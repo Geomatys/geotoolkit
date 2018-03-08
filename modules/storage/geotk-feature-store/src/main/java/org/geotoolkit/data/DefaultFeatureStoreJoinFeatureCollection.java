@@ -20,6 +20,7 @@ package org.geotoolkit.data;
 import java.util.Collection;
 import java.util.Map;
 import java.util.logging.Level;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.Join;
 import org.geotoolkit.data.query.Query;
@@ -43,7 +44,7 @@ public class DefaultFeatureStoreJoinFeatureCollection extends AbstractFeatureCol
     private final Query query;
     private FeatureType type = null;
 
-    public DefaultFeatureStoreJoinFeatureCollection(final String id, final Query query){
+    public DefaultFeatureStoreJoinFeatureCollection(final NamedIdentifier id, final Query query){
         super(id,query.getSource());
         this.query = query;
 
@@ -90,7 +91,7 @@ public class DefaultFeatureStoreJoinFeatureCollection extends AbstractFeatureCol
     public FeatureCollection subset(final Query query) throws DataStoreException {
         final Query combine = QueryUtilities.subQuery(this.query, query);
         //the result should be an absolute query too.
-        return QueryUtilities.evaluate("sub-"+getID(), combine);
+        return QueryUtilities.evaluate("sub-"+getIdentifier().getCode(), combine);
     }
 
     @Override

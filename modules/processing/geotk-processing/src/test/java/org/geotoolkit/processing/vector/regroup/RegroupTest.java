@@ -140,7 +140,7 @@ public class RegroupTest extends AbstractProcessTest {
 
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
 
         Feature myFeature1 = type.newInstance();
@@ -276,7 +276,7 @@ public class RegroupTest extends AbstractProcessTest {
 
         type = createSimpleResultType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
 
         Feature myFeature1 = type.newInstance();
@@ -360,7 +360,7 @@ public class RegroupTest extends AbstractProcessTest {
 
         type = createSimpleResultType2();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
 
         Feature myFeature1 = type.newInstance();

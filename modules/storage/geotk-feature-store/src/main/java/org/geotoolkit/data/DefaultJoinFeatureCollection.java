@@ -38,6 +38,7 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.expression.PropertyName;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.referencing.NamedIdentifier;
 
 /**
  * FeatureCollection that takes it'es source from a join query.
@@ -58,7 +59,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection{
     private GenericName leftName = null;
     private GenericName rightName = null;
 
-    public DefaultJoinFeatureCollection(final String id, final Query query){
+    public DefaultJoinFeatureCollection(final NamedIdentifier id, final Query query){
         super(id,query.getSource());
 
         final Source src = query.getSource();
@@ -138,7 +139,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection{
     public FeatureCollection subset(final Query query) throws DataStoreException {
         final Query combine = QueryUtilities.subQuery(this.query, query);
         //the result should be an absolute query too.
-        return QueryUtilities.evaluate("sub-"+getID(), combine);
+        return QueryUtilities.evaluate("sub-"+getIdentifier().getCode(), combine);
     }
 
     @Override

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalFeatureTypeException;
 import org.apache.sis.storage.ReadOnlyStorageException;
@@ -75,8 +76,8 @@ public class GenericMappingFeatureCollection extends AbstractCollection<Feature>
     }
 
     @Override
-    public String getID() {
-        return original.getID();
+    public NamedIdentifier getIdentifier() {
+        return original.getIdentifier();
     }
 
     @Override

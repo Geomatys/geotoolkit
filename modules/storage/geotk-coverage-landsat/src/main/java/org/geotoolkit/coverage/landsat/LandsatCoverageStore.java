@@ -34,18 +34,15 @@ import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
-
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
+import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.Resource;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
-
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.util.NamesExt;
-
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
-import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.Resource;
 
 /**
  * Store adapted to Landsat 8 files structure.
@@ -129,7 +126,6 @@ public class LandsatCoverageStore extends DataStore implements Aggregate, Resour
         resources.add(reflectiveRef);
         final LandsatCoverageResource panchroRef    = new LandsatCoverageResource(this, NamesExt.create(sceneName+"-"+PANCHROMATIC_LABEL), origin, metadataParser);
         resources.add(panchroRef);
-
         final LandsatCoverageResource thermicRef    = new LandsatCoverageResource(this, NamesExt.create(sceneName+"-"+THERMAL_LABEL), origin, metadataParser);
         resources.add(thermicRef);
     }
@@ -160,8 +156,8 @@ public class LandsatCoverageStore extends DataStore implements Aggregate, Resour
      * {@inheritDoc }.
      */
     @Override
-    public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(LandsatProvider.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(LandsatProvider.NAME);
     }
 
     /**

@@ -105,7 +105,7 @@ public class DifferenceTest extends AbstractProcessTest {
 
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
         geometryFactory = new GeometryFactory();
 
@@ -192,7 +192,7 @@ public class DifferenceTest extends AbstractProcessTest {
 
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
         geometryFactory = new GeometryFactory();
 
@@ -263,7 +263,7 @@ public class DifferenceTest extends AbstractProcessTest {
 
         type = createSimpleResultType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
         geometryFactory = new GeometryFactory();
 

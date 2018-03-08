@@ -27,7 +27,6 @@ import org.geotoolkit.storage.AbstractFeatureSet;
 import org.geotoolkit.storage.StorageListener;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.metadata.Metadata;
 
 /**
  * Default subset feature resource.
@@ -73,11 +72,6 @@ final class SubsetFeatureResource extends AbstractFeatureSet implements FeatureS
     @Override
     public Stream<Feature> features(boolean parallal) throws DataStoreException {
         return FeatureStreams.subset(parent.features(false), getType(), query);
-    }
-
-    @Override
-    public Metadata getMetadata() throws DataStoreException {
-        return parent.getMetadata();
     }
 
     @Override

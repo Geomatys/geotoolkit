@@ -71,8 +71,6 @@ public abstract class DataStore extends org.apache.sis.storage.DataStore {
      * @throws DataStoreException If an error occurs while analyzing underlying
      * data.
      */
-    protected Metadata createMetadata() throws DataStoreException {
-        return null;
-    }
+    protected abstract Metadata createMetadata() throws DataStoreException;
 
 }

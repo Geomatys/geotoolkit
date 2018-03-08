@@ -280,7 +280,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
     private TileSetResult listTiles(RenderingContext2D context2D){
         final TileSetResult result = new TileSetResult();
 
-        final GenericName coverageName = item.getCoverageReference().getName();
+        final GenericName coverageName = item.getCoverageReference().getIdentifier();
         result.rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 context2D.getSEScale(), coverageName,null);
 

@@ -32,8 +32,9 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
-import org.opengis.util.GenericName;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
@@ -156,27 +157,28 @@ public class QueryUtilities {
 
 
         final String language = query.getLanguage();
+        final NamedIdentifier ident = new NamedIdentifier(NamesExt.create(id));
 
         if(Query.GEOTK_QOM.equalsIgnoreCase(language)){
             final Source s = query.getSource();
             if(s instanceof Selector){
-                return new DefaultSelectorFeatureCollection(id, query);
+                return new DefaultSelectorFeatureCollection(ident, query);
             }else if(s instanceof Join){
                 final Collection<Session> sessions = getSessions(s, null);
 
                 if(sessions.size() == 1 && sessions.iterator().next().getFeatureStore().getQueryCapabilities().handleCrossQuery()){
                     //the feature store can handle our join query, it will be much more efficient then a generic implementation
-                    return new DefaultFeatureStoreJoinFeatureCollection(id, query);
+                    return new DefaultFeatureStoreJoinFeatureCollection(ident, query);
                 }else{
                     //can't optimize it, use the generic implementation
-                    return new DefaultJoinFeatureCollection(id, query);
+                    return new DefaultJoinFeatureCollection(ident, query);
                 }
             }else{
                 throw new IllegalArgumentException("Query source is an unknowned type : " + s);
             }
         }else{
             //custom language query, let the feature store handle it
-            return new DefaultTextStmtFeatureCollection(id, query);
+            return new DefaultTextStmtFeatureCollection(ident, query);
         }
     }
 

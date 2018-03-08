@@ -30,6 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
@@ -55,7 +56,6 @@ import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.Metadata;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
@@ -87,7 +87,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
     }
 
     @Override
-    public Metadata getMetadata() throws DataStoreException {
+    protected DefaultMetadata createMetadata() throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
 
@@ -269,7 +269,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
                 }
 
                 final GridCoverageBuilder builder = new GridCoverageBuilder();
-                builder.setName(ref.getName().tip().toString());
+                builder.setName(ref.getIdentifier().tip().toString());
                 builder.setRenderedImage(targetImage);
                 builder.setGridGeometry(gridGeom);
                 builder.setSampleDimensions(coverages.get(0).getSampleDimensions());

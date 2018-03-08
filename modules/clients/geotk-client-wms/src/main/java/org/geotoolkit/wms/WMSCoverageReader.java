@@ -86,7 +86,7 @@ public class WMSCoverageReader extends GridCoverageReader{
     @Override
     public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
         final NameFactory dnf = FactoryFinder.getNameFactory(null);
-        final GenericName name = getInput().getName();
+        final GenericName name = getInput().getIdentifier();
         NameSpace ns = null;
         if (NamesExt.getNamespace(name) != null) {
             ns = dnf.createNameSpace(dnf.createGenericName(null, NamesExt.getNamespace(name)), null);

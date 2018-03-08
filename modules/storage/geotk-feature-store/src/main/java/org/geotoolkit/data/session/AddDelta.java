@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStore;
@@ -37,6 +38,7 @@ import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -77,7 +79,8 @@ public class AddDelta extends AbstractDelta{
             ft = null;
         }
 
-        this.features = FeatureStoreUtilities.collection("temp", ft);
+        final NamedIdentifier ident = new NamedIdentifier(NamesExt.create("temp"));
+        this.features = FeatureStoreUtilities.collection(ident, ft);
 
         //we must copy the features since they might be changed later
         final Iterator<? extends Feature> ite = features.iterator();

@@ -39,8 +39,7 @@ public abstract class AbstractResource implements Resource {
 
     protected final Set<StorageListener> listeners = new HashSet<>();
 
-
-    protected Identifier identifier;
+    protected NamedIdentifier identifier;
     private DefaultMetadata metadata;
 
     protected AbstractResource() {
@@ -48,31 +47,42 @@ public abstract class AbstractResource implements Resource {
 
     public AbstractResource(GenericName name) {
         ArgumentChecks.ensureNonNull("identifier", name);
-        this.identifier = new NamedIdentifier(name);
+        this.identifier = (name instanceof NamedIdentifier) ?
+                (NamedIdentifier)name : new NamedIdentifier(name);
     }
 
     public AbstractResource(Identifier identifier) {
+        ArgumentChecks.ensureNonNull("identifier", identifier);
+        this.identifier = (identifier instanceof NamedIdentifier) ?
+                (NamedIdentifier)identifier : new NamedIdentifier(identifier);
+    }
+
+    public AbstractResource(NamedIdentifier identifier) {
         ArgumentChecks.ensureNonNull("identifier", identifier);
         this.identifier = identifier;
     }
 
     @Override
-    public Identifier getIdentifier() {
+    public NamedIdentifier getIdentifier() {
         return identifier;
     }
 
     @Override
-    public synchronized Metadata getMetadata() throws DataStoreException {
+    public final synchronized Metadata getMetadata() throws DataStoreException {
         if (metadata == null) {
-            metadata = new DefaultMetadata();
-            final DefaultDataIdentification idf = new DefaultDataIdentification();
-            final DefaultCitation citation = new DefaultCitation();
-            citation.getIdentifiers().add(identifier);
-            idf.setCitation(citation);
-            metadata.setIdentificationInfo(Arrays.asList(idf));
-            metadata.freeze();
-
+            metadata = createMetadata();
         }
+        return metadata;
+    }
+
+    protected DefaultMetadata createMetadata() throws DataStoreException {
+        final DefaultMetadata metadata = new DefaultMetadata();
+        final DefaultDataIdentification idf = new DefaultDataIdentification();
+        final DefaultCitation citation = new DefaultCitation();
+        citation.getIdentifiers().add(identifier);
+        idf.setCitation(citation);
+        metadata.setIdentificationInfo(Arrays.asList(idf));
+        metadata.freeze();
         return metadata;
     }
 

@@ -727,7 +727,7 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
     @Override
     public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
-        final Pyramid pyramid = set.createPyramid(getName().tip().toString(),crs);
+        final Pyramid pyramid = set.createPyramid(getIdentifier().tip().toString(),crs);
         save();
         return pyramid;
     }

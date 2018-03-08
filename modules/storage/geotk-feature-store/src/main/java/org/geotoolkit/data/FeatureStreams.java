@@ -34,6 +34,7 @@ import java.util.logging.Level;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.logging.Logging;
@@ -44,6 +45,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureSetMapper;
 import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.internal.data.GenericMappedFeatureIterator;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -550,6 +552,10 @@ public final class FeatureStreams {
         private final FeatureCollection[] wrapped;
 
         private FeatureCollectionSequence(final String id, final FeatureCollection[] wrapped) {
+            this(new NamedIdentifier(NamesExt.create(id)), wrapped);
+        }
+
+        private FeatureCollectionSequence(final NamedIdentifier id, final FeatureCollection[] wrapped) {
             super(id, wrapped[0].getSource());
 
             if(wrapped.length == 1){

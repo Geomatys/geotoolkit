@@ -218,7 +218,7 @@ public class OwcDataStoreExtension extends OwcExtension {
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
             final CoverageResource covref = cml.getCoverageReference();
-            return covref.getName().toString();
+            return covref.getIdentifier().toString();
         }
         return null;
     }
