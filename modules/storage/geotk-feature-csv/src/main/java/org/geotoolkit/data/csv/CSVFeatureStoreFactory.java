@@ -58,7 +58,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     /** factory identification **/
-    public static final String NAME = "csv";
+    public static final String NAME = "geotk_csv";
     public static final String MIME_TYPE = "text/csv";
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
