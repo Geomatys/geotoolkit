@@ -58,7 +58,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class GPXFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     /** factory identification **/
-    public static final String NAME = "gpx";
+    public static final String NAME = "geotk_gpx";
     public static final String MIME_TYPE = "application/gpx+xml";
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
