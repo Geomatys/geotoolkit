@@ -59,6 +59,8 @@ import org.geotoolkit.gml.xml.PolygonProperty;
 import org.geotoolkit.gml.xml.Ring;
 import org.geotoolkit.gml.xml.SurfaceProperty;
 import org.geotoolkit.gml.xml.WithCoordinates;
+import org.geotoolkit.gml.xml.v321.PolygonPatchType;
+import org.geotoolkit.gml.xml.v321.SurfaceType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -189,6 +191,11 @@ public class GeometryTransformer implements Supplier<Geometry> {
         } else if (source instanceof org.geotoolkit.gml.xml.Polygon) {
             return convertPolygon((org.geotoolkit.gml.xml.Polygon) source);
         } else if (source instanceof AbstractSurface) {
+            if (source instanceof SurfaceType) {
+                return convertSurface((SurfaceType)source);
+            } else if (source instanceof org.geotoolkit.gml.xml.v311.SurfaceType) {
+                return convertSurface((org.geotoolkit.gml.xml.v311.SurfaceType)source);
+            }
             // TODO : complex case
 
             /*
@@ -208,7 +215,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
             return convertMultiGeometry((MultiGeometry) source);
         }
 
-        throw new IllegalArgumentException("Unssupported geometry type : " + source.getClass());
+        throw new IllegalArgumentException("Unsupported geometry type : " + source.getClass());
     }
 
     /**
@@ -275,18 +282,33 @@ public class GeometryTransformer implements Supplier<Geometry> {
 
         // TODO : below conditions should be removed when proper abstraction is setup on GML geometry definition.
         if (values == null) {
-            if (source instanceof org.geotoolkit.gml.xml.LineString) {
-                final org.geotoolkit.gml.xml.LineString ls = (org.geotoolkit.gml.xml.LineString) (source);
-                final DirectPositionList posList = ls.getPosList();
+            final boolean isLineString = source instanceof org.geotoolkit.gml.xml.LineString;
+            final boolean isLineStringSegment = source instanceof org.geotoolkit.gml.xml.LineStringSegment;
+            if (isLineString || isLineStringSegment) {
+                final DirectPositionList posList;
+                if (isLineString) {
+                    posList = ((org.geotoolkit.gml.xml.LineString) source).getPosList();
+                } else {
+                    posList = ((org.geotoolkit.gml.xml.LineStringSegment) source).getPosList();
+                }
                 if (posList != null) {
                     values = posList.getValue();
-                } else if (ls.getPos() != null) {
-                    return ls.getPos().stream()
+                } else {
+                    final List<? extends DirectPosition> pList;
+                    if (isLineString) {
+                        pList = ((org.geotoolkit.gml.xml.LineString) source).getPos();
+                    } else {
+                        pList = ((org.geotoolkit.gml.xml.LineStringSegment) source).getPos();
+                    }
+
+                    if (pList != null) {
+                    return pList.stream()
                             .map(GeometryTransformer::convertDirectPosition)
                             .filter(Objects::nonNull)
                             .spliterator();
-                } else {
-                    values = Collections.EMPTY_LIST;// We've identified a line, but there's no data in it
+                    } else {
+                        values = Collections.EMPTY_LIST;// We've identified a line, but there's no data in it
+                    }
                 }
             } else if (source instanceof org.geotoolkit.gml.xml.LinearRing) {
                 // Note : do not check "getCoordinates", because it should have been done above.
@@ -295,6 +317,19 @@ public class GeometryTransformer implements Supplier<Geometry> {
                 values = asDoubles(() -> ((org.geotoolkit.gml.xml.v311.GeodesicStringType) source).getPosList());
             } else if (source instanceof org.geotoolkit.gml.xml.v321.GeodesicStringType) {
                 values = asDoubles(() -> ((org.geotoolkit.gml.xml.v321.GeodesicStringType) source).getPosList());
+            } else if (source instanceof Curve) {
+                CurveSegmentArrayProperty segments = ((Curve)source).getSegments();
+                if (segments != null) {
+                    final List<? extends AbstractCurveSegment> curveSegments = segments.getAbstractCurveSegment();
+                    if (curveSegments != null) {
+                        return curveSegments.stream()
+                                .flatMap(seg
+                                        -> StreamSupport.stream(getCoordinates(seg), false))
+                                .spliterator();
+                    }
+                }
+                // If we arrive here, we've got an empty curve.
+                values = Collections.EMPTY_LIST;
             }
         }
 
@@ -452,7 +487,12 @@ public class GeometryTransformer implements Supplier<Geometry> {
                 .reduce(new ArrayList<>(), (target, gt) -> {
                     gt.accumulate(target, true);
                     return target;
-                }, null);
+                }, (l1, l2) -> {
+                    if (l1 != l2) {
+                        l1.addAll(l2);
+                    }
+                    return l1;
+                });
         final LinearRing ring = GF.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
         applyCRS(ring);
 
@@ -472,7 +512,11 @@ public class GeometryTransformer implements Supplier<Geometry> {
     }
 
     private Polygon convertPolygon(final org.geotoolkit.gml.xml.Polygon polygon) {
-        final AbstractRing exterior = polygon.getExterior().getAbstractRing();
+        return convertPolygonLike(polygon.getExterior(), polygon.getInterior());
+    }
+
+    private Polygon convertPolygonLike(AbstractRingProperty exteriorProperty, final List<? extends AbstractRingProperty> interiorProperties) {
+        final AbstractRing exterior = exteriorProperty.getAbstractRing();
         final Geometry extRing = new GeometryTransformer(exterior, this).get();
         // Check now to avoid costly parsing of interior geometries
         if (!(extRing instanceof LinearRing)) {
@@ -481,7 +525,9 @@ public class GeometryTransformer implements Supplier<Geometry> {
 
         final LinearRing[] interiors;
         try {
-            interiors = polygon.getInterior().stream()
+            final Stream<? extends AbstractRingProperty> interiorStream =
+                    interiorProperties == null? Stream.empty() : interiorProperties.stream();
+            interiors = interiorStream
                     .map(AbstractRingProperty::getAbstractRing)
                     .map(ring -> new GeometryTransformer(ring, this).get())
                     .map(LinearRing.class::cast)
@@ -603,6 +649,37 @@ public class GeometryTransformer implements Supplier<Geometry> {
         applyCRS(result);
         return result;
     }
+
+    private MultiPolygon convertSurface(SurfaceType surface) {
+        final Polygon[] polygons = surface.getPatches().getAbstractSurfacePatch().stream()
+                .peek(patch -> {
+                    if (!(patch instanceof PolygonPatchType))
+                        throw new UnconvertibleObjectException("Only polygon patches are currently supported for surface types. Found: "+ patch.getClass());
+                })
+                .map(PolygonPatchType.class::cast)
+                .map(polygon -> convertPolygonLike(polygon.getExterior(), polygon.getInterior()))
+                .toArray(size -> new Polygon[size]);
+
+        final MultiPolygon mp = GF.createMultiPolygon(polygons);
+        applyCRS(mp);
+        return mp;
+    }
+
+    private MultiPolygon convertSurface(org.geotoolkit.gml.xml.v311.SurfaceType surface) {
+        final Polygon[] polygons = surface.getPatches().getAbstractSurfacePatch().stream()
+                .peek(patch -> {
+                    if (!(patch instanceof org.geotoolkit.gml.xml.v311.PolygonPatchType))
+                        throw new UnconvertibleObjectException("Only polygon patches are currently supported for surface types. Found: "+ patch.getClass());
+                })
+                .map(org.geotoolkit.gml.xml.v311.PolygonPatchType.class::cast)
+                .map(polygon -> convertPolygonLike(polygon.getExterior(), polygon.getInterior()))
+                .toArray(size -> new Polygon[size]);
+
+        final MultiPolygon mp = GF.createMultiPolygon(polygons);
+        applyCRS(mp);
+        return mp;
+    }
+
 
     /**
      * Extract points in source GML geometry, then send them to a function which
