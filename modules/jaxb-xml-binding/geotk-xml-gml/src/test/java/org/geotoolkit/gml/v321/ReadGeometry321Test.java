@@ -48,4 +48,13 @@ public class ReadGeometry321Test extends ReadGeometryTest {
                 new Envelope(12.98241111111111, 13.462391666666665, -87.81824444444445, -87.25221944444445)
         );
     }
+
+    @Test
+    public void testSurface() throws Exception {
+        testCollection(ReadGeometry321Test.class.getResource("surface.gml"),
+                MultiPolygon.class,
+                1,
+                new Envelope(17.529157027777778, 17.58207613888889, -88.31997997222221, -88.14625286111112)
+        );
+    }
 }
