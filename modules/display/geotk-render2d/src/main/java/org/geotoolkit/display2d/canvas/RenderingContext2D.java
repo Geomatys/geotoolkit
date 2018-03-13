@@ -63,6 +63,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 
 
 /**
@@ -180,6 +181,11 @@ public class RenderingContext2D implements RenderingContext{
     private double geoScale = 1;
 
     /**
+     * Precalculated objective to display rotation.
+     */
+    private double rotation = 0.0;
+
+    /**
      * Precaculated geographic scale calculated using OGC Symbology Encoding
      * Specification.
      * This is not the scale Objective to Display.
@@ -278,6 +284,8 @@ public class RenderingContext2D implements RenderingContext{
             geoScale = 1;
             LOGGER.log(Level.WARNING, null, ex);
         }
+
+        rotation = AffineTransforms2D.getRotation(objectiveToDisplay);
 
         //set temporal and elevation range--------------------------------------
         final Date[] temporal = canvas.getTemporalRange();
@@ -493,6 +501,7 @@ public class RenderingContext2D implements RenderingContext{
         this.objectiveToDisplay = null;
         this.resolution = null;
         this.current = DISPLAY_TRS;
+        this.rotation = 0.0;
     }
 
     public void dispose(){
@@ -791,6 +800,14 @@ public class RenderingContext2D implements RenderingContext{
      */
     public double getSEScale() {
         return seScale;
+    }
+
+    /**
+     *
+     * @return objective to display rotation.
+     */
+    public double getRotation() {
+        return rotation;
     }
 
     /**

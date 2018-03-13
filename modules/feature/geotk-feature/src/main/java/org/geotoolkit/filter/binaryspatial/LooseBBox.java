@@ -34,7 +34,7 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class LooseBBox extends DefaultBBox{
+public class LooseBBox extends DefaultBBox {
 
     public LooseBBox(final PropertyName property, final DefaultLiteral<BoundingBox> bbox) {
         super(property,bbox);
@@ -47,7 +47,7 @@ public class LooseBBox extends DefaultBBox{
     public boolean evaluate(final Object object) {
         Geometry candidate = toGeometry(object, left);
 
-        if(candidate == null){
+        if (candidate == null) {
             return false;
         }
 
@@ -55,7 +55,7 @@ public class LooseBBox extends DefaultBBox{
         final CoordinateReferenceSystem candidateCrs = findCRS(object, candidate);
 
         //if we don't know the crs, we will assume it's the objective crs already
-        if(candidateCrs != null){
+        if (candidateCrs != null) {
             //reproject in objective crs if needed
             final Envelope e = new JTSEnvelope2D(candidate.getEnvelopeInternal(),CRS.getHorizontalComponent(candidateCrs));
             return ReferencingUtilities.intersects(e, right.getValue());
