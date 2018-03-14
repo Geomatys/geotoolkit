@@ -27,6 +27,8 @@ import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ProviderOnFileSystem;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -36,6 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Remi Marechal (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
+@StoreMetadataExt(resourceTypes = ResourceType.GRID)
 public class LandsatProvider extends DataStoreProvider implements ProviderOnFileSystem {
 
     /** factory identification **/

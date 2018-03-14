@@ -62,6 +62,7 @@ import org.geotoolkit.process.ProcessFinder;
 
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
 import org.geotoolkit.storage.coverage.CoverageReaderHelper;
+import org.geotoolkit.util.NamesExt;
 
 /**
  * Reader to read Landsat datas.
@@ -166,7 +167,8 @@ public class LandsatReader extends GridCoverageReader {
      */
     @Override
     public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final String sceneName  = metaParse.getValue(false, SCENE_ID);
+        return Arrays.asList(NamesExt.create(sceneName+"-"+REFLECTIVE_LABEL), NamesExt.create(sceneName+"-"+PANCHROMATIC_LABEL), NamesExt.create(sceneName+"-"+THERMAL_LABEL));
     }
 
     /**
