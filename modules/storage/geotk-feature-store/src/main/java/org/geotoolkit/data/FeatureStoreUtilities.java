@@ -29,6 +29,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.BinaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -257,7 +259,13 @@ public class FeatureStoreUtilities {
     /**
      * Get or compute DataSet envelope.
      *
-     * @param dataset dataset, not null
+     * <p>
+     * This operation can be expensive in time and resources if the envelope
+     * must be computed. It is recommended to use {@link DataSet#getEnvelope() }
+     * instead if a resulting null envelope is acceptable.
+     * </p>
+     *
+     * @param dataset Data set to extract or compute from, must not be null
      * @return dataset envelope or null if the envelope could not be computed or is not geospatial.
      * @throws org.apache.sis.storage.DataStoreException
      */
@@ -268,7 +276,13 @@ public class FeatureStoreUtilities {
     /**
      * Get or compute DataSet envelope.
      *
-     * @param dataset dataset, not null
+     * <p>
+     * This operation can be expensive in time and resources if the envelope
+     * must be computed. It is recommended to use {@link DataSet#getEnvelope() }
+     * instead if a resulting null envelope is acceptable.
+     * </p>
+     *
+     * @param dataset Data set to extract or compute from, must not be null
      * @param forceCompute ignore dataset declared envelope and always compute envelope
      * @return dataset envelope or null if the envelope could not be computed or is not geospatial.
      * @throws org.apache.sis.storage.DataStoreException

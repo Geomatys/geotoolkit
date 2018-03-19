@@ -63,7 +63,7 @@ public class ArrayFeatureSet implements FeatureSet {
 
     @Override
     public Stream<Feature> features(boolean bln) throws DataStoreException {
-        return features.stream();
+        return bln ? features.parallelStream() : features.stream();
     }
 
     /**
