@@ -107,9 +107,18 @@ public interface CoverageResource extends FeatureSet {
     @Override
     public default FeatureType getType() throws DataStoreException {
         final GridCoverageReader reader = acquireReader();
-        final FeatureType type = CoverageFeature.createCoverageType(reader);
-        recycle(reader);
-        return type;
+        try {
+            final FeatureType type = CoverageFeature.createCoverageType(reader);
+            recycle(reader);
+            return type;
+        } catch (CoverageStoreException ex) {
+            try {
+                reader.dispose();
+            } catch (CoverageStoreException ex2) {
+                ex.addSuppressed(ex2);
+            }
+            throw ex;
+        }
     }
 
     @Override
