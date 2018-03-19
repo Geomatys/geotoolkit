@@ -118,8 +118,6 @@ public interface CoverageResource extends FeatureSet {
                 ex.addSuppressed(ex2);
             }
             throw ex;
-        } finally {
-            recycle(reader);
         }
     }
 
