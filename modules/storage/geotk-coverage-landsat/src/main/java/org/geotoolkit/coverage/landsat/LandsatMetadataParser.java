@@ -47,7 +47,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.content.AttributeGroup;
 import org.opengis.metadata.content.Band;
-import org.opengis.metadata.content.ImageDescription;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.metadata.identification.Resolution;
 import org.opengis.metadata.lineage.ProcessStep;
@@ -107,6 +106,7 @@ import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.geotoolkit.temporal.util.TimeParser;
 
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
+import org.opengis.util.InternationalString;
 
 /**
  * A helper class to parse Landsat metadata to build appropriate {@linkplain DefaultMetadata ISO19115 Metadata}
@@ -230,274 +230,278 @@ public class LandsatMetadataParser {
     /**
      * Returns Landsat ISO19115 metadatas.
      *
+     * @param group
      * @return
      * @throws FactoryException
      * @throws ParseException
      */
-    public final DefaultMetadata getMetadata(final String groupName) throws FactoryException, ParseException {
-        ArgumentChecks.ensureNonNull("Metadata group name", groupName);
-        final DefaultMetadata filledMetadata = new DefaultMetadata();
-        switch(groupName) {
-            case GENERAL_LABEL : {
-                if (isoMetadata != null) {
-                    return isoMetadata;
-                } else {
-                    isoMetadata = filledMetadata;
-                }
-                break;
-            }
+    public final DefaultMetadata getMetadata(final LandsatConstants.CoverageGroup group) throws FactoryException, ParseException {
+        ArgumentChecks.ensureNonNull("Metadata group name", group);
 
-            case REFLECTIVE_LABEL : {
-                if (reflectiveMetadatas != null) {
-                    return reflectiveMetadatas;
-                } else {
-                    reflectiveMetadatas = filledMetadata;
-                }
-                break;
-            }
+        if (isoMetadata == null) {
 
-            case PANCHROMATIC_LABEL : {
-                if (panchromaticMetadatas != null) {
-                    return panchromaticMetadatas;
-                } else {
-                    panchromaticMetadatas = filledMetadata;
-                }
-                break;
-            }
+            //generate metadata
+            final DefaultMetadata baseMetadata = new DefaultMetadata();
 
-            case THERMAL_LABEL : {
-                if (thermalMetadatas != null) {
-                    return thermalMetadatas;
-                } else {
-                    thermalMetadatas = filledMetadata;
-                }
-                break;
-            }
-        }
+            assert metaGroups != null;
 
+            //----------------------------------------------------------------------//
+            //------------------------ Mandatory metadata --------------------------//
+            //----------------------------------------------------------------------//
 
-        assert metaGroups != null;
+            //-- set CRS
+            baseMetadata.setReferenceSystemInfo(Collections.singleton(getCRS()));
+            final Date metadataPublicationDate =  getDateInfo();
+            if (metadataPublicationDate != null) baseMetadata.setDateStamp(metadataPublicationDate);
+            //-- unique file identifier
+            baseMetadata.setFileIdentifier(UUID.randomUUID().toString());
+            //-- Iso metadatas 19115 generation date.
+            baseMetadata.setDateStamp(new Date());
 
-        //----------------------------------------------------------------------//
-        //------------------------ Mandatory metadata --------------------------//
-        //----------------------------------------------------------------------//
+            //-- set bounding box
+            final double[] bbCoords = getProjectedBound2D();
+            final DefaultGeographicBoundingBox geo = new DefaultGeographicBoundingBox(bbCoords[0], bbCoords[1],  //-- long
+                                                                                      bbCoords[2], bbCoords[3]); //-- lat
 
-        //-- set CRS
-        filledMetadata.setReferenceSystemInfo(Collections.singleton(getCRS()));
-        final Date metadataPublicationDate =  getDateInfo();
-        if (metadataPublicationDate != null)
-            filledMetadata.setDateStamp(metadataPublicationDate);
-        //-- unique file identifier
-        filledMetadata.setFileIdentifier(UUID.randomUUID().toString());
-        //-- Iso metadatas 19115 generation date.
-        filledMetadata.setDateStamp(new Date());
+            //-- geographic extent
+            final DefaultExtent ex = new DefaultExtent();
+            ex.setGeographicElements(Arrays.asList(geo));
 
-        //-- set bounding box
-        final double[] bbCoords = getProjectedBound2D();
-        final DefaultGeographicBoundingBox geo = new DefaultGeographicBoundingBox(bbCoords[0], bbCoords[1],  //-- long
-                                                                                  bbCoords[2], bbCoords[3]); //-- lat
+            //-- acquisition date
+            final DefaultTemporalExtent tex = new DefaultTemporalExtent();
+            final Date acquisitionDate = getAcquisitionDate();
+            tex.setBounds(acquisitionDate, acquisitionDate);
+            ex.setTemporalElements(Arrays.asList(tex));
 
-        final DefaultExtent ex = new DefaultExtent();
-        ex.setGeographicElements(Arrays.asList(geo));
+            //-- temporal extent
+            final NamedIdentifier extentName = new NamedIdentifier(Citations.CRS, "Landsat extent");
+            final Map<String, Object> propertiesExtent = new HashMap<>();
+            propertiesExtent.put(IdentifiedObject.NAME_KEY, extentName);
 
-        //-- acquisition date
-        final DefaultTemporalExtent tex = new DefaultTemporalExtent();
-        final Date acquisitionDate = getAcquisitionDate();
-        tex.setBounds(acquisitionDate, acquisitionDate);
-        ex.setTemporalElements(Arrays.asList(tex));
+            final NamedIdentifier extentBeginName = new NamedIdentifier(Citations.CRS, "Landsat extent");
+            final Map<String, Object> propertiesBegin = new HashMap<>();
+            propertiesBegin.put(IdentifiedObject.NAME_KEY, extentBeginName);
 
-        //-- temporal extent
-        final NamedIdentifier extentName = new NamedIdentifier(Citations.CRS, "Landsat extent");
-        final Map<String, Object> propertiesExtent = new HashMap<>();
-        propertiesExtent.put(IdentifiedObject.NAME_KEY, extentName);
+            final NamedIdentifier extentEnd = new NamedIdentifier(Citations.CRS, "Landsat extent");
+            final Map<String, Object> propertiesEnd = new HashMap<>();
+            propertiesEnd.put(IdentifiedObject.NAME_KEY, extentEnd);
+            tex.setExtent(new DefaultPeriod(propertiesExtent, new DefaultInstant(propertiesBegin, acquisitionDate), new DefaultInstant(propertiesEnd, acquisitionDate)));
 
-        final NamedIdentifier extentBeginName = new NamedIdentifier(Citations.CRS, "Landsat extent");
-        final Map<String, Object> propertiesBegin = new HashMap<>();
-        propertiesBegin.put(IdentifiedObject.NAME_KEY, extentBeginName);
-
-        final NamedIdentifier extentEnd = new NamedIdentifier(Citations.CRS, "Landsat extent");
-        final Map<String, Object> propertiesEnd = new HashMap<>();
-        propertiesEnd.put(IdentifiedObject.NAME_KEY, extentEnd);
-        tex.setExtent(new DefaultPeriod(propertiesExtent, new DefaultInstant(propertiesBegin, acquisitionDate), new DefaultInstant(propertiesEnd, acquisitionDate)));
-
-
-        //-- all minimum mandatory metadatas.
-        //-- geographic extent
-        final DefaultDataIdentification ddii = new DefaultDataIdentification();
-        ddii.setExtents(Arrays.asList(ex));
-        //-- comment about data
-        final String abstractComment = getValue(true, "ORIGIN");
-        ddii.setAbstract(new DefaultInternationalString(abstractComment));
-        //-- scene title
-        String uid = getValue(false, LandsatConstants.SCENE_ID);
-        if (!GENERAL_LABEL.equals(groupName)) uid +="-"+groupName;
-        final NamedIdentifier identifier = new NamedIdentifier(new DefaultIdentifier(uid));
-        final DefaultCitation titleCitation = new DefaultCitation(uid);
-        titleCitation.setIdentifiers(Collections.singleton(identifier));
-        //-- dates
-        Set<DefaultCitationDate> dateset = new HashSet<>();
-        dateset.add(new DefaultCitationDate(acquisitionDate, DateType.CREATION));
-        dateset.add(new DefaultCitationDate(metadataPublicationDate, DateType.PUBLICATION));
-        titleCitation.setDates(dateset);
-        ddii.setCitation(titleCitation);
-
-        //-- Resolution
-        if (!groupName.equalsIgnoreCase(GENERAL_LABEL)) {
-            final String reres = getValue(false, RESOLUTION_LABEL+groupName);
+            //-- Resolution
+            final String reres = getValue(false, RESOLUTION_LABEL+group);
+            final Set<Resolution> res = new HashSet<>();
             if (reres != null) {
-                HashSet<Resolution> res = new HashSet<Resolution>();
                 final DefaultResolution defaultResolution = new DefaultResolution();
                 defaultResolution.setDistance(Double.valueOf(reres));
                 res.add(defaultResolution);
+            }
+
+            /**
+             * Three different Images Descriptions.
+             * - Reflective
+             * - Panchromatic
+             * - Thermal
+             */
+            //-- Reflective description.
+            final DefaultImageDescription reflectiveImgDesc = new DefaultImageDescription();
+
+            final DefaultAttributeGroup dAGReflectiveRef = new DefaultAttributeGroup();
+            dAGReflectiveRef.setAttributes(getBandsInfos(CoverageGroup.REFLECTIVE, "REFLECTANCE"));
+            final DefaultAttributeGroup dAGReflectiveRad = new DefaultAttributeGroup();
+            dAGReflectiveRad.setAttributes(getBandsInfos(CoverageGroup.REFLECTIVE, "RADIANCE"));
+            final Set<AttributeGroup> reflectiveInfos = new HashSet<>();
+            reflectiveInfos.add(dAGReflectiveRef);
+            reflectiveInfos.add(dAGReflectiveRad);
+            reflectiveImgDesc.setAttributeGroups(reflectiveInfos);
+
+            //-- Panchromatic image description.
+            final DefaultImageDescription panchroImgDesc = new DefaultImageDescription();
+            final DefaultAttributeGroup dAGPanchromaRef  = new DefaultAttributeGroup();
+            dAGPanchromaRef.setAttributes(getBandsInfos(CoverageGroup.PANCHROMATIC, "REFLECTANCE"));
+            final DefaultAttributeGroup dAGPanchromaRad  = new DefaultAttributeGroup();
+            dAGPanchromaRad.setAttributes(getBandsInfos(CoverageGroup.PANCHROMATIC, "RADIANCE"));
+            final Set<AttributeGroup> panchroInfos = new HashSet<>();
+            panchroInfos.add(dAGPanchromaRef);
+            panchroInfos.add(dAGPanchromaRad);
+            panchroImgDesc.setAttributeGroups(panchroInfos);
+
+            //-- Thermal descriptions. (only define with Radiance)
+            final DefaultImageDescription thermalImgDesc = new DefaultImageDescription();
+            final DefaultAttributeGroup dAGThermalRad    = new DefaultAttributeGroup();
+            dAGThermalRad.setAttributes(getBandsInfos(CoverageGroup.THERMAL, "RADIANCE"));
+            thermalImgDesc.setAttributeGroups(Collections.singleton(dAGThermalRad));
+
+            //-- image description
+            final String cloud = getValue(false, "CLOUD_COVER");
+            if (cloud != null) {
+                final double val = Double.valueOf(cloud);
+                reflectiveImgDesc.setCloudCoverPercentage(val);
+                panchroImgDesc.setCloudCoverPercentage(val);
+                thermalImgDesc.setCloudCoverPercentage(val);
+            }
+
+            final String sunAz = getValue(false, "SUN_AZIMUTH");
+            if (sunAz != null) {
+                final double val = Double.valueOf(sunAz);
+                reflectiveImgDesc.setIlluminationAzimuthAngle(val);
+                panchroImgDesc.setIlluminationAzimuthAngle(val);
+                thermalImgDesc.setIlluminationAzimuthAngle(val);
+            }
+
+            final String sunEl = getValue(false, "SUN_ELEVATION");
+            if (sunEl != null) {
+                final double val = Double.valueOf(sunEl);
+                reflectiveImgDesc.setIlluminationElevationAngle(val);
+                panchroImgDesc.setIlluminationElevationAngle(val);
+                thermalImgDesc.setIlluminationElevationAngle(val);
+            }
+
+            //----------------------------------------------------------------------//
+            //------------------------- optional metadatas -------------------------//
+            //----------------------------------------------------------------------//
+
+            //-- set metadata Date publication
+            baseMetadata.setDateInfo(Collections.singleton(new DefaultCitationDate(metadataPublicationDate, DateType.PUBLICATION)));
+
+            //-- Distribution informations
+            final DefaultDistribution distribution = new DefaultDistribution();
+            final String origin = getValue(false, "ORIGIN");
+            if (origin != null) distribution.setDescription(new DefaultInternationalString(origin));
+
+            final String outputFormat       = getValue(false, "OUTPUT_FORMAT");
+            final String processSoftVersion = getValue(false, "PROCESSING_SOFTWARE_VERSION");
+            if ((outputFormat != null) && (processSoftVersion != null)){
+                DefaultFormat f = new DefaultFormat();
+                f.setName(new SimpleInternationalString(outputFormat));
+                f.setVersion(new SimpleInternationalString(processSoftVersion));
+                distribution.setDistributionFormats(Collections.singleton(f));
+            }
+
+            baseMetadata.setDistributionInfo(Collections.singleton(distribution));
+
+            //-- Aquisition informations
+            final DefaultAcquisitionInformation dAI = new DefaultAcquisitionInformation();
+            //-- platform
+            final DefaultPlatform platform = new DefaultPlatform();
+            final String platF = getValue(false, "SPACECRAFT_ID");
+            if (platF != null){
+                platform.setCitation(new DefaultCitation());
+            }
+
+            //-- instrument
+            final DefaultInstrument instru = new DefaultInstrument();
+            final String instrum = getValue(false, "SENSOR_ID");
+            if (instrum != null) {
+                instru.setType(new DefaultInternationalString(instrum));
+            }
+
+            if (platF != null && instrum != null) {
+                //-- set related founded instrument and platform
+                //*****************************************************************//
+                //-- a cycle is define here, platform -> instru and instru -> platform
+                //-- like a dad know his son and a son know his dad.
+                //-- during xml binding a cycle is not supported for the current Apach SIS version
+                //-- decomment this row when upgrade SIS version
+                //instru.setMountedOn(platform);
+                //*****************************************************************//
+
+                platform.setInstruments(Collections.singleton(instru));
+
+                dAI.setPlatforms(Collections.singleton(platform));
+                dAI.setInstruments(Collections.singleton(instru));
+
+                baseMetadata.setAcquisitionInformation(Collections.singleton(dAI));
+            }
+
+
+            // build each specific metadata
+            isoMetadata           = new DefaultMetadata(baseMetadata);
+            panchromaticMetadatas = new DefaultMetadata(baseMetadata);
+            reflectiveMetadatas   = new DefaultMetadata(baseMetadata);
+            thermalMetadatas      = new DefaultMetadata(baseMetadata);
+
+            //-- all minimum mandatory metadatas.
+            //-- comment about data
+            final InternationalString abstractComment = new DefaultInternationalString(getValue(true, "ORIGIN"));
+            //-- dates
+            final Set<DefaultCitationDate> dateset = new HashSet<>();
+            dateset.add(new DefaultCitationDate(acquisitionDate, DateType.CREATION));
+            dateset.add(new DefaultCitationDate(metadataPublicationDate, DateType.PUBLICATION));
+
+            { //general metadata
+                final NamedIdentifier identifier = CoverageGroup.ALL.createName(getValue(false, LandsatConstants.SCENE_ID));
+                final DefaultCitation titleCitation = new DefaultCitation(identifier.toString());
+                titleCitation.setIdentifiers(Collections.singleton(identifier));
+                titleCitation.setDates(dateset);
+
+                final DefaultDataIdentification ddii = new DefaultDataIdentification();
+                ddii.setExtents(Arrays.asList(ex));
+                ddii.setAbstract(abstractComment);
+                ddii.setCitation(titleCitation);
+
+                isoMetadata.setIdentificationInfo(Arrays.asList(ddii));
+            }
+            { //panchromatic
+                final NamedIdentifier identifier = CoverageGroup.PANCHROMATIC.createName(getValue(false, LandsatConstants.SCENE_ID));
+                final DefaultCitation titleCitation = new DefaultCitation(identifier.toString());
+                titleCitation.setIdentifiers(Collections.singleton(identifier));
+                titleCitation.setDates(dateset);
+
+                final DefaultDataIdentification ddii = new DefaultDataIdentification();
+                ddii.setExtents(Arrays.asList(ex));
+                ddii.setAbstract(abstractComment);
+                ddii.setCitation(titleCitation);
                 ddii.setSpatialResolutions(res);
+
+                panchromaticMetadatas.setIdentificationInfo(Arrays.asList(ddii));
+                panchromaticMetadatas.setContentInfo(Arrays.asList(panchroImgDesc));
+            }
+            { //reflective
+                final NamedIdentifier identifier = CoverageGroup.REFLECTIVE.createName(getValue(false, LandsatConstants.SCENE_ID));
+                final DefaultCitation titleCitation = new DefaultCitation(identifier.toString());
+                titleCitation.setIdentifiers(Collections.singleton(identifier));
+                titleCitation.setDates(dateset);
+
+                final DefaultDataIdentification ddii = new DefaultDataIdentification();
+                ddii.setExtents(Arrays.asList(ex));
+                ddii.setAbstract(abstractComment);
+                ddii.setCitation(titleCitation);
+                ddii.setSpatialResolutions(res);
+
+                reflectiveMetadatas.setIdentificationInfo(Arrays.asList(ddii));
+                reflectiveMetadatas.setContentInfo(Arrays.asList(reflectiveImgDesc));
+            }
+            { //thermal
+                final NamedIdentifier identifier = CoverageGroup.THERMAL.createName(getValue(false, LandsatConstants.SCENE_ID));
+                final DefaultCitation titleCitation = new DefaultCitation(identifier.toString());
+                titleCitation.setIdentifiers(Collections.singleton(identifier));
+                titleCitation.setDates(dateset);
+
+                final DefaultDataIdentification ddii = new DefaultDataIdentification();
+                ddii.setExtents(Arrays.asList(ex));
+                ddii.setAbstract(abstractComment);
+                ddii.setCitation(titleCitation);
+                ddii.setSpatialResolutions(res);
+
+                thermalMetadatas.setIdentificationInfo(Arrays.asList(ddii));
+                thermalMetadatas.setContentInfo(Arrays.asList(thermalImgDesc));
+
+                final Set<ProcessStep> extendedInfos = getThermicInfos();
+                if (!extendedInfos.isEmpty()) {
+                    final DefaultLineage defaultLineage = new DefaultLineage();
+                    defaultLineage.setProcessSteps(extendedInfos);
+                    thermalMetadatas.setResourceLineages(Collections.singleton(defaultLineage));
+                }
             }
         }
 
-        filledMetadata.setIdentificationInfo(Arrays.asList(ddii));
-
-        /**
-         * Three different Images Descriptions.
-         * - Reflective
-         * - Panchromatic
-         * - Thermal
-         */
-        //-- Reflective description.
-        final DefaultImageDescription reflectiveImgDesc = new DefaultImageDescription();
-
-        final DefaultAttributeGroup dAGReflectiveRef = new DefaultAttributeGroup();
-        dAGReflectiveRef.setAttributes(getBandsInfos("REFLECTIVE", "REFLECTANCE"));
-        final DefaultAttributeGroup dAGReflectiveRad = new DefaultAttributeGroup();
-        dAGReflectiveRad.setAttributes(getBandsInfos("REFLECTIVE", "RADIANCE"));
-        final Set<AttributeGroup> reflectiveInfos = new HashSet<>();
-        reflectiveInfos.add(dAGReflectiveRef);
-        reflectiveInfos.add(dAGReflectiveRad);
-        reflectiveImgDesc.setAttributeGroups(reflectiveInfos);
-
-        //-- Panchromatic image description.
-        final DefaultImageDescription panchroImgDesc = new DefaultImageDescription();
-        final DefaultAttributeGroup dAGPanchromaRef  = new DefaultAttributeGroup();
-        dAGPanchromaRef.setAttributes(getBandsInfos("PANCHROMATIC", "REFLECTANCE"));
-        final DefaultAttributeGroup dAGPanchromaRad  = new DefaultAttributeGroup();
-        dAGPanchromaRad.setAttributes(getBandsInfos("PANCHROMATIC", "RADIANCE"));
-        final Set<AttributeGroup> panchroInfos = new HashSet<>();
-        panchroInfos.add(dAGPanchromaRef);
-        panchroInfos.add(dAGPanchromaRad);
-        panchroImgDesc.setAttributeGroups(panchroInfos);
-
-        //-- Thermal descriptions. (only define with Radiance)
-        final DefaultImageDescription thermalImgDesc = new DefaultImageDescription();
-        final DefaultAttributeGroup dAGThermalRad    = new DefaultAttributeGroup();
-        dAGThermalRad.setAttributes(getBandsInfos("THERMAL", "RADIANCE"));
-        thermalImgDesc.setAttributeGroups(Collections.singleton(dAGThermalRad));
-
-        //-- image description
-        final String cloud = getValue(false, "CLOUD_COVER");
-        if (cloud != null) {
-            final double val = Double.valueOf(cloud);
-            reflectiveImgDesc.setCloudCoverPercentage(val);
-            panchroImgDesc.setCloudCoverPercentage(val);
-            thermalImgDesc.setCloudCoverPercentage(val);
+        switch (group) {
+            case ALL :          return isoMetadata;
+            case PANCHROMATIC : return panchromaticMetadatas;
+            case REFLECTIVE :   return reflectiveMetadatas;
+            case THERMAL :      return thermalMetadatas;
+            default: throw new IllegalArgumentException("Unknown coverage "+group);
         }
-
-        final String sunAz = getValue(false, "SUN_AZIMUTH");
-        if (sunAz != null) {
-            final double val = Double.valueOf(sunAz);
-            reflectiveImgDesc.setIlluminationAzimuthAngle(val);
-            panchroImgDesc.setIlluminationAzimuthAngle(val);
-            thermalImgDesc.setIlluminationAzimuthAngle(val);
-        }
-
-        final String sunEl = getValue(false, "SUN_ELEVATION");
-        if (sunEl != null) {
-            final double val = Double.valueOf(sunEl);
-            reflectiveImgDesc.setIlluminationElevationAngle(val);
-            panchroImgDesc.setIlluminationElevationAngle(val);
-            thermalImgDesc.setIlluminationElevationAngle(val);
-        }
-
-        final HashSet<ImageDescription> imgDescriptions = new HashSet<>();
-        switch (groupName) {
-            case REFLECTIVE_LABEL   : imgDescriptions.add(reflectiveImgDesc);break;
-            case PANCHROMATIC_LABEL : imgDescriptions.add(panchroImgDesc);break;
-            case THERMAL_LABEL      : imgDescriptions.add(thermalImgDesc);break;
-            default : {
-                imgDescriptions.add(reflectiveImgDesc);
-                imgDescriptions.add(panchroImgDesc);
-                imgDescriptions.add(thermalImgDesc);
-            }
-        }
-
-        filledMetadata.setContentInfo(imgDescriptions);
-
-
-        //----------------------------------------------------------------------//
-        //------------------------- optional metadatas -------------------------//
-        //----------------------------------------------------------------------//
-
-        //-- set metadata Date publication
-        filledMetadata.setDateInfo(Collections.singleton(new DefaultCitationDate(metadataPublicationDate, DateType.PUBLICATION)));
-
-        //-- Distribution informations
-        final DefaultDistribution distribution = new DefaultDistribution();
-        final String origin = getValue(false, "ORIGIN");
-        if (origin != null) distribution.setDescription(new DefaultInternationalString(origin));
-
-        final String outputFormat       = getValue(false, "OUTPUT_FORMAT");
-        final String processSoftVersion = getValue(false, "PROCESSING_SOFTWARE_VERSION");
-        if ((outputFormat != null) && (processSoftVersion != null)){
-            DefaultFormat f = new DefaultFormat();
-            f.setName(new SimpleInternationalString(outputFormat));
-            f.setVersion(new SimpleInternationalString(processSoftVersion));
-            distribution.setDistributionFormats(Collections.singleton(f));
-        }
-
-        filledMetadata.setDistributionInfo(Collections.singleton(distribution));
-
-        //-- Aquisition informations
-        final DefaultAcquisitionInformation dAI = new DefaultAcquisitionInformation();
-        //-- platform
-        final DefaultPlatform platform = new DefaultPlatform();
-        final String platF = getValue(false, "SPACECRAFT_ID");
-        if (platF != null){
-            platform.setCitation(new DefaultCitation());
-        }
-
-        //-- instrument
-        final DefaultInstrument instru = new DefaultInstrument();
-        final String instrum = getValue(false, "SENSOR_ID");
-        if (instrum != null) {
-            instru.setType(new DefaultInternationalString(instrum));
-        }
-
-        if (platF != null && instrum != null) {
-            //-- set related founded instrument and platform
-            //*****************************************************************//
-            //-- a cycle is define here, platform -> instru and instru -> platform
-            //-- like a dad know his son and a son know his dad.
-            //-- during xml binding a cycle is not supported for the current Apach SIS version
-            //-- decomment this row when upgrade SIS version
-            //instru.setMountedOn(platform);
-            //*****************************************************************//
-
-            platform.setInstruments(Collections.singleton(instru));
-
-            dAI.setPlatforms(Collections.singleton(platform));
-            dAI.setInstruments(Collections.singleton(instru));
-
-            filledMetadata.setAcquisitionInformation(Collections.singleton(dAI));
-        }
-
-        //-- additionnal informations about thermic band metadatas.
-        if (groupName.equalsIgnoreCase(THERMAL_LABEL)) {
-            final Set<ProcessStep> extendedInfos = getThermicInfos();
-            if (!extendedInfos.isEmpty()) {
-                final DefaultLineage defaultLineage = new DefaultLineage();
-                defaultLineage.setProcessSteps(extendedInfos);
-                filledMetadata.setResourceLineages(Collections.singleton(defaultLineage));
-            }
-        }
-
-        return filledMetadata;
     }
 
     /**
@@ -516,43 +520,26 @@ public class LandsatMetadataParser {
      * Returns {@link Collections} of Landsat Reflective {@link Band}.
      * Means metadatas about band (1 to 7 and 9).
      *
-     * @param groupName name of group, expected name are : PANCHROMATIC or REFLECTIVE or THERMAL.
+     * @param group name of group, expected name are : PANCHROMATIC or REFLECTIVE or THERMAL.
      * @param reflectanceOrRadiance band metadata for REFLECTANCE or RADIANCE band attributs.
      * @return {@link Collections} of Landsat Reflective {@link Band}.
      */
-    private Set<DefaultBand> getBandsInfos(final String groupName, final String reflectanceOrRadiance) {
-        int[] indexBands = null;
-
-        switch(groupName) {
-            case PANCHROMATIC_LABEL : {
-                indexBands = new int[]{8};
-                break;
-            }
-            case REFLECTIVE_LABEL : {
-                indexBands = new int[]{1, 2, 3, 4, 5, 6, 7, 9};
-                break;
-            }
-            case THERMAL_LABEL : {
-                indexBands = new int[]{10, 11};
-                break;
-            }
-            default : throw new IllegalStateException("Group Name should be : PANCHROMATIC or REFLECTIVE or THERMAL.");
-        }
-        return getBandsInfos(groupName, reflectanceOrRadiance, indexBands);
+    private Set<DefaultBand> getBandsInfos(final CoverageGroup group, final String reflectanceOrRadiance) {
+        return getBandsInfos(group, reflectanceOrRadiance, group.bands);
     }
 
     /**
      * Returns all bands informations from metadata text file.
      *
-     * @param groupName
+     * @param group
      * @param reflectanceOrRadiance
      * @param bandsIndex
      * @return
      */
-    private Set<DefaultBand> getBandsInfos(final String groupName, final String reflectanceOrRadiance, final int ...bandsIndex) {
+    private Set<DefaultBand> getBandsInfos(final CoverageGroup group, final String reflectanceOrRadiance, final int ...bandsIndex) {
         final HashSet<DefaultBand> bands = new HashSet<>();
         for (int i : bandsIndex) {
-            bands.add(getBandInfos(i, groupName, reflectanceOrRadiance));
+            bands.add(getBandInfos(i, group, reflectanceOrRadiance));
         }
         return bands;
     }
@@ -564,7 +551,7 @@ public class LandsatMetadataParser {
      * @param reflectanceOrRadiance metadata for RADIANCE or REFLECTANCE case.
      * @return appropriate metadatas {@link DefaultBand} properties.
      */
-    private DefaultBand getBandInfos(final int bandIndex, final String groupName, final String reflectanceOrRadiance) {
+    private DefaultBand getBandInfos(final int bandIndex, final CoverageGroup group, final String reflectanceOrRadiance) {
         final DefaultBand df = new DefaultBand();
         df.setTransferFunctionType(TransferFunctionType.LINEAR);
 
@@ -593,7 +580,7 @@ public class LandsatMetadataParser {
         if (offRBVal != null) df.setOffset(Double.valueOf(offRBVal));
 
         //-- resolution
-        final String gridCellSizeLabel = RESOLUTION_LABEL+groupName;
+        final String gridCellSizeLabel = RESOLUTION_LABEL+group.toString();
         final String gridCellSizeValue = getValue(false, gridCellSizeLabel);
         if (gridCellSizeValue != null) df.setNominalSpatialResolution(Double.valueOf(gridCellSizeValue));
 
@@ -767,11 +754,11 @@ public class LandsatMetadataParser {
      * @return Grid Extent from metadata for given Landsat group
      * @throws FactoryException if impossible to compute CRS.
      */
-    GridEnvelope getGridExtent(final String groupName) throws FactoryException {
+    GridEnvelope getGridExtent(final CoverageGroup group) throws FactoryException {
 
         //-- grid coordinates
-        final String width   = getValue(true, groupName+SAMPLES_LABEL);
-        final String height  = getValue(true, groupName+LINES_LABEL);
+        final String width   = getValue(true, group.toString()+SAMPLES_LABEL);
+        final String height  = getValue(true, group.toString()+LINES_LABEL);
 
         final CoordinateSystem sysAxxes = getCRS().getCoordinateSystem();
         final int dim = sysAxxes.getDimension();
@@ -787,18 +774,19 @@ public class LandsatMetadataParser {
      * Build {@linkplain MathTransform GridToCRS} from internal grid extent,
      * fourth projected envelope corners and also {@link Date} if exist.
      *
-     * @param groupName Reflective, Panchromatic or Thermal
+     * @param group Reflective, Panchromatic or Thermal
      * @return Grid to CRS from metadata for given Landsat group
      * @throws ParseException if problem during Date parsing.
      * @throws FactoryException  if impossible to compute CRS.
      */
-    MathTransform getGridToCRS(final String groupName) throws ParseException, FactoryException {
+    MathTransform getGridToCRS(final CoverageGroup group) throws ParseException, FactoryException {
         final Date acquisitionDate = getAcquisitionDate();
-        final MathTransform gridToCRS2D = MathTransforms.linear(AffineTransforms2D.toMatrix(getGridToCRS2D(groupName)));
+        final MathTransform gridToCRS2D = MathTransforms.linear(AffineTransforms2D.toMatrix(getGridToCRS2D(group)));
         if (acquisitionDate == null)
             return gridToCRS2D;
 
-        final LinearTransform linearTime = MathTransforms.linear(0, acquisitionDate.getTime());
+        // we use a scale of 1, otherwise the transform can not be reversed.
+        final LinearTransform linearTime = MathTransforms.linear(1.0, acquisitionDate.getTime());
         return MathTransforms.compound(gridToCRS2D, linearTime);
     }
 
@@ -806,25 +794,47 @@ public class LandsatMetadataParser {
      * Build grid to CRS from internal grid extent and fourth projected envelope corners.
      * The returned {@link AffineTransform} is built from {@link LocalizationGrid#getAffineTransform() }.
      *
-     * @param groupName Reflective, Panchromatic or Thermal
+     * @param group Reflective, Panchromatic or Thermal
      * @return Grid to CRS from metadata for given Landsat group
      * @throws FactoryException if impossible to compute CRS.
      */
-    private AffineTransform getGridToCRS2D(final String groupName) throws FactoryException {
+    private AffineTransform getGridToCRS2D(final CoverageGroup group) throws FactoryException {
 
-        final GridEnvelope gridExtent = getGridExtent(groupName);
+        final GridEnvelope gridExtent = getGridExtent(group);
 
-        //-- longitude
-        final String lowWest = getValue(true, "CORNER_LL_LON_PRODUCT", "CORNER_UL_LON_PRODUCT");
-        final String upWest  = getValue(true, "CORNER_UL_LON_PRODUCT", "CORNER_LL_LON_PRODUCT");
-        final String lowEst  = getValue(true, "CORNER_LR_LON_PRODUCT", "CORNER_UR_LON_PRODUCT");
-        final String upEst   = getValue(true, "CORNER_UR_LON_PRODUCT", "CORNER_LR_LON_PRODUCT");
-
-        //-- lattitude
-        final String westSouth = getValue(true, "CORNER_LL_LAT_PRODUCT", "CORNER_LR_LAT_PRODUCT");
-        final String estSouth  = getValue(true, "CORNER_LR_LAT_PRODUCT", "CORNER_LL_LAT_PRODUCT");
-        final String westNorth = getValue(true, "CORNER_UL_LAT_PRODUCT", "CORNER_UR_LAT_PRODUCT");
-        final String estNorth  = getValue(true, "CORNER_UR_LAT_PRODUCT", "CORNER_UL_LAT_PRODUCT");
+        final String lowWest;
+        final String upWest;
+        final String lowEst;
+        final String upEst;
+        final String westSouth;
+        final String estSouth;
+        final String westNorth;
+        final String estNorth;
+        if (getValue(false, "CORNER_LL_PROJECTION_X_PRODUCT") != null) {
+            //use projected coordinates
+            //-- X
+            lowWest = getValue(true, "CORNER_LL_PROJECTION_X_PRODUCT", "CORNER_UL_PROJECTION_X_PRODUCT");
+            upWest  = getValue(true, "CORNER_UL_PROJECTION_X_PRODUCT", "CORNER_LL_PROJECTION_X_PRODUCT");
+            lowEst  = getValue(true, "CORNER_LR_PROJECTION_X_PRODUCT", "CORNER_UR_PROJECTION_X_PRODUCT");
+            upEst   = getValue(true, "CORNER_UR_PROJECTION_X_PRODUCT", "CORNER_LR_PROJECTION_X_PRODUCT");
+            //-- Y
+            westSouth = getValue(true, "CORNER_LL_PROJECTION_Y_PRODUCT", "CORNER_LR_PROJECTION_Y_PRODUCT");
+            estSouth  = getValue(true, "CORNER_LR_PROJECTION_Y_PRODUCT", "CORNER_LL_PROJECTION_Y_PRODUCT");
+            westNorth = getValue(true, "CORNER_UL_PROJECTION_Y_PRODUCT", "CORNER_UR_PROJECTION_Y_PRODUCT");
+            estNorth  = getValue(true, "CORNER_UR_PROJECTION_Y_PRODUCT", "CORNER_UL_PROJECTION_Y_PRODUCT");
+        } else {
+            //use lat/lon coordinates
+            //-- longitude
+            lowWest = getValue(true, "CORNER_LL_LON_PRODUCT", "CORNER_UL_LON_PRODUCT");
+            upWest  = getValue(true, "CORNER_UL_LON_PRODUCT", "CORNER_LL_LON_PRODUCT");
+            lowEst  = getValue(true, "CORNER_LR_LON_PRODUCT", "CORNER_UR_LON_PRODUCT");
+            upEst   = getValue(true, "CORNER_UR_LON_PRODUCT", "CORNER_LR_LON_PRODUCT");
+            //-- lattitude
+            westSouth = getValue(true, "CORNER_LL_LAT_PRODUCT", "CORNER_LR_LAT_PRODUCT");
+            estSouth  = getValue(true, "CORNER_LR_LAT_PRODUCT", "CORNER_LL_LAT_PRODUCT");
+            westNorth = getValue(true, "CORNER_UL_LAT_PRODUCT", "CORNER_UR_LAT_PRODUCT");
+            estNorth  = getValue(true, "CORNER_UR_LAT_PRODUCT", "CORNER_UL_LAT_PRODUCT");
+        }
 
         final double minLong  = Math.min(Double.valueOf(lowWest), Double.valueOf(upWest));
         final double spanLong = Math.max(Double.valueOf(lowEst), Double.valueOf(upEst)) - minLong;

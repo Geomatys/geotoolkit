@@ -38,7 +38,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
@@ -120,13 +119,12 @@ public class LandsatCoverageStore extends DataStore implements Aggregate, Resour
         //-- add 3 Coverage References : REFLECTIVE, PANCHROMATIQUE, THERMIC.
         metadataParser          = getMetadataParser(path);
         origin                  = metadataParser.getPath().getParent();
-        final String sceneName  = getSceneName();
 
-        final LandsatCoverageResource reflectiveRef = new LandsatCoverageResource(this, NamesExt.create(sceneName+"-"+REFLECTIVE_LABEL), origin, metadataParser);
+        final LandsatCoverageResource reflectiveRef = new LandsatCoverageResource(this, origin, metadataParser, CoverageGroup.REFLECTIVE);
         resources.add(reflectiveRef);
-        final LandsatCoverageResource panchroRef    = new LandsatCoverageResource(this, NamesExt.create(sceneName+"-"+PANCHROMATIC_LABEL), origin, metadataParser);
+        final LandsatCoverageResource panchroRef    = new LandsatCoverageResource(this, origin, metadataParser, CoverageGroup.PANCHROMATIC);
         resources.add(panchroRef);
-        final LandsatCoverageResource thermicRef    = new LandsatCoverageResource(this, NamesExt.create(sceneName+"-"+THERMAL_LABEL), origin, metadataParser);
+        final LandsatCoverageResource thermicRef    = new LandsatCoverageResource(this, origin, metadataParser, CoverageGroup.THERMAL);
         resources.add(thermicRef);
     }
 
@@ -179,7 +177,7 @@ public class LandsatCoverageStore extends DataStore implements Aggregate, Resour
     @Override
     public Metadata getMetadata() throws DataStoreException {
         try {
-            return metadataParser.getMetadata(GENERAL_LABEL);
+            return metadataParser.getMetadata(CoverageGroup.ALL);
         } catch (FactoryException | ParseException ex) {
             throw new DataStoreException(ex);
         }
@@ -202,25 +200,6 @@ public class LandsatCoverageStore extends DataStore implements Aggregate, Resour
     //**************************************************************************//
     //********** added methods only effectives for Landsat utilisation *********//
     //**************************************************************************//
-
-    /**
-     * Returns part of {@linkplain #getMetadata() global Landsat 8 metadatas},
-     * in relation with only Landsat 8 group name datas.
-     * The valid group name are {@link LandsatConstants#GENERAL_LABEL},
-     * {@link LandsatConstants#REFLECTIVE_LABEL},
-     * {@link LandsatConstants#PANCHROMATIC_LABEL},
-     * {@link LandsatConstants#THERMAL_LABEL}.
-     *
-     * @return Reflective Landsat 8 metadatas.
-     * @throws DataStoreException
-     */
-    public Metadata getMetadata(String groupNameLabel) throws DataStoreException {
-        try {
-            return metadataParser.getMetadata(REFLECTIVE_LABEL);
-        } catch (FactoryException | ParseException ex) {
-            throw new DataStoreException(ex);
-        }
-    }
 
     /**
      * Returns Landsat datas name from theirs metadatas.
