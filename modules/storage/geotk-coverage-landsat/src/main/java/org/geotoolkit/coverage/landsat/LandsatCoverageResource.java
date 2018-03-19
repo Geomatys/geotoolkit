@@ -112,7 +112,7 @@ public class LandsatCoverageResource extends AbstractCoverageResource implements
     @Override
     public GridCoverageReader acquireReader() throws CoverageStoreException {
         try {
-            return new LandsatReader(parentDirectory, metadataParser, group);
+            return new LandsatReader(this, parentDirectory, metadataParser, group);
         } catch (IOException ex) {
             throw new CoverageStoreException(ex);
         }

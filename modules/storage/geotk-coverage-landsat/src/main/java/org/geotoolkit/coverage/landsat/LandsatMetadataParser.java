@@ -792,7 +792,8 @@ public class LandsatMetadataParser {
         if (acquisitionDate == null)
             return gridToCRS2D;
 
-        final LinearTransform linearTime = MathTransforms.linear(0, acquisitionDate.getTime());
+        // we use a scale of 1, otherwise the transform can not be reversed.
+        final LinearTransform linearTime = MathTransforms.linear(1.0, acquisitionDate.getTime());
         return MathTransforms.compound(gridToCRS2D, linearTime);
     }
 
@@ -808,17 +809,39 @@ public class LandsatMetadataParser {
 
         final GridEnvelope gridExtent = getGridExtent(group);
 
-        //-- longitude
-        final String lowWest = getValue(true, "CORNER_LL_LON_PRODUCT", "CORNER_UL_LON_PRODUCT");
-        final String upWest  = getValue(true, "CORNER_UL_LON_PRODUCT", "CORNER_LL_LON_PRODUCT");
-        final String lowEst  = getValue(true, "CORNER_LR_LON_PRODUCT", "CORNER_UR_LON_PRODUCT");
-        final String upEst   = getValue(true, "CORNER_UR_LON_PRODUCT", "CORNER_LR_LON_PRODUCT");
-
-        //-- lattitude
-        final String westSouth = getValue(true, "CORNER_LL_LAT_PRODUCT", "CORNER_LR_LAT_PRODUCT");
-        final String estSouth  = getValue(true, "CORNER_LR_LAT_PRODUCT", "CORNER_LL_LAT_PRODUCT");
-        final String westNorth = getValue(true, "CORNER_UL_LAT_PRODUCT", "CORNER_UR_LAT_PRODUCT");
-        final String estNorth  = getValue(true, "CORNER_UR_LAT_PRODUCT", "CORNER_UL_LAT_PRODUCT");
+        final String lowWest;
+        final String upWest;
+        final String lowEst;
+        final String upEst;
+        final String westSouth;
+        final String estSouth;
+        final String westNorth;
+        final String estNorth;
+        if (getValue(false, "CORNER_LL_PROJECTION_X_PRODUCT") != null) {
+            //use projected coordinates
+            //-- X
+            lowWest = getValue(true, "CORNER_LL_PROJECTION_X_PRODUCT", "CORNER_UL_PROJECTION_X_PRODUCT");
+            upWest  = getValue(true, "CORNER_UL_PROJECTION_X_PRODUCT", "CORNER_LL_PROJECTION_X_PRODUCT");
+            lowEst  = getValue(true, "CORNER_LR_PROJECTION_X_PRODUCT", "CORNER_UR_PROJECTION_X_PRODUCT");
+            upEst   = getValue(true, "CORNER_UR_PROJECTION_X_PRODUCT", "CORNER_LR_PROJECTION_X_PRODUCT");
+            //-- Y
+            westSouth = getValue(true, "CORNER_LL_PROJECTION_Y_PRODUCT", "CORNER_LR_PROJECTION_Y_PRODUCT");
+            estSouth  = getValue(true, "CORNER_LR_PROJECTION_Y_PRODUCT", "CORNER_LL_PROJECTION_Y_PRODUCT");
+            westNorth = getValue(true, "CORNER_UL_PROJECTION_Y_PRODUCT", "CORNER_UR_PROJECTION_Y_PRODUCT");
+            estNorth  = getValue(true, "CORNER_UR_PROJECTION_Y_PRODUCT", "CORNER_UL_PROJECTION_Y_PRODUCT");
+        } else {
+            //use lat/lon coordinates
+            //-- longitude
+            lowWest = getValue(true, "CORNER_LL_LON_PRODUCT", "CORNER_UL_LON_PRODUCT");
+            upWest  = getValue(true, "CORNER_UL_LON_PRODUCT", "CORNER_LL_LON_PRODUCT");
+            lowEst  = getValue(true, "CORNER_LR_LON_PRODUCT", "CORNER_UR_LON_PRODUCT");
+            upEst   = getValue(true, "CORNER_UR_LON_PRODUCT", "CORNER_LR_LON_PRODUCT");
+            //-- lattitude
+            westSouth = getValue(true, "CORNER_LL_LAT_PRODUCT", "CORNER_LR_LAT_PRODUCT");
+            estSouth  = getValue(true, "CORNER_LR_LAT_PRODUCT", "CORNER_LL_LAT_PRODUCT");
+            westNorth = getValue(true, "CORNER_UL_LAT_PRODUCT", "CORNER_UR_LAT_PRODUCT");
+            estNorth  = getValue(true, "CORNER_UR_LAT_PRODUCT", "CORNER_UL_LAT_PRODUCT");
+        }
 
         final double minLong  = Math.min(Double.valueOf(lowWest), Double.valueOf(upWest));
         final double spanLong = Math.max(Double.valueOf(lowEst), Double.valueOf(upEst)) - minLong;
