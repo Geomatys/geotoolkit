@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureExt;
@@ -43,6 +44,7 @@ import org.geotoolkit.data.session.Session;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.DataSet;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.apache.sis.util.logging.Logging;
@@ -250,6 +252,52 @@ public class FeatureStoreUtilities {
         }
 
         return env;
+    }
+
+    /**
+     * Get or compute DataSet envelope.
+     *
+     * @param dataset dataset, not null
+     * @return dataset envelope or null if the envelope could not be computed or is not geospatial.
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    public static Envelope getEnvelope(DataSet dataset) throws DataStoreException {
+        return getEnvelope(dataset, false);
+    }
+
+    /**
+     * Get or compute DataSet envelope.
+     *
+     * @param dataset dataset, not null
+     * @param forceCompute ignore dataset declared envelope and always compute envelope
+     * @return dataset envelope or null if the envelope could not be computed or is not geospatial.
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    public static Envelope getEnvelope(DataSet dataset, boolean forceCompute) throws DataStoreException {
+        Envelope envelope = forceCompute ? null : dataset.getEnvelope();
+
+        if (envelope == null) {
+            GeneralEnvelope env = null;
+            if (dataset instanceof org.apache.sis.storage.FeatureSet) {
+                try (Stream<Feature> features = ((org.apache.sis.storage.FeatureSet) dataset).features(false)) {
+                    final Iterator<Feature> iterator = features.iterator();
+                    while (iterator.hasNext()) {
+                        final Feature f = iterator.next();
+                        final Envelope bbox = FeatureExt.getEnvelope(f);
+                        if(bbox != null){
+                            if(env != null){
+                                env.add(bbox);
+                            }else{
+                                env = new GeneralEnvelope(bbox);
+                            }
+                        }
+                    }
+                }
+            }
+            envelope = env;
+        }
+
+        return envelope;
     }
 
     /**
