@@ -62,7 +62,6 @@ import org.geotoolkit.process.ProcessFinder;
 
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
 import org.geotoolkit.storage.coverage.CoverageReaderHelper;
-import org.geotoolkit.util.NamesExt;
 
 /**
  * Reader to read Landsat datas.
@@ -72,27 +71,6 @@ import org.geotoolkit.util.NamesExt;
  * @since   1.0
  */
 public class LandsatReader extends GridCoverageReader {
-
-    static {
-        /**
-         * Index arrays which contain index to retrieve appropriates band index to
-         * build different coverage from Landsat datas.
-         * Values came from Landsat8 documentation.
-         */
-       final int[] REFLECTIVE_BAND_ID   = new int[]{1, 2, 3, 4, 5, 6, 7, 9};
-       final int[] PANCHROMATIC_BAND_ID = new int[]{8};
-       final int[] THERMIC_BAND_ID      = new int[]{10, 11};
-
-       BANDS_INDEX = new int[][]{REFLECTIVE_BAND_ID,
-                                 PANCHROMATIC_BAND_ID,
-                                 THERMIC_BAND_ID};
-    }
-
-    /**
-     * Index arrays which contain index to retrieve appropriates band index to
-     * build different coverage from Landsat datas.
-     */
-    final static int[][] BANDS_INDEX;
 
     /**
      * TiffImageReader SPI used to read images
@@ -112,7 +90,9 @@ public class LandsatReader extends GridCoverageReader {
     /**
      * Array which contains all sample dimension for each read index.
      */
-    private final List[] gsdLandsat = new List[3];
+    private List gsdLandsat = null;
+
+    private final CoverageGroup group;
 
     /**
      * Build a Landsat reader from Parent directory path and metadata file path.
@@ -121,11 +101,12 @@ public class LandsatReader extends GridCoverageReader {
      * @param metadata path to metadata file.
      * @throws IOException if problem during metadatas parser building.
      */
-    LandsatReader(final Path parentDirectory, final Path metadata) throws IOException {
+    LandsatReader(final Path parentDirectory, final Path metadata, LandsatConstants.CoverageGroup group) throws IOException {
         ArgumentChecks.ensureNonNull("parent directory path", parentDirectory);
         ArgumentChecks.ensureNonNull("metadata path", metadata);
         this.parenPath = parentDirectory;
         this.metaParse  = new LandsatMetadataParser(metadata);
+        this.group = group;
     }
 
     /**
@@ -135,11 +116,12 @@ public class LandsatReader extends GridCoverageReader {
      * @param metadataParser metadata parser for Landsat8.
      * @throws IOException if problem during metadatas parser building.
      */
-    LandsatReader(final Path parentDirectory, final LandsatMetadataParser metadataParser) throws IOException {
+    LandsatReader(final Path parentDirectory, final LandsatMetadataParser metadataParser, LandsatConstants.CoverageGroup group) throws IOException {
         ArgumentChecks.ensureNonNull("parent directory path", parentDirectory);
         ArgumentChecks.ensureNonNull("metadata parser", metadataParser);
         this.parenPath  = parentDirectory;
         this.metaParse  = metadataParser;
+        this.group = group;
     }
 
     /**
@@ -152,7 +134,7 @@ public class LandsatReader extends GridCoverageReader {
     @Override
     public Metadata getMetadata() throws CoverageStoreException {
         try {
-            return metaParse.getMetadata(GENERAL_LABEL);
+            return metaParse.getMetadata(group);
         } catch (FactoryException | ParseException ex) {
             throw new CoverageStoreException("Landsat coverage reader metadata parsing : ", ex);
         }
@@ -168,47 +150,27 @@ public class LandsatReader extends GridCoverageReader {
     @Override
     public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
         final String sceneName  = metaParse.getValue(false, SCENE_ID);
-        return Arrays.asList(NamesExt.create(sceneName+"-"+REFLECTIVE_LABEL), NamesExt.create(sceneName+"-"+PANCHROMATIC_LABEL), NamesExt.create(sceneName+"-"+THERMAL_LABEL));
+        return Arrays.asList(group.createName(sceneName));
     }
 
     /**
      * {@inheritDoc }
      *
-     * @param index 0, 1 or 2 for respectively ({@link LandsatConstants#REFLECTIVE_LABEL},
-     * {@link LandsatConstants#PANCHROMATIC_LABEL}, {@link LandsatConstants#THERMAL_LABEL}).
+     * @param index 0
      * @return
      * @throws CoverageStoreException
      * @throws CancellationException
      */
     @Override
     public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
-        final String coverageName;
-        switch (index) {
-            case 0 : {
-                //-- Reflective case RGB band 1, 2, 3, 4, 5, 6, 7, 9
-                coverageName = REFLECTIVE_LABEL;
-                break;
-            }
-            case 1 : {
-                //-- Panchromatic case one sample band 8
-                coverageName = PANCHROMATIC_LABEL;
-                break;
-            }
-            case 2 : {
-                //-- Thermic case band 10 and 11
-                coverageName = THERMAL_LABEL;
-                break;
-            }
-            default : throw new CoverageStoreException("Current index "+index+" is not known, available index are : "
-                    + "0 for reflective, 1 for panchromatic and 2 for Thermic");
-        }
+        if (index != 0) throw new CoverageStoreException("Unvalid index "+index);
 
         final GridEnvelope gridExtent;
         final MathTransform gridToCRS;
         final CoordinateReferenceSystem crs;
         try {
-            gridExtent        = metaParse.getGridExtent(coverageName);
-            gridToCRS         = metaParse.getGridToCRS(coverageName);
+            gridExtent        = metaParse.getGridExtent(group);
+            gridToCRS         = metaParse.getGridToCRS(group);
             crs               = metaParse.getCRS();
         } catch (Exception ex) {
             throw new CoverageStoreException(ex);
@@ -227,10 +189,12 @@ public class LandsatReader extends GridCoverageReader {
      */
     @Override
     public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException, CancellationException {
-        if (gsdLandsat[index] != null)
-            return gsdLandsat[index];
+        if (index != 0) throw new CoverageStoreException("Unvalid index "+index);
 
-        final int[] bandId = getBandsIndex(index);
+        if (gsdLandsat != null)
+            return gsdLandsat;
+
+        final int[] bandId = group.bands;
 
         final List<GridSampleDimension> gList = new ArrayList<>();
         for (int i : bandId) {
@@ -241,7 +205,8 @@ public class LandsatReader extends GridCoverageReader {
                 final ImageReader tiffReader = TIFF_SPI.createReaderInstance();
                 tiffReader.setInput(resolve);
                 imageCoverageReader.setInput(tiffReader);
-                gList.addAll(imageCoverageReader.getSampleDimensions(0));
+                final List<GridSampleDimension> candidates = imageCoverageReader.getSampleDimensions(0);
+                if (candidates != null) gList.addAll(candidates);
             } catch (IOException ex) {
                 throw new CoverageStoreException(ex);
             } finally {
@@ -249,8 +214,8 @@ public class LandsatReader extends GridCoverageReader {
             }
         }
 
-        gsdLandsat[index] = gList;
-        return gsdLandsat[index];
+        gsdLandsat= gList;
+        return gsdLandsat;
     }
 
     /**
@@ -258,13 +223,7 @@ public class LandsatReader extends GridCoverageReader {
      *
      * A Landsat 8 data may contain many internal coverage.<br>
      *
-     * Index parameter differenciates this kind of read : <br>
-     * - 0 to read REFLECTIVE part of Landsat 8 Coverage (8 bands).<br>
-     * - 1 to read PANCHROMATIC part of Landsat 8 Coverage (1 bands).<br>
-     * - 2 to read THERMIC part of Landsat 8 Coverage (2 bands).
-     *
-     * @param index 0, 1 or 2 for respectively ({@link LandsatConstants#REFLECTIVE_LABEL},
-     * {@link LandsatConstants#PANCHROMATIC_LABEL}, {@link LandsatConstants#THERMAL_LABEL}).
+     * @param index 0
      * @param param
      * @return
      * @throws CoverageStoreException
@@ -273,36 +232,12 @@ public class LandsatReader extends GridCoverageReader {
     @Override
     public GridCoverage read(int index, GridCoverageReadParam param)
             throws CoverageStoreException, CancellationException {
+        if (index != 0) throw new CoverageStoreException("Unvalid index "+index);
 
         //-- get all needed band to build coverage (see Landsat spec)
-        final int[] bandId = getBandsIndex(index);
-
-        //-- create an adapted coverage name
-        StringBuilder strBuild = new StringBuilder("Landsat8 : ");
-        switch (index) {
-            case 0 : {
-                //-- Reflective case RGB band 1, 2, 3, 4, 5, 6, 7, 9
-                strBuild.append(REFLECTIVE_LABEL);
-                break;
-            }
-            case 1 : {
-                //-- Panchromatic case one sample band 8
-                strBuild.append(PANCHROMATIC_LABEL);
-                break;
-            }
-            case 2 : {
-                //-- Thermic case band 10 and 11
-                strBuild.append(THERMAL_LABEL);
-                break;
-            }
-            default : strBuild.append("Unknow type");
-        }
-
-        strBuild.append("-");
-        strBuild.append(parenPath.getName(parenPath.getNameCount()-1));
+        final int[] bandId = group.bands;
 
         try {
-
             final CoverageReaderHelper crh        = new CoverageReaderHelper((GridGeometry2D) getGridGeometry(index), param);
             final Dimension outImgSize            = crh.getOutImgSize();
             final Rectangle srcImgBoundary        = crh.getSrcImgBoundary();
@@ -384,7 +319,7 @@ public class LandsatReader extends GridCoverageReader {
 
             //-- build new coverage
             final GridCoverageBuilder gridCoverageBuilder = new GridCoverageBuilder();
-            gridCoverageBuilder.setName(strBuild.toString());
+            gridCoverageBuilder.setName(getCoverageNames().get(0).toString());
             gridCoverageBuilder.setGridGeometry(gridGeometry2D);
             gridCoverageBuilder.setRenderedImage(outImage);
             List<GridSampleDimension> sampleDimensions = getSampleDimensions(index);
@@ -395,21 +330,6 @@ public class LandsatReader extends GridCoverageReader {
         } catch (Exception ex) {
             throw new CoverageStoreException(ex);
         }
-    }
-
-    /**
-     * Returns array index of future aggregated bands from read index.<br>
-     * Supported values are 0 for REFLECTIVE, 1 for PANCHROMATIC and 2 for THERMIC.
-     *
-     * @param readIndex Coverage read index.
-     * @return array index of future aggregated bands
-     * @throws CoverageStoreException if index is out of [0; 3] boundary.
-     */
-    private static int[] getBandsIndex(final int readIndex) throws CoverageStoreException {
-        if (readIndex < 0 || readIndex > 2)
-            throw new CoverageStoreException("Current index "+readIndex+" is not known, available index are : "
-                    + "0 for reflective, 1 for panchromatic and 2 for Thermic");
-        return BANDS_INDEX[readIndex];
     }
 
 

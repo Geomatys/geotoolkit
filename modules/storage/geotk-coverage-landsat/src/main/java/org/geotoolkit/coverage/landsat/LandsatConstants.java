@@ -16,7 +16,9 @@
  */
 package org.geotoolkit.coverage.landsat;
 
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.Static;
+import org.geotoolkit.util.NamesExt;
 
 /**
  * Reference all metadata fields name.<br><br>
@@ -32,26 +34,35 @@ import org.apache.sis.util.Static;
  */
 final class LandsatConstants extends Static {
 
-    /**
-     * To define Global or General metadata.
-     * Note : this label does not exist into Landsat specification.
-     */
-    public static final String GENERAL_LABEL      = "GENERAL";
+    public static enum CoverageGroup {
+        /**
+        * To define Global or General metadata.
+        * Note : this label does not exist into Landsat specification.
+        */
+        ALL(new int[0]),
+        /**
+        * To define REFLECTIVE coverage (band 1-7 and 9)
+        */
+        REFLECTIVE(new int[]{1, 2, 3, 4, 5, 6, 7, 9}),
+        /**
+        * To define PANCHROMATIC coverage (band 8)
+        */
+        PANCHROMATIC(new int[]{8}),
+        /**
+        * To define THERMIC coverage (band 10-11)
+        */
+        THERMAL(new int[]{10, 11});
 
-    /**
-     * To define REFLECTIVE coverage (band 1-7 and 9)
-     */
-    public static final String REFLECTIVE_LABEL   = "REFLECTIVE";
+        final int[] bands;
 
-    /**
-     * To define PANCHROMATIC coverage (band 8)
-     */
-    public static final String PANCHROMATIC_LABEL = "PANCHROMATIC";
+        private CoverageGroup(int[] bands) {
+            this.bands = bands;
+        }
 
-    /**
-     * To define THERMIC coverage (band 10-11)
-     */
-    public static final String THERMAL_LABEL      = "THERMAL";
+        public NamedIdentifier createName(String sceneName) {
+            return new NamedIdentifier(NamesExt.create(sceneName+"-"+toString()));
+        }
+    }
 
     /**
      * The unique Landsat scene identifier.
