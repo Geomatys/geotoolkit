@@ -34,7 +34,6 @@ import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.query.JoinType;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryFeatureSet;
 import org.geotoolkit.factory.FactoryFinder;
@@ -48,10 +47,36 @@ import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 
 /**
+ * A join feature set merges features from two different sources following a
+ * SQL Join condition.
  *
- * @author Johann Sorel
+ * <p>
+ * Note-1 : This implementation is read-only.
+ * </p>
+ * <p>
+ * Note-2 : this class is experimental and should be moved to SIS when ready.
+ * </p>
+ *
+ * @author Johann Sorel (Geomatys)
  */
 public class JoinFeatureSet implements FeatureSet {
+
+    public enum Type {
+        /**
+         * Both side must have a value to be included.
+         */
+        INNER,
+
+        /**
+         * A least left side must have a value to be included.
+         */
+        LEFT_OUTER,
+
+        /**
+         * A least right side must have a value to be included.
+         */
+        RIGHT_OUTER
+    }
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
@@ -59,13 +84,13 @@ public class JoinFeatureSet implements FeatureSet {
     private final FeatureSet right;
     private String leftAlias;
     private String rightAlias;
-    private final JoinType joinType;
+    private final Type joinType;
     private final PropertyIsEqualTo condition;
 
     //cache
     private FeatureType type = null;
 
-    public JoinFeatureSet(FeatureSet left, String leftAlias, FeatureSet right, String rightAlias, JoinType joinType, PropertyIsEqualTo condition) {
+    public JoinFeatureSet(FeatureSet left, String leftAlias, FeatureSet right, String rightAlias, Type joinType, PropertyIsEqualTo condition) {
         this.left = left;
         this.right = right;
         this.leftAlias = leftAlias;
@@ -88,7 +113,7 @@ public class JoinFeatureSet implements FeatureSet {
      *
      * @return
      */
-    public JoinType getJoinType() {
+    public Type getJoinType() {
         return joinType;
     }
 

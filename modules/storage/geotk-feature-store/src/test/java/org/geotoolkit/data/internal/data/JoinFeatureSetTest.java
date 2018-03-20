@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.data.query.JoinType;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.internal.data.ArrayFeatureSet;
@@ -42,7 +41,7 @@ import org.opengis.util.GenericName;
 
 /**
  *
- * @author Johann Sorel
+ * @author Johann Sorel (Geomatys)
  */
 public class JoinFeatureSetTest {
 
@@ -182,7 +181,7 @@ public class JoinFeatureSetTest {
     public void testInnerJoinQuery() throws Exception{
 
         final PropertyIsEqualTo condition = FF.equals(FF.property("att2"), FF.property("att3"));
-        final FeatureSet col = new JoinFeatureSet(featureSet1, "s1", featureSet2, "s2", JoinType.INNER, condition);
+        final FeatureSet col = new JoinFeatureSet(featureSet1, "s1", featureSet2, "s2", JoinFeatureSet.Type.INNER, condition);
 
         try (Stream<Feature> stream = col.features(false)) {
             final Iterator<Feature> ite = stream.iterator();
@@ -238,7 +237,7 @@ public class JoinFeatureSetTest {
     public void testOuterLeftQuery() throws Exception{
 
         final PropertyIsEqualTo condition = FF.equals(FF.property("att2"), FF.property("att3"));
-        final FeatureSet col = new JoinFeatureSet(featureSet1, "s1", featureSet2, "s2", JoinType.LEFT_OUTER, condition);
+        final FeatureSet col = new JoinFeatureSet(featureSet1, "s1", featureSet2, "s2", JoinFeatureSet.Type.LEFT_OUTER, condition);
 
         try (Stream<Feature> stream = col.features(false)) {
             final Iterator<Feature> ite = stream.iterator();
@@ -305,7 +304,7 @@ public class JoinFeatureSetTest {
     public void testOuterRightQuery() throws Exception{
 
         final PropertyIsEqualTo condition = FF.equals(FF.property("att2"), FF.property("att3"));
-        final FeatureSet col = new JoinFeatureSet(featureSet1, "s1", featureSet2, "s2", JoinType.RIGHT_OUTER, condition);
+        final FeatureSet col = new JoinFeatureSet(featureSet1, "s1", featureSet2, "s2", JoinFeatureSet.Type.RIGHT_OUTER, condition);
 
         try (Stream<Feature> stream = col.features(false)) {
             final Iterator<Feature> ite = stream.iterator();
