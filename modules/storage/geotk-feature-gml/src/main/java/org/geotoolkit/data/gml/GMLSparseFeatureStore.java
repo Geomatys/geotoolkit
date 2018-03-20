@@ -28,24 +28,25 @@ import java.nio.file.Paths;
 import java.util.*;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.nio.PosixDirectoryFilter;
-import org.opengis.util.GenericName;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.nio.PosixDirectoryFilter;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
@@ -53,7 +54,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
-import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.opengis.util.GenericName;
 
 /**
  * GML feature store.
@@ -190,16 +191,22 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements Resou
 
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
-        typeCheck(query.getTypeName());
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        typeCheck(gquery.getTypeName());
         final ReadIterator ite = new ReadIterator(featureType, file);
-        return FeatureStreams.subset(ite, query);
+        return FeatureStreams.subset(ite, gquery);
     }
 
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        typeCheck(query.getTypeName());
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        typeCheck(gquery.getTypeName());
         final WriterIterator ite = new WriterIterator(featureType, file);
-        return FeatureStreams.filter((FeatureWriter)ite, query.getFilter());
+        return FeatureStreams.filter((FeatureWriter)ite, gquery.getFilter());
     }
 
     @Override

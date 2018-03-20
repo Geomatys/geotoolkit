@@ -27,12 +27,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.StorageListener;
@@ -89,8 +90,11 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
     }
 
     public void addQuery(final Query query) throws IllegalNameException{
-        ArgumentChecks.ensureNonNull("query name", query.getTypeName());
-        queries.add(this, NamesExt.valueOf(query.getTypeName()), query);
+        if (!(query instanceof org.geotoolkit.data.query.Query))  throw new IllegalNameException("Unsuported query type");
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        ArgumentChecks.ensureNonNull("query name", gquery.getTypeName());
+        queries.add(this, NamesExt.valueOf(gquery.getTypeName()), query);
         featureTypes.clear();
     }
 
@@ -169,7 +173,10 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
 
     @Override
     public long getCount(final Query query) throws DataStoreException {
-        if(queries.get(this, query.getTypeName())!=null){
+        if (!(query instanceof org.geotoolkit.data.query.Query))  throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        if(queries.get(this, gquery.getTypeName())!=null){
             try(FeatureReader reader = getFeatureReader(query)) {
                 return FeatureStoreUtilities.calculateCount(reader);
             }
@@ -179,7 +186,10 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
 
     @Override
     public Envelope getEnvelope(final Query query) throws DataStoreException {
-        if(queries.get(this, query.getTypeName())!=null){
+        if (!(query instanceof org.geotoolkit.data.query.Query))  throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        if(queries.get(this, gquery.getTypeName())!=null){
             try(FeatureReader reader = getFeatureReader(query)) {
                 return FeatureStoreUtilities.calculateEnvelope(reader);
             }
@@ -221,18 +231,24 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
 
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        final String typeName = query.getTypeName();
+        if (!(query instanceof org.geotoolkit.data.query.Query))  throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final String typeName = gquery.getTypeName();
         if(queries.get(this, typeName)!=null){
             final Query original = queries.get(this, typeName);
             final FeatureReader baseReader = wrapped.getFeatureReader(original);
-            return FeatureStreams.subset(baseReader, query);
+            return FeatureStreams.subset(baseReader, gquery);
         }
         return wrapped.getFeatureReader(query);
     }
 
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        if(queries.get(this, query.getTypeName())!=null){
+        if (!(query instanceof org.geotoolkit.data.query.Query))  throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        if(queries.get(this, gquery.getTypeName())!=null){
             throw new DataStoreException("Group name corresponed to a stored query, writing is not possible.");
         }
         return wrapped.getFeatureWriter(query);

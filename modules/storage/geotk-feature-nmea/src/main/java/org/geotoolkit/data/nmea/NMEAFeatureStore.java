@@ -31,10 +31,11 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.util.GenericName;
 import org.geotoolkit.storage.DataStores;
@@ -95,7 +96,10 @@ public class NMEAFeatureStore extends AbstractFeatureStore {
 
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
-        typeCheck(query.getTypeName());
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        typeCheck(gquery.getTypeName());
         try {
             return new NMEAFileReader(openConnexion());
         } catch (IOException ex) {

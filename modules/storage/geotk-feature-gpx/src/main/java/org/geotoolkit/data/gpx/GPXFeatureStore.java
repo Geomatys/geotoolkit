@@ -16,21 +16,6 @@
  */
 package org.geotoolkit.data.gpx;
 
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.AbstractFeatureStore;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.factory.Hints;
-import org.opengis.util.GenericName;
-import org.geotoolkit.nio.IOUtilities;
-import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.parameter.ParameterValueGroup;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -47,23 +32,36 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.apache.sis.internal.storage.gpx.Store;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.internal.storage.gpx.Metadata;
+import org.apache.sis.internal.storage.gpx.Store;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.Query;
 import org.apache.sis.storage.StorageConnector;
+import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
+import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStoreFactory;
-
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.filter.Filter;
+import org.opengis.filter.identity.FeatureId;
 import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.content.FeatureCatalogueDescription;
 import org.opengis.metadata.content.FeatureTypeInfo;
-import org.apache.sis.internal.storage.ResourceOnFileSystem;
-
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  * GPX DataStore, holds 4 feature types.
@@ -156,16 +154,22 @@ public class GPXFeatureStore extends AbstractFeatureStore implements ResourceOnF
 
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        final FeatureType ft = getFeatureType(query.getTypeName());
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final FeatureType ft = getFeatureType(gquery.getTypeName());
         final FeatureReader fr = new GPXFeatureReader(ft);
-        return FeatureStreams.subset(fr, query);
+        return FeatureStreams.subset(fr, gquery);
     }
 
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        final FeatureType ft = getFeatureType(query.getTypeName());
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final FeatureType ft = getFeatureType(gquery.getTypeName());
         final FeatureWriter fw = new GPXFeatureWriter(ft);
-        return FeatureStreams.filter(fw, query.getFilter());
+        return FeatureStreams.filter(fw, gquery.getFilter());
     }
 
     ////////////////////////////////////////////////////////////////////////////

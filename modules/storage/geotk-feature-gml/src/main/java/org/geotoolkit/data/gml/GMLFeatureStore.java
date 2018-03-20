@@ -28,22 +28,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
-import org.opengis.util.GenericName;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
-import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.opengis.util.GenericName;
 
 /**
  * GML feature store.
@@ -150,7 +151,10 @@ public class GMLFeatureStore extends AbstractFeatureStore implements ResourceOnF
 
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
-        typeCheck(query.getTypeName());
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        typeCheck(gquery.getTypeName());
 
         final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader(featureType);
         reader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
@@ -166,7 +170,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements ResourceOnF
         }
 
         final FeatureReader freader = FeatureStreams.asReader(ite,featureType);
-        return FeatureStreams.subset(freader, query);
+        return FeatureStreams.subset(freader, gquery);
     }
 
 }

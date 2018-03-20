@@ -21,12 +21,13 @@ import java.util.Collections;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.util.GenericName;
@@ -90,14 +91,17 @@ public class BeanStore extends AbstractFeatureStore implements StorageListener{
 
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
-        typeCheck(query.getTypeName());
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
 
-        final BeanFeatureSupplier bt = types.get(this, query.getTypeName());
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        typeCheck(gquery.getTypeName());
+
+        final BeanFeatureSupplier bt = types.get(this, gquery.getTypeName());
         final Iterable candidates = bt.supplier.get();
         final BeanFeature.Mapping mapping = bt.mapping;
 
         final FeatureReader reader = new BeanFeatureReader(mapping, candidates);
-        return FeatureStreams.subset(reader, query);
+        return FeatureStreams.subset(reader, gquery);
     }
 
     @Override

@@ -37,7 +37,6 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.NamesExt;
@@ -78,6 +77,8 @@ import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.temporal.TemporalObject;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 
 /**
  *
@@ -138,9 +139,12 @@ public class XmlObservationStore extends AbstractFeatureStore implements Resourc
 
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        final FeatureType sft = getFeatureType(query.getTypeName());
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final FeatureType sft = getFeatureType(gquery.getTypeName());
         try {
-            return FeatureStreams.subset(new XmlFeatureReader(xmlFile,sft), query);
+            return FeatureStreams.subset(new XmlFeatureReader(xmlFile,sft), gquery);
         } catch (IOException | JAXBException ex) {
             throw new DataStoreException(ex);
         }
