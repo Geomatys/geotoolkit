@@ -26,10 +26,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Stream;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -38,19 +39,24 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.data.AbstractFeatureStore;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStreams;
-import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.data.query.QueryFeatureSet;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.internal.data.GenericWrapFeatureIterator;
 import org.geotoolkit.kml.xml.KMLMarshallerPool;
 import org.geotoolkit.kml.xml.v220.AbstractContainerType;
 import org.geotoolkit.kml.xml.v220.AbstractFeatureType;
@@ -67,13 +73,13 @@ import org.geotoolkit.kml.xml.v220.PhotoOverlayType;
 import org.geotoolkit.kml.xml.v220.PlacemarkType;
 import org.geotoolkit.kml.xml.v220.PointType;
 import org.geotoolkit.kml.xml.v220.PolygonType;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.GenericName;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -83,7 +89,7 @@ import org.xml.sax.SAXException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class KMLFeatureStore extends AbstractFeatureStore {
+public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSystem {
 
     private static final GeometryFactory GF = GO2Utilities.JTS_FACTORY;
     private static final CoordinateReferenceSystem CRS = CommonCRS.WGS84.normalizedGeographic(); //CRS:84 , longitude/latitude
@@ -94,41 +100,77 @@ public class KMLFeatureStore extends AbstractFeatureStore {
     private static FeatureType PLACEMARK_TYPE;
 
     private final URI path;
+    private final ParameterValueGroup params;
 
-    public KMLFeatureStore(Path path) {
+    public KMLStore(URI path) {
         this(toParameters(path));
     }
 
-    public KMLFeatureStore(ParameterValueGroup params){
-        super(params);
-        path = Parameters.castOrWrap(params).getValue(KMLFeatureStoreFactory.PATH);
+    public KMLStore(ParameterValueGroup params){
+        this.params = params;
+        this.path = Parameters.castOrWrap(params).getValue(KMLProvider.LOCATION_PARAM);
     }
 
-    private static ParameterValueGroup toParameters(final Path f) {
-        final Parameters params = Parameters.castOrWrap(KMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
-        params.getOrCreate(KMLFeatureStoreFactory.PATH).setValue(f.toUri());
+    private static ParameterValueGroup toParameters(final URI f) {
+        final Parameters params = Parameters.castOrWrap(KMLProvider.provider().getOpenParameters().createValue());
+        params.getOrCreate(KMLProvider.LOCATION_PARAM).setValue(f);
         return params;
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(KMLFeatureStoreFactory.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(KMLProvider.NAME);
     }
 
     @Override
-    public QueryCapabilities getQueryCapabilities() {
-        return new DefaultQueryCapabilities(false, false);
+    public ParameterValueGroup getOpenParameters() {
+        return params;
     }
 
     @Override
-    public Set<GenericName> getNames() throws DataStoreException {
-        return Collections.singleton(getPlacemarkType().getName());
+    public Metadata getMetadata() throws DataStoreException {
+        final FeatureType type = getType();
+        final DefaultMetadata metadata = new DefaultMetadata();
+        final DefaultDataIdentification ident = new DefaultDataIdentification();
+        final DefaultCitation citation = new DefaultCitation();
+        citation.setTitle(new SimpleInternationalString(type.getName().toString()));
+        citation.setIdentifiers(Arrays.asList(new NamedIdentifier(type.getName())));
+        ident.setCitation(citation);
+        metadata.setIdentificationInfo(Arrays.asList(ident));
+        return metadata;
     }
 
     @Override
-    public FeatureType getFeatureType(String name) throws DataStoreException {
-        typeCheck(name);
+    public FeatureType getType() throws DataStoreException {
         return getPlacemarkType();
+    }
+
+    @Override
+    public Envelope getEnvelope() throws DataStoreException {
+        return null;
+    }
+
+    @Override
+    public Stream<Feature> features(boolean parallel) throws DataStoreException {
+        final KmlType kml = read();
+
+        final List<PlacemarkType> placemarks = new ArrayList<>();
+        extractPlacemarks(kml.getAbstractFeatureGroup(), placemarks);
+
+        final List<Feature> features = new ArrayList<>();
+        for (PlacemarkType pt : placemarks) {
+            features.add(convert(pt));
+        }
+
+        return parallel ? features.parallelStream() : features.stream();
+    }
+
+    @Override
+    public FeatureSet subset(Query query) throws UnsupportedQueryException, DataStoreException {
+        if (query instanceof org.geotoolkit.data.query.Query) {
+            return QueryFeatureSet.apply(this, (org.geotoolkit.data.query.Query)query);
+        }
+        return FeatureSet.super.subset(query);
     }
 
     private KmlType read() throws DataStoreException {
@@ -166,27 +208,6 @@ public class KMLFeatureStore extends AbstractFeatureStore {
         for (int i = 0; i < list.getLength(); ++i) {
             renameNamespaceRecursive(doc, list.item(i), oldNamespace, newNamespace);
         }
-    }
-
-    @Override
-    public FeatureReader getFeatureReader(Query query) throws DataStoreException {
-        typeCheck(query.getTypeName());
-
-        //check we can read the file
-        final KmlType kml = read();
-
-        final List<PlacemarkType> placemarks = new ArrayList<>();
-        extractPlacemarks(kml.getAbstractFeatureGroup(), placemarks);
-
-        int i=0;
-        final List<Feature> features = new ArrayList<>();
-        for(PlacemarkType pt : placemarks) {
-            features.add(convert(pt));
-        }
-
-        final FeatureReader reader = GenericWrapFeatureIterator.wrapToReader(features.iterator(), getPlacemarkType());
-
-        return FeatureStreams.subset(reader, query);
     }
 
     private static synchronized FeatureType getAbstractFeatureType() {
@@ -349,7 +370,12 @@ public class KMLFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public void refreshMetaModel() {
+    public Path[] getComponentFiles() throws DataStoreException {
+        return new Path[]{Paths.get(path)};
+    }
+
+    @Override
+    public void close() throws DataStoreException {
     }
 
 }
