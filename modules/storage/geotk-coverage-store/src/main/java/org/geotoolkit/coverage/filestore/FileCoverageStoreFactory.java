@@ -16,13 +16,14 @@
  */
 package org.geotoolkit.coverage.filestore;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
@@ -92,8 +93,9 @@ public class FileCoverageStoreFactory extends DataStoreFactory {
             new ParameterBuilder().addName(NAME).addName("FileCoverageStoreParameters").createGroup(
                 IDENTIFIER, PATH, TYPE, PATH_SEPARATOR);
 
-    private static final List<ImageReaderSpi> SPIS = new ArrayList<>();
+    private static final Set<ImageReaderSpi> SPIS = new HashSet<>();
     static {
+        //several SPI are registered under different names
         for (String name : getReaderTypeList()) {
             SPIS.add(XImageIO.getReaderSpiByFormatName(name));
         }
@@ -134,7 +136,13 @@ public class FileCoverageStoreFactory extends DataStoreFactory {
 
         for (ImageReaderSpi spi : SPIS) {
             try {
-                if (spi.canDecodeInput(in)) {
+                //Special case for TextImageReaders, waiting for fix : GEOTK-688
+                Object input = in;
+                if (spi.getClass().getName().contains("Text") || spi.getClass().getName().contains("AsciiGrid")) {
+                    input = connector.getStorageAs(File.class);
+                    if (input == null) continue;
+                }
+                if (spi.canDecodeInput(input)) {
                     final String[] mimeTypes = spi.getMIMETypes();
                     if (mimeTypes != null) {
                         return new ProbeResult(true, mimeTypes[0], null);

@@ -3807,10 +3807,21 @@ public class TiffImageReader extends SpatialImageReader {
             } else if (source instanceof ImageInputStream) {
                 ((ImageInputStream) source).mark();
             }
+
             final ReadableByteChannel channel = openChannel(source);
-            //-- Closing the imageStream will close the input stream.
             ByteBuffer buffer = ByteBuffer.allocate(16);
-            channel.read(buffer);
+            try {
+                channel.read(buffer);
+            } finally {
+                if (source instanceof InputStream) {
+                    ((InputStream) source).reset();
+                } else if (source instanceof ImageInputStream) {
+                    ((ImageInputStream) source).reset();
+                } else {
+                    channel.close();
+                }
+            }
+
             buffer.position(0);
             final byte c = buffer.get();
             if (c != buffer.get()) {
@@ -3833,13 +3844,6 @@ public class TiffImageReader extends SpatialImageReader {
                 return false;//-- invalid magic number
             }
 
-            if (source instanceof InputStream) {
-                ((InputStream) source).reset();
-            } else if (source instanceof ImageInputStream) {
-                ((ImageInputStream) source).reset();
-            } else {
-                channel.close();
-            }
             return true;
         }
 
