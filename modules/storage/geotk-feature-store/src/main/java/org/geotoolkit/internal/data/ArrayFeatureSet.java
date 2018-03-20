@@ -20,6 +20,9 @@ import java.util.Collection;
 import java.util.stream.Stream;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
+import org.geotoolkit.data.query.QueryFeatureSet;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Envelope;
@@ -64,6 +67,14 @@ public class ArrayFeatureSet implements FeatureSet {
     @Override
     public Stream<Feature> features(boolean bln) throws DataStoreException {
         return bln ? features.parallelStream() : features.stream();
+    }
+
+    @Override
+    public FeatureSet subset(Query query) throws UnsupportedQueryException, DataStoreException {
+        if (query instanceof org.geotoolkit.data.query.Query) {
+            return QueryFeatureSet.apply(this, (org.geotoolkit.data.query.Query)query);
+        }
+        return FeatureSet.super.subset(query);
     }
 
     /**
