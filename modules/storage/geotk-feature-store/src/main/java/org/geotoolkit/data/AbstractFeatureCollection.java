@@ -42,7 +42,6 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
-import org.geotoolkit.data.query.TextStatement;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -113,8 +112,6 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
     public Session getSession() {
         if(source instanceof Selector){
             return ((Selector)source).getSession();
-        }else if(source instanceof TextStatement){
-            return ((TextStatement)source).getSession();
         }else{
             return null;
         }

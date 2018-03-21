@@ -103,40 +103,6 @@ class DefaultQuery implements Query {
     }
 
     /**
-     * A custom query statement in the given language.
-     */
-    DefaultQuery(final String language, TextStatement statement) {
-        this.language = language;
-        this.source = statement;
-        this.properties = null;
-        this.maxFeatures = null;
-        this.startIndex = 0;
-        this.filter = Filter.INCLUDE;
-        this.sortBy = null;
-        this.hints = null;
-        this.crs = null;
-        this.resolution = null;
-        this.version = null;
-    }
-
-    /**
-     * A custom query statement in the given language.
-     */
-    DefaultQuery(final String language, final String statement, final String name) {
-        this.language = language;
-        this.source = new DefaultTextStatement(statement,null,name);
-        this.properties = null;
-        this.maxFeatures = null;
-        this.startIndex = 0;
-        this.filter = Filter.INCLUDE;
-        this.sortBy = null;
-        this.hints = null;
-        this.crs = null;
-        this.resolution = null;
-        this.version = null;
-    }
-
-    /**
      * Copy attributes from the given query
      * @param query : query to copy
      */
@@ -176,8 +142,6 @@ class DefaultQuery implements Query {
     public String getTypeName() {
         if(source instanceof Selector){
             return ((Selector)source).getFeatureTypeName();
-        }else if(source instanceof TextStatement){
-            return ((TextStatement)source).getName();
         }else{
             throw new IllegalStateException("Query getTypeName can only be called " +
                     "when query is a selector or a text statement.");

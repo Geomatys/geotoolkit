@@ -28,7 +28,6 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.data.DefaultSelectorFeatureCollection;
-import org.geotoolkit.data.DefaultTextStmtFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
@@ -59,8 +58,6 @@ public class QueryUtilities {
     public static boolean isAbsolute(final Source source){
         if (source instanceof Selector){
             return ((Selector)source).getSession() != null;
-        }else if (source instanceof TextStatement){
-            return ((TextStatement)source).getSession() != null;
         }else{
             throw new IllegalStateException("Source type is unknowned : " + source +
                     "\n valid types ares Join and Selector");
@@ -87,17 +84,6 @@ public class QueryUtilities {
                 }
 
                 absolute = new DefaultSelector(session, select.getFeatureTypeName(), select.getSelectorName());
-            }else{
-                absolute = source;
-            }
-        }else if (source instanceof TextStatement){
-            final TextStatement select = (TextStatement) source;
-            if (select.getSession() == null){
-                if(session == null){
-                    throw new NullPointerException("Session can not be null.");
-                }
-
-                absolute = new DefaultTextStatement(select.getStatement(), session, select.getName());
             }else{
                 absolute = source;
             }
@@ -140,20 +126,14 @@ public class QueryUtilities {
     public static FeatureCollection evaluate(final String id, Query query, final Session session){
         query = QueryUtilities.makeAbsolute(query, session);
 
-
         final String language = query.getLanguage();
         final NamedIdentifier ident = new NamedIdentifier(NamesExt.create(id));
 
-        if(Query.GEOTK_QOM.equalsIgnoreCase(language)){
-            final Source s = query.getSource();
-            if(s instanceof Selector){
-                return new DefaultSelectorFeatureCollection(ident, query);
-            }else{
-                throw new IllegalArgumentException("Query source is an unknowned type : " + s);
-            }
+        final Source s = query.getSource();
+        if(s instanceof Selector){
+            return new DefaultSelectorFeatureCollection(ident, query);
         }else{
-            //custom language query, let the feature store handle it
-            return new DefaultTextStmtFeatureCollection(ident, query);
+            throw new IllegalArgumentException("Query source is an unknowned type : " + s);
         }
     }
 
@@ -173,8 +153,6 @@ public class QueryUtilities {
             }
 
             return session.getFeatureStore().isWritable(select.getFeatureTypeName().toString());
-        }else if(source instanceof TextStatement){
-            return false;
         }else{
             throw new IllegalStateException("Source type is unknowned : " + source +
                     "\n valid types ares Join and Selector");
@@ -205,11 +183,6 @@ public class QueryUtilities {
     }
 
     public static boolean queryAll(final Query query){
-
-        if(query.getSource() instanceof TextStatement){
-            return true;
-        }
-
         return     query.retrieveAllProperties()
                 && query.getCoordinateSystemReproject() == null
                 && query.getCoordinateSystemReproject() == null

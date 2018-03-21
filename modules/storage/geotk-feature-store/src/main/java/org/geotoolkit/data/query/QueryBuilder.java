@@ -210,11 +210,7 @@ public final class QueryBuilder {
     public Query buildQuery(){
         final Source cs = (source == null) ? new DefaultSelector(null, typeName, "s1") : source;
         checkSource(cs,null);
-        if(cs instanceof TextStatement){
-            return new DefaultQuery(language, (TextStatement)cs);
-        }else{
-            return new DefaultQuery(cs, filter, properties, sortBy, crs, startIndex, maxFeatures, resolution, version, hints);
-        }
+        return new DefaultQuery(cs, filter, properties, sortBy, crs, startIndex, maxFeatures, resolution, version, hints);
     }
 
     /**
@@ -232,8 +228,6 @@ public final class QueryBuilder {
             }else{
                 selectors.add(selectName);
             }
-        }else if(s instanceof TextStatement){
-            //can't check this
         }else{
             throw new IllegalStateException("Unknown source type : " + s +
                     "\n valid types ares Join and Selector");
@@ -294,18 +288,6 @@ public final class QueryBuilder {
      */
     public static Query all(final Source source){
         return new DefaultQuery(source);
-    }
-
-    /**
-     * Create a query in the defined language.
-     *
-     * @param language
-     * @param statement
-     * @param name
-     * @return Query
-     */
-    public static Query language(final String language, final String statement, final String name){
-        return new DefaultQuery(language, statement,name);
     }
 
     /**
