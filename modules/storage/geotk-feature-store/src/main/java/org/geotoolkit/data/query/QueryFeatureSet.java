@@ -88,7 +88,7 @@ public final class QueryFeatureSet implements FeatureSet {
             return ft;
         }
 
-        throw new DataStoreException("Can not deduce feature type of query : " + query);
+        throw new DataStoreException("Cannot deduce any feature type from query : " + query);
     }
 
     @Override

@@ -196,7 +196,7 @@ public class JoinFeatureSet implements FeatureSet {
             case LEFT_OUTER :  ite = new JoinOuterRowIterator(true); break;
             case RIGHT_OUTER : ite = new JoinOuterRowIterator(false); break;
             default:
-                throw new IllegalArgumentException("Unknowned Join type : " + joinType);
+                throw new IllegalArgumentException("Unknown Join type : " + joinType);
         }
         final Stream<Feature> stream = StreamSupport.stream(
             Spliterators.spliteratorUnknownSize(ite, Spliterator.ORDERED),
