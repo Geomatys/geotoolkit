@@ -17,7 +17,10 @@
  */
 package org.geotoolkit.data.query;
 
+import java.util.Arrays;
 import java.util.Date;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.factory.Hints;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
@@ -46,26 +49,104 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @version $Id$
  * @module
  */
-public interface Query extends org.apache.sis.storage.Query {
+public final class Query implements org.apache.sis.storage.Query {
 
     /**
      * Default GeotoolKit language used for querying databases.
      */
     public static final String GEOTK_QOM = "GEOTK-QOM";
 
+    private final Source source;
+    private final String[] properties;
+    private final Integer maxFeatures;
+    private final int startIndex;
+    private final Filter filter;
+    private final SortBy[] sortBy;
+    private final Hints hints;
+    private final CoordinateReferenceSystem crs;
+    private final double[] resolution;
+    private final Object version;
+
+
+    /**
+     * Query with typeName.
+     *
+     * @param typeName the name of the featureType to retrieve
+     */
+    Query(final Source name) {
+        this(name,null);
+    }
+
+    /**
+     * Query with typeName.
+     *
+     * @param typeName the name of the featureType to retrieve
+     */
+    Query(final Source name, final String[] attributs) {
+        this(name,
+                Filter.INCLUDE,
+                attributs,
+                null,
+                null,
+                0,
+                null,
+                null,
+                null,
+                null);
+    }
+
+    Query(final Source source, final Filter filter, final String[] attributs, final SortBy[] sort,
+            final CoordinateReferenceSystem crs, final int startIndex, final Integer MaxFeature,
+            final double[] resolution, final Object version, final Hints hints){
+
+        ensureNonNull("query source", source);
+        if(filter == null){
+            throw new NullArgumentException("Query filter can not be null, did you mean Filter.INCLUDE ?");
+        }
+
+        this.source = source;
+        this.filter = filter;
+        this.properties = attributs;
+        this.sortBy = sort;
+        this.crs = crs;
+        this.startIndex = startIndex;
+        this.maxFeatures = MaxFeature;
+        this.resolution = resolution;
+        this.version = version;
+
+        if(hints == null){
+            this.hints = new Hints();
+        }else{
+            this.hints = hints;
+        }
+
+    }
+
+    /**
+     * Copy attributes from the given query
+     * @param query : query to copy
+     */
+    Query(final Query query) {
+        this(query.getSource(),
+             query.getFilter(),
+             query.getPropertyNames(),
+             query.getSortBy(),
+             query.getCoordinateSystemReproject(),
+             query.getStartIndex(),
+             query.getMaxFeatures(),
+             (query.getResolution()==null)?null:query.getResolution().clone(),
+             (query.getVersionDate()!=null)? query.getVersionDate() : query.getVersionLabel(),
+             query.getHints());
+    }
+
+
     /**
      * The feature source of the query.
      * Can be a selector or Join.
      */
-    Source getSource();
-
-    /**
-     * Returns the language set for this query. This will be one of the query
-     * language constants returned by {@link FeatureStore#getSupportedQueryLanguages}.
-     *
-     * @return the query language.
-     */
-    public String getLanguage();
+    public Source getSource(){
+        return source;
+    }
 
     /**
      * The typeName attribute is used to indicate the name of the feature type
@@ -75,13 +156,14 @@ public interface Query extends org.apache.sis.storage.Query {
      * @return the name of the feature type to be returned with this query.
      * @throws IllegalStateException if the query is not simple.
      */
-    String getTypeName() throws IllegalStateException;
-
-    /**
-     * A query is consider simple when it has a single source which is a selector.
-     * @return true is query has a single selector.
-     */
-    boolean isSimple();
+    public String getTypeName() {
+        if(source instanceof Selector){
+            return ((Selector)source).getFeatureTypeName();
+        }else{
+            throw new IllegalStateException("Query getTypeName can only be called " +
+                    "when query is a selector or a text statement.");
+        }
+    }
 
     /**
      * The Filter can be used to define constraints on a query.
@@ -89,7 +171,9 @@ public interface Query extends org.apache.sis.storage.Query {
      *
      * @return The filter that defines constraints on the query, can not be null.
      */
-    Filter getFilter();
+    public Filter getFilter() {
+        return this.filter;
+    }
 
     /**
      * The properties array is used to specify the attributes that should be
@@ -138,7 +222,9 @@ public interface Query extends org.apache.sis.storage.Query {
      *       I think Query.FIDS fills this role to some degree.
      *       Query.FIDS.equals( filter ) would meet this need?
      */
-    String[] getPropertyNames();
+    public String[] getPropertyNames() {
+        return properties;
+    }
 
     /**
      * Convenience method to determine if the query should use the full schema
@@ -151,7 +237,9 @@ public interface Query extends org.apache.sis.storage.Query {
      * @return if all datasource attributes should be included in the schema of
      *         the returned FeatureCollection.
      */
-    boolean retrieveAllProperties();
+    public boolean retrieveAllProperties() {
+        return properties == null;
+    }
 
     /**
      * Get the starting index. default value is 0.
@@ -160,7 +248,9 @@ public interface Query extends org.apache.sis.storage.Query {
      *
      * @return starting index.
      */
-    int getStartIndex();
+    public int getStartIndex() {
+        return this.startIndex;
+    }
 
     /**
      * The optional maxFeatures can be used to limit the number of features
@@ -176,7 +266,9 @@ public interface Query extends org.apache.sis.storage.Query {
      *
      * @return the max features the getFeature call should return.
      */
-    Integer getMaxFeatures();
+    public Integer getMaxFeatures() {
+        return this.maxFeatures;
+    }
 
     /**
      * Request data reprojection.
@@ -199,7 +291,9 @@ public interface Query extends org.apache.sis.storage.Query {
      * @return The coordinate system that Features from the datasource should
      *         be reprojected to.
      */
-    CoordinateReferenceSystem getCoordinateSystemReproject();
+    public CoordinateReferenceSystem getCoordinateSystemReproject() {
+        return crs;
+    }
 
     /**
      * Set The wished resolution of the geometries.
@@ -208,7 +302,9 @@ public interface Query extends org.apache.sis.storage.Query {
      *
      * @return resolution or null if no resolution provided.
      */
-    double[] getResolution();
+    public double[] getResolution() {
+        return resolution;
+    }
 
     /**
      * SortBy results according to indicated property and order.
@@ -242,7 +338,9 @@ public interface Query extends org.apache.sis.storage.Query {
      *
      * @return SortBy array or order of application
      */
-    SortBy[] getSortBy();
+    public SortBy[] getSortBy() {
+        return sortBy;
+    }
 
     /**
      * Requested version label of the features.
@@ -250,7 +348,12 @@ public interface Query extends org.apache.sis.storage.Query {
      * Mutualy excludive with VersionDate.
      * @return String, may be null.
      */
-    String getVersionLabel();
+    public String getVersionLabel() {
+        if(version instanceof String){
+            return (String)version;
+        }
+        return null;
+    }
 
     /**
      * Requested version date of the features.
@@ -258,7 +361,12 @@ public interface Query extends org.apache.sis.storage.Query {
      * Mutualy excludive with VersionLabel.
      * @return Date, may be null.
      */
-    Date getVersionDate();
+    public Date getVersionDate() {
+        if(version instanceof Date){
+            return (Date)version;
+        }
+        return null;
+    }
 
     /**
      * Specifies some hints to drive the query execution and results build-up.
@@ -273,6 +381,109 @@ public interface Query extends org.apache.sis.storage.Query {
      * @return the Hints the data store should try to use when executing the query
      *         (eventually empty but never null).
      */
-    Hints getHints();
+    public Hints getHints() {
+        return hints;
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Query other = (Query) obj;
+        if (this.source != other.source && (this.source == null || !this.source.equals(other.source))) {
+            return false;
+        }
+        if (!Arrays.deepEquals(this.properties, other.properties)) {
+            return false;
+        }
+        if (this.maxFeatures != other.maxFeatures && (this.maxFeatures == null || !this.maxFeatures.equals(other.maxFeatures))) {
+            return false;
+        }
+        if (this.startIndex != other.startIndex) {
+            return false;
+        }
+        if (this.filter != other.filter && (this.filter == null || !this.filter.equals(other.filter))) {
+            return false;
+        }
+        if (!Arrays.deepEquals(this.sortBy, other.sortBy)) {
+            return false;
+        }
+        if (this.hints != other.hints && (this.hints == null || !this.hints.equals(other.hints))) {
+            return false;
+        }
+        if (this.crs != other.crs && (this.crs == null || !this.crs.equals(other.crs))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 83 * hash + (this.source != null ? this.source.hashCode() : 0);
+        hash = 83 * hash + Arrays.deepHashCode(this.properties);
+        hash = 83 * hash + (this.maxFeatures != null ? this.maxFeatures.hashCode() : 0);
+        hash = 83 * hash + this.startIndex;
+        hash = 83 * hash + (this.filter != null ? this.filter.hashCode() : 0);
+        hash = 83 * hash + Arrays.deepHashCode(this.sortBy);
+        hash = 83 * hash + (this.hints != null ? this.hints.hashCode() : 0);
+        hash = 83 * hash + (this.crs != null ? this.crs.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder returnString = new StringBuilder("Query:");
+
+        returnString.append("\n   feature type: ").append(source);
+
+        if (filter != null) {
+            returnString.append("\n   filter: ").append(filter.toString());
+        }
+
+        returnString.append("\n   [properties: ");
+
+        if ((properties == null) || (properties.length == 0)) {
+            returnString.append(" ALL ]");
+        } else {
+            for (int i = 0; i < properties.length; i++) {
+                returnString.append(properties[i]);
+
+                if (i < (properties.length - 1)) {
+                    returnString.append(", ");
+                }
+            }
+
+            returnString.append("]");
+        }
+
+        if (sortBy != null && sortBy.length > 0) {
+            returnString.append("\n   [sort by: ");
+            for (int i = 0; i < sortBy.length; i++) {
+                returnString.append(sortBy[i].getPropertyName().getPropertyName());
+                returnString.append(" ");
+                returnString.append(sortBy[i].getSortOrder().name());
+
+                if (i < (sortBy.length - 1)) {
+                    returnString.append(", ");
+                }
+            }
+
+            returnString.append("]");
+        }
+
+        return returnString.toString();
+    }
 
 }

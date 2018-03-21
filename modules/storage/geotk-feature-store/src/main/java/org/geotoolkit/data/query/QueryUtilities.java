@@ -126,15 +126,9 @@ public class QueryUtilities {
     public static FeatureCollection evaluate(final String id, Query query, final Session session){
         query = QueryUtilities.makeAbsolute(query, session);
 
-        final String language = query.getLanguage();
         final NamedIdentifier ident = new NamedIdentifier(NamesExt.create(id));
 
-        final Source s = query.getSource();
-        if(s instanceof Selector){
-            return new DefaultSelectorFeatureCollection(ident, query);
-        }else{
-            throw new IllegalArgumentException("Query source is an unknowned type : " + s);
-        }
+        return new DefaultSelectorFeatureCollection(ident, query);
     }
 
     /**

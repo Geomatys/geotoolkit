@@ -297,10 +297,6 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      */
     private FeatureReader getQOMFeatureReader(final org.geotoolkit.data.query.Query query, Connection cnx) throws DataStoreException {
 
-        if(!query.isSimple()){
-            throw new DataStoreException("Query is not simple.");
-        }
-
         final String dbSchemaName = getDatabaseSchema();
         final FeatureType type = dbmodel.getFeatureType(query.getTypeName());
         final String tableName = type.getName().tip().toString();

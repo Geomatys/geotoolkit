@@ -228,21 +228,17 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
         final Source source = gquery.getSource();
 
-        if (org.geotoolkit.data.query.Query.GEOTK_QOM.equalsIgnoreCase(gquery.getLanguage()) && source instanceof Selector) {
-            final Selector selector = (Selector) source;
-            FeatureType ft = selector.getSession().getFeatureStore().getFeatureType(gquery.getTypeName());
-            final String[] properties = gquery.getPropertyNames();
-            if (properties!=null && FeatureTypeExt.isAllProperties(ft, properties)) {
-                ft = new ViewMapper(ft, properties).getMappedType();
-            }
-            if(gquery.getCoordinateSystemReproject()!=null){
-                ft = new ReprojectMapper(ft, gquery.getCoordinateSystemReproject()).getMappedType();
-            }
-
-            return ft;
+        final Selector selector = (Selector) source;
+        FeatureType ft = selector.getSession().getFeatureStore().getFeatureType(gquery.getTypeName());
+        final String[] properties = gquery.getPropertyNames();
+        if (properties!=null && FeatureTypeExt.isAllProperties(ft, properties)) {
+            ft = new ViewMapper(ft, properties).getMappedType();
+        }
+        if(gquery.getCoordinateSystemReproject()!=null){
+            ft = new ReprojectMapper(ft, gquery.getCoordinateSystemReproject()).getMappedType();
         }
 
-        throw new DataStoreException("Can not deduce feature type of query : " + query);
+        return ft;
     }
 
     /**
