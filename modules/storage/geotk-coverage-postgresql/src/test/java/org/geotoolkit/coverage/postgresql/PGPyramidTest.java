@@ -112,7 +112,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         BufferedImage image;
 
         final GenericName name = NamesExt.create(null, "versLayer");
-        store.create(name);
+        store.add(new DefiningCoverageResource(name));
 
         //create version 1 -----------------------------------------------------
         cref = (PyramidalCoverageResource) store.findResource(name.toString());
@@ -177,7 +177,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         BufferedImage image;
 
         final GenericName name = NamesExt.create(null, "sampleTestLayer");
-        store.create(name);
+        store.add(new DefiningCoverageResource(name));
 
         //create version 1 -----------------------------------------------------
         cref = (PyramidalCoverageResource) store.findResource(name.toString());

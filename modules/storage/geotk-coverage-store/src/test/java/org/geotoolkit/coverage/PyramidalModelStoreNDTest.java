@@ -36,6 +36,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.Utilities;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -43,6 +44,7 @@ import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.util.NamesExt;
@@ -83,12 +85,13 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
 
         //create a small pyramid
         store = createStore();
+        final WritableAggregate agg = (WritableAggregate) store;
         final CoordinateReferenceSystem horizontal = CommonCRS.WGS84.normalizedGeographic();
         final CoordinateReferenceSystem vertical = CommonCRS.Vertical.ELLIPSOIDAL.crs();
         crs = new GeodeticObjectBuilder().addName("3dcrs").createCompoundCRS(horizontal,vertical);
 
         final GenericName name = NamesExt.create("test");
-        ref = (PyramidalCoverageResource) store.create(name);
+        ref = (PyramidalCoverageResource) agg.add(new DefiningCoverageResource(name));
 
         //prepare expected colors
         int color = 0;

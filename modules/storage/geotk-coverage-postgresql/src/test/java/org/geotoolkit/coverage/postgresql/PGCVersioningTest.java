@@ -53,6 +53,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
@@ -117,7 +118,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         GridCoverage2D coverage;
 
         final GenericName name = NamesExt.create(null, "versLayer");
-        store.create(name);
+        store.add(new DefiningCoverageResource(name));
         final VersionControl vc = store.getVersioning(name);
         versions = vc.list();
         assertTrue(versions.isEmpty());

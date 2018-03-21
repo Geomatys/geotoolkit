@@ -25,6 +25,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 
@@ -58,6 +59,21 @@ public class DefiningCoverageResource implements Resource {
 
     private final GenericName name;
     private final Metadata metadata;
+
+    /**
+     *
+     * @param name mandatory new resource name
+     */
+    public DefiningCoverageResource(String name) {
+        this(NamesExt.valueOf(name),null);
+    }
+    /**
+     *
+     * @param name mandatory new resource name
+     */
+    public DefiningCoverageResource(GenericName name) {
+        this(name,null);
+    }
 
     /**
      *

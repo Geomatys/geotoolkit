@@ -25,7 +25,7 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.Pyramid;
 
@@ -50,7 +50,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
     public void coverage4DTest() throws Exception{
 
         //create a small pyramid
-        final CoverageStore store = new MPCoverageStore();
+        final MPCoverageStore store = new MPCoverageStore();
         final CoordinateReferenceSystem horizontal = CommonCRS.WGS84.normalizedGeographic();
         final CoordinateReferenceSystem vertical = CommonCRS.Vertical.ELLIPSOIDAL.crs();
         final CoordinateReferenceSystem temporal = CommonCRS.Temporal.JAVA.crs();
@@ -61,7 +61,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         final int width = 28;
         final int height = 13;
 
-        final PyramidalCoverageResource ref1 = (PyramidalCoverageResource) store.create(NamesExt.create("test1"));
+        final PyramidalCoverageResource ref1 = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(NamesExt.create("test1")));
         create4DPyramid(ref1, crs, width, height, new double[][]{
             {-5,-9,  12},
             {-5, 0,  -7},

@@ -51,7 +51,9 @@ import org.geotoolkit.process.ProcessListener;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -912,7 +914,12 @@ public class PyramidCoverageBuilder {
             }
         }
         if (cv == null) {
-            cv = coverageStore.create(coverageName);
+            if (coverageStore instanceof WritableAggregate) {
+                final WritableAggregate agg = (WritableAggregate) coverageStore;
+                cv = (CoverageResource) agg.add(new DefiningCoverageResource(coverageName, null));
+            } else {
+                throw new DataStoreException("Store do not support creation operation.");
+            }
         }
         return cv;
     }
