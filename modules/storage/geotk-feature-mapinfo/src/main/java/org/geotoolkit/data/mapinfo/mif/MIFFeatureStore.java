@@ -17,19 +17,6 @@
 package org.geotoolkit.data.mapinfo.mif;
 
 import java.io.IOException;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.*;
-import org.geotoolkit.data.mapinfo.ProjectionUtils;
-import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.factory.Hints;
-import org.opengis.util.GenericName;
-import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -41,14 +28,27 @@ import java.util.Set;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.feature.ReprojectMapper;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
+import org.geotoolkit.data.*;
 import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.data.mapinfo.ProjectionUtils;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.filter.Filter;
+import org.opengis.filter.identity.FeatureId;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
 
 /**
  * A featureStore for MapInfo exchange format MIF-MID.
@@ -207,18 +207,21 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      */
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
-        typeCheck(query.getTypeName());
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
 
-        FeatureType ft = getFeatureType(query.getTypeName());
+        org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        typeCheck(gquery.getTypeName());
+
+        FeatureType ft = getFeatureType(gquery.getTypeName());
 
         /* We analyze input query to extract queried properties. We do it because
          * we're capable of filtering properties at read, so we'll handle this part
          * of the query.
          */
-        if (query.getPropertyNames() != null) {
+        if (gquery.getPropertyNames() != null) {
             final FeatureTypeBuilder builder = new FeatureTypeBuilder(ft);
             final Iterator<PropertyTypeBuilder> it = builder.properties().iterator();
-            final String[] props = Arrays.copyOf(query.getPropertyNames(), query.getPropertyNames().length);
+            final String[] props = Arrays.copyOf(gquery.getPropertyNames(), gquery.getPropertyNames().length);
             Arrays.sort(props);
             while (it.hasNext()) {
                 final GenericName pName = it.next().getName();
@@ -229,12 +232,12 @@ public class MIFFeatureStore extends AbstractFeatureStore {
             }
 
             ft = builder.build();
-            final QueryBuilder qb = new QueryBuilder(query);
+            final QueryBuilder qb = new QueryBuilder(gquery);
             qb.setProperties(null);
-            query = qb.buildQuery();
+            gquery = qb.buildQuery();
         }
 
-        return FeatureStreams.subset(new MIFFeatureReader(manager, ft), query);
+        return FeatureStreams.subset(new MIFFeatureReader(manager, ft), gquery);
     }
 
     /**
@@ -242,8 +245,11 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      */
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        typeCheck(query.getTypeName());
-        final FeatureReader reader = getFeatureReader(query);
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        typeCheck(gquery.getTypeName());
+        final FeatureReader reader = getFeatureReader(gquery);
         final MIFFeatureWriter writer = new MIFFeatureWriter(manager, reader);
         return  writer;
     }

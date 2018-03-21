@@ -52,7 +52,6 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.NamesExt;
@@ -78,6 +77,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.IllegalNameException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.data.FeatureStreams;
@@ -255,17 +256,20 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      */
     @Override
     public Envelope getEnvelope(final Query query) throws DataStoreException {
-        final String typeName = query.getTypeName();
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final String typeName = gquery.getTypeName();
         final FeatureType type = getFeatureType(typeName);
-        if(   query.getCoordinateSystemReproject() == null
-           && query.getFilter() == Filter.INCLUDE
-           && (query.getMaxFeatures() == null || query.getMaxFeatures() == Integer.MAX_VALUE)
-           && query.getStartIndex() == 0){
+        if(   gquery.getCoordinateSystemReproject() == null
+           && gquery.getFilter() == Filter.INCLUDE
+           && (gquery.getMaxFeatures() == null || gquery.getMaxFeatures() == Integer.MAX_VALUE)
+           && gquery.getStartIndex() == 0){
             Envelope env = bounds.get(this, type.getName().toString());
             if(env != null) {return env;}
         }
 
-        return super.getEnvelope(query);
+        return super.getEnvelope(gquery);
     }
 
     /**
@@ -313,7 +317,10 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      */
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        final String name = query.getTypeName();
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final String name = gquery.getTypeName();
         //will raise an error if typename in unknowned
         final FeatureType sft = getFeatureType(name);
 
@@ -327,7 +334,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
             q = new QName(namespace, gName.tip().toString(), prefixes.get(namespace));
         }
         try {
-            reader = requestFeature(q, query);
+            reader = requestFeature(q, gquery);
         } catch (IOException|XMLStreamException ex) {
             throw new DataStoreException(ex);
         }
@@ -486,6 +493,9 @@ public class WFSFeatureStore extends AbstractFeatureStore{
     }
 
     private FeatureReader requestFeature(final QName typeName, final Query query) throws XMLStreamException, DataStoreException, IOException {
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
         final GenericName name = NamesExt.create(typeName);
         FeatureType type = types.get(this, name.toString());
         // TODO : remove SIS conventions
@@ -499,8 +509,8 @@ public class WFSFeatureStore extends AbstractFeatureStore{
          *
          */
         final QueryBuilder remainingQuery;
-        if (query != null) {
-            remainingQuery = new QueryBuilder(query);
+        if (gquery != null) {
+            remainingQuery = new QueryBuilder(gquery);
 
             final Map<String, String> replacements = type.getProperties(true).stream()
                     // operations are not data sent back by the server.
@@ -513,13 +523,13 @@ public class WFSFeatureStore extends AbstractFeatureStore{
                             entry -> entry.getValue().iterator().next()
                     ));
 
-            final String[] propertyNames = Stream.of(query.getPropertyNames())
+            final String[] propertyNames = Stream.of(gquery.getPropertyNames())
                     .map(pName -> replacements.getOrDefault(pName, pName))
                     .toArray(size -> new String[size]);
 
             type = FeatureTypeExt.createSubType(type, propertyNames);
 
-            final Filter filter = query.getFilter();
+            final Filter filter = gquery.getFilter();
             if (filter == null) {
                 request.setFilter(Filter.INCLUDE);
             } else {
@@ -534,8 +544,8 @@ public class WFSFeatureStore extends AbstractFeatureStore{
             // Filter is already processed, but a query builder does not support null filter.
             remainingQuery.setFilter(Filter.INCLUDE);
 
-            final int start = query.getStartIndex();
-            final Integer max = query.getMaxFeatures();
+            final int start = gquery.getStartIndex();
+            final Integer max = gquery.getMaxFeatures();
             if (start <= 0 && max != null) {
                 request.setMaxFeatures(max);
                 // For this one, do not remove from remaining queries : If the

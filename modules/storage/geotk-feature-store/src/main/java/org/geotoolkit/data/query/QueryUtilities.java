@@ -23,17 +23,15 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import org.geotoolkit.data.DefaultJoinFeatureCollection;
-import org.geotoolkit.data.DefaultSelectorFeatureCollection;
-import org.geotoolkit.data.DefaultTextStmtFeatureCollection;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.DefaultFeatureStoreJoinFeatureCollection;
-import org.geotoolkit.data.session.Session;
-import org.geotoolkit.factory.FactoryFinder;
-import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.NullArgumentException;
+import org.geotoolkit.data.DefaultSelectorFeatureCollection;
+import org.geotoolkit.data.DefaultTextStmtFeatureCollection;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.session.Session;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -59,10 +57,7 @@ public class QueryUtilities {
      * @return true if the source is absolute
      */
     public static boolean isAbsolute(final Source source){
-        if(source instanceof Join){
-            final Join j = (Join) source;
-            return isAbsolute(j.getLeft()) && isAbsolute(j.getRight());
-        }else if (source instanceof Selector){
+        if (source instanceof Selector){
             return ((Selector)source).getSession() != null;
         }else if (source instanceof TextStatement){
             return ((TextStatement)source).getSession() != null;
@@ -84,17 +79,7 @@ public class QueryUtilities {
     public static Source makeAbsolute(final Source source, final Session session){
 
         final Source absolute;
-        if(source instanceof Join){
-            final Join j = (Join) source;
-
-            if(isAbsolute(j)){
-                absolute = j;
-            }else{
-                final Source left = makeAbsolute(j.getLeft(), session);
-                final Source right = makeAbsolute(j.getLeft(), session);
-                absolute = new DefaultJoin(left, right, j.getJoinType(), j.getJoinCondition());
-            }
-        }else if (source instanceof Selector){
+        if (source instanceof Selector){
             final Selector select = (Selector) source;
             if (select.getSession() == null){
                 if(session == null){
@@ -163,16 +148,6 @@ public class QueryUtilities {
             final Source s = query.getSource();
             if(s instanceof Selector){
                 return new DefaultSelectorFeatureCollection(ident, query);
-            }else if(s instanceof Join){
-                final Collection<Session> sessions = getSessions(s, null);
-
-                if(sessions.size() == 1 && sessions.iterator().next().getFeatureStore().getQueryCapabilities().handleCrossQuery()){
-                    //the feature store can handle our join query, it will be much more efficient then a generic implementation
-                    return new DefaultFeatureStoreJoinFeatureCollection(ident, query);
-                }else{
-                    //can't optimize it, use the generic implementation
-                    return new DefaultJoinFeatureCollection(ident, query);
-                }
             }else{
                 throw new IllegalArgumentException("Query source is an unknowned type : " + s);
             }
@@ -189,11 +164,7 @@ public class QueryUtilities {
      * @return true if all source are writable
      */
     public static boolean isWritable(final Source source) throws DataStoreException{
-        if(source instanceof Join){
-            final Join j = (Join) source;
-            return isWritable(j.getLeft()) && isWritable(j.getRight());
-
-        }else if(source instanceof Selector){
+        if(source instanceof Selector){
             final Selector select = (Selector) source;
             final Session session = select.getSession();
 
@@ -228,10 +199,6 @@ public class QueryUtilities {
             if(s != null){
                 buffer.add(s);
             }
-        }else if(source instanceof Join){
-            final Join j = (Join) source;
-            getSessions(j.getLeft(), buffer);
-            getSessions(j.getRight(), buffer);
         }
 
         return buffer;

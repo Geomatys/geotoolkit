@@ -17,8 +17,11 @@
 
 package org.geotoolkit.data.csv;
 
-import com.vividsolutions.jts.geom.Geometry;
 
+
+
+
+import com.vividsolutions.jts.geom.Geometry;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -32,27 +35,28 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
-import org.geotoolkit.feature.FeatureExt;
-
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.data.*;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.nio.IOUtilities;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.storage.DataStoreException;
-
-import static java.nio.file.StandardOpenOption.*;
-import org.apache.sis.feature.builder.AttributeTypeBuilder;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-
-import org.opengis.util.GenericName;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -62,13 +66,10 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.parameter.Parameters;
-import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.storage.DataStoreFactory;
-import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
+import static java.nio.file.StandardOpenOption.*;
 
 /**
  * CSV DataStore, holds a single feature type which name match the file name.
@@ -325,7 +326,10 @@ public class CSVFeatureStore extends AbstractFeatureStore implements ResourceOnF
 
     @Override
     public long getCount(final Query query) throws DataStoreException {
-        if(QueryUtilities.queryAll(query)) {
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        if(QueryUtilities.queryAll(gquery)) {
             //Neither filter nor start index, just count number of lines to avoid reading features.
             fileLock.readLock().lock();
             try (final BufferedReader reader = Files.newBufferedReader(file, UTF8_ENCODING)) {
@@ -345,7 +349,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements ResourceOnF
             }
         }
 
-        return super.getCount(query);
+        return super.getCount(gquery);
     }
 
     @Override
@@ -413,20 +417,26 @@ public class CSVFeatureStore extends AbstractFeatureStore implements ResourceOnF
 
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        typeCheck(query.getTypeName()); //raise error is type doesnt exist
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
 
-        final Hints hints = query.getHints();
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        typeCheck(gquery.getTypeName()); //raise error is type doesnt exist
+
+        final Hints hints = gquery.getHints();
         final Boolean detached = (hints == null) ? null : (Boolean) hints.get(HintsPending.FEATURE_DETACHED);
 
         final FeatureReader fr = new CSVFeatureReader(this,featureType,detached != null && !detached,fileLock);
-        return FeatureStreams.subset(fr, query);
+        return FeatureStreams.subset(fr, gquery);
     }
 
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        typeCheck(query.getTypeName()); //raise error is type doesnt exist
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        typeCheck(gquery.getTypeName()); //raise error is type doesnt exist
         final FeatureWriter fw = new CSVFeatureWriter(this,featureType,fileLock);
-        return FeatureStreams.filter(fw, query.getFilter());
+        return FeatureStreams.filter(fw, gquery.getFilter());
     }
 
     @Override

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2018, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,31 +14,22 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.data.query;
 
 /**
- * Define join type, similar to SQL "inner join".
- *
- * This class is the counterpart of javax.jcr.query.qom.QueryObjectModelConstants.JCR_JOIN_TYPE_*
- * from JSR-283 (Java Content Repository 2).
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
-public enum JoinType {
-    /**
-     * Both side must have a value to be included.
-     */
-    INNER,
+public class SQLQuery implements org.apache.sis.storage.Query {
 
-    /**
-     * A least left side must have a value to be included.
-     */
-    LEFT_OUTER,
+    private final String statement;
 
-    /**
-     * A least right side must have a value to be included.
-     */
-    RIGHT_OUTER
+    public SQLQuery(String statement) {
+        this.statement = statement;
+    }
+
+    public String getStatement() {
+        return statement;
+    }
+
 }

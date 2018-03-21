@@ -32,7 +32,6 @@ import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.ViewMapper;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.memory.GenericFeatureWriter;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
@@ -64,6 +63,8 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.feature.FeatureExt;
@@ -222,18 +223,20 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
 
     @Override
     public FeatureType getFeatureType(final Query query) throws DataStoreException, MismatchedFeatureException {
+        if (!(query instanceof org.geotoolkit.data.query.Query))  throw new UnsupportedQueryException();
 
-        final Source source = query.getSource();
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final Source source = gquery.getSource();
 
-        if(Query.GEOTK_QOM.equalsIgnoreCase(query.getLanguage()) && source instanceof Selector){
+        if (org.geotoolkit.data.query.Query.GEOTK_QOM.equalsIgnoreCase(gquery.getLanguage()) && source instanceof Selector) {
             final Selector selector = (Selector) source;
-            FeatureType ft = selector.getSession().getFeatureStore().getFeatureType(query.getTypeName());
-            final String[] properties = query.getPropertyNames();
+            FeatureType ft = selector.getSession().getFeatureStore().getFeatureType(gquery.getTypeName());
+            final String[] properties = gquery.getPropertyNames();
             if (properties!=null && FeatureTypeExt.isAllProperties(ft, properties)) {
                 ft = new ViewMapper(ft, properties).getMappedType();
             }
-            if(query.getCoordinateSystemReproject()!=null){
-                ft = new ReprojectMapper(ft, query.getCoordinateSystemReproject()).getMappedType();
+            if(gquery.getCoordinateSystemReproject()!=null){
+                ft = new ReprojectMapper(ft, gquery.getCoordinateSystemReproject()).getMappedType();
             }
 
             return ft;
@@ -286,8 +289,11 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      */
     @Override
     public long getCount(Query query) throws DataStoreException {
-        query = addSeparateFeatureHint(query);
-        final FeatureReader reader = getFeatureReader(query);
+        if (!(query instanceof org.geotoolkit.data.query.Query))  throw new UnsupportedQueryException();
+
+        org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        gquery = addSeparateFeatureHint(gquery);
+        final FeatureReader reader = getFeatureReader(gquery);
         return FeatureStoreUtilities.calculateCount(reader);
     }
 
@@ -300,16 +306,19 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      */
     @Override
     public Envelope getEnvelope(Query query) throws DataStoreException, FeatureStoreRuntimeException {
+        if (!(query instanceof org.geotoolkit.data.query.Query))  throw new UnsupportedQueryException();
 
-        if(query.retrieveAllProperties()){
+        org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+
+        if(gquery.retrieveAllProperties()){
             //we simplify it, get only geometry attributes + sort attribute
-            final FeatureType ft = getFeatureType(query.getTypeName());
+            final FeatureType ft = getFeatureType(gquery.getTypeName());
             final List<String> names = new ArrayList<>();
             for(PropertyType desc : ft.getProperties(true)){
                 if(AttributeConvention.isGeometryAttribute(desc)){
                     names.add(desc.getName().toString());
-                } else if (query.getSortBy() != null) {
-                    for (SortBy sortBy : query.getSortBy()) {
+                } else if (gquery.getSortBy() != null) {
+                    for (SortBy sortBy : gquery.getSortBy()) {
                         final String propName = sortBy.getPropertyName().getPropertyName();
                         if (desc.getName().toString().equals(propName) ||
                             desc.getName().tip().toString().equals(propName)) {
@@ -324,22 +333,22 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
                 return null;
             }
 
-            final QueryBuilder qb = new QueryBuilder(query);
+            final QueryBuilder qb = new QueryBuilder(gquery);
             qb.setProperties(names.toArray(new String[names.size()]));
-            query = qb.buildQuery();
+            gquery = qb.buildQuery();
         }
 
 
-        final String[] wantedProp = query.getPropertyNames();
+        final String[] wantedProp = gquery.getPropertyNames();
         if(wantedProp.length==0){
             return null;
         }
 
-        final FeatureReader reader = getFeatureReader(query);
+        final FeatureReader reader = getFeatureReader(gquery);
         return FeatureStoreUtilities.calculateEnvelope(reader);
     }
 
-    private static Query addSeparateFeatureHint(final Query query){
+    private static org.geotoolkit.data.query.Query addSeparateFeatureHint(final org.geotoolkit.data.query.Query query){
         //hints never null on a query
         Hints hints = query.getHints();
         hints.put(HintsPending.FEATURE_DETACHED, Boolean.FALSE);
@@ -540,8 +549,11 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * add, remove, update methods.
      */
     protected FeatureWriter handleWriter(Query query) throws DataStoreException {
-        final Filter filter = query.getFilter();
-        final String groupName = query.getTypeName();
+        if (!(query instanceof org.geotoolkit.data.query.Query))  throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final Filter filter = gquery.getFilter();
+        final String groupName = gquery.getTypeName();
         if (Filter.EXCLUDE.equals(filter) ) {
             return GenericFeatureWriter.wrapAppend(this, groupName);
         } else {

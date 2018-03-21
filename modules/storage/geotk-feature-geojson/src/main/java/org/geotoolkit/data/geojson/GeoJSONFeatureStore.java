@@ -17,28 +17,7 @@
 
 package org.geotoolkit.data.geojson;
 
-import org.geotoolkit.util.NamesExt;
-import org.opengis.util.GenericName;
 import com.vividsolutions.jts.geom.*;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.*;
-import org.geotoolkit.data.geojson.binding.*;
-import org.geotoolkit.data.geojson.utils.FeatureTypeUtils;
-import org.geotoolkit.data.geojson.utils.GeoJSONParser;
-import org.geotoolkit.data.geojson.utils.GeoJSONUtils;
-import org.geotoolkit.data.query.*;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
-import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.geometry.Envelope;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.*;
-import static org.geotoolkit.data.geojson.binding.GeoJSONGeometry.*;
-
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.FileSystemNotFoundException;
@@ -53,12 +32,35 @@ import java.util.logging.Logger;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.data.*;
+import org.geotoolkit.data.geojson.binding.*;
+import org.geotoolkit.data.geojson.utils.FeatureTypeUtils;
+import org.geotoolkit.data.geojson.utils.GeoJSONParser;
+import org.geotoolkit.data.geojson.utils.GeoJSONUtils;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
+import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.data.query.QueryUtilities;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.opengis.filter.Filter;
+import org.opengis.filter.identity.FeatureId;
+import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
+import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.*;
+import static org.geotoolkit.data.geojson.binding.GeoJSONGeometry.*;
 
 /**
  *
@@ -312,9 +314,12 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore implements Resourc
 
     @Override
     public Envelope getEnvelope(final Query query) throws DataStoreException, FeatureStoreRuntimeException {
-        typeCheck(query.getTypeName());
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
 
-        if (QueryUtilities.queryAll(query)) {
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        typeCheck(gquery.getTypeName());
+
+        if (QueryUtilities.queryAll(gquery)) {
             rwLock.readLock().lock();
             try {
                 final GeoJSONObject obj = GeoJSONParser.parse(jsonFile, true);
@@ -332,7 +337,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore implements Resourc
         }
 
         //fallback
-        return super.getEnvelope(query);
+        return super.getEnvelope(gquery);
     }
 
     /**
@@ -340,10 +345,13 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore implements Resourc
      */
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        typeCheck(query.getTypeName());
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        typeCheck(gquery.getTypeName());
 
         final FeatureReader fr = new GeoJSONReader(jsonFile, featureType, rwLock);
-        return FeatureStreams.subset(fr, query);
+        return FeatureStreams.subset(fr, gquery);
     }
 
     /**
@@ -351,10 +359,13 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore implements Resourc
      */
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        typeCheck(query.getTypeName());
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        typeCheck(gquery.getTypeName());
         final FeatureWriter fw = new GeoJSONFileWriter(jsonFile, featureType, rwLock,
                 GeoJSONFeatureStoreFactory.ENCODING, coordAccuracy);
-        return FeatureStreams.filter(fw, query.getFilter());
+        return FeatureStreams.filter(fw, gquery.getFilter());
     }
 
     ////////////////////////////////////////////////////////////////////////////

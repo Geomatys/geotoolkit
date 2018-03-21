@@ -225,11 +225,7 @@ public final class QueryBuilder {
             selectors = new HashSet<>();
         }
 
-        if(s instanceof Join){
-            final Join j = (Join) s;
-            checkSource(j.getLeft(), selectors);
-            checkSource(j.getRight(), selectors);
-        }else if(s instanceof Selector){
+        if(s instanceof Selector){
             final String selectName = ((Selector) s).getSelectorName();
             if(selectors.contains(selectName)){
                 throw new IllegalStateException("Source has several selector with the same name = " + selectName);
