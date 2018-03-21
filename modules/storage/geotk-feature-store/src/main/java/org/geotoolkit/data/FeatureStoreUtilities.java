@@ -29,8 +29,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.BinaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -254,6 +252,50 @@ public class FeatureStoreUtilities {
         }
 
         return env;
+    }
+
+    /**
+     * Get or count features in FeatureSet.
+     *
+     * <p>
+     * This operation can be expensive in time and resources if the count
+     * must be computed. It is recommended to use {@link DataSet#getMetadata() }
+     * informations instead if a resulting null count is acceptable.
+     * </p>
+     *
+     * @param dataset Data set to extract or compute from, must not be null
+     * @return features count
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    public static Long getCount(FeatureSet dataset) throws DataStoreException {
+        return getCount(dataset, false);
+    }
+
+    /**
+     * Get or count features in FeatureSet.
+     *
+     * <p>
+     * This operation can be expensive in time and resources if the count
+     * must be computed. It is recommended to use {@link DataSet#getMetadata() }
+     * informations instead if a resulting null count is acceptable.
+     * </p>
+     *
+     * @param dataset Data set to extract or compute from, must not be null
+     * @param forceCompute ignore dataset declared envelope and always compute envelope
+     * @return features count
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    public static Long getCount(FeatureSet dataset, boolean forceCompute) throws DataStoreException {
+        //TODO extract count value from metadata, where is it stored ?
+        Long count = null;
+
+        if (count == null) {
+            try (Stream<Feature> stream = dataset.features(true)) {
+                count = stream.count();
+            }
+        }
+
+        return count;
     }
 
     /**

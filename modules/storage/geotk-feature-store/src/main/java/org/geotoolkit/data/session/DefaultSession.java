@@ -55,8 +55,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.data.DefaultSelectorFeatureCollection;
 import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -123,7 +126,8 @@ public class DefaultSession extends AbstractSession {
      */
     @Override
     public FeatureCollection getFeatureCollection(final Query query) {
-        return QueryUtilities.evaluate("id", query,this);
+        final NamedIdentifier ident = new NamedIdentifier(NamesExt.create("id"));
+        return new DefaultSelectorFeatureCollection(ident, query, this);
     }
 
     /**

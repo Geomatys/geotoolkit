@@ -56,7 +56,7 @@ public final class Query implements org.apache.sis.storage.Query {
      */
     public static final String GEOTK_QOM = "GEOTK-QOM";
 
-    private final Source source;
+    private final String typeName;
     private final String[] properties;
     private final Integer maxFeatures;
     private final int startIndex;
@@ -73,8 +73,8 @@ public final class Query implements org.apache.sis.storage.Query {
      *
      * @param typeName the name of the featureType to retrieve
      */
-    Query(final Source name) {
-        this(name,null);
+    Query(final String typeName) {
+        this(typeName,null);
     }
 
     /**
@@ -82,8 +82,8 @@ public final class Query implements org.apache.sis.storage.Query {
      *
      * @param typeName the name of the featureType to retrieve
      */
-    Query(final Source name, final String[] attributs) {
-        this(name,
+    Query(final String typeName, final String[] attributs) {
+        this(typeName,
                 Filter.INCLUDE,
                 attributs,
                 null,
@@ -95,16 +95,16 @@ public final class Query implements org.apache.sis.storage.Query {
                 null);
     }
 
-    Query(final Source source, final Filter filter, final String[] attributs, final SortBy[] sort,
+    Query(final String typeName, final Filter filter, final String[] attributs, final SortBy[] sort,
             final CoordinateReferenceSystem crs, final int startIndex, final Integer MaxFeature,
             final double[] resolution, final Object version, final Hints hints){
 
-        ensureNonNull("query source", source);
+        ensureNonNull("query source", typeName);
         if(filter == null){
             throw new NullArgumentException("Query filter can not be null, did you mean Filter.INCLUDE ?");
         }
 
-        this.source = source;
+        this.typeName = typeName;
         this.filter = filter;
         this.properties = attributs;
         this.sortBy = sort;
@@ -127,7 +127,7 @@ public final class Query implements org.apache.sis.storage.Query {
      * @param query : query to copy
      */
     Query(final Query query) {
-        this(query.getSource(),
+        this(query.getTypeName(),
              query.getFilter(),
              query.getPropertyNames(),
              query.getSortBy(),
@@ -139,15 +139,6 @@ public final class Query implements org.apache.sis.storage.Query {
              query.getHints());
     }
 
-
-    /**
-     * The feature source of the query.
-     * Can be a selector or Join.
-     */
-    public Source getSource(){
-        return source;
-    }
-
     /**
      * The typeName attribute is used to indicate the name of the feature type
      * to be queried. This value can not be return if the query affects several
@@ -157,12 +148,7 @@ public final class Query implements org.apache.sis.storage.Query {
      * @throws IllegalStateException if the query is not simple.
      */
     public String getTypeName() {
-        if(source instanceof Selector){
-            return ((Selector)source).getFeatureTypeName();
-        }else{
-            throw new IllegalStateException("Query getTypeName can only be called " +
-                    "when query is a selector or a text statement.");
-        }
+        return typeName;
     }
 
     /**
@@ -398,7 +384,7 @@ public final class Query implements org.apache.sis.storage.Query {
             return false;
         }
         final Query other = (Query) obj;
-        if (this.source != other.source && (this.source == null || !this.source.equals(other.source))) {
+        if (this.typeName != other.typeName && (this.typeName == null || !this.typeName.equals(other.typeName))) {
             return false;
         }
         if (!Arrays.deepEquals(this.properties, other.properties)) {
@@ -431,7 +417,7 @@ public final class Query implements org.apache.sis.storage.Query {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 83 * hash + (this.source != null ? this.source.hashCode() : 0);
+        hash = 83 * hash + (this.typeName != null ? this.typeName.hashCode() : 0);
         hash = 83 * hash + Arrays.deepHashCode(this.properties);
         hash = 83 * hash + (this.maxFeatures != null ? this.maxFeatures.hashCode() : 0);
         hash = 83 * hash + this.startIndex;
@@ -446,7 +432,7 @@ public final class Query implements org.apache.sis.storage.Query {
     public String toString() {
         final StringBuilder returnString = new StringBuilder("Query:");
 
-        returnString.append("\n   feature type: ").append(source);
+        returnString.append("\n   feature type: ").append(typeName);
 
         if (filter != null) {
             returnString.append("\n   filter: ").append(filter.toString());

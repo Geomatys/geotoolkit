@@ -34,7 +34,6 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.memory.mapping.DefaultFeatureMapper;
 import org.geotoolkit.data.memory.mapping.FeatureMapper;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.StorageListener;
@@ -83,11 +82,6 @@ public class GenericMappingFeatureCollection extends AbstractCollection<Feature>
     @Override
     public Session getSession() {
         return original.getSession();
-    }
-
-    @Override
-    public Source getSource() {
-        return original.getSource();
     }
 
     @Override

@@ -33,8 +33,6 @@ import org.geotoolkit.feature.ViewMapper;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.memory.GenericFeatureWriter;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.query.Selector;
-import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.DefaultSession;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
@@ -226,10 +224,8 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         if (!(query instanceof org.geotoolkit.data.query.Query))  throw new UnsupportedQueryException();
 
         final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
-        final Source source = gquery.getSource();
 
-        final Selector selector = (Selector) source;
-        FeatureType ft = selector.getSession().getFeatureStore().getFeatureType(gquery.getTypeName());
+        FeatureType ft = getFeatureType(gquery.getTypeName());
         final String[] properties = gquery.getPropertyNames();
         if (properties!=null && FeatureTypeExt.isAllProperties(ft, properties)) {
             ft = new ViewMapper(ft, properties).getMappedType();

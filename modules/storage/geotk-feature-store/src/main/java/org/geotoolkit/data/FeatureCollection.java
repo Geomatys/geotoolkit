@@ -25,7 +25,6 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.opengis.feature.Feature;
@@ -58,15 +57,6 @@ public interface FeatureCollection extends Collection<Feature>, FeatureSet, Writ
      * @return Session or null if not related to a session.
      */
     Session getSession();
-
-    /**
-     * A collection always takes it's data from somewhere, it can be any kind
-     * of FeatureStore.
-     *
-     * @return feature source of this collection.
-     */
-    Source getSource();
-
 
     /**
      * If all features in this collection are of the same type then

@@ -31,7 +31,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
-import org.geotoolkit.data.query.Selector;
+import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.collection.CloseableIterator;
@@ -53,23 +53,14 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
 
     private final Query query;
 
-    public DefaultSelectorFeatureCollection(final NamedIdentifier id, final Query query){
-        super(id,query.getSource());
-
-        if(!(query.getSource() instanceof Selector)){
-            throw new IllegalArgumentException("Query must have a selector source.");
-        }
-
-        if(!QueryUtilities.isAbsolute(query.getSource())){
-            throw new IllegalArgumentException("Selector must be absolute.");
-        }
-
+    public DefaultSelectorFeatureCollection(final NamedIdentifier id, final Query query, final Session session){
+        super(id, session);
         this.query = query;
     }
 
     @Override
-    public Selector getSource() {
-        return (Selector) super.getSource();
+    public Session getSession() {
+        return session;
     }
 
     /**
