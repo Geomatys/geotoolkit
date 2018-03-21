@@ -134,14 +134,6 @@ public class AmendedCoverageStore extends AbstractCoverageStore implements Aggre
      * {@inheritDoc }
      */
     @Override
-    public void delete(GenericName name) throws DataStoreException {
-        store.delete(name);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public Metadata getMetadata() throws DataStoreException {
         return store.getMetadata();
     }

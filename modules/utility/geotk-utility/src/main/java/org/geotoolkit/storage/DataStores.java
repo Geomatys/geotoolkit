@@ -70,24 +70,42 @@ public final class DataStores extends Static {
      * @throws DataStoreException
      */
     public static Collection<? extends Resource> flatten(Resource root, boolean includeRoot) throws DataStoreException {
+        return flatten(root, includeRoot, null);
+    }
+
+    /**
+     * List all resources in given resource.
+     *
+     * @param <T>
+     * @param root Root resource to explore
+     * @param includeRoot include the root in the stream
+     * @param resourceClass class of searched resources
+     * @return Collection of all resources
+     * @throws DataStoreException
+     */
+    public static <T extends Resource> Collection<T> flatten(Resource root, boolean includeRoot, Class<T> resourceClass) throws DataStoreException {
+        if (resourceClass == null) {
+            resourceClass = (Class<T>) Resource.class;
+        }
+
         if (root instanceof Aggregate) {
-            final List<Resource> list = new ArrayList<>();
-            if (includeRoot) list.add(root);
-            list(root,list);
+            final List<T> list = new ArrayList<>();
+            if (includeRoot && resourceClass.isInstance(root)) list.add((T)root);
+            list(root, list, resourceClass);
             return list;
-        } else if (includeRoot) {
-            return Collections.singleton(root);
+        } else if (includeRoot && resourceClass.isInstance(root)) {
+            return Collections.singleton((T)root);
         } else {
             return Collections.EMPTY_LIST;
         }
     }
 
-    private static void list(Resource resource, Collection<Resource> list) throws DataStoreException {
+    private static <T extends Resource> void list(Resource resource, Collection<T> list, Class<T> resourceClass) throws DataStoreException {
         if (resource instanceof Aggregate) {
             final Aggregate ds = (Aggregate) resource;
             for (Resource rs : ds.components()) {
-                list.add(rs);
-                list(rs,list);
+                if (resourceClass.isInstance(rs)) list.add((T)rs);
+                list(rs, list, resourceClass);
             }
         }
     }

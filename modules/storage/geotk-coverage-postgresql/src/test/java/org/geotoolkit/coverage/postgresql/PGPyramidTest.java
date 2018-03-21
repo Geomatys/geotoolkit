@@ -52,6 +52,7 @@ import org.junit.BeforeClass;
 import org.geotoolkit.storage.DataStores;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.measure.Units;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.parameter.Parameters;
 
 /**
@@ -91,9 +92,8 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
             store = factory.open(params);
         }
 
-        for(GenericName n : store.getNames()){
-            VersionControl vc = store.getVersioning(n);
-            store.delete(n);
+        for (CoverageResource r : DataStores.flatten(store, true, CoverageResource.class)) {
+            store.remove(r);
         }
         assertTrue(store.getNames().isEmpty());
     }

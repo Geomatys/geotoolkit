@@ -29,6 +29,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
@@ -70,6 +71,10 @@ public class MapTilingDemo {
         final CoverageStore store = (CoverageStore) DataStores.create(factory,Collections.singletonMap(
                 "path", new URL("file:/media/terra/GIS_DATA/wmts_bluemarble")));
         final GenericName name = NamesExt.create("bluemarble");
+        if (!(store instanceof WritableAggregate)) {
+            throw new IllegalArgumentException("Store is not writable");
+        }
+
         final CoverageResource ref = store.create(name);
 
 

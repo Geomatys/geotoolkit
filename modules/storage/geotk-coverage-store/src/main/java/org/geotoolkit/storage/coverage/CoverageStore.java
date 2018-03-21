@@ -72,16 +72,6 @@ public interface CoverageStore extends AutoCloseable, Resource {
     }
 
     /**
-     * Delete an existing coverage reference.
-     *
-     * @param name
-     * @throws DataStoreException
-     */
-    default void delete(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Deletion of coverage not supported.");
-    }
-
-    /**
      * Add a storage listener which will be notified when structure changes or
      * when coverage data changes.
      *
