@@ -57,4 +57,22 @@ public class ReadGeometry321Test extends ReadGeometryTest {
                 new Envelope(17.529157027777778, 17.58207613888889, -88.31997997222221, -88.14625286111112)
         );
     }
+
+    @Test
+    public void testArcSurface() throws Exception {
+        testCollection(ReadGeometry321Test.class.getResource("surface_arc.gml"),
+                MultiPolygon.class,
+                1,
+                new Envelope(13.72789390919098, 14.172372222222222, -87.03219444444444, -86.82579166666666)
+        );
+    }
+
+    @Test
+    public void testCircleSurface() throws Exception {
+        testCollection(ReadGeometry321Test.class.getResource("surface_circle.gml"),
+                MultiPolygon.class,
+                1,
+                new Envelope(13.949929082626413, 13.95021755003295, -87.13333333333334, -87.12783067203311)
+        );
+    }
 }
