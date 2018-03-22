@@ -72,23 +72,16 @@ public final class QueryFeatureSet implements FeatureSet {
 
     @Override
     public FeatureType getType() throws DataStoreException {
-        final Source source = query.getSource();
-
-        if (Query.GEOTK_QOM.equalsIgnoreCase(query.getLanguage()) && source instanceof Selector) {
-            final Selector selector = (Selector) source;
-            FeatureType ft = selector.getSession().getFeatureStore().getFeatureType(query.getTypeName());
-            final String[] properties = query.getPropertyNames();
-            if (properties!=null && FeatureTypeExt.isAllProperties(ft, properties)) {
-                ft = new ViewMapper(ft, properties).getMappedType();
-            }
-            if (query.getCoordinateSystemReproject() != null) {
-                ft = new ReprojectMapper(ft, query.getCoordinateSystemReproject()).getMappedType();
-            }
-
-            return ft;
+        FeatureType ft = base.getType();
+        final String[] properties = query.getPropertyNames();
+        if (properties!=null && FeatureTypeExt.isAllProperties(ft, properties)) {
+            ft = new ViewMapper(ft, properties).getMappedType();
+        }
+        if (query.getCoordinateSystemReproject() != null) {
+            ft = new ReprojectMapper(ft, query.getCoordinateSystemReproject()).getMappedType();
         }
 
-        throw new DataStoreException("Cannot deduce any feature type from query : " + query);
+        return ft;
     }
 
     @Override

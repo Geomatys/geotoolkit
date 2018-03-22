@@ -40,9 +40,6 @@ import org.apache.sis.storage.IllegalFeatureTypeException;
 import org.apache.sis.storage.ReadOnlyStorageException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryUtilities;
-import org.geotoolkit.data.query.Selector;
-import org.geotoolkit.data.query.Source;
-import org.geotoolkit.data.query.TextStatement;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -73,26 +70,24 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public abstract class AbstractFeatureCollection extends AbstractCollection<Feature>
         implements FeatureCollection, FeatureStoreListener{
 
-    private final Set<StorageListener> listeners = new HashSet<StorageListener>();
+    private final Set<StorageListener> listeners = new HashSet<>();
     private final FeatureStoreListener.Weak weakListener = new Weak(this);
 
     protected NamedIdentifier identifier;
-    protected final Source source;
+    protected Session session;
 
-    public AbstractFeatureCollection(final String id, final Source source){
-        this(new NamedIdentifier(NamesExt.create(id)),source);
+    public AbstractFeatureCollection(final String id, Session session){
+        this(new NamedIdentifier(NamesExt.create(id)),session);
     }
 
-    public AbstractFeatureCollection(final NamedIdentifier id, final Source source){
+    public AbstractFeatureCollection(final NamedIdentifier id, Session session){
         ensureNonNull("feature collection id", id);
-        ensureNonNull("feature collection source", source);
 
         this.identifier = id;
-        this.source = source;
+        this.session = session;
 
-        final Collection<Session> sessions = QueryUtilities.getSessions(source, null);
-        for (Session s : sessions) {
-            weakListener.registerSource(s);
+        if (session != null) {
+            weakListener.registerSource(session);
         }
 
     }
@@ -106,38 +101,9 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         return identifier;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public Session getSession() {
-        if(source instanceof Selector){
-            return ((Selector)source).getSession();
-        }else if(source instanceof TextStatement){
-            return ((TextStatement)source).getSession();
-        }else{
-            return null;
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Source getSource() {
-        return source;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean isWritable() throws FeatureStoreRuntimeException {
-        try {
-            return QueryUtilities.isWritable(source);
-        } catch (DataStoreException ex) {
-            throw new FeatureStoreRuntimeException(ex);
-        }
+        return session;
     }
 
     /**

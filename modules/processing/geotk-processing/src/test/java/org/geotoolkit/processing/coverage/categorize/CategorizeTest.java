@@ -17,6 +17,7 @@ import org.geotoolkit.coverage.memory.MemoryCoverageStore;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifierTest;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.test.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -43,7 +44,7 @@ public class CategorizeTest {
 
     private void test2D(final boolean subset) throws DataStoreException, ProcessException {
         final MemoryCoverageStore store = new MemoryCoverageStore();
-        final CoverageResource input = store.create(Names.createLocalName("", ":", "input"));
+        final CoverageResource input = store.add(new DefiningCoverageResource("input"));
 
         final BufferedImage inputImage = SampleClassifierTest.createGrayScale(3, 3, new double[]{
             0, 1, 2,
@@ -78,7 +79,7 @@ public class CategorizeTest {
             input.recycle(writer);
         }
 
-        final CoverageResource output = store.create(Names.createLocalName("", ":", "output"));
+        final CoverageResource output = store.add(new DefiningCoverageResource("output"));
         final Envelope roi;
         final Categorize process;
         if (subset) {
@@ -122,7 +123,7 @@ public class CategorizeTest {
                 CommonCRS.Vertical.MEAN_SEA_LEVEL.crs()
         );
         final MemoryCoverageStore store = new MemoryCoverageStore();
-        final CoverageResource input = store.create(Names.createLocalName("", ":", "input"));
+        final CoverageResource input = store.add(new DefiningCoverageResource("input"));
 
         final double[][] inputs = {
             {
@@ -173,7 +174,7 @@ public class CategorizeTest {
             input.recycle(writer);
         }
 
-        final CoverageResource output = store.create(Names.createLocalName("", ":", "output"));
+        final CoverageResource output = store.add(new DefiningCoverageResource("output"));
         final Categorize process = create(input, output, null);
         process.call();
 

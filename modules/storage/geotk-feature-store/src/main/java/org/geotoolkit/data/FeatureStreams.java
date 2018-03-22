@@ -556,7 +556,7 @@ public final class FeatureStreams {
         }
 
         private FeatureCollectionSequence(final NamedIdentifier id, final FeatureCollection[] wrapped) {
-            super(id, wrapped[0].getSource());
+            super(id, null);
 
             if(wrapped.length == 1){
                 throw new IllegalArgumentException("Sequence of featureCollection must have at least 2 collections.");

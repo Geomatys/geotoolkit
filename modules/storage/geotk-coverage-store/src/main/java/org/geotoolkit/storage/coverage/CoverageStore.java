@@ -21,8 +21,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.StorageListener;
-import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -54,32 +54,6 @@ public interface CoverageStore extends AutoCloseable, Resource {
     Set<GenericName> getNames() throws DataStoreException;
 
     Resource findResource(final String name) throws DataStoreException;
-
-    ////////////////////////////////////////////////////////////////////////////
-    // OLD API /////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Create a new coverage reference.
-     * The returned coverage reference might have a different namespace.
-     *
-     * @param name
-     * @return CoverageResource
-     * @throws DataStoreException
-     */
-    default CoverageResource create(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Creation of coverages not supported.");
-    }
-
-    /**
-     * Delete an existing coverage reference.
-     *
-     * @param name
-     * @throws DataStoreException
-     */
-    default void delete(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Deletion of coverage not supported.");
-    }
 
     /**
      * Add a storage listener which will be notified when structure changes or

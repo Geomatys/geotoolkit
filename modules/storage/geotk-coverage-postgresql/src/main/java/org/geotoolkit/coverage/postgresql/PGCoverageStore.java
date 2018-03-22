@@ -27,33 +27,33 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.sql.DataSource;
-
+import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.referencing.factory.sql.EPSGFactory;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.jdbc.ManageableDataSource;
+import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.jdbc.ManageableDataSource;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.Resource;
+import org.geotoolkit.storage.coverage.AbstractCoverageStore;
+import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
-import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
-import org.apache.sis.referencing.factory.sql.EPSGFactory;
-import org.apache.sis.storage.Aggregate;
-import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.Resource;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.opengis.util.GenericName;
 
 /**
  * GeotoolKit Coverage Store using PostgreSQL Raster model.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PGCoverageStore extends AbstractCoverageStore implements Aggregate {
+public class PGCoverageStore extends AbstractCoverageStore implements WritableAggregate {
 
     private EPSGFactory epsgfactory;
     private DataSource source;
@@ -132,7 +132,12 @@ public class PGCoverageStore extends AbstractCoverageStore implements Aggregate 
     }
 
     @Override
-    public CoverageResource create(GenericName name) throws DataStoreException {
+    public org.apache.sis.storage.Resource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
+        if (!(resource instanceof DefiningCoverageResource)) {
+            throw new DataStoreException("Unsupported resource "+resource);
+        }
+        final DefiningCoverageResource cr = (DefiningCoverageResource) resource;
+        final GenericName name = cr.getName();
 
         final StringBuilder query = new StringBuilder();
         query.append("INSERT INTO ");
@@ -160,7 +165,13 @@ public class PGCoverageStore extends AbstractCoverageStore implements Aggregate 
     }
 
     @Override
-    public void delete(GenericName name) throws DataStoreException {
+    public void remove(org.apache.sis.storage.Resource resource) throws DataStoreException {
+        if (!(resource instanceof CoverageResource)) {
+            throw new DataStoreException("Unknown resource "+resource);
+        }
+        final CoverageResource cr = (CoverageResource) resource;
+        final NamedIdentifier name = cr.getIdentifier();
+
         final StringBuilder query = new StringBuilder();
         query.append("DELETE FROM ");
         query.append(encodeTableName("Layer"));

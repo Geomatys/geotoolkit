@@ -47,6 +47,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.coverage.pyramid.PyramidDescriptor;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.junit.Test;
 import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
@@ -74,7 +75,7 @@ public class PyramidTest extends org.geotoolkit.test.TestBase {
 
         final MPCoverageStore store = new MPCoverageStore();
         final GenericName name = NamesExt.create(null, "test");
-        final PyramidalCoverageResource pcr = (PyramidalCoverageResource) store.create(name);
+        final PyramidalCoverageResource pcr = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(name));
         final List<GridSampleDimension> dims = new ArrayList<GridSampleDimension>();
         final GridSampleDimension dim1 = new GridSampleDimension("sampleDesc1");
         final GridSampleDimension dim2 = new GridSampleDimension("sampleDesc2");

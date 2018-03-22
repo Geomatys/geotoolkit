@@ -23,13 +23,18 @@ package org.geotoolkit.data.query;
 public class SQLQuery implements org.apache.sis.storage.Query {
 
     private final String statement;
+    private final String name;
 
-    public SQLQuery(String statement) {
+    public SQLQuery(String statement, String name) {
         this.statement = statement;
+        this.name = name;
     }
 
     public String getStatement() {
         return statement;
     }
 
+    public String getName() {
+        return name;
+    }
 }

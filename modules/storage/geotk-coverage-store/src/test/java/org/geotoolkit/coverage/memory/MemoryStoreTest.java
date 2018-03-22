@@ -23,6 +23,7 @@ import org.opengis.metadata.extent.VerticalExtent;
 import org.opengis.metadata.identification.DataIdentification;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 
 /**
  *
@@ -32,7 +33,7 @@ public class MemoryStoreTest {
 
     private static MemoryCoverageStore create() throws DataStoreException {
         final MemoryCoverageStore mcs = new MemoryCoverageStore();
-        final CoverageResource ref = mcs.create(Names.createLocalName("test", ":", "mock"));
+        final CoverageResource ref = mcs.add(new DefiningCoverageResource(Names.createLocalName("test", ":", "mock")));
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(new BufferedImage(13, 13, BufferedImage.TYPE_BYTE_GRAY));

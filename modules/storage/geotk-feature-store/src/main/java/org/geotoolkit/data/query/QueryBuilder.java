@@ -40,7 +40,6 @@ public final class QueryBuilder {
         AttributeConvention.IDENTIFIER_PROPERTY.toString()
     };
 
-    private Source source = null;
     private String typeName = null;
 
     private Filter filter = Filter.INCLUDE;
@@ -88,10 +87,8 @@ public final class QueryBuilder {
         this.sortBy = query.getSortBy();
         this.startIndex = query.getStartIndex();
         this.typeName = query.getTypeName();
-        this.source = query.getSource();
         this.version = query.getVersionDate();
         if(this.version==null) this.version = query.getVersionLabel();
-        this.language = query.getLanguage();
     }
 
     public String getTypeName() {
@@ -100,25 +97,10 @@ public final class QueryBuilder {
 
     public void setTypeName(final GenericName typeName) {
         this.typeName = typeName.toString();
-        this.source = null;
     }
 
     public void setTypeName(final String typeName) {
         this.typeName = typeName;
-        this.source = null;
-    }
-
-    public void setSource(final Source source){
-        this.source = source;
-        this.typeName = null;
-    }
-
-    public Source getSource(){
-        if(source == null){
-            return new DefaultSelector(null, typeName, "s1");
-        }else{
-            return source;
-        }
     }
 
     public Filter getFilter() {
@@ -208,37 +190,7 @@ public final class QueryBuilder {
     }
 
     public Query buildQuery(){
-        final Source cs = (source == null) ? new DefaultSelector(null, typeName, "s1") : source;
-        checkSource(cs,null);
-        if(cs instanceof TextStatement){
-            return new DefaultQuery(language, (TextStatement)cs);
-        }else{
-            return new DefaultQuery(cs, filter, properties, sortBy, crs, startIndex, maxFeatures, resolution, version, hints);
-        }
-    }
-
-    /**
-     * Verify that we don't have several selectors with the same name.
-     */
-    private static void checkSource(final Source s, Set<String> selectors){
-        if(selectors == null){
-            selectors = new HashSet<>();
-        }
-
-        if(s instanceof Selector){
-            final String selectName = ((Selector) s).getSelectorName();
-            if(selectors.contains(selectName)){
-                throw new IllegalStateException("Source has several selector with the same name = " + selectName);
-            }else{
-                selectors.add(selectName);
-            }
-        }else if(s instanceof TextStatement){
-            //can't check this
-        }else{
-            throw new IllegalStateException("Unknown source type : " + s +
-                    "\n valid types ares Join and Selector");
-        }
-
+        return new Query(typeName, filter, properties, sortBy, crs, startIndex, maxFeatures, resolution, version, hints);
     }
 
     /**
@@ -275,7 +227,7 @@ public final class QueryBuilder {
      * filtering, and the default featureType.
      */
     public static Query all(final GenericName name){
-        return new DefaultQuery(new DefaultSelector(null, name.toString(), "s1"));
+        return new Query(name.toString());
     }
 
     /**
@@ -284,28 +236,7 @@ public final class QueryBuilder {
      * filtering, and the default featureType.
      */
     public static Query all(final String name){
-        return new DefaultQuery(new DefaultSelector(null, name, "s1"));
-    }
-
-    /**
-     * Implements a query that will fetch all features from a source. This
-     * query should retrieve all properties, with no maxFeatures, no
-     * filtering, and the default featureType.
-     */
-    public static Query all(final Source source){
-        return new DefaultQuery(source);
-    }
-
-    /**
-     * Create a query in the defined language.
-     *
-     * @param language
-     * @param statement
-     * @param name
-     * @return Query
-     */
-    public static Query language(final String language, final String statement, final String name){
-        return new DefaultQuery(language, statement,name);
+        return new Query(name);
     }
 
     /**
@@ -314,7 +245,7 @@ public final class QueryBuilder {
      * filtering, and the a featureType with no attributes.
      */
     public static Query fids(final String name){
-        return new DefaultQuery(new DefaultSelector(null, name, "s1"), ONLY_ID_PROPERTIES);
+        return new Query(name, ONLY_ID_PROPERTIES);
     }
 
     /**

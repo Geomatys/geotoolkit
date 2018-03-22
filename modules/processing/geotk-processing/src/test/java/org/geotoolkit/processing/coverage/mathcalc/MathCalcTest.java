@@ -43,6 +43,7 @@ import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.coverage.Coverage;
@@ -79,7 +80,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         //create output coverage ref
         final GenericName n = NamesExt.create("test");
         final MPCoverageStore store = new MPCoverageStore();
-        final PyramidalCoverageResource outRef = (PyramidalCoverageResource) store.create(n);
+        final PyramidalCoverageResource outRef = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(n));
         outRef.setPackMode(ViewType.GEOPHYSICS);
         outRef.setSampleDimensions(Collections.singletonList(new GridSampleDimension("data")));
         outRef.setSampleModel(baseCoverage.getRenderedImage().getSampleModel());
@@ -131,7 +132,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         //create output coverage ref
         final GenericName n = NamesExt.create("test");
         final MPCoverageStore store = new MPCoverageStore();
-        final PyramidalCoverageResource outRef = (PyramidalCoverageResource) store.create(n);
+        final PyramidalCoverageResource outRef = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(n));
         outRef.setPackMode(ViewType.GEOPHYSICS);
         outRef.setSampleDimensions(Collections.singletonList(new GridSampleDimension("data")));
         outRef.setSampleModel(baseCoverage.getRenderedImage().getSampleModel());
@@ -184,7 +185,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         //create output coverage ref
         final GenericName n = NamesExt.create("test");
         final MPCoverageStore store = new MPCoverageStore();
-        final PyramidalCoverageResource outRef = (PyramidalCoverageResource) store.create(n);
+        final PyramidalCoverageResource outRef = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(n));
         outRef.setPackMode(ViewType.GEOPHYSICS);
         outRef.setSampleDimensions(Collections.singletonList(new GridSampleDimension("data")));
         outRef.setSampleModel(baseCoverage1.getRenderedImage().getSampleModel());
@@ -224,7 +225,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
     public void coverage4DTest() throws Exception{
 
         //create a small pyramid
-        final CoverageStore store = new MPCoverageStore();
+        final MPCoverageStore store = new MPCoverageStore();
         final CoordinateReferenceSystem horizontal = CommonCRS.defaultGeographic();
         final CoordinateReferenceSystem vertical = CommonCRS.Vertical.ELLIPSOIDAL.crs();
         final CoordinateReferenceSystem temporal = CommonCRS.Temporal.JAVA.crs();
@@ -235,7 +236,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         final int width = 28;
         final int height = 13;
 
-        final PyramidalCoverageResource ref1 = (PyramidalCoverageResource) store.create(NamesExt.create("test1"));
+        final PyramidalCoverageResource ref1 = (PyramidalCoverageResource) store.add(new DefiningCoverageResource("test1"));
         create4DPyramid(ref1, crs, width, height, new double[][]{
                 {-5,-9,  12},
                 {-5, 0,  -7},
@@ -245,7 +246,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
                 {62,21,  17},
         });
 
-        final PyramidalCoverageResource ref2 = (PyramidalCoverageResource) store.create(NamesExt.create("test2"));
+        final PyramidalCoverageResource ref2 = (PyramidalCoverageResource) store.add(new DefiningCoverageResource("test2"));
         create4DPyramid(ref2, crs, width, height, new double[][]{
                 {-5,-9,  -4},
                 {-5, 0,  32},
@@ -255,7 +256,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
                 {62,21,  41},
         });
 
-        final PyramidalCoverageResource outRef = (PyramidalCoverageResource) store.create(NamesExt.create("result"));
+        final PyramidalCoverageResource outRef = (PyramidalCoverageResource) store.add(new DefiningCoverageResource("result"));
         create4DPyramid(outRef, crs, width, height, new double[][]{
                 {-5,-9,   0},
                 {-5, 0,   0},

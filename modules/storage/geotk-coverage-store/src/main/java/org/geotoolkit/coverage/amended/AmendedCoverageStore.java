@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
-import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStoreFactory;
@@ -34,9 +33,7 @@ import org.geotoolkit.storage.coverage.CoverageStoreListener;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.util.GenericName;
 import org.geotoolkit.storage.coverage.CoverageResource;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  * Decorates a coverage store adding possibility to override properties of each coverage reference.
@@ -115,27 +112,6 @@ public class AmendedCoverageStore extends AbstractCoverageStore implements Aggre
             }
         }
         return Collections.unmodifiableList(resources);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public CoverageResource create(GenericName name) throws DataStoreException {
-        final CoverageResource cr = store.create(name);
-        if(cr instanceof PyramidalCoverageResource){
-            return new AmendedCoverageResource(cr, (DataStore)store);
-        }else{
-            return new AmendedCoverageResource(cr, (DataStore)store);
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void delete(GenericName name) throws DataStoreException {
-        store.delete(name);
     }
 
     /**
