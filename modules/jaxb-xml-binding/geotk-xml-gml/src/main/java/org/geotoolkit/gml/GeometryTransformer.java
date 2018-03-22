@@ -965,6 +965,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
 
         final Coordinate[] arcPerimeter = new Coordinate[(int)Math.ceil(phi/step) + 1];
         final DoubleFunction<Coordinate> pointOnCircle = azimuth -> {
+            azimuth = ((azimuth + 180) % 360) - 180;
             gc.setDirection(azimuth, r);
             final DirectPosition pt;
             try {
