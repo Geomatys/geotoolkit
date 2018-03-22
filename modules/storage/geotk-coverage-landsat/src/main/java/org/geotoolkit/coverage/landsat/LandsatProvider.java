@@ -57,7 +57,7 @@ public class LandsatProvider extends DataStoreProvider implements ProviderOnFile
 
     static {
         final ParameterBuilder builder = new ParameterBuilder();
-        PATH = builder.setRequired(false).addName(DataStoreProvider.LOCATION).addName("path")
+        PATH = builder.setRequired(true).addName(DataStoreProvider.LOCATION).addName("path")
                       .setDescription("Landsat product file : Landsat8, MTL.txt (*.txt)")
                       .create(URI.class, null);
 
