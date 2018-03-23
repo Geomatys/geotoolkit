@@ -956,12 +956,15 @@ public class GeometryTransformer implements Supplier<Geometry> {
         double phi = end - theta;
         // Draw a circle. We don"t bother preserving iteration order
         double positivePhi = Math.abs(phi);
-        final boolean isCircle = positivePhi - 1e-8 <= 0 || Math.abs(phi) >= 2*Math.PI;
+        final boolean isCircle = positivePhi - 1e-8 <= 0 || positivePhi >= 360.0;
         if (isCircle) {
-            phi = 2*Math.PI;
+            phi = 360.0;
         }
 
-        final double step = (phi < 0? -1 : 1) * angularStep.getUnit(Angle.class).getConverterTo(Units.RADIAN).convert(angularStep.value);
+        double step = (phi < 0? -1 : 1) * angularStep.getUnit(Angle.class).getConverterTo(Units.DEGREE).convert(angularStep.value);
+        if ((phi / step) < 3) {
+            step = phi / 3;
+        }
 
         final Coordinate[] arcPerimeter = new Coordinate[(int)Math.ceil(phi/step) + 1];
         final DoubleFunction<Coordinate> pointOnCircle = azimuth -> {

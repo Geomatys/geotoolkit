@@ -42,6 +42,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.dbf.DbaseFileReader.Row;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.nio.IOUtilities;
@@ -192,7 +193,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements Resou
      */
     @Override
     public QueryCapabilities getQueryCapabilities() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultQueryCapabilities(false, false);
     }
 
     /**
