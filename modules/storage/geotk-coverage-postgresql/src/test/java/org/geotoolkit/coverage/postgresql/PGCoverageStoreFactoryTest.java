@@ -17,8 +17,8 @@
 package org.geotoolkit.coverage.postgresql;
 
 import java.util.Iterator;
+import org.apache.sis.storage.DataStoreProvider;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 
@@ -36,7 +36,7 @@ public class PGCoverageStoreFactoryTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testFactory() {
 
-        final Iterator<CoverageStoreFactory> ite = DataStores.getAllFactories(CoverageStoreFactory.class).iterator();
+        final Iterator<DataStoreProvider> ite = DataStores.getProviders(DataStoreProvider.class).iterator();
         boolean found = false;
         while (ite.hasNext()){
             if(ite.next() instanceof PGCoverageStoreFactory){

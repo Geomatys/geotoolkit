@@ -29,6 +29,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.opengis.feature.Feature;
@@ -130,7 +131,7 @@ public class GenericQueryFeatureIterator {
     }
 
     public static FeatureCollection wrap(final FeatureCollection col, final Query query){
-        return new AbstractFeatureCollection("wrap", col.getSource()) {
+        return new AbstractFeatureCollection("wrap", col.getSession()) {
 
             private FeatureType type = null;
 
@@ -142,6 +143,11 @@ public class GenericQueryFeatureIterator {
                     }
                 }
                 return type;
+            }
+
+            @Override
+            public boolean isWritable() {
+                return false;
             }
 
             @Override

@@ -32,6 +32,7 @@ import org.apache.sis.metadata.iso.content.DefaultAttributeGroup;
 import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -44,12 +45,9 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.storage.AbstractFeatureSet;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -62,7 +60,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
 
     private static final int DEFAULT_SUBSET_SIZE = 256;
 
-    protected final CoverageStore store;
+    protected final DataStore store;
 
     private DefaultCoverageDescription desc = null;
 
@@ -71,28 +69,22 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
      * @param store can be null
      * @param name never null
      */
-    public AbstractCoverageResource(CoverageStore store, GenericName name) {
+    public AbstractCoverageResource(DataStore store, GenericName name) {
         super(name);
         this.store = store;
     }
 
     @Override
-    public GenericName getName() {
-        Identifier identifier = getIdentifier();
-        if (identifier instanceof GenericName) {
-            return (GenericName) identifier;
-        } else {
-           return NamesExt.create(identifier.getCode());
-        }
-    }
-
-    @Override
-    public CoverageStore getStore() {
+    public DataStore getStore() {
         return store;
     }
 
     @Override
-    public Metadata getMetadata() throws DataStoreException {
+    protected DefaultMetadata createMetadata() throws DataStoreException {
+        final DefaultDataIdentification idf = new DefaultDataIdentification();
+        final DefaultCitation citation = new DefaultCitation();
+        citation.getIdentifiers().add(getIdentifier());
+        idf.setCitation(citation);
 
         GridCoverageReader reader = null;
         DefaultMetadata metadata = null;
@@ -105,9 +97,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
             if (reader != null) recycle(reader);
         }
 
-        final Identification id = new DefaultDataIdentification(
-                new DefaultCitation(getName().toString()), null, null, null);
-        metadata.getIdentificationInfo().add(id);
+        metadata.setIdentificationInfo(Arrays.asList(idf));
         return metadata;
     }
 
@@ -214,61 +204,61 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
     }
 
     protected CoverageStoreManagementEvent firePyramidAdded(final String pyramidId){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidAddEvent(this, getName(), pyramidId);
+        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidAddEvent(this, getIdentifier(), pyramidId);
         sendStructureEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent firePyramidUpdated(final String pyramidId){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidUpdateEvent(this, getName(), pyramidId);
+        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidUpdateEvent(this, getIdentifier(), pyramidId);
         sendStructureEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent firePyramidDeleted(final String pyramidId){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidDeleteEvent(this, getName(), pyramidId);
+        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidDeleteEvent(this, getIdentifier(), pyramidId);
         sendStructureEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent fireMosaicAdded(final String pyramidId, final String mosaicId){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicAddEvent(this, getName(), pyramidId, mosaicId);
+        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicAddEvent(this, getIdentifier(), pyramidId, mosaicId);
         sendStructureEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent fireMosaicUpdated(final String pyramidId, final String mosaicId){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicUpdateEvent(this, getName(), pyramidId, mosaicId);
+        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicUpdateEvent(this, getIdentifier(), pyramidId, mosaicId);
         sendStructureEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent fireMosaicDeleted(final String pyramidId, final String mosaicId){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicDeleteEvent(this, getName(), pyramidId, mosaicId);
+        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicDeleteEvent(this, getIdentifier(), pyramidId, mosaicId);
         sendStructureEvent(event);
         return event;
     }
 
     protected CoverageStoreContentEvent fireDataUpdated(){
-        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createDataUpdateEvent(this, getName());
+        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createDataUpdateEvent(this, getIdentifier());
         sendContentEvent(event);
         return event;
     }
 
     protected CoverageStoreContentEvent fireTileAdded(final String pyramidId, final String mosaicId, final List<Point> tiles){
-        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileAddEvent(this, getName(), pyramidId, mosaicId, tiles);
+        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileAddEvent(this, getIdentifier(), pyramidId, mosaicId, tiles);
         sendContentEvent(event);
         return event;
     }
 
     protected CoverageStoreContentEvent fireTileUpdated(final String pyramidId, final String mosaicId, final List<Point> tiles){
-        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileUpdateEvent(this, getName(), pyramidId, mosaicId, tiles);
+        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileUpdateEvent(this, getIdentifier(), pyramidId, mosaicId, tiles);
         sendContentEvent(event);
         return event;
     }
 
     protected CoverageStoreContentEvent fireTileDeleted(final String pyramidId, final String mosaicId, final List<Point> tiles){
-        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileDeleteEvent(this, getName(), pyramidId, mosaicId, tiles);
+        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileDeleteEvent(this, getIdentifier(), pyramidId, mosaicId, tiles);
         sendContentEvent(event);
         return event;
     }

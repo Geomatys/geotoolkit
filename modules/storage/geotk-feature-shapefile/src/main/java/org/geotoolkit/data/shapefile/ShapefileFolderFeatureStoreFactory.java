@@ -34,9 +34,8 @@ import java.nio.file.*;
 import java.util.EnumSet;
 import java.util.logging.Level;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 
 /**
  * FeatureStore for a folder of Shapefiles.
@@ -44,6 +43,14 @@ import org.geotoolkit.storage.FactoryMetadata;
  * @author Johann Sorel (Geomatys)
  * @module
  */
+@StoreMetadataExt(
+        resourceTypes = ResourceType.VECTOR,
+        canCreate = true,
+        canWrite = true,
+        geometryTypes ={Point.class,
+                        MultiPoint.class,
+                        MultiLineString.class,
+                        MultiPolygon.class})
 public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFactory{
 
     /** factory identification **/
@@ -116,13 +123,6 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
         Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), depth, visitor);
 
         return !(visitor.getMatchedPaths().isEmpty());
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, new Class[]{
-            Point.class, MultiPoint.class, MultiLineString.class, MultiPolygon.class
-        });
     }
 
 }

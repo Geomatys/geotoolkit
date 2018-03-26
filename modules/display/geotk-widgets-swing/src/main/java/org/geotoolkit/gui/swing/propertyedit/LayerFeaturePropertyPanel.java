@@ -49,8 +49,6 @@ import org.geotoolkit.cql.JCQLTextPane;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.query.Selector;
-import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
@@ -574,19 +572,16 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
             weakListener.registerSource(layer);
 
             //list versions
-            final Source src = source.getSource();
+            final Session session = source.getSession();
             final List lst = new ArrayList();
             lst.add("-");
-            if(src instanceof Selector){
-                final Selector s = (Selector) src;
-                final FeatureStore store = s.getSession().getFeatureStore();
-                if(store.getQueryCapabilities().handleVersioning()){
-                    try {
-                        final VersionHistory history = store.getVersioning(source.getType().getName().toString());
-                        lst.addAll(history.list());
-                    } catch (VersioningException ex) {
-                        Exceptions.printStackTrace(ex);
-                    }
+            final FeatureStore store = session.getFeatureStore();
+            if(store.getQueryCapabilities().handleVersioning()){
+                try {
+                    final VersionHistory history = store.getVersioning(source.getType().getName().toString());
+                    lst.addAll(history.list());
+                } catch (VersioningException ex) {
+                    Exceptions.printStackTrace(ex);
                 }
             }
             guiVersions.setModel(new ListComboBoxModel(lst));

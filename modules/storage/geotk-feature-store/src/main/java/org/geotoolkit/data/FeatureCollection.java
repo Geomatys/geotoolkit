@@ -25,14 +25,11 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
-import org.opengis.metadata.Identifier;
 
 /**
  * A java collection that may hold only features.
@@ -49,18 +46,8 @@ import org.opengis.metadata.Identifier;
  */
 public interface FeatureCollection extends Collection<Feature>, FeatureSet, WritableFeatureSet {
 
-    /**
-     * A feature collection is created with an id.
-     * This can be used for different purposes.
-     *
-     * @return String, never null
-     */
-    String getID();
-
     @Override
-    default Identifier getIdentifier() {
-        return new NamedIdentifier(NamesExt.create(getID()));
-    }
+    NamedIdentifier getIdentifier();
 
     /**
      * A collection may be linked to a session, this implies that changes maid
@@ -70,15 +57,6 @@ public interface FeatureCollection extends Collection<Feature>, FeatureSet, Writ
      * @return Session or null if not related to a session.
      */
     Session getSession();
-
-    /**
-     * A collection always takes it's data from somewhere, it can be any kind
-     * of FeatureStore.
-     *
-     * @return feature source of this collection.
-     */
-    Source getSource();
-
 
     /**
      * If all features in this collection are of the same type then

@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Consumer;
+import java.util.function.DoubleFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
@@ -28,11 +29,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import javax.measure.Unit;
+import javax.measure.quantity.Angle;
+import javax.measure.quantity.Length;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.internal.jaxb.gml.Measure;
+import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.geometry.jts.JTS;
@@ -45,7 +54,6 @@ import org.geotoolkit.gml.xml.Coordinates;
 import org.geotoolkit.gml.xml.Curve;
 import org.geotoolkit.gml.xml.CurveProperty;
 import org.geotoolkit.gml.xml.CurveSegmentArrayProperty;
-import org.geotoolkit.gml.xml.DirectPosition;
 import org.geotoolkit.gml.xml.DirectPositionList;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.GeometryProperty;
@@ -59,8 +67,17 @@ import org.geotoolkit.gml.xml.PolygonProperty;
 import org.geotoolkit.gml.xml.Ring;
 import org.geotoolkit.gml.xml.SurfaceProperty;
 import org.geotoolkit.gml.xml.WithCoordinates;
+import org.geotoolkit.gml.xml.v321.ArcByCenterPointType;
+import org.geotoolkit.gml.xml.v321.MeasureType;
+import org.geotoolkit.gml.xml.v321.PointPropertyType;
+import org.geotoolkit.gml.xml.v321.PolygonPatchType;
+import org.geotoolkit.gml.xml.v321.SurfaceType;
+import org.geotoolkit.referencing.GeodeticCalculator;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
@@ -109,6 +126,15 @@ public class GeometryTransformer implements Supplier<Geometry> {
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gml");
 
     private static final GeometryFactory GF = new GeometryFactory();
+
+    /**
+     * When generating a sequence of points on a circle/arc, it's the angle
+     * between the line formed by previously generated point and the center of
+     * the arc, and the line formed by the center and the new point. The default
+     * step is 9 degrees, which corresponds to 40 points (+1 because of line
+     * closing) on a full circle.
+     */
+    private static final Measure ARC_PRECISION = new Measure(8.0, Units.DEGREE);
 
     /**
      * Keep previously decoded CRS in memory. We do so because it's a heavy
@@ -189,6 +215,11 @@ public class GeometryTransformer implements Supplier<Geometry> {
         } else if (source instanceof org.geotoolkit.gml.xml.Polygon) {
             return convertPolygon((org.geotoolkit.gml.xml.Polygon) source);
         } else if (source instanceof AbstractSurface) {
+            if (source instanceof SurfaceType) {
+                return convertSurface((SurfaceType)source);
+            } else if (source instanceof org.geotoolkit.gml.xml.v311.SurfaceType) {
+                return convertSurface((org.geotoolkit.gml.xml.v311.SurfaceType)source);
+            }
             // TODO : complex case
 
             /*
@@ -208,7 +239,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
             return convertMultiGeometry((MultiGeometry) source);
         }
 
-        throw new IllegalArgumentException("Unssupported geometry type : " + source.getClass());
+        throw new IllegalArgumentException("Unsupported geometry type : " + source.getClass());
     }
 
     /**
@@ -275,18 +306,33 @@ public class GeometryTransformer implements Supplier<Geometry> {
 
         // TODO : below conditions should be removed when proper abstraction is setup on GML geometry definition.
         if (values == null) {
-            if (source instanceof org.geotoolkit.gml.xml.LineString) {
-                final org.geotoolkit.gml.xml.LineString ls = (org.geotoolkit.gml.xml.LineString) (source);
-                final DirectPositionList posList = ls.getPosList();
+            final boolean isLineString = source instanceof org.geotoolkit.gml.xml.LineString;
+            final boolean isLineStringSegment = source instanceof org.geotoolkit.gml.xml.LineStringSegment;
+            if (isLineString || isLineStringSegment) {
+                final DirectPositionList posList;
+                if (isLineString) {
+                    posList = ((org.geotoolkit.gml.xml.LineString) source).getPosList();
+                } else {
+                    posList = ((org.geotoolkit.gml.xml.LineStringSegment) source).getPosList();
+                }
                 if (posList != null) {
                     values = posList.getValue();
-                } else if (ls.getPos() != null) {
-                    return ls.getPos().stream()
+                } else {
+                    final List<? extends DirectPosition> pList;
+                    if (isLineString) {
+                        pList = ((org.geotoolkit.gml.xml.LineString) source).getPos();
+                    } else {
+                        pList = ((org.geotoolkit.gml.xml.LineStringSegment) source).getPos();
+                    }
+
+                    if (pList != null) {
+                    return pList.stream()
                             .map(GeometryTransformer::convertDirectPosition)
                             .filter(Objects::nonNull)
                             .spliterator();
-                } else {
-                    values = Collections.EMPTY_LIST;// We've identified a line, but there's no data in it
+                    } else {
+                        values = Collections.EMPTY_LIST;// We've identified a line, but there's no data in it
+                    }
                 }
             } else if (source instanceof org.geotoolkit.gml.xml.LinearRing) {
                 // Note : do not check "getCoordinates", because it should have been done above.
@@ -295,6 +341,118 @@ public class GeometryTransformer implements Supplier<Geometry> {
                 values = asDoubles(() -> ((org.geotoolkit.gml.xml.v311.GeodesicStringType) source).getPosList());
             } else if (source instanceof org.geotoolkit.gml.xml.v321.GeodesicStringType) {
                 values = asDoubles(() -> ((org.geotoolkit.gml.xml.v321.GeodesicStringType) source).getPosList());
+            } else if (source instanceof Curve) {
+                CurveSegmentArrayProperty segments = ((Curve)source).getSegments();
+                if (segments != null) {
+                    final List<? extends AbstractCurveSegment> curveSegments = segments.getAbstractCurveSegment();
+                    if (curveSegments != null) {
+                        return curveSegments.stream()
+                                .flatMap(seg
+                                        -> StreamSupport.stream(getCoordinates(seg), false))
+                                .spliterator();
+                    }
+                }
+                // If we arrive here, we've got an empty curve.
+                values = Collections.EMPTY_LIST;
+            } else if (source instanceof ArcByCenterPointType) {
+                final ArcByCenterPointType arc = (ArcByCenterPointType) source;
+                org.opengis.geometry.DirectPosition dp = arc.getPos();
+                if (dp == null) {
+                    PointPropertyType pp = arc.getPointProperty();
+                    if (pp == null) {
+                        pp = arc.getPointRep();
+                    }
+
+                    if (pp == null) {
+                        throw new UnconvertibleObjectException("Not enough information to build an arc.");
+                    }
+
+                    final Geometry point = new GeometryTransformer(pp.getPoint(), this).get();
+                    dp = JTS.toEnvelope(point).getLowerCorner();
+                }
+
+                CoordinateReferenceSystem crs = dp.getCoordinateReferenceSystem();
+                if (crs == null) {
+                    crs = getSrsName()
+                            .map(this::findCRS)
+                            .orElseThrow(() -> new UnconvertibleObjectException("Cannot create an arc without its coordinate reference system"));
+                    final GeneralDirectPosition gdp = new GeneralDirectPosition(dp);
+                    gdp.setCoordinateReferenceSystem(crs);
+                    dp = gdp;
+                }
+
+                try {
+                    final Measure startAngle, endAngle;
+                    // If we miss a start or end angle, it means we're in presence of a circle.
+                    if (arc.getStartAngle() == null || arc.getEndAngle() == null) {
+                        startAngle = new Measure(0, Units.DEGREE);
+                        endAngle = new Measure(360, Units.DEGREE);
+                    } else {
+                        startAngle = asMeasure(arc.getStartAngle());
+                        endAngle = asMeasure(arc.getEndAngle());
+                    }
+
+                    final Coordinate[] coordinates = drawArc(
+                            dp,
+                            asMeasure(arc.getRadius()),
+                            startAngle,
+                            endAngle,
+                            ARC_PRECISION
+                    );
+                    return Spliterators.spliterator(coordinates, Spliterator.ORDERED);
+                } catch (TransformException ex) {
+                    throw new UnconvertibleObjectException("Cannot draw an arc.", ex);
+                }
+            } else if (source instanceof org.geotoolkit.gml.xml.v311.ArcByCenterPointType) {
+                // TODO : factorize with above case
+                final org.geotoolkit.gml.xml.v311.ArcByCenterPointType arc = (org.geotoolkit.gml.xml.v311.ArcByCenterPointType) source;
+                org.opengis.geometry.DirectPosition dp = arc.getPos();
+                if (dp == null) {
+                    org.geotoolkit.gml.xml.v311.PointPropertyType pp = arc.getPointProperty();
+                    if (pp == null) {
+                        pp = arc.getPointRep();
+                    }
+
+                    if (pp == null) {
+                        throw new UnconvertibleObjectException("Not enough information to build an arc.");
+                    }
+
+                    final Geometry point = new GeometryTransformer(pp.getPoint(), this).get();
+                    dp = JTS.toEnvelope(point).getLowerCorner();
+                }
+
+                CoordinateReferenceSystem crs = dp.getCoordinateReferenceSystem();
+                if (crs == null) {
+                    crs = getSrsName()
+                            .map(this::findCRS)
+                            .orElseThrow(() -> new UnconvertibleObjectException("Cannot create an arc without its coordinate reference system"));
+                    final GeneralDirectPosition gdp = new GeneralDirectPosition(dp);
+                    gdp.setCoordinateReferenceSystem(crs);
+                    dp = gdp;
+                }
+
+                try {
+                    final Measure startAngle, endAngle;
+                    // If we miss a start or end angle, it means we're in presence of a circle.
+                    if (arc.getStartAngle() == null || arc.getEndAngle() == null) {
+                        startAngle = new Measure(0, Units.DEGREE);
+                        endAngle = new Measure(360, Units.DEGREE);
+                    } else {
+                        startAngle = asMeasure(arc.getStartAngle());
+                        endAngle = asMeasure(arc.getEndAngle());
+                    }
+
+                    final Coordinate[] coordinates = drawArc(
+                            dp,
+                            asMeasure(arc.getRadius()),
+                            startAngle,
+                            endAngle,
+                            ARC_PRECISION
+                    );
+                    return Spliterators.spliterator(coordinates, Spliterator.ORDERED);
+                } catch (TransformException ex) {
+                    throw new UnconvertibleObjectException("Cannot draw an arc.", ex);
+                }
             }
         }
 
@@ -306,6 +464,21 @@ public class GeometryTransformer implements Supplier<Geometry> {
         }
 
         throw new UnconvertibleObjectException("Cannot extract coordinates from source geometry.");
+    }
+
+    private Measure asMeasure(final MeasureType in) {
+        return new Measure(in.getValue(), hackUnit(in.getUom()));
+    }
+
+    private Measure asMeasure(final org.geotoolkit.gml.xml.v311.MeasureType in) {
+        return new Measure(in.getValue(), hackUnit(in.getUom()));
+    }
+
+    private static Unit<?> hackUnit(final String uom) {
+        if ("[nmi_i]".equals(uom)) {
+            return Units.NAUTICAL_MILE;
+        }
+        return Units.valueOf(uom);
     }
 
     /**
@@ -452,7 +625,21 @@ public class GeometryTransformer implements Supplier<Geometry> {
                 .reduce(new ArrayList<>(), (target, gt) -> {
                     gt.accumulate(target, true);
                     return target;
-                }, null);
+                }, (l1, l2) -> {
+                    if (l1 != l2) {
+                        l1.addAll(l2);
+                    }
+                    return l1;
+                });
+
+        // Ensure linear ring is closed. If there's not enough points, we let
+        // JTS raise a proper topology error.
+        if (coords.size() > 1) {
+            if (!coords.get(0).equals2D(coords.get(coords.size() - 1))) {
+                coords.add(coords.get(0));
+            }
+        }
+
         final LinearRing ring = GF.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
         applyCRS(ring);
 
@@ -472,7 +659,11 @@ public class GeometryTransformer implements Supplier<Geometry> {
     }
 
     private Polygon convertPolygon(final org.geotoolkit.gml.xml.Polygon polygon) {
-        final AbstractRing exterior = polygon.getExterior().getAbstractRing();
+        return convertPolygonLike(polygon.getExterior(), polygon.getInterior());
+    }
+
+    private Polygon convertPolygonLike(AbstractRingProperty exteriorProperty, final List<? extends AbstractRingProperty> interiorProperties) {
+        final AbstractRing exterior = exteriorProperty.getAbstractRing();
         final Geometry extRing = new GeometryTransformer(exterior, this).get();
         // Check now to avoid costly parsing of interior geometries
         if (!(extRing instanceof LinearRing)) {
@@ -481,7 +672,9 @@ public class GeometryTransformer implements Supplier<Geometry> {
 
         final LinearRing[] interiors;
         try {
-            interiors = polygon.getInterior().stream()
+            final Stream<? extends AbstractRingProperty> interiorStream =
+                    interiorProperties == null? Stream.empty() : interiorProperties.stream();
+            interiors = interiorStream
                     .map(AbstractRingProperty::getAbstractRing)
                     .map(ring -> new GeometryTransformer(ring, this).get())
                     .map(LinearRing.class::cast)
@@ -604,6 +797,37 @@ public class GeometryTransformer implements Supplier<Geometry> {
         return result;
     }
 
+    private MultiPolygon convertSurface(SurfaceType surface) {
+        final Polygon[] polygons = surface.getPatches().getAbstractSurfacePatch().stream()
+                .peek(patch -> {
+                    if (!(patch instanceof PolygonPatchType))
+                        throw new UnconvertibleObjectException("Only polygon patches are currently supported for surface types. Found: "+ patch.getClass());
+                })
+                .map(PolygonPatchType.class::cast)
+                .map(polygon -> convertPolygonLike(polygon.getExterior(), polygon.getInterior()))
+                .toArray(size -> new Polygon[size]);
+
+        final MultiPolygon mp = GF.createMultiPolygon(polygons);
+        applyCRS(mp);
+        return mp;
+    }
+
+    private MultiPolygon convertSurface(org.geotoolkit.gml.xml.v311.SurfaceType surface) {
+        final Polygon[] polygons = surface.getPatches().getAbstractSurfacePatch().stream()
+                .peek(patch -> {
+                    if (!(patch instanceof org.geotoolkit.gml.xml.v311.PolygonPatchType))
+                        throw new UnconvertibleObjectException("Only polygon patches are currently supported for surface types. Found: "+ patch.getClass());
+                })
+                .map(org.geotoolkit.gml.xml.v311.PolygonPatchType.class::cast)
+                .map(polygon -> convertPolygonLike(polygon.getExterior(), polygon.getInterior()))
+                .toArray(size -> new Polygon[size]);
+
+        final MultiPolygon mp = GF.createMultiPolygon(polygons);
+        applyCRS(mp);
+        return mp;
+    }
+
+
     /**
      * Extract points in source GML geometry, then send them to a function which
      * role is to create a JTS geometry from them. Note : we'll try to affect a
@@ -687,5 +911,91 @@ public class GeometryTransformer implements Supplier<Geometry> {
             action.accept(c);
             return true;
         }
+    }
+
+    /**
+     * Draw a succession of segments representing an arc or a circle.
+     * @implNote
+     * This method checks given angles to ensure that a full circle is drawn using
+     * the strict necessary amount of points.
+     *
+     * @param center The center point of the arc to draw. The unit of measure MUST
+     * be consistent with the unit of given radius.
+     * @param radius The Radius of the arc to draw. Unit must be the same as the
+     * one of input center point.
+     * @param startAzimuth Start of the drawn line relative to the geographic north (clockwise order).
+     * @param endAzimuth End of the drawn line relative to the geographic north (clockwise order). If
+     * it's inferior to start angle, the arc is drawn on counter-clockwise order. If superior, the arc is
+     * drawn on clockwise order.
+     * @param angularStep The step to apply on the trigonometric circle to find
+     * next point of the arc. its sign will be adapted to match draw order (clockwise
+     * or counter clockwise).
+     * @return An arc, as a discrete succession of points of configured precision.
+     */
+    private static Coordinate[] drawArc(final DirectPosition center, final Measure radius, final Measure startAzimuth, final Measure endAzimuth, final Measure angularStep) throws TransformException {
+        ArgumentChecks.ensureNonNull("Center point", center);
+        final CoordinateReferenceSystem sourceCrs = center.getCoordinateReferenceSystem();
+        ArgumentChecks.ensureNonNull("coordinate reference system", sourceCrs);
+
+        final SingleCRS hCrs = CRS.getHorizontalComponent(sourceCrs);
+        if (hCrs == null) {
+            throw new UnconvertibleObjectException("Cannot extract geometries without projected part.");
+        }
+
+        final int xAxis = AxisDirections.indexOfColinear(sourceCrs.getCoordinateSystem(), hCrs.getCoordinateSystem());
+        final int yAxis = xAxis + 1;
+
+        final GeodeticCalculator gc = new GeodeticCalculator(sourceCrs);
+        gc.setStartingPosition(center);
+
+        final Unit<Length> radiusUnit = gc.getEllipsoid().getAxisUnit();
+        final double r = radius.getUnit(Length.class).getConverterTo(radiusUnit).convert(radius.value);
+
+        double theta = startAzimuth.getUnit(Angle.class).getConverterTo(Units.DEGREE).convert(startAzimuth.value);
+        double end = endAzimuth.getUnit(Angle.class).getConverterTo(Units.DEGREE).convert(endAzimuth.value);
+        double phi = end - theta;
+        // Draw a circle. We don"t bother preserving iteration order
+        double positivePhi = Math.abs(phi);
+        final boolean isCircle = positivePhi - 1e-8 <= 0 || positivePhi >= 360.0;
+        if (isCircle) {
+            phi = 360.0;
+        }
+
+        double step = (phi < 0? -1 : 1) * angularStep.getUnit(Angle.class).getConverterTo(Units.DEGREE).convert(angularStep.value);
+        if ((phi / step) < 3) {
+            step = phi / 3;
+        }
+
+        final Coordinate[] arcPerimeter = new Coordinate[(int)Math.ceil(phi/step) + 1];
+        final DoubleFunction<Coordinate> pointOnCircle = azimuth -> {
+            azimuth = ((azimuth + 180) % 360) - 180;
+            gc.setDirection(azimuth, r);
+            final DirectPosition pt;
+            try {
+                pt = gc.getDestinationPosition();
+            } catch (TransformException ex) {
+                throw new BackingStoreException(ex);
+            }
+            return new Coordinate(
+                pt.getOrdinate(xAxis),
+                pt.getOrdinate(yAxis)
+            );
+        };
+
+        /* Don't entirely fill array. Last point will be computed in a sepcial case,
+         * to ensure it's closed properly if it's a circle.
+         */
+        for (int i = 0 ; i < arcPerimeter.length - 1 ; i++, theta += step) {
+            arcPerimeter[i] = pointOnCircle.apply(theta);
+        }
+
+        if (isCircle) {
+            // Ensure last point is the start point
+            arcPerimeter[arcPerimeter.length -1] = arcPerimeter[0];
+        } else {
+            arcPerimeter[arcPerimeter.length - 1] = pointOnCircle.apply(end);
+        }
+
+        return arcPerimeter;
     }
 }

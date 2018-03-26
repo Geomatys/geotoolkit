@@ -119,7 +119,7 @@ public class UnionTest extends AbstractProcessTest {
     private static FeatureCollection buildFeatureList() throws FactoryException {
 
         type = createSimpleType();
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
 
         Feature myFeature1 = type.newInstance();
@@ -186,7 +186,7 @@ public class UnionTest extends AbstractProcessTest {
 
         type = createSimpleType2();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
 
         Feature myFeature1 = type.newInstance();
@@ -276,7 +276,7 @@ public class UnionTest extends AbstractProcessTest {
 
         type = createSimpleResultType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
 
         Feature myFeature = type.newInstance();

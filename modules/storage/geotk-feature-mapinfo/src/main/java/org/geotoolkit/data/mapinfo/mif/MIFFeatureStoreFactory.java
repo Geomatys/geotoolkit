@@ -16,6 +16,13 @@
  */
 package org.geotoolkit.data.mapinfo.mif;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FileFeatureStoreFactory;
@@ -32,10 +39,9 @@ import java.util.logging.Logger;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.StoreMetadataExt;
 
 /**
  * Class Description
@@ -43,6 +49,15 @@ import org.apache.sis.util.logging.Logging;
  * @author Alexis Manin (Geomatys)
  *         Date : 21/02/13
  */
+@StoreMetadataExt(
+        resourceTypes = ResourceType.VECTOR,
+        geometryTypes ={Geometry.class,
+                        Point.class,
+                        LineString.class,
+                        Polygon.class,
+                        MultiPoint.class,
+                        MultiLineString.class,
+                        MultiPolygon.class})
 public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory implements FileFeatureStoreFactory {
 
     public final static Logger LOGGER = Logging.getLogger("org.geotoolkit.data.mapinfo.mif");
@@ -107,8 +122,4 @@ public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory impl
         return new MIFFeatureStore(filePath);
     }
 
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.VECTOR, true, false, false, false, GEOMS_ALL);
-    }
 }

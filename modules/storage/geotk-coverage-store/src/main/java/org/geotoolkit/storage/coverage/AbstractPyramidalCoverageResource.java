@@ -37,8 +37,9 @@ import java.util.logging.Level;
 import javax.imageio.ImageReader;
 import javax.swing.ProgressMonitor;
 import javax.xml.bind.annotation.XmlTransient;
-
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -49,12 +50,11 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.image.io.XImageIO;
-import org.opengis.util.GenericName;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
-import org.apache.sis.util.logging.Logging;
+import org.opengis.util.GenericName;
 
 /**
  * Abstract pyramidal coverage reference.
@@ -67,7 +67,7 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
 
     protected final int imageIndex;
 
-    public AbstractPyramidalCoverageResource(CoverageStore store, GenericName name,int imageIndex) {
+    public AbstractPyramidalCoverageResource(DataStore store, GenericName name,int imageIndex) {
         super(store, name);
         this.imageIndex = imageIndex;
     }

@@ -31,12 +31,9 @@ import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreListener;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
-import org.geotoolkit.storage.coverage.CoverageType;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.util.GenericName;
 import org.geotoolkit.storage.coverage.CoverageResource;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  * Decorates a coverage store adding possibility to override properties of each coverage reference.
@@ -115,35 +112,6 @@ public class AmendedCoverageStore extends AbstractCoverageStore implements Aggre
             }
         }
         return Collections.unmodifiableList(resources);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public CoverageResource create(GenericName name) throws DataStoreException {
-        final CoverageResource cr = store.create(name);
-        if(cr instanceof PyramidalCoverageResource){
-            return new AmendedCoverageResource(cr, store);
-        }else{
-            return new AmendedCoverageResource(cr, store);
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public CoverageType getType() {
-        return store.getType();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void delete(GenericName name) throws DataStoreException {
-        store.delete(name);
     }
 
     /**

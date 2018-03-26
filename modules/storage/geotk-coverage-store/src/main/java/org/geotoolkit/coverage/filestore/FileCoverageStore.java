@@ -29,32 +29,31 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
-import org.apache.sis.storage.Aggregate;
-
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageType;
-import org.geotoolkit.util.NamesExt;
+import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.metadata.MetadataUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.opengis.metadata.Metadata;
-import org.opengis.util.GenericName;
-import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageResource;
-import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.util.NamesExt;
+import org.opengis.metadata.Metadata;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  * Coverage Store which rely on standard java readers and writers.
@@ -62,7 +61,7 @@ import org.apache.sis.internal.storage.ResourceOnFileSystem;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class FileCoverageStore extends AbstractCoverageStore implements ResourceOnFileSystem, Aggregate {
+public class FileCoverageStore extends AbstractCoverageStore implements ResourceOnFileSystem, WritableAggregate {
 
     private static final String REGEX_SEPARATOR;
     static {
@@ -313,17 +312,18 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
     }
 
     @Override
-    public CoverageType getType() {
-        return CoverageType.GRID;
-    }
-
-    @Override
     public Path[] getComponentFiles() throws DataStoreException {
         return new Path[] {root};
     }
 
     @Override
-    public CoverageResource create(GenericName name) throws DataStoreException {
+    public CoverageResource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
+        if (!(resource instanceof DefiningCoverageResource)) {
+            throw new DataStoreException("Unsupported resource "+resource);
+        }
+        final DefiningCoverageResource cr = (DefiningCoverageResource) resource;
+        final GenericName name = cr.getName();
+
         final Collection<GenericName> names = getNames();
         if(names.contains(name)){
             throw new IllegalNameException("Coverage "+name+" already exist in this datastore.");
@@ -336,6 +336,18 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
         resources.add(fcr);
 
         return fcr;
+    }
+
+    @Override
+    public void remove(org.apache.sis.storage.Resource resource) throws DataStoreException {
+        if (!(resource instanceof CoverageResource)) {
+            throw new DataStoreException("Unknown resource "+resource);
+        }
+        final CoverageResource cr = (CoverageResource) resource;
+        final NamedIdentifier name = cr.getIdentifier();
+
+        //TODO
+        throw new DataStoreException("Remove operation not supported.");
     }
 
     /**

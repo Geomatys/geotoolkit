@@ -17,30 +17,27 @@
 
 package org.geotoolkit.data.osm;
 
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 import javax.xml.stream.XMLStreamException;
-
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryCapabilities;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStreams;
-
-import org.opengis.util.GenericName;
-
-import org.opengis.parameter.ParameterValueGroup;
-import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
+import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
 
 /**
  * OSM DataStore, holds 3 feature types.
@@ -103,9 +100,12 @@ public class OSMMemoryFeatureStore extends AbstractFeatureStore{
 
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        final FeatureType ft = getFeatureType(query.getTypeName());
-        FeatureReader fr = memoryStore.getFeatureReader(QueryBuilder.all(query.getTypeName()));
-        return FeatureStreams.subset(fr, query);
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final FeatureType ft = getFeatureType(gquery.getTypeName());
+        FeatureReader fr = memoryStore.getFeatureReader(QueryBuilder.all(gquery.getTypeName()));
+        return FeatureStreams.subset(fr, gquery);
     }
 
     @Override

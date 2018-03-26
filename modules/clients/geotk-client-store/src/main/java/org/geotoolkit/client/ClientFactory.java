@@ -20,7 +20,6 @@ package org.geotoolkit.client;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.FactoryMetadata;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -30,12 +29,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel
  */
 public interface ClientFactory {
-
-    /**
-     *
-     * @return A metadata object giving general information about data support of this factory.
-     */
-    FactoryMetadata getMetadata();
 
     /**
      * Name suitable for display to end user.

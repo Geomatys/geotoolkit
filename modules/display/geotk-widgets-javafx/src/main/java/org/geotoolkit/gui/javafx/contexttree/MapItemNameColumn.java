@@ -32,6 +32,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.TextAlignment;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.client.ClientFactory;
@@ -188,7 +189,7 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
         if(mapItem instanceof FeatureMapLayer){
             return ICON_VECTOR;
         }else if(mapItem instanceof CoverageMapLayer){
-            final CoverageStore store = ((CoverageMapLayer)mapItem).getCoverageReference().getStore();
+            final DataStore store = ((CoverageMapLayer)mapItem).getCoverageReference().getStore();
             if(store!=null && store.getProvider() instanceof ClientFactory){
                 return ICON_SERVICE;
             }else{

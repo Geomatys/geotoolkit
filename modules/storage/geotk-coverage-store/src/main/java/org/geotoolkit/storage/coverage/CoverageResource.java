@@ -18,6 +18,7 @@ package org.geotoolkit.storage.coverage;
 
 import java.awt.Image;
 import java.util.stream.Stream;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -28,7 +29,6 @@ import org.geotoolkit.internal.feature.TypeConventions;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
-import org.opengis.util.GenericName;
 import org.opengis.metadata.content.CoverageDescription;
 import org.geotoolkit.data.FeatureSet;
 
@@ -39,13 +39,6 @@ import org.geotoolkit.data.FeatureSet;
  * @module
  */
 public interface CoverageResource extends FeatureSet {
-
-    /**
-     * Name of the coverage. act as an identifier in the coverage store
-     *
-     * @return Name
-     */
-    GenericName getName();
 
     /**
      * @return int image index in reader/writer.
@@ -66,11 +59,11 @@ public interface CoverageResource extends FeatureSet {
     boolean isWritable() throws DataStoreException;
 
     /**
-     * Get the coverage store this coverage comes from.
+     * Get the data store this coverage comes from.
      *
-     * @return CoverageStore, can be null if coverage has a different kind of source.
+     * @return DataStore, can be null if coverage has a different kind of source.
      */
-    CoverageStore getStore();
+    DataStore getStore();
 
     /**
      * Get a reader for this coverage.
@@ -114,9 +107,18 @@ public interface CoverageResource extends FeatureSet {
     @Override
     public default FeatureType getType() throws DataStoreException {
         final GridCoverageReader reader = acquireReader();
-        final FeatureType type = CoverageFeature.createCoverageType(reader);
-        recycle(reader);
-        return type;
+        try {
+            final FeatureType type = CoverageFeature.createCoverageType(reader);
+            recycle(reader);
+            return type;
+        } catch (CoverageStoreException ex) {
+            try {
+                reader.dispose();
+            } catch (CoverageStoreException ex2) {
+                ex.addSuppressed(ex2);
+            }
+            throw ex;
+        }
     }
 
     @Override

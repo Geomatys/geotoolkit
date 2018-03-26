@@ -33,30 +33,27 @@ import java.util.Set;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
-
+import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
+import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.Resource;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
-
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageType;
-import org.geotoolkit.util.NamesExt;
-
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
-import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.Resource;
 
 /**
- * Store adapted to Landsat 8 comportement.
+ * Store adapted to Landsat 8 files structure.
  *
  * @author Remi Marechal (Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @version 1.0
  * @since   1.0
  */
-public class LandsatCoverageStore extends AbstractCoverageStore implements Aggregate, ResourceOnFileSystem {
+public class LandsatCoverageStore extends DataStore implements Aggregate, ResourceOnFileSystem {
 
+    private final ParameterValueGroup params;
     private final List<Resource> resources = new ArrayList<>();
 
     /**
@@ -92,7 +89,7 @@ public class LandsatCoverageStore extends AbstractCoverageStore implements Aggre
 
     /**
      *
-     * @param path
+     * @param uri
      * @throws DataStoreException
      */
     public LandsatCoverageStore(URI uri) throws DataStoreException {
@@ -109,9 +106,9 @@ public class LandsatCoverageStore extends AbstractCoverageStore implements Aggre
      */
     public LandsatCoverageStore(ParameterValueGroup params)
             throws DataStoreException {
-        super(params);
+        this.params = params;
 
-        final Object uri = Parameters.castOrWrap(params).getValue(LandsatStoreFactory.PATH);
+        final Object uri = Parameters.castOrWrap(params).getValue(LandsatProvider.PATH);
         final Path path;
         if (uri != null) {
             path = Paths.get((URI) uri);
@@ -122,14 +119,12 @@ public class LandsatCoverageStore extends AbstractCoverageStore implements Aggre
         //-- add 3 Coverage References : REFLECTIVE, PANCHROMATIQUE, THERMIC.
         metadataParser          = getMetadataParser(path);
         origin                  = metadataParser.getPath().getParent();
-        final String sceneName  = getSceneName();
 
-        final LandsatCoverageResource reflectiveRef = new LandsatCoverageResource(this, NamesExt.create(sceneName+"-"+REFLECTIVE_LABEL), origin, metadataParser);
+        final LandsatCoverageResource reflectiveRef = new LandsatCoverageResource(this, origin, metadataParser, CoverageGroup.REFLECTIVE);
         resources.add(reflectiveRef);
-        final LandsatCoverageResource panchroRef    = new LandsatCoverageResource(this, NamesExt.create(sceneName+"-"+PANCHROMATIC_LABEL), origin, metadataParser);
+        final LandsatCoverageResource panchroRef    = new LandsatCoverageResource(this, origin, metadataParser, CoverageGroup.PANCHROMATIC);
         resources.add(panchroRef);
-
-        final LandsatCoverageResource thermicRef    = new LandsatCoverageResource(this, NamesExt.create(sceneName+"-"+THERMAL_LABEL), origin, metadataParser);
+        final LandsatCoverageResource thermicRef    = new LandsatCoverageResource(this, origin, metadataParser, CoverageGroup.THERMAL);
         resources.add(thermicRef);
     }
 
@@ -140,8 +135,13 @@ public class LandsatCoverageStore extends AbstractCoverageStore implements Aggre
      * @return
      */
     private static ParameterValueGroup toParameters(URI uri) {
-        final Parameters params = Parameters.castOrWrap(LandsatStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
-        params.getOrCreate(LandsatStoreFactory.PATH).setValue(uri);
+        final Parameters params = Parameters.castOrWrap(LandsatProvider.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(LandsatProvider.PATH).setValue(uri);
+        return params;
+    }
+
+    @Override
+    public ParameterValueGroup getOpenParameters() {
         return params;
     }
 
@@ -154,16 +154,8 @@ public class LandsatCoverageStore extends AbstractCoverageStore implements Aggre
      * {@inheritDoc }.
      */
     @Override
-    public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(LandsatStoreFactory.NAME);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public CoverageType getType() {
-        return CoverageType.GRID;
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(LandsatProvider.NAME);
     }
 
     /**
@@ -185,7 +177,7 @@ public class LandsatCoverageStore extends AbstractCoverageStore implements Aggre
     @Override
     public Metadata getMetadata() throws DataStoreException {
         try {
-            return metadataParser.getMetadata(GENERAL_LABEL);
+            return metadataParser.getMetadata(CoverageGroup.ALL);
         } catch (FactoryException | ParseException ex) {
             throw new DataStoreException(ex);
         }
@@ -208,25 +200,6 @@ public class LandsatCoverageStore extends AbstractCoverageStore implements Aggre
     //**************************************************************************//
     //********** added methods only effectives for Landsat utilisation *********//
     //**************************************************************************//
-
-    /**
-     * Returns part of {@linkplain #getMetadata() global Landsat 8 metadatas},
-     * in relation with only Landsat 8 group name datas.
-     * The valid group name are {@link LandsatConstants#GENERAL_LABEL},
-     * {@link LandsatConstants#REFLECTIVE_LABEL},
-     * {@link LandsatConstants#PANCHROMATIC_LABEL},
-     * {@link LandsatConstants#THERMAL_LABEL}.
-     *
-     * @return Reflective Landsat 8 metadatas.
-     * @throws DataStoreException
-     */
-    public Metadata getMetadata(String groupNameLabel) throws DataStoreException {
-        try {
-            return metadataParser.getMetadata(REFLECTIVE_LABEL);
-        } catch (FactoryException | ParseException ex) {
-            throw new DataStoreException(ex);
-        }
-    }
 
     /**
      * Returns Landsat datas name from theirs metadatas.

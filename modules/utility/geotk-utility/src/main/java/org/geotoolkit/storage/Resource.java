@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.storage;
 
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
-import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
 
 /**
@@ -31,7 +31,7 @@ public interface Resource extends org.apache.sis.storage.Resource {
      *
      * @return Identifier, never null
      */
-    Identifier getIdentifier();
+    NamedIdentifier getIdentifier();
 
     /**
      * Returns information about the resource. The returned metadata object, can contain

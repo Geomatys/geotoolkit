@@ -33,8 +33,6 @@ import java.util.Properties;
 import java.util.TimeZone;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -54,6 +52,8 @@ import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
@@ -95,10 +95,8 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
             store = factory.open(params);
         }
 
-
-        for(GenericName n : store.getNames()){
-            VersionControl vc = store.getVersioning(n);
-            store.delete(n);
+        for (CoverageResource r : DataStores.flatten(store, true, CoverageResource.class)) {
+            store.remove(r);
         }
         assertTrue(store.getNames().isEmpty());
     }
@@ -120,7 +118,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         GridCoverage2D coverage;
 
         final GenericName name = NamesExt.create(null, "versLayer");
-        store.create(name);
+        store.add(new DefiningCoverageResource(name));
         final VersionControl vc = store.getVersioning(name);
         versions = vc.list();
         assertTrue(versions.isEmpty());

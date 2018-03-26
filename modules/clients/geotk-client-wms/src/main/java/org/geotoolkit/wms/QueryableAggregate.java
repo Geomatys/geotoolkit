@@ -17,6 +17,8 @@
 package org.geotoolkit.wms;
 
 import java.awt.Image;
+import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -25,12 +27,9 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.storage.coverage.CoverageResource;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.Identifier;
 import org.opengis.metadata.content.CoverageDescription;
-import org.opengis.util.GenericName;
 
 /**
  *
@@ -41,7 +40,7 @@ public class QueryableAggregate extends WMSAggregate implements CoverageResource
     final AbstractLayer layer;
     final WMSCoverageResource queryableResource;
 
-    final GenericName name;
+    final NamedIdentifier name;
 
     public QueryableAggregate(final WebMapClient client, final AbstractLayer layer) throws CoverageStoreException {
         super(client, layer);
@@ -51,12 +50,12 @@ public class QueryableAggregate extends WMSAggregate implements CoverageResource
             throw new CoverageStoreException("Cannot create a queryable resource over an unqueryable layer.");
         }
         this.layer = layer;
-        name = Names.createScopedName(null, ":", layer.getName());
+        name = new NamedIdentifier(Names.createScopedName(null, ":", layer.getName()));
         queryableResource = new WMSCoverageResource(client, layer.getName());
     }
 
     @Override
-    public GenericName getName() {
+    public NamedIdentifier getIdentifier() {
         return name;
     }
 
@@ -76,7 +75,7 @@ public class QueryableAggregate extends WMSAggregate implements CoverageResource
     }
 
     @Override
-    public CoverageStore getStore() {
+    public DataStore getStore() {
         return queryableResource.getStore();
     }
 
@@ -103,11 +102,6 @@ public class QueryableAggregate extends WMSAggregate implements CoverageResource
     @Override
     public Image getLegend() throws DataStoreException {
         return queryableResource.getLegend();
-    }
-
-    @Override
-    public Identifier getIdentifier() {
-        return queryableResource.getIdentifier();
     }
 
     @Override

@@ -29,7 +29,6 @@ import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
-import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -40,7 +39,6 @@ import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.StorageListener;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Wrap a coverage-sql database as a CoverageStore.
@@ -93,11 +91,6 @@ public class CoverageSQLStore extends AbstractCoverageStore implements Aggregate
     }
 
     @Override
-    public CoverageType getType() {
-        return CoverageType.GRID;
-    }
-
-    @Override
     public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
         final List<Resource> resources = new ArrayList<>();
         final Set<String> layers = db.getLayers().result();
@@ -105,16 +98,6 @@ public class CoverageSQLStore extends AbstractCoverageStore implements Aggregate
             resources.add(new CoverageSQLLayerResource(NamesExt.create(layer)));
         }
         return Collections.unmodifiableList(resources);
-    }
-
-    @Override
-    public CoverageResource create(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
-    }
-
-    @Override
-    public void delete(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
     }
 
     @Override
@@ -194,7 +177,7 @@ public class CoverageSQLStore extends AbstractCoverageStore implements Aggregate
 
         @Override
         public GridCoverageReader acquireReader() throws CoverageStoreException {
-            final LayerCoverageReader reader = CoverageSQLStore.this.db.createGridCoverageReader(getName().tip().toString());
+            final LayerCoverageReader reader = CoverageSQLStore.this.db.createGridCoverageReader(getIdentifier().tip().toString());
             return reader;
         }
 

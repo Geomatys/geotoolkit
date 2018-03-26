@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureExt;
@@ -42,6 +43,8 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.DataSet;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.apache.sis.util.logging.Logging;
@@ -76,7 +79,7 @@ public class FeatureStoreUtilities {
     }
 
     public static FeatureCollection collection(final Feature ... features){
-        final FeatureCollection col = collection("", features[0].getType());
+        final FeatureCollection col = collection(new NamedIdentifier(NamesExt.create("noid")), features[0].getType());
         col.addAll(Arrays.asList(features));
         return col;
     }
@@ -88,12 +91,17 @@ public class FeatureStoreUtilities {
      * @return FeatureCollection
      */
     public static FeatureCollection collection(final FeatureType type, final Collection<? extends Feature> features){
-        final FeatureCollection col = collection("", type);
+        final FeatureCollection col = collection(new NamedIdentifier(type.getName()), type);
         col.addAll(features);
         return col;
     }
 
     public static FeatureCollection collection(final String id, FeatureType type){
+        final NamedIdentifier ident = new NamedIdentifier(NamesExt.create(id));
+        return collection(ident, type);
+    }
+
+    public static FeatureCollection collection(final NamedIdentifier id, FeatureType type){
         if(type == null){
             //a collection with no defined type, make a generic abstract type
             //that is possible since feature collection may not always have a type.
@@ -107,7 +115,7 @@ public class FeatureStoreUtilities {
         final Session session = ds.createSession(false);
 
         FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(type.getName().toString()));
-        ((AbstractFeatureCollection)col).setId(id);
+        ((AbstractFeatureCollection)col).setIdentifier(id);
 
         return col;
     }
@@ -244,6 +252,108 @@ public class FeatureStoreUtilities {
         }
 
         return env;
+    }
+
+    /**
+     * Get or count features in FeatureSet.
+     *
+     * <p>
+     * This operation can be expensive in time and resources if the count
+     * must be computed. It is recommended to use {@link DataSet#getMetadata() }
+     * informations instead if a resulting null count is acceptable.
+     * </p>
+     *
+     * @param dataset Data set to extract or compute from, must not be null
+     * @return features count
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    public static Long getCount(FeatureSet dataset) throws DataStoreException {
+        return getCount(dataset, false);
+    }
+
+    /**
+     * Get or count features in FeatureSet.
+     *
+     * <p>
+     * This operation can be expensive in time and resources if the count
+     * must be computed. It is recommended to use {@link DataSet#getMetadata() }
+     * informations instead if a resulting null count is acceptable.
+     * </p>
+     *
+     * @param dataset Data set to extract or compute from, must not be null
+     * @param forceCompute ignore dataset declared envelope and always compute envelope
+     * @return features count
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    public static Long getCount(FeatureSet dataset, boolean forceCompute) throws DataStoreException {
+        //TODO extract count value from metadata, where is it stored ?
+        Long count = null;
+
+        if (count == null) {
+            try (Stream<Feature> stream = dataset.features(true)) {
+                count = stream.count();
+            }
+        }
+
+        return count;
+    }
+
+    /**
+     * Get or compute DataSet envelope.
+     *
+     * <p>
+     * This operation can be expensive in time and resources if the envelope
+     * must be computed. It is recommended to use {@link DataSet#getEnvelope() }
+     * instead if a resulting null envelope is acceptable.
+     * </p>
+     *
+     * @param dataset Data set to extract or compute from, must not be null
+     * @return dataset envelope or null if the envelope could not be computed or is not geospatial.
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    public static Envelope getEnvelope(DataSet dataset) throws DataStoreException {
+        return getEnvelope(dataset, false);
+    }
+
+    /**
+     * Get or compute DataSet envelope.
+     *
+     * <p>
+     * This operation can be expensive in time and resources if the envelope
+     * must be computed. It is recommended to use {@link DataSet#getEnvelope() }
+     * instead if a resulting null envelope is acceptable.
+     * </p>
+     *
+     * @param dataset Data set to extract or compute from, must not be null
+     * @param forceCompute ignore dataset declared envelope and always compute envelope
+     * @return dataset envelope or null if the envelope could not be computed or is not geospatial.
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    public static Envelope getEnvelope(DataSet dataset, boolean forceCompute) throws DataStoreException {
+        Envelope envelope = forceCompute ? null : dataset.getEnvelope();
+
+        if (envelope == null) {
+            GeneralEnvelope env = null;
+            if (dataset instanceof org.apache.sis.storage.FeatureSet) {
+                try (Stream<Feature> features = ((org.apache.sis.storage.FeatureSet) dataset).features(false)) {
+                    final Iterator<Feature> iterator = features.iterator();
+                    while (iterator.hasNext()) {
+                        final Feature f = iterator.next();
+                        final Envelope bbox = FeatureExt.getEnvelope(f);
+                        if(bbox != null){
+                            if(env != null){
+                                env.add(bbox);
+                            }else{
+                                env = new GeneralEnvelope(bbox);
+                            }
+                        }
+                    }
+                }
+            }
+            envelope = env;
+        }
+
+        return envelope;
     }
 
     /**

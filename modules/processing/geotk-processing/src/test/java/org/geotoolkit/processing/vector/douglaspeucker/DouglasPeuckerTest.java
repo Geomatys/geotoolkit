@@ -89,7 +89,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
         final FeatureCollection featureListResult = buildFeatureCollectionResult();
 
         assertEquals(featureListOut.getType(), featureListResult.getType());
-        assertEquals(featureListOut.getID(), featureListResult.getID());
+        assertEquals(featureListOut.getIdentifier(), featureListResult.getIdentifier());
         assertEquals(featureListOut.size(), featureListResult.size());
 
         FeatureIterator iteratorOut = featureListOut.iterator();
@@ -194,7 +194,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
         final FeatureCollection featureListResult = buildFeatureCollectionResult2();
 
         assertEquals(featureListResult.getType(), featureListOut.getType());
-        assertEquals(featureListResult.getID(), featureListOut.getID());
+        assertEquals(featureListResult.getIdentifier(), featureListOut.getIdentifier());
         assertEquals(featureListResult.size(), featureListOut.size());
 
         FeatureIterator iteratorOut = featureListOut.iterator();
@@ -219,7 +219,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
     private static FeatureCollection buildFeatureCollectionInput1() throws FactoryException {
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
         geometryFactory = new GeometryFactory();
 
@@ -271,7 +271,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
     private static FeatureCollection buildFeatureCollectionInput2() throws FactoryException {
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
         geometryFactory = new GeometryFactory();
 
@@ -300,7 +300,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
     private static FeatureCollection buildFeatureCollectionResult() throws FactoryException {
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
         geometryFactory = new GeometryFactory();
 
@@ -345,7 +345,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
     private static FeatureCollection buildFeatureCollectionResult2() throws FactoryException {
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
         geometryFactory = new GeometryFactory();
 

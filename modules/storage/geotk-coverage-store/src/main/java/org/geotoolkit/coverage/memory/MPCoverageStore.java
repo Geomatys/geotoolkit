@@ -21,21 +21,22 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.apache.sis.storage.Aggregate;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.storage.Resource;
-import org.opengis.util.GenericName;
-import org.opengis.parameter.ParameterDescriptorGroup;
+import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.util.GenericName;
 
 /**
  *
  * @author remi marechal (Geomatys)
  */
-public class MPCoverageStore extends AbstractCoverageStore implements Aggregate {
+public class MPCoverageStore extends AbstractCoverageStore implements WritableAggregate {
 
     private final List<Resource> resources = Collections.synchronizedList(new ArrayList<>());
 
@@ -54,11 +55,29 @@ public class MPCoverageStore extends AbstractCoverageStore implements Aggregate 
     }
 
     @Override
-    public CoverageResource create(GenericName name) throws DataStoreException {
+    public CoverageResource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
+        if (!(resource instanceof DefiningCoverageResource)) {
+            throw new DataStoreException("Unsupported resource "+resource);
+        }
+        final DefiningCoverageResource cr = (DefiningCoverageResource) resource;
+        final GenericName name = cr.getName();
+
         final MPCoverageResource mpcref = new MPCoverageResource(this, name);
         resources.add(mpcref);
         fireCoverageAdded(name);
         return mpcref;
+    }
+
+    @Override
+    public void remove(org.apache.sis.storage.Resource resource) throws DataStoreException {
+        if (!(resource instanceof CoverageResource)) {
+            throw new DataStoreException("Unknown resource "+resource);
+        }
+        final CoverageResource cr = (CoverageResource) resource;
+        final NamedIdentifier name = cr.getIdentifier();
+
+        //TODO
+        throw new DataStoreException("Remove operation not supported.");
     }
 
     @Override
@@ -68,11 +87,6 @@ public class MPCoverageStore extends AbstractCoverageStore implements Aggregate 
 
     @Override
     public void close() {
-    }
-
-    @Override
-    public CoverageType getType() {
-        return CoverageType.PYRAMID;
     }
 
 }

@@ -64,7 +64,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
 
 import org.apache.sis.util.logging.Logging;
@@ -74,6 +76,7 @@ import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescripto
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.STORE_IN;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.STORE_OUT;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
@@ -132,6 +135,11 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         final Boolean       erase    = inputParameters.getValue(ERASE);
         final Boolean       reduce   = inputParameters.getValue(REDUCE_TO_DOMAIN);
 
+        if (!(outStore instanceof WritableAggregate)) {
+            throw new ProcessException("Outut store is not writable.",this);
+        }
+        final WritableAggregate outAggregate = (WritableAggregate) outStore;
+
         try {
             final float size = inStore.getNames().size();
             int inc = 0;
@@ -141,11 +149,19 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
                 final Resource resource = inStore.findResource(n.toString());
                 if (resource instanceof CoverageResource) {
                     final CoverageResource inRef = (CoverageResource) resource;
-                    final GenericName name = inRef.getName();
+                    final GenericName name = inRef.getIdentifier();
+
+                    //remove if exist
                     if (erase) {
-                        outStore.delete(name);
+                        try {
+                            final Resource res = outStore.findResource(name.toString());
+                            outAggregate.remove(res);
+                        } catch (IllegalNameException e) {
+                            //resource does not exist
+                        }
                     }
-                    final CoverageResource outRef = outStore.create(name);
+
+                    final CoverageResource outRef = (CoverageResource) outAggregate.add(new DefiningCoverageResource(name, null));
 
                     if(inRef instanceof PyramidalCoverageResource && outRef instanceof PyramidalCoverageResource){
                         savePMtoPM((PyramidalCoverageResource)inRef, (PyramidalCoverageResource)outRef);
@@ -341,7 +357,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         final GeneralGridGeometry globalGeom = reader.getGridGeometry(imageIndex);
         final CoordinateReferenceSystem crs = globalGeom.getCoordinateReferenceSystem();
 
-        final GenericName name = inRef.getName();
+        final GenericName name = inRef.getIdentifier();
         if(crs instanceof ImageCRS){
             //image is not georeferenced, we can't store it.
             fireWarningOccurred("Image "+name+" does not have a CoordinateReferenceSystem, insertion is skipped.", 0, null);

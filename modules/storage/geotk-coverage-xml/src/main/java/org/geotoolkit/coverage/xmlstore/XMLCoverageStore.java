@@ -33,18 +33,19 @@ import java.util.Set;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.parameter.Parameters;
-import org.apache.sis.storage.Aggregate;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 
 /**
  * Coverage store relying on an xml file.
@@ -52,7 +53,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class XMLCoverageStore extends AbstractCoverageStore implements Aggregate {
+public class XMLCoverageStore extends AbstractCoverageStore implements WritableAggregate {
 
     private final Path root;
     private final List<Resource> resources = new ArrayList<>();
@@ -158,12 +159,26 @@ public class XMLCoverageStore extends AbstractCoverageStore implements Aggregate
     }
 
     @Override
-    public void close() {
+    public CoverageResource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
+        if (!(resource instanceof DefiningCoverageResource)) {
+            throw new DataStoreException("Unsupported resource "+resource);
+        }
+        final DefiningCoverageResource cr = (DefiningCoverageResource) resource;
+        final GenericName name = cr.getName();
+
+        return create(name, null, null);
     }
 
     @Override
-    public CoverageResource create(GenericName name) throws DataStoreException {
-        return create(name, null, null);
+    public void remove(org.apache.sis.storage.Resource resource) throws DataStoreException {
+        if (!(resource instanceof CoverageResource)) {
+            throw new DataStoreException("Unknown resource "+resource);
+        }
+        final CoverageResource cr = (CoverageResource) resource;
+        final NamedIdentifier name = cr.getIdentifier();
+
+        //TODO
+        throw new DataStoreException("Remove operation not supported.");
     }
 
     /**
@@ -204,7 +219,7 @@ public class XMLCoverageStore extends AbstractCoverageStore implements Aggregate
     }
 
     @Override
-    public CoverageType getType() {
-        return CoverageType.PYRAMID;
+    public void close() {
     }
+
 }

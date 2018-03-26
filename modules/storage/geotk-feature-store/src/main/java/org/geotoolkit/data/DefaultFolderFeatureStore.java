@@ -30,7 +30,6 @@ import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.*;
 import static org.geotoolkit.data.AbstractFolderFeatureStoreFactory.*;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.DataStoreFactory;
@@ -46,6 +45,8 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 
 /**
  * Handle a folder of single file FeatureStore.
@@ -332,7 +333,10 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
      */
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        final String name = query.getTypeName();
+        if (!(query instanceof org.geotoolkit.data.query.Query))  throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final String name = gquery.getTypeName();
         typeCheck(name);
         final FeatureStore store = stores.get(this, name);
         return store.getFeatureReader(query);
@@ -343,7 +347,10 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
      */
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        final String typeName = query.getTypeName();
+        if (!(query instanceof org.geotoolkit.data.query.Query))  throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final String typeName = gquery.getTypeName();
         typeCheck(typeName);
         final FeatureStore store = stores.get(this, typeName);
         return store.getFeatureWriter(query);

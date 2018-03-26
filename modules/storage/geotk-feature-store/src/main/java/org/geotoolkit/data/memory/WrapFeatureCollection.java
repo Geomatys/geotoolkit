@@ -43,7 +43,7 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection {
      * @param originalFC FeatureCollection
      */
     public WrapFeatureCollection(final FeatureCollection originalFC) {
-        super(originalFC.getID(), originalFC.getSource());
+        super(originalFC.getIdentifier(), originalFC.getSession());
         this.originalFC = originalFC;
     }
 

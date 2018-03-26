@@ -24,17 +24,24 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.util.GeometricShapeFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import org.apache.sis.geometry.DirectPosition2D;
+import org.geotoolkit.gml.xml.v321.AngleType;
+import org.geotoolkit.gml.xml.v321.ArcByCenterPointType;
 import org.geotoolkit.gml.xml.v321.CurveSegmentArrayPropertyType;
 import org.geotoolkit.gml.xml.v321.CurveType;
 import org.geotoolkit.gml.xml.v321.DirectPositionListType;
 import org.geotoolkit.gml.xml.v321.DirectPositionType;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.geotoolkit.gml.xml.v321.GeodesicStringType;
+import org.geotoolkit.gml.xml.v321.LengthType;
 import org.geotoolkit.gml.xml.v321.LineStringType;
 import org.geotoolkit.gml.xml.v321.LinearRingType;
+import org.geotoolkit.gml.xml.v321.PointPropertyType;
 import org.geotoolkit.gml.xml.v321.PointType;
 import org.geotoolkit.gml.xml.v321.PolygonType;
 import org.junit.Assert;
@@ -235,4 +242,47 @@ public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
         Assert.assertTrue(GF.createPolygon(expectedPoints).equalsTopo(geom));
     }
 
+    @Test
+    public void gmlArcToJTSTest() throws Exception {
+        final LengthType radius = new LengthType();
+        radius.setValue(2.0);
+        radius.setUom("m");
+        final AngleType startAngle = new AngleType();
+        startAngle.setValue(0);
+        startAngle.setUom("rad");
+
+        final AngleType endAngle = new AngleType();
+        endAngle.setValue(270);
+        endAngle.setUom("°");
+
+        final ArcByCenterPointType arc = new ArcByCenterPointType();
+        arc.setStartAngle(startAngle);
+        arc.setEndAngle(endAngle);
+        arc.setRadius(radius);
+        arc.setPointProperty(new PointPropertyType(new PointType(new DirectPosition2D(0, 0))));
+
+        final CurveType gmlCurve = new CurveType();
+        gmlCurve.setSrsName("EPSG:3857");
+
+        gmlCurve.setSegments(new CurveSegmentArrayPropertyType(Collections.singletonList(arc)));
+        Geometry geom = GeometrytoJTS.toJTS(gmlCurve);
+
+        // For geometric comparison, we oppose pure jts solution to the SIS geodetic calculator.
+        final GeometricShapeFactory f = new GeometricShapeFactory(GF);
+        f.setCentre(new Coordinate(0, 0));
+        f.setSize(radius.getValue()*2);
+        // with this value, we should get points on trigonometric circle cardinalities (0, PI/2, PI, etc.), which eases comparison in debug.
+        f.setNumPoints(17);
+        // JTS angles are not azimuth, but pure trigonometric
+        Geometry expectedArc = f.createArc(Math.PI, 3/2.0 * Math.PI);
+
+        Assert.assertTrue(expectedArc.buffer(0.2).contains(geom));
+
+        // Now, test in reverse (counter-clockwise) order
+        endAngle.setValue(-90);
+        geom = GeometrytoJTS.toJTS(gmlCurve);
+        expectedArc = f.createArc(0, Math.PI);
+
+        Assert.assertTrue(expectedArc.buffer(0.2).contains(geom));
+    }
 }

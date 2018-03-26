@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2018, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,43 +16,27 @@
  */
 package org.geotoolkit.storage;
 
-import org.opengis.geometry.Geometry;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Base class for {@link org.geotoolkit.storage.DataStoreFactory} metadata. It should be retrived via {@link DataStoreFactory#getMetadata()}.
+ * Additional informations for store capabilities.
+ * TODO : merge with StoreMetadata from SIS
  *
- * @author Alexis Manin (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public interface FactoryMetadata {
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface StoreMetadataExt {
 
     /**
-     * Data types stores.
+     * Indicates what type of resource this store can handle.
      *
-     * @return DataType
+     * @return list of supported resource types.
      */
-    DataType getDataType();
-
-    /**
-     * Indicate if this factory can open existing and read datas.
-     *
-     * @return true if reading is supported
-     */
-    boolean supportStoreReading();
-
-    /**
-     * Indicate if this factory can create new stores.
-     *
-     * @return true if writing is supported
-     */
-    boolean supportStoreCreation();
-
-    /**
-     * Indicate if this factory can write datas is stores.
-     *
-     * @return true if writing is supported
-     */
-    boolean supportStoreWriting();
+    ResourceType[] resourceTypes();
 
     /**
      * This method is only for stores of data type : feature.
@@ -60,9 +44,23 @@ public interface FactoryMetadata {
      * Some format are limited to points, lines, or can support support the
      * global type 'Geometry'
      *
-     * @return
+     * @return list of supported geometry types.
      */
-    Class<Geometry>[] supportedGeometryTypes();
+    Class[] geometryTypes() default {};
+
+    /**
+     * Indicate if this factory can create new stores.
+     *
+     * @return true if writing is supported
+     */
+    boolean canCreate() default false;
+
+    /**
+     * Indicate if this factory can write datas is stores.
+     *
+     * @return true if writing is supported
+     */
+    boolean canWrite() default false;
 
     /**
      * Feature store may produce 2 kinds of features.
@@ -70,7 +68,6 @@ public interface FactoryMetadata {
      *
      * @return true if features are styled.
      */
-    boolean produceStyledFeature();
-
+    boolean styledFeature() default false;
 
 }

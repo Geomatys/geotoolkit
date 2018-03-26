@@ -10,20 +10,19 @@ import java.util.Collections;
 import java.util.Set;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-
-import org.geotoolkit.data.AbstractFeatureStore;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryCapabilities;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
+import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.storage.DataStoreFactory;
-
-import org.opengis.util.GenericName;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 public class FishFeatureStore extends AbstractFeatureStore{
 
@@ -63,7 +62,10 @@ public class FishFeatureStore extends AbstractFeatureStore{
 
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
-        typeCheck(query.getTypeName());
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        typeCheck(gquery.getTypeName());
 
         FeatureReader reader;
         try {
@@ -73,7 +75,7 @@ public class FishFeatureStore extends AbstractFeatureStore{
         }
 
         //use the generic methode to take to care of everything for us.
-        reader = FeatureStreams.subset(reader, query);
+        reader = FeatureStreams.subset(reader, gquery);
         return reader;
     }
 

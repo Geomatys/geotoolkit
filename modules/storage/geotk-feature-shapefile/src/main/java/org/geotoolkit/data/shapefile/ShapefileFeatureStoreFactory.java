@@ -43,9 +43,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -68,6 +67,14 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
+@StoreMetadataExt(
+        resourceTypes = ResourceType.VECTOR,
+        canCreate = true,
+        canWrite = true,
+        geometryTypes ={Point.class,
+                        MultiPoint.class,
+                        MultiLineString.class,
+                        MultiPolygon.class})
 public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactory implements FileFeatureStoreFactory {
 
     /** factory identification **/
@@ -173,7 +180,7 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
             //SHP and SHX files have the same signature, we only want to match on the SHP file.
             final Path path = connector.getStorageAs(Path.class);
             final String ext = IOUtilities.extension(path);
-            if ("shx".equalsIgnoreCase(ext)) {
+            if (!"shp".equalsIgnoreCase(ext)) {
                 return ProbeResult.UNSUPPORTED_STORAGE;
             }
         }
@@ -293,13 +300,6 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
         } catch (MalformedURLException mue) {
             throw new DataStoreException("Uri for shapefile malformed: " + uri, mue);
         }
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, new Class[]{
-            Point.class, MultiPoint.class, MultiLineString.class, MultiPolygon.class
-        });
     }
 
 }

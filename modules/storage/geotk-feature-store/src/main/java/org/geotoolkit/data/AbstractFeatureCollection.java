@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectMapper;
@@ -39,9 +40,6 @@ import org.apache.sis.storage.IllegalFeatureTypeException;
 import org.apache.sis.storage.ReadOnlyStorageException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryUtilities;
-import org.geotoolkit.data.query.Selector;
-import org.geotoolkit.data.query.Source;
-import org.geotoolkit.data.query.TextStatement;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -49,6 +47,7 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -71,70 +70,40 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public abstract class AbstractFeatureCollection extends AbstractCollection<Feature>
         implements FeatureCollection, FeatureStoreListener{
 
-    private final Set<StorageListener> listeners = new HashSet<StorageListener>();
+    private final Set<StorageListener> listeners = new HashSet<>();
     private final FeatureStoreListener.Weak weakListener = new Weak(this);
 
-    protected String id;
-    protected final Source source;
+    protected NamedIdentifier identifier;
+    protected Session session;
 
-    public AbstractFeatureCollection(final String id, final Source source){
+    public AbstractFeatureCollection(final String id, Session session){
+        this(new NamedIdentifier(NamesExt.create(id)),session);
+    }
+
+    public AbstractFeatureCollection(final NamedIdentifier id, Session session){
         ensureNonNull("feature collection id", id);
-        ensureNonNull("feature collection source", source);
 
-        this.id = id;
-        this.source = source;
+        this.identifier = id;
+        this.session = session;
 
-        final Collection<Session> sessions = QueryUtilities.getSessions(source, null);
-        for (Session s : sessions) {
-            weakListener.registerSource(s);
+        if (session != null) {
+            weakListener.registerSource(session);
         }
 
     }
 
-    public void setId(final String id) {
-        this.id = id;
+    public void setIdentifier(final NamedIdentifier id) {
+        this.identifier = id;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public String getID() {
-        return id;
+    public NamedIdentifier getIdentifier() {
+        return identifier;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public Session getSession() {
-        if(source instanceof Selector){
-            return ((Selector)source).getSession();
-        }else if(source instanceof TextStatement){
-            return ((TextStatement)source).getSession();
-        }else{
-            return null;
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Source getSource() {
-        return source;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean isWritable() throws FeatureStoreRuntimeException {
-        try {
-            return QueryUtilities.isWritable(source);
-        } catch (DataStoreException ex) {
-            throw new FeatureStoreRuntimeException(ex);
-        }
+        return session;
     }
 
     /**

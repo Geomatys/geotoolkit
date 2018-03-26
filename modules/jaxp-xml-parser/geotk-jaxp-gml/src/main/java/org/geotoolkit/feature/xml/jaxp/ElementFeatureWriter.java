@@ -369,8 +369,8 @@ public class ElementFeatureWriter {
         document.appendChild(rootElement);
 
         String collectionID = "";
-        if (featureCollection.getID() != null) {
-            collectionID = featureCollection.getID();
+        if (featureCollection.getIdentifier()!= null) {
+            collectionID = featureCollection.getIdentifier().toString();
         }
         final Attr idAttribute = document.createAttributeNS(GML, "id");
         idAttribute.setValue(collectionID);

@@ -122,7 +122,7 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
     @Override
     public void paintLayer(final RenderingContext2D renderingContext) {
 
-        final GenericName coverageName = item.getCoverageReference().getName();
+        final GenericName coverageName = item.getCoverageReference().getIdentifier();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 renderingContext.getSEScale(), coverageName,null);
 
@@ -183,7 +183,7 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
 
         final RenderingContext2D renderingContext = (RenderingContext2D) context;
 
-        final GenericName coverageName = item.getCoverageReference().getName();
+        final GenericName coverageName = item.getCoverageReference().getIdentifier();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 renderingContext.getSEScale(), coverageName,null);
 

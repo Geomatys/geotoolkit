@@ -16,7 +16,13 @@
  */
 package org.geotoolkit.data.gml;
 
-import org.geotoolkit.data.FileFeatureStoreFactory;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.PosixDirectoryFilter;
@@ -29,9 +35,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Level;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 
 /**
  * FeatureStore for a folder of GML files.
@@ -39,6 +44,17 @@ import org.geotoolkit.storage.FactoryMetadata;
  * @author Johann Sorel (Geomatys)
  * @module
  */
+@StoreMetadataExt(
+        resourceTypes = ResourceType.VECTOR,
+        canCreate = false,
+        canWrite = false,
+        geometryTypes ={Geometry.class,
+                        Point.class,
+                        LineString.class,
+                        Polygon.class,
+                        MultiPoint.class,
+                        MultiLineString.class,
+                        MultiPolygon.class})
 public class GMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFactory{
 
     public static final String NAME = derivateName(GMLFeatureStoreFactory.NAME);
@@ -103,10 +119,5 @@ public class GMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
             LOGGER.log(Level.INFO, e.getLocalizedMessage());
         }
         return false;
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.VECTOR, true, false, false, false, GEOMS_ALL);
     }
 }

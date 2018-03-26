@@ -17,7 +17,11 @@
 package org.geotoolkit.coverage.amended;
 
 import java.awt.Image;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -26,8 +30,10 @@ import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.storage.Resource;
+import org.geotoolkit.storage.StorageEvent;
+import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.storage.coverage.AbstractCoverageResource;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.content.CoverageDescription;
@@ -35,6 +41,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 
 /**
@@ -51,9 +58,11 @@ import org.opengis.metadata.Metadata;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class AmendedCoverageResource extends AbstractCoverageResource{
+public class AmendedCoverageResource implements Resource,CoverageResource{
 
+    protected final Set<StorageListener> listeners = new HashSet<>();
     protected final CoverageResource ref;
+    protected final DataStore store;
 
     //source unmodified informations
     protected GeneralGridGeometry refGridGeom;
@@ -65,9 +74,24 @@ public class AmendedCoverageResource extends AbstractCoverageResource{
     protected MathTransform overrideGridToCrs;
     protected List<GridSampleDimension> overrideDims;
 
-    public AmendedCoverageResource(CoverageResource ref, CoverageStore store) {
-        super(store, ref.getName());
+    public AmendedCoverageResource(CoverageResource ref, DataStore store) {
+        this.store = store;
         this.ref = ref;
+    }
+
+    @Override
+    public DataStore getStore() {
+        return store;
+    }
+
+    @Override
+    public NamedIdentifier getIdentifier() {
+        return ref.getIdentifier();
+    }
+
+    @Override
+    public Envelope getEnvelope() throws DataStoreException {
+        return getGridGeometry(0).getEnvelope();
     }
 
     private void loadRefData(int index) throws CoverageStoreException {
@@ -127,7 +151,7 @@ public class AmendedCoverageResource extends AbstractCoverageResource{
     public void setOverrideCRS(CoordinateReferenceSystem overrideCRS) {
         if(this.overrideCRS==overrideCRS) return;
         this.overrideCRS = overrideCRS;
-        sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, getName(), null, null));
+        sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, getIdentifier(), null, null));
     }
 
     /**
@@ -167,7 +191,7 @@ public class AmendedCoverageResource extends AbstractCoverageResource{
     public void setOverrideGridToCrs(MathTransform overrideGridToCrs) {
         if(this.overrideGridToCrs==overrideGridToCrs) return;
         this.overrideGridToCrs = overrideGridToCrs;
-        sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, getName(), null, null));
+        sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, getIdentifier(), null, null));
     }
 
     /**
@@ -302,6 +326,34 @@ public class AmendedCoverageResource extends AbstractCoverageResource{
     @Override
     public Metadata getMetadata() throws DataStoreException {
         return ref.getMetadata();
+    }
+
+    @Override
+    public void addStorageListener(final StorageListener listener) {
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
+    }
+
+    @Override
+    public void removeStorageListener(final StorageListener listener) {
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
+    }
+
+    /**
+     * Forward a structure event to all listeners.
+     * @param event , event to send to listeners.
+     */
+    private void sendStructureEvent(final StorageEvent event){
+        final StorageListener[] lst;
+        synchronized (listeners) {
+            lst = listeners.toArray(new StorageListener[listeners.size()]);
+        }
+        for(final StorageListener listener : lst){
+            listener.structureChanged(event);
+        }
     }
 
 }

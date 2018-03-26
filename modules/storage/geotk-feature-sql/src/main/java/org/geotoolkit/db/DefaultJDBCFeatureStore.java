@@ -40,12 +40,8 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Version;
 import org.geotoolkit.data.*;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.data.query.Selector;
-import org.geotoolkit.data.query.Source;
-import org.geotoolkit.data.query.TextStatement;
 import org.geotoolkit.data.session.Session;
 import static org.geotoolkit.db.JDBCFeatureStore.JDBC_PROPERTY_RELATION;
 import org.geotoolkit.db.dialect.SQLDialect;
@@ -61,6 +57,8 @@ import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 import org.opengis.util.GenericName;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.MismatchedFeatureException;
@@ -73,6 +71,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.data.query.SQLQuery;
 import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.feature.AttributeType;
@@ -94,7 +93,8 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         UPDATE_AND_INSERT
     }
 
-    protected static final QueryCapabilities DEFAULT_CAPABILITIES = new DefaultQueryCapabilities(false, false, new String[]{Query.GEOTK_QOM, CUSTOM_SQL});
+    protected static final QueryCapabilities DEFAULT_CAPABILITIES = new DefaultQueryCapabilities(false, false,
+            new String[]{org.geotoolkit.data.query.Query.GEOTK_QOM, CUSTOM_SQL});
 
     protected final GeometryFactory geometryFactory = new GeometryFactory();
     protected final FilterFactory filterFactory = FactoryFinder.getFilterFactory(null);
@@ -239,9 +239,9 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
     @Override
     public FeatureType getFeatureType(Query query) throws DataStoreException, MismatchedFeatureException {
-        if(CUSTOM_SQL.equalsIgnoreCase(query.getLanguage())){
-            final TextStatement txt = (TextStatement) query.getSource();
-            final String sql = txt.getStatement();
+        if (query instanceof SQLQuery) {
+            final SQLQuery sqlQuery = (SQLQuery) query;
+            final String sql = sqlQuery.getStatement();
             Connection cnx = null;
             Statement stmt = null;
             ResultSet rs = null;
@@ -249,7 +249,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                 cnx = getDataSource().getConnection();
                 stmt = cnx.createStatement();
                 rs = stmt.executeQuery(sql);
-                return getDatabaseModel().analyzeResult(rs, query.getTypeName());
+                return getDatabaseModel().analyzeResult(rs, sqlQuery.getName());
             } catch (SQLException ex) {
                 throw new DataStoreException(ex);
             }finally{
@@ -270,35 +270,32 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     }
 
     public FeatureReader getFeatureReader(final Query query, final Connection cnx) throws DataStoreException {
-        final Source source = query.getSource();
 
-        final FeatureReader reader;
-        if(source instanceof Selector){
-            reader = getQOMFeatureReader(query,cnx);
-        }else if(source instanceof TextStatement){
-            reader = getSQLFeatureReader(query,cnx);
-        }else{
-            throw new DataStoreException("Unsupported source type : " + source);
+        if (query instanceof SQLQuery) {
+            return getSQLFeatureReader((SQLQuery)query,cnx);
+
+        } else if (query instanceof org.geotoolkit.data.query.Query) {
+            final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query)query;
+            final FeatureReader reader = getQOMFeatureReader(gquery,cnx);
+
+            //take care of potential hints, like removing primary keys
+            final QueryBuilder qb = new QueryBuilder();
+            qb.setTypeName("remaining");
+            qb.setHints(gquery.getHints());
+            return FeatureStreams.subset(reader, qb.buildQuery());
+
+        } else {
+            throw new UnsupportedQueryException();
         }
-
-        //take care of potential hints, like removing primary keys
-        final QueryBuilder qb = new QueryBuilder();
-        qb.setTypeName("remaining");
-        qb.setHints(query.getHints());
-        return FeatureStreams.subset(reader, qb.buildQuery());
     }
 
     /**
      * Get reader with geotk query model.
-     * @param query
+     * @param gquery
      * @return FeatureReader
      * @throws DataStoreException
      */
-    private FeatureReader getQOMFeatureReader(final Query query, Connection cnx) throws DataStoreException {
-
-        if(!query.isSimple()){
-            throw new DataStoreException("Query is not simple.");
-        }
+    private FeatureReader getQOMFeatureReader(final org.geotoolkit.data.query.Query query, Connection cnx) throws DataStoreException {
 
         final String dbSchemaName = getDatabaseSchema();
         final FeatureType type = dbmodel.getFeatureType(query.getTypeName());
@@ -343,7 +340,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         if(query.getResolution() != null){ //attach resampling in hints; used later by postgis dialect
             builder.getHints().add(new Hints(RESAMPLING, query.getResolution()));
         }
-        final Query preQuery = builder.buildQuery();
+        final org.geotoolkit.data.query.Query preQuery = builder.buildQuery();
 
         final FeatureType baseType = getFeatureType(query.getTypeName());
 
@@ -434,14 +431,13 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
     /**
      * Get reader with SQL query.
-     * @param query
+     * @param gquery
      * @return FeatureReader
      * @throws DataStoreException
      */
-    private FeatureReader getSQLFeatureReader(final Query query, Connection cnx) throws DataStoreException {
+    private FeatureReader getSQLFeatureReader(final SQLQuery query, Connection cnx) throws DataStoreException {
 
-        final TextStatement stmt = (TextStatement) query.getSource();
-        final String sql = stmt.getStatement();
+        final String sql = query.getStatement();
 
         //we gave him the connection, he must not release it
         final boolean release = (cnx == null);
@@ -465,35 +461,38 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
     @Override
     public Envelope getEnvelope(Query query) throws DataStoreException, FeatureStoreRuntimeException {
-        if(CUSTOM_SQL.equalsIgnoreCase(query.getLanguage())){
+        if (query instanceof SQLQuery) {
             //can not optimize this query
             //iterator is closed by method
-            return FeatureStoreUtilities.calculateEnvelope(getSQLFeatureReader(query,null));
+            return FeatureStoreUtilities.calculateEnvelope(getSQLFeatureReader((SQLQuery)query,null));
         }
         return super.getEnvelope(query);
     }
 
     @Override
     public long getCount(Query query) throws DataStoreException {
-        if(CUSTOM_SQL.equalsIgnoreCase(query.getLanguage())){
+        if (query instanceof SQLQuery) {
             //iterator is closed by method
-            return FeatureStoreUtilities.calculateCount(getSQLFeatureReader(query,null));
+            return FeatureStoreUtilities.calculateCount(getSQLFeatureReader((SQLQuery)query,null));
         }
         return super.getCount(query);
     }
 
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        typeCheck(query.getTypeName());
-        final Filter filter = query.getFilter();
-        final Hints hints = query.getHints();
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        typeCheck(gquery.getTypeName());
+        final Filter filter = gquery.getFilter();
+        final Hints hints = gquery.getHints();
         try {
             if (Filter.EXCLUDE.equals(filter)) {
                //append mode
-               return getFeatureWriterInternal(query.getTypeName(), Filter.EXCLUDE, EditMode.INSERT, null, hints);
+               return getFeatureWriterInternal(gquery.getTypeName(), Filter.EXCLUDE, EditMode.INSERT, null, hints);
             } else {
                 //update mode
-                return getFeatureWriterInternal(query.getTypeName(), filter, EditMode.UPDATE_AND_INSERT, null, hints);
+                return getFeatureWriterInternal(gquery.getTypeName(), filter, EditMode.UPDATE_AND_INSERT, null, hints);
             }
         } catch (IOException ex) {
             throw new DataStoreException(ex);
@@ -538,7 +537,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             if ( EditMode.INSERT == mode ) {
                 //build up a statement for the content, inserting only so we dont want
                 //the query to return any data ==> Filter.EXCLUDE
-                final Query queryNone = QueryBuilder.filtered(typeName, Filter.EXCLUDE);
+                final org.geotoolkit.data.query.Query queryNone = QueryBuilder.filtered(typeName, Filter.EXCLUDE);
                 final String sql = getQueryBuilder().selectSQL(baseType, queryNone);
                 getLogger().fine(sql);
                 return new JDBCFeatureWriterInsert(this,sql,baseType,cnx,release,hints);
@@ -546,7 +545,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
 
             // build up a statement for the content
-            final Query preQuery = QueryBuilder.filtered(typeName, preFilter);
+            final org.geotoolkit.data.query.Query preQuery = QueryBuilder.filtered(typeName, preFilter);
             final String sql = getQueryBuilder().selectSQL(baseType, preQuery);
             getLogger().fine(sql);
 

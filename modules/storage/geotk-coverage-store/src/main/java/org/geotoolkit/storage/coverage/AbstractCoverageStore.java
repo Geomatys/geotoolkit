@@ -127,7 +127,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
             }
 
             if (gg != null) {
-                geometries.put(ref.getName(), gg);
+                geometries.put(ref.getIdentifier(), gg);
             }
 
             if (md != null) {
@@ -144,21 +144,21 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
     /**
      * Compute extents to set in store's metadata. This analysis is separated in
- a method so inheriting stores will be able to customize it easily.
- This method is needed because geographic information could be features differently
- according to its structure. Example :
- - If the metadata represents two distinct data, we should have two distinct
- extents
- - If the metadata describes an non-continuous data cube, we should have a
- single extent which contains multiple disjoint geographic/temporal/elevation
- extents.
-
- Note : Default algorithm is really simple. We put all envelopes in a simple
- extent, which will directly contain the list of geographic, temporal and
- vertical extents for each reference.
-
- We'll also add all reference systems found in the input grid geometries if
- they're not here already.
+     * a method so inheriting stores will be able to customize it easily.
+     * This method is needed because geographic information could be features differently
+     * according to its structure. Example :
+     * - If the metadata represents two distinct data, we should have two distinct
+     * extents
+     * - If the metadata describes an non-continuous data cube, we should have a
+     * single extent which contains multiple disjoint geographic/temporal/elevation
+     * extents.
+     *
+     * Note : Default algorithm is really simple. We put all envelopes in a simple
+     * extent, which will directly contain the list of geographic, temporal and
+     * vertical extents for each reference.
+     *
+     * We'll also add all reference systems found in the input grid geometries if
+     * they're not here already.
      *
      * @param md The metadata to update
      * @param geometries The grid geometries of each store's reference, grouped
@@ -215,16 +215,6 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         return Classes.getShortClassName(this);
     }
 
-    @Override
-    public CoverageResource create(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Creation of new coverage not supported.");
-    }
-
-    @Override
-    public void delete(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Deletion of coverage not supported.");
-    }
-
     ////////////////////////////////////////////////////////////////////////////
     // Convinient methods, fallback on getRootResource                            //
     ////////////////////////////////////////////////////////////////////////////
@@ -248,7 +238,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
         if(candidate instanceof CoverageResource){
             final CoverageResource cr = (CoverageResource) candidate;
-            map.add(cr.getName(), cr);
+            map.add(cr.getIdentifier(), cr);
         }
 
         if (candidate instanceof Aggregate) {

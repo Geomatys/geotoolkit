@@ -20,12 +20,10 @@ package org.geotoolkit.data.om.netcdf;
 import java.net.URI;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.observation.AbstractObservationStoreFactory;
 import org.geotoolkit.observation.Bundle;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -34,7 +32,8 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class NetcdfObservationStoreFactory extends AbstractObservationStoreFactory implements FeatureStoreFactory {
+@StoreMetadataExt(resourceTypes = ResourceType.SENSOR)
+public class NetcdfObservationStoreFactory extends AbstractObservationStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "observationFile";
@@ -58,11 +57,6 @@ public class NetcdfObservationStoreFactory extends AbstractObservationStoreFacto
     @Override
     public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS_DESCRIPTOR;
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.SENSOR, true, false, false);
     }
 
     @Override

@@ -39,6 +39,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.apache.sis.referencing.NamedIdentifier;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -59,6 +60,7 @@ import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.DefaultPropertyName;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.w3c.dom.Element;
@@ -333,10 +335,10 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
 
         FeatureCollection result = (FeatureCollection) obj;
         try {
-            String id = result.getID();
+            NamedIdentifier id = result.getIdentifier();
             result = result.subset(QueryBuilder.sorted(
                     result.getType().getName().toString(), FF.sort("attDouble", SortOrder.ASCENDING)));
-            ((AbstractFeatureCollection)result).setId(id);
+            ((AbstractFeatureCollection)result).setIdentifier(id);
         } catch (DataStoreException ex) {
             Logging.getLogger("org.geotoolkit.feature.xml").log(Level.SEVERE, null, ex);
         }
@@ -345,7 +347,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         FeatureIterator expectedIte = collectionSimple.iterator();
 
         assertEquals(collectionSimple.size(), result.size());
-        assertEquals(collectionSimple.getID(), result.getID());
+        assertEquals(collectionSimple.getIdentifier(), result.getIdentifier());
         assertEquals(collectionSimple.getType(), result.getType());
 
         assertEquals(resultIte.next(), expectedIte.next());

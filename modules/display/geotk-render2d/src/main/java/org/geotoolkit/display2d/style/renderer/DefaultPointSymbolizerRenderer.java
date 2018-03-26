@@ -36,7 +36,6 @@ import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.geometry.jts.JTS;
 import org.opengis.referencing.operation.TransformException;
@@ -135,7 +134,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
             return;
         }
 
-        double rot = AffineTransforms2D.getRotation(renderingContext.getObjectiveToDisplay());
+        double rot = renderingContext.getRotation();
         rot -= imgRot;
 
         final int postx = (int) (-img.getWidth()*anchor[0] + disps[0]);
@@ -240,7 +239,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
         final float[] anchor = new float[2];
         final AffineTransform imgTrs = new AffineTransform();
 
-        final double rot = AffineTransforms2D.getRotation(renderingContext.getObjectiveToDisplay());
+        final double rot = renderingContext.getRotation();
         final AffineTransform mapRotationTrs = new AffineTransform();
         mapRotationTrs.rotate(-rot);
 

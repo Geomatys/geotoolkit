@@ -72,7 +72,7 @@ public class FXDRBound extends FXStyleElementController<DynamicRangeSymbolizer.D
 
         //mimic a feature with coverage properties
         final FeatureType ft = DynamicRangeSymbolizer.buildBandType();
-        uiValue.setLayer(MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection("", ft)));
+        uiValue.setLayer(MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection("noname", ft)));
     }
 
     @Override

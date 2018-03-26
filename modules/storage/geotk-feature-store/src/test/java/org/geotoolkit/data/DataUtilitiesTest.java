@@ -108,7 +108,7 @@ public class DataUtilitiesTest extends org.geotoolkit.test.TestBase {
 
         FeatureCollection col = FeatureStoreUtilities.collection("myId", ft);
 
-        assertEquals("myId", col.getID());
+        assertEquals("myId", col.getIdentifier().toString());
 
     }
 

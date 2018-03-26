@@ -70,6 +70,7 @@ import org.geotoolkit.storage.DataStores;
 import org.junit.After;
 import org.opengis.filter.identity.FeatureId;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.data.query.SQLQuery;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.opengis.feature.AttributeType;
@@ -627,7 +628,7 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         assertEquals(1, addedIds.size());
         assertEquals(new DefaultFeatureId("Voyage.1"), addedIds.get(0));
 
-        final Query query = QueryBuilder.language(JDBCFeatureStore.CUSTOM_SQL, "SELECT * FROM \"Stop\"", "s1");
+        final org.apache.sis.storage.Query query = new SQLQuery("SELECT * FROM \"Stop\"", "s1");
         final FeatureReader ite = store.getFeatureReader(query);
         final boolean[] found = new boolean[3];
         try{

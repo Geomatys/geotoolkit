@@ -107,7 +107,7 @@ public class ClipGeometryTest extends AbstractProcessTest {
 
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
         Feature myFeature1 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
@@ -207,7 +207,7 @@ public class ClipGeometryTest extends AbstractProcessTest {
 
         type = createSimpleResultType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
         Feature myFeature1 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(

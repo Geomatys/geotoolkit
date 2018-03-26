@@ -25,13 +25,9 @@ import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.apache.sis.storage.Aggregate;
-
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
-import org.geotoolkit.storage.coverage.CoverageType;
-import org.geotoolkit.storage.coverage.DefaultCoverageResource;
+import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -41,12 +37,16 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.storage.Resource;
+import org.geotoolkit.storage.coverage.AbstractCoverageStore;
+import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
+import org.geotoolkit.storage.coverage.DefaultCoverageResource;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Simple implementation to provide a {@link MemoryCoverageStore} for a {@link GridCoverage2D}.
@@ -54,7 +54,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  * @author Johan Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  */
-public class MemoryCoverageStore extends AbstractCoverageStore implements Aggregate {
+public class MemoryCoverageStore extends AbstractCoverageStore implements WritableAggregate {
     /**
      * Dummy parameter descriptor group.
      */
@@ -74,7 +74,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Aggreg
     public MemoryCoverageStore(final GridCoverage2D gridCov, final String name) {
         this();
         try {
-            final CoverageResource ref = create(NamesExt.create(name));
+            final CoverageResource ref = add(new DefiningCoverageResource(NamesExt.create(name),null));
             final GridCoverageWriter writer = ref.acquireWriter();
             writer.write(gridCov, null);
             ref.recycle(writer);
@@ -101,7 +101,13 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Aggreg
     }
 
     @Override
-    public CoverageResource create(final GenericName name) throws DataStoreException {
+    public CoverageResource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
+        if (!(resource instanceof DefiningCoverageResource)) {
+            throw new DataStoreException("Unsupported resource "+resource);
+        }
+        final DefiningCoverageResource cr = (DefiningCoverageResource) resource;
+        final GenericName name = cr.getName();
+
         final Set<GenericName> names = getNames();
         if (names.contains(name)) {
             throw new DataStoreException("Layer "+name+" already exist");
@@ -110,6 +116,18 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Aggreg
         resources.add(res);
         fireCoverageAdded(name);
         return res;
+    }
+
+    @Override
+    public void remove(org.apache.sis.storage.Resource resource) throws DataStoreException {
+        if (!(resource instanceof CoverageResource)) {
+            throw new DataStoreException("Unknown resource "+resource);
+        }
+        final CoverageResource cr = (CoverageResource) resource;
+        final NamedIdentifier name = cr.getIdentifier();
+
+        //TODO
+        throw new DataStoreException("Remove operation not supported.");
     }
 
     /**
@@ -170,7 +188,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Aggreg
 
         @Override
         public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-            return Collections.singletonList(ref.getName());
+            return Collections.singletonList(ref.getIdentifier());
         }
     }
 
@@ -187,11 +205,6 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Aggreg
             ref.setCoverage((GridCoverage2D)coverage);
         }
 
-    }
-
-    @Override
-    public CoverageType getType() {
-        return CoverageType.GRID;
     }
 
 }

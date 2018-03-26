@@ -36,6 +36,7 @@ import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.image.BufferedImages;
 
 import static org.junit.Assert.*;
@@ -49,6 +50,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
@@ -81,13 +83,14 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
             return store;
         }
         store = createStore();
+        final WritableAggregate agg = (WritableAggregate) store;
         crs = CRS.forCode("EPSG:3395");
 
         ////////////////////////////////////////////////////////////////////////
         //create a small RGBA pyramid //////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
         final GenericName rgbaName = NamesExt.create("rgba");
-        rgbaCoverageRef = (PyramidalCoverageResource) store.create(rgbaName);
+        rgbaCoverageRef = (PyramidalCoverageResource) agg.add(new DefiningCoverageResource(rgbaName));
         rgbaCoverageRef.setPackMode(ViewType.RENDERED);
 
         //define the coverage informations
@@ -133,7 +136,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
         //create a small Float 1 band pyramid //////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
         final GenericName float1bName = NamesExt.create("float1b");
-        float1bCoverageRef = (PyramidalCoverageResource) store.create(float1bName);
+        float1bCoverageRef = (PyramidalCoverageResource) agg.add(new DefiningCoverageResource(float1bName));
         float1bCoverageRef.setPackMode(ViewType.GEOPHYSICS);
 
         //define the coverage informations

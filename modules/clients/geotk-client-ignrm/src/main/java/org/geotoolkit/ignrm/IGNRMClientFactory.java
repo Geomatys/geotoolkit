@@ -22,9 +22,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
@@ -36,6 +35,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
+@StoreMetadataExt(resourceTypes = ResourceType.OTHER)
 public class IGNRMClientFactory extends AbstractClientFactory{
 
     /** factory identification **/
@@ -59,11 +59,6 @@ public class IGNRMClientFactory extends AbstractClientFactory{
     @Override
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.serverDescription);
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.OTHER, false, false, false);
     }
 
     @Override

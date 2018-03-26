@@ -38,7 +38,6 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.FactoryFinder;
@@ -59,6 +58,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.IllegalNameException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.internal.data.GenericNameIndex;
@@ -525,15 +526,18 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      */
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        final Group grp = groups.get(this, query.getTypeName());
+        if (!(query instanceof org.geotoolkit.data.query.Query))  throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final Group grp = groups.get(this, gquery.getTypeName());
 
         if(grp == null){
-            throw new DataStoreException("No featureType for name : " + query.getTypeName());
+            throw new DataStoreException("No featureType for name : " + gquery.getTypeName());
         }
 
         //we can handle id filter
-        final Filter filter = query.getFilter();
-        final QueryBuilder remaining = new QueryBuilder(query);
+        final Filter filter = gquery.getFilter();
+        final QueryBuilder remaining = new QueryBuilder(gquery);
 
         final Iterator<? extends Feature> ite;
         if(grp instanceof GroupWithId){

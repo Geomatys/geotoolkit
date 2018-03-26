@@ -23,17 +23,15 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import org.geotoolkit.data.DefaultJoinFeatureCollection;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.data.DefaultSelectorFeatureCollection;
-import org.geotoolkit.data.DefaultTextStmtFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.DefaultFeatureStoreJoinFeatureCollection;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
-import org.apache.sis.util.NullArgumentException;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.apache.sis.storage.DataStoreException;
-import org.opengis.util.GenericName;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
@@ -49,198 +47,7 @@ public class QueryUtilities {
 
     private QueryUtilities(){}
 
-    /**
-     * A source is considered absolute when all selector in the source have
-     * a session defined. That implies we can use a query with this source
-     * directly on a EvaluatedFeatureCollection.
-     *
-     * @param source
-     * @return true if the source is absolute
-     */
-    public static boolean isAbsolute(final Source source){
-        if(source instanceof Join){
-            final Join j = (Join) source;
-            return isAbsolute(j.getLeft()) && isAbsolute(j.getRight());
-        }else if (source instanceof Selector){
-            return ((Selector)source).getSession() != null;
-        }else if (source instanceof TextStatement){
-            return ((TextStatement)source).getSession() != null;
-        }else{
-            throw new IllegalStateException("Source type is unknowned : " + source +
-                    "\n valid types ares Join and Selector");
-        }
-    }
-
-    /**
-     * When a source is not yet absolute, you can reconfigure it to be so.
-     * every Selector that doesn't have a session configure will be replaced by
-     * the given one.
-     *
-     * @param source
-     * @param session
-     * @return an absolute source
-     */
-    public static Source makeAbsolute(final Source source, final Session session){
-
-        final Source absolute;
-        if(source instanceof Join){
-            final Join j = (Join) source;
-
-            if(isAbsolute(j)){
-                absolute = j;
-            }else{
-                final Source left = makeAbsolute(j.getLeft(), session);
-                final Source right = makeAbsolute(j.getLeft(), session);
-                absolute = new DefaultJoin(left, right, j.getJoinType(), j.getJoinCondition());
-            }
-        }else if (source instanceof Selector){
-            final Selector select = (Selector) source;
-            if (select.getSession() == null){
-                if(session == null){
-                    throw new NullPointerException("Session can not be null.");
-                }
-
-                absolute = new DefaultSelector(session, select.getFeatureTypeName(), select.getSelectorName());
-            }else{
-                absolute = source;
-            }
-        }else if (source instanceof TextStatement){
-            final TextStatement select = (TextStatement) source;
-            if (select.getSession() == null){
-                if(session == null){
-                    throw new NullPointerException("Session can not be null.");
-                }
-
-                absolute = new DefaultTextStatement(select.getStatement(), session, select.getName());
-            }else{
-                absolute = source;
-            }
-        }else{
-            throw new IllegalStateException("Source type is unknowned : " + source +
-                    "\n valid types ares Join and Selector");
-        }
-
-        return absolute;
-    }
-
-    public static Query makeAbsolute(final Query query, final Session session){
-        Source source = query.getSource();
-        if(isAbsolute(source)){
-            //nothing to change, query is absolute already
-            return query;
-        }
-
-        source = makeAbsolute(source, session);
-        QueryBuilder qb = new QueryBuilder(query);
-        qb.setSource(source);
-        return qb.buildQuery();
-    }
-
-    public static FeatureCollection evaluate(final String id, final Query query){
-        return evaluate(id,query, null);
-    }
-
-    /**
-     * Create a feature collection for the given query.
-     * This method will try to use the feature store query capabilities if several
-     * selector/join source use the same Session.
-     * Otherwise a generic (slower) implementation will be returned.
-     *
-     * @param id : feature collection id.
-     * @param query : query
-     * @param session : use this session if the query is not absolute
-     * @return feature collection
-     */
-    public static FeatureCollection evaluate(final String id, Query query, final Session session){
-        query = QueryUtilities.makeAbsolute(query, session);
-
-
-        final String language = query.getLanguage();
-
-        if(Query.GEOTK_QOM.equalsIgnoreCase(language)){
-            final Source s = query.getSource();
-            if(s instanceof Selector){
-                return new DefaultSelectorFeatureCollection(id, query);
-            }else if(s instanceof Join){
-                final Collection<Session> sessions = getSessions(s, null);
-
-                if(sessions.size() == 1 && sessions.iterator().next().getFeatureStore().getQueryCapabilities().handleCrossQuery()){
-                    //the feature store can handle our join query, it will be much more efficient then a generic implementation
-                    return new DefaultFeatureStoreJoinFeatureCollection(id, query);
-                }else{
-                    //can't optimize it, use the generic implementation
-                    return new DefaultJoinFeatureCollection(id, query);
-                }
-            }else{
-                throw new IllegalArgumentException("Query source is an unknowned type : " + s);
-            }
-        }else{
-            //custom language query, let the feature store handle it
-            return new DefaultTextStmtFeatureCollection(id, query);
-        }
-    }
-
-    /**
-     * Explore all source and check that the type is writable.
-     *
-     * @param source
-     * @return true if all source are writable
-     */
-    public static boolean isWritable(final Source source) throws DataStoreException{
-        if(source instanceof Join){
-            final Join j = (Join) source;
-            return isWritable(j.getLeft()) && isWritable(j.getRight());
-
-        }else if(source instanceof Selector){
-            final Selector select = (Selector) source;
-            final Session session = select.getSession();
-
-            if(session == null){
-                throw new IllegalArgumentException("Source must be absolute to verify if it's writable");
-            }
-
-            return session.getFeatureStore().isWritable(select.getFeatureTypeName().toString());
-        }else if(source instanceof TextStatement){
-            return false;
-        }else{
-            throw new IllegalStateException("Source type is unknowned : " + source +
-                    "\n valid types ares Join and Selector");
-        }
-    }
-
-    /**
-     * Explore the source and return a collection of all session used in this
-     * source.
-     *
-     * @param source : source to explore
-     * @param buffer : a collection buffer, can be null
-     * @return a collection of sessions, never null but can be empty.
-     */
-    public static Collection<Session> getSessions(final Source source, Collection<Session> buffer){
-        if(buffer == null){
-            buffer = new HashSet<Session>();
-        }
-
-        if(source instanceof Selector){
-            final Session s = ((Selector)source).getSession();
-            if(s != null){
-                buffer.add(s);
-            }
-        }else if(source instanceof Join){
-            final Join j = (Join) source;
-            getSessions(j.getLeft(), buffer);
-            getSessions(j.getRight(), buffer);
-        }
-
-        return buffer;
-    }
-
     public static boolean queryAll(final Query query){
-
-        if(query.getSource() instanceof TextStatement){
-            return true;
-        }
-
         return     query.retrieveAllProperties()
                 && query.getCoordinateSystemReproject() == null
                 && query.getCoordinateSystemReproject() == null
@@ -267,7 +74,7 @@ public class QueryUtilities {
         }
 
         final QueryBuilder qb = new QueryBuilder();
-        qb.setSource(original.getSource());
+        qb.setTypeName(original.getTypeName());
 
         //use the more restrictive max features field---------------------------
         Integer max = original.getMaxFeatures();

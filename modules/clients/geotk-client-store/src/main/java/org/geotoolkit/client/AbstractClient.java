@@ -20,6 +20,7 @@ import java.net.URLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Level;
@@ -27,9 +28,13 @@ import java.util.logging.Logger;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.Resource;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.apache.sis.util.ArgumentChecks;
@@ -67,8 +72,18 @@ public abstract class AbstractClient extends DataStore implements Client{
     }
 
     @Override
-    public Metadata getMetadata() throws DataStoreException {
-        return null;
+    protected Metadata createMetadata() throws DataStoreException {
+        //extract an identifier string from url
+        String name = serverURL.getHost() + serverURL.getPath();
+        final DefaultMetadata metadata = new DefaultMetadata();
+        final DefaultDataIdentification identification = new DefaultDataIdentification();
+        final NamedIdentifier identifier = new NamedIdentifier(new DefaultIdentifier(name));
+        final DefaultCitation citation = new DefaultCitation(name);
+        citation.setIdentifiers(Collections.singleton(identifier));
+        identification.setCitation(citation);
+        metadata.setIdentificationInfo(Collections.singleton(identification));
+        metadata.freeze();
+        return metadata;
     }
 
     @Override

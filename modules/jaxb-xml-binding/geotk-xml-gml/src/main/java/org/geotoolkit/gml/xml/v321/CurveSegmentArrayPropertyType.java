@@ -66,7 +66,7 @@ public class CurveSegmentArrayPropertyType implements CurveSegmentArrayProperty{
             ObjectFactory factory = new ObjectFactory();
             abstractCurveSegment = new ArrayList<>();
             for (AbstractCurveSegmentType segment : segments) {
-                abstractCurveSegment.add(factory.createLineStringSegment((LineStringSegmentType) segment));
+                abstractCurveSegment.add(factory.createAbstractCurveSegment(segment));
             }
         }
     }

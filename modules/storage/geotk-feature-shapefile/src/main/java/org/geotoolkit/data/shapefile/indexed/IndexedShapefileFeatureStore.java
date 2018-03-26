@@ -29,30 +29,32 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import org.apache.sis.feature.AbstractOperation;
-import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.shapefile.FeatureIDReader;
+import org.geotoolkit.data.shapefile.ShapefileFeatureReader;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
-import org.geotoolkit.data.shapefile.ShapefileFeatureReader;
 import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
 import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
 import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
-import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
-
-import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
+import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
 import org.geotoolkit.filter.visitor.ExtractBoundsFilterVisitor;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
@@ -62,13 +64,9 @@ import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
 import org.geotoolkit.index.TreeException;
 import org.geotoolkit.index.quadtree.*;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.util.NullProgressListener;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
-import org.opengis.util.GenericName;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
@@ -76,6 +74,8 @@ import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.filter.spatial.BBOX;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 
 
 /**
@@ -182,16 +182,19 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      */
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
 
         final FeatureType   baseType = getFeatureType();
-        final String        queryTypeName = query.getTypeName();
-        final String[]      queryPropertyNames = query.getPropertyNames();
-        final Hints         queryHints = query.getHints();
-        final double[]      queryRes = query.getResolution();
-        Filter              queryFilter = query.getFilter();
+        final String        queryTypeName = gquery.getTypeName();
+        final String[]      queryPropertyNames = gquery.getPropertyNames();
+        final Hints         queryHints = gquery.getHints();
+        final double[]      queryRes = gquery.getResolution();
+        Filter              queryFilter = gquery.getFilter();
 
         //check if we must read the 3d values
-        final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
+        final CoordinateReferenceSystem reproject = gquery.getCoordinateSystemReproject();
         final boolean read3D = (reproject==null || CRS.getVerticalComponent(reproject, true) != null);
 
 
@@ -282,10 +285,10 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         }
         qb.setFilter(queryFilter);
         qb.setHints(queryHints);
-        qb.setCRS(query.getCoordinateSystemReproject());
-        qb.setSortBy(query.getSortBy());
-        qb.setStartIndex(query.getStartIndex());
-        qb.setMaxFeatures(query.getMaxFeatures());
+        qb.setCRS(gquery.getCoordinateSystemReproject());
+        qb.setSortBy(gquery.getSortBy());
+        qb.setStartIndex(gquery.getStartIndex());
+        qb.setMaxFeatures(gquery.getMaxFeatures());
         return FeatureStreams.subset(reader, qb.buildQuery());
     }
 
@@ -551,9 +554,12 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      */
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
 
         //will raise an error if it does not exist
-        final FeatureType schema = getFeatureType(query.getTypeName());
+        final FeatureType schema = getFeatureType(gquery.getTypeName());
 
         //we read all properties
         final IndexedShapefileAttributeReader attReader = getAttributesReader(
@@ -563,7 +569,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             final FeatureReader reader = createFeatureReader(attReader, schema, null);
             FeatureWriter writer = new IndexedShapefileFeatureWriter(
                     schema.getName().tip().toString(), shpFiles, attReader, reader, this, dbfCharset);
-            return FeatureStreams.filter(writer, query.getFilter());
+            return FeatureStreams.filter(writer, gquery.getFilter());
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
@@ -572,11 +578,14 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
     @Override
     public org.opengis.geometry.Envelope getEnvelope(final Query query) throws DataStoreException {
+        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
 
-        final Filter filter = query.getFilter();
-        if (filter == Filter.INCLUDE || QueryUtilities.queryAll(query) ) {
+        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+
+        final Filter filter = gquery.getFilter();
+        if (filter == Filter.INCLUDE || QueryUtilities.queryAll(gquery) ) {
             //use the generic envelope calculation
-            return super.getEnvelope(query);
+            return super.getEnvelope(gquery);
         }
 
         final Set<Identifier> fids = (Set<Identifier>) filter.accept(

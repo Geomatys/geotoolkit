@@ -52,6 +52,7 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortOrder;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.NamedIdentifier;
 import static org.geotoolkit.feature.xml.GMLConvention.*;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
@@ -321,7 +322,8 @@ public class XmlTestData {
             throw new RuntimeException(ex.getMessage(),ex);
         }
 
-        ((AbstractFeatureCollection)collectionSimple).setId("one of a kind ID");
+        final NamedIdentifier ident = new NamedIdentifier(NamesExt.create("one of a kind ID"));
+        ((AbstractFeatureCollection)collectionSimple).setIdentifier(ident);
 
 
         featureComplex = complexType.newInstance();

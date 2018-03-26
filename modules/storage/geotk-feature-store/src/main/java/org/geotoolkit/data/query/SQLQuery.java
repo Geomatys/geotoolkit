@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011, Geomatys
+ *    (C) 2018, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,42 +14,27 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
-
 package org.geotoolkit.data.query;
-
-import org.geotoolkit.data.session.Session;
 
 /**
  *
- * @author Johann Sorel (Geoamtys)
- * @module
+ * @author Johann Sorel (Geomatys)
  */
-public class DefaultTextStatement implements TextStatement {
+public class SQLQuery implements org.apache.sis.storage.Query {
 
-    private final String name;
     private final String statement;
-    private final Session session;
+    private final String name;
 
-    public DefaultTextStatement(final String statement, final Session session, final String name) {
+    public SQLQuery(String statement, String name) {
         this.statement = statement;
-        this.session = session;
         this.name = name;
     }
 
-    @Override
     public String getStatement() {
         return statement;
     }
 
-    @Override
-    public Session getSession(){
-        return session;
-    }
-
-    @Override
     public String getName() {
         return name;
     }
-
 }

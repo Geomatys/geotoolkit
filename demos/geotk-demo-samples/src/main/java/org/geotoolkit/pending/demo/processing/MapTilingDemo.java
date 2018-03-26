@@ -29,7 +29,9 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 
 /**
  * Create a pyramid from a MapContext.
@@ -70,7 +72,12 @@ public class MapTilingDemo {
         final CoverageStore store = (CoverageStore) DataStores.create(factory,Collections.singletonMap(
                 "path", new URL("file:/media/terra/GIS_DATA/wmts_bluemarble")));
         final GenericName name = NamesExt.create("bluemarble");
-        final CoverageResource ref = store.create(name);
+        if (!(store instanceof WritableAggregate)) {
+            throw new IllegalArgumentException("Store is not writable");
+        }
+        final WritableAggregate agg = (WritableAggregate) store;
+
+        final CoverageResource ref = (CoverageResource) agg.add(new DefiningCoverageResource(name, null));
 
 
         //set the input parameters

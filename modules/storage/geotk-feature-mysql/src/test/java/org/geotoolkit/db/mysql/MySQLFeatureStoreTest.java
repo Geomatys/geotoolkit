@@ -70,6 +70,7 @@ import org.opengis.util.FactoryException;
 import static org.geotoolkit.db.mysql.MySQLFeatureStoreFactory.*;
 import org.geotoolkit.storage.DataStores;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.data.query.SQLQuery;
 import org.junit.Assert;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
@@ -854,7 +855,7 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
 
         store.addFeatures(resType.getName().toString(), Collections.singleton(voyage));
 
-        final Query query = QueryBuilder.language(JDBCFeatureStore.CUSTOM_SQL, "SELECT * FROM \"Stop\"", "s1");
+        final org.apache.sis.storage.Query query = new SQLQuery("SELECT * FROM \"Stop\"", "s1");
         final FeatureReader ite = store.getFeatureReader(query);
         final boolean[] found = new boolean[3];
         try{

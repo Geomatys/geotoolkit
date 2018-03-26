@@ -28,8 +28,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.geotoolkit.gui.swing.util.JOptionDialog;
@@ -38,10 +36,13 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gui.swing.parameters.editor.JParameterValuesEditor;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.ResourceType;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.opengis.parameter.ParameterValueGroup;
@@ -303,6 +304,12 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 
     private static ImageIcon findIcon(Object candidate){
 
+
+        ResourceType[] types = new ResourceType[0];
+        if (candidate instanceof DataStoreProvider) {
+            types = org.geotoolkit.storage.DataStores.getResourceTypes((DataStoreProvider) candidate);
+        }
+
         ImageIcon icon = EMPTY_24;
         String name = "";
         if (candidate instanceof DataStoreFactory) {
@@ -310,9 +317,9 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         }
         if(candidate instanceof ClientFactory){
             icon = IconBundle.getIcon("24_server");
-        }else if(candidate instanceof CoverageStoreFactory){
+        }else if(ArraysExt.contains(types, ResourceType.COVERAGE) | ArraysExt.contains(types, ResourceType.GRID) | ArraysExt.contains(types, ResourceType.PYRAMID)){
             icon = IconBundle.getIcon("24_folder_img");
-        }else if(candidate instanceof FeatureStoreFactory){
+        }else if(ArraysExt.contains(types, ResourceType.VECTOR)){
             icon = IconBundle.getIcon("24_store");
         }
 

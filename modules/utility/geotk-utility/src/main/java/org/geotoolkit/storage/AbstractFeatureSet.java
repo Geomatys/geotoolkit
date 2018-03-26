@@ -17,6 +17,7 @@
 package org.geotoolkit.storage;
 
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.opengis.geometry.Envelope;
@@ -42,6 +43,10 @@ public abstract class AbstractFeatureSet extends AbstractResource implements Fea
     }
 
     public AbstractFeatureSet(Identifier identifier) {
+        super(identifier);
+    }
+
+    public AbstractFeatureSet(NamedIdentifier identifier) {
         super(identifier);
     }
 

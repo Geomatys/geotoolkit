@@ -23,14 +23,13 @@ import javax.xml.bind.JAXBElement;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.query.Selector;
-import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -157,24 +156,20 @@ public class OwcDataStoreExtension extends OwcExtension {
     private static String getStoreFactoryName(MapLayer layer){
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            final Source source = ((FeatureCollection)fml.getResource()).getSource();
-            if(source instanceof Selector){
-                final Selector selector = (Selector)source;
-                final Session session = selector.getSession();
-                if(session!=null){
-                    final FeatureStore store = session.getFeatureStore();
-                    if(store!=null){
-                        final DataStoreFactory factory = store.getProvider();
-                        return factory.getOpenParameters().getName().getCode();
-                    }
+            final Session session = ((FeatureCollection)fml.getResource()).getSession();
+            if(session!=null){
+                final FeatureStore store = session.getFeatureStore();
+                if(store!=null){
+                    final DataStoreFactory factory = store.getProvider();
+                    return factory.getOpenParameters().getName().getCode();
                 }
             }
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
             final CoverageResource covref = cml.getCoverageReference();
-            final CoverageStore store = covref.getStore();
+            final DataStore store = covref.getStore();
             if(store!=null){
-                final DataStoreFactory factory = store.getProvider();
+                final DataStoreProvider factory = store.getProvider();
                 return factory.getOpenParameters().getName().getCode();
             }
         }
@@ -184,21 +179,17 @@ public class OwcDataStoreExtension extends OwcExtension {
     private static ParameterValueGroup getParams(MapLayer layer){
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            final Source source = ((FeatureCollection)fml.getResource()).getSource();
-            if(source instanceof Selector){
-                final Selector selector = (Selector)source;
-                final Session session = selector.getSession();
-                if(session!=null){
-                    final FeatureStore store = session.getFeatureStore();
-                    if(store!=null){
-                        return store.getOpenParameters();
-                    }
+            final Session session = ((FeatureCollection)fml.getResource()).getSession();
+            if(session!=null){
+                final FeatureStore store = session.getFeatureStore();
+                if(store!=null){
+                    return store.getOpenParameters();
                 }
             }
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
             final CoverageResource covref = cml.getCoverageReference();
-            final CoverageStore store = covref.getStore();
+            final DataStore store = covref.getStore();
             if(store!=null){
                 return store.getOpenParameters();
             }
@@ -209,15 +200,15 @@ public class OwcDataStoreExtension extends OwcExtension {
     private static String getTypeName(MapLayer layer){
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            final Source source = ((FeatureCollection)fml.getResource()).getSource();
-            if(source instanceof Selector){
-                final Selector selector = (Selector)source;
-                return selector.getFeatureTypeName();
+            try {
+                return fml.getResource().getType().getName().toString();
+            } catch (DataStoreException ex) {
+                return null;
             }
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
             final CoverageResource covref = cml.getCoverageReference();
-            return covref.getName().toString();
+            return covref.getIdentifier().toString();
         }
         return null;
     }
