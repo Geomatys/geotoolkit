@@ -142,6 +142,13 @@ public class FileCoverageStoreFactory extends DataStoreFactory {
                     input = connector.getStorageAs(File.class);
                     if (input == null) continue;
                 }
+                //Special case for JP2K, this decoder is close to useless
+                //it work on a very limited number of cases
+                //this decoder is not present by default, added by third-party jars.
+                if (spi.getClass().getName().contains("J2KImageReaderSpi")) {
+                    continue;
+                }
+
                 if (spi.canDecodeInput(input)) {
                     final String[] mimeTypes = spi.getMIMETypes();
                     if (mimeTypes != null) {
