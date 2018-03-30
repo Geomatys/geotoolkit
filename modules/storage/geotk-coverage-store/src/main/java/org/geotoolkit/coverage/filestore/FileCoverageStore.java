@@ -98,9 +98,9 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
     public FileCoverageStore(ParameterValueGroup params) throws URISyntaxException, IOException {
         super(params);
         Parameters p = Parameters.castOrWrap(params);
-        rootPath = p.getValue(FileCoverageStoreFactory.PATH);
-        separator = p.getValue(FileCoverageStoreFactory.PATH_SEPARATOR);
-        format = p.getValue(FileCoverageStoreFactory.TYPE);
+        rootPath = p.getValue(FileCoverageProvider.PATH);
+        separator = p.getValue(FileCoverageProvider.PATH_SEPARATOR);
+        format = p.getValue(FileCoverageProvider.TYPE);
         root = Paths.get(rootPath);
 
         if("AUTO".equalsIgnoreCase(format)){
@@ -112,17 +112,17 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
     }
 
     private static ParameterValueGroup toParameters(URI uri, String format){
-        final Parameters params = Parameters.castOrWrap(FileCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
-        params.getOrCreate(FileCoverageStoreFactory.PATH).setValue(uri);
+        final Parameters params = Parameters.castOrWrap(FileCoverageProvider.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(FileCoverageProvider.PATH).setValue(uri);
         if (format!=null) {
-            params.getOrCreate(FileCoverageStoreFactory.TYPE).setValue(format);
+            params.getOrCreate(FileCoverageProvider.TYPE).setValue(format);
         }
         return params;
     }
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(FileCoverageStoreFactory.NAME);
+        return DataStores.getFactoryById(FileCoverageProvider.NAME);
     }
 
     @Override
@@ -260,15 +260,11 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
      * @throws IOException if fail to create a reader.
      * @throws UnsupportedImageFormatException if spi is defined but can't decode candidate file
      */
-    static ImageReader createReader(final Path candidate, ImageReaderSpi spi) throws IOException{
+    static ImageReader createReader(final Path candidate, ImageReaderSpi spi) throws IOException {
         final ImageReader reader;
-        if(spi == null){
-            if (!IOUtilities.extension(candidate).isEmpty()) {
-                reader = XImageIO.getReaderBySuffix(candidate, Boolean.FALSE, Boolean.FALSE);
-            } else {
-                reader = XImageIO.getReader(candidate,Boolean.FALSE,Boolean.FALSE);
-            }
-        }else{
+        if (spi == null) {
+            reader = XImageIO.getReader(candidate, Boolean.FALSE, Boolean.FALSE);
+        } else {
             if (spi.canDecodeInput(candidate)) {
                 reader = spi.createReaderInstance();
                 Object in = XImageIO.toSupportedInput(spi, candidate);
@@ -289,7 +285,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
      * @return ImageWriter, never null
      * @throws IOException if fail to create a writer.
      */
-    ImageWriter createWriter(final Path candidate) throws IOException{
+    ImageWriter createWriter(final Path candidate) throws IOException {
         if (Files.exists(candidate)) {
             final ImageReaderSpi readerSpi = createReader(candidate,spi).getOriginatingProvider();
             final String[] writerSpiNames = readerSpi.getImageWriterSpiNames();

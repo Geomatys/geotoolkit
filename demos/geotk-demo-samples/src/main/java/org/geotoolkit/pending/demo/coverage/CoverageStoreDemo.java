@@ -6,7 +6,7 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.coverage.filestore.FileCoverageStoreFactory;
+import org.geotoolkit.coverage.filestore.FileCoverageProvider;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
@@ -31,9 +31,9 @@ public class CoverageStoreDemo {
 
         Path dataResources = IOUtilities.getResourceAsPath("data");
 
-        final Parameters params = Parameters.castOrWrap(FileCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
-        params.getOrCreate(FileCoverageStoreFactory.PATH).setValue(dataResources.toUri());
-        params.getOrCreate(FileCoverageStoreFactory.TYPE).setValue("jpg-wf");
+        final Parameters params = Parameters.castOrWrap(FileCoverageProvider.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(FileCoverageProvider.PATH).setValue(dataResources.toUri());
+        params.getOrCreate(FileCoverageProvider.TYPE).setValue("jpg-wf");
 
         final CoverageStore store = (CoverageStore) DataStores.open(params);
 
