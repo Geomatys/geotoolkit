@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
@@ -50,8 +49,6 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.FeatureNaming;
-import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.data.AbstractFeatureStore;
@@ -76,8 +73,6 @@ import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileWriter;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.nio.IOUtilities;
@@ -86,9 +81,6 @@ import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.IdentifiedType;
-import org.opengis.feature.MismatchedFeatureException;
-import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
@@ -313,102 +305,35 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
         if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
 
         final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
-        final FeatureType type = getFeatureType(gquery.getTypeName());
 
-        final Hints hints = gquery.getHints();
-        final String typeName = type.getName().tip().toString();
-        final String[] propertyNames = gquery.getPropertyNames();
-        final double[] resample = gquery.getResolution();
+        final FeatureType   baseType = getFeatureType();
+        final String        queryTypeName = gquery.getTypeName();
+        final String[]      queryPropertyNames = gquery.getPropertyNames();
+        final Hints         queryHints = gquery.getHints();
+        final double[]      queryRes = gquery.getResolution();
+        Filter              queryFilter = gquery.getFilter();
 
-        // find all possible names for geometry attributes (because of SIS convention).
-        final FeatureNaming geometryNames = new FeatureNaming();
-        try {
-            IdentifiedType defaultGeometry = FeatureExt.getDefaultGeometry(type);
-            while (defaultGeometry instanceof Operation) {
-                geometryNames.add(null, defaultGeometry.getName(), defaultGeometry.getName());
-                defaultGeometry = ((Operation) defaultGeometry).getResult();
-            }
-            geometryNames.add(null, defaultGeometry.getName(), defaultGeometry.getName());
-        } catch (PropertyNotFoundException | IllegalStateException e) {
-            getLogger().log(Level.FINE, e, () -> String.format("No geometry available in datatype :%n%s", type));
-        } catch (IllegalNameException e) {
-            // cycle detection
-            getLogger().log(Level.WARNING, "An operation references itself !", e);
-        }
+        final String typeName = baseType.getName().tip().toString();
 
         //check if we must read the 3d values
         final CoordinateReferenceSystem reproject = gquery.getCoordinateSystemReproject();
-        final boolean read3D = (reproject == null || CRS.getVerticalComponent(reproject, true) != null);
+        final boolean read3D = (reproject==null || CRS.getVerticalComponent(reproject, true) != null);
 
-        // gather attributes needed by the query tool, they will be used by the
-        // query filter
-        final FilterAttributeExtractor extractor = new FilterAttributeExtractor();
-        final Filter filter = gquery.getFilter();
-        filter.accept(extractor, null);
-        final GenericName[] filterAttnames = extractor.getAttributeNames();
+        final ShapefileAttributeReader attReader = getAttributesReader(true, read3D, queryRes);
+        final FeatureIDReader idReader = new DefaultFeatureIDReader(typeName);
+        FeatureReader reader = ShapefileFeatureReader.create(attReader,idReader, baseType, queryHints);
 
-        final Predicate<String> isGeometryName = input -> {
-            try {
-                return geometryNames.get(null, input) != null;
-            } catch (IllegalNameException e) {
-                return false;
-            }
-        };
 
-        // check if the geometry is the one and only attribute needed
-        // to return attribute _and_ to run the query filter
-        if (   propertyNames != null
-            && propertyNames.length == 1
-            && isGeometryName.test(propertyNames[0])
-            && (filterAttnames.length == 0 ||
-                (filterAttnames.length == 1 && isGeometryName.test(filterAttnames[0].toString())))) {
-            try {
-                final FeatureType newSchema = FeatureTypeExt.createSubType(schema, propertyNames);
-
-                final ShapefileAttributeReader attReader = getAttributesReader(false,read3D,resample);
-                final FeatureIDReader idReader = new DefaultFeatureIDReader(typeName);
-                FeatureReader reader = ShapefileFeatureReader.create(attReader, idReader, newSchema, hints);
-                final QueryBuilder remaining = new QueryBuilder(gquery.getTypeName());
-                remaining.setProperties(gquery.getPropertyNames());
-                remaining.setFilter(gquery.getFilter());
-                remaining.setHints(gquery.getHints());
-                remaining.setCRS(gquery.getCoordinateSystemReproject());
-                remaining.setSortBy(gquery.getSortBy());
-                remaining.setStartIndex(gquery.getStartIndex());
-                remaining.setMaxFeatures(gquery.getMaxFeatures());
-                reader = FeatureStreams.subset(reader, remaining.buildQuery());
-
-                return reader;
-            } catch (MismatchedFeatureException se) {
-                throw new DataStoreException("Error creating schema", se);
-            }
-        }else{
-             try {
-                final FeatureType newSchema;
-                if (propertyNames != null) {
-                    newSchema = FeatureTypeExt.createSubType(schema, propertyNames);
-                } else {
-                    newSchema = schema;
-                }
-
-                final ShapefileAttributeReader attReader = getAttributesReader(true,read3D,resample);
-                final FeatureIDReader idReader = new DefaultFeatureIDReader(typeName);
-                FeatureReader reader = ShapefileFeatureReader.create(attReader,idReader, newSchema, hints);
-                QueryBuilder query2 = new QueryBuilder(gquery.getTypeName());
-                query2.setProperties(gquery.getPropertyNames());
-                query2.setFilter(gquery.getFilter());
-                query2.setHints(gquery.getHints());
-                query2.setCRS(gquery.getCoordinateSystemReproject());
-                query2.setSortBy(gquery.getSortBy());
-                query2.setStartIndex(gquery.getStartIndex());
-                query2.setMaxFeatures(gquery.getMaxFeatures());
-                reader = FeatureStreams.subset(reader, query2.buildQuery());
-
-                return reader;
-            } catch (MismatchedFeatureException se) {
-                throw new DataStoreException("Error creating schema", se);
-            }
-        }
+        //handle remaining query parameters ------------------------------------
+        final QueryBuilder qb = new QueryBuilder(queryTypeName);
+        qb.setProperties(queryPropertyNames);
+        qb.setFilter(queryFilter);
+        qb.setHints(queryHints);
+        qb.setCRS(gquery.getCoordinateSystemReproject());
+        qb.setSortBy(gquery.getSortBy());
+        qb.setStartIndex(gquery.getStartIndex());
+        qb.setMaxFeatures(gquery.getMaxFeatures());
+        return FeatureStreams.subset(reader, qb.buildQuery());
     }
 
     /**
