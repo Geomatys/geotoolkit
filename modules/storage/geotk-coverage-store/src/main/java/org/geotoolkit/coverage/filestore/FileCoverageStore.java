@@ -260,15 +260,11 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
      * @throws IOException if fail to create a reader.
      * @throws UnsupportedImageFormatException if spi is defined but can't decode candidate file
      */
-    static ImageReader createReader(final Path candidate, ImageReaderSpi spi) throws IOException{
+    static ImageReader createReader(final Path candidate, ImageReaderSpi spi) throws IOException {
         final ImageReader reader;
-        if(spi == null){
-            if (!IOUtilities.extension(candidate).isEmpty()) {
-                reader = XImageIO.getReaderBySuffix(candidate, Boolean.FALSE, Boolean.FALSE);
-            } else {
-                reader = XImageIO.getReader(candidate,Boolean.FALSE,Boolean.FALSE);
-            }
-        }else{
+        if (spi == null) {
+            reader = XImageIO.getReader(candidate, Boolean.FALSE, Boolean.FALSE);
+        } else {
             if (spi.canDecodeInput(candidate)) {
                 reader = spi.createReaderInstance();
                 Object in = XImageIO.toSupportedInput(spi, candidate);
@@ -289,7 +285,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
      * @return ImageWriter, never null
      * @throws IOException if fail to create a writer.
      */
-    ImageWriter createWriter(final Path candidate) throws IOException{
+    ImageWriter createWriter(final Path candidate) throws IOException {
         if (Files.exists(candidate)) {
             final ImageReaderSpi readerSpi = createReader(candidate,spi).getOriginatingProvider();
             final String[] writerSpiNames = readerSpi.getImageWriterSpiNames();

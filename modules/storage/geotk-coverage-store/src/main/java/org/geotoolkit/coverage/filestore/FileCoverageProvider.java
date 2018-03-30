@@ -24,13 +24,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
@@ -41,7 +37,6 @@ import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStoreFactory;
@@ -104,11 +99,11 @@ public class FileCoverageProvider extends DataStoreFactory {
             new ParameterBuilder().addName(NAME).addName("FileCoverageStoreParameters").createGroup(
                 IDENTIFIER, PATH, TYPE, PATH_SEPARATOR);
 
-    private static final Map<ImageReaderSpi,Boolean> SPIS = new HashMap<>();
+    static final Map<ImageReaderSpi,Boolean> SPIS = new HashMap<>();
     static {
         //several SPI are registered under different names
         for (String name : getReaderTypeList()) {
-            ImageReaderSpi spi = XImageIO.getReaderSpiByFormatName(name);
+            final ImageReaderSpi spi = XImageIO.getReaderSpiByFormatName(name);
             if (!SPIS.containsKey(spi)) {
                 boolean worldFile = true;
                 try {
