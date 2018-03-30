@@ -98,9 +98,9 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
     public FileCoverageStore(ParameterValueGroup params) throws URISyntaxException, IOException {
         super(params);
         Parameters p = Parameters.castOrWrap(params);
-        rootPath = p.getValue(FileCoverageStoreFactory.PATH);
-        separator = p.getValue(FileCoverageStoreFactory.PATH_SEPARATOR);
-        format = p.getValue(FileCoverageStoreFactory.TYPE);
+        rootPath = p.getValue(FileCoverageProvider.PATH);
+        separator = p.getValue(FileCoverageProvider.PATH_SEPARATOR);
+        format = p.getValue(FileCoverageProvider.TYPE);
         root = Paths.get(rootPath);
 
         if("AUTO".equalsIgnoreCase(format)){
@@ -112,17 +112,17 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
     }
 
     private static ParameterValueGroup toParameters(URI uri, String format){
-        final Parameters params = Parameters.castOrWrap(FileCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
-        params.getOrCreate(FileCoverageStoreFactory.PATH).setValue(uri);
+        final Parameters params = Parameters.castOrWrap(FileCoverageProvider.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(FileCoverageProvider.PATH).setValue(uri);
         if (format!=null) {
-            params.getOrCreate(FileCoverageStoreFactory.TYPE).setValue(format);
+            params.getOrCreate(FileCoverageProvider.TYPE).setValue(format);
         }
         return params;
     }
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(FileCoverageStoreFactory.NAME);
+        return DataStores.getFactoryById(FileCoverageProvider.NAME);
     }
 
     @Override

@@ -20,18 +20,29 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.image.io.plugin.WorldFileImageReader;
+import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ResourceType;
@@ -47,7 +58,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  */
 @StoreMetadataExt(resourceTypes = ResourceType.GRID, canCreate = true, canWrite = true)
-public class FileCoverageStoreFactory extends DataStoreFactory {
+public class FileCoverageProvider extends DataStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "coverage-file";
@@ -93,12 +104,40 @@ public class FileCoverageStoreFactory extends DataStoreFactory {
             new ParameterBuilder().addName(NAME).addName("FileCoverageStoreParameters").createGroup(
                 IDENTIFIER, PATH, TYPE, PATH_SEPARATOR);
 
-    private static final Set<ImageReaderSpi> SPIS = new HashSet<>();
+    private static final Map<ImageReaderSpi,Boolean> SPIS = new HashMap<>();
     static {
         //several SPI are registered under different names
         for (String name : getReaderTypeList()) {
-            SPIS.add(XImageIO.getReaderSpiByFormatName(name));
+            ImageReaderSpi spi = XImageIO.getReaderSpiByFormatName(name);
+            if (!SPIS.containsKey(spi)) {
+                boolean worldFile = true;
+                try {
+                    ImageReader reader = spi.createReaderInstance();
+                    if (reader instanceof SpatialImageReader) {
+                        worldFile = false;
+                    }
+                    reader.dispose();
+                } catch (IOException ex) {}
+                SPIS.put(spi,worldFile);
+            }
+
         }
+    }
+
+    private static FileCoverageProvider INSTANCE;
+    /**
+     * Get singleton instance of file coverage provider.
+     *
+     * <p>
+     * Note : this method is named after Java 9 service loader provider method.
+     * {@link https://docs.oracle.com/javase/9/docs/api/java/util/ServiceLoader.html}
+     * </p>
+     *
+     * @return singleton instance of FileCoverageProvider
+     */
+    public static synchronized FileCoverageProvider provider() {
+        if (INSTANCE == null) INSTANCE = new FileCoverageProvider();
+        return INSTANCE;
     }
 
     @Override
@@ -134,7 +173,8 @@ public class FileCoverageStoreFactory extends DataStoreFactory {
         final ImageInputStream in = connector.getStorageAs(ImageInputStream.class);
         if (in == null) return ProbeResult.UNSUPPORTED_STORAGE;
 
-        for (ImageReaderSpi spi : SPIS) {
+        for (Entry<ImageReaderSpi,Boolean> entry : SPIS.entrySet()) {
+            final ImageReaderSpi spi = entry.getKey();
             try {
                 //Special case for TextImageReaders, waiting for fix : GEOTK-688
                 Object input = in;
@@ -150,6 +190,16 @@ public class FileCoverageStoreFactory extends DataStoreFactory {
                 }
 
                 if (spi.canDecodeInput(input)) {
+                    if (Boolean.TRUE.equals(entry.getValue())) {
+                        //special case for world files, verify tfw and prj files
+                        final Path path = connector.getStorageAs(Path.class);
+                        if (path == null) continue;
+                        Object prj = SupportFiles.changeExtension(path, "prj");
+                        if (prj == null || !Files.exists((Path)prj)) continue;
+                        Object tfw = SupportFiles.changeExtension(path, "tfw");
+                        if (tfw == null || !Files.exists((Path)tfw)) continue;
+                    }
+
                     final String[] mimeTypes = spi.getMIMETypes();
                     if (mimeTypes != null) {
                         return new ProbeResult(true, mimeTypes[0], null);

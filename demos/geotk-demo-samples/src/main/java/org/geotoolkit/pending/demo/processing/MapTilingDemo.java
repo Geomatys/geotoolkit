@@ -132,8 +132,8 @@ public class MapTilingDemo {
 
     private static MapContext openData() throws DataStoreException, URISyntaxException {
 
-        final ParameterValueGroup params = FileCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        params.parameter(FileCoverageStoreFactory.PATH.getName().getCode()).setValue(new URI("file:/home/jsorel/temp/bluemarble/bluemarble"));
+        final ParameterValueGroup params = FileCoverageProvider.PARAMETERS_DESCRIPTOR.createValue();
+        params.parameter(FileCoverageProvider.PATH.getName().getCode()).setValue(new URI("file:/home/jsorel/temp/bluemarble/bluemarble"));
 
         final CoverageStore store = (CoverageStore) DataStores.open(params);
 
