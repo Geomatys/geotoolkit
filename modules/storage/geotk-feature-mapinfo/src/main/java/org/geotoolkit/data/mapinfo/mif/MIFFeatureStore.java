@@ -19,6 +19,9 @@ package org.geotoolkit.data.mapinfo.mif;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -27,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
@@ -56,7 +60,7 @@ import org.opengis.util.GenericName;
  * @author Alexis Manin (Geomatys)
  *         Date : 21/02/13
  */
-public class MIFFeatureStore extends AbstractFeatureStore {
+public class MIFFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
 
     private final MIFManager manager;
 
@@ -282,5 +286,17 @@ public class MIFFeatureStore extends AbstractFeatureStore {
             // Nothing to do here, if we get an exception, we just get an incompatible CRS.
         }
         return isCompatible;
+    }
+
+    @Override
+    public Path[] getComponentFiles() throws DataStoreException {
+        List<Path> results = new ArrayList<>();
+        if (manager.getMIFPath() != null) {
+            results.add(Paths.get(manager.getMIFPath()));
+        }
+        if (manager.getMIDPath() != null) {
+            results.add(Paths.get(manager.getMIDPath()));
+        }
+        return results.toArray(new Path[results.size()]);
     }
 }
