@@ -101,7 +101,7 @@ import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.provider.Krovak;
 import org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea;
 import org.geotoolkit.referencing.operation.provider.NewZealandMapGrid;
-import org.geotoolkit.referencing.operation.provider.ObliqueMercator;
+import org.apache.sis.internal.referencing.provider.ObliqueMercator;
 import org.geotoolkit.referencing.operation.provider.Orthographic;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
 import org.geotoolkit.resources.Vocabulary;
@@ -919,7 +919,7 @@ final class GeoTiffCRSReader {
             if (name.equalsIgnoreCase("oblique_mercator")
                     || name.equalsIgnoreCase("hotine_oblique_mercator")
                     || code == CT_ObliqueMercator) {
-                parameters = mtFactory.getDefaultParameters(code(ObliqueMercator.PARAMETERS));
+                parameters = mtFactory.getDefaultParameters(code(new ObliqueMercator().getParameters()));   // TODO: use a more efficient way.
                 parameters.parameter(code(ObliqueMercator.SCALE_FACTOR)).setValue(getScaleFactor(metadata));
                 parameters.parameter(code(ObliqueMercator.AZIMUTH)).setValue(metadata.getAsDouble(ProjAzimuthAngleGeoKey));
                 parameters.parameter(code(ObliqueMercator.FALSE_EASTING)).setValue(getFalseEasting(metadata));

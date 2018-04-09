@@ -110,11 +110,10 @@ public final class XMath extends Static {
 
     /**
      * Ensures that the specified value stay within the [-<var>bound</var> &hellip; <var>bound</var>] range.
-     * This method is typically invoked before to project geographic coordinates.
-     * It may add or subtract some amount of 2&times;<var>bound</var> from <var>x</var>.
+     * This method may add or subtract some amount of 2&times;<var>bound</var> from <var>x</var>.
      *
-     * <p>The <var>bound</var> value is typically 180 if the longitude is express in degrees,
-     * or {@link Math#PI} it the longitude is express in radians. But it can also be some other value
+     * <p>The <var>bound</var> value is typically 180 if the longitude is expressed in degrees,
+     * or {@link Math#PI} it the longitude is expressed in radians. But it can also be some other value
      * if the longitude has already been multiplied by a scale factor before this method is invoked.</p>
      *
      * @param  x The longitude.
@@ -136,16 +135,16 @@ public final class XMath extends Static {
          *
          * Note: usage of long instead of int is necessary, otherwise overflows do occur.
          */
-        long n = (long) (x / bound); // Really want rounding toward zero.
+        long n = (long) (x / bound);            // Really want rounding toward zero.
         if (n != 0) {
             if (n < 0) {
-                if ((n &= ~1) == -2) { // If odd number, decrement to the previous even number.
-                    if (x == -bound) { // Special case for this one: don't rool to +180°.
+                if ((n &= ~1) == -2) {          // If odd number, decrement to the previous even number.
+                    if (x == -bound) {          // Special case for this one: don't rool to +180°.
                         return x;
                     }
                 }
             } else if ((n & 1) != 0) {
-                n++; // If odd number, increment to the next even number.
+                n++;                            // If odd number, increment to the next even number.
             }
             x -= n * bound;
         }
