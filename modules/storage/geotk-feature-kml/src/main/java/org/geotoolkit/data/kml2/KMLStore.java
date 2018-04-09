@@ -52,6 +52,8 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.data.query.QueryFeatureSet;
@@ -372,6 +374,14 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
     @Override
     public Path[] getComponentFiles() throws DataStoreException {
         return new Path[]{Paths.get(path)};
+    }
+
+    @Override
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    }
+
+    @Override
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 
     @Override

@@ -25,6 +25,8 @@ import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.metadata.Identifier;
@@ -84,6 +86,14 @@ public abstract class AbstractResource implements Resource {
         metadata.setIdentificationInfo(Arrays.asList(idf));
         metadata.freeze();
         return metadata;
+    }
+
+    @Override
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    }
+
+    @Override
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 
     @Override

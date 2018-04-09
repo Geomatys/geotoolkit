@@ -38,8 +38,9 @@ import org.geotoolkit.feature.ViewMapper;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalFeatureTypeException;
 import org.apache.sis.storage.ReadOnlyStorageException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -386,6 +387,14 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         if(currentType != null && currentType.getName().equals(event.getFeatureTypeName())){
             sendEvent(event.copy(this));
         }
+    }
+
+    @Override
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    }
+
+    @Override
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 
     /**

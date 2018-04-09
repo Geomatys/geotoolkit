@@ -23,6 +23,8 @@ import java.util.Set;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -33,7 +35,6 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.content.CoverageDescription;
@@ -326,6 +327,14 @@ public class AmendedCoverageResource implements Resource,CoverageResource{
     @Override
     public Metadata getMetadata() throws DataStoreException {
         return ref.getMetadata();
+    }
+
+    @Override
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    }
+
+    @Override
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 
     @Override
