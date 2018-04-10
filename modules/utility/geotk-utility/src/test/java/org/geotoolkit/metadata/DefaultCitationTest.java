@@ -69,10 +69,10 @@ public final strictfp class DefaultCitationTest extends org.geotoolkit.test.Test
         for (CharSequence l : CharSequences.splitOnEOL(xml)) {
             final String line = l.toString().trim();
             if (line.contains("MyID"))   {assertTrue  ("Expected root.",  previous.startsWith("<?xml")); foundID++;}
-            if (line.contains("MyOGC"))  {assertEquals("Wrong parent element.", "<gmd:code>", previous); foundOGC++;}
-            if (line.contains("MyEPSG")) {assertEquals("Wrong parent element.", "<gmd:code>", previous); foundEPSG++;}
-            if (line.contains("MyISBN")) {assertEquals("Wrong parent element.", "<gmd:ISBN>", previous); foundISBN++;}
-            if (line.contains("MyISSN")) {assertEquals("Wrong parent element.", "<gmd:ISSN>", previous); foundISSN++;}
+            if (line.contains("MyOGC"))  {assertEquals("Wrong parent element.", "<mcc:code>", previous); foundOGC++;}
+            if (line.contains("MyEPSG")) {assertEquals("Wrong parent element.", "<mcc:code>", previous); foundEPSG++;}
+            if (line.contains("MyISBN")) {assertEquals("Wrong parent element.", "<cit:ISBN>", previous); foundISBN++;}
+            if (line.contains("MyISSN")) {assertEquals("Wrong parent element.", "<cit:ISSN>", previous); foundISSN++;}
             previous = line;
         }
         assertEquals("MyID",   1, foundID);
