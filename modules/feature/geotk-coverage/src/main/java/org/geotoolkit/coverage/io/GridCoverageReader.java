@@ -467,7 +467,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
                      * to the poles).
                      */
                     final GeneralGridGeometry gg = getGridGeometry(i);
-                    if (computeResolutions) {
+                    if (computeResolutions && gg.isDefined(GeneralGridGeometry.CRS)) {
                         final Quantity<?> m = CRSUtilities.getHorizontalResolution(
                                 gg.getCoordinateReferenceSystem(), gg.getResolution());
                         if (m != null) {
