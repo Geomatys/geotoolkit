@@ -19,10 +19,10 @@ package org.geotoolkit.processing.vector.centroid;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
 import org.opengis.util.NoSuchIdentifierException;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Point;
 
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;

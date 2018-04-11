@@ -19,8 +19,8 @@ package org.geotoolkit.data.shapefile.shp;
 
 import java.nio.ByteBuffer;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Point;
 import org.apache.sis.storage.DataStoreException;
 
 /**

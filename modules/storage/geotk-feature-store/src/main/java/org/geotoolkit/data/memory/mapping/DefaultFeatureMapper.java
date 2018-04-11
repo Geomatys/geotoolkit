@@ -17,7 +17,7 @@
 package org.geotoolkit.data.memory.mapping;
 
 import org.geotoolkit.geometry.jts.JTSMapping;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;

@@ -64,7 +64,7 @@ public interface MultiGeometry extends AbstractGeometry {
      *
      * @return
      */
-    com.vividsolutions.jts.geom.Point getCentroid();
+    org.locationtech.jts.geom.Point getCentroid();
 
     /**
      * <p>This method returns coordinates of the whole geometries contained in
@@ -72,6 +72,6 @@ public interface MultiGeometry extends AbstractGeometry {
      *
      * @return
      */
-    com.vividsolutions.jts.geom.Coordinate[] getCoordinates();
+    org.locationtech.jts.geom.Coordinate[] getCoordinates();
 
 }

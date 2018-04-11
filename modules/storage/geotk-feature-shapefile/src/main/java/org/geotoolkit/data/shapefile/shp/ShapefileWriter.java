@@ -25,9 +25,9 @@ import java.nio.channels.FileChannel;
 import org.geotoolkit.data.shapefile.shx.ShxWriter;
 import org.apache.sis.storage.DataStoreException;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
 import org.geotoolkit.data.dbf.Closeable;
 
 /**

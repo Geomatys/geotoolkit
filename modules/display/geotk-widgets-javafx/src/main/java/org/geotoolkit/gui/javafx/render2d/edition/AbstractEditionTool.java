@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.gui.javafx.render2d.edition;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;

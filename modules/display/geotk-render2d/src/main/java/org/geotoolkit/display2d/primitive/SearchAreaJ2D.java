@@ -33,13 +33,13 @@ public interface SearchAreaJ2D extends SearchArea {
      * Objective crs search area in JTS geometry.
      * @return JTS Geometry
      */
-    com.vividsolutions.jts.geom.Geometry getObjectiveGeometryJTS();
+    org.locationtech.jts.geom.Geometry getObjectiveGeometryJTS();
 
     /**
      * Display crs search area in JTS geometry.
      * @return JTS Geometry
      */
-    com.vividsolutions.jts.geom.Geometry getDisplayGeometryJTS();
+    org.locationtech.jts.geom.Geometry getDisplayGeometryJTS();
 
     /**
      * Objective crs search area in Java2D shape.

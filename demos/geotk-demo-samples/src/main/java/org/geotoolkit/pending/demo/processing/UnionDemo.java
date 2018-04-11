@@ -1,10 +1,10 @@
 
 package org.geotoolkit.pending.demo.processing;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.feature.builder.AttributeRole;

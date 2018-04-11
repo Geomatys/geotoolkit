@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.processing.jts.difference;
 
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Geometry;
 
 import java.util.Collections;
 

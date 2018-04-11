@@ -613,13 +613,13 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 final JAXBElement element;
                 final MarshallerPool POOL;
                 if ("3.1.1".equals(gmlVersion)) {
-                    final Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) valueA, crs);
+                    final Geometry isoGeometry = JTSUtils.toISO((org.locationtech.jts.geom.Geometry) valueA, crs);
                     element = OBJECT_FACTORY.buildAnyGeometry(isoGeometry);
                     POOL = GML_31_POOL;
                 } else if ("3.2.1".equals(gmlVersion)) {
                     AbstractGeometry gmlGeometry = null;
                     try {
-                        gmlGeometry = JTStoGeometry.toGML(gmlVersion, (com.vividsolutions.jts.geom.Geometry) valueA,  crs);
+                        gmlGeometry = JTStoGeometry.toGML(gmlVersion, (org.locationtech.jts.geom.Geometry) valueA,  crs);
                     } catch (FactoryException ex) {
                         LOGGER.log(Level.WARNING, "Factory exception when transforming JTS geometry to GML binding", ex);
                     }

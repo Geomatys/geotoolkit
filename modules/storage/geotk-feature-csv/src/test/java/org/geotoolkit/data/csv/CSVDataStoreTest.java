@@ -19,7 +19,7 @@ package org.geotoolkit.data.csv;
 
 import java.util.Map;
 import java.util.Collections;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;

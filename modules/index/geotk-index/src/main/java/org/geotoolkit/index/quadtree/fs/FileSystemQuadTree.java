@@ -17,7 +17,7 @@
 
 package org.geotoolkit.index.quadtree.fs;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import java.io.File;
 import java.io.IOException;

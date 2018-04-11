@@ -17,7 +17,7 @@
 
 package org.geotoolkit.data.geojson;
 
-import com.vividsolutions.jts.geom.*;
+import org.locationtech.jts.geom.*;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.FileSystemNotFoundException;

@@ -173,8 +173,8 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
      * Computes the JTS equivalent of this geometry.
      */
     @Override
-    protected com.vividsolutions.jts.geom.Geometry computeJTSPeer() {
-        com.vividsolutions.jts.geom.Point result =  JTSUtils.directPositionToPoint(position);
+    protected org.locationtech.jts.geom.Geometry computeJTSPeer() {
+        org.locationtech.jts.geom.Point result =  JTSUtils.directPositionToPoint(position);
         CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
         if (crs != null) {
             final int srid = SRIDGenerator.toSRID(crs, Version.V1);

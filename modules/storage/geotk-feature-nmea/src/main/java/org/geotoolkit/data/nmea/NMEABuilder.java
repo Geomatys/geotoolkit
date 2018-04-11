@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.data.nmea;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import static org.geotoolkit.data.nmea.NMEAFeatureStore.ALT_NAME;
 import static org.geotoolkit.data.nmea.NMEAFeatureStore.DATE_NAME;
 import static org.geotoolkit.data.nmea.NMEAFeatureStore.DEPTH_NAME;

@@ -1,6 +1,6 @@
 package org.geotoolkit.gui.swing.render2d.control.information.presenter;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;

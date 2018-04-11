@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.display2d.canvas;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -432,8 +432,8 @@ public class RenderingContext2D implements RenderingContext{
                         new Coordinate(env.getMaximum(0), min),
                         new Coordinate(env.getMaximum(0), max)});
                 }
-                wraps.wrapArea = (com.vividsolutions.jts.geom.Polygon)JTS.toGeometry(env);
-                wraps.objectiveJTSEnvelope = new com.vividsolutions.jts.geom.Envelope(
+                wraps.wrapArea = (org.locationtech.jts.geom.Polygon)JTS.toGeometry(env);
+                wraps.objectiveJTSEnvelope = new org.locationtech.jts.geom.Envelope(
                         canvasObjectiveBounds.getMinX(),canvasObjectiveBounds.getMaxX(),
                         canvasObjectiveBounds.getMinY(),canvasObjectiveBounds.getMaxY());
 

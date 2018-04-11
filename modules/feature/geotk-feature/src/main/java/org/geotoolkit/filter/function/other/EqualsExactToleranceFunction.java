@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.filter.function.other;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.opengis.filter.expression.Expression;
 

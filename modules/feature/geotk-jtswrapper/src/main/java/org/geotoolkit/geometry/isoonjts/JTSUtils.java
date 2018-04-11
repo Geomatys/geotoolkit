@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.geometry.isoonjts;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +72,7 @@ public final class JTSUtils {
      * Common instance of GEOMETRY_FACTORY with the default JTS precision model
      * that can be used to make new geometries.
      */
-    public static final com.vividsolutions.jts.geom.GeometryFactory GEOMETRY_FACTORY = new com.vividsolutions.jts.geom.GeometryFactory();
+    public static final org.locationtech.jts.geom.GeometryFactory GEOMETRY_FACTORY = new org.locationtech.jts.geom.GeometryFactory();
 
     /**
      * This class has only static methods, so we make the constructor private
@@ -84,7 +84,7 @@ public final class JTSUtils {
     /**
      * Creates a 19107 primitive geometry from the given JTS geometry.
      */
-    public static Geometry toISO(final com.vividsolutions.jts.geom.Geometry jtsGeom,
+    public static Geometry toISO(final org.locationtech.jts.geom.Geometry jtsGeom,
             CoordinateReferenceSystem crs) {
 
         if (jtsGeom == null) {
@@ -108,13 +108,13 @@ public final class JTSUtils {
         final PrimitiveFactory pf = new JTSPrimitiveFactory(crs);//FactoryFinder.getPrimitiveFactory(hints);
         final GeometryFactory gf  = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
 
-        if (jtsGeom instanceof com.vividsolutions.jts.geom.Point) {
-            com.vividsolutions.jts.geom.Point candidate = (com.vividsolutions.jts.geom.Point) jtsGeom;
+        if (jtsGeom instanceof org.locationtech.jts.geom.Point) {
+            org.locationtech.jts.geom.Point candidate = (org.locationtech.jts.geom.Point) jtsGeom;
             DirectPosition dp = pointToDirectPosition(candidate, crs);
             return pf.createPoint(dp);
 
-        } else if (jtsGeom instanceof com.vividsolutions.jts.geom.LineString) {
-            com.vividsolutions.jts.geom.LineString candidate = (com.vividsolutions.jts.geom.LineString) jtsGeom;
+        } else if (jtsGeom instanceof org.locationtech.jts.geom.LineString) {
+            org.locationtech.jts.geom.LineString candidate = (org.locationtech.jts.geom.LineString) jtsGeom;
             LineString ls = gf.createLineString(new ArrayList<Position>());
             PointArray pointList = ls.getControlPoints();
             for (int i = 0, n = candidate.getNumPoints(); i < n; i++) {
@@ -122,18 +122,18 @@ public final class JTSUtils {
             }
             return (JTSLineString)ls;
 
-        } else if (jtsGeom instanceof com.vividsolutions.jts.geom.LinearRing) {
-            return linearRingToRing((com.vividsolutions.jts.geom.LinearRing) jtsGeom, crs);
+        } else if (jtsGeom instanceof org.locationtech.jts.geom.LinearRing) {
+            return linearRingToRing((org.locationtech.jts.geom.LinearRing) jtsGeom, crs);
 
-        } else if (jtsGeom instanceof com.vividsolutions.jts.geom.Polygon) {
-            com.vividsolutions.jts.geom.Polygon jtsPolygon = (com.vividsolutions.jts.geom.Polygon) jtsGeom;
+        } else if (jtsGeom instanceof org.locationtech.jts.geom.Polygon) {
+            org.locationtech.jts.geom.Polygon jtsPolygon = (org.locationtech.jts.geom.Polygon) jtsGeom;
             Ring externalRing = linearRingToRing(
-                    (com.vividsolutions.jts.geom.LinearRing) jtsPolygon.getExteriorRing(),
+                    (org.locationtech.jts.geom.LinearRing) jtsPolygon.getExteriorRing(),
                     crs);
             ArrayList internalRings = new ArrayList();
             for (int i = 0, n = jtsPolygon.getNumInteriorRing(); i < n; i++) {
                 internalRings.add(linearRingToRing(
-                        (com.vividsolutions.jts.geom.LinearRing) jtsPolygon.getInteriorRingN(i),
+                        (org.locationtech.jts.geom.LinearRing) jtsPolygon.getInteriorRingN(i),
                         crs));
             }
             SurfaceBoundary boundary = pf.createSurfaceBoundary(externalRing, internalRings);
@@ -146,7 +146,7 @@ public final class JTSUtils {
             return result;*/
 
         } else if (jtsGeom instanceof GeometryCollection) {
-            com.vividsolutions.jts.geom.GeometryCollection jtsCollection = (com.vividsolutions.jts.geom.GeometryCollection) jtsGeom;
+            org.locationtech.jts.geom.GeometryCollection jtsCollection = (org.locationtech.jts.geom.GeometryCollection) jtsGeom;
             boolean multiPoint   = jtsGeom instanceof MultiPoint;
             boolean multiCurve   = jtsGeom instanceof MultiLineString;
             boolean multiSurface = jtsGeom instanceof MultiPolygon;
@@ -156,13 +156,13 @@ public final class JTSUtils {
             if (!(multiPoint || multiCurve || multiSurface || jtsGeom.isEmpty())) {
                 multiPoint = multiCurve = multiSurface = true;
                 for (int i = 0, n = jtsCollection.getNumGeometries(); i < n && (multiPoint || multiCurve || multiSurface); i++) {
-                    if (!(jtsCollection.getGeometryN(i) instanceof com.vividsolutions.jts.geom.Point)) {
+                    if (!(jtsCollection.getGeometryN(i) instanceof org.locationtech.jts.geom.Point)) {
                         multiPoint = false;
                     }
-                    if (!(jtsCollection.getGeometryN(i) instanceof com.vividsolutions.jts.geom.LineString)) {
+                    if (!(jtsCollection.getGeometryN(i) instanceof org.locationtech.jts.geom.LineString)) {
                         multiCurve = false;
                     }
-                    if (!(jtsCollection.getGeometryN(i) instanceof com.vividsolutions.jts.geom.Polygon)) {
+                    if (!(jtsCollection.getGeometryN(i) instanceof org.locationtech.jts.geom.Polygon)) {
                         multiSurface = false;
                     }
                 }
@@ -215,7 +215,7 @@ public final class JTSUtils {
      * Converts a DirectPosition to a JTS Coordinate.  Returns a newly
      * instantiated Coordinate object.
      */
-    public static com.vividsolutions.jts.geom.Coordinate directPositionToCoordinate(final DirectPosition dp) {
+    public static org.locationtech.jts.geom.Coordinate directPositionToCoordinate(final DirectPosition dp) {
         double x = Double.NaN, y = Double.NaN, z = Double.NaN;
         final int d = dp.getDimension();
         if (d >= 1) {
@@ -227,7 +227,7 @@ public final class JTSUtils {
                 }
             }
         }
-        return new com.vividsolutions.jts.geom.Coordinate(x, y, z);
+        return new org.locationtech.jts.geom.Coordinate(x, y, z);
     }
 
     /**
@@ -236,7 +236,7 @@ public final class JTSUtils {
      * less than three, then the unused ordinates of the Coordinate are set to
      * Double.NaN.
      */
-    public static void directPositionToCoordinate(final DirectPosition dp, final com.vividsolutions.jts.geom.Coordinate result) {
+    public static void directPositionToCoordinate(final DirectPosition dp, final org.locationtech.jts.geom.Coordinate result) {
         final int d = dp.getDimension();
         if (d >= 1) {
             result.x = dp.getOrdinate(0);
@@ -262,14 +262,14 @@ public final class JTSUtils {
      * instantiated Point object that was created using the default
      * GeometryFactory instance.
      */
-    public static com.vividsolutions.jts.geom.Point directPositionToPoint(final DirectPosition dp) {
+    public static org.locationtech.jts.geom.Point directPositionToPoint(final DirectPosition dp) {
         return GEOMETRY_FACTORY.createPoint(directPositionToCoordinate(dp));
     }
 
     /**
      * Converts a JTS Coordinate to a DirectPosition with the given CRS.
      */
-    public static DirectPosition coordinateToDirectPosition(final com.vividsolutions.jts.geom.Coordinate c,
+    public static DirectPosition coordinateToDirectPosition(final org.locationtech.jts.geom.Coordinate c,
             final CoordinateReferenceSystem crs) {
 
         PositionFactory pf = new JTSPositionFactory(crs);
@@ -300,7 +300,7 @@ public final class JTSUtils {
      * Extracts the values of a JTS coordinate into an existing DirectPosition
      * object.
      */
-    public static void coordinateToDirectPosition(final com.vividsolutions.jts.geom.Coordinate c,
+    public static void coordinateToDirectPosition(final org.locationtech.jts.geom.Coordinate c,
             final DirectPosition result) {
         // Get the CRS so we can figure out the dimension of the result.
         CoordinateReferenceSystem crs = result.getCoordinateReferenceSystem();
@@ -341,12 +341,12 @@ public final class JTSUtils {
     /**
      * Converts a JTS Point to a DirectPosition with the given CRS.
      */
-    public static DirectPosition pointToDirectPosition(final com.vividsolutions.jts.geom.Point p,
+    public static DirectPosition pointToDirectPosition(final org.locationtech.jts.geom.Point p,
             final CoordinateReferenceSystem crs) {
         return coordinateToDirectPosition(p.getCoordinate(), crs);
     }
 
-    public static Ring linearRingToRing(final com.vividsolutions.jts.geom.LineString jtsLinearRing,
+    public static Ring linearRingToRing(final org.locationtech.jts.geom.LineString jtsLinearRing,
             final CoordinateReferenceSystem crs) {
         int numPoints = jtsLinearRing.getNumPoints();
         if (numPoints != 0 && !jtsLinearRing.getCoordinateN(0).equals(jtsLinearRing.getCoordinateN(numPoints - 1))) {
@@ -375,12 +375,12 @@ public final class JTSUtils {
      * methods do not allow for either parameter to be a collection.  So we have
      * to implement the logic of dealing with collection geometries separately.
      */
-    public static double distance(final com.vividsolutions.jts.geom.Geometry g1,
-            final com.vividsolutions.jts.geom.Geometry g2) {
-        if (g1 instanceof com.vividsolutions.jts.geom.GeometryCollection) {
+    public static double distance(final org.locationtech.jts.geom.Geometry g1,
+            final org.locationtech.jts.geom.Geometry g2) {
+        if (g1 instanceof org.locationtech.jts.geom.GeometryCollection) {
             double minDistance = Double.POSITIVE_INFINITY;
-            com.vividsolutions.jts.geom.GeometryCollection gc1 =
-                    (com.vividsolutions.jts.geom.GeometryCollection) g1;
+            org.locationtech.jts.geom.GeometryCollection gc1 =
+                    (org.locationtech.jts.geom.GeometryCollection) g1;
             int n = gc1.getNumGeometries();
             for (int i = 0; i < n; i++) {
                 double d = distance(gc1.getGeometryN(i), g2);
@@ -389,10 +389,10 @@ public final class JTSUtils {
                 }
             }
             return minDistance;
-        } else if (g2 instanceof com.vividsolutions.jts.geom.GeometryCollection) {
+        } else if (g2 instanceof org.locationtech.jts.geom.GeometryCollection) {
             double minDistance = Double.POSITIVE_INFINITY;
-            com.vividsolutions.jts.geom.GeometryCollection gc2 =
-                    (com.vividsolutions.jts.geom.GeometryCollection) g2;
+            org.locationtech.jts.geom.GeometryCollection gc2 =
+                    (org.locationtech.jts.geom.GeometryCollection) g2;
             int n = gc2.getNumGeometries();
             for (int i = 0; i < n; i++) {
                 // This call will result in a redundant check of
@@ -414,39 +414,39 @@ public final class JTSUtils {
      * geometries, this simply delegates to the JTS method.  In the case of
      * aggregates, creates an aggregate containing all the parts of both.
      */
-    public static com.vividsolutions.jts.geom.Geometry union(
-            final com.vividsolutions.jts.geom.Geometry g1,
-            final com.vividsolutions.jts.geom.Geometry g2) {
+    public static org.locationtech.jts.geom.Geometry union(
+            final org.locationtech.jts.geom.Geometry g1,
+            final org.locationtech.jts.geom.Geometry g2) {
         return null;
     }
 
-    public static com.vividsolutions.jts.geom.Geometry intersection(
-            final com.vividsolutions.jts.geom.Geometry g1,
-            final com.vividsolutions.jts.geom.Geometry g2) {
+    public static org.locationtech.jts.geom.Geometry intersection(
+            final org.locationtech.jts.geom.Geometry g1,
+            final org.locationtech.jts.geom.Geometry g2) {
         return null;
     }
 
-    public static com.vividsolutions.jts.geom.Geometry difference(
-            final com.vividsolutions.jts.geom.Geometry g1,
-            final com.vividsolutions.jts.geom.Geometry g2) {
+    public static org.locationtech.jts.geom.Geometry difference(
+            final org.locationtech.jts.geom.Geometry g1,
+            final org.locationtech.jts.geom.Geometry g2) {
         return null;
     }
 
-    public static com.vividsolutions.jts.geom.Geometry symmetricDifference(
-            final com.vividsolutions.jts.geom.Geometry g1,
-            final com.vividsolutions.jts.geom.Geometry g2) {
+    public static org.locationtech.jts.geom.Geometry symmetricDifference(
+            final org.locationtech.jts.geom.Geometry g1,
+            final org.locationtech.jts.geom.Geometry g2) {
         return null;
     }
 
     public static boolean contains(
-            final com.vividsolutions.jts.geom.Geometry g1,
-            final com.vividsolutions.jts.geom.Geometry g2) {
+            final org.locationtech.jts.geom.Geometry g1,
+            final org.locationtech.jts.geom.Geometry g2) {
         return false;
     }
 
     public static boolean equals(
-            final com.vividsolutions.jts.geom.Geometry g1,
-            final com.vividsolutions.jts.geom.Geometry g2) {
+            final org.locationtech.jts.geom.Geometry g1,
+            final org.locationtech.jts.geom.Geometry g2) {
         return false;
     }
 
@@ -457,25 +457,25 @@ public final class JTSUtils {
      * intersections.
      */
     public static boolean intersects(
-            final com.vividsolutions.jts.geom.Geometry g1,
-            final com.vividsolutions.jts.geom.Geometry g2) {
-        if (g1 instanceof com.vividsolutions.jts.geom.GeometryCollection) {
-            com.vividsolutions.jts.geom.GeometryCollection gc1 =
-                    (com.vividsolutions.jts.geom.GeometryCollection) g1;
+            final org.locationtech.jts.geom.Geometry g1,
+            final org.locationtech.jts.geom.Geometry g2) {
+        if (g1 instanceof org.locationtech.jts.geom.GeometryCollection) {
+            org.locationtech.jts.geom.GeometryCollection gc1 =
+                    (org.locationtech.jts.geom.GeometryCollection) g1;
             int n = gc1.getNumGeometries();
             for (int i = 0; i < n; i++) {
-                com.vividsolutions.jts.geom.Geometry g = gc1.getGeometryN(i);
+                org.locationtech.jts.geom.Geometry g = gc1.getGeometryN(i);
                 if (intersects(g, g2)) {
                     return true;
                 }
             }
             return false;
-        } else if (g2 instanceof com.vividsolutions.jts.geom.GeometryCollection) {
-            com.vividsolutions.jts.geom.GeometryCollection gc2 =
-                    (com.vividsolutions.jts.geom.GeometryCollection) g2;
+        } else if (g2 instanceof org.locationtech.jts.geom.GeometryCollection) {
+            org.locationtech.jts.geom.GeometryCollection gc2 =
+                    (org.locationtech.jts.geom.GeometryCollection) g2;
             int n = gc2.getNumGeometries();
             for (int i = 0; i < n; i++) {
-                com.vividsolutions.jts.geom.Geometry g = gc2.getGeometryN(i);
+                org.locationtech.jts.geom.Geometry g = gc2.getGeometryN(i);
                 if (intersects(g1, g)) {
                     return true;
                 }
@@ -491,7 +491,7 @@ public final class JTSUtils {
      * @param envelope The Envelope to be converted
      * @return A JTS Geometry
      */
-    public static com.vividsolutions.jts.geom.Geometry getEnvelopeGeometry(
+    public static org.locationtech.jts.geom.Geometry getEnvelopeGeometry(
             final Envelope envelope) {
         // PENDING(NL): Add code to check for CRS compatibility
         // Must consider possibility that this is a pixel envelope
@@ -530,7 +530,7 @@ public final class JTSUtils {
         Coordinate jtsBotRight =
                 JTSUtils.directPositionToCoordinate(botRight);
 
-        com.vividsolutions.jts.geom.Geometry jtsEnv = GEOMETRY_FACTORY.createLineString(
+        org.locationtech.jts.geom.Geometry jtsEnv = GEOMETRY_FACTORY.createLineString(
                 new Coordinate[]{jtsTopLeft, jtsTopRight, jtsBotRight, jtsBotLeft,
                     jtsTopLeft}).getEnvelope();
         return jtsEnv;

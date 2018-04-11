@@ -35,9 +35,9 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.test.TestData;
 import org.opengis.util.GenericName;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.MultiPolygon;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.storage.DataStores;

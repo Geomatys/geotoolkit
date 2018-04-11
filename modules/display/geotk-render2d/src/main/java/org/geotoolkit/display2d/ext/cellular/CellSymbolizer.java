@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.display2d.ext.cellular;
 
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;

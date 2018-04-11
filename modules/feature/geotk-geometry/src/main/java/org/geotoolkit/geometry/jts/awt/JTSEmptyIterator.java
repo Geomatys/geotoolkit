@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.geometry.jts.awt;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * An iterator for empty geometries

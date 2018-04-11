@@ -17,7 +17,7 @@
 
 package org.geotoolkit.data.shapefile.shp;
 
-import com.vividsolutions.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.GeometryFactory;
 
 /**
  *

@@ -80,21 +80,21 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon, Primitive {
      * {@inheritDoc }
      */
     @Override
-    public com.vividsolutions.jts.geom.Geometry computeJTSPeer() {
+    public org.locationtech.jts.geom.Geometry computeJTSPeer() {
         final SurfaceBoundary boundary = getBoundary();
         final Ring exterior = boundary.getExterior();
         final List interiors = boundary.getInteriors();
         if (exterior != null) {
-            final com.vividsolutions.jts.geom.Geometry g = ((JTSGeometry) exterior).getJTSGeometry();
+            final org.locationtech.jts.geom.Geometry g = ((JTSGeometry) exterior).getJTSGeometry();
             final int numHoles = (interiors != null) ? interiors.size() : 0;
-            final com.vividsolutions.jts.geom.LinearRing jtsExterior = JTSUtils.GEOMETRY_FACTORY.createLinearRing(g.getCoordinates());
-            final com.vividsolutions.jts.geom.LinearRing [] jtsInterior = new com.vividsolutions.jts.geom.LinearRing[numHoles];
+            final org.locationtech.jts.geom.LinearRing jtsExterior = JTSUtils.GEOMETRY_FACTORY.createLinearRing(g.getCoordinates());
+            final org.locationtech.jts.geom.LinearRing [] jtsInterior = new org.locationtech.jts.geom.LinearRing[numHoles];
             for (int i=0; i<numHoles; i++) {
-                final com.vividsolutions.jts.geom.Geometry g2 =
+                final org.locationtech.jts.geom.Geometry g2 =
                     ((JTSGeometry) interiors.get(i)).getJTSGeometry();
                 jtsInterior[i] = JTSUtils.GEOMETRY_FACTORY.createLinearRing(g2.getCoordinates());
             }
-            final com.vividsolutions.jts.geom.Polygon result =
+            final org.locationtech.jts.geom.Polygon result =
                 JTSUtils.GEOMETRY_FACTORY.createPolygon(jtsExterior, jtsInterior);
             final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
             if (crs != null) {
@@ -124,7 +124,7 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon, Primitive {
     }
 
     public boolean isValid() {
-        com.vividsolutions.jts.geom.Polygon poly = (com.vividsolutions.jts.geom.Polygon)
+        org.locationtech.jts.geom.Polygon poly = (org.locationtech.jts.geom.Polygon)
             this.getJTSGeometry();
         return poly.isValid();
     }

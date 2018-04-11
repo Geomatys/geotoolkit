@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.processing.vector.centroid;
 
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Point;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.geotoolkit.processing.vector.VectorProcessUtils;

@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.processing.vector.douglaspeucker;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
 
 import org.apache.sis.measure.Units;
 import org.geotoolkit.data.FeatureCollection;

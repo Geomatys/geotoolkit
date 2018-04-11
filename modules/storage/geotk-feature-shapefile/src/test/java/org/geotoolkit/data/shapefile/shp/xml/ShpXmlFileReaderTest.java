@@ -21,7 +21,7 @@ import java.net.URL;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 import org.geotoolkit.data.shapefile.xml.IdInfo;
 import org.geotoolkit.data.shapefile.xml.Metadata;
 import org.geotoolkit.data.shapefile.xml.ShpXmlFileReader;

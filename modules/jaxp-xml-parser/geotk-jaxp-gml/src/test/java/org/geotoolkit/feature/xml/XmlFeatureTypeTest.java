@@ -17,7 +17,7 @@
 
 package org.geotoolkit.feature.xml;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.io.BufferedReader;
 
 import java.io.File;

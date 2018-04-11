@@ -2,7 +2,7 @@
 package org.geotoolkit.data.om.netcdf;
 
 import org.geotoolkit.data.om.OMFeatureTypes;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;

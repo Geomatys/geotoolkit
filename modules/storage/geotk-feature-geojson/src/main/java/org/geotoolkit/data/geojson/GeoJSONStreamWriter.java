@@ -1,7 +1,7 @@
 package org.geotoolkit.data.geojson;
 
 import com.fasterxml.jackson.core.JsonEncoding;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;

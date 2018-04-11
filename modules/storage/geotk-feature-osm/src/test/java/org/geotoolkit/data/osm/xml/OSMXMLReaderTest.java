@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.osm.xml;
 
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;

@@ -2,7 +2,7 @@
 
 package org.geotoolkit.pending.demo.datamodel.customdatastore;
 
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;

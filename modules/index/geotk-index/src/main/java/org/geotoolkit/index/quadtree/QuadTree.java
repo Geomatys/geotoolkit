@@ -29,7 +29,7 @@ import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
 import org.apache.sis.util.logging.Logging;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 /**
  * Java porting of mapserver quadtree implementation.<br>

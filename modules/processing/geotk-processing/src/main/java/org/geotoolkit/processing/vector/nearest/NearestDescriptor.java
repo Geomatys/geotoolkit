@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.processing.vector.nearest;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;

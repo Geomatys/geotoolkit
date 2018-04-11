@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.wps.converters.outputs.reference;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

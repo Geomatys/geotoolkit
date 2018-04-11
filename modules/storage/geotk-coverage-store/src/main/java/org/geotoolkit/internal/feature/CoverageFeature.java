@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.internal.feature;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -521,7 +521,7 @@ public final class CoverageFeature {
                 //has been converted to an attribute, the envelope will be N dimesion, and the geometry 2D
                 if (envelope.getDimension() > 2) {
                     final GeneralEnvelope env = new GeneralEnvelope(envelope);
-                    final com.vividsolutions.jts.geom.Envelope jtsEnv = geom.getEnvelopeInternal();
+                    final org.locationtech.jts.geom.Envelope jtsEnv = geom.getEnvelopeInternal();
                     env.setRange(0, jtsEnv.getMinX(), jtsEnv.getMaxX());
                     env.setRange(1, jtsEnv.getMinY(), jtsEnv.getMaxY());
                     next.setPropertyValue(AttributeConvention.ENVELOPE_PROPERTY.toString(), env);

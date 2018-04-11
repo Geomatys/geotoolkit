@@ -5,7 +5,7 @@ import org.geotoolkit.data.geojson.binding.GeoJSONObject;
 import org.geotoolkit.data.geojson.utils.GeoJSONParser;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
-import com.vividsolutions.jts.geom.*;
+import org.locationtech.jts.geom.*;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.*;
 import org.geotoolkit.data.query.QueryBuilder;

@@ -19,8 +19,8 @@ package org.geotoolkit.geometry.jts;
 
 import java.awt.geom.Rectangle2D;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
 import java.util.Objects;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.DirectPosition;

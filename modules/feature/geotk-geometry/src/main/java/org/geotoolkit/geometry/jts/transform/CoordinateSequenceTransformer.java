@@ -17,7 +17,7 @@
 package org.geotoolkit.geometry.jts.transform;
 
 
-import com.vividsolutions.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.CoordinateSequence;
 
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;

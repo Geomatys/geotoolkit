@@ -17,10 +17,10 @@
 
 package org.geotoolkit.io.wkb;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.WKBWriter;
+import org.locationtech.jts.geom.Geometry;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
+import org.locationtech.jts.io.WKBWriter;
 
 /**
  *

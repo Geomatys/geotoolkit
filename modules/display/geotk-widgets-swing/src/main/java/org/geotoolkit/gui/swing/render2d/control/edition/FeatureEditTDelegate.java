@@ -17,7 +17,7 @@
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;

@@ -17,9 +17,9 @@
 
 package org.geotoolkit.geometry.jts.transform;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.CoordinateSequenceFactory;
 import static org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer.DEFAULT_CS_FACTORY;
 import org.opengis.referencing.operation.TransformException;
 
@@ -38,7 +38,7 @@ public class CoordinateSequenceWrapTransformer implements CoordinateSequenceTran
 
     /**
      * Default wrap coordinate sequence transformer.
-     * @see CoordinateSequenceWrapTransformer#CoordinateSequenceWrapTransformer(com.vividsolutions.jts.geom.CoordinateSequenceFactory, double[], double[])
+     * @see CoordinateSequenceWrapTransformer#CoordinateSequenceWrapTransformer(org.locationtech.jts.geom.CoordinateSequenceFactory, double[], double[])
      */
     public CoordinateSequenceWrapTransformer(final double[] worldspan) {
         this(null,worldspan);

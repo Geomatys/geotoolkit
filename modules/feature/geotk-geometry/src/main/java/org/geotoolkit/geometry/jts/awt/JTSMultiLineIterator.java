@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.geometry.jts.awt;
 
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
 import org.opengis.referencing.operation.MathTransform;
 
 /**

@@ -30,8 +30,8 @@ import org.opengis.geometry.Geometry;
  */
 public class DefaultSearchAreaJ2D extends DefaultSearchArea implements SearchAreaJ2D{
 
-    private final com.vividsolutions.jts.geom.Geometry objectiveGeometryJTS;
-    private final com.vividsolutions.jts.geom.Geometry displayGeometryJTS;
+    private final org.locationtech.jts.geom.Geometry objectiveGeometryJTS;
+    private final org.locationtech.jts.geom.Geometry displayGeometryJTS;
     private final Shape objectiveShape;
     private final Shape displayShape;
 
@@ -45,8 +45,8 @@ public class DefaultSearchAreaJ2D extends DefaultSearchArea implements SearchAre
 
     public DefaultSearchAreaJ2D(
             final Geometry objectiveGeometryISO, final Geometry displayGeometryISO,
-            final com.vividsolutions.jts.geom.Geometry objectiveGeometryJTS,
-            final com.vividsolutions.jts.geom.Geometry displayGeometryJTS,
+            final org.locationtech.jts.geom.Geometry objectiveGeometryJTS,
+            final org.locationtech.jts.geom.Geometry displayGeometryJTS,
             final Shape objectiveShape, final Shape displayShape) {
         super(objectiveGeometryISO,displayGeometryISO);
         this.objectiveGeometryJTS   = objectiveGeometryJTS;
@@ -59,7 +59,7 @@ public class DefaultSearchAreaJ2D extends DefaultSearchArea implements SearchAre
      * {@inheritDoc }
      */
     @Override
-    public com.vividsolutions.jts.geom.Geometry getObjectiveGeometryJTS() {
+    public org.locationtech.jts.geom.Geometry getObjectiveGeometryJTS() {
         return objectiveGeometryJTS;
     }
 
@@ -67,7 +67,7 @@ public class DefaultSearchAreaJ2D extends DefaultSearchArea implements SearchAre
      * {@inheritDoc }
      */
     @Override
-    public com.vividsolutions.jts.geom.Geometry getDisplayGeometryJTS() {
+    public org.locationtech.jts.geom.Geometry getDisplayGeometryJTS() {
         return displayGeometryJTS;
     }
 
