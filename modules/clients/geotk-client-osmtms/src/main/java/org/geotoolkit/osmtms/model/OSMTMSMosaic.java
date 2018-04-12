@@ -25,6 +25,7 @@ import org.geotoolkit.storage.coverage.AbstractGridMosaic;
 import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.storage.coverage.TileReference;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.coverage.PyramidSet;
 import org.opengis.geometry.DirectPosition;
 
 /**
@@ -48,11 +49,13 @@ public class OSMTMSMosaic extends AbstractGridMosaic{
 
     @Override
     public TileReference getTile(int col, int row, Map hints) throws DataStoreException {
+        hints.put(PyramidSet.HINT_FORMAT, "image/png");
         return ((OSMTMSPyramidSet)getPyramid().getPyramidSet()).getTile(this, col, row, hints);
     }
 
     @Override
     public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
+        hints.put(PyramidSet.HINT_FORMAT, "image/png");
         return ((OSMTMSPyramidSet)getPyramid().getPyramidSet()).getTiles(this, positions, hints);
     }
 

@@ -457,7 +457,7 @@ public class PyramidalModelReader extends GridCoverageReader{
             }
 
             //aggregation ----------------------------------------------------------
-            final Map hints = Collections.EMPTY_MAP;
+            final Map hints = new HashMap();
 
 
             final BlockingQueue<Object> queue;
