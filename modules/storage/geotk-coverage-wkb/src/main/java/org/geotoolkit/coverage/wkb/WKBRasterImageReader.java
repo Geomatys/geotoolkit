@@ -108,7 +108,6 @@ public class WKBRasterImageReader extends ImageReader{
             version         = Utilities.VERSION.toString();
             writerSpiNames  = new String[] {"PostGISWKBraster"};
             inputTypes      = new Class[0];
-            inputTypes      = ArraysExt.append(inputTypes, InputStream.class);
             inputTypes      = ArraysExt.append(inputTypes, ImageInputStream.class);
             inputTypes      = ArraysExt.append(inputTypes, File.class);
             inputTypes      = ArraysExt.append(inputTypes, URL.class);
@@ -125,11 +124,22 @@ public class WKBRasterImageReader extends ImageReader{
         }
 
         @Override
-        public boolean canDecodeInput(final Object source) throws IOException {
+        public boolean canDecodeInput(Object source) throws IOException {
 
-            if(source instanceof byte[] || source instanceof InputStream){
-                //TODO we must check more then that
-                return true;
+            if (source instanceof ImageInputStream) {
+                final ImageInputStream is = (ImageInputStream) source;
+                is.mark();
+                source = new byte[3];
+                is.readFully((byte[])source);
+                is.reset();
+            }
+
+            if (source instanceof byte[]) {
+                byte[] buffer = (byte[]) source;
+                //check endianess and version
+                return (buffer[0] == 0 || buffer[0] == 1)
+                        && buffer[1] == 0
+                        && buffer[2] == 0;
             }
 
             return false;
