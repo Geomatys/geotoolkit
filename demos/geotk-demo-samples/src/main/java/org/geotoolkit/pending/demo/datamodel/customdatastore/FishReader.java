@@ -4,15 +4,14 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Iterator;
 import java.util.Scanner;
 import org.apache.sis.internal.feature.AttributeConvention;
-
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureReader;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
-public class FishReader implements FeatureReader {
+public class FishReader implements Iterator<Feature> {
 
 
     private final GeometryFactory gf = new GeometryFactory();
@@ -27,7 +26,6 @@ public class FishReader implements FeatureReader {
         scanner = new Scanner(file);
     }
 
-    @Override
     public FeatureType getFeatureType() {
         return type;
     }
@@ -68,7 +66,6 @@ public class FishReader implements FeatureReader {
         }
     }
 
-    @Override
     public void close() {
         scanner.close();
     }

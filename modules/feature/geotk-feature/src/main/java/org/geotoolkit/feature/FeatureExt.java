@@ -36,6 +36,7 @@ import org.geotoolkit.internal.feature.ArrayFeature;
 import java.util.function.BiFunction;
 import org.geotoolkit.internal.feature.FeatureLoop;
 import java.util.function.Predicate;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.sis.feature.DefaultAttributeType;
@@ -221,15 +222,23 @@ public final class FeatureExt extends Static {
     }
 
     /**
-     * Extract default geometry property crs.
+     * Extract the coordinate reference system associated to the primary geometry
+     * of input data type.
      *
-     * @param type
-     * @return CoordinateReferenceSystem or null
+     * @implNote
+     * Primary geometry is determined using {@link #getDefaultGeometry(org.opengis.feature.FeatureType) }.
+     *
+     * @param type The data type to extract reference system from.
+     * @return The CRS associated to the default geometry of this data type, or
+     * a null value if we cannot determine what is the primary geometry of the
+     * data type. Note that a null value is also returned if a geometry property
+     * is found, but no CRS characteristics is associated with it.
      */
     public static CoordinateReferenceSystem getCRS(FeatureType type){
         try {
             return getCRS(getDefaultGeometry(type));
-        } catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException|IllegalStateException ex) {
+            LOGGER.log(Level.FINE, "Cannot extract CRS from type, cause no default geometry is available", ex);
             //no default geometry property
             return null;
         }
@@ -508,7 +517,7 @@ public final class FeatureExt extends Static {
      * @throws PropertyNotFoundException If no geometric property is available
      * in the given type.
      * @throws IllegalStateException If no convention is set (see
-     * {@link AttributeConvention#GEOMETRY_PROPERTY}, and we've found more than
+     * {@link AttributeConvention#GEOMETRY_PROPERTY}), and we've found more than
      * one geometry.
      */
     public static PropertyType getDefaultGeometry(final FeatureType type) throws PropertyNotFoundException, IllegalStateException {

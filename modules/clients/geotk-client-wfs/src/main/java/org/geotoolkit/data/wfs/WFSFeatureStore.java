@@ -513,19 +513,22 @@ public class WFSFeatureStore extends AbstractFeatureStore{
             remainingQuery = new QueryBuilder(gquery);
 
             final Map<String, String> replacements = type.getProperties(true).stream()
-                    // operations are not data sent back by the server.
-                    .filter(pType -> pType instanceof AbstractOperation)
-                    .map(pType -> new AbstractMap.SimpleEntry<>(pType.getName(), ((AbstractOperation) pType).getDependencies()))
-                    // If dependency is more than one property, we cannot make a simple replacement
-                    .filter(entry -> entry.getValue().size() == 1)
-                    .collect(Collectors.toMap(
-                            entry -> entry.getKey().toString(),
-                            entry -> entry.getValue().iterator().next()
-                    ));
+                // operations are not data sent back by the server.
+                .filter(pType -> pType instanceof AbstractOperation)
+                .map(pType -> new AbstractMap.SimpleEntry<>(pType.getName(), ((AbstractOperation) pType).getDependencies()))
+                // If dependency is more than one property, we cannot make a simple replacement
+                .filter(entry -> entry.getValue().size() == 1)
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue().iterator().next()
+                ));
 
-            final String[] propertyNames = Stream.of(gquery.getPropertyNames())
+            String[] propertyNames = gquery.getPropertyNames();
+            if (propertyNames != null) {
+                propertyNames = Stream.of(propertyNames)
                     .map(pName -> replacements.getOrDefault(pName, pName))
                     .toArray(size -> new String[size]);
+            }
 
             type = FeatureTypeExt.createSubType(type, propertyNames);
 

@@ -18,10 +18,14 @@ package org.geotoolkit.client.map;
 
 import java.awt.Point;
 import java.io.IOException;
-import javax.imageio.ImageIO;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
+import org.apache.sis.setup.OptionKey;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.storage.coverage.DefaultTileReference;
 import org.geotoolkit.image.io.XImageIO;
@@ -36,25 +40,34 @@ public class RequestTileReference extends DefaultTileReference {
         super(spi, input, imageIndex, position);
     }
 
-
-
     @Override
     public ImageReader getImageReader() throws IOException {
 
 
         if(spi == null){
             //try to find reader
-            ImageReader reader = XImageIO.getReader(((Request)input).getResponseStream(), Boolean.TRUE, Boolean.TRUE);
-            if (!reader.getClass().getName().startsWith("com.sun.media")) {
+            final InputStream in = ((Request)input).getResponseStream();
+            final StorageConnector cnx = new StorageConnector(in);
+            cnx.setOption(OptionKey.BYTE_BUFFER, ByteBuffer.allocate(8196));
+
+            try {
+                final ImageInputStream imin = cnx.getStorageAs(ImageInputStream.class);
+                final ImageReader reader = XImageIO.getReader(imin, Boolean.TRUE, Boolean.TRUE);
                 return reader;
-            }else{
-                //reader is JAI, we don't want this implementation
-                //we use an ImageInputStream, this will avoid JAI readers since
-                //pure java reader should be first.
-                XImageIO.dispose(reader);
-                final ImageInputStream ninput = ImageIO.createImageInputStream(((Request)input).getResponseStream());
-                reader = XImageIO.getReader(ninput, Boolean.TRUE, Boolean.TRUE);
-                return reader;
+            } catch (DataStoreException ex) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    ex.addSuppressed(e);
+                }
+                throw new IOException(ex.getMessage(), ex);
+            } catch (IOException ex) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    ex.addSuppressed(e);
+                }
+                throw ex;
             }
         }
 
