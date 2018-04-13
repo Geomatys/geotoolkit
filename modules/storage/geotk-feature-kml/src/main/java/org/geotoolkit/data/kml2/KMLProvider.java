@@ -70,8 +70,8 @@ public class KMLProvider extends AbstractProvider {
     }
 
     public KMLProvider(){
-        super(NAME, 1);
-        types.put("http://www.opengis.net/kml/2.2", MIME_TYPE);
+        super(NAME);
+        mimeForNameSpaces.put("http://www.opengis.net/kml/2.2", MIME_TYPE);
     }
 
     @Override
