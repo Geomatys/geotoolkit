@@ -79,7 +79,10 @@ public class FXURLEditor extends FXValueEditor {
 
         String previousPath = checkAndAdaptPath(getPreviousPath());
         try {
-            final Path tmpPath = Paths.get(new URI(previousPath));
+            Path tmpPath = Paths.get(new URI(previousPath));
+            if (!Files.isDirectory(tmpPath)) {
+                tmpPath = tmpPath.getParent();
+            }
             previousPath = tmpPath.toString();
         } catch (Exception e) {
             // We cannot convert last user text to a standard URI. We'll try
