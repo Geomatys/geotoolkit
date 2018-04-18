@@ -18,17 +18,18 @@ package org.geotoolkit.gui.javafx.parameter;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.prefs.Preferences;
-import java.util.regex.Pattern;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;
@@ -43,7 +44,6 @@ import org.geotoolkit.internal.Loggers;
  */
 public class FXURLEditor extends FXValueEditor {
 
-    private static final Pattern PROTOCOL_START = Pattern.compile("^\\w+://");
     private static final Class[] ALLOWED_CLASSES = new Class[]{URL.class, URI.class, Path.class, File.class};
 
     /**
@@ -60,19 +60,6 @@ public class FXURLEditor extends FXValueEditor {
 
     public FXURLEditor(final Spi originatingSpi) {
         super(originatingSpi);
-        String previousPath = getPreviousPath();
-        if (previousPath != null && !previousPath.isEmpty()) {
-            try {
-                final Path rootPath = Paths.get(previousPath);
-                if (Files.isDirectory(rootPath)) {
-                    pathField.rootPath.set(previousPath);
-                } else if (Files.isDirectory(rootPath.getParent())) {
-                    pathField.rootPath.set(rootPath.getParent().toAbsolutePath().toString());
-                }
-            } catch (Exception e) {
-                Loggers.JAVAFX.log(Level.WARNING, "Cannot initialize root path for editor : " + previousPath, e);
-            }
-        }
 
         currentAttributeType.addListener(this::updateConverter);
         currentParamDesc.addListener(this::updateConverter);
@@ -88,7 +75,9 @@ public class FXURLEditor extends FXValueEditor {
                     @Override
                     public Object fromString(String string) {
                         if (string == null || valueConverter == null) return null;
-                        return valueConverter.apply(checkAndAdaptPath(string));
+                        final URI uri = checkAndAdaptPath(string);
+                        if (uri == null) return null;
+                        return valueConverter.apply(uri.toString());
                     }
                 });
     }
@@ -103,17 +92,24 @@ public class FXURLEditor extends FXValueEditor {
         valueConverter = ObjectConverters.find(String.class, getValueClass());
     }
 
-    protected static String checkAndAdaptPath(final String input) {
-        if (input == null || input.isEmpty())
-            return input;
-        if (PROTOCOL_START.matcher(input).find()) {
-            return input;
-        } else {
+    protected static URI checkAndAdaptPath(final String input) {
+        if (input == null || input.isEmpty()) {
+            return null;
+        }
+        try {
+            final URI uri = new URI(input);
+            if (uri.getScheme()== null) {
+                throw new URISyntaxException(input, "no scheme defined");
+            }
+            return uri;
+        } catch (URISyntaxException ex) {
+            //not an URI
             Path target = Paths.get(input);
             if (Files.exists(target)) {
-                return target.toAbsolutePath().toUri().toString();
+                return target.toAbsolutePath().toUri();
             } else {
-                return "http://" + input;
+                //unsupported string
+                return null;
             }
         }
     }
@@ -129,24 +125,64 @@ public class FXURLEditor extends FXValueEditor {
         return cp;
     }
 
-    public static String getPreviousPath() {
+    public static URI getPreviousPath() {
         final Preferences prefs = Preferences.userNodeForPackage(FXURLEditor.class);
         return checkAndAdaptPath(prefs.get("path", null));
     }
 
-    public static void setPreviousPath(final String path) {
-        if (path == null) return;
-        final Preferences prefs = Preferences.userNodeForPackage(FXURLEditor.class);
-        prefs.put("path", checkAndAdaptPath(path));
+    public static void setPreviousPath(final URI uri) {
+        if (uri != null) {
+            final Preferences prefs = Preferences.userNodeForPackage(FXURLEditor.class);
+            prefs.put("path", uri.toString());
+        }
     }
 
     private static class PropertyPathEditor extends FXFileTextField {
 
         @Override
         protected String chooseInputContent() {
-            final String chosenPath = super.chooseInputContent();
-            setPreviousPath(chosenPath);
-            return chosenPath;
+            final FileChooser chooser = new FileChooser();
+            try {
+                URI uriForText = getURIForText(getText());
+                final Path basePath = Paths.get(uriForText);
+                if (Files.isDirectory(basePath)) {
+                    chooser.setInitialDirectory(basePath.toFile());
+                } else if (Files.isDirectory(basePath.getParent())) {
+                    chooser.setInitialDirectory(basePath.getParent().toFile());
+                }
+            } catch (Exception e) {
+                Loggers.JAVAFX.log(Level.FINE, "Root path cannot be decoded.", e);
+            }
+
+            if (chooser.getInitialDirectory() == null) {
+                //point to previous opened file
+                URI previousPath = getPreviousPath();
+                if (previousPath != null) {
+                    try {
+                        final Path rootPath = Paths.get(previousPath);
+                        if (Files.isDirectory(rootPath)) {
+                            chooser.setInitialDirectory(rootPath.toFile());
+                        } else if (Files.isDirectory(rootPath.getParent())) {
+                            chooser.setInitialDirectory(rootPath.getParent().toFile());
+                        }
+                    } catch (Exception e) {
+                        Loggers.JAVAFX.log(Level.WARNING, "Cannot initialize root path for editor : " + previousPath, e);
+                    }
+                }
+            }
+
+            File returned = chooser.showOpenDialog(null);
+            if (returned == null) {
+                return null;
+            }
+
+            try {
+                setPreviousPath(returned.toURI());
+            } catch (Exception ex) {
+                //not a valid uri, can not store it
+                Loggers.JAVAFX.log(Level.WARNING, "Cannot store path in preferences : " + returned.toString(), ex);
+            }
+            return returned.toPath().toString();
         }
     }
 

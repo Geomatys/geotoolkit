@@ -37,6 +37,7 @@ import org.apache.sis.measure.Range;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import static org.geotoolkit.map.MapLayer.SELECTION_FILTER_PROPERTY;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.opengis.feature.Feature;
@@ -172,12 +173,12 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
      */
     @Override
     public Envelope getBounds() {
-        final FeatureSet featureCol = getResource();
+        final FeatureSet featureSet = getResource();
         CoordinateReferenceSystem sourceCrs = null;
         Envelope env = null;
         try {
-            sourceCrs = FeatureExt.getCRS(featureCol.getType());
-            env = featureCol.getEnvelope();
+            sourceCrs = FeatureExt.getCRS(featureSet.getType());
+            env = FeatureStoreUtilities.getEnvelope(featureSet);
         } catch (DataStoreException e) {
             LOGGER.log(Level.WARNING, "Could not create referecenced envelope.",e);
         }
