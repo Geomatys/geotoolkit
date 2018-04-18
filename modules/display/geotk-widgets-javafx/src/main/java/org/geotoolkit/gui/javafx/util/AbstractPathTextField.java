@@ -179,7 +179,7 @@ public abstract class AbstractPathTextField extends HBox {
             final URI toOpen = getURIForText(inputText);
             // First, we try to open input file as a local file, to allow system to find best application to open it.
             try {
-                Path local = Paths.get(toOpen.toString());
+                Path local = Paths.get(toOpen);
                 Desktop.getDesktop().open(local.toFile());
                 return null;
             } catch (Exception ex) {
