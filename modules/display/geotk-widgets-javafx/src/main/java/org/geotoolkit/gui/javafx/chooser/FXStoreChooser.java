@@ -69,18 +69,20 @@ import org.geotoolkit.gui.javafx.util.FXOptionDialog;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
+import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXStoreChooser extends SplitPane {
+public class FXStoreChooser extends BorderPane {
 
     public static final Predicate CLIENTFACTORY_ONLY = (Object t) -> t instanceof ClientFactory;
 
@@ -149,6 +151,7 @@ public class FXStoreChooser extends SplitPane {
     private final Button connectButton = new Button(GeotkFX.getString(FXStoreChooser.class,"apply"));
     private final Label infoLabel = new Label();
     private final BooleanProperty decorateProperty = new SimpleBooleanProperty(false);
+    private final TitledPane paneResource;
 
     public FXStoreChooser() {
         this(null);
@@ -181,15 +184,15 @@ public class FXStoreChooser extends SplitPane {
         final TitledPane paneFactory = new TitledPane(GeotkFX.getString(FXStoreChooser.class,"factory"), listScroll);
         paneFactory.setFont(Font.font(paneFactory.getFont().getFamily(), FontWeight.BOLD, paneFactory.getFont().getSize()));
         final TitledPane paneConfig = new TitledPane(GeotkFX.getString(FXStoreChooser.class,"config"), vpane);
+        paneResource = new TitledPane(GeotkFX.getString(FXStoreChooser.class,"resource"), placeholder);
 
         accordion.getPanes().add(paneFactory);
         accordion.getPanes().add(paneConfig);
+        accordion.getPanes().add(paneResource);
         accordion.setPrefSize(500, 500);
         accordion.setExpandedPane(paneFactory);
 
-        getItems().add(accordion);
-        getItems().add(placeholder);
-        this.setDividerPositions(0.5);
+        setCenter(accordion);
 
         factoryView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         factoryView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<Object>() {
@@ -225,11 +228,12 @@ public class FXStoreChooser extends SplitPane {
                             store = new AmendedCoverageStore((CoverageStore) store);
                         }
                         layerChooser.setSource(store);
-                        getItems().set(1, layerChooser);
+                        paneResource.setContent(layerChooser);
                     } else {
                         resourceChooser.setResource(store);
-                        getItems().set(1, resourceChooser);
+                        paneResource.setContent(resourceChooser);
                     }
+                    accordion.setExpandedPane(paneResource);
 
                 } catch (DataStoreException ex) {
                     infoLabel.setText("Error "+ex.getMessage());
@@ -265,14 +269,18 @@ public class FXStoreChooser extends SplitPane {
     }
 
     private List<MapLayer> getSelectedLayers() throws DataStoreException {
-        if (getItems().get(1) == layerChooser) {
+        if (paneResource.getContent() == layerChooser) {
             return layerChooser.getLayers();
         } else {
             final List<Resource> selected = resourceChooser.getSelected();
             final List<MapLayer> layers = new ArrayList<>();
             for (Resource selection : selected) {
                 if (selection instanceof FeatureSet) {
-                    layers.add(MapBuilder.createFeatureLayer((FeatureSet)selection));
+                    final FeatureSet fs = (FeatureSet) selection;
+                    final FeatureMapLayer layer = MapBuilder.createFeatureLayer(fs);
+                    layer.setStyle(RandomStyleBuilder.createRandomVectorStyle(fs.getType()));
+
+                    layers.add(layer);
                 }
             }
 

@@ -475,11 +475,17 @@ final class JaxenFeatureNavigator implements Navigator{
 //                    }
 //                }else
                 final String name = gname.toString();
-                if (candidate instanceof FeatureAssociationRole && ((FeatureAssociationRole)candidate).getMaximumOccurs() > 1) {
+                if (candidate instanceof FeatureAssociationRole) {
+                    final FeatureAssociationRole far = (FeatureAssociationRole) candidate;
                     final FeatureAssociation complete = (FeatureAssociation) feature.getProperty(name);
-                    final Collection<? extends Feature> values = complete.getValues();
-                    for (Feature o : values) {
-                        props.add(new Fake(complete, gname, o));
+                    if (far.getMaximumOccurs() > 1) {
+                        final Collection<? extends Feature> values = complete.getValues();
+                        for (Feature o : values) {
+                            props.add(new Fake(complete, gname, o));
+                        }
+                    } else {
+                        final Feature o = complete.getValue();
+                        if (o != null) props.add(new Fake(complete, gname, o));
                     }
                 } else {
                     props.add(feature.getProperty(name));

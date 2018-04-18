@@ -70,7 +70,7 @@ public class ResourceNameColumn extends TreeTableColumn<Resource,String>{
         });
         setCellFactory((TreeTableColumn<Resource, String> param) -> new Cell());
         setEditable(true);
-        setPrefWidth(200);
+        setPrefWidth(2000);
         setMinWidth(120);
     }
 
