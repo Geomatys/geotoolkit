@@ -14,14 +14,21 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.data.om.netcdf;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import static org.apache.sis.storage.DataStoreProvider.LOCATION;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.observation.AbstractObservationStoreFactory;
 import org.geotoolkit.observation.Bundle;
+import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
@@ -33,26 +40,29 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Guilhem Legal (Geomatys)
  */
 @StoreMetadataExt(resourceTypes = ResourceType.SENSOR)
-public class NetcdfObservationStoreFactory extends AbstractObservationStoreFactory {
+public class NetcdfObservationStoreFactory extends AbstractObservationStoreFactory implements ProviderOnFileSystem {
 
     /** factory identification **/
     public static final String NAME = "observationFile";
+
+    public static final String MIME_TYPE = "application/x-netcdf";
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     /**
      * url to the file.
      */
-    public static final ParameterDescriptor<URI> FILE_PATH =  new ParameterBuilder()
+    public static final ParameterDescriptor<URI> FILE_PATH = new ParameterBuilder()
             .addName("path")
+            .addName(LOCATION)
             .addName(Bundle.formatInternational(Bundle.Keys.paramURLAlias))
             .setRemarks(Bundle.formatInternational(Bundle.Keys.paramURLRemarks))
             .setRequired(true)
             .create(URI.class, null);
 
-    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName(NAME).addName("ObservationFileParameters").createGroup(
-                IDENTIFIER,NAMESPACE,FILE_PATH);
+    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR
+            = new ParameterBuilder().addName(NAME).addName("ObservationFileParameters").createGroup(
+                    IDENTIFIER, NAMESPACE, FILE_PATH);
 
     @Override
     public ParameterDescriptorGroup getOpenParameters() {
@@ -67,6 +77,21 @@ public class NetcdfObservationStoreFactory extends AbstractObservationStoreFacto
     @Override
     public NetcdfObservationStore create(ParameterValueGroup params) throws DataStoreException {
         return new NetcdfObservationStore(params);
+    }
+
+    @Override
+    public Collection<String> getSuffix() {
+        return Arrays.asList("nc", "cdf");
+    }
+
+    @Override
+    public Collection<byte[]> getSignature() {
+        return Collections.singletonList(new byte[]{'C', 'D', 'F'});
+    }
+
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        return FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
     }
 
 }
