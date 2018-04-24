@@ -68,6 +68,8 @@ import com.vividsolutions.jts.geom.Point;
 import java.awt.Rectangle;
 import javax.vecmath.Vector3d;
 import org.apache.sis.util.Utilities;
+import org.apache.sis.util.collection.BackingStoreException;
+import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 
 
 /**
@@ -487,6 +489,22 @@ public final class JTS {
      * @return The JTS geometry.
      */
     public static Geometry shapeToGeometry(final Shape shape, final GeometryFactory factory) {
+
+        if (shape instanceof JTSGeometryJ2D) {
+            final JTSGeometryJ2D jtsgeom = (JTSGeometryJ2D) shape;
+            Geometry geometry = jtsgeom.getGeometry();
+            final MathTransform transform = jtsgeom.getTransform();
+            if (!transform.isIdentity()) {
+                try {
+                    geometry = JTS.transform(geometry, transform);
+                } catch (MismatchedDimensionException | TransformException ex) {
+                    throw new BackingStoreException(ex.getMessage(), ex);
+                }
+            }
+            return geometry;
+        }
+
+
         ensureNonNull("shape", shape);
         ensureNonNull("factory", factory);
 

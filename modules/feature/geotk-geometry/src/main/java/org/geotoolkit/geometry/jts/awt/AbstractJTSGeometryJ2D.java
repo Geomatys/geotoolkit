@@ -83,6 +83,10 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
         return geometry;
     }
 
+    public MathTransform getTransform() {
+        return transform;
+    }
+
     protected MathTransform getInverse(){
         try {
             return transform.inverse();
