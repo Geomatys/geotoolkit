@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import net.iharder.Base64;
-import org.apache.sis.filter.DefaultPropertyName;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.util.Version;
 import org.geotoolkit.db.FilterToSQL;
@@ -97,7 +96,6 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.Operation;
 
 /**
  * Convert filters and expressions in SQL.
@@ -819,7 +817,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
                 property = (PropertyName)exp2;
                 geometry = (Literal)exp1;
             }
-            
+
             //change Envelope in polygon
             final Object obj = geometry.getValue();
             if (obj instanceof Envelope) {
@@ -846,18 +844,8 @@ public class PostgresFilterToSQL implements FilterToSQL {
             //requiered when encoding geometry
             currentsrid = -1;
             if (featureType != null) {
-                final AttributeType descriptor;
-                final Object propObj = property.evaluate(featureType);
-                if (propObj instanceof Operation) {
-                    final Operation op = (Operation) propObj;
-                    descriptor = (AttributeType) op.getResult();
-                    property = new DefaultPropertyName(descriptor.getName().tip().toString());
-                } else if (propObj instanceof AttributeType) {
-                    descriptor = (AttributeType) property.evaluate(featureType);
-                } else {
-                    descriptor = null;
-                }
-                if (descriptor != null && Geometry.class.isAssignableFrom(descriptor.getValueClass())) {
+                final AttributeType descriptor = (AttributeType) property.evaluate(featureType);
+                if (Geometry.class.isAssignableFrom(descriptor.getValueClass())) {
                     Integer srid = (Integer) FeatureExt.getCharacteristicValue(descriptor, JDBCFeatureStore.JDBC_PROPERTY_SRID.getName().toString(), null);
                     if(srid!=null){
                         currentsrid = srid;
