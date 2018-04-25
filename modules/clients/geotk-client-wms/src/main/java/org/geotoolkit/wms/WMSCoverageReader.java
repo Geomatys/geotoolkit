@@ -48,6 +48,7 @@ import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 
@@ -199,7 +200,9 @@ public class WMSCoverageReader extends GridCoverageReader{
         try (final InputStream stream = request.getResponseStream()) {
             final BufferedImage image = ImageIO.read(stream);
 
-            final Envelope env2D = Envelopes.transform(env, crs2d);
+            //the envelope CRS may have been changed by prepareQuery method
+            final CoordinateReferenceSystem resultCrs = CRS.getHorizontalComponent(env.getCoordinateReferenceSystem());
+            final Envelope env2D = Envelopes.transform(env, resultCrs);
             final AffineTransform gridToCRS = ReferencingUtilities.toAffine(dim, env2D);
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
@@ -207,7 +210,7 @@ public class WMSCoverageReader extends GridCoverageReader{
             gcb.setRenderedImage(image);
             gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
             gcb.setGridToCRS(gridToCRS);
-            gcb.setCoordinateReferenceSystem(crs2d);
+            gcb.setCoordinateReferenceSystem(resultCrs);
             return gcb.build();
 
         } catch (IOException|TransformException ex) {
