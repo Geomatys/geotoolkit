@@ -14,15 +14,22 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.data.om.xml;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import static org.apache.sis.storage.DataStoreProvider.LOCATION;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.observation.AbstractObservationStoreFactory;
 import org.geotoolkit.observation.Bundle;
+import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
@@ -34,26 +41,29 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Guilhem Legal (Geomatys)
  */
 @StoreMetadataExt(resourceTypes = ResourceType.SENSOR, canCreate = true, canWrite = true)
-public class XmlObservationStoreFactory extends AbstractObservationStoreFactory {
+public class XmlObservationStoreFactory extends AbstractObservationStoreFactory implements ProviderOnFileSystem {
 
     /** factory identification **/
     public static final String NAME = "observationXmlFile";
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
+    public static final String MIME_TYPE = "text/xml; subtype=\"om\"";
+
     /**
      * url to the file.
      */
-    public static final ParameterDescriptor<URI> FILE_PATH =  new ParameterBuilder()
+    public static final ParameterDescriptor<URI> FILE_PATH = new ParameterBuilder()
             .addName("path")
+            .addName(LOCATION)
             .addName(Bundle.formatInternational(Bundle.Keys.paramURLAlias))
             .setRemarks(Bundle.formatInternational(Bundle.Keys.paramURLRemarks))
             .setRequired(true)
             .create(URI.class, null);
 
-    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName(NAME).addName("ObservationXmlFileParameters").createGroup(
-                IDENTIFIER,NAMESPACE,FILE_PATH);
+    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR
+            = new ParameterBuilder().addName(NAME).addName("ObservationXmlFileParameters").createGroup(
+                    IDENTIFIER, NAMESPACE, FILE_PATH);
 
     @Override
     public ParameterDescriptorGroup getOpenParameters() {
@@ -76,6 +86,21 @@ public class XmlObservationStoreFactory extends AbstractObservationStoreFactory 
         } catch (IOException e) {
             throw new DataStoreException(e.getLocalizedMessage(), e);
         }
+    }
+
+    @Override
+    public Collection<String> getSuffix() {
+        return Arrays.asList("xml");
+    }
+
+    @Override
+    public Collection<byte[]> getSignature() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        return FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
     }
 
 }
