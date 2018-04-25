@@ -102,13 +102,13 @@ public class ResourceNameColumn extends TreeTableColumn<Resource,String>{
     }
 
     private static Image getTypeIcon(Resource resource){
-        if (resource instanceof FeatureSet) {
-            return ICON_VECTOR;
-        } else if(resource instanceof CoverageResource) {
+        if (resource instanceof CoverageResource) {
             return ICON_RASTER;
-        } else if(resource instanceof DataStore) {
+        } else if (resource instanceof FeatureSet) {
+            return ICON_VECTOR;
+        } else if (resource instanceof DataStore) {
             return ICON_STORE;
-        } else if(resource instanceof Aggregate) {
+        } else if (resource instanceof Aggregate) {
             return ICON_FOLDER;
         } else {
             //unknown

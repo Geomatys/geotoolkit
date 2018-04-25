@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2014-2018, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -43,7 +43,6 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -58,7 +57,6 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.coverage.amended.AmendedCoverageStore;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
@@ -69,12 +67,13 @@ import org.geotoolkit.gui.javafx.util.FXOptionDialog;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
+import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -143,7 +142,6 @@ public class FXStoreChooser extends BorderPane {
 
     private final Accordion accordion = new Accordion();
     private final ListView<Object> factoryView = new ListView<>();
-    private final FXLayerChooser layerChooser = new FXLayerChooser();
     private final FXResourceChooser resourceChooser = new FXResourceChooser();
     private final Label placeholder = new Label(" . . . ");
     private final FXParameterEditor paramEditor = new FXParameterEditor();
@@ -185,6 +183,7 @@ public class FXStoreChooser extends BorderPane {
         paneFactory.setFont(Font.font(paneFactory.getFont().getFamily(), FontWeight.BOLD, paneFactory.getFont().getSize()));
         final TitledPane paneConfig = new TitledPane(GeotkFX.getString(FXStoreChooser.class,"config"), vpane);
         paneResource = new TitledPane(GeotkFX.getString(FXStoreChooser.class,"resource"), placeholder);
+        paneResource.setContent(resourceChooser);
 
         accordion.getPanes().add(paneFactory);
         accordion.getPanes().add(paneConfig);
@@ -218,21 +217,9 @@ public class FXStoreChooser extends BorderPane {
             public void handle(ActionEvent event) {
 
                 try {
-                    layerChooser.setSource(null);
                     resourceChooser.setResource(null);
                     DataStore store = getStore();
-                    if (store instanceof org.geotoolkit.storage.DataStore) {
-                        //use old API view
-                        if(decorateProperty.get() && store instanceof CoverageStore){
-                            //decorate store
-                            store = new AmendedCoverageStore((CoverageStore) store);
-                        }
-                        layerChooser.setSource(store);
-                        paneResource.setContent(layerChooser);
-                    } else {
-                        resourceChooser.setResource(store);
-                        paneResource.setContent(resourceChooser);
-                    }
+                    resourceChooser.setResource(store);
                     accordion.setExpandedPane(paneResource);
 
                 } catch (DataStoreException ex) {
@@ -249,7 +236,7 @@ public class FXStoreChooser extends BorderPane {
     }
 
     private void setLayerSelectionVisible(boolean layerVisible) {
-        layerChooser.setVisible(layerVisible);
+        resourceChooser.setVisible(layerVisible);
     }
 
     /**
@@ -269,23 +256,22 @@ public class FXStoreChooser extends BorderPane {
     }
 
     private List<MapLayer> getSelectedLayers() throws DataStoreException {
-        if (paneResource.getContent() == layerChooser) {
-            return layerChooser.getLayers();
-        } else {
-            final List<Resource> selected = resourceChooser.getSelected();
-            final List<MapLayer> layers = new ArrayList<>();
-            for (Resource selection : selected) {
-                if (selection instanceof FeatureSet) {
-                    final FeatureSet fs = (FeatureSet) selection;
-                    final FeatureMapLayer layer = MapBuilder.createFeatureLayer(fs);
-                    layer.setStyle(RandomStyleBuilder.createRandomVectorStyle(fs.getType()));
-
-                    layers.add(layer);
-                }
+        final List<Resource> selected = resourceChooser.getSelected();
+        final List<MapLayer> layers = new ArrayList<>();
+        for (Resource selection : selected) {
+            if (selection instanceof CoverageResource) {
+                final CoverageResource ref = (CoverageResource) selection;
+                final CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref);
+                layer.setName(ref.getIdentifier().tip().toString());
+                layers.add(layer);
+            } else if (selection instanceof FeatureSet) {
+                final FeatureSet fs = (FeatureSet) selection;
+                final FeatureMapLayer layer = MapBuilder.createFeatureLayer(fs);
+                layer.setStyle(RandomStyleBuilder.createRandomVectorStyle(fs.getType()));
+                layers.add(layer);
             }
-
-            return layers;
         }
+        return layers;
     }
 
 
