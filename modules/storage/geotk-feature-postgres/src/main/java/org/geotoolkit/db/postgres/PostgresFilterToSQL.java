@@ -25,7 +25,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.iharder.Base64;
+import org.apache.sis.filter.DefaultPropertyName;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.util.Version;
 import org.geotoolkit.db.FilterToSQL;
@@ -96,6 +99,8 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyNotFoundException;
 
 /**
  * Convert filters and expressions in SQL.
@@ -108,6 +113,8 @@ public class PostgresFilterToSQL implements FilterToSQL {
     private final FeatureType featureType;
     private final PrimaryKey pkey;
     private int currentsrid;
+
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.db.postgres");
 
     public PostgresFilterToSQL(FeatureType featureType, PrimaryKey pkey, Version pgVersion) {
         this.featureType = featureType;
@@ -844,10 +851,27 @@ public class PostgresFilterToSQL implements FilterToSQL {
             //requiered when encoding geometry
             currentsrid = -1;
             if (featureType != null) {
-                final AttributeType descriptor = (AttributeType) property.evaluate(featureType);
-                if (Geometry.class.isAssignableFrom(descriptor.getValueClass())) {
+                final AttributeType descriptor;
+                final Object propObj = property.evaluate(featureType);
+                if (propObj instanceof Operation) {
+                    final Operation op = (Operation) propObj;
+                    descriptor = FeatureExt.castOrUnwrap(op).orElse(null);
+                    if (descriptor != null) {
+                        try {
+                            featureType.getProperty(descriptor.getName().tip().toString());// throw exception if not found
+                            property = new DefaultPropertyName(descriptor.getName().tip().toString());
+                        } catch (PropertyNotFoundException ex) {
+                            LOGGER.log(Level.FINE, "Unsupported Operation property", ex);
+                        }
+                    }
+                } else if (propObj instanceof AttributeType) {
+                    descriptor = (AttributeType) property.evaluate(featureType);
+                } else {
+                    descriptor = null;
+                }
+                if (descriptor != null && Geometry.class.isAssignableFrom(descriptor.getValueClass())) {
                     Integer srid = (Integer) FeatureExt.getCharacteristicValue(descriptor, JDBCFeatureStore.JDBC_PROPERTY_SRID.getName().toString(), null);
-                    if(srid!=null){
+                    if (srid != null) {
                         currentsrid = srid;
                     }
                 }
