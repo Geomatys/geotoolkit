@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -27,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
@@ -38,6 +40,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
@@ -108,17 +111,38 @@ public class GMLFeatureStore extends AbstractFeatureStore implements ResourceOnF
 
     @Override
     public synchronized Set<GenericName> getNames() throws DataStoreException {
-        if(featureType==null){
-            final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader();
-            reader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
-            reader.setReadEmbeddedFeatureType(true);
-            try {
-                FeatureReader ite = reader.readAsStream(file);
-                featureType = ite.getFeatureType();
-            } catch (IOException | XMLStreamException ex) {
-                throw new DataStoreException(ex.getMessage(),ex);
-            } finally{
-                reader.dispose();
+        if (featureType == null) {
+            final String xsd = (String) parameters.parameter(GMLFeatureStoreFactory.XSD.getName().toString()).getValue();
+            final String xsdTypeName = (String) parameters.parameter(GMLFeatureStoreFactory.XSD_TYPE_NAME.getName().toString()).getValue();
+            if (xsd != null) {
+                //read types from XSD file
+                final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
+                try {
+                    for (FeatureType ft : reader.read(new URL(xsd))) {
+                        if (ft.getName().tip().toString().equalsIgnoreCase(xsdTypeName)) {
+                            featureType = ft;
+                        }
+                    }
+                    if (featureType == null) {
+                        throw new DataStoreException("Type for name " + xsdTypeName + " not found in xsd.");
+                    }
+
+                    // schemaLocations.put(reader.getTargetNamespace(),xsd); needed?
+                } catch (MalformedURLException | JAXBException ex) {
+                    throw new DataStoreException(ex.getMessage(), ex);
+                }
+            } else {
+                final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader();
+                reader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
+                reader.setReadEmbeddedFeatureType(true);
+                try {
+                    FeatureReader ite = reader.readAsStream(file);
+                    featureType = ite.getFeatureType();
+                } catch (IOException | XMLStreamException ex) {
+                    throw new DataStoreException(ex.getMessage(), ex);
+                } finally {
+                    reader.dispose();
+                }
             }
         }
         return Collections.singleton(featureType.getName());
