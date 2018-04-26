@@ -27,6 +27,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -37,6 +38,12 @@ import java.util.logging.Level;
 import javax.imageio.ImageReader;
 import javax.swing.ProgressMonitor;
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
@@ -51,9 +58,11 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.image.io.XImageIO;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 
 /**
@@ -80,6 +89,34 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
     @Override
     public boolean isWritable() throws CoverageStoreException {
         return false;
+    }
+
+    @Override
+    public DefaultMetadata createMetadata() throws DataStoreException {
+        final DefaultMetadata meta = super.createMetadata();
+
+        final DefaultDataIdentification ident = (DefaultDataIdentification) meta.getIdentificationInfo().iterator().next();
+
+        //-- geographic extent
+        try {
+            final Envelope envelope = getPyramidSet().getEnvelope();
+            final Envelope geoenv = Envelopes.transform(envelope, CommonCRS.WGS84.normalizedGeographic());
+            final DefaultGeographicBoundingBox geo = new DefaultGeographicBoundingBox(
+                    geoenv.getMinimum(0), geoenv.getMaximum(0),
+                    geoenv.getMinimum(1), geoenv.getMaximum(1));
+            final DefaultExtent ex = new DefaultExtent();
+            ex.setGeographicElements(Arrays.asList(geo));
+            ident.setExtents(Arrays.asList(ex));
+        } catch (TransformException ex) {
+            //do not break metadata creation for a possible not geographic CRS
+        }
+
+        return meta;
+    }
+
+    @Override
+    public Envelope getEnvelope() throws DataStoreException {
+        return getPyramidSet().getEnvelope();
     }
 
     @Override
