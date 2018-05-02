@@ -100,13 +100,15 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
         //-- geographic extent
         try {
             final Envelope envelope = getPyramidSet().getEnvelope();
-            final Envelope geoenv = Envelopes.transform(envelope, CommonCRS.WGS84.normalizedGeographic());
-            final DefaultGeographicBoundingBox geo = new DefaultGeographicBoundingBox(
-                    geoenv.getMinimum(0), geoenv.getMaximum(0),
-                    geoenv.getMinimum(1), geoenv.getMaximum(1));
-            final DefaultExtent ex = new DefaultExtent();
-            ex.setGeographicElements(Arrays.asList(geo));
-            ident.setExtents(Arrays.asList(ex));
+            if(envelope != null) {
+                final Envelope geoenv = Envelopes.transform(envelope, CommonCRS.WGS84.normalizedGeographic());
+                final DefaultGeographicBoundingBox geo = new DefaultGeographicBoundingBox(
+                        geoenv.getMinimum(0), geoenv.getMaximum(0),
+                        geoenv.getMinimum(1), geoenv.getMaximum(1));
+                final DefaultExtent ex = new DefaultExtent();
+                ex.setGeographicElements(Arrays.asList(geo));
+                ident.setExtents(Arrays.asList(ex));
+            }
         } catch (TransformException ex) {
             //do not break metadata creation for a possible not geographic CRS
         }
