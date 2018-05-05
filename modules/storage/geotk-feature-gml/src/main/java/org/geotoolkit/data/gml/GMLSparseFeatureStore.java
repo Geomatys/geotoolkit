@@ -147,6 +147,10 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements Resou
                                 schemaLocations.putAll(reader.getSchemaLocations());
                             }
                         }
+                    } else {
+                        FeatureReader ite = reader.readAsStream(file);
+                        featureType = ite.getFeatureType();
+                        schemaLocations.putAll(reader.getSchemaLocations());
                     }
                 } catch (IOException | XMLStreamException ex) {
                     throw new DataStoreException(ex.getMessage(), ex);
@@ -247,7 +251,11 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements Resou
             this.xmlReader = new JAXPStreamFeatureReader(type);
             this.xmlReader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
             try {
-                this.files.addAll(IOUtilities.listChildren(folder, "*.gml"));
+                if (Files.isDirectory(file)) {
+                    this.files.addAll(IOUtilities.listChildren(folder, "*.gml"));
+                } else {
+                    this.files.add(folder);
+                }
             } catch (IOException e) {
                 throw new DataStoreException(e.getLocalizedMessage(), e);
             }

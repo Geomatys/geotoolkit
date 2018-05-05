@@ -22,7 +22,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.logging.Level;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import javafx.beans.binding.Bindings;
@@ -33,7 +32,6 @@ import javafx.util.StringConverter;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.gui.javafx.util.FXFileTextField;
-import org.geotoolkit.internal.Loggers;
 
 /**
  * An editor allowing setting of a parameter of URL, Path or File value.
@@ -60,19 +58,6 @@ public class FXURLEditor extends FXValueEditor {
 
     public FXURLEditor(final Spi originatingSpi) {
         super(originatingSpi);
-        String previousPath = getPreviousPath();
-        if (previousPath != null && !previousPath.isEmpty()) {
-            try {
-                final Path rootPath = Paths.get(previousPath);
-                if (Files.isDirectory(rootPath)) {
-                    pathField.rootPath.set(previousPath);
-                } else if (Files.isDirectory(rootPath.getParent())) {
-                    pathField.rootPath.set(rootPath.getParent().toAbsolutePath().toString());
-                }
-            } catch (Exception e) {
-                Loggers.JAVAFX.log(Level.WARNING, "Cannot initialize root path for editor : " + previousPath, e);
-            }
-        }
 
         currentAttributeType.addListener(this::updateConverter);
         currentParamDesc.addListener(this::updateConverter);
@@ -91,6 +76,21 @@ public class FXURLEditor extends FXValueEditor {
                         return valueConverter.apply(checkAndAdaptPath(string));
                     }
                 });
+
+        String previousPath = checkAndAdaptPath(getPreviousPath());
+        try {
+            Path tmpPath = Paths.get(new URI(previousPath));
+            if (!Files.isDirectory(tmpPath)) {
+                tmpPath = tmpPath.getParent();
+            }
+            previousPath = tmpPath.toString();
+        } catch (Exception e) {
+            // We cannot convert last user text to a standard URI. We'll try
+            // to work with brut value
+        }
+        if (previousPath != null && !previousPath.isEmpty()) {
+            pathField.setText(previousPath);
+        }
     }
 
     @Override
@@ -112,10 +112,10 @@ public class FXURLEditor extends FXValueEditor {
             Path target = Paths.get(input);
             if (Files.exists(target)) {
                 return target.toAbsolutePath().toUri().toString();
-            } else {
-                return "http://" + input;
             }
         }
+
+        return input;
     }
 
     @Override

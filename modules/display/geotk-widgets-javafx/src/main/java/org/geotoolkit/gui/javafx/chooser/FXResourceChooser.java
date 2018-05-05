@@ -21,12 +21,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javafx.collections.ObservableList;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.BorderPane;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
+import org.geotoolkit.gui.javafx.util.FXUtilities;
 
 /**
  *
@@ -40,6 +42,9 @@ public class FXResourceChooser extends BorderPane{
     public FXResourceChooser() {
         treeTable.getColumns().add(new ResourceNameColumn());
         setCenter(treeTable);
+        treeTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        treeTable.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
+        FXUtilities.hideTableHeader(treeTable);
     }
 
     public Resource getResource() {

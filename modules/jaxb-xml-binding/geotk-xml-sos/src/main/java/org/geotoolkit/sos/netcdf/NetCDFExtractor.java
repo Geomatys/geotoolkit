@@ -930,11 +930,11 @@ public class NetCDFExtractor {
                         sb.closeBlock();
                     }
 
-                    final SamplingFeature sp      = OMUtils.buildSamplingCurve(identifier, positions);
+                    final SamplingFeature sp = OMUtils.buildSamplingCurve("foi-" + identifier, positions);
                     results.addFeatureOfInterest(sp);
                     gb.addGeometry((AbstractGeometry) sp.getGeometry());
 
-                    results.observations.add(OMUtils.buildObservation(identifier,                    // id
+                    results.observations.add(OMUtils.buildObservation("obs-" + identifier,           // id
                                                                       sp,                            // foi
                                                                       phenomenon,                    // phenomenon
                                                                       procedureID,                   // procedure

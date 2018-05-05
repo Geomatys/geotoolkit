@@ -160,8 +160,9 @@ public class OMUtils {
             for (Field phen : phenomenons) {
                 types.add(new PhenomenonType(phen.label, phen.label));
             }
-            final String compositeName = "composite" + UUID.randomUUID().toString();
-            phenomenon = new CompositePhenomenonType(compositeName, compositeName, null, null, types);
+            final String compositeId = "composite" + UUID.randomUUID().toString();
+            final String compositeName = "urn:ogc:phenomenon:" + compositeId;
+            phenomenon = new CompositePhenomenonType(compositeId, compositeName, null, null, types);
         }
         return phenomenon;
     }

@@ -78,6 +78,7 @@ import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyType;
 
 /**
@@ -398,11 +399,23 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         }
 
         FeatureReader reader;
-        try {
-            sql = getQueryBuilder().selectSQL(queryFeatureType, preQuery);
-            reader = new JDBCFeatureReader(this, sql, queryFeatureType, cnx, release, null);
-        } catch (SQLException ex) {
-            throw new DataStoreException(ex.getMessage(), ex);
+        // current implementation does not support LinkOperation attribute
+        // so for now if we got one, we let the filter be evaluated in java and not with a sql query
+        if (containsOperation(preQuery, baseType)) {
+            try {
+                sql = getQueryBuilder().selectSQL(baseType, QueryBuilder.all(baseType.getName()));
+                reader = new JDBCFeatureReader(this, sql, baseType, cnx, release, null);
+                FeatureStreams.subset(reader, query);
+            } catch (SQLException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+        } else {
+            try {
+                sql = getQueryBuilder().selectSQL(queryFeatureType, preQuery);
+                reader = new JDBCFeatureReader(this, sql, queryFeatureType, cnx, release, null);
+            } catch (SQLException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
         }
 
 
@@ -427,6 +440,31 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         }
 
         return reader;
+    }
+
+    /**
+     * return true if one of the requestes property is an operation.
+     *
+     * @param query
+     * @param type
+     * @return
+     */
+    private boolean containsOperation(org.geotoolkit.data.query.Query query, FeatureType type) {
+        if (query.retrieveAllProperties()) {
+            for (PropertyType prop : type.getProperties(true)) {
+                if (prop instanceof Operation) {
+                    return true;
+                }
+            }
+        } else {
+            for (String propertyName : query.getPropertyNames()) {
+                PropertyType prop = type.getProperty(propertyName);
+                if (prop instanceof Operation) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

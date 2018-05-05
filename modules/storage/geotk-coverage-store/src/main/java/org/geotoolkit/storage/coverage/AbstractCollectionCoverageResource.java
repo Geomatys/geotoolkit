@@ -87,11 +87,6 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
     }
 
     @Override
-    protected DefaultMetadata createMetadata() throws DataStoreException {
-        throw new DataStoreException("Not supported yet.");
-    }
-
-    @Override
     public Collection<Resource> components() {
         return Collections.unmodifiableList(resources);
     }

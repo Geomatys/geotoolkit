@@ -70,7 +70,7 @@ public class ResourceNameColumn extends TreeTableColumn<Resource,String>{
         });
         setCellFactory((TreeTableColumn<Resource, String> param) -> new Cell());
         setEditable(true);
-        setPrefWidth(200);
+        setPrefWidth(2000);
         setMinWidth(120);
     }
 
@@ -102,13 +102,13 @@ public class ResourceNameColumn extends TreeTableColumn<Resource,String>{
     }
 
     private static Image getTypeIcon(Resource resource){
-        if (resource instanceof FeatureSet) {
-            return ICON_VECTOR;
-        } else if(resource instanceof CoverageResource) {
+        if (resource instanceof CoverageResource) {
             return ICON_RASTER;
-        } else if(resource instanceof DataStore) {
+        } else if (resource instanceof FeatureSet) {
+            return ICON_VECTOR;
+        } else if (resource instanceof DataStore) {
             return ICON_STORE;
-        } else if(resource instanceof Aggregate) {
+        } else if (resource instanceof Aggregate) {
             return ICON_FOLDER;
         } else {
             //unknown

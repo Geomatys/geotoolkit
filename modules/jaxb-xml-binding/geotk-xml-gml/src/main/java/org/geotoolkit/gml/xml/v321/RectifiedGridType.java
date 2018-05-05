@@ -20,6 +20,7 @@ package org.geotoolkit.gml.xml.v321;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -58,7 +59,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class RectifiedGridType extends GridType {
 
     @XmlElement(required = true)
-    private PointType origin;
+    private PointPropertyType origin;
     @XmlElement(required = true)
     private List<VectorType> offsetVector;
 
@@ -73,8 +74,10 @@ public class RectifiedGridType extends GridType {
     public RectifiedGridType(final RectifiedGrid grid, final CoordinateReferenceSystem crs) {
        super(grid, crs);
        if (grid != null) {
-           origin       = new PointType(grid.getOrigin(), false);
-           offsetVector = new ArrayList<>();
+           PointType oriPt = new PointType(grid.getOrigin(), false);
+           oriPt.setId("pt-" + new Random().nextInt()); // for xml validation
+           origin          = new PointPropertyType(oriPt);
+           offsetVector    = new ArrayList<>();
 
            final List<double[]> vectors = grid.getOffsetVectors();
            for (double[] vector : vectors) {
@@ -86,11 +89,11 @@ public class RectifiedGridType extends GridType {
     /**
      * Gets the value of the origin property.
      */
-    public PointType getOrigin() {
+    public PointPropertyType getOrigin() {
         return origin;
     }
 
-    public void setOrigin(final PointType origin) {
+    public void setOrigin(final PointPropertyType origin) {
         this.origin = origin;
     }
 

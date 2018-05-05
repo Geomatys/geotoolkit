@@ -96,6 +96,8 @@ import org.geotoolkit.style.interval.IntervalStyleBuilder;
 import org.geotoolkit.style.interval.Palette;
 import org.geotoolkit.style.interval.RandomPalette;
 import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureAssociation;
+import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
@@ -344,14 +346,7 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         if(layer != null){
             try {
                 final FeatureType schema = layer.getResource().getType();
-                for(PropertyType desc : schema.getProperties(true)){
-                    if(desc instanceof AttributeType){
-                        final Class<?> type = ((AttributeType)desc).getValueClass();
-                        if(!Geometry.class.isAssignableFrom(type)){
-                            properties.add(GeotkFX.getFilterFactory().property(desc.getName().tip().toString()));
-                        }
-                    }
-                }
+                listProperties(properties, "", schema);
             } catch (DataStoreException ex) {
                 Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
             }
@@ -359,6 +354,32 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
 
         return properties;
     }
+
+    private static void listProperties(ObservableList properties, String path, FeatureType schema) {
+        for (PropertyType desc : schema.getProperties(true)) {
+            final String propName = desc.getName().tip().toString();
+            if (desc instanceof AttributeType) {
+                final Class<?> type = ((AttributeType)desc).getValueClass();
+                if(!Geometry.class.isAssignableFrom(type)){
+                    String name = path + propName;
+                    properties.add(GeotkFX.getFilterFactory().property(name));
+                }
+            } else if (desc instanceof FeatureAssociationRole) {
+                final FeatureAssociationRole far = (FeatureAssociationRole) desc;
+                if (far.getMaximumOccurs()==1) {
+                    final FeatureType assoType = far.getValueType();
+                    String base = path;
+                    if (base.isEmpty()) {
+                        base = "/"+propName+"/";
+                    } else {
+                        base += propName+"/";
+                    }
+                    listProperties(properties, base, assoType);
+                }
+            }
+        }
+    }
+
 
     private Symbolizer generateTemplate(FeatureMapLayer layer){
         Symbolizer template = null;
@@ -497,7 +518,7 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
             Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
             return FXCollections.observableArrayList();
         }
-        builder.setProperties(new String[]{property.getPropertyName()});
+//        builder.setProperties(new String[]{property.getPropertyName()});
         final Query query = builder.buildQuery();
 
         try (Stream<Feature> stream = resource.subset(query).features(false)) {

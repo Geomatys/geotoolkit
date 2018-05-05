@@ -73,6 +73,7 @@ public abstract class AbstractResource implements Resource {
     public final synchronized Metadata getMetadata() throws DataStoreException {
         if (metadata == null) {
             metadata = createMetadata();
+            metadata.freeze();
         }
         return metadata;
     }
@@ -84,7 +85,6 @@ public abstract class AbstractResource implements Resource {
         citation.getIdentifiers().add(identifier);
         idf.setCitation(citation);
         metadata.setIdentificationInfo(Arrays.asList(idf));
-        metadata.freeze();
         return metadata;
     }
 

@@ -36,6 +36,7 @@ import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.opengis.feature.FeatureType;
 import org.opengis.metadata.quality.CoverageResult;
 
 /**
@@ -145,12 +146,17 @@ public final class MapBuilder {
      */
     public static FeatureMapLayer createFeatureLayer(final FeatureSet collection){
         MutableStyle style;
+        String name = "";
         try {
-            style = RandomStyleBuilder.createDefaultVectorStyle(collection.getType());
+            final FeatureType type = collection.getType();
+            name = type.getName().toString();
+            style = RandomStyleBuilder.createDefaultVectorStyle(type);
         } catch (DataStoreException ex) {
             style = ((MutableStyleFactory)FactoryFinder.getStyleFactory(null)).style(RandomStyleBuilder.createRandomPointSymbolizer());
         }
-        return new DefaultFeatureMapLayer(collection, style);
+        final DefaultFeatureMapLayer maplayer = new DefaultFeatureMapLayer(collection, style);
+        maplayer.setName(name);
+        return maplayer;
     }
 
     /**

@@ -45,6 +45,7 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.coverage.grid.GeneralGridCoordinates;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.resources.Errors;
+import org.opengis.coverage.grid.RectifiedGrid;
 
 
 /**
@@ -394,8 +395,13 @@ final class MetadataProxy<T> implements InvocationHandler {
             if (value == null) {
                 value = 0;
                 if (SPECIAL_CASE) {
-                    if (methodName.equals("getDimension") && proxy instanceof GridEnvelope) {
-                        value = Math.max(getAttributeLength("low"), getAttributeLength("high"));
+                    if (methodName.equals("getDimension")) {
+                        if (proxy instanceof GridEnvelope) {
+                            value = Math.max(getAttributeLength("low"), getAttributeLength("high"));
+                        } else if (proxy instanceof RectifiedGrid) {
+                            final double[] values = accessor.getAttributeAsDoubles("origin", false);
+                            if (values != null) value = values.length;
+                        }
                     }
                 }
             }
