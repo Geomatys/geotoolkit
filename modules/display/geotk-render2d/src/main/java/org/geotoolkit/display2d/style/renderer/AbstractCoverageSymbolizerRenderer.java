@@ -650,6 +650,9 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                                                final Envelope inputCoverageEnvelope)
             throws CoverageStoreException {
 
+        if (paramEnvelope != null && GeneralEnvelope.castOrCopy(paramEnvelope).isEmpty()) {
+            return null;
+        }
         final GridCoverageReadParam param = new GridCoverageReadParam();
         param.setEnvelope(paramEnvelope);
         param.setResolution(paramResolution);
