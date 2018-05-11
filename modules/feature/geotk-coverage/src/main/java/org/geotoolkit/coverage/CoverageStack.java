@@ -289,6 +289,23 @@ public class CoverageStack extends AbstractCoverage {
         protected Number center;
 
         /**
+         * Dimension Z index.
+         */
+        protected Integer zDimension;
+
+        /**
+         * Constructs a new adapter for the specified coverage and <var>z</var> values.
+         *
+         * @param coverage The coverage to wrap. Can be {@code null} only if this constructor
+         *                 is invoked from a sub-class constructor.
+         * @param zDimension   dimension index to use for z range
+         */
+        public Adapter(final Coverage coverage, final Integer zDimension) {
+            this(coverage,null,null);
+            this.zDimension = zDimension;
+        }
+
+        /**
          * Constructs a new adapter for the specified coverage and <var>z</var> values.
          *
          * @param coverage The coverage to wrap. Can be {@code null} only if this constructor
@@ -371,7 +388,7 @@ public class CoverageStack extends AbstractCoverage {
         public NumberRange<?> getZRange() throws IOException {
             if (range == null) {
                 final Envelope envelope = getEnvelope();
-                final int zDimension = envelope.getDimension() - 1;
+                final int zDimension = (this.zDimension == null) ? envelope.getDimension() - 1 : this.zDimension;
                 range = NumberRange.create(envelope.getMinimum(zDimension), true,
                                            envelope.getMaximum(zDimension), true);
             }
@@ -588,7 +605,7 @@ public class CoverageStack extends AbstractCoverage {
     public CoverageStack(final CharSequence name, final Collection<? extends Coverage> coverages)
             throws IOException
     {
-        this(name, (CoordinateReferenceSystem) null, toElements(coverages), null);
+        this(name, (CoordinateReferenceSystem) null, toElements(coverages,null), null);
     }
 
     /**
@@ -601,18 +618,18 @@ public class CoverageStack extends AbstractCoverage {
     public CoverageStack(final CharSequence name, final Collection<? extends Coverage> coverages, final Integer zDimension)
             throws IOException
     {
-        this(name, (CoordinateReferenceSystem) null, toElements(coverages), zDimension);
+        this(name, (CoordinateReferenceSystem) null, toElements(coverages, zDimension), zDimension);
     }
 
     /**
      * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
      * call in constructors").
      */
-    private static Element[] toElements(final Collection<? extends Coverage> coverages) {
+    private static Element[] toElements(final Collection<? extends Coverage> coverages, Integer zDimension) {
         final Element[] elements = new Element[coverages.size()];
         int count = 0;
         for (final Coverage coverage : coverages) {
-            elements[count++] = new Adapter(coverage, null);
+            elements[count++] = new Adapter(coverage, zDimension);
         }
         return elements;
     }
