@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.iharder.Base64;
-import org.apache.sis.filter.DefaultPropertyName;
+import org.apache.sis.filter.DefaultFilterFactory;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.util.Version;
 import org.geotoolkit.db.FilterToSQL;
@@ -859,7 +859,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
                     if (descriptor != null) {
                         try {
                             featureType.getProperty(descriptor.getName().tip().toString());// throw exception if not found
-                            property = new DefaultPropertyName(descriptor.getName().tip().toString());
+                            property = new DefaultFilterFactory().property(descriptor.getName().tip().toString());
                         } catch (PropertyNotFoundException ex) {
                             LOGGER.log(Level.FINE, "Unsupported Operation property", ex);
                         }

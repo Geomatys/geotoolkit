@@ -20,7 +20,7 @@ package org.geotoolkit.data.query;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class SQLQuery implements org.apache.sis.storage.Query {
+public class SQLQuery extends org.apache.sis.storage.Query {
 
     private final String statement;
     private final String name;
