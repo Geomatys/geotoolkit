@@ -120,6 +120,7 @@ public final strictfp class NetcdfMetadataReaderTest extends NetcdfMetadataTest 
      */
     @Test
     @Override
+    @Ignore("Incompatible changes between the netCDF library version used by SIS and the one used by Geotk.")
     public void testTHREDDS() throws IOException {
         final Map<String,Object> expected = expectedProperties;
         addCommonProperties(expected, true);
@@ -203,6 +204,7 @@ public final strictfp class NetcdfMetadataReaderTest extends NetcdfMetadataTest 
      */
     @Test
     @Override
+    @Ignore("Incompatible changes between the netCDF library version used by SIS and the one used by Geotk.")
     public void testLandsat() throws IOException {
         addCommonProperties(expectedProperties, false);
         super.testLandsat();
@@ -221,6 +223,7 @@ public final strictfp class NetcdfMetadataReaderTest extends NetcdfMetadataTest 
      */
     @Test
     @Override
+    @Ignore("Incompatible changes between the netCDF library version used by SIS and the one used by Geotk.")
     public void testCIP() throws IOException {
         final Map<String,Object> expected = expectedProperties;
         addCommonProperties(expected, true);

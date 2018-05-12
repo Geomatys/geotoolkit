@@ -99,7 +99,7 @@ public class SweXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         String result = sw.toString();
         //we remove the first line
-        result = result.substring(result.indexOf("?>") + 3);
+        result = result.substring(result.indexOf("?>") + 2).trim();
         //we remove the xmlmns
         result = StringUtilities.removeXmlns(result);
 
@@ -120,7 +120,7 @@ public class SweXMLBindingTest extends org.geotoolkit.test.TestBase {
         result = sw.toString();
 
         //we remove the first line
-        result = result.substring(result.indexOf("?>") + 3);
+        result = result.substring(result.indexOf("?>") + 2).trim();
 
         expResult = "<swe:DataArray gml:id=\"array-id-1\"" +
                         " xmlns:gml=\"http://www.opengis.net/gml\"" +

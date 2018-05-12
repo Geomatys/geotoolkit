@@ -47,12 +47,10 @@ import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
 import org.geotoolkit.swe.xml.v101.Text;
 import org.geotoolkit.swe.xml.v101.TextBlockType;
 import javax.xml.bind.JAXBContext;
-import org.apache.sis.internal.jaxb.LegacyNamespaces;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import org.xml.sax.SAXException;
 
-import org.apache.sis.xml.XML;
 import static org.apache.sis.test.MetadataAssert.*;
 
 
@@ -118,11 +116,7 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         String result = sw.toString();
         //we remove the first line
-        result = result.substring(result.indexOf("?>") + 2);
-        if (result.startsWith("/n")) {
-            result = result.substring(1);
-        }
-
+        result = result.substring(result.indexOf("?>") + 2).trim();
         String expResult = "<om:Observation xmlns:sampling=\"http://www.opengis.net/sampling/1.0\"" +
                                           " xmlns:om=\"http://www.opengis.net/om/1.0\"" +
                                           " xmlns:xlink=\"http://www.w3.org/1999/xlink\"" +
@@ -192,10 +186,7 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         result = sw.toString();
         //we remove the first line
-       result = result.substring(result.indexOf("?>") + 2);
-        if (result.startsWith("/n")) {
-            result = result.substring(1);
-        }
+        result = result.substring(result.indexOf("?>") + 2).trim();
 
         expResult =        "<om:Measurement xmlns:sampling=\"http://www.opengis.net/sampling/1.0\"" +
                                           " xmlns:om=\"http://www.opengis.net/om/1.0\"" +
