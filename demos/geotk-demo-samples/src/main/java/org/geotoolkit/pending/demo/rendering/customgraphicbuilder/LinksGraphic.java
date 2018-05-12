@@ -2,8 +2,8 @@
 package org.geotoolkit.pending.demo.rendering.customgraphicbuilder;
 
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;

@@ -17,7 +17,7 @@
 
 package org.geotoolkit.gui.swing.propertyedit;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;

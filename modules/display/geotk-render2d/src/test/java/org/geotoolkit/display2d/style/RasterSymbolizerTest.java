@@ -26,7 +26,7 @@ import java.io.File;
 import java.awt.Color;
 import org.opengis.filter.FilterFactory;
 import org.geotoolkit.factory.FactoryFinder;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.GeometryFactory;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;

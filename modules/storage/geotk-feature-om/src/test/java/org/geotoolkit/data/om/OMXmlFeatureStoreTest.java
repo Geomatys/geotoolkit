@@ -18,7 +18,7 @@
 
 package org.geotoolkit.data.om;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.security.AccessController;

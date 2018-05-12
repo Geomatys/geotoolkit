@@ -18,7 +18,7 @@
 
 package org.geotoolkit.data.shapefile;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -266,8 +266,8 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
                     buffer.flip();
                     final ShapefileHeader header = ShapefileHeader.read(buffer, true);
 
-                    final com.vividsolutions.jts.geom.Envelope env =
-                            new com.vividsolutions.jts.geom.Envelope(
+                    final org.locationtech.jts.geom.Envelope env =
+                            new org.locationtech.jts.geom.Envelope(
                             header.minX(), header.maxX(), header.minY(), header.maxY());
 
                     if (schema != null) {

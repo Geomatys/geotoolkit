@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.shapefile;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 import org.junit.Test;
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,9 +27,9 @@ import java.nio.charset.Charset;
 
 import org.geotoolkit.data.FeatureCollection;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;

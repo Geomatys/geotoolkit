@@ -18,7 +18,7 @@ package org.geotoolkit.data.shapefile.shp;
 
 import java.nio.ByteBuffer;
 
-import com.vividsolutions.jts.geom.LineString;
+import org.locationtech.jts.geom.LineString;
 import java.nio.DoubleBuffer;
 import org.apache.sis.storage.DataStoreException;
 

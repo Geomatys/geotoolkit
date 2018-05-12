@@ -24,8 +24,8 @@ import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 
 import static org.junit.Assert.*;

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.kml.model;
 
-import com.vividsolutions.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.GeometryFactory;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
@@ -27,7 +27,7 @@ import static java.util.Collections.*;
  * @author Samuel Andrés
  * @module
  */
-public class DefaultPolygon extends com.vividsolutions.jts.geom.Polygon implements Polygon {
+public class DefaultPolygon extends org.locationtech.jts.geom.Polygon implements Polygon {
 
     private final Extensions extensions = new Extensions();
     private IdAttributes idAttributes;
@@ -43,13 +43,13 @@ public class DefaultPolygon extends com.vividsolutions.jts.geom.Polygon implemen
      * @param boundaries
      * @return
      */
-    private static com.vividsolutions.jts.geom.LinearRing[] extract(List<Boundary> boundaries) {
+    private static org.locationtech.jts.geom.LinearRing[] extract(List<Boundary> boundaries) {
         if (boundaries == null) {
             return null;
         }
-        com.vividsolutions.jts.geom.LinearRing[] linearRing = new com.vividsolutions.jts.geom.LinearRing[boundaries.size()];
+        org.locationtech.jts.geom.LinearRing[] linearRing = new org.locationtech.jts.geom.LinearRing[boundaries.size()];
         for (int i = 0, size = boundaries.size(); i < size; i++) {
-            linearRing[i] = (com.vividsolutions.jts.geom.LinearRing) boundaries.get(i).getLinearRing();
+            linearRing[i] = (org.locationtech.jts.geom.LinearRing) boundaries.get(i).getLinearRing();
         }
         return linearRing;
     }
@@ -62,8 +62,8 @@ public class DefaultPolygon extends com.vividsolutions.jts.geom.Polygon implemen
      */
     public DefaultPolygon(Boundary outerBoundary,
             List<Boundary> innerBoundaries, GeometryFactory factory) {
-        super((com.vividsolutions.jts.geom.LinearRing) outerBoundary.getLinearRing(),
-                (com.vividsolutions.jts.geom.LinearRing[]) extract(innerBoundaries),
+        super((org.locationtech.jts.geom.LinearRing) outerBoundary.getLinearRing(),
+                (org.locationtech.jts.geom.LinearRing[]) extract(innerBoundaries),
                 factory);
         this.extrude = DEF_EXTRUDE;
         this.tessellate = DEF_TESSELLATE;
@@ -97,7 +97,7 @@ public class DefaultPolygon extends com.vividsolutions.jts.geom.Polygon implemen
             List<SimpleTypeContainer> polygonSimpleExtensions,
             List<Object> polygonObjectExtensions) {
 
-        super((com.vividsolutions.jts.geom.LinearRing) outerBoundary.getLinearRing(),
+        super((org.locationtech.jts.geom.LinearRing) outerBoundary.getLinearRing(),
                 extract(innerBoundaries),
                 factory);
 

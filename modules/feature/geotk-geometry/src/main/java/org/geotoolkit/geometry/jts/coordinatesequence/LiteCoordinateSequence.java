@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.geometry.jts.coordinatesequence;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
 
 /**
  * @todo class description
@@ -116,7 +116,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
     }
 
     /**
-     * @see com.vividsolutions.jts.geom.CoordinateSequence#getCoordinate(int)
+     * @see org.locationtech.jts.geom.CoordinateSequence#getCoordinate(int)
      */
     @Override
     public Coordinate getCoordinateInternal(final int i) {
@@ -127,7 +127,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
     }
 
     /**
-     * @see com.vividsolutions.jts.geom.CoordinateSequence#size()
+     * @see org.locationtech.jts.geom.CoordinateSequence#size()
      */
     @Override
     public int size() {
@@ -145,7 +145,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
     }
 
     /**
-     * @see com.vividsolutions.jts.geom.CoordinateSequence#getOrdinate(int, int)
+     * @see org.locationtech.jts.geom.CoordinateSequence#getOrdinate(int, int)
      *      Beware, for performace reasons the ordinate index is not checked, if
      *      it's over dimensions you may not get an exception but a meaningless
      *      value.
@@ -239,5 +239,10 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
             result[t * 2 + 1] = getOrdinate(t, 1);
         }
         return result;
+    }
+
+    @Override
+    public PackedCoordinateSequence copy() {
+        return new LiteCoordinateSequence(coords.clone());
     }
 }

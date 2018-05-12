@@ -9,7 +9,7 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -282,13 +282,13 @@ public class JTSLineString extends AbstractJTSGenericCurve
     @Override
     protected Geometry computeJTSPeer() {
         int n = controlPoints.length();
-        com.vividsolutions.jts.geom.Coordinate [] coords =
-            new com.vividsolutions.jts.geom.Coordinate[n];
+        org.locationtech.jts.geom.Coordinate [] coords =
+            new org.locationtech.jts.geom.Coordinate[n];
         for (int i=0; i<n; i++) {
             coords[i] = JTSUtils.directPositionToCoordinate(
                 (DirectPosition) controlPoints.positions().get(i));
         }
-        final com.vividsolutions.jts.geom.LineString result = JTSUtils.GEOMETRY_FACTORY.createLineString(coords);
+        final org.locationtech.jts.geom.LineString result = JTSUtils.GEOMETRY_FACTORY.createLineString(coords);
         CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
         if (crs != null) {
             final int srid = SRIDGenerator.toSRID(crs, Version.V1);

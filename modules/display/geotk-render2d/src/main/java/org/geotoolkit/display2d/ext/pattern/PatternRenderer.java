@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.display2d.ext.pattern;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;

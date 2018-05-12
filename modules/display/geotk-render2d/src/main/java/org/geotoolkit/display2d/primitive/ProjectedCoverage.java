@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.util.logging.Level;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.coverage.GridCoverageStack;

@@ -17,9 +17,9 @@
 
 package org.geotoolkit.data.shapefile.shp;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.Envelope;
 
 /**
  * Coordinates are ordered in an array like [x1,y1, ... xN, yN]
@@ -125,6 +125,11 @@ class ShapeCoordinateSequence2D implements CoordinateSequence {
 
     @Override
     public CoordinateSequence clone(){
+        return new ShapeCoordinateSequence2D(coordinates);
+    }
+
+    @Override
+    public CoordinateSequence copy() {
         return new ShapeCoordinateSequence2D(coordinates);
     }
 

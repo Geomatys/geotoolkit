@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.geometry.jts.awt;
 
-import com.vividsolutions.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiLineString;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;

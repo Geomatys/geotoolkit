@@ -17,7 +17,7 @@
 
 package org.geotoolkit.filter.binaryspatial;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.apache.sis.referencing.CRS;
 import org.opengis.filter.expression.PropertyName;
@@ -60,7 +60,7 @@ public class LooseBBox extends DefaultBBox {
             final Envelope e = new JTSEnvelope2D(candidate.getEnvelopeInternal(),CRS.getHorizontalComponent(candidateCrs));
             return ReferencingUtilities.intersects(e, right.getValue());
         }
-        final com.vividsolutions.jts.geom.Envelope candidateEnv = candidate.getEnvelopeInternal();
+        final org.locationtech.jts.geom.Envelope candidateEnv = candidate.getEnvelopeInternal();
         return boundingEnv.intersects(candidateEnv);
     }
 

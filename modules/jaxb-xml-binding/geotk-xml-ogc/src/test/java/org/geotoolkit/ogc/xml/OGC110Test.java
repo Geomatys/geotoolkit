@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.ogc.xml;
 
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Polygon;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;

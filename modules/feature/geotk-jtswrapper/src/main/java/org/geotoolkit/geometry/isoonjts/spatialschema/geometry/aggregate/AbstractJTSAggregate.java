@@ -9,9 +9,9 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate;
 
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import java.util.*;
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
@@ -45,12 +45,12 @@ public abstract class AbstractJTSAggregate<T extends Geometry> extends AbstractJ
      * {@inheritDoc }
      */
     @Override
-    protected com.vividsolutions.jts.geom.Geometry computeJTSPeer() {
-        final List<com.vividsolutions.jts.geom.Geometry> childParts = new ArrayList<com.vividsolutions.jts.geom.Geometry>();
+    protected org.locationtech.jts.geom.Geometry computeJTSPeer() {
+        final List<org.locationtech.jts.geom.Geometry> childParts = new ArrayList<org.locationtech.jts.geom.Geometry>();
         for(Geometry prim : elements) {
             if(prim instanceof JTSGeometry){
                 final JTSGeometry jtsGeom = (JTSGeometry) prim;
-                final com.vividsolutions.jts.geom.Geometry geom = jtsGeom.getJTSGeometry();
+                final org.locationtech.jts.geom.Geometry geom = jtsGeom.getJTSGeometry();
                 if (geom != null) {
                     childParts.add(geom);
                 }
@@ -59,10 +59,10 @@ public abstract class AbstractJTSAggregate<T extends Geometry> extends AbstractJ
             }
         }
 
-        com.vividsolutions.jts.geom.Geometry result = null;
+        org.locationtech.jts.geom.Geometry result = null;
         // we want a multi geometry event if there is only one geometry
         if (childParts.size() == 1) {
-            com.vividsolutions.jts.geom.Geometry geom = childParts.get(0);
+            org.locationtech.jts.geom.Geometry geom = childParts.get(0);
             if (geom instanceof LineString) {
                 result =  JTSUtils.GEOMETRY_FACTORY.createMultiLineString(new LineString[] {(LineString)geom});
             } if (geom instanceof Polygon) {

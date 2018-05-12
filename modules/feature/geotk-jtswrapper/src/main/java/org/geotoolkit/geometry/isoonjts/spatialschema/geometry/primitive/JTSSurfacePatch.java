@@ -124,7 +124,7 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
      */
     @Override
     public final double getPerimeter() {
-        com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
+        org.locationtech.jts.geom.Geometry jtsGeom = getJTSGeometry();
         return jtsGeom.getBoundary().getLength();
     }
 
@@ -133,7 +133,7 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
      */
     @Override
     public final double getArea() {
-        com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
+        org.locationtech.jts.geom.Geometry jtsGeom = getJTSGeometry();
         return jtsGeom.getArea();
     }
 

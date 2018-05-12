@@ -148,7 +148,7 @@ public class JTSComplex<T extends Geometry> extends AbstractJTSGeometry implemen
      * Creates the JTS peer.
      */
     @Override
-    protected final com.vividsolutions.jts.geom.Geometry computeJTSPeer() {
+    protected final org.locationtech.jts.geom.Geometry computeJTSPeer() {
         ArrayList subParts = new ArrayList();
         Iterator elemIt = elements.iterator();
         while (elemIt.hasNext()) {

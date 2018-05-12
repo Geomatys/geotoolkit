@@ -313,9 +313,9 @@
 
       <!-- Geometries -->
       <dependency>
-        <groupId>com.vividsolutions</groupId>
-        <artifactId>jts</artifactId>
-        <version>1.13</version>
+        <groupId>org.locationtech.jts</groupId>
+        <artifactId>jts-core</artifactId>
+        <version>1.15.0</version>
         <exclusions>
           <exclusion>
             <groupId>xerces</groupId>

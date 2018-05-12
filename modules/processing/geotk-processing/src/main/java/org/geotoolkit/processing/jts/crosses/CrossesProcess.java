@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.processing.jts.crosses;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;

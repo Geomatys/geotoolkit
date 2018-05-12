@@ -655,8 +655,8 @@ public class FactoryRegistry extends ServiceRegistry {
      * need to override this method for {@link Factory} implementations, since their hints are
      * automatically checked. Override this method for non-Geotk implementations.
      * For example a JTS geometry factory finder may overrides this method in order to check
-     * if a {@link com.vividsolutions.jts.geom.GeometryFactory} uses the required
-     * {@link com.vividsolutions.jts.geom.CoordinateSequenceFactory}. Such method should be
+     * if a {@link org.locationtech.jts.geom.GeometryFactory} uses the required
+     * {@link org.locationtech.jts.geom.CoordinateSequenceFactory}. Such method should be
      * implemented as below, since this method may be invoked for various kind of objects:
      *
      * {@preformat java

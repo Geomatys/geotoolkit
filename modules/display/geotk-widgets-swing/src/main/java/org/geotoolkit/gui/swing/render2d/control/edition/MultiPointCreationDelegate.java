@@ -19,8 +19,8 @@ package org.geotoolkit.gui.swing.render2d.control.edition;
 
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,8 +1,8 @@
 package org.geotoolkit.data.geojson;
 
 import com.fasterxml.jackson.core.JsonEncoding;
-import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.io.WKTReader;
+import org.locationtech.jts.geom.*;
+import org.locationtech.jts.io.WKTReader;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.data.*;

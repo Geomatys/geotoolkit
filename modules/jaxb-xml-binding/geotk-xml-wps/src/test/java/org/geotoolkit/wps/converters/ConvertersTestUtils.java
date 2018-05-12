@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.wps.converters;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Polygon;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;

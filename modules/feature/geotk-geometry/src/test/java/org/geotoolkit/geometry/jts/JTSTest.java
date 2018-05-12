@@ -16,13 +16,12 @@
  */
 package org.geotoolkit.geometry.jts;
 
-import com.vividsolutions.jts.algorithm.CGAlgorithms;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +31,7 @@ import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.junit.Assert.*;
+import org.locationtech.jts.algorithm.Orientation;
 
 /**
  * Test JTS utility class
@@ -91,7 +91,7 @@ public class JTSTest extends org.geotoolkit.test.TestBase {
 
         final Polygon poly = GF.createPolygon(ring, null);
         final Geometry returnedGeom = JTS.ensureCounterClockWise(poly);
-        assertTrue(CGAlgorithms.isCCW(returnedGeom.getCoordinates()));
+        assertTrue(Orientation.isCCW(returnedGeom.getCoordinates()));
 
     }
 
@@ -112,7 +112,7 @@ public class JTSTest extends org.geotoolkit.test.TestBase {
 
         final Geometry returnedGeom = JTS.ensureClockWise(poly);
 
-        assertFalse(CGAlgorithms.isCCW(returnedGeom.getCoordinates()));
+        assertFalse(Orientation.isCCW(returnedGeom.getCoordinates()));
 
     }
 

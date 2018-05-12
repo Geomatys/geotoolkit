@@ -19,9 +19,9 @@
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.Point;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;

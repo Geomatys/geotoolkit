@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.data.kml.model;
 
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.GeometryFactory;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
@@ -27,7 +27,7 @@ import static org.geotoolkit.data.kml.xml.KmlConstants.*;
  * @author Samuel Andrés
  * @module
  */
-public class DefaultLineString extends com.vividsolutions.jts.geom.LineString implements LineString {
+public class DefaultLineString extends org.locationtech.jts.geom.LineString implements LineString {
 
     private final Extensions extensions = new Extensions();
     private IdAttributes idAttributes;

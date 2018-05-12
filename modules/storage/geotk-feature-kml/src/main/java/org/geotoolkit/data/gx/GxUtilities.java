@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.gx;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 import org.geotoolkit.data.gx.model.Angles;
 
 /**

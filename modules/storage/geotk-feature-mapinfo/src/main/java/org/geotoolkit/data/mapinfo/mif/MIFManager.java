@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.mapinfo.mif;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import org.geotoolkit.nio.IOUtilities;
 import org.opengis.util.GenericName;
 import org.apache.sis.storage.DataStoreException;

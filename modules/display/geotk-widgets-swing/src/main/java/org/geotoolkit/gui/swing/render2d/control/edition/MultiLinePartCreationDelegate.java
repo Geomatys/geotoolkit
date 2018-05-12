@@ -19,9 +19,9 @@
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.MultiLineString;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;

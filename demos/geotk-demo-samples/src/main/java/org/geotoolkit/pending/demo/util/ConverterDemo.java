@@ -1,7 +1,7 @@
 
 package org.geotoolkit.pending.demo.util;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.util.ObjectConverters;

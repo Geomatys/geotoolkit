@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Polygon;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -55,7 +55,7 @@ public class StatelessContextParams<T extends MapLayer> {
      * This envelope should be the painted are in ojective CRS,
      * but symbolizer may need to enlarge it because of symbols size.
      */
-    public com.vividsolutions.jts.geom.Envelope objectiveJTSEnvelope = null;
+    public org.locationtech.jts.geom.Envelope objectiveJTSEnvelope = null;
 
     //clipping geometries
     public Rectangle2D displayClipRect;

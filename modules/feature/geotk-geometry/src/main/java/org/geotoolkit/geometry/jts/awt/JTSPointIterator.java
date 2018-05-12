@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.geometry.jts.awt;
 
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Point;
 import org.opengis.referencing.operation.MathTransform;
 
 /**

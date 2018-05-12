@@ -17,7 +17,7 @@
 
 package org.geotoolkit.data.osm.xml;
 
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Point;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
