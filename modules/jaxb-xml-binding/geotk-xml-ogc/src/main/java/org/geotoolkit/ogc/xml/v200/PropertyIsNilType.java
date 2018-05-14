@@ -86,12 +86,17 @@ public class PropertyIsNilType extends ComparisonOpsType {
         }
     }
 
+    public String getPropertyName() {
+        if (expression != null && expression.getValue() instanceof String) {
+            return (String) expression.getValue();
+        }
+        return null;
+    }
+
     /**
      * Gets the value of the expression property.
      *
-     * @return
-     *     possible object is
-     *     {@link JAXBElement }{@code <}{@link LiteralType }{@code >}
+     * @return possible object is      {@link JAXBElement }{@code <}{@link LiteralType }{@code >}
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}

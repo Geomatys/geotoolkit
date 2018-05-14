@@ -489,15 +489,15 @@ public class Utils {
     private static final Map<Class, QName> GEOMETRY_NAME_BINDING_321 = new HashMap<Class, QName>();
     static {
 
-        GEOMETRY_NAME_BINDING_321.put(MultiPoint.class,         new QName(GML_321_NAMESPACE, "MultiPointType"));
-        GEOMETRY_NAME_BINDING_321.put(Point.class,              new QName(GML_321_NAMESPACE, "PointType"));
-        GEOMETRY_NAME_BINDING_321.put(LineString.class,         new QName(GML_321_NAMESPACE, "CurveType"));
-        GEOMETRY_NAME_BINDING_321.put(GeometryCollection.class, new QName(GML_321_NAMESPACE, "MultiGeometryType"));
-        GEOMETRY_NAME_BINDING_321.put(MultiLineString.class,    new QName(GML_321_NAMESPACE, "CompositeCurveType"));
-        GEOMETRY_NAME_BINDING_321.put(Envelope.class,           new QName(GML_321_NAMESPACE, "EnvelopeTypr"));
-        GEOMETRY_NAME_BINDING_321.put(MultiPolygon.class,       new QName(GML_321_NAMESPACE, "MultiPolygonType"));
-        GEOMETRY_NAME_BINDING_321.put(Polygon.class,            new QName(GML_321_NAMESPACE, "PolygonType"));
-        GEOMETRY_NAME_BINDING_321.put(LinearRing.class,         new QName(GML_321_NAMESPACE, "RingType"));
+        GEOMETRY_NAME_BINDING_321.put(MultiPoint.class,         new QName(GML_321_NAMESPACE, "MultiPointPropertyType"));
+        GEOMETRY_NAME_BINDING_321.put(Point.class,              new QName(GML_321_NAMESPACE, "PointPropertyType"));
+        GEOMETRY_NAME_BINDING_321.put(LineString.class,         new QName(GML_321_NAMESPACE, "CurvePropertyType"));
+        GEOMETRY_NAME_BINDING_321.put(GeometryCollection.class, new QName(GML_321_NAMESPACE, "MultiGeometryPropertyType"));
+        GEOMETRY_NAME_BINDING_321.put(MultiLineString.class,    new QName(GML_321_NAMESPACE, "MultiCurvePropertyType"));
+        GEOMETRY_NAME_BINDING_321.put(Envelope.class,           new QName(GML_321_NAMESPACE, "EnvelopeType"));
+        GEOMETRY_NAME_BINDING_321.put(MultiPolygon.class,       new QName(GML_321_NAMESPACE, "MultiSurfacePropertyType"));
+        GEOMETRY_NAME_BINDING_321.put(Polygon.class,            new QName(GML_321_NAMESPACE, "SurfacePropertyType"));
+        GEOMETRY_NAME_BINDING_321.put(LinearRing.class,         new QName(GML_321_NAMESPACE, "RingPropertyType"));
     }
     /**
      * Return a QName intended to be used in a xsd XML file fro mthe specified class.
@@ -552,7 +552,14 @@ public class Utils {
      * @return A QName describing the class.
      */
     public static QName getQNameFromType(final FeatureType type, final String gmlVersion) {
-        return new QName(NamesExt.getNamespace(type.getName()), getNameWithTypeSuffix(type.getName().tip().toString()));
+        String namespace = NamesExt.getNamespace(type.getName());
+        // override GML version if needed
+        if (GML_311_NAMESPACE.equals(namespace) && "3.2.1".equals(gmlVersion)) {
+            namespace = GML_321_NAMESPACE;
+        } else if (GML_321_NAMESPACE.equals(namespace) && "3.1.1".equals(gmlVersion)) {
+            namespace = GML_311_NAMESPACE;
+        }
+        return new QName(namespace, getNameWithTypeSuffix(type.getName().tip().toString()));
     }
 
     /**
