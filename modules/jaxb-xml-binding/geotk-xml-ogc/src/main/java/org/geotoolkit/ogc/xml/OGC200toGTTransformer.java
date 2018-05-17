@@ -17,6 +17,7 @@
 package org.geotoolkit.ogc.xml;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -220,9 +221,10 @@ public class OGC200toGTTransformer {
             if (OGCJAXBStatics.FILTER_LOGIC_NOT.equalsIgnoreCase(OpName)) {
                 Filter filter = null;
 
-                if(unary.getComparisonOps() != null) {filter = visitComparisonOp(unary.getComparisonOps());}
-                else if(unary.getLogicOps() != null) {filter = visitLogicOp(unary.getLogicOps());}
+                if(unary.getComparisonOps() != null)   {filter = visitComparisonOp(unary.getComparisonOps());}
+                else if(unary.getLogicOps() != null)   {filter = visitLogicOp(unary.getLogicOps());}
                 else if(unary.getSpatialOps() != null) {filter = visitSpatialOp(unary.getSpatialOps());}
+                else if(!unary.getId().isEmpty())      {filter = visitIds(unary.getId());}
 
                 if(filter == null){
                     throw new IllegalArgumentException("Invalid filter element" + unary);
@@ -246,6 +248,8 @@ public class OGC200toGTTransformer {
 
                     } else if (ele.getValue() instanceof SpatialOpsType) {
                         filters.add(visitSpatialOp((JAXBElement<? extends SpatialOpsType>)ele));
+                    } else if (ele.getValue() instanceof AbstractIdType) {
+                        filters.add(visitIds(Arrays.asList((JAXBElement<? extends AbstractIdType>)ele)));
                     }
                 }
 
@@ -258,17 +262,20 @@ public class OGC200toGTTransformer {
                 }
 
             } else if (OGCJAXBStatics.FILTER_LOGIC_OR.equalsIgnoreCase(OpName)) {
-                final List<Filter> filters = new ArrayList<Filter>();
+                final List<Filter> filters = new ArrayList<>();
 
                 for (final JAXBElement ele : binary.getComparisonOpsOrSpatialOpsOrTemporalOps()) {
                     if (ele.getValue() instanceof ComparisonOpsType) {
-                        filters.add(visitComparisonOp((JAXBElement<? extends ComparisonOpsType>)ele));
+                        filters.add(visitComparisonOp((JAXBElement<? extends ComparisonOpsType>) ele));
 
                     } else if (ele.getValue() instanceof LogicOpsType) {
-                        filters.add(visitLogicOp((JAXBElement<? extends LogicOpsType>)ele));
+                        filters.add(visitLogicOp((JAXBElement<? extends LogicOpsType>) ele));
 
                     } else if (ele.getValue() instanceof SpatialOpsType) {
-                        filters.add(visitSpatialOp((JAXBElement<? extends SpatialOpsType>)ele));
+                        filters.add(visitSpatialOp((JAXBElement<? extends SpatialOpsType>) ele));
+
+                    } else if (ele.getValue() instanceof AbstractIdType) {
+                        filters.add(visitIds(Arrays.asList((JAXBElement<? extends AbstractIdType>) ele)));
                     }
                 }
 
@@ -356,6 +363,17 @@ public class OGC200toGTTransformer {
 
             if (OGCJAXBStatics.FILTER_COMPARISON_ISNULL.equalsIgnoreCase(OpName)) {
                 return filterFactory.isNull(expr);
+            }
+
+            throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
+
+        } else if (ops instanceof org.geotoolkit.ogc.xml.v200.PropertyIsNilType) {
+            final org.geotoolkit.ogc.xml.v200.PropertyIsNilType property = (org.geotoolkit.ogc.xml.v200.PropertyIsNilType) ops;
+
+            final Expression expr = visitPropertyName(property.getPropertyName());
+
+            if (OGCJAXBStatics.FILTER_COMPARISON_ISNIL.equalsIgnoreCase(OpName)) {
+                return filterFactory.isNil(expr);
             }
 
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
