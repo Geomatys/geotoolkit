@@ -19,214 +19,266 @@ package org.geotoolkit.wps.json;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.wps.xml.BoundingBoxDataDescription;
+import org.geotoolkit.wps.xml.ComplexDataTypeDescription;
+import org.geotoolkit.wps.xml.LiteralDataDescription;
+import org.geotoolkit.wps.xml.ProcessDescription;
 
 /**
  * Process
  */
 public class Process extends DescriptionType {
 
-  // literal / complex / boundingBox
-  private List<Object> inputs = null;
-  
-  private List<OutputDescription> outputs = null;
-  
-  private String version = null;
-  
-  private List<JobControlOptions> jobControlOptions = null;
-  
-  private List<TransmissionMode> outputTransmission = null;
-  
-  private String executeEndpoint = null;
-  
-  public Process inputs(List<Object> inputs) {
-    this.inputs = inputs;
-    return this;
-  }
+    // literal / complex / boundingBox
+    private List<Object> inputs = null;
 
-  public Process addInputsItem(Object inputsItem) {
-    
-    if (this.inputs == null) {
-      this.inputs = new ArrayList<>();
+    private List<OutputDescription> outputs = null;
+
+    private String version = null;
+
+    private List<JobControlOptions> jobControlOptions = null;
+
+    private List<TransmissionMode> outputTransmission = null;
+
+    private String executeEndpoint = null;
+
+    public Process() {
+        
     }
     
-    this.inputs.add(inputsItem);
-    return this;
-  }
-  
-  /**
-  * Get inputs
-  * @return inputs
-  **/
-  public List<Object> getInputs() {
-    return inputs;
-  }
-  public void setInputs(List<Object> inputs) {
-    this.inputs = inputs;
-  }
-  
-  public Process outputs(List<OutputDescription> outputs) {
-    this.outputs = outputs;
-    return this;
-  }
-
-  public Process addOutputsItem(OutputDescription outputsItem) {
-    
-    if (this.outputs == null) {
-      this.outputs = new ArrayList<>();
+    public Process(org.geotoolkit.wps.xml.ProcessOffering offering) {
+        super(offering);
+        if (offering != null) {
+            this.executeEndpoint = null; // TODO
+            this.outputTransmission = null; // TODO
+            
+            this.version = offering.getProcessVersion();
+            this.jobControlOptions = new ArrayList<>();
+            for (String jco : offering.getJobControlOptions()) {
+                this.jobControlOptions.add(JobControlOptions.fromValue(jco));
+            }
+            
+            final ProcessDescription desc = offering.getProcessDescription();
+            if (desc != null) {
+                this.inputs = new ArrayList<>();
+                for (org.geotoolkit.wps.xml.InputDescription in : desc.getInputs()) {
+                    if (in.getDataDescription() instanceof LiteralDataDescription) {
+                        this.inputs.add(new LiteralInputType(in));
+                    } else if (in.getDataDescription() instanceof ComplexDataTypeDescription) {
+                        this.inputs.add(new ComplexInputType(in));
+                     }else if (in.getDataDescription() instanceof BoundingBoxDataDescription) {
+                        this.inputs.add(new BoundingBoxInputType(in));
+                    }
+                }
+                this.outputs = new ArrayList<>();
+                for (org.geotoolkit.wps.xml.OutputDescription out : desc.getOutputs()) {
+                    this.outputs.add(new OutputDescription(out));
+                }
+            }
+        }
     }
-    
-    this.outputs.add(outputsItem);
-    return this;
-  }
-  
-  /**
-  * Get outputs
-  * @return outputs
-  **/
-  public List<OutputDescription> getOutputs() {
-    return outputs;
-  }
-  public void setOutputs(List<OutputDescription> outputs) {
-    this.outputs = outputs;
-  }
-  
-  public Process version(String version) {
-    this.version = version;
-    return this;
-  }
 
-  
-  /**
-  * Get version
-  * @return version
-  **/
-  public String getVersion() {
-    return version;
-  }
-  public void setVersion(String version) {
-    this.version = version;
-  }
-  
-  public Process jobControlOptions(List<JobControlOptions> jobControlOptions) {
-    this.jobControlOptions = jobControlOptions;
-    return this;
-  }
-
-  public Process addJobControlOptionsItem(JobControlOptions jobControlOptionsItem) {
-    
-    if (this.jobControlOptions == null) {
-      this.jobControlOptions = new ArrayList<>();
+    public Process inputs(List<Object> inputs) {
+        this.inputs = inputs;
+        return this;
     }
-    
-    this.jobControlOptions.add(jobControlOptionsItem);
-    return this;
-  }
-  
-  /**
-  * Get jobControlOptions
-  * @return jobControlOptions
-  **/
-  public List<JobControlOptions> getJobControlOptions() {
-    return jobControlOptions;
-  }
-  public void setJobControlOptions(List<JobControlOptions> jobControlOptions) {
-    this.jobControlOptions = jobControlOptions;
-  }
-  
-  public Process outputTransmission(List<TransmissionMode> outputTransmission) {
-    this.outputTransmission = outputTransmission;
-    return this;
-  }
 
-  public Process addOutputTransmissionItem(TransmissionMode outputTransmissionItem) {
-    
-    if (this.outputTransmission == null) {
-      this.outputTransmission = new ArrayList<>();
+    public Process addInputsItem(Object inputsItem) {
+
+        if (this.inputs == null) {
+            this.inputs = new ArrayList<>();
+        }
+
+        this.inputs.add(inputsItem);
+        return this;
     }
-    
-    this.outputTransmission.add(outputTransmissionItem);
-    return this;
-  }
-  
-  /**
-  * Get outputTransmission
-  * @return outputTransmission
-  **/
-  public List<TransmissionMode> getOutputTransmission() {
-    return outputTransmission;
-  }
-  public void setOutputTransmission(List<TransmissionMode> outputTransmission) {
-    this.outputTransmission = outputTransmission;
-  }
-  
-  public Process executeEndpoint(String executeEndpoint) {
-    this.executeEndpoint = executeEndpoint;
-    return this;
-  }
 
-  
-  /**
-  * Get executeEndpoint
-  * @return executeEndpoint
-  **/
-  public String getExecuteEndpoint() {
-    return executeEndpoint;
-  }
-  public void setExecuteEndpoint(String executeEndpoint) {
-    this.executeEndpoint = executeEndpoint;
-  }
-  
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
+    /**
+     * Get inputs
+     *
+     * @return inputs
+  *
+     */
+    public List<Object> getInputs() {
+        return inputs;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    public void setInputs(List<Object> inputs) {
+        this.inputs = inputs;
     }
-    Process process = (Process) o;
-    return Objects.equals(this.inputs, process.inputs) &&
-        Objects.equals(this.outputs, process.outputs) &&
-        Objects.equals(this.version, process.version) &&
-        Objects.equals(this.jobControlOptions, process.jobControlOptions) &&
-        Objects.equals(this.outputTransmission, process.outputTransmission) &&
-        Objects.equals(this.executeEndpoint, process.executeEndpoint) &&
-        super.equals(o);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(inputs, outputs, version, jobControlOptions, outputTransmission, executeEndpoint, super.hashCode());
-  }
-  
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class Process {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    inputs: ").append(toIndentedString(inputs)).append("\n");
-    sb.append("    outputs: ").append(toIndentedString(outputs)).append("\n");
-    sb.append("    version: ").append(toIndentedString(version)).append("\n");
-    sb.append("    jobControlOptions: ").append(toIndentedString(jobControlOptions)).append("\n");
-    sb.append("    outputTransmission: ").append(toIndentedString(outputTransmission)).append("\n");
-    sb.append("    executeEndpoint: ").append(toIndentedString(executeEndpoint)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
+    public Process outputs(List<OutputDescription> outputs) {
+        this.outputs = outputs;
+        return this;
     }
-    return o.toString().replace("\n", "\n    ");
-  }
 
-  
+    public Process addOutputsItem(OutputDescription outputsItem) {
+
+        if (this.outputs == null) {
+            this.outputs = new ArrayList<>();
+        }
+
+        this.outputs.add(outputsItem);
+        return this;
+    }
+
+    /**
+     * Get outputs
+     *
+     * @return outputs
+  *
+     */
+    public List<OutputDescription> getOutputs() {
+        return outputs;
+    }
+
+    public void setOutputs(List<OutputDescription> outputs) {
+        this.outputs = outputs;
+    }
+
+    public Process version(String version) {
+        this.version = version;
+        return this;
+    }
+
+    /**
+     * Get version
+     *
+     * @return version
+  *
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public Process jobControlOptions(List<JobControlOptions> jobControlOptions) {
+        this.jobControlOptions = jobControlOptions;
+        return this;
+    }
+
+    public Process addJobControlOptionsItem(JobControlOptions jobControlOptionsItem) {
+
+        if (this.jobControlOptions == null) {
+            this.jobControlOptions = new ArrayList<>();
+        }
+
+        this.jobControlOptions.add(jobControlOptionsItem);
+        return this;
+    }
+
+    /**
+     * Get jobControlOptions
+     *
+     * @return jobControlOptions
+  *
+     */
+    public List<JobControlOptions> getJobControlOptions() {
+        return jobControlOptions;
+    }
+
+    public void setJobControlOptions(List<JobControlOptions> jobControlOptions) {
+        this.jobControlOptions = jobControlOptions;
+    }
+
+    public Process outputTransmission(List<TransmissionMode> outputTransmission) {
+        this.outputTransmission = outputTransmission;
+        return this;
+    }
+
+    public Process addOutputTransmissionItem(TransmissionMode outputTransmissionItem) {
+
+        if (this.outputTransmission == null) {
+            this.outputTransmission = new ArrayList<>();
+        }
+
+        this.outputTransmission.add(outputTransmissionItem);
+        return this;
+    }
+
+    /**
+     * Get outputTransmission
+     *
+     * @return outputTransmission
+  *
+     */
+    public List<TransmissionMode> getOutputTransmission() {
+        return outputTransmission;
+    }
+
+    public void setOutputTransmission(List<TransmissionMode> outputTransmission) {
+        this.outputTransmission = outputTransmission;
+    }
+
+    public Process executeEndpoint(String executeEndpoint) {
+        this.executeEndpoint = executeEndpoint;
+        return this;
+    }
+
+    /**
+     * Get executeEndpoint
+     *
+     * @return executeEndpoint
+  *
+     */
+    public String getExecuteEndpoint() {
+        return executeEndpoint;
+    }
+
+    public void setExecuteEndpoint(String executeEndpoint) {
+        this.executeEndpoint = executeEndpoint;
+    }
+
+    @Override
+    public boolean equals(java.lang.Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Process process = (Process) o;
+        return Objects.equals(this.inputs, process.inputs)
+                && Objects.equals(this.outputs, process.outputs)
+                && Objects.equals(this.version, process.version)
+                && Objects.equals(this.jobControlOptions, process.jobControlOptions)
+                && Objects.equals(this.outputTransmission, process.outputTransmission)
+                && Objects.equals(this.executeEndpoint, process.executeEndpoint)
+                && super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(inputs, outputs, version, jobControlOptions, outputTransmission, executeEndpoint, super.hashCode());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class Process {\n");
+        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+        sb.append("    inputs: ").append(toIndentedString(inputs)).append("\n");
+        sb.append("    outputs: ").append(toIndentedString(outputs)).append("\n");
+        sb.append("    version: ").append(toIndentedString(version)).append("\n");
+        sb.append("    jobControlOptions: ").append(toIndentedString(jobControlOptions)).append("\n");
+        sb.append("    outputTransmission: ").append(toIndentedString(outputTransmission)).append("\n");
+        sb.append("    executeEndpoint: ").append(toIndentedString(executeEndpoint)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(java.lang.Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
+
 }
-
-
-

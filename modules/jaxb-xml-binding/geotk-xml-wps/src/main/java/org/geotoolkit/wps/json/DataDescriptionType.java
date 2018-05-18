@@ -20,6 +20,9 @@ package org.geotoolkit.wps.json;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.wps.xml.Format;
+import org.geotoolkit.wps.xml.InputDescription;
+import org.geotoolkit.wps.xml.OutputDescription;
 
 /**
  * DataDescriptionType
@@ -27,6 +30,30 @@ import java.util.List;
 public class DataDescriptionType extends DescriptionType {
 
   private List<FormatDescription> formats = new ArrayList<>();
+  
+  public DataDescriptionType() {
+      
+  }
+  
+  public DataDescriptionType(InputDescription desc) {
+      super(desc);
+      if (desc != null && desc.getDataDescription() != null) {
+          this.formats = new ArrayList<>();
+          for (Format format : desc.getDataDescription().getFormat()) {
+              this.formats.add(new FormatDescription(format));
+          }
+      }
+  }
+  
+  public DataDescriptionType(OutputDescription desc) {
+      super(desc);
+      if (desc != null && desc.getDataDescription() != null) {
+          this.formats = new ArrayList<>();
+          for (Format format : desc.getDataDescription().getFormat()) {
+              this.formats.add(new FormatDescription(format));
+          }
+      }
+  }
   
   public DataDescriptionType formats(List<FormatDescription> formats) {
     this.formats = formats;

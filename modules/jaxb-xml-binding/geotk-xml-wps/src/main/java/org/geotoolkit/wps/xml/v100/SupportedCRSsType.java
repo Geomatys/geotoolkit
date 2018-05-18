@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -23,7 +24,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.wps.xml.DataDescription;
+import org.geotoolkit.wps.xml.BoundingBoxDataDescription;
+import org.geotoolkit.wps.xml.Format;
 
 
 /**
@@ -64,7 +66,7 @@ import org.geotoolkit.wps.xml.DataDescription;
     "_default",
     "supported"
 })
-public class SupportedCRSsType implements DataDescription {
+public class SupportedCRSsType implements BoundingBoxDataDescription {
 
     @XmlElement(name = "Default", namespace = "", required = true)
     protected SupportedCRSsType.Default _default;
@@ -163,6 +165,11 @@ public class SupportedCRSsType implements DataDescription {
         hash = 83 * hash + Objects.hashCode(this._default);
         hash = 83 * hash + Objects.hashCode(this.supported);
         return hash;
+    }
+
+    @Override
+    public List<? extends Format> getFormat() {
+        return new ArrayList<>();
     }
 
     /**

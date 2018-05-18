@@ -104,6 +104,48 @@ public class StatusType implements StatusInfo {
             this.processFailed = new ProcessFailedType(processFailed);
         }
     }
+    
+    @Override
+    public Integer getPercentCompleted() {
+        if (processStarted != null) {
+            return processStarted.getPercentCompleted();
+        } else if (processPaused != null) {
+            return processPaused.getPercentCompleted();
+        }
+        return 0;
+    }
+    
+    @Override
+    public String getMessage() {
+        if (processStarted != null) {
+            return processStarted.getValue();
+        } else if (processPaused != null) {
+            return processPaused.getValue();
+        } else if (processFailed != null) {
+            return processFailed.getExceptionReport().toString();
+        } else if (processAccepted != null) {
+            return processAccepted;
+        } else if (processSucceeded != null) {
+            return processSucceeded;
+        }
+        return null;
+    }
+    
+    @Override
+    public String getStatus() {
+        if (processStarted != null) {
+            return STATUS_RUNNING;
+        } else if (processPaused != null) {
+            return STATUS_PAUSED;
+        } else if (processFailed != null) {
+            return STATUS_FAILED;
+        } else if (processAccepted != null) {
+            return STATUS_ACCEPTED;
+        } else if (processSucceeded != null) {
+            return STATUS_SUCCEEDED;
+        }
+        return null;
+    }
 
     /**
      * Gets the value of the processAccepted property.

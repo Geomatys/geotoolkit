@@ -24,10 +24,14 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  */
 public interface AbstractDescription {
+    
+    AbstractCodeType getIdentifier();
 
     String getFirstTitle();
 
     String getFirstAbstract();
 
     List<? extends AbstractKeywords> getKeywords();
+    
+    List<? extends AbstractMetadata> getMetadata();
 }

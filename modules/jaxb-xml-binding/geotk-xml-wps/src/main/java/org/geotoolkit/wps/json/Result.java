@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Result
  */
-public class Result {
+public class Result implements WPSJSONResponse {
 
   private List<OutputInfo> outputs = new ArrayList<>();
   

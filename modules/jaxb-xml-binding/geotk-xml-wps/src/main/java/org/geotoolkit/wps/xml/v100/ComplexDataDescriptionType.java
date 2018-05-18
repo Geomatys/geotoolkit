@@ -153,6 +153,16 @@ public class ComplexDataDescriptionType implements Format{
     public void setSchema(final String value) {
         this.schema = value;
     }
+    
+    @Override
+    public Boolean isDefault() {
+        return false;
+    }
+    
+    @Override
+    public Integer getMaximumMegabytes() {
+        return null;
+    }
 
     @Override
     public String toString() {

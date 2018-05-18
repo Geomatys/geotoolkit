@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -23,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
+import org.geotoolkit.wps.xml.Format;
 import org.geotoolkit.wps.xml.LiteralDataDescription;
 
 
@@ -119,6 +122,11 @@ public class LiteralOutputType implements LiteralDataDescription {
      */
     public void setUOMs(final SupportedUOMsType value) {
         this.uoMs = value;
+    }
+    
+    @Override
+    public List<? extends Format> getFormat() {
+        return new ArrayList<>();
     }
 
     @Override

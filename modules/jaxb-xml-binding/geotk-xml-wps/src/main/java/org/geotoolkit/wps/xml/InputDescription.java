@@ -16,10 +16,17 @@
  */
 package org.geotoolkit.wps.xml;
 
+import org.geotoolkit.ows.xml.AbstractDescription;
+
 /**
  *
- * @author guilhem
+ * @author Guilhem Legal (Geomatys)
  */
-public interface InputDescription {
+public interface InputDescription extends AbstractDescription {
 
+    Integer getMinOccurs();
+    
+    Integer getMaxOccurs();
+    
+    DataDescription getDataDescription();
 }

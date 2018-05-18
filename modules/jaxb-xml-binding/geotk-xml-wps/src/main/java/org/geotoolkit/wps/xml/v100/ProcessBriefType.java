@@ -17,6 +17,7 @@
 package org.geotoolkit.wps.xml.v100;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,9 +27,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ows.xml.LanguageString;
 import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.ows.xml.v110.LanguageStringType;
+import org.geotoolkit.wps.xml.ProcessDescription;
 import org.geotoolkit.wps.xml.ProcessOffering;
 import org.geotoolkit.wps.xml.ProcessSummary;
 
@@ -128,6 +129,7 @@ public class ProcessBriefType extends DescriptionType implements ProcessSummary,
      *     {@link String }
      *
      */
+    @Override
     public String getProcessVersion() {
         return processVersion;
     }
@@ -189,4 +191,13 @@ public class ProcessBriefType extends DescriptionType implements ProcessSummary,
         return hash;
     }
 
+    @Override
+    public List<String> getJobControlOptions() {
+        return Collections.EMPTY_LIST;
+    }
+    
+    @Override
+    public ProcessDescription getProcessDescription() {
+        return null;
+    }
 }

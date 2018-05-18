@@ -21,5 +21,23 @@ package org.geotoolkit.wps.xml;
  * @author guilhem
  */
 public interface StatusInfo extends WPSResponse {
+    
+    /** The job has finished with no errors. */
+    public static final String STATUS_SUCCEEDED = "Succeeded";
+    /** The job has finished with errors. */
+    public static final String STATUS_FAILED = "Failed";
+    /** The job is queued for execution. */
+    public static final String STATUS_ACCEPTED = "Accepted";
+    /** The job is running. */
+    public static final String STATUS_RUNNING = "Running";
+    /** The job has been dismissed. */
+    public static final String STATUS_DISSMISED = "Dismissed";
+    /** The job has been paused. */
+    public static final String STATUS_PAUSED = "Paused";
 
+    Integer getPercentCompleted();
+    
+    String getMessage();
+    
+    String getStatus();
 }

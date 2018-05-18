@@ -21,7 +21,19 @@ import java.util.Objects;
 /**
  * StatusInfo
  */
-public class StatusInfo {
+public class StatusInfo implements WPSJSONResponse {
+    
+    public StatusInfo() {
+        
+    }
+    
+    public StatusInfo(org.geotoolkit.wps.xml.StatusInfo status) {
+        if (status != null) {
+            this.progress = status.getPercentCompleted();
+            this.message = status.getStatus();
+            this.status = StatusEnum.fromValue(status.getStatus());
+        }
+    }
 
   /**
    * Gets or Sets status

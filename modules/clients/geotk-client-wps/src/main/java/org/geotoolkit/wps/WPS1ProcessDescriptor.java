@@ -127,16 +127,16 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
 
         // INPUTS
         final List<GeneralParameterDescriptor> inputDescriptors = new ArrayList<>();
-        if (wpsProcessDesc.getDataInputs() != null) {
-            for (final InputDescriptionType inputDesc : wpsProcessDesc.getDataInputs().getInput()) {
+        if (!wpsProcessDesc.getInputs().isEmpty()) {
+            for (final InputDescriptionType inputDesc : wpsProcessDesc.getInputs()) {
                 inputDescriptors.add(toDescriptor(processIdentifier, inputDesc));
             }
         }
 
         //OUTPUTS
         final List<GeneralParameterDescriptor> outputDescriptors = new ArrayList<>();
-        if (wpsProcessDesc.getProcessOutputs() != null) {
-            for (final OutputDescriptionType outputDesc : wpsProcessDesc.getProcessOutputs().getOutput()) {
+        if (!wpsProcessDesc.getOutputs().isEmpty()) {
+            for (final OutputDescriptionType outputDesc : wpsProcessDesc.getOutputs()) {
                 outputDescriptors.add(toDescriptor(processIdentifier, outputDesc));
             }
         }

@@ -19,13 +19,24 @@ package org.geotoolkit.wps.json;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.wps.xml.ProcessOfferings;
 
 /**
  * ProcessCollection
  */
-public class ProcessCollection {
+public class ProcessCollection implements WPSJSONResponse {
 
   private List<ProcessSummary> processes = new ArrayList<>();
+  
+  public ProcessCollection() {
+      
+  }
+  
+  public ProcessCollection(ProcessOfferings offerings) {
+      for (org.geotoolkit.wps.xml.ProcessOffering process : offerings.getProcesses()) {
+          this.processes.add(new ProcessSummary(process));
+      }
+  }
   
   public ProcessCollection processes(List<ProcessSummary> processes) {
     this.processes = processes;

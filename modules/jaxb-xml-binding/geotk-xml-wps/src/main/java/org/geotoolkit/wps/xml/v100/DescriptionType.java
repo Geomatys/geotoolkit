@@ -99,6 +99,7 @@ public class DescriptionType implements AbstractDescription {
      *     {@link CodeType }
      *
      */
+    @Override
     public CodeType getIdentifier() {
         return identifier;
     }
@@ -175,6 +176,7 @@ public class DescriptionType implements AbstractDescription {
      *
      *
      */
+    @Override
     public List<MetadataType> getMetadata() {
         if (metadata == null) {
             metadata = new ArrayList<>();

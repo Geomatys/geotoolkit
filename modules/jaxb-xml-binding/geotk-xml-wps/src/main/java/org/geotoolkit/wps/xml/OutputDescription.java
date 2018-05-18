@@ -16,10 +16,13 @@
  */
 package org.geotoolkit.wps.xml;
 
+import org.geotoolkit.ows.xml.AbstractDescription;
+
 /**
  *
  * @author guilhem
  */
-public interface OutputDescription {
-
+public interface OutputDescription extends AbstractDescription {
+    
+    DataDescription getDataDescription();
 }

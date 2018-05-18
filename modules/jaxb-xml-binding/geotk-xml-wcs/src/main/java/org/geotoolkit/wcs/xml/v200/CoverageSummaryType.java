@@ -200,6 +200,17 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
         return this.boundingBox;
     }
 
+    @Override
+    public List<MetadataType> getMetadata() {
+        final List<MetadataType> result = new ArrayList<>();
+        if (metadata != null) {
+            for (JAXBElement<? extends MetadataType> meta : metadata) {
+                result.add(meta.getValue());
+            }
+        }
+        return result;
+    }
+    
     /**
      * Gets the value of the metadata property.
      *
@@ -209,7 +220,7 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
      *
      *
      */
-    public List<JAXBElement<? extends MetadataType>> getMetadata() {
+    public List<JAXBElement<? extends MetadataType>> getJbMetadata() {
         if (metadata == null) {
             metadata = new ArrayList<>();
         }

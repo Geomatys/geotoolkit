@@ -18,6 +18,7 @@ package org.geotoolkit.wps.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
+import org.geotoolkit.wps.xml.InputDescription;
 
 /**
  * LiteralInputType
@@ -30,6 +31,19 @@ public class LiteralInputType extends DataDescriptionType {
   
   @JsonProperty("LiteralDataDomain")
   private Object literalDataDomain = null;
+  
+  public LiteralInputType() {
+      
+  }
+  
+  public LiteralInputType(InputDescription in) {
+      super(in);
+      if (in != null) {
+          this.minOccurs = in.getMinOccurs();
+          this.maxOccurs = in.getMaxOccurs();
+          this.literalDataDomain = null; // TODO
+      }
+  }
   
   public LiteralInputType minOccurs(Integer minOccurs) {
     this.minOccurs = minOccurs;

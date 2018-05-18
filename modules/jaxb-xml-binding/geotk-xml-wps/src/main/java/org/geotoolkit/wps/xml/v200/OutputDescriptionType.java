@@ -87,6 +87,15 @@ public class OutputDescriptionType extends DescriptionType implements OutputDesc
             throw new IllegalArgumentException("unecpected data description type:" + dataDescription.getClass().getName());
         }
     }
+    
+    @Override
+    public DataDescriptionType getDataDescription() {
+        if (dataDescription != null) {
+            return dataDescription.getValue();
+        }
+        return null;
+    }
+    
     /**
      * Gets the value of the dataDescription property.
      *
@@ -98,7 +107,7 @@ public class OutputDescriptionType extends DescriptionType implements OutputDesc
      *     {@link JAXBElement }{@code <}{@link DataDescriptionType }{@code >}
      *
      */
-    public JAXBElement<? extends DataDescriptionType> getDataDescription() {
+    public JAXBElement<? extends DataDescriptionType> getJbDataDescription() {
         return dataDescription;
     }
 

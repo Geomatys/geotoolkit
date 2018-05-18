@@ -21,7 +21,7 @@ import java.util.Objects;
 /**
  * Exception
  */
-public class Exception {
+public class Exception implements WPSJSONResponse {
 
   private String code = null;
   

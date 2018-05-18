@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -24,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.wps.xml.ComplexDataTypeDescription;
+import org.geotoolkit.wps.xml.Format;
 
 
 /**
@@ -123,6 +125,11 @@ public class SupportedComplexDataType implements ComplexDataTypeDescription {
      */
     public void setSupported(final ComplexDataCombinationsType value) {
         this.supported = value;
+    }
+    
+    @Override
+    public List<? extends Format> getFormat() {
+        return new ArrayList<>();
     }
 
     @Override

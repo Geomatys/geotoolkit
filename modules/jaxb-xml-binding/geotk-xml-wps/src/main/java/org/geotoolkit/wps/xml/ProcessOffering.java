@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.wps.xml;
 
-import org.geotoolkit.ows.xml.AbstractCodeType;
+import java.util.List;
 import org.geotoolkit.ows.xml.AbstractDescription;
 
 /**
@@ -27,6 +27,10 @@ import org.geotoolkit.ows.xml.AbstractDescription;
  */
 public interface ProcessOffering extends AbstractDescription {
 
-    AbstractCodeType getIdentifier();
+    String getProcessVersion();
+    
+    List<String> getJobControlOptions();
+    
+    ProcessDescription getProcessDescription();
 
 }

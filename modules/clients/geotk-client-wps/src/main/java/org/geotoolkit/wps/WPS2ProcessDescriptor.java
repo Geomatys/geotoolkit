@@ -110,15 +110,15 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
             displayName = new DefaultInternationalString("");
         }
 
-        final ProcessDescriptionType process = offering.getProcess();
+        final ProcessDescriptionType process = offering.getProcessDescription();
 
         final List<GeneralParameterDescriptor> inputLst = new ArrayList<>();
         final List<GeneralParameterDescriptor> outputLst = new ArrayList<>();
-        for (final InputDescriptionType input : process.getInput()) {
+        for (final InputDescriptionType input : process.getInputs()) {
             inputLst.add(toDescriptor(processIdentifier,input));
         }
 
-        for (final OutputDescriptionType outputDesc : process.getOutput()) {
+        for (final OutputDescriptionType outputDesc : process.getOutputs()) {
             outputLst.add(toDescriptor(processIdentifier,outputDesc));
         }
 
@@ -146,20 +146,13 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
         if (input instanceof InputDescriptionType) {
             final InputDescriptionType id = (InputDescriptionType) input;
             subInputs = id.getInput();
-            dataDescType = id.getDataDescription()==null?null : id.getDataDescription().getValue();
-            final String maxValue = id.getMaxOccurs();
-            if ("unbounded".equals(maxValue)) {
-                max = Integer.MAX_VALUE;
-            } else if (maxValue != null) {
-                max = Integer.parseInt(maxValue);
-            } else {
-                max = 1;
-            }
+            dataDescType = id.getDataDescription();
+            max = id.getMaxOccurs();
             min = id.getMinOccurs();
         } else if(input instanceof OutputDescriptionType) {
             final OutputDescriptionType od = (OutputDescriptionType) input;
             subInputs = od.getOutput();
-            dataDescType = od.getDataDescription()==null?null : od.getDataDescription().getValue();
+            dataDescType = od.getDataDescription();
             min = 1;
             max = 1;
         } else {
@@ -171,8 +164,7 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
         final String remarks = input.getFirstAbstract();
 
         Map userObject = new HashMap();
-        for (JAXBElement<? extends MetadataType> metaJB : input.getMetadata()) {
-            MetadataType meta = metaJB.getValue();
+        for (MetadataType meta : input.getMetadata()) {
             if (meta instanceof AdditionalParametersType) {
                 AdditionalParametersType params = (AdditionalParametersType)meta;
                 for (AdditionalParameter param : params.getAdditionalParameter()) {

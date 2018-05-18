@@ -153,6 +153,18 @@ public class OutputDescriptionType extends DescriptionType implements OutputDesc
     public void setBoundingBoxOutput(final SupportedCRSsType value) {
         this.boundingBoxOutput = value;
     }
+    
+    @Override
+    public DataDescription getDataDescription() {
+        if (boundingBoxOutput != null) {
+            return boundingBoxOutput;
+        } else if (complexOutput != null) {
+            return complexOutput;
+        } else if (complexOutput != null) {
+            return complexOutput;
+        } 
+        return null;
+    }
 
     @Override
     public String toString() {

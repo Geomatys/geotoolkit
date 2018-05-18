@@ -62,7 +62,7 @@ import org.geotoolkit.wps.xml.ProcessDescription;
     "input",
     "output"
 })
-public class ProcessDescriptionType extends DescriptionType  implements ProcessDescription {
+public class ProcessDescriptionType extends DescriptionType implements ProcessDescription {
 
     @XmlElement(name = "Input")
     protected List<InputDescriptionType> input;
@@ -84,26 +84,9 @@ public class ProcessDescriptionType extends DescriptionType  implements ProcessD
     /**
      * Gets the value of the input property.
      *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the input property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getInput().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link InputDescriptionType }
-     *
-     *
      */
-    public List<InputDescriptionType> getInput() {
+    @Override
+    public List<InputDescriptionType> getInputs() {
         if (input == null) {
             input = new ArrayList<>();
         }
@@ -113,26 +96,9 @@ public class ProcessDescriptionType extends DescriptionType  implements ProcessD
     /**
      * Gets the value of the output property.
      *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the output property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getOutput().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link OutputDescriptionType }
-     *
-     *
      */
-    public List<OutputDescriptionType> getOutput() {
+    @Override
+    public List<OutputDescriptionType> getOutputs() {
         if (output == null) {
             output = new ArrayList<>();
         }
@@ -168,6 +134,11 @@ public class ProcessDescriptionType extends DescriptionType  implements ProcessD
      */
     public void setLang(String value) {
         this.lang = value;
+    }
+
+    @Override
+    public String getProcessVersion() {
+        return null; // TODO find a way to fill this
     }
 
 }

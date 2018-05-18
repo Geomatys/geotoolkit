@@ -16,10 +16,18 @@
  */
 package org.geotoolkit.wps.xml;
 
+import java.util.List;
+import org.geotoolkit.ows.xml.AbstractDescription;
+
 /**
  *
- * @author guilhem
+ * @author Guilhem Legal (Geomatys)
  */
-public interface ProcessDescription {
+public interface ProcessDescription extends AbstractDescription {
 
+    List<? extends InputDescription> getInputs();
+    
+    List<? extends OutputDescription> getOutputs();
+    
+    String getProcessVersion();
 }

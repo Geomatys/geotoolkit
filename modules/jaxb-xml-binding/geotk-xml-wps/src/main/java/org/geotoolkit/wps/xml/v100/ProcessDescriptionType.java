@@ -112,13 +112,13 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
     /**
      * Gets the value of the dataInputs property.
      *
-     * @return
-     *     possible object is
-     *     {@link ProcessDescriptionType.DataInputs }
-     *
      */
-    public ProcessDescriptionType.DataInputs getDataInputs() {
-        return dataInputs;
+    @Override
+    public List<InputDescriptionType> getInputs() {
+        if (dataInputs != null) {
+            dataInputs = new DataInputs();
+        }
+        return dataInputs.getInput();
     }
 
     /**
@@ -135,14 +135,13 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
 
     /**
      * Gets the value of the processOutputs property.
-     *
-     * @return
-     *     possible object is
-     *     {@link ProcessDescriptionType.ProcessOutputs }
-     *
      */
-    public ProcessDescriptionType.ProcessOutputs getProcessOutputs() {
-        return processOutputs;
+    @Override
+    public List<OutputDescriptionType> getOutputs() {
+        if (processOutputs != null) {
+            processOutputs = new ProcessOutputs();
+        }
+        return processOutputs.getOutput();
     }
 
     /**
@@ -211,6 +210,11 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
      */
     public void setStatusSupported(final Boolean value) {
         this.statusSupported = value;
+    }
+    
+    @Override
+    public ProcessDescription getProcessDescription() {
+        return this;
     }
 
     @Override

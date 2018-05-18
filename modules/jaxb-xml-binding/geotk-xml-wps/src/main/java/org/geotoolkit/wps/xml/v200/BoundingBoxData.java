@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wps.xml.BoundingBoxDataDescription;
 
 
 /**
@@ -48,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "supportedCRS"
 })
-public class BoundingBoxData extends DataDescriptionType {
+public class BoundingBoxData extends DataDescriptionType implements BoundingBoxDataDescription {
 
     @XmlElement(name = "SupportedCRS", required = true)
     protected List<SupportedCRS> supportedCRS;

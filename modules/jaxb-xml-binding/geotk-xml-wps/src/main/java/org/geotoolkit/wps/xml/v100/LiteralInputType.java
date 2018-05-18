@@ -57,7 +57,7 @@ import org.geotoolkit.wps.xml.LiteralDataDescription;
     "valuesReference",
     "defaultValue"
 })
-public class LiteralInputType extends LiteralOutputType implements LiteralDataDescription {
+public class LiteralInputType extends LiteralOutputType {
 
     @XmlElement(name = "AllowedValues", namespace = "http://www.opengis.net/ows/1.1")
     protected AllowedValues allowedValues;
@@ -180,7 +180,7 @@ public class LiteralInputType extends LiteralOutputType implements LiteralDataDe
     public void setDefaultValue(final String value) {
         this.defaultValue = value;
     }
-
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString()).append("\n");

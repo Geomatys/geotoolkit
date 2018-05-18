@@ -29,6 +29,18 @@ public class Format {
   
   private String encoding = null;
   
+  public Format() {
+      
+  }
+  
+  public Format(org.geotoolkit.wps.xml.Format format) {
+      if (format != null) {
+          this.encoding = format.getEncoding();
+          this.mimeType = format.getMimeType();
+          this.schema   = format.getSchema();
+      }
+  }
+  
   public Format mimeType(String mimeType) {
     this.mimeType = mimeType;
     return this;

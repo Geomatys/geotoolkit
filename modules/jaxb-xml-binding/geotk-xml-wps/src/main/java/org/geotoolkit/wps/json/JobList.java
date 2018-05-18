@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * JobList
  */
-public class JobList {
+public class JobList implements WPSJSONResponse {
 
   private List<String> jobs = null;
   

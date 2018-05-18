@@ -16,14 +16,10 @@
  */
 package org.geotoolkit.wps.xml;
 
-import java.util.List;
-
 /**
  *
- * @author guilhem
+ * @author Guilhem Legal (Geomatys)
  */
-public interface DataDescription {
+public interface BoundingBoxDataDescription extends DataDescription {
     
-    List<? extends Format> getFormat();
-
 }

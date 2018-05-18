@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractCodeType;
 import org.geotoolkit.ows.xml.AbstractKeywords;
-import org.geotoolkit.ows.xml.LanguageString;
+import org.geotoolkit.ows.xml.AbstractMetadata;
 import org.w3c.dom.Element;
 
 
@@ -103,6 +103,11 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
     public List<? extends AbstractKeywords> getKeywords() {
         return process.getKeywords();
     }
+    
+    @Override
+    public List<? extends AbstractMetadata> getMetadata() {
+        return process.getMetadata();
+    }
 
     /**
      * Gets the value of the process property.
@@ -112,7 +117,8 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
      *     {@link ProcessDescriptionType }
      *
      */
-    public ProcessDescriptionType getProcess() {
+    @Override
+    public ProcessDescriptionType getProcessDescription() {
         return process;
     }
 
@@ -176,9 +182,10 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
      *
      *
      */
+    @Override
     public List<String> getJobControlOptions() {
         if (jobControlOptions == null) {
-            jobControlOptions = new ArrayList<String>();
+            jobControlOptions = new ArrayList<>();
         }
         return this.jobControlOptions;
     }
@@ -207,7 +214,7 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
      */
     public List<DataTransmissionModeType> getOutputTransmission() {
         if (outputTransmission == null) {
-            outputTransmission = new ArrayList<DataTransmissionModeType>();
+            outputTransmission = new ArrayList<>();
         }
         return this.outputTransmission;
     }
@@ -220,6 +227,7 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
      *     {@link String }
      *
      */
+    @Override
     public String getProcessVersion() {
         return processVersion;
     }

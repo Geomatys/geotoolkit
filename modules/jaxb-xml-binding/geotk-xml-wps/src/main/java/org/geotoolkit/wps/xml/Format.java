@@ -33,4 +33,8 @@ public interface Format {
     String getSchema();
 
     void setSchema(final String value);
+    
+    Boolean isDefault();
+    
+    Integer getMaximumMegabytes();
 }

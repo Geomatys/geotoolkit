@@ -21,6 +21,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.ows.xml.AbstractDescription;
+import org.geotoolkit.ows.xml.AbstractKeywords;
+import org.geotoolkit.ows.xml.AbstractMetadata;
 
 /**
  * DescriptionType
@@ -37,6 +40,25 @@ public class DescriptionType {
   private List<String> keywords = null;
   
   private List<Metadata> metadata = null;
+  
+  public DescriptionType() {
+  }
+  
+    public DescriptionType(AbstractDescription desc) {
+        if (desc != null) {
+            this.id = desc.getIdentifier().getValue();
+            this._abstract = desc.getFirstAbstract();
+            this.keywords = new ArrayList<>();
+            for (AbstractKeywords kw : desc.getKeywords()) {
+                this.keywords.addAll(kw.getKeywordList());
+            }
+            this.title = desc.getFirstTitle();
+            this.metadata = new ArrayList<>();
+            for (AbstractMetadata meta : desc.getMetadata()) {
+                this.metadata.add(new Metadata(meta));
+            }
+        }
+    }
   
   public DescriptionType id(String id) {
     this.id = id;
@@ -101,6 +123,16 @@ public class DescriptionType {
     }
     
     this.keywords.add(keywordsItem);
+    return this;
+  }
+  
+  public DescriptionType addKeywordsItems(List<String> keywordsItems) {
+    
+    if (this.keywords == null) {
+      this.keywords = new ArrayList<>();
+    }
+    
+    this.keywords.addAll(keywordsItems);
     return this;
   }
   

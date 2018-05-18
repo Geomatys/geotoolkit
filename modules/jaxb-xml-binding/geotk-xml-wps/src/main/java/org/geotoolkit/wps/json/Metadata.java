@@ -18,6 +18,7 @@
 package org.geotoolkit.wps.json;
 
 import java.util.Objects;
+import org.geotoolkit.ows.xml.AbstractMetadata;
 
 /**
  * Metadata
@@ -28,12 +29,22 @@ public class Metadata {
   
   private String href = null;
   
+  public Metadata() {
+      
+  }
+  
+  public Metadata(AbstractMetadata that) {
+      if (that != null) {
+          this.href = that.getHref();
+          this.role = that.getRole();
+      }
+  }
+  
   public Metadata role(String role) {
     this.role = role;
     return this;
   }
 
-  
   /**
   * Get role
   * @return role

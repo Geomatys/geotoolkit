@@ -101,6 +101,14 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
         }
     }
 
+    @Override
+    public DataDescriptionType getDataDescription() {
+        if (dataDescription != null) {
+            return dataDescription.getValue();
+        }
+        return null;
+    }
+    
     /**
      * Gets the value of the dataDescription property.
      *
@@ -112,7 +120,7 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
      *     {@link JAXBElement }{@code <}{@link DataDescriptionType }{@code >}
      *
      */
-    public JAXBElement<? extends DataDescriptionType> getDataDescription() {
+    public JAXBElement<? extends DataDescriptionType> getJbDataDescription() {
         return dataDescription;
     }
 
@@ -168,9 +176,10 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
      *     {@link BigInteger }
      *
      */
+    @Override
     public Integer getMinOccurs() {
         if (minOccurs == null) {
-            return new Integer(1);
+            return 1;
         } else {
             return minOccurs;
         }
@@ -196,11 +205,14 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
      *     {@link String }
      *
      */
-    public String getMaxOccurs() {
+    @Override
+    public Integer getMaxOccurs() {
         if (maxOccurs == null) {
-            return "1";
+            return 1;
+        } else if ("unbounded".equals(maxOccurs)) {
+            return Integer.MAX_VALUE;
         } else {
-            return maxOccurs;
+            return Integer.parseInt(maxOccurs);
         }
     }
 

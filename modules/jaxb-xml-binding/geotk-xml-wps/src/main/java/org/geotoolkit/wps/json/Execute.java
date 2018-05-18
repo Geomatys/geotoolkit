@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Execute
  */
-public class Execute {
+public class Execute implements WPSJSONResponse {
 
     private List<Input> inputs = null;
 

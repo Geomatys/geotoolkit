@@ -87,17 +87,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlRootElement(name = "StatusInfo")
 public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
 
-    /** The job has finished with no errors. */
-    public static final String STATUS_SUCCEEDED = "Succeeded";
-    /** The job has finished with errors. */
-    public static final String STATUS_FAILED = "Failed";
-    /** The job is queued for execution. */
-    public static final String STATUS_ACCEPTED = "Accepted";
-    /** The job is running. */
-    public static final String STATUS_RUNNING = "Running";
-    /** The job has been dismissed. */
-    public static final String STATUS_DISSMISED = "Dismissed";
-
     @XmlElement(name = "JobID", required = true)
     protected String jobID;
     @XmlElement(name = "Status", required = true)
@@ -161,10 +150,11 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
      *     {@link String }
      *
      */
+    @Override
     public String getStatus() {
         return status;
     }
-
+    
     /**
      * Sets the value of the status property.
      *
@@ -175,6 +165,11 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
      */
     public void setStatus(String value) {
         this.status = value;
+    }
+    
+    @Override
+    public String getMessage() {
+        return null;
     }
 
     /**
@@ -257,6 +252,7 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
      *     {@link Integer }
      *
      */
+    @Override
     public Integer getPercentCompleted() {
         return percentCompleted;
     }

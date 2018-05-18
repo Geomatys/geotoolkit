@@ -198,6 +198,7 @@ public class Format implements org.geotoolkit.wps.xml.Format{
      *     {@link Boolean }
      *
      */
+    @Override
     public Boolean isDefault() {
         if (_default == null) {
             return false;

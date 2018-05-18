@@ -21,6 +21,7 @@ package org.geotoolkit.wps.json;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.ows.xml.AbstractKeywords;
 
 /**
  * ProcessSummary
@@ -32,6 +33,19 @@ public class ProcessSummary extends DescriptionType {
   private List<JobControlOptions> jobControlOptions = null;
   
   private String processDescriptionURL = null;
+  
+  public ProcessSummary() {
+      
+  }
+  
+  public ProcessSummary(org.geotoolkit.wps.xml.ProcessOffering process) {
+      super(process);
+      this.version = process.getProcessVersion();
+      for (String jco : process.getJobControlOptions()) {
+          this.addJobControlOptionsItem(JobControlOptions.fromValue(jco));
+      }
+      this.processDescriptionURL = null; //TODO
+  }
   
   public ProcessSummary version(String version) {
     this.version = version;

@@ -176,6 +176,7 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
      *     {@link Integer }
      *
      */
+    @Override
     public Integer getMinOccurs() {
         return minOccurs;
     }
@@ -200,6 +201,7 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
      *     {@link Integer }
      *
      */
+    @Override
     public Integer getMaxOccurs() {
         return maxOccurs;
     }
@@ -214,6 +216,18 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
      */
     public void setMaxOccurs(final Integer value) {
         this.maxOccurs = value;
+    }
+    
+    @Override
+    public DataDescription getDataDescription() {
+        if (boundingBoxData != null) {
+            return boundingBoxData;
+        } else if (complexData != null) {
+            return complexData;
+        } else if (literalData != null) {
+            return literalData;
+        } 
+        return null;
     }
 
     @Override

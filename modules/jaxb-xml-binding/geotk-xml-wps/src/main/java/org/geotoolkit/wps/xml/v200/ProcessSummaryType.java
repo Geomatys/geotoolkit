@@ -23,10 +23,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ows.xml.LanguageString;
 import org.geotoolkit.ows.xml.v200.CodeType;
 import org.geotoolkit.ows.xml.v200.KeywordsType;
 import org.geotoolkit.ows.xml.v200.LanguageStringType;
+import org.geotoolkit.wps.xml.ProcessDescription;
 import org.geotoolkit.wps.xml.ProcessSummary;
 
 
@@ -98,6 +98,7 @@ public class ProcessSummaryType extends DescriptionType implements ProcessSummar
      *
      *
      */
+    @Override
     public List<String> getJobControlOptions() {
         if (jobControlOptions == null) {
             jobControlOptions = new ArrayList<>();
@@ -142,6 +143,7 @@ public class ProcessSummaryType extends DescriptionType implements ProcessSummar
      *     {@link String }
      *
      */
+    @Override
     public String getProcessVersion() {
         return processVersion;
     }
@@ -186,4 +188,8 @@ public class ProcessSummaryType extends DescriptionType implements ProcessSummar
         this.processModel = value;
     }
 
+    @Override
+    public ProcessDescription getProcessDescription() {
+        return null;
+    }
 }
