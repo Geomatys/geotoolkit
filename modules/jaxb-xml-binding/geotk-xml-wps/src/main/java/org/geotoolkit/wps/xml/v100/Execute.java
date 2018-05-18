@@ -68,8 +68,8 @@ public class Execute extends RequestBaseType implements org.geotoolkit.wps.xml.E
 
     }
 
-    public Execute(final String language, final CodeType identifier, DataInputsType dataInputs, ResponseFormType responseForm) {
-        super(language);
+    public Execute(final String service, final String language, final CodeType identifier, DataInputsType dataInputs, ResponseFormType responseForm) {
+        super(service, language);
         this.identifier = identifier;
         this.dataInputs = dataInputs;
         this.responseForm = responseForm;

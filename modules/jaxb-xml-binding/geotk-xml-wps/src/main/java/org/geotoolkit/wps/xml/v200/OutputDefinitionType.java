@@ -95,6 +95,20 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
             }
         }
     }
+    
+    public OutputDefinitionType(String id, final String encoding, final String mimeType, final String schema, Boolean asReference) {
+        this.id = id;
+        this.encoding = encoding;
+        this.mimeType = mimeType;
+        this.schema = schema;
+        if (asReference != null) {
+            if (asReference) {
+                this.transmission = DataTransmissionModeType.REFERENCE;
+            } else {
+                this.transmission = DataTransmissionModeType.VALUE;
+            }
+        }
+    }
 
     /**
      * Gets the value of the output property.

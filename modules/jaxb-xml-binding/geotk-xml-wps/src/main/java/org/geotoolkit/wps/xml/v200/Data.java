@@ -99,6 +99,18 @@ public class Data implements DataType {
             this.content.add(content);
         }
     }
+    
+    public Data(org.geotoolkit.wps.xml.Format format, Object content) {
+        if (content != null) {
+            this.content = new ArrayList<>();
+            this.content.add(content);
+        }
+        if (format != null) {
+            this.encoding = format.getEncoding();
+            this.mimeType = format.getMimeType();
+            this.schema   = format.getSchema();
+        }
+    }
 
     /**
      *

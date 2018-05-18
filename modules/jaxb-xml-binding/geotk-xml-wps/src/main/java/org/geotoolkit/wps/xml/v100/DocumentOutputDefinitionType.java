@@ -79,6 +79,11 @@ public class DocumentOutputDefinitionType extends OutputDefinitionType implement
     public DocumentOutputDefinitionType(CodeType identifier, String uom, String mimeType, String encoding, String schema) {
         super(identifier, uom, mimeType, encoding, schema);
     }
+    
+    public DocumentOutputDefinitionType(CodeType identifier, String uom, String mimeType, String encoding, String schema, Boolean asReference) {
+        super(identifier, uom, mimeType, encoding, schema);
+        this.asReference = asReference;
+    }
 
 
     /**

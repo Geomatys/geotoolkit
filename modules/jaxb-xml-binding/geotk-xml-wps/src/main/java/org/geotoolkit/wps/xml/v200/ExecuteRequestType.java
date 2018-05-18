@@ -97,7 +97,8 @@ public class ExecuteRequestType extends RequestBaseType implements Execute {
 
     }
 
-    public ExecuteRequestType(CodeType identifier, List<DataInputType> input, List<OutputDefinitionType> output, String response) {
+    public ExecuteRequestType(String service, CodeType identifier, List<DataInputType> input, List<OutputDefinitionType> output, String response) {
+        super(service);
         this.identifier = identifier;
         this.input = input;
         this.output = output;
