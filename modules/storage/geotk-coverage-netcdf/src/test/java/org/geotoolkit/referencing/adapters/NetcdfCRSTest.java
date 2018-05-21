@@ -58,7 +58,6 @@ import static org.geotoolkit.image.io.plugin.CoriolisFormatTest.assertExpectedAx
 
 /**
  * Tests the {@link NetcdfCRS} class using the same test file than {@link CoriolisFormatTest}.
- * In addition, this class inherits all tests defined in the {@code geoapi-netcdf} module.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
@@ -66,7 +65,7 @@ import static org.geotoolkit.image.io.plugin.CoriolisFormatTest.assertExpectedAx
  * @since 3.08
  */
 @DependsOn({NetcdfAxisTest.class, IrregularAxesConverterTest.class})
-public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.NetcdfCRSTest {
+public final strictfp class NetcdfCRSTest {
     /**
      * Small tolerance factor for floating point comparison.
      */
@@ -74,40 +73,16 @@ public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.Net
 
     /**
      * Wraps the given NetCDF file into the CRS object to test.
-     * This method is invoked by the tests inherited from the {@code geoapi-test} module.
      *
      * @param  cs   The NetCDF coordinate system to wrap.
      * @param  file The originating dataset file, or {@code null} if none.
      * @return A CRS implementation created from the given NetCDF coordinate system.
      * @throws IOException If an error occurred while wrapping the given NetCDF coordinate system.
      */
-    @Override
-    protected CoordinateReferenceSystem wrap(final CoordinateSystem cs, final NetcdfDataset file) throws IOException {
-        return wrapStatic(cs, file);
-    }
-
-    /**
-     * Implementation of {@link #wrap(CoordinateSystem, NetcdfDataset)} as a static method.
-     */
     static NetcdfCRS wrapStatic(final CoordinateSystem cs, final NetcdfDataset file) throws IOException {
         final NetcdfCRSBuilder builder = new NetcdfCRSBuilder(file, null);
         builder.setCoordinateSystem(cs);
         return builder.getNetcdfCRS();
-    }
-
-    @Override
-    @Ignore("Incompatible changes between the netCDF library version used by SIS and the one used by Geotk.")
-    public void testGeographic() {
-    }
-
-    @Override
-    @Ignore("Incompatible changes between the netCDF library version used by SIS and the one used by Geotk.")
-    public void testGeographic_XYT() {
-    }
-
-    @Override
-    @Ignore("Incompatible changes between the netCDF library version used by SIS and the one used by Geotk.")
-    public void testProjected_XYZT() {
     }
 
     /**

@@ -19,12 +19,9 @@ package org.geotoolkit.image.io.plugin;
 
 import java.util.Iterator;
 import java.io.File;
-import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 
-import ucar.nc2.NetcdfFile;
-import org.opengis.wrapper.netcdf.IOTestCase;
 import org.opengis.test.coverage.image.ImageReaderTestCase;
 
 import org.geotoolkit.factory.Hints;
@@ -111,24 +108,5 @@ public abstract strictfp class NetcdfImageReaderTestBase extends ImageReaderTest
      */
     protected static File getLocallyInstalledFile(final String filename) {
         return ImageTestBase.getLocallyInstalledFile(filename);
-    }
-
-    /**
-     * Opens the given NetCDF file. The file argument should be one of the names listed in the
-     * {@link IOTestCase} class. If a test file of the given name exists in this package, it
-     * will have precedence over the test file defines in the {@code geoapi-netcdf} test module.
-     *
-     * @param  file The file name.
-     * @return The NetCDF file.
-     * @throws IOException If an error occurred while opening the file.
-     *
-     * @since 3.20
-     */
-    protected static NetcdfFile open(final String file) throws IOException {
-        return new IOTestCase() {
-            @Override public NetcdfFile open(final String file) throws IOException {
-                return super.open(file);
-            }
-        }.open(file);
     }
 }
