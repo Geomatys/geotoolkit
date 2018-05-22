@@ -30,10 +30,10 @@ public class FormatDescription extends Format {
     private Boolean _default = false;
 
     public FormatDescription() {
-        
+
     }
-            
-    public FormatDescription(org.geotoolkit.wps.xml.Format format) {
+
+    public FormatDescription(org.geotoolkit.wps.xml.v200.Format format) {
         super(format);
         if (format != null) {
             this._default = format.isDefault();

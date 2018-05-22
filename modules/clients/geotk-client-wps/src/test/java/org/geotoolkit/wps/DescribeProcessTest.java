@@ -28,7 +28,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
-import org.geotoolkit.wps.xml.v100.DescribeProcess;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.DescribeProcess;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 

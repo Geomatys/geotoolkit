@@ -29,14 +29,14 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
-import static org.geotoolkit.wps.converters.WPSObjectConverter.WPSVERSION;
-import org.geotoolkit.wps.xml.WPSXmlFactory;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
 import org.opengis.feature.FeatureType;
 
 /**
- * Implementation of ObjectConverter to convert a FeatureCollection into a {@link ComplexDataType}.
+ * Implementation of ObjectConverter to convert a FeatureCollection into a {@link Data}.
  *
  * @author Quentin Boileau (Geomatys).
  * @author Theo Zozime
@@ -64,27 +64,35 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
      * {@inheritDoc}
      */
     @Override
-    public ComplexDataType convert(final FeatureCollection source, final Map<String, Object> params) throws UnconvertibleObjectException {
-
+    public Data convert(final FeatureCollection source, final Map<String, Object> params) throws UnconvertibleObjectException {
         if (source == null) {
             throw new UnconvertibleObjectException("The output data should be defined.");
-        }
-        if (!(source instanceof FeatureCollection)) {
-            throw new UnconvertibleObjectException("The requested output data is not an instance of FeatureCollection.");
+        } else if (params == null) {
+            throw new UnconvertibleObjectException("Not enough information about data format");
         }
 
-        String wpsVersion  = (String) params.get(WPSVERSION);
-        if (wpsVersion == null) {
-            LOGGER.warning("No WPS version set using default 1.0.0");
-            wpsVersion = "1.0.0";
+        final Object tmpMime = params.get(MIME);
+        final String mime;
+        if (tmpMime instanceof String) {
+            mime = (String) tmpMime;
+        } else {
+            throw new UnconvertibleObjectException("No valid mime type given. We cannot determine output image format");
         }
-        final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(wpsVersion, (String) params.get(ENCODING),(String) params.get(MIME), null);
+
+
+        final Data complex = new Data();
+        complex.setMimeType(mime);
+
+        final Object tmpEncoding = params.get(ENCODING);
+        if (tmpEncoding instanceof String) {
+            complex.setEncoding((String) tmpEncoding);
+        }
 
         final FeatureType ft = source.getType();
         final String namespace = NamesExt.getNamespace(ft.getName());
         final Map<String, String> schemaLocation = new HashMap<>();
 
-        if(WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(complex.getMimeType())) {
+        if(WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(mime)) {
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try {
@@ -98,9 +106,9 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
             } catch (UnsupportedEncodingException e) {
                 throw new UnconvertibleObjectException("Can't convert output stream into String.", e);
             }
-        } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(complex.getMimeType())||
-                   WPSMimeType.TEXT_XML.val().equalsIgnoreCase(complex.getMimeType()) ||
-                   WPSMimeType.TEXT_GML.val().equalsIgnoreCase(complex.getMimeType())) {
+        } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(mime)||
+                   WPSMimeType.TEXT_XML.val().equalsIgnoreCase(mime) ||
+                   WPSMimeType.TEXT_GML.val().equalsIgnoreCase(mime)) {
             try {
                 complex.setSchema(WPSConvertersUtils.writeSchema(ft, params));
                 schemaLocation.put(namespace, complex.getSchema());
@@ -115,9 +123,7 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
                 final ElementFeatureWriter efw = new ElementFeatureWriter(schemaLocation);
                 complex.getContent().add(efw.writeFeatureCollection(source, true, false, null));
 
-            } catch (DataStoreException ex) {
-                throw new UnconvertibleObjectException("Can't write FeatureCollection into ResponseDocument.", ex);
-            } catch (ParserConfigurationException ex) {
+            } catch (DataStoreException | ParserConfigurationException ex) {
                 throw new UnconvertibleObjectException("Can't write FeatureCollection into ResponseDocument.", ex);
             }
         }

@@ -17,13 +17,10 @@
 package org.geotoolkit.wps.adaptor;
 
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.xml.Format;
-import org.geotoolkit.wps.xml.v100.InputType;
-import org.geotoolkit.wps.xml.v100.OutputDataType;
-import org.geotoolkit.wps.xml.v200.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.Format;
+import org.geotoolkit.wps.xml.v200.ComplexData;
 import org.geotoolkit.wps.xml.v200.Data;
-import org.geotoolkit.wps.xml.v200.DataInputType;
-import org.geotoolkit.wps.xml.v200.DataOutputType;
+import org.geotoolkit.wps.xml.v200.DataInput;
 
 /**
  *
@@ -65,21 +62,16 @@ public class HTMLAdaptor extends ComplexAdaptor<String> {
     }
 
     @Override
-    public InputType toWPS1Input(String candidate) throws UnconvertibleObjectException {
-        return InputType.createComplex("", encoding, mimeType, schema, candidate, null, null);
-    }
+    public DataInput toWPS2Input(String candidate) throws UnconvertibleObjectException {
 
-    @Override
-    public DataInputType toWPS2Input(String candidate) throws UnconvertibleObjectException {
-
-        final ComplexDataType cdt = new ComplexDataType();
+        final ComplexData cdt = new ComplexData();
         cdt.getContent().add(new org.geotoolkit.wps.xml.v200.Format(encoding, mimeType, schema, null));
         cdt.getContent().add(candidate);
 
         final Data data = new Data();
         data.getContent().add(cdt);
 
-        final DataInputType dit = new DataInputType();
+        final DataInput dit = new DataInput();
         dit.setData(data);
         return dit;
     }

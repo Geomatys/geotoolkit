@@ -27,7 +27,7 @@ public class OutputDescription extends DataDescriptionType {
 
     }
 
-    public OutputDescription(org.geotoolkit.wps.xml.OutputDescription out) {
+    public OutputDescription(org.geotoolkit.wps.xml.v200.OutputDescription out) {
         super(out);
     }
 

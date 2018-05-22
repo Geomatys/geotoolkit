@@ -17,21 +17,16 @@
 package org.geotoolkit.wps.adaptor;
 
 import javax.measure.Unit;
-import javax.measure.format.ParserException;
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.ows.xml.DomainMetadata;
 import org.geotoolkit.ows.xml.v200.DomainMetadataType;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
-import org.geotoolkit.wps.xml.v100.InputType;
-import org.geotoolkit.wps.xml.v100.LiteralOutputType;
-import org.geotoolkit.wps.xml.v100.OutputDataType;
-import org.geotoolkit.wps.xml.v100.SupportedUOMsType;
 import org.geotoolkit.wps.xml.v200.Data;
-import org.geotoolkit.wps.xml.v200.DataInputType;
-import org.geotoolkit.wps.xml.v200.DataOutputType;
-import org.geotoolkit.wps.xml.v200.LiteralDataType;
+import org.geotoolkit.wps.xml.v200.DataInput;
+import org.geotoolkit.wps.xml.v200.DataOutput;
+import org.geotoolkit.wps.xml.v200.LiteralDataDomain;
 import org.geotoolkit.wps.xml.v200.LiteralValue;
 
 
@@ -67,18 +62,7 @@ public class LiteralAdaptor<T> implements DataAdaptor<T> {
         return converter.apply(value);
     }
 
-    @Override
-    public InputType toWPS1Input(Object candidate) {
-        final String uom = unit != null ? unit.toString() : null;
-
-        return InputType.createLiteral(
-                "",
-                String.valueOf(candidate),
-                WPSConvertersUtils.getDataTypeString(version, converter.getTargetClass()),
-                uom);
-    }
-
-    public DataInputType toWPS2Input(Object candidate, boolean rawLiteral) {
+    public DataInput toWPS2Input(Object candidate, boolean rawLiteral) {
 
         final Data data = new Data();
         final LiteralValue litValue = new LiteralValue();
@@ -92,7 +76,7 @@ public class LiteralAdaptor<T> implements DataAdaptor<T> {
             data.getContent().add(litValue);
         }
 
-        final DataInputType dit = new DataInputType();
+        final DataInput dit = new DataInput();
         dit.setData(data);
 
 
@@ -100,24 +84,19 @@ public class LiteralAdaptor<T> implements DataAdaptor<T> {
     }
 
     @Override
-    public DataInputType toWPS2Input(Object candidate) {
+    public DataInput toWPS2Input(Object candidate) {
         return toWPS2Input(candidate, false);
     }
 
     @Override
-    public T fromWPS1Input(OutputDataType candidate) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public T fromWPS2Input(DataOutputType candidate) {
+    public T fromWPS2Input(DataOutput candidate) {
         final Data data = candidate.getData();
         final LiteralValue literalData = data.getLiteralData();
         final String value = literalData.getValue();
         return convert(value);
     }
 
-    public static LiteralAdaptor create(LiteralDataType.LiteralDataDomain domain) {
+    public static LiteralAdaptor create(LiteralDataDomain domain) {
 
         Class clazz = getValueClass(domain.getDataType());
         if (clazz == null) clazz = String.class;
@@ -126,38 +105,6 @@ public class LiteralAdaptor<T> implements DataAdaptor<T> {
 
         final ObjectConverter cvt = ObjectConverters.find(String.class, clazz);
         return new LiteralAdaptor(cvt,unit,"2.0.0");
-    }
-
-    public static LiteralAdaptor create(LiteralOutputType domain) {
-
-        Class clazz = getValueClass(domain.getDataType());
-        if (clazz == null) clazz = String.class;
-
-        Unit unit = null;
-        final SupportedUOMsType uoMs = domain.getUOMs();
-        if (uoMs!=null) {
-            final SupportedUOMsType.Default def = uoMs.getDefault();
-            if (def!=null) {
-                try {
-                    unit = Units.valueOf(def.getUOM().getValue());
-                } catch (ParserException ex) {
-                    unit = Units.valueOf(def.getUOM().getReference());
-                }
-            }
-            if (uoMs.getSupported()!=null) {
-                for (org.geotoolkit.ows.xml.v110.DomainMetadataType t : uoMs.getSupported().getUOM()) {
-                    if (unit!=null) break;
-                    try {
-                        unit = Units.valueOf(t.getValue());
-                    } catch (ParserException ex) {
-                        unit = Units.valueOf(t.getReference());
-                    }
-                }
-            }
-        }
-
-        final ObjectConverter cvt = ObjectConverters.find(String.class, clazz);
-        return new LiteralAdaptor(cvt,unit,"1.0.0");
     }
 
     private static Class getValueClass(DomainMetadata type) {

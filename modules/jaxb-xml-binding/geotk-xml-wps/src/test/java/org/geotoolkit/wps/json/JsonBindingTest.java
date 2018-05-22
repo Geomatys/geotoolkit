@@ -25,6 +25,7 @@ import java.util.Arrays;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.gml.xml.v321.CoordinatesType;
 import org.geotoolkit.gml.xml.v321.PointType;
+import org.geotoolkit.wps.xml.v200.JobControlOptions;
 import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
@@ -107,7 +108,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         input.setId("inout-1");
         input.setValue("somevalue");
         executeRoot.setInputs(Arrays.asList(input));
-        
+
         Output output = new Output();
         output.setId("out-1");
         output.setTransmissionMode(TransmissionMode.VALUE);
@@ -124,11 +125,11 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testMarshallingExecuteV2() throws JAXBException, IOException {
-        
+
 
         PointType pt = new PointType(new CoordinatesType());
         Format format = new Format().encoding("UTF8").mimeType("text/xml").schema("http://kk.com");
-        
+
         final Execute executeRoot = new Execute();
         Input dataInput = (Input) new Input().value("not a point").id("input1").format(format);
         executeRoot.addInputsItem(dataInput);
@@ -145,13 +146,13 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         assertEquals(expResult, sw.toString());
 
     }
-    
+
     @Test
     public void testMarshallingProcesseCollectionV2() throws JAXBException, IOException {
-        
+
         ProcessCollection collec = new ProcessCollection();
-        
-        
+
+
         ProcessSummary summary = new ProcessSummary().addJobControlOptionsItem(JobControlOptions.SYNC_EXECUTE);
         summary.setAbstract("some process 1");
         summary.setId("urn:process:1");
@@ -160,8 +161,8 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         summary.setTitle("title p1");
         summary.setVersion("1.0");
         collec.addProcessesItem(summary);
-        
-        
+
+
         ProcessSummary summary2 = new ProcessSummary().addJobControlOptionsItem(JobControlOptions.ASYNC_EXECUTE);
         summary.setAbstract("some process 2");
         summary.setId("urn:process:2");
@@ -170,8 +171,8 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         summary.setTitle("title p2");
         summary.setVersion("1.0");
         collec.addProcessesItem(summary2);
-        
-        
+
+
         ObjectMapper m = new ObjectMapper();
         StringWriter sw = new StringWriter();
         m.writeValue(sw, collec);
@@ -179,13 +180,13 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         assertEquals(expResult, sw.toString());
 
     }
-    
+
     @Test
     public void testMarshallingProcesseOffering() throws JAXBException, IOException {
-        
+
         ProcessOffering collec = new ProcessOffering();
-        
-        
+
+
         Process summary = new Process().addJobControlOptionsItem(JobControlOptions.SYNC_EXECUTE);
         summary.setAbstract("some process 1");
         summary.setId("urn:process:1");
@@ -194,7 +195,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         summary.setTitle("title p1");
         summary.setVersion("1.0");
         summary.setOutputTransmission(Arrays.asList(TransmissionMode.REFERENCE));
-        
+
         // inputs
         FormatDescription format = (FormatDescription) new FormatDescription()._default(true).encoding("UTF8").mimeType("text/xml").schema("http://kk.com");
         LiteralInputType input1 = new LiteralInputType();
@@ -206,7 +207,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         input1.setMaxOccurs(Integer.MAX_VALUE);
         input1.setTitle("in put 1 title");
         summary.addInputsItem(input1);
-        
+
         // outputs
         OutputDescription output = new OutputDescription();
         output.setAbstract("some output");
@@ -215,9 +216,9 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         output.setKeywords(Arrays.asList("kw-out"));
         output.setTitle("out title");
         summary.addOutputsItem(output);
-        
+
         collec.setProcess(summary);
-        
+
         ObjectMapper m = new ObjectMapper();
         StringWriter sw = new StringWriter();
         m.writeValue(sw, collec);
@@ -225,5 +226,5 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         assertEquals(expResult, sw.toString());
 
     }
-    
+
 }

@@ -19,12 +19,12 @@ package org.geotoolkit.wps.xml.v200;
 
 import java.math.BigInteger;
 import java.util.Objects;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
@@ -50,23 +50,31 @@ import javax.xml.bind.annotation.XmlType;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "")
+@XmlType(name = "", propOrder = {
+    "legacyMimeType",
+    "legacyEncoding",
+    "legacySchema"
+})
 @XmlRootElement(name = "Format")
-public class Format implements org.geotoolkit.wps.xml.Format{
+public class Format {
 
     @XmlAttribute(name = "mimeType")
+    @XmlJavaTypeAdapter(FilterV2.String.class)
     protected String mimeType;
     @XmlAttribute(name = "encoding")
     @XmlSchemaType(name = "anyURI")
+    @XmlJavaTypeAdapter(FilterV2.String.class)
     protected String encoding;
     @XmlAttribute(name = "schema")
     @XmlSchemaType(name = "anyURI")
+    @XmlJavaTypeAdapter(FilterV2.String.class)
     protected String schema;
     @XmlAttribute(name = "maximumMegabytes")
     @XmlSchemaType(name = "positiveInteger")
+    @XmlJavaTypeAdapter(FilterV2.Integer.class)
     protected Integer maximumMegabytes;
     @XmlAttribute(name = "default")
+    @XmlJavaTypeAdapter(FilterV2.Boolean.class)
     protected Boolean _default;
 
     public Format() {
@@ -96,7 +104,6 @@ public class Format implements org.geotoolkit.wps.xml.Format{
      *     {@link String }
      *
      */
-    @Override
     public String getMimeType() {
         return mimeType;
     }
@@ -109,7 +116,6 @@ public class Format implements org.geotoolkit.wps.xml.Format{
      *     {@link String }
      *
      */
-    @Override
     public void setMimeType(String value) {
         this.mimeType = value;
     }
@@ -122,7 +128,6 @@ public class Format implements org.geotoolkit.wps.xml.Format{
      *     {@link String }
      *
      */
-    @Override
     public String getEncoding() {
         return encoding;
     }
@@ -135,7 +140,6 @@ public class Format implements org.geotoolkit.wps.xml.Format{
      *     {@link String }
      *
      */
-    @Override
     public void setEncoding(String value) {
         this.encoding = value;
     }
@@ -148,7 +152,6 @@ public class Format implements org.geotoolkit.wps.xml.Format{
      *     {@link String }
      *
      */
-    @Override
     public String getSchema() {
         return schema;
     }
@@ -161,7 +164,6 @@ public class Format implements org.geotoolkit.wps.xml.Format{
      *     {@link String }
      *
      */
-    @Override
     public void setSchema(String value) {
         this.schema = value;
     }
@@ -198,7 +200,6 @@ public class Format implements org.geotoolkit.wps.xml.Format{
      *     {@link Boolean }
      *
      */
-    @Override
     public Boolean isDefault() {
         if (_default == null) {
             return false;
@@ -239,10 +240,6 @@ public class Format implements org.geotoolkit.wps.xml.Format{
         return sb.toString();
     }
 
-    /**
-     * Verify that this entry is identical to the specified object.
-     * @param object Object to compare
-     */
     @Override
     public boolean equals(final Object object) {
         if (object == this) {
@@ -268,5 +265,48 @@ public class Format implements org.geotoolkit.wps.xml.Format{
         hash = 97 * hash + Objects.hashCode(this.maximumMegabytes);
         hash = 97 * hash + Objects.hashCode(this._default);
         return hash;
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // Following section is boilerplate code for WPS v1 retro-compatibility.
+    //
+    ////////////////////////////////////////////////////////////////////////////
+
+    @XmlElement(name="MimeType")
+    private String getLegacyMimeType() {
+        if (FilterByVersion.isV1()) {
+            return mimeType;
+        }
+        return null;
+    }
+
+    @XmlElement(name="Encoding")
+    private String getLegacyEncoding() {
+        if (FilterByVersion.isV1()) {
+            return encoding;
+        }
+        return null;
+    }
+
+    @XmlElement(name="Schema")
+    private String getLegacySchema() {
+        if (FilterByVersion.isV1()) {
+            return schema;
+        }
+        return null;
+    }
+
+    private void setLegacyMimeType(String val) {
+        mimeType = val;
+    }
+
+    private void setLegacyEncoding(String val) {
+        encoding = val;
+    }
+
+    private void setLegacySchema(String val) {
+        schema = val;
     }
 }

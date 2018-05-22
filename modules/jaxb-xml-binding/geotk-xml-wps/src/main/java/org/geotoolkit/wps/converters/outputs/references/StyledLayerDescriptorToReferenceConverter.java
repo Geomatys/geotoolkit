@@ -21,16 +21,13 @@ import java.util.Map;
 import java.util.UUID;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.io.WPSMimeType;
 
 import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.StyleXmlIO;
-import static org.geotoolkit.wps.converters.WPSObjectConverter.IOTYPE;
-import static org.geotoolkit.wps.converters.WPSObjectConverter.WPSVERSION;
-import org.geotoolkit.wps.xml.Reference;
-import org.geotoolkit.wps.xml.WPSXmlFactory;
-import org.opengis.sld.StyledLayerDescriptor;
+import org.geotoolkit.wps.xml.v200.Reference;
+;
+import org.opengis.sld.StyledLayerDescriptor;import org.opengis.sld.StyledLayerDescriptor;
 
 /**
  * Implementation of ObjectConverter to convert a {@link StyledLayerDescriptor sld} into a {@link OutputReferenceType reference}.
@@ -69,13 +66,7 @@ public class StyledLayerDescriptorToReferenceConverter extends AbstractReference
             throw new UnconvertibleObjectException("The source is not defined.");
         }
 
-        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
-        String wpsVersion  = (String) params.get(WPSVERSION);
-        if (wpsVersion == null) {
-            LOGGER.warning("No WPS version set using default 1.0.0");
-            wpsVersion = "1.0.0";
-        }
-        Reference reference = WPSXmlFactory.buildInOutReference(wpsVersion, ioType);
+        Reference reference = new Reference();
 
         reference.setMimeType((String) params.get(MIME));
         reference.setEncoding((String) params.get(ENCODING));

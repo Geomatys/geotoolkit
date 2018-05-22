@@ -19,16 +19,12 @@ package org.geotoolkit.wps.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ows.xml.AbstractCodeType;
-import org.geotoolkit.ows.xml.AbstractKeywords;
-import org.geotoolkit.ows.xml.AbstractMetadata;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.w3c.dom.Element;
 
 
@@ -55,58 +51,39 @@ import org.w3c.dom.Element;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "process",
     "any"
 })
 @XmlRootElement(name = "ProcessOffering")
-public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
+public class ProcessOffering implements ProcessProperties {
 
-    @XmlElement(name = "Process")
-    protected ProcessDescriptionType process;
+    private ProcessDescription process;
     @XmlAnyElement(lax = true)
     protected Object any;
-    @XmlAttribute(name = "jobControlOptions", required = true)
-    protected List<String> jobControlOptions;
-    @XmlAttribute(name = "outputTransmission")
-    protected List<DataTransmissionModeType> outputTransmission;
-    @XmlAttribute(name = "processVersion")
+
+    protected List<JobControlOptions> jobControlOptions;
+    protected List<DataTransmissionMode> outputTransmission;
     protected String processVersion;
-    @XmlAttribute(name = "processModel")
     protected String processModel;
 
-    public ProcessOffering() {
+    public ProcessOffering() {}
 
-    }
-
-    public ProcessOffering(ProcessDescriptionType process) {
+    public ProcessOffering(ProcessDescription process) {
         this.process = process;
-    }
+        /* WPS 1 retro-compatibility flag. If store is true, we can use references.
+         * If it's false, only values can be used. But if the value is null, we
+         * don't know which modes are accepted, and we cannot set any flag.
+         */
+        if (Boolean.TRUE.equals(process.isStoreSupported())) {
+            getOutputTransmission().add(DataTransmissionMode.REFERENCE);
+        } else if (Boolean.FALSE.equals(process.isStoreSupported())) {
+            getOutputTransmission().add(DataTransmissionMode.VALUE);
+        }
 
-    @Override
-    public AbstractCodeType getIdentifier() {
-        return process.getIdentifier();
-    }
-
-    @Override
-    public String getFirstTitle() {
-        return process.getFirstTitle();
-    }
-
-    @Override
-    public String getFirstAbstract() {
-        return process.getFirstAbstract();
-    }
-
-    @Override
-    public List<? extends AbstractKeywords> getKeywords() {
-        return process.getKeywords();
-    }
-    
-    @Override
-    public List<? extends AbstractMetadata> getMetadata() {
-        return process.getMetadata();
+        if (process.processVersion != null) {
+            processVersion = process.processVersion;
+        }
     }
 
     /**
@@ -114,11 +91,12 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
      *
      * @return
      *     possible object is
-     *     {@link ProcessDescriptionType }
+     *     {@link ProcessDescription }
      *
      */
-    @Override
-    public ProcessDescriptionType getProcessDescription() {
+    @XmlElement(name = "Process")
+    @XmlJavaTypeAdapter(FilterV2.ProcessDescription.class)
+    public ProcessDescription getProcess() {
         return process;
     }
 
@@ -127,10 +105,10 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
      *
      * @param value
      *     allowed object is
-     *     {@link ProcessDescriptionType }
+     *     {@link ProcessDescription }
      *
      */
-    public void setProcess(ProcessDescriptionType value) {
+    public void setProcess(ProcessDescription value) {
         this.process = value;
     }
 
@@ -182,8 +160,9 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
      *
      *
      */
-    @Override
-    public List<String> getJobControlOptions() {
+    @XmlAttribute(name = "jobControlOptions", required = true)
+    //@XmlJavaTypeAdapter(FilterV2.JobControlOptions.class)
+    public List<JobControlOptions> getJobControlOptions() {
         if (jobControlOptions == null) {
             jobControlOptions = new ArrayList<>();
         }
@@ -208,11 +187,13 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
      *
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DataTransmissionModeType }
+     * {@link DataTransmissionMode }
      *
      *
      */
-    public List<DataTransmissionModeType> getOutputTransmission() {
+    @XmlAttribute(name = "outputTransmission")
+    @XmlJavaTypeAdapter(FilterV2.DataTransmissionMode.class)
+    public List<DataTransmissionMode> getOutputTransmission() {
         if (outputTransmission == null) {
             outputTransmission = new ArrayList<>();
         }
@@ -227,7 +208,7 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
      *     {@link String }
      *
      */
-    @Override
+    @XmlAttribute(name = "processVersion")
     public String getProcessVersion() {
         return processVersion;
     }
@@ -242,6 +223,9 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
      */
     public void setProcessVersion(String value) {
         this.processVersion = value;
+        if (process != null) {
+            process.processVersion = value;
+        }
     }
 
     /**
@@ -252,6 +236,8 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
      *     {@link String }
      *
      */
+    @XmlAttribute(name = "processModel")
+    @XmlJavaTypeAdapter(FilterV2.String.class)
     public String getProcessModel() {
         if (processModel == null) {
             return "native";
@@ -271,5 +257,4 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
     public void setProcessModel(String value) {
         this.processModel = value;
     }
-
 }

@@ -24,29 +24,29 @@ import java.util.Objects;
 public class Format {
 
   private String mimeType = null;
-  
+
   private String schema = null;
-  
+
   private String encoding = null;
-  
+
   public Format() {
-      
+
   }
-  
-  public Format(org.geotoolkit.wps.xml.Format format) {
+
+  public Format(org.geotoolkit.wps.xml.v200.Format format) {
       if (format != null) {
           this.encoding = format.getEncoding();
           this.mimeType = format.getMimeType();
           this.schema   = format.getSchema();
       }
   }
-  
+
   public Format mimeType(String mimeType) {
     this.mimeType = mimeType;
     return this;
   }
 
-  
+
   /**
   * Get mimeType
   * @return mimeType
@@ -57,13 +57,13 @@ public class Format {
   public void setMimeType(String mimeType) {
     this.mimeType = mimeType;
   }
-  
+
   public Format schema(String schema) {
     this.schema = schema;
     return this;
   }
 
-  
+
   /**
   * Get schema
   * @return schema
@@ -74,13 +74,13 @@ public class Format {
   public void setSchema(String schema) {
     this.schema = schema;
   }
-  
+
   public Format encoding(String encoding) {
     this.encoding = encoding;
     return this;
   }
 
-  
+
   /**
   * Get encoding
   * @return encoding
@@ -91,7 +91,7 @@ public class Format {
   public void setEncoding(String encoding) {
     this.encoding = encoding;
   }
-  
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -110,12 +110,12 @@ public class Format {
   public int hashCode() {
     return Objects.hash(mimeType, schema, encoding);
   }
-  
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Format {\n");
-    
+
     sb.append("    mimeType: ").append(toIndentedString(mimeType)).append("\n");
     sb.append("    schema: ").append(toIndentedString(schema)).append("\n");
     sb.append("    encoding: ").append(toIndentedString(encoding)).append("\n");
@@ -134,7 +134,7 @@ public class Format {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
+
 }
 
 

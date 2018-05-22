@@ -24,7 +24,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.v200.Reference;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.util.FactoryException;
@@ -41,8 +41,7 @@ public class GeometryToReferenceConverterTest extends org.geotoolkit.test.TestBa
         // Get test resource
         final Object testResource = ConvertersTestUtils.loadTestResource("/inputs/geometry.json");
 
-        Reference reference = ConvertersTestUtils.initAndRunOutputConversion(
-                                                        Geometry.class,
+        Reference reference = ConvertersTestUtils.initAndRunOutputConversion(Geometry.class,
                                                         Reference.class,
                                                         testResource,
                                                         WPSMimeType.APP_GEOJSON.val(),

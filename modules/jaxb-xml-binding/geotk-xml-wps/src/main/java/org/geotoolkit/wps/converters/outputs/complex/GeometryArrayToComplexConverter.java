@@ -32,16 +32,14 @@ import org.geotoolkit.data.geojson.utils.GeometryUtils;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
-import static org.geotoolkit.wps.converters.WPSObjectConverter.WPSVERSION;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.ComplexDataType;
-import org.geotoolkit.wps.xml.WPSXmlFactory;
+import org.geotoolkit.wps.xml.v200.Data;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
 
 /**
- * Implementation of ObjectConverter to convert a JTS Geometry array into a {@link ComplexDataType}.
+ * Implementation of ObjectConverter to convert a JTS Geometry array into a {@link Data}.
  *
  * @author Quentin Boileau (Geomatys).
  * @author Theo Zozime
@@ -69,26 +67,36 @@ public final class GeometryArrayToComplexConverter extends AbstractComplexOutput
      * {@inheritDoc}
      */
     @Override
-    public ComplexDataType convert(final Geometry[] source, final Map<String, Object> params) throws UnconvertibleObjectException {
-
-
+    public Data convert(final Geometry[] source, final Map<String, Object> params) throws UnconvertibleObjectException {
         if (source == null) {
             throw new UnconvertibleObjectException("The output data should be defined.");
-        }
-        if (!(source instanceof Geometry[])) {
-            throw new UnconvertibleObjectException("The requested output data is not an instance of Geometry array.");
+        } else if (params == null) {
+            throw new UnconvertibleObjectException("Not enough information about data format");
         }
 
-        String wpsVersion  = (String) params.get(WPSVERSION);
-        if (wpsVersion == null) {
-            LOGGER.warning("No WPS version set using default 1.0.0");
-            wpsVersion = "1.0.0";
+        final Object tmpMime = params.get(MIME);
+        final String mime;
+        if (tmpMime instanceof String) {
+            mime = (String) tmpMime;
+        } else {
+            throw new UnconvertibleObjectException("No valid mime type given. We cannot determine output image format");
         }
-        final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(wpsVersion, (String) params.get(ENCODING),(String) params.get(MIME), (String) params.get(SCHEMA));
 
-        String gmlVersion = (String) params.get(GMLVERSION);
-        if (gmlVersion == null) {
-            gmlVersion = "3.1.1";
+
+        final Data complex = new Data();
+        complex.setMimeType(mime);
+
+        final Object tmpEncoding = params.get(ENCODING);
+        if (tmpEncoding instanceof String) {
+            complex.setEncoding((String) tmpEncoding);
+        }
+
+        Object tmpGmlVersion = params.get(GMLVERSION);
+        final String gmlVersion;
+        if (tmpGmlVersion instanceof String) {
+            gmlVersion = (String) tmpGmlVersion;
+        } else {
+            gmlVersion = "3.2.1";
         }
 
         if (WPSMimeType.APP_GML.val().equalsIgnoreCase(complex.getMimeType())||

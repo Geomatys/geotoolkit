@@ -36,9 +36,9 @@ import org.geotoolkit.wps.adaptor.ComplexAdaptor;
 import org.geotoolkit.wps.adaptor.DataAdaptor;
 import org.geotoolkit.wps.adaptor.LiteralAdaptor;
 import org.geotoolkit.wps.xml.ExecuteResponse;
-import org.geotoolkit.wps.xml.v200.DataInputType;
-import org.geotoolkit.wps.xml.v200.DataOutputType;
-import org.geotoolkit.wps.xml.v200.OutputDefinitionType;
+import org.geotoolkit.wps.xml.v200.DataInput;
+import org.geotoolkit.wps.xml.v200.DataOutput;
+import org.geotoolkit.wps.xml.v200.OutputDefinition;
 import org.geotoolkit.wps.xml.v200.Result;
 import org.geotoolkit.wps.xml.v200.StatusInfo;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -375,7 +375,7 @@ public class WPS2Process extends AbstractProcess {
 
             if (response instanceof Result) {
                 final Result result = (Result) response;
-                for (DataOutputType out : result.getOutput()) {
+                for (DataOutput out : result.getOutput()) {
                     fillOutputs(outputParameters, out);
                 }
 
@@ -391,14 +391,14 @@ public class WPS2Process extends AbstractProcess {
         }
     }
 
-    private static void fillOutputs(Parameters outParams, DataOutputType out) {
+    private static void fillOutputs(Parameters outParams, DataOutput out) {
         if (out != null) {
             final GeneralParameterDescriptor param = outParams.getDescriptor().descriptor(out.getId());
 
             if (param instanceof ParameterDescriptorGroup) {
                 //expecting a complex output
                 final Parameters group = Parameters.castOrWrap(outParams.addGroup(out.getId()));
-                for (DataOutputType output : out.getOutput()) {
+                for (DataOutput output : out.getOutput()) {
                     fillOutputs(group, output);
                 }
             } else {
@@ -431,8 +431,8 @@ public class WPS2Process extends AbstractProcess {
 
             final List<GeneralParameterDescriptor> outputParamDesc = descriptor.getOutputDescriptor().descriptors();
 
-            final List<DataInputType> wpsIN = new ArrayList<>();
-            final List<OutputDefinitionType> wpsOUT = new ArrayList<>();
+            final List<DataInput> wpsIN = new ArrayList<>();
+            final List<OutputDefinition> wpsOUT = new ArrayList<>();
 
             final String processId = descriptor.getIdentifier().getCode();
 
@@ -449,7 +449,7 @@ public class WPS2Process extends AbstractProcess {
                     final Object value = ((ParameterValue)inputValue).getValue();
                     if (value==null) continue;
 
-                    final DataInputType dataInput;
+                    final DataInput dataInput;
                     if (adaptor instanceof LiteralAdaptor) {
                         dataInput = ((LiteralAdaptor)adaptor).toWPS2Input(value, rawLiteralData);
                     } else {
@@ -479,21 +479,21 @@ public class WPS2Process extends AbstractProcess {
                         schema   = cadaptor.getSchema();
                     }
 
-                    final OutputDefinitionType out = new OutputDefinitionType(outputIdentifier, asReference);
+                    final OutputDefinition out = new OutputDefinition(outputIdentifier, asReference);
                     out.setEncoding(encoding);
                     out.setMimeType(mime);
                     out.setSchema(schema);
                     wpsOUT.add(out);
                 } else if(outputGeneDesc instanceof ParameterDescriptorGroup) {
                     final ParameterDescriptorGroup outputDesc = (ParameterDescriptorGroup) outputGeneDesc;
-                    final OutputDefinitionType out = new OutputDefinitionType(outputDesc.getName().getCode(), asReference);
+                    final OutputDefinition out = new OutputDefinition(outputDesc.getName().getCode(), asReference);
                     wpsOUT.add(out);
                 }
             }
 
             final ExecuteRequest request = registry.getClient().createExecute();
             request.setClientSecurity(security);
-            final org.geotoolkit.wps.xml.v200.ExecuteRequestType execute = (org.geotoolkit.wps.xml.v200.ExecuteRequestType) request.getContent();
+            final org.geotoolkit.wps.xml.v200.Execute execute = (org.geotoolkit.wps.xml.v200.Execute) request.getContent();
             execute.setIdentifier(processId);
             if (asReference) {
                 execute.setMode("async");

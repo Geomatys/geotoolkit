@@ -33,7 +33,7 @@ import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
-import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.v200.Reference;;
 
 /**
  * Implementation of ObjectConverter to convert a reference into a GridCoverageReader.
@@ -103,11 +103,11 @@ public final class ReferenceToGridCoverageReaderConverter extends AbstractRefere
             }
 
         } catch (MalformedURLException ex) {
-            throw new UnconvertibleObjectException("Reference grid coverage invalid input : Malformed url", ex);
+            throw new UnconvertibleObjectException("ReferenceType grid coverage invalid input : Malformed url", ex);
         } catch (CoverageStoreException ex) {
-            throw new UnconvertibleObjectException("Reference grid coverage invalid input : Can't read coverage", ex);
+            throw new UnconvertibleObjectException("ReferenceType grid coverage invalid input : Can't read coverage", ex);
         } catch (IOException ex) {
-            throw new UnconvertibleObjectException("Reference grid coverage invalid input : IO", ex);
+            throw new UnconvertibleObjectException("ReferenceType grid coverage invalid input : IO", ex);
         } finally {
             if (imageStream != null) {
                 try {

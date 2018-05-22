@@ -18,12 +18,9 @@ package org.geotoolkit.wps.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.wps.xml.ProcessOffering;
 
 
 /**
@@ -36,7 +33,7 @@ import org.geotoolkit.wps.xml.ProcessOffering;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="ProcessSummary" type="{http://www.opengis.net/wps/2.0}ProcessSummaryType" maxOccurs="unbounded"/>
+ *         &lt;element name="ProcessSummary" type="{http://www.opengis.net/wps/2.0}ProcessSummary" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -45,22 +42,21 @@ import org.geotoolkit.wps.xml.ProcessOffering;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "processSummary"
 })
 @XmlRootElement(name = "Contents")
-public class Contents implements org.geotoolkit.wps.xml.ProcessOfferings {
+public class Contents {
 
     @XmlElement(name = "ProcessSummary", required = true)
-    protected List<ProcessSummaryType> processSummary;
+    protected List<ProcessSummary> processSummary;
 
 
     public Contents() {
 
     }
 
-    public Contents(List<ProcessSummaryType> processSummary) {
+    public Contents(List<ProcessSummary> processSummary) {
         this.processSummary = processSummary;
     }
 
@@ -82,20 +78,14 @@ public class Contents implements org.geotoolkit.wps.xml.ProcessOfferings {
      *
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link ProcessSummaryType }
+     * {@link ProcessSummary }
      *
      *
      */
-    public List<ProcessSummaryType> getProcessSummary() {
+    public List<ProcessSummary> getProcessSummary() {
         if (processSummary == null) {
             processSummary = new ArrayList<>();
         }
         return this.processSummary;
     }
-
-    @Override
-    public List<? extends ProcessOffering> getProcesses() {
-        return getProcessSummary();
-    }
-
 }

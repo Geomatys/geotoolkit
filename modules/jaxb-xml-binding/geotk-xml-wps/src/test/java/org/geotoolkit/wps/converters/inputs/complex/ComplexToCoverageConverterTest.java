@@ -24,13 +24,14 @@ import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.junit.Test;
 import static org.geotoolkit.test.Assert.*;
 import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.wps.xml.v200.Data;
+import org.geotoolkit.wps.xml.v200.Format;
 
 /**
  *
@@ -43,7 +44,7 @@ public class ComplexToCoverageConverterTest extends AbstractWPSConverterTest {
     @org.junit.Ignore("Fails randomly because of GeoTIFF reader not found.")
     public void testConversion() throws UnconvertibleObjectException, IOException, InterruptedException  {
 
-        final WPSObjectConverter<ComplexDataType, GridCoverage2D> converter = WPSConverterRegistry.getInstance().getConverter(ComplexDataType.class, GridCoverage2D.class);
+        final WPSObjectConverter<Data, GridCoverage2D> converter = WPSConverterRegistry.getInstance().getConverter(Data.class, GridCoverage2D.class);
 
         final InputStream expectedStream = ComplexToRenderedImageConvereterTest.class.getResourceAsStream("/expected/coverage_base64");
         assertNotNull(expectedStream);
@@ -53,10 +54,8 @@ public class ComplexToCoverageConverterTest extends AbstractWPSConverterTest {
         param.put(WPSObjectConverter.MIME, "image/x-geotiff");
         param.put(WPSObjectConverter.ENCODING, "base64");
 
-        final ComplexDataType complex = new ComplexDataType();
-        complex.setEncoding("base64");
-        complex.setMimeType("image/x-geotiff");
-        complex.setSchema(null);
+        final Format format = new Format("base64", "image/x-geotiff", null, null);
+        final Data complex = new Data(format, encodedCoverage);
         complex.getContent().add(encodedCoverage);
 
         final GridCoverage2D convertedCoverage = converter.convert(complex, param);

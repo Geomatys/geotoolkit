@@ -19,11 +19,9 @@ package org.geotoolkit.wps.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.wps.xml.BoundingBoxDataDescription;
 
 
 /**
@@ -34,7 +32,7 @@ import org.geotoolkit.wps.xml.BoundingBoxDataDescription;
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
- *     &lt;extension base="{http://www.opengis.net/wps/2.0}DataDescriptionType">
+ *     &lt;extension base="{http://www.opengis.net/wps/2.0}DataDescription">
  *       &lt;sequence>
  *         &lt;element ref="{http://www.opengis.net/wps/2.0}SupportedCRS" maxOccurs="unbounded"/>
  *       &lt;/sequence>
@@ -45,11 +43,12 @@ import org.geotoolkit.wps.xml.BoundingBoxDataDescription;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "supportedCRS"
+    "supportedCRS",
+    "default"
 })
-public class BoundingBoxData extends DataDescriptionType implements BoundingBoxDataDescription {
+@XmlRootElement(name = "BoundingBoxData")
+public class BoundingBoxData extends DataDescription {
 
     @XmlElement(name = "SupportedCRS", required = true)
     protected List<SupportedCRS> supportedCRS;
@@ -91,4 +90,21 @@ public class BoundingBoxData extends DataDescriptionType implements BoundingBoxD
         return this.supportedCRS;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // Following section is boilerplate code for WPS v1 retro-compatibility.
+    //
+    ////////////////////////////////////////////////////////////////////////////
+
+    @XmlElement(name="Default")
+    private SupportedCRS getDefault() {
+        if (FilterByVersion.isV1()) {
+            return getSupportedCRS().stream()
+                    .filter(SupportedCRS::isDefault)
+                    .findAny()
+                    .orElse(null);
+        }
+
+        return null;
+    }
 }

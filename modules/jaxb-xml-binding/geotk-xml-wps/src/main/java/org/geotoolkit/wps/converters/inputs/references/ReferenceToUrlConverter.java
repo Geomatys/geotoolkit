@@ -21,7 +21,7 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
-import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.v200.Reference;;
 
 /**
  * Implementation of ObjectConverter to convert a reference into an URL.

@@ -31,7 +31,7 @@ public class BoundingBoxInputType extends DataDescriptionType {
 
     }
 
-    public BoundingBoxInputType(org.geotoolkit.wps.xml.InputDescription in) {
+    public BoundingBoxInputType(org.geotoolkit.wps.xml.v200.InputDescription in) {
         super(in);
         if (in != null) {
             this.minOccurs = in.getMinOccurs();

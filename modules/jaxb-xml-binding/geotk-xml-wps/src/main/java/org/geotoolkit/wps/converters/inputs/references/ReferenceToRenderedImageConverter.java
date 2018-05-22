@@ -29,7 +29,7 @@ import net.iharder.Base64;
 import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
-import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.v200.Reference;;
 
 /**
  *
@@ -90,9 +90,9 @@ public class ReferenceToRenderedImageConverter extends AbstractReferenceInputCon
             }
 
         } catch (MalformedURLException ex) {
-            throw new UnconvertibleObjectException("Reference image invalid URL : Malformed url", ex);
+            throw new UnconvertibleObjectException("ReferenceType image invalid URL : Malformed url", ex);
         } catch (IOException ex) {
-            throw new UnconvertibleObjectException("Reference image invalid input : IO", ex);
+            throw new UnconvertibleObjectException("ReferenceType image invalid input : IO", ex);
         } finally {
             if (imageStream != null) {
                 try {

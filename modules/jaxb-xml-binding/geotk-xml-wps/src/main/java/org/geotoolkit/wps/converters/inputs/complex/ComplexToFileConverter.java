@@ -4,7 +4,7 @@ import net.iharder.Base64;
 import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
-import org.geotoolkit.wps.xml.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.Data;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -39,7 +39,7 @@ public class ComplexToFileConverter extends AbstractComplexInputConverter<File> 
     }
 
     @Override
-    public File convert(ComplexDataType source, Map<String, Object> params) throws UnconvertibleObjectException {
+    public File convert(Data source, Map<String, Object> params) throws UnconvertibleObjectException {
 
         if(source == null || source.getContent() == null) {
             throw new UnconvertibleObjectException("Mandatory parameter is missing.");

@@ -29,7 +29,7 @@ public class ProcessOffering implements WPSJSONResponse {
 
     }
 
-    public ProcessOffering(org.geotoolkit.wps.xml.ProcessOffering offering) {
+    public ProcessOffering(org.geotoolkit.wps.xml.v200.ProcessOffering offering) {
         if (offering != null) {
             this.process = new Process(offering);
         }

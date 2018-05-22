@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -28,12 +29,10 @@ import org.geotoolkit.data.geojson.utils.GeoJSONParser;
 import static org.geotoolkit.wps.converters.ConvertersTestUtils.getTestResource;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
-import org.geotoolkit.wps.xml.v100.DataInputsType;
-import org.geotoolkit.wps.xml.v100.DataType;
-import org.geotoolkit.wps.xml.v100.Execute;
-import org.geotoolkit.wps.xml.v100.InputType;
-import org.geotoolkit.wps.xml.v100.ext.GeoJSONType;
+import org.geotoolkit.wps.xml.v200.ComplexData;
+import org.geotoolkit.wps.xml.v200.Data;
+import org.geotoolkit.wps.xml.v200.DataInput;
+import org.geotoolkit.wps.xml.v200.Execute;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -55,15 +54,9 @@ public class CDATATest extends org.geotoolkit.test.TestBase {
 
         // Create an execute request to marshall
         Execute request = new Execute();
-        ComplexDataType complexToMarshall = new ComplexDataType();
-        complexToMarshall.getContent().add(new GeoJSONType(geoJsonData));
-        DataType dataType = new DataType();
-        dataType.setComplexData(complexToMarshall);
-        DataInputsType inputs = new DataInputsType();
-        InputType in = new InputType();
-        in.setData(dataType);
-        inputs.getInput().add(in);
-        request.setDataInputs(inputs);
+        ComplexData complexToMarshal = new ComplexData();
+        complexToMarshal.getContent().add(geoJsonData);
+        request.getInput().add(new DataInput("toto", new Data(complexToMarshal)));
 
         // Marshall request into a StringWriter
         StringWriter sw = new StringWriter();
@@ -77,21 +70,21 @@ public class CDATATest extends org.geotoolkit.test.TestBase {
         // Unmarshall the marshalled datas
         Unmarshaller unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
         Execute executeRequest = (Execute) unmarshaller.unmarshal(new StringReader(sw.toString()));
-        DataInputsType dataInputs = executeRequest.getDataInputs();
+        List<DataInput> dataInputs = executeRequest.getInput();
 
         // Assert that the resulting data is valid
         assertNotNull(dataInputs);
-        assertNotNull(dataInputs.getInput());
-        assertEquals(1, dataInputs.getInput().size());
-        assertNotNull(dataInputs.getInput().get(0));
-        assertNotNull(dataInputs.getInput().get(0).getData());
-        ComplexDataType complex = dataInputs.getInput().get(0).getData().getComplexData();
+        assertEquals(1, dataInputs.size());
+        final DataInput in = dataInputs.get(0);
+        assertNotNull(in);
+        assertNotNull(in.getData());
+        ComplexData complex = in.getData().getComplexData();
         assertNotNull(complex);
 
         WPSConvertersUtils.removeWhiteSpaceFromList(complex.getContent());
         assertEquals(1, complex.getContent().size());
 
-        String geoJsonContent = WPSConvertersUtils.extractGeoJSONContentAsStringFromComplex(complex);
+        String geoJsonContent = WPSConvertersUtils.geojsonContentAsString(complex.getContent().get(0));
 
         // Check that the json is still readable by the GeoJSONParser
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(geoJsonContent.getBytes());

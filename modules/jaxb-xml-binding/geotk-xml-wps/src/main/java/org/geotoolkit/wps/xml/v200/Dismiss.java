@@ -19,8 +19,6 @@ package org.geotoolkit.wps.xml.v200;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -34,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
- *     &lt;extension base="{http://www.opengis.net/wps/2.0}RequestBaseType">
+ *     &lt;extension base="{http://www.opengis.net/wps/2.0}RequestBase">
  *       &lt;sequence>
  *         &lt;element ref="{http://www.opengis.net/wps/2.0}JobID"/>
  *       &lt;/sequence>
@@ -45,12 +43,11 @@ import javax.xml.bind.annotation.XmlType;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "jobID"
 })
 @XmlRootElement(name = "Dismiss")
-public class Dismiss extends RequestBaseType {
+public class Dismiss extends RequestBase {
 
     @XmlElement(name = "JobID", required = true)
     protected String jobID;

@@ -41,7 +41,7 @@ import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.io.WPSSchema;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.wps.xml.Execute;
-import org.geotoolkit.wps.xml.v100.InputType;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.Input;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
@@ -70,11 +70,11 @@ public class ExecuteTest extends org.geotoolkit.test.TestBase {
             final Point point = gf.createPoint(new Coordinate(0.0, 0.0));
             JTS.setCRS(point, CommonCRS.WGS84.geographic());
 
-            final List<InputType> inputs = new ArrayList<>();
-            inputs.add(InputType.createLiteral("literal", "10", null, null));
-            inputs.add(InputType.createBoundingBox("bbox", env));
-            inputs.add(InputType.createComplex("complex", "UTF-8", WPSMimeType.APP_GML.val(), WPSSchema.OGC_GML_3_1_1.getValue(), point, null, null));
-            inputs.add(InputType.createReference("reference", "http://link.to/reference/", null, null, null, null));
+            final List<Input> inputs = new ArrayList<>();
+            inputs.add(Input.createLiteral("literal", "10", null, null));
+            inputs.add(Input.createBoundingBox("bbox", env));
+            inputs.add(Input.createComplex("complex", "UTF-8", WPSMimeType.APP_GML.val(), WPSSchema.OGC_GML_3_1_1.getValue(), point, null, null));
+            inputs.add(Input.createReference("reference", "http://link.to/reference/", null, null, null, null));
 
 
             final List<WPSOutput> outputs = new ArrayList<>();

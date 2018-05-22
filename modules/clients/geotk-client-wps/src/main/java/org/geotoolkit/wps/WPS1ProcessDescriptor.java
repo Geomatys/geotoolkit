@@ -36,16 +36,16 @@ import org.geotoolkit.wps.adaptor.LiteralAdaptor;
 import org.geotoolkit.wps.xml.DataDescription;
 import org.geotoolkit.wps.xml.Format;
 import org.geotoolkit.wps.xml.ProcessOfferings;
-import org.geotoolkit.wps.xml.v100.ComplexDataCombinationType;
-import org.geotoolkit.wps.xml.v100.DescriptionType;
-import org.geotoolkit.wps.xml.v100.InputDescriptionType;
-import org.geotoolkit.wps.xml.v100.LiteralInputType;
-import org.geotoolkit.wps.xml.v100.LiteralOutputType;
-import org.geotoolkit.wps.xml.v100.OutputDescriptionType;
-import org.geotoolkit.wps.xml.v100.ProcessDescriptionType;
-import org.geotoolkit.wps.xml.v100.SupportedCRSsType;
-import org.geotoolkit.wps.xml.v100.SupportedComplexDataInputType;
-import org.geotoolkit.wps.xml.v100.ValuesReferenceType;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.ComplexDataCombination;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.Description;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.InputDescription;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.LiteralInput;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.LiteralOutput;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.OutputDescription;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.ProcessDescription;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.SupportedCRSs;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.SupportedComplexDataInput;
+import org.geotoolkit.wps.xml.v100.LegacyValuesReference;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
@@ -61,10 +61,10 @@ import org.opengis.util.InternationalString;
 public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
 
     private final WPSProcessingRegistry registry;
-    private final ProcessDescriptionType type;
+    private final ProcessDescription type;
     private boolean outputAsReference = false;
 
-    private WPS1ProcessDescriptor(WPSProcessingRegistry registry, ProcessDescriptionType type,
+    private WPS1ProcessDescriptor(WPSProcessingRegistry registry, ProcessDescription type,
             String processIdentifier,
             InternationalString processAbstract,
             InternationalString displayName,
@@ -109,7 +109,7 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
             throws Exception {
 
         final ProcessOfferings wpsProcessDescriptions = registry.getClient().getDescribeProcess(Collections.singletonList(processIdentifier));
-        final ProcessDescriptionType wpsProcessDesc = (ProcessDescriptionType) wpsProcessDescriptions.getProcesses().get(0);
+        final ProcessDescription wpsProcessDesc = (ProcessDescription) wpsProcessDescriptions.getProcesses().get(0);
 
         final InternationalString processAbstract;
         if (wpsProcessDesc.getFirstAbstract() != null) {
@@ -128,7 +128,7 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
         // INPUTS
         final List<GeneralParameterDescriptor> inputDescriptors = new ArrayList<>();
         if (!wpsProcessDesc.getInputs().isEmpty()) {
-            for (final InputDescriptionType inputDesc : wpsProcessDesc.getInputs()) {
+            for (final InputDescription inputDesc : wpsProcessDesc.getInputs()) {
                 inputDescriptors.add(toDescriptor(processIdentifier, inputDesc));
             }
         }
@@ -136,7 +136,7 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
         //OUTPUTS
         final List<GeneralParameterDescriptor> outputDescriptors = new ArrayList<>();
         if (!wpsProcessDesc.getOutputs().isEmpty()) {
-            for (final OutputDescriptionType outputDesc : wpsProcessDesc.getOutputs()) {
+            for (final OutputDescription outputDesc : wpsProcessDesc.getOutputs()) {
                 outputDescriptors.add(toDescriptor(processIdentifier, outputDesc));
             }
         }
@@ -150,13 +150,13 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
     }
 
     /**
-     * Convert DescriptionType to GeneralParameterDescriptor.
+     * Convert Description to GeneralParameterDescriptor.
      *
      * @param input
      * @return
      * @throws UnsupportedOperationException if data type could not be mapped
      */
-    private static GeneralParameterDescriptor toDescriptor(String processId, DescriptionType input) throws UnsupportedParameterException{
+    private static GeneralParameterDescriptor toDescriptor(String processId, Description input) throws UnsupportedParameterException{
 
         final String inputName = input.getIdentifier().getValue();
         final String inputAbstract = input.getFirstAbstract();
@@ -173,16 +173,16 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
         }
 
         DataDescription dataDesc;
-        if (input instanceof InputDescriptionType) {
-            final InputDescriptionType id = (InputDescriptionType) input;
+        if (input instanceof InputDescription) {
+            final InputDescription id = (InputDescription) input;
             dataDesc = id.getBoundingBoxData();
             if (dataDesc==null) dataDesc = id.getComplexData();
             if (dataDesc==null) dataDesc = id.getLiteralData();
             final Integer max = id.getMaxOccurs();
             final Integer min = id.getMinOccurs();
             required = min!=0;
-        } else if(input instanceof OutputDescriptionType) {
-            final OutputDescriptionType od = (OutputDescriptionType) input;
+        } else if(input instanceof OutputDescription) {
+            final OutputDescription od = (OutputDescription) input;
             dataDesc = od.getBoundingBoxOutput();
             if (dataDesc==null) dataDesc = od.getComplexOutput();
             if (dataDesc==null) dataDesc = od.getLiteralOutput();
@@ -191,18 +191,18 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
             throw new IllegalArgumentException("Unexpected description type "+input.getClass());
         }
 
-        if (dataDesc instanceof LiteralOutputType) {
-            final LiteralOutputType cd = (LiteralOutputType) dataDesc;
+        if (dataDesc instanceof LiteralOutput) {
+            final LiteralOutput cd = (LiteralOutput) dataDesc;
             final DomainMetadataType dataType = cd.getDataType();
             final LiteralAdaptor adaptor = LiteralAdaptor.create(cd);
             Object defaultValue = null;
 
-            if (cd instanceof LiteralInputType) {
-                final LiteralInputType li = (LiteralInputType) cd;
+            if (cd instanceof LiteralInput) {
+                final LiteralInput li = (LiteralInput) cd;
                 final AllowedValues allowedValues = li.getAllowedValues();
                 final AnyValue anyValue = li.getAnyValue();
                 final String defaultValueStr = li.getDefaultValue();
-                final ValuesReferenceType valuesReference = li.getValuesReference();
+                final LegacyValuesReference valuesReference = li.getValuesReference();
                 if (defaultValueStr!=null) {
                     defaultValue = adaptor.convert(defaultValueStr);
                 }
@@ -216,15 +216,15 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
                     null, defaultValue, null, null, adaptor.getUnit(), required,
                     Collections.singletonMap(DataAdaptor.USE_ADAPTOR, adaptor));
 
-        } else if (dataDesc instanceof SupportedCRSsType) {
-            final BboxAdaptor adaptor = BboxAdaptor.create((SupportedCRSsType) dataDesc);
+        } else if (dataDesc instanceof SupportedCRSs) {
+            final BboxAdaptor adaptor = BboxAdaptor.create((SupportedCRSs) dataDesc);
             return new ExtendedParameterDescriptor(properties, Envelope.class,
                     null, null, null, null, null, required,Collections.singletonMap(DataAdaptor.USE_ADAPTOR, adaptor));
 
-        } else if (dataDesc instanceof SupportedComplexDataInputType) {
+        } else if (dataDesc instanceof SupportedComplexDataInput) {
 
-            final SupportedComplexDataInputType scdt = (SupportedComplexDataInputType) dataDesc;
-            final ComplexDataCombinationType complexDefault = scdt.getDefault();
+            final SupportedComplexDataInput scdt = (SupportedComplexDataInput) dataDesc;
+            final ComplexDataCombination complexDefault = scdt.getDefault();
 
             final List<Format> formats = new ArrayList<>();
             if (complexDefault != null && complexDefault.getFormat() != null) {

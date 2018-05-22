@@ -17,8 +17,6 @@
 
 package org.geotoolkit.wps.xml.v200;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
@@ -50,10 +48,9 @@ import org.geotoolkit.ows.xml.v200.ValueType;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "")
+@XmlType(name = "LiteralValueType")
 @XmlRootElement(name = "LiteralValue")
-public class LiteralValue extends ValueType implements org.geotoolkit.wps.xml.LiteralDataType {
+public class LiteralValue extends ValueType {
 
     @XmlAttribute(name = "dataType")
     @XmlSchemaType(name = "anyURI")
@@ -80,7 +77,6 @@ public class LiteralValue extends ValueType implements org.geotoolkit.wps.xml.Li
      *     {@link String }
      *
      */
-    @Override
     public String getDataType() {
         return dataType;
     }
@@ -93,7 +89,6 @@ public class LiteralValue extends ValueType implements org.geotoolkit.wps.xml.Li
      *     {@link String }
      *
      */
-    @Override
     public void setDataType(String value) {
         this.dataType = value;
     }
@@ -106,7 +101,6 @@ public class LiteralValue extends ValueType implements org.geotoolkit.wps.xml.Li
      *     {@link String }
      *
      */
-    @Override
     public String getUom() {
         return uom;
     }
@@ -119,9 +113,7 @@ public class LiteralValue extends ValueType implements org.geotoolkit.wps.xml.Li
      *     {@link String }
      *
      */
-    @Override
     public void setUom(String value) {
         this.uom = value;
     }
-
 }

@@ -19,36 +19,36 @@ package org.geotoolkit.wps.json;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.wps.xml.ProcessOfferings;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * ProcessCollection
  */
 public class ProcessCollection implements WPSJSONResponse {
 
-  private List<ProcessSummary> processes = new ArrayList<>();
-  
+  private List<ProcessSummary> processes;
+
   public ProcessCollection() {
-      
+      this.processes = new ArrayList<>();
   }
-  
-  public ProcessCollection(ProcessOfferings offerings) {
-      for (org.geotoolkit.wps.xml.ProcessOffering process : offerings.getProcesses()) {
-          this.processes.add(new ProcessSummary(process));
-      }
+
+  public ProcessCollection(Stream<org.geotoolkit.wps.xml.v200.ProcessSummary> offerings) {
+      this.processes = offerings
+              .map(ProcessSummary::new )
+              .collect(Collectors.toList());
   }
-  
+
   public ProcessCollection processes(List<ProcessSummary> processes) {
     this.processes = processes;
     return this;
   }
 
   public ProcessCollection addProcessesItem(ProcessSummary processesItem) {
-    
     this.processes.add(processesItem);
     return this;
   }
-  
+
   /**
   * Get processes
   * @return processes
@@ -59,7 +59,7 @@ public class ProcessCollection implements WPSJSONResponse {
   public void setProcesses(List<ProcessSummary> processes) {
     this.processes = processes;
   }
-  
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -76,12 +76,12 @@ public class ProcessCollection implements WPSJSONResponse {
   public int hashCode() {
     return Objects.hash(processes);
   }
-  
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ProcessCollection {\n");
-    
+
     sb.append("    processes: ").append(toIndentedString(processes)).append("\n");
     sb.append("}");
     return sb.toString();
@@ -98,7 +98,7 @@ public class ProcessCollection implements WPSJSONResponse {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
+
 }
 
 

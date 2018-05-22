@@ -46,14 +46,14 @@ import org.geotoolkit.wps.adaptor.ComplexAdaptor;
 import org.geotoolkit.wps.adaptor.DataAdaptor;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
-import org.geotoolkit.wps.xml.v100.DataType;
-import org.geotoolkit.wps.xml.v100.ExecuteResponse;
-import org.geotoolkit.wps.xml.v100.InputType;
-import org.geotoolkit.wps.xml.v100.LiteralDataType;
-import org.geotoolkit.wps.xml.v100.OutputDataType;
-import org.geotoolkit.wps.xml.v100.ProcessFailedType;
-import org.geotoolkit.wps.xml.v100.ProcessStartedType;
-import org.geotoolkit.wps.xml.v100.StatusType;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.Data;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.ExecuteResponse;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.Input;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.LiteralData;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.OutputData;
+import org.geotoolkit.wps.xml.v100.ProcessFailed;
+import org.geotoolkit.wps.xml.v100.ProcessStarted;
+import org.geotoolkit.wps.xml.v100.LegacyStatus;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
@@ -152,7 +152,7 @@ public class WPS1Process extends AbstractProcess {
             if (respObj instanceof ExecuteResponse) {
                 final ExecuteResponse response = (ExecuteResponse) respObj;
                 // Check if distant process has failed, in case we throw an exception.
-                final ProcessFailedType processFailed = response.getStatus().getProcessFailed();
+                final ProcessFailed processFailed = response.getStatus().getProcessFailed();
                 if (processFailed != null) {
                     final StringBuilder errorText = new StringBuilder(process.getDescriptor().getIdentifier().getCode()+ " failed.");
                     final ExceptionResponse report = processFailed.getExceptionReport();
@@ -199,7 +199,7 @@ public class WPS1Process extends AbstractProcess {
             return respObj;
 
         } else if (respObj instanceof ExecuteResponse) {
-            StatusType status = ((ExecuteResponse) respObj).getStatus();
+            LegacyStatus status = ((ExecuteResponse) respObj).getStatus();
             if (status.getProcessFailed() != null || status.getProcessSucceeded() != null) {
                 return respObj;
             }
@@ -240,7 +240,7 @@ public class WPS1Process extends AbstractProcess {
 
                 if (tmpResponse instanceof ExecuteResponse) {
                     status = ((ExecuteResponse) tmpResponse).getStatus();
-                    final ProcessStartedType processStarted = status.getProcessStarted();
+                    final ProcessStarted processStarted = status.getProcessStarted();
                     if(processStarted!=null){
                         if( !Objects.equals(processStarted.getPercentCompleted(),lastProgress)
                            || !Objects.equals(processStarted.getValue(), lastMessage)){
@@ -280,10 +280,10 @@ public class WPS1Process extends AbstractProcess {
 
         if (response.getProcessOutputs() != null) {
 
-            final List<OutputDataType> wpsOutputs = response.getProcessOutputs().getOutput();
+            final List<OutputData> wpsOutputs = response.getProcessOutputs().getOutput();
 
             registry.getClient().getLogger().log(Level.INFO, "Starting to parse output parameters. We found  {0} of them.", wpsOutputs.size());
-            for (final OutputDataType output : wpsOutputs) {
+            for (final OutputData output : wpsOutputs) {
 
                 registry.getClient().getLogger().log(Level.INFO, "Parsing {0} output.", output.getIdentifier().getValue());
                 final ParameterDescriptor outDesc = (ParameterDescriptor) descriptor.getOutputDescriptor().descriptor(output.getIdentifier().getValue());
@@ -301,7 +301,7 @@ public class WPS1Process extends AbstractProcess {
                     }
 
                 } else {
-                    final DataType outputType = output.getData();
+                    final Data outputType = output.getData();
 
                     /*
                     * BBOX
@@ -340,7 +340,7 @@ public class WPS1Process extends AbstractProcess {
                     */
                     } else if (outputType.getLiteralData() != null) {
                         try {
-                            final LiteralDataType outputLiteral = outputType.getLiteralData();
+                            final LiteralData outputLiteral = outputType.getLiteralData();
                             final ObjectConverter converter = ObjectConverters.find(String.class, clazz);
                             outputs.parameter(output.getIdentifier().getValue()).setValue(converter.apply(outputLiteral.getValue()));
                         } catch (UnconvertibleObjectException ex) {
@@ -368,7 +368,7 @@ public class WPS1Process extends AbstractProcess {
             final List<GeneralParameterDescriptor> inputParamDesc = inputs.getDescriptor().descriptors();
             final List<GeneralParameterDescriptor> outputParamDesc = descriptor.getOutputDescriptor().descriptors();
 
-            final List<InputType> wpsIN = new ArrayList<>();
+            final List<Input> wpsIN = new ArrayList<>();
             final List<WPSOutput> wpsOUT = new ArrayList<>();
 
             final String processId = descriptor.getIdentifier().getCode();
@@ -384,7 +384,7 @@ public class WPS1Process extends AbstractProcess {
                             .getUserObject().get(DataAdaptor.USE_ADAPTOR);
                     final String inputIdentifier = inputDesc.getName().getCode();
                     final Object value = inputs.parameter(inputIdentifier).getValue();
-                    final InputType input = adaptor.toWPS1Input(value);
+                    final Input input = adaptor.toWPS1Input(value);
                     input.setIdentifier(new CodeType(inputIdentifier));
                     wpsIN.add(input);
                 }
@@ -415,7 +415,7 @@ public class WPS1Process extends AbstractProcess {
 
             final ExecuteRequest request = registry.getClient().createExecute();
             request.setClientSecurity(security);
-            final org.geotoolkit.wps.xml.v100.Execute execute = (org.geotoolkit.wps.xml.v100.Execute) request.getContent();
+            final org.geotoolkit.wps.xml.v100.TOREMOVE.Execute execute = (org.geotoolkit.wps.xml.v100.TOREMOVE.Execute) request.getContent();
             execute.setIdentifier(processId);
             request.setInputs(wpsIN);
             request.setOutputs(wpsOUT);
@@ -423,7 +423,7 @@ public class WPS1Process extends AbstractProcess {
             request.setOutputStorage(asReference);
             execute.setResponseForm(request.getRespForm());
             execute.setDataInputs(request.getDataInputs());
-            // Status can be activated only if we ask outputs as references.
+            // LegacyStatus can be activated only if we ask outputs as references.
             request.setOutputStatus(asReference && statusReport);
             request.setStorageURL(registry.getStorageURL());
             WPSProcessingRegistry.LOGGER.log(Level.INFO, "Execute request created for {0} in {1} mode.", new Object[]{processId, (asReference)? "asynchronous": "synchronous"});

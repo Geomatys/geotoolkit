@@ -34,12 +34,12 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.Execute;
-import org.geotoolkit.wps.xml.v100.DataInputsType;
-import org.geotoolkit.wps.xml.v100.DocumentOutputDefinitionType;
-import org.geotoolkit.wps.xml.v100.InputType;
-import org.geotoolkit.wps.xml.v100.OutputDefinitionType;
-import org.geotoolkit.wps.xml.v100.ResponseDocumentType;
-import org.geotoolkit.wps.xml.v100.ResponseFormType;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.DataInputs;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.DocumentOutputDefinition;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.Input;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.OutputDefinition;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.ResponseDocument;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.ResponseForm;
 
 /**
  * WPS Execute request.
@@ -56,7 +56,7 @@ public class ExecuteRequest extends AbstractRequest {
     protected boolean storage;
     protected boolean status;
     protected List<WPSOutput> outputs;
-    protected List<InputType> inputs;
+    protected List<Input> inputs;
 
     protected String storageDirectory;
     protected String storageURL;
@@ -147,8 +147,8 @@ public class ExecuteRequest extends AbstractRequest {
      */
     public void setOutputs(List<WPSOutput> outForm) {
         this.outputs = outForm;
-        if (content instanceof org.geotoolkit.wps.xml.v100.Execute) {
-            ((org.geotoolkit.wps.xml.v100.Execute)content).setResponseForm(getRespForm());
+        if (content instanceof org.geotoolkit.wps.xml.v100.TOREMOVE.Execute) {
+            ((org.geotoolkit.wps.xml.v100.TOREMOVE.Execute)content).setResponseForm(getRespForm());
         }
     }
 
@@ -156,7 +156,7 @@ public class ExecuteRequest extends AbstractRequest {
      * Returns Inputs, can be {@code null}.
      * @return
      */
-    public List<InputType> getInputs() {
+    public List<Input> getInputs() {
         return inputs;
     }
 
@@ -164,10 +164,10 @@ public class ExecuteRequest extends AbstractRequest {
      * Sets Input to a process.
      * @param inputs
      */
-    public void setInputs(List<InputType> inputs) {
+    public void setInputs(List<Input> inputs) {
         this.inputs = inputs;
-        if (content instanceof org.geotoolkit.wps.xml.v100.Execute) {
-            ((org.geotoolkit.wps.xml.v100.Execute)content).setDataInputs(getDataInputs());
+        if (content instanceof org.geotoolkit.wps.xml.v100.TOREMOVE.Execute) {
+            ((org.geotoolkit.wps.xml.v100.TOREMOVE.Execute)content).setDataInputs(getDataInputs());
         }
     }
 
@@ -266,8 +266,8 @@ public class ExecuteRequest extends AbstractRequest {
      * @param in
      * @return
      */
-    ResponseFormType getRespForm() {
-        final ResponseFormType responseForm = new ResponseFormType();
+    ResponseForm getRespForm() {
+        final ResponseForm responseForm = new ResponseForm();
 
         if (outputForm.equalsIgnoreCase("document")) {
             responseForm.setResponseDocument(getRespDocument());
@@ -286,8 +286,8 @@ public class ExecuteRequest extends AbstractRequest {
      * @param in
      * @return
      */
-    private ResponseDocumentType getRespDocument() {
-        final ResponseDocumentType docu = new ResponseDocumentType();
+    private ResponseDocument getRespDocument() {
+        final ResponseDocument docu = new ResponseDocument();
         docu.setLineage(content.isLineage());
         docu.setStatus(status);
         docu.setStoreExecuteResponse(storage);
@@ -304,10 +304,10 @@ public class ExecuteRequest extends AbstractRequest {
      * @param in
      * @return
      */
-    private OutputDefinitionType getRespRaw() {
+    private OutputDefinition getRespRaw() {
 
         final WPSOutput output = outputs.get(0);
-        final OutputDefinitionType raw = new OutputDefinitionType();
+        final OutputDefinition raw = new OutputDefinition();
         raw.setIdentifier(new CodeType(output.getIdentifier()));
         raw.setSchema(output.getSchema());
         raw.setMimeType(output.getMime());
@@ -322,9 +322,9 @@ public class ExecuteRequest extends AbstractRequest {
      * @param in
      * @return
      */
-    private DocumentOutputDefinitionType getOutputDef(final WPSOutput output) {
+    private DocumentOutputDefinition getOutputDef(final WPSOutput output) {
 
-        final DocumentOutputDefinitionType outDef = new DocumentOutputDefinitionType();
+        final DocumentOutputDefinition outDef = new DocumentOutputDefinition();
         outDef.setIdentifier(new CodeType(output.getIdentifier()));
         outDef.setAsReference(output.getAsReference());
         outDef.setEncoding(output.getEncoding());
@@ -341,9 +341,9 @@ public class ExecuteRequest extends AbstractRequest {
      * @param in
      * @return
      */
-    DataInputsType getDataInputs() throws UnconvertibleObjectException {
+    DataInputs getDataInputs() throws UnconvertibleObjectException {
 
-        final DataInputsType input = new DataInputsType();
+        final DataInputs input = new DataInputs();
         input.getInput().addAll(inputs);
         return input;
     }

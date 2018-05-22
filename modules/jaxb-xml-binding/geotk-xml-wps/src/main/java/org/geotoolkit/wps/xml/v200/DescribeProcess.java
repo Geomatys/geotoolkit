@@ -21,9 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -38,7 +35,7 @@ import org.geotoolkit.ows.xml.v200.CodeType;
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
- *     &lt;extension base="{http://www.opengis.net/wps/2.0}RequestBaseType">
+ *     &lt;extension base="{http://www.opengis.net/wps/2.0}RequestBase">
  *       &lt;sequence>
  *         &lt;element ref="{http://www.opengis.net/ows/2.0}Identifier" maxOccurs="unbounded"/>
  *       &lt;/sequence>
@@ -50,26 +47,20 @@ import org.geotoolkit.ows.xml.v200.CodeType;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "identifier"
 })
 @XmlRootElement(name = "DescribeProcess")
-public class DescribeProcess extends RequestBaseType implements org.geotoolkit.wps.xml.DescribeProcess {
+public class DescribeProcess extends RequestBase {
 
     @XmlElement(name = "Identifier", namespace = "http://www.opengis.net/ows/2.0", required = true)
     protected List<CodeType> identifier;
-    @XmlAttribute(name = "lang", namespace = "http://www.w3.org/XML/1998/namespace")
-    protected String lang;
 
-    public DescribeProcess() {
-
-    }
+    public DescribeProcess() {}
 
     public DescribeProcess(String service, String language, List<CodeType> identifiers) {
-        super(service);
+        super(service, null, language);
         this.identifier = identifiers;
-        this.lang = language;
     }
 
     /**
@@ -97,7 +88,6 @@ public class DescribeProcess extends RequestBaseType implements org.geotoolkit.w
      *
      *
      */
-    @Override
     public List<CodeType> getIdentifier() {
         if (identifier == null) {
             identifier = new ArrayList<>();
@@ -105,37 +95,12 @@ public class DescribeProcess extends RequestBaseType implements org.geotoolkit.w
         return this.identifier;
     }
 
-    @Override
     public void setIdentifier(List<String> ids) {
         final List<CodeType> codes = new ArrayList<>();
         for(String id : ids) {
             codes.add(new CodeType(id));
         }
         identifier = codes;
-    }
-
-    /**
-     * RFC 4646 language code of the human-readable text (e.g. "en-CA") in the process description.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     */
-    @Override
-    public String getLanguage() {
-        return lang;
-    }
-
-    /**
-     * Sets the value of the lang property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     */
-    @Override
-    public void setLanguage(String value) {
-        this.lang = value;
     }
 
     @Override

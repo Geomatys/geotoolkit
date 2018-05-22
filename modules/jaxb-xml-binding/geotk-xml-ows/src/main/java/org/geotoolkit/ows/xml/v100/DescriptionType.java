@@ -143,7 +143,7 @@ public class DescriptionType implements AbstractDescription {
         }
         return Collections.unmodifiableList(keywords);
     }
-    
+
     @Override
     public AbstractCodeType getIdentifier() {
         return null;

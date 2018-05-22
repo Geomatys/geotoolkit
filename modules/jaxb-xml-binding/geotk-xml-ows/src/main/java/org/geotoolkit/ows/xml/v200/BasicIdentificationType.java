@@ -103,7 +103,7 @@ public class BasicIdentificationType extends DescriptionType {
     public void setIdentifier(CodeType value) {
         this.identifier = value;
     }
-    
+
     @Override
     public List<MetadataType> getMetadata() {
         final List<MetadataType> result = new ArrayList<>();

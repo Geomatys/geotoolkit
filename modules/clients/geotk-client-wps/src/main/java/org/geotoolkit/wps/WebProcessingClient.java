@@ -270,13 +270,13 @@ public class WebProcessingClient extends AbstractClient {
         final GetCapabilitiesRequest request = new GetCapabilitiesRequest(serverURL.toString(), getClientSecurity(), forceGET, getTimeOutValue());
         switch (getVersion()) {
             case v100: {
-                final org.geotoolkit.wps.xml.v100.GetCapabilities cap = new org.geotoolkit.wps.xml.v100.GetCapabilities();
+                final org.geotoolkit.wps.xml.v100.TOREMOVE.GetCapabilities cap = new org.geotoolkit.wps.xml.v100.TOREMOVE.GetCapabilities();
                 cap.setService("WPS");
                 cap.setAcceptVersions(new AcceptVersionsType("1.0.0"));
                 request.setContent(cap);
                 } break;
             case v200: {
-                final org.geotoolkit.wps.xml.v200.GetCapabilitiesType cap = new org.geotoolkit.wps.xml.v200.GetCapabilitiesType();
+                final org.geotoolkit.wps.xml.v200.GetCapabilities cap = new org.geotoolkit.wps.xml.v200.GetCapabilities();
                 cap.setService("WPS");
                 cap.setAcceptVersions(new org.geotoolkit.ows.xml.v200.AcceptVersionsType("2.0.0"));
                 request.setContent(cap);
@@ -285,7 +285,7 @@ public class WebProcessingClient extends AbstractClient {
                 if(LOGGER.isLoggable(Level.FINE)){
                     LOGGER.log(Level.FINE, "Version was not defined");
                 }
-                final org.geotoolkit.wps.xml.v200.GetCapabilitiesType cap = new org.geotoolkit.wps.xml.v200.GetCapabilitiesType();
+                final org.geotoolkit.wps.xml.v200.GetCapabilities cap = new org.geotoolkit.wps.xml.v200.GetCapabilities();
                 cap.setService("WPS");
                 cap.setAcceptVersions(new org.geotoolkit.ows.xml.v200.AcceptVersionsType("1.0.0","2.0.0"));
                 request.setContent(cap);
@@ -305,7 +305,7 @@ public class WebProcessingClient extends AbstractClient {
         final DescribeProcessRequest request = new DescribeProcessRequest(serverURL.toString(), getClientSecurity(), forceGET, getTimeOutValue());
         switch (getVersion()) {
             case v100: {
-                final org.geotoolkit.wps.xml.v100.DescribeProcess content = new org.geotoolkit.wps.xml.v100.DescribeProcess();
+                final org.geotoolkit.wps.xml.v100.TOREMOVE.DescribeProcess content = new org.geotoolkit.wps.xml.v100.TOREMOVE.DescribeProcess();
                 content.setService("WPS");
                 content.setVersion("1.0.0");
                 request.setContent(content);
@@ -358,7 +358,7 @@ public class WebProcessingClient extends AbstractClient {
     /**
      * Create an execute request
      *
-     * @return ExecuteRequest : execute request.
+     * @return Execute : execute request.
      */
     public ExecuteRequest createExecute() {
 
@@ -366,13 +366,13 @@ public class WebProcessingClient extends AbstractClient {
 
         switch (getVersion()) {
             case v100: {
-                final org.geotoolkit.wps.xml.v100.Execute content = new org.geotoolkit.wps.xml.v100.Execute();
+                final org.geotoolkit.wps.xml.v100.TOREMOVE.Execute content = new org.geotoolkit.wps.xml.v100.TOREMOVE.Execute();
                 content.setService("WPS");
                 content.setVersion("1.0.0");
                 request.setContent(content);
                 } break;
             case v200: {
-                final org.geotoolkit.wps.xml.v200.ExecuteRequestType content = new org.geotoolkit.wps.xml.v200.ExecuteRequestType();
+                final org.geotoolkit.wps.xml.v200.Execute content = new org.geotoolkit.wps.xml.v200.Execute();
                 content.setService("WPS");
                 content.setVersion("2.0.0");
                 request.setContent(content);

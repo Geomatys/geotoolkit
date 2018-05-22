@@ -28,14 +28,11 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
-import org.geotoolkit.wps.xml.Format;
+import org.geotoolkit.wps.xml.v200.Format;
 import org.geotoolkit.wps.xml.ReferenceProxy;
-import org.geotoolkit.wps.xml.v100.InputType;
-import org.geotoolkit.wps.xml.v100.OutputDataType;
-import org.geotoolkit.wps.xml.v200.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.ComplexData;
 import org.geotoolkit.wps.xml.v200.Data;
-import org.geotoolkit.wps.xml.v200.DataInputType;
-import org.geotoolkit.wps.xml.v200.DataOutputType;
+import org.geotoolkit.wps.xml.v200.DataInput;
 import org.opengis.feature.Feature;
 import org.w3c.dom.Document;
 
@@ -98,17 +95,10 @@ public class GMLAdaptor extends ComplexAdaptor {
     }
 
     @Override
-    public InputType toWPS1Input(Object candidate) throws UnconvertibleObjectException {
-        if(candidate instanceof ReferenceProxy) return super.toWPS1Input(candidate);
-
-        return InputType.createComplex("", encoding, mimeType, schema, candidate, null, null);
-    }
-
-    @Override
-    public DataInputType toWPS2Input(Object candidate) throws UnconvertibleObjectException {
+    public DataInput toWPS2Input(Object candidate) throws UnconvertibleObjectException {
         if(candidate instanceof ReferenceProxy) return super.toWPS2Input(candidate);
 
-        final ComplexDataType cdt = new ComplexDataType();
+        final ComplexData cdt = new ComplexData();
         cdt.getContent().add(new org.geotoolkit.wps.xml.v200.Format(encoding, mimeType, schema, null));
 
 
@@ -135,7 +125,7 @@ public class GMLAdaptor extends ComplexAdaptor {
         final Data data = new Data();
         data.getContent().add(cdt);
 
-        final DataInputType dit = new DataInputType();
+        final DataInput dit = new DataInput();
         dit.setData(data);
         return dit;
     }

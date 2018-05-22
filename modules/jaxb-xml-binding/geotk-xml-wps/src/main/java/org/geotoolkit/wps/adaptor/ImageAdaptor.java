@@ -18,13 +18,9 @@ package org.geotoolkit.wps.adaptor;
 
 import java.awt.image.RenderedImage;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.imageio.ImageIO;
-import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.xml.Format;
-import org.geotoolkit.wps.xml.ReferenceProxy;
-import org.geotoolkit.wps.xml.v100.InputType;
+import org.geotoolkit.wps.xml.v200.Format;
 
 /**
  *
@@ -56,13 +52,6 @@ public class ImageAdaptor extends ComplexAdaptor<RenderedImage> {
     @Override
     public Class<RenderedImage> getValueClass() {
         return RenderedImage.class;
-    }
-
-    @Override
-    public InputType toWPS1Input(RenderedImage candidate) throws UnconvertibleObjectException {
-        if(candidate instanceof ReferenceProxy) return super.toWPS1Input(candidate);
-
-        return InputType.createComplex("", null, mimeType, null, candidate, null, null);
     }
 
     public static class Spi implements ComplexAdaptor.Spi {

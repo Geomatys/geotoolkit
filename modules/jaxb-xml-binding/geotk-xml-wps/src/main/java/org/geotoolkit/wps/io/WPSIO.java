@@ -21,30 +21,41 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.measure.Unit;
+import javax.xml.bind.JAXBException;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.ows.xml.v110.BoundingBoxType;
+import org.geotoolkit.ows.xml.v200.BoundingBoxType;
 import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.ows.xml.v110.DomainMetadataType;
+import org.geotoolkit.ows.xml.v200.DomainMetadataType;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.feature.xml.XmlFeatureReader;
+import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
+import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.converters.WPSObjectConverterAdapter;
-import org.geotoolkit.wps.xml.ComplexDataType;
-import org.geotoolkit.wps.xml.DataType;
+import org.geotoolkit.wps.converters.inputs.references.ReferenceToUrlConnectionConverter;
+import org.geotoolkit.wps.xml.v200.ComplexData;
+import org.geotoolkit.wps.xml.v200.Reference;
 import org.opengis.coverage.Coverage;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
-import org.geotoolkit.wps.xml.Reference;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
@@ -55,6 +66,9 @@ import org.opengis.sld.StyledLayerDescriptor;
  * @author Quentin Boileau (Geomatys).
  */
 public final class WPSIO {
+
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wps.io");
+
     /**
      * A key for userdata map of an {@link org.geotoolkit.parameter.ExtendedParameterDescriptor} object. The aim is to
      * link it with a list of {@link FormatSupport} wanted for the parameter.
@@ -240,7 +254,7 @@ public final class WPSIO {
                 } else if (dataType.equals(FormChoice.BBOX)) {
                     formClass = BoundingBoxType.class;
                 } else if (dataType.equals(FormChoice.COMPLEX)) {
-                    formClass = ComplexDataType.class;
+                    formClass = ComplexData.class;
                 } else if (dataType.equals(FormChoice.REFERENCE)) {
                     formClass = Reference.class;
                 }
@@ -260,7 +274,7 @@ public final class WPSIO {
                 final WPSConverterRegistry registry = WPSConverterRegistry.getInstance();
                 WPSObjectConverter converter = null;
                 int loop = 0;
-                final Class[] testClass = new Class[]{String.class, Reference.class, BoundingBoxType.class, ComplexDataType.class};
+                final Class[] testClass = new Class[]{String.class, Reference.class, BoundingBoxType.class, ComplexData.class};
 
                 while (converter == null) {
                     try {
@@ -619,7 +633,7 @@ public final class WPSIO {
 
                 for (WPSObjectConverter conv : candidates) {
                     final Class sourceClass = conv.getSourceClass();
-                    if ((dataType.equals(FormChoice.COMPLEX) && ComplexDataType.class.isAssignableFrom(sourceClass))
+                    if ((dataType.equals(FormChoice.COMPLEX) && ComplexData.class.isAssignableFrom(sourceClass))
                             || (dataType.equals(FormChoice.REFERENCE) && Reference.class.isAssignableFrom(sourceClass))
                             || (dataType.equals(FormChoice.BBOX) && BoundingBoxType.class.isAssignableFrom(sourceClass))
                             || (dataType.equals(FormChoice.LITERAL) && String.class.isAssignableFrom(sourceClass))) {
@@ -638,7 +652,7 @@ public final class WPSIO {
 
                 for (WPSObjectConverter conv : candidates) {
                     final Class targetClass = conv.getTargetClass();
-                    if ((dataType.equals(FormChoice.COMPLEX) && ComplexDataType.class.isAssignableFrom(targetClass))
+                    if ((dataType.equals(FormChoice.COMPLEX) && ComplexData.class.isAssignableFrom(targetClass))
                             || (dataType.equals(FormChoice.REFERENCE) && Reference.class.isAssignableFrom(targetClass))
                             || (dataType.equals(FormChoice.BBOX) && BoundingBoxType.class.isAssignableFrom(targetClass))
                             || (dataType.equals(FormChoice.LITERAL) && String.class.isAssignableFrom(targetClass))) {
@@ -907,5 +921,49 @@ public final class WPSIO {
             sb.append("isDefault:").append(defaultFormat).append("}");
             return sb.toString();
         }
+    }
+
+    public static URLConnection connect(final Reference ref) {
+        return ReferenceToUrlConnectionConverter.getInstance().apply(ref);
+    }
+
+
+    /**
+     * Get the JAXPStreamFeatureReader to read feature. If there is a schema
+     * defined, the JAXPStreamFeatureReader will use it. Otherwise it will try
+     * to read it when reading data.
+     *
+     * @param schema location of the feature type definition.
+     * @return
+     * @throws MalformedURLException If given schema cannot be translated in a
+     * propert URL.
+     */
+    public static XmlFeatureReader getFeatureReader(String schema) throws MalformedURLException {
+        final List<FeatureType> schemaTypes;
+
+        if (schema == null || (schema = schema.trim()).isEmpty()) {
+            schemaTypes = Collections.EMPTY_LIST;
+        } else {
+            List<FeatureType> types = null;
+            try {
+                final JAXBFeatureTypeReader xsdReader = new JAXBFeatureTypeReader();
+                final URL schemaURL = new URL(URLDecoder.decode(schema, StandardCharsets.UTF_8.name()));
+                types = xsdReader.read(schemaURL);
+            } catch (JAXBException|UnsupportedEncodingException ex) {
+                LOGGER.log(Level.FINE, "Cannot read schema at location "+schema, ex);
+            }
+
+            schemaTypes = types;
+        }
+
+        final JAXPStreamFeatureReader featureReader;
+        if (schemaTypes == null || schemaTypes.isEmpty()) {
+            featureReader = new JAXPStreamFeatureReader();
+            featureReader.getProperties().put(JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE, true);
+        } else {
+            featureReader = new JAXPStreamFeatureReader(schemaTypes);
+        }
+
+        return featureReader;
     }
 }

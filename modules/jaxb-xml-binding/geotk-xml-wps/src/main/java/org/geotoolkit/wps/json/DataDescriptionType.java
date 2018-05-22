@@ -20,21 +20,21 @@ package org.geotoolkit.wps.json;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.wps.xml.Format;
-import org.geotoolkit.wps.xml.InputDescription;
-import org.geotoolkit.wps.xml.OutputDescription;
+import org.geotoolkit.wps.xml.v200.Format;
+import org.geotoolkit.wps.xml.v200.InputDescription;
+import org.geotoolkit.wps.xml.v200.OutputDescription;
 
 /**
- * DataDescriptionType
+ * DataDescription
  */
 public class DataDescriptionType extends DescriptionType {
 
   private List<FormatDescription> formats = new ArrayList<>();
-  
+
   public DataDescriptionType() {
-      
+
   }
-  
+
   public DataDescriptionType(InputDescription desc) {
       super(desc);
       if (desc != null && desc.getDataDescription() != null) {
@@ -44,7 +44,7 @@ public class DataDescriptionType extends DescriptionType {
           }
       }
   }
-  
+
   public DataDescriptionType(OutputDescription desc) {
       super(desc);
       if (desc != null && desc.getDataDescription() != null) {
@@ -54,18 +54,18 @@ public class DataDescriptionType extends DescriptionType {
           }
       }
   }
-  
+
   public DataDescriptionType formats(List<FormatDescription> formats) {
     this.formats = formats;
     return this;
   }
 
   public DataDescriptionType addFormatsItem(FormatDescription formatsItem) {
-    
+
     this.formats.add(formatsItem);
     return this;
   }
-  
+
   /**
   * Get formats
   * @return formats
@@ -76,7 +76,7 @@ public class DataDescriptionType extends DescriptionType {
   public void setFormats(List<FormatDescription> formats) {
     this.formats = formats;
   }
-  
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -94,7 +94,7 @@ public class DataDescriptionType extends DescriptionType {
   public int hashCode() {
     return Objects.hash(formats, super.hashCode());
   }
-  
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -116,7 +116,7 @@ public class DataDescriptionType extends DescriptionType {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
+
 }
 
 

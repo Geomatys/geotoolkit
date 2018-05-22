@@ -79,12 +79,12 @@ import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "CapabilitiesBaseType", propOrder = {
     "serviceIdentification",
     "serviceProvider",
     "operationsMetadata",
-    "languages"
+    "languagesToMarshall"
 })
 public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
 
@@ -94,12 +94,17 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
     private ServiceProvider serviceProvider;
     @XmlElement(name = "OperationsMetadata")
     private OperationsMetadata operationsMetadata;
-    @XmlElement(name = "Languages")
+    /**
+     * @implNote language marshalling rules are set on a private getter, because
+     * of WPS retro-compatiblity rules.
+     */
     private CapabilitiesBaseType.Languages languages;
     @XmlAttribute(required = true)
     private String version;
     @XmlAttribute
     private String updateSequence;
+    @XmlAttribute(namespace = "http://www.w3.org/XML/1998/namespace", required = true)
+    private String lang;
 
      /**
      * Empty constructor used by JAXB.
@@ -221,6 +226,15 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
         return languages;
     }
 
+    @XmlElement(name = "Languages")
+    protected CapabilitiesBaseType.Languages getLanguagesToMarshall() {
+        return languages;
+    }
+
+    private void setLanguagesToMarshall(CapabilitiesBaseType.Languages value) {
+        this.languages = value;
+    }
+
     /**
      * Sets the value of the languages property.
      *
@@ -283,6 +297,29 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
         this.updateSequence = value;
     }
 
+    /**
+     * Gets the value of the lang property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getLang() {
+        return lang;
+    }
+
+    /**
+     * Sets the value of the lang property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setLang(final String value) {
+        this.lang = value;
+    }
 
     /**
      * <p>Java class for anonymous complex type.

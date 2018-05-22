@@ -210,7 +210,7 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
         }
         return result;
     }
-    
+
     /**
      * Gets the value of the metadata property.
      *

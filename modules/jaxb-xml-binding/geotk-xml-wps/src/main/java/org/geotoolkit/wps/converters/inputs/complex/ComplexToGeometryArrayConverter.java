@@ -32,7 +32,7 @@ import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONGeometryCollec
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.Data;
 import org.opengis.util.FactoryException;
 
 /**
@@ -65,7 +65,7 @@ public final class ComplexToGeometryArrayConverter extends AbstractComplexInputC
      * @return Geometry array.
      */
     @Override
-    public Geometry[] convert(final ComplexDataType source, final Map<String, Object> params) throws UnconvertibleObjectException {
+    public Geometry[] convert(final Data source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         String dataMimeTypeIdentifier = null;
         try {
@@ -87,7 +87,7 @@ public final class ComplexToGeometryArrayConverter extends AbstractComplexInputC
                 else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(source.getMimeType())) {
                     dataMimeTypeIdentifier = "GeoJSON";
 
-                    final String content = WPSConvertersUtils.extractGeoJSONContentAsStringFromComplex(source);
+                    final String content = WPSConvertersUtils.geojsonContentAsString(source);
                     final GeoJSONObject jsonObject = WPSConvertersUtils.readGeoJSONObjectsFromString(content);
 
                     // Check that we have a FeatureCollection

@@ -41,8 +41,11 @@ import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.PATH;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.v200.Reference;
+;
 import org.opengis.feature.Feature;
+import org.opengis.util.GenericName;
+import org.opengis.parameter.ParameterValueGroup;import org.opengis.feature.Feature;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -96,11 +99,11 @@ public final class ReferenceToGeometryConverter extends AbstractReferenceInputCo
                 return GeometrytoJTS.toJTS((AbstractGeometryType) value);
 
             } catch (NoSuchAuthorityCodeException ex) {
-                throw new UnconvertibleObjectException("Reference geometry invalid input", ex);
+                throw new UnconvertibleObjectException("ReferenceType geometry invalid input", ex);
             } catch (FactoryException ex) {
-                throw new UnconvertibleObjectException("Reference geometry invalid input", ex);
+                throw new UnconvertibleObjectException("ReferenceType geometry invalid input", ex);
             } catch (JAXBException ex) {
-                throw new UnconvertibleObjectException("Reference geometry invalid input : Unmarshallable geometry", ex);
+                throw new UnconvertibleObjectException("ReferenceType geometry invalid input : Unmarshallable geometry", ex);
             }
         } else if (mime.equalsIgnoreCase(WPSMimeType.APP_GEOJSON.val())) {
             ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();

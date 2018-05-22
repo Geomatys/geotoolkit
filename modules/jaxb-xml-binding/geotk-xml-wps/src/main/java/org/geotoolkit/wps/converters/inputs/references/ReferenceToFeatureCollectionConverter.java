@@ -16,22 +16,25 @@
  */
 package org.geotoolkit.wps.converters.inputs.references;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
-import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
+import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.Reference;
-import org.opengis.util.FactoryException;
+import org.geotoolkit.wps.xml.v200.Reference;
+import org.opengis.feature.Feature;
+;
 
 /**
  * Implementation of ObjectConverter to convert a reference into a FeatureCollection.
@@ -67,35 +70,32 @@ public final class ReferenceToFeatureCollectionConverter extends AbstractReferen
     public FeatureCollection convert(final Reference source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
-        final InputStream stream = getInputStreamFromReference(source);
 
         //XML
         if (mime.equalsIgnoreCase(WPSMimeType.TEXT_XML.val())
                 || mime.equalsIgnoreCase(WPSMimeType.APP_GML.val())
                 || mime.equalsIgnoreCase(WPSMimeType.TEXT_GML.val())) {
 
-            XmlFeatureReader fcollReader = null;
             try {
-                fcollReader = getFeatureReader(source);
-                final FeatureCollection fcoll = (FeatureCollection) fcollReader.read(stream);
-                return (FeatureCollection) WPSConvertersUtils.fixFeature(fcoll);
+                final XmlFeatureReader fcollReader = WPSIO.getFeatureReader(source.getSchema());
 
-            } catch (FactoryException ex) {
-                throw new UnconvertibleObjectException("Invalid reference input : can't spread CRS.", ex);
+                // TODO: stream data instead of putting it in memory ?
+                try (final Closeable readerClosing = () -> fcollReader.dispose();
+                        final InputStream in = getInputStreamFromReference(source)) {
+
+                    return castOrWrap(fcollReader.read(in));
+                }
+
+            } catch (UnconvertibleObjectException ex) {
+                throw ex;
             } catch (IllegalArgumentException ex) {
                 throw new UnconvertibleObjectException("Unable to read the feature with the specified schema.", ex);
-            } catch (JAXBException ex) {
-                throw new UnconvertibleObjectException("Invalid reference input : can't read reference schema.", ex);
             } catch (MalformedURLException ex) {
-                throw new UnconvertibleObjectException("Invalid reference input : Malformed schema or resource.", ex);
+                throw new UnconvertibleObjectException("Invalid reference input: Malformed schema or resource.", ex);
             } catch (IOException ex) {
-                throw new UnconvertibleObjectException("Invalid reference input : IO.", ex);
+                throw new UnconvertibleObjectException("Invalid reference input: access problem.", ex);
             } catch (XMLStreamException ex) {
-                throw new UnconvertibleObjectException("Invalid reference input.", ex);
-            } finally {
-                if (fcollReader != null) {
-                    fcollReader.dispose();
-                }
+                throw new UnconvertibleObjectException("Invalid reference input: unknown error", ex);
             }
         } else if (mime.equalsIgnoreCase(WPSMimeType.APP_GEOJSON.val())) {
             try {
@@ -103,40 +103,17 @@ public final class ReferenceToFeatureCollectionConverter extends AbstractReferen
             } catch (DataStoreException | URISyntaxException | IOException ex) {
                 throw new UnconvertibleObjectException(ex);
             }
-            // SHP
-        } else if (mime.equalsIgnoreCase(WPSMimeType.APP_SHP.val())
-                || mime.equalsIgnoreCase(WPSMimeType.APP_OCTET.val())) {
-            return null;
-//            try {
-//                Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
-//                final Map<String, Serializable> parameters = new HashMap<String, Serializable>();
-//                parameters.put("url", new URL(href));
-//
-//                final FeatureStore store = DataStoreFinder.get(parameters);
-//
-//                if (store == null) {
-//                    throw new UnconvertibleObjectException("Invalid URL");
-//                }
-//
-//                if (store.getNames().size() != 1) {
-//                    throw new UnconvertibleObjectException("More than one FeatureCollection in the file");
-//                }
-//
-//                final FeatureCollection collection = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
-//                if (collection != null) {
-//                    return collection;
-//                } else {
-//                    throw new UnconvertibleObjectException("Collection not found");
-//                }
-//
-//            } catch (DataStoreException ex) {
-//                throw new UnconvertibleObjectException("Invalid reference input : Malformed schema or resource.", ex);
-//            } catch (MalformedURLException ex) {
-//                throw new UnconvertibleObjectException("Invalid reference input : Malformed schema or resource.", ex);
-//            }
-
         } else {
             throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + source.getMimeType());
         }
+    }
+
+    public static FeatureCollection castOrWrap(final Object in) {
+        if (in instanceof FeatureCollection) {
+            return (FeatureCollection) in;
+        } else if (in instanceof Feature) {
+            return FeatureStoreUtilities.collection((Feature) in);
+        } else
+            throw new UnconvertibleObjectException("Read data is of unexpected type: " + (in == null ? "null" : in.getClass()));
     }
 }

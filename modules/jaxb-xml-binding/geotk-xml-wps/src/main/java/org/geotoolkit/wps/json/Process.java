@@ -19,10 +19,11 @@ package org.geotoolkit.wps.json;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.wps.xml.BoundingBoxDataDescription;
-import org.geotoolkit.wps.xml.ComplexDataTypeDescription;
-import org.geotoolkit.wps.xml.LiteralDataDescription;
-import org.geotoolkit.wps.xml.ProcessDescription;
+import org.geotoolkit.wps.xml.v200.BoundingBoxData;
+import org.geotoolkit.wps.xml.v200.ComplexData;
+import org.geotoolkit.wps.xml.v200.JobControlOptions;
+import org.geotoolkit.wps.xml.v200.LiteralData;
+import org.geotoolkit.wps.xml.v200.ProcessDescription;
 
 /**
  * Process
@@ -43,37 +44,32 @@ public class Process extends DescriptionType {
     private String executeEndpoint = null;
 
     public Process() {
-        
+
     }
-    
-    public Process(org.geotoolkit.wps.xml.ProcessOffering offering) {
-        super(offering);
-        if (offering != null) {
-            this.executeEndpoint = null; // TODO
-            this.outputTransmission = null; // TODO
-            
-            this.version = offering.getProcessVersion();
-            this.jobControlOptions = new ArrayList<>();
-            for (String jco : offering.getJobControlOptions()) {
-                this.jobControlOptions.add(JobControlOptions.fromValue(jco));
+
+    public Process(org.geotoolkit.wps.xml.v200.ProcessOffering offering) {
+        super(offering.getProcess());
+        this.executeEndpoint = null; // TODO
+        this.outputTransmission = null; // TODO
+
+        this.version = offering.getProcessVersion();
+        this.jobControlOptions = new ArrayList<>(offering.getJobControlOptions());
+
+        final ProcessDescription desc = offering.getProcess();
+        if (desc != null) {
+            this.inputs = new ArrayList<>();
+            for (org.geotoolkit.wps.xml.v200.InputDescription in : desc.getInputs()) {
+                if (in.getDataDescription() instanceof LiteralData) {
+                    this.inputs.add(new LiteralInputType(in));
+                } else if (in.getDataDescription() instanceof ComplexData) {
+                    this.inputs.add(new ComplexInputType(in));
+                } else if (in.getDataDescription() instanceof BoundingBoxData) {
+                    this.inputs.add(new BoundingBoxInputType(in));
+                }
             }
-            
-            final ProcessDescription desc = offering.getProcessDescription();
-            if (desc != null) {
-                this.inputs = new ArrayList<>();
-                for (org.geotoolkit.wps.xml.InputDescription in : desc.getInputs()) {
-                    if (in.getDataDescription() instanceof LiteralDataDescription) {
-                        this.inputs.add(new LiteralInputType(in));
-                    } else if (in.getDataDescription() instanceof ComplexDataTypeDescription) {
-                        this.inputs.add(new ComplexInputType(in));
-                     }else if (in.getDataDescription() instanceof BoundingBoxDataDescription) {
-                        this.inputs.add(new BoundingBoxInputType(in));
-                    }
-                }
-                this.outputs = new ArrayList<>();
-                for (org.geotoolkit.wps.xml.OutputDescription out : desc.getOutputs()) {
-                    this.outputs.add(new OutputDescription(out));
-                }
+            this.outputs = new ArrayList<>();
+            for (org.geotoolkit.wps.xml.v200.OutputDescription out : desc.getOutputs()) {
+                this.outputs.add(new OutputDescription(out));
             }
         }
     }

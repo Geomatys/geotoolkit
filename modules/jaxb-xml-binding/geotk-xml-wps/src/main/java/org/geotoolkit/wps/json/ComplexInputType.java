@@ -17,7 +17,7 @@
 package org.geotoolkit.wps.json;
 
 import java.util.Objects;
-import org.geotoolkit.wps.xml.InputDescription;
+import org.geotoolkit.wps.xml.v200.InputDescription;
 
 /**
  * ComplexInputType
@@ -29,9 +29,9 @@ public class ComplexInputType extends DataDescriptionType {
     private Integer maxOccurs = null;
 
     public ComplexInputType() {
-        
+
     }
-    
+
     public ComplexInputType(InputDescription in) {
         super(in);
         if (in != null) {

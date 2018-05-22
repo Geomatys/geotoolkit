@@ -21,7 +21,7 @@ package org.geotoolkit.wps.json;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.ows.xml.AbstractKeywords;
+import org.geotoolkit.wps.xml.v200.JobControlOptions;
 
 /**
  * ProcessSummary
@@ -29,30 +29,28 @@ import org.geotoolkit.ows.xml.AbstractKeywords;
 public class ProcessSummary extends DescriptionType {
 
   private String version = null;
-  
+
   private List<JobControlOptions> jobControlOptions = null;
-  
+
   private String processDescriptionURL = null;
-  
+
   public ProcessSummary() {
-      
+
   }
-  
-  public ProcessSummary(org.geotoolkit.wps.xml.ProcessOffering process) {
+
+  public ProcessSummary(org.geotoolkit.wps.xml.v200.ProcessSummary process) {
       super(process);
       this.version = process.getProcessVersion();
-      for (String jco : process.getJobControlOptions()) {
-          this.addJobControlOptionsItem(JobControlOptions.fromValue(jco));
-      }
+      jobControlOptions = new ArrayList<>(process.getJobControlOptions());
       this.processDescriptionURL = null; //TODO
   }
-  
+
   public ProcessSummary version(String version) {
     this.version = version;
     return this;
   }
 
-  
+
   /**
   * Get version
   * @return version
@@ -63,22 +61,22 @@ public class ProcessSummary extends DescriptionType {
   public void setVersion(String version) {
     this.version = version;
   }
-  
+
   public ProcessSummary jobControlOptions(List<JobControlOptions> jobControlOptions) {
     this.jobControlOptions = jobControlOptions;
     return this;
   }
 
   public ProcessSummary addJobControlOptionsItem(JobControlOptions jobControlOptionsItem) {
-    
+
     if (this.jobControlOptions == null) {
       this.jobControlOptions = new ArrayList<>();
     }
-    
+
     this.jobControlOptions.add(jobControlOptionsItem);
     return this;
   }
-  
+
   /**
   * Get jobControlOptions
   * @return jobControlOptions
@@ -89,13 +87,13 @@ public class ProcessSummary extends DescriptionType {
   public void setJobControlOptions(List<JobControlOptions> jobControlOptions) {
     this.jobControlOptions = jobControlOptions;
   }
-  
+
   public ProcessSummary processDescriptionURL(String processDescriptionURL) {
     this.processDescriptionURL = processDescriptionURL;
     return this;
   }
 
-  
+
   /**
   * Get processDescriptionURL
   * @return processDescriptionURL
@@ -106,7 +104,7 @@ public class ProcessSummary extends DescriptionType {
   public void setProcessDescriptionURL(String processDescriptionURL) {
     this.processDescriptionURL = processDescriptionURL;
   }
-  
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -126,7 +124,7 @@ public class ProcessSummary extends DescriptionType {
   public int hashCode() {
     return Objects.hash(version, jobControlOptions, processDescriptionURL, super.hashCode());
   }
-  
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -150,7 +148,7 @@ public class ProcessSummary extends DescriptionType {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
+
 }
 
 

@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -35,9 +33,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.geotoolkit.ows.xml.BoundingBox;
+import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
 import org.geotoolkit.ows.xml.v200.BoundingBoxType;
-import org.geotoolkit.wps.xml.DataType;
 import org.w3c.dom.Element;
 
 
@@ -63,18 +60,18 @@ import org.w3c.dom.Element;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "content"
 })
 @XmlRootElement(name = "Data")
-public class Data implements DataType {
+public class Data {
 
     @XmlMixed
     @XmlElementRefs({
         @XmlElementRef(name = "BoundingBox", namespace = "http://www.opengis.net/ows/2.0", type = BoundingBoxType.class),
-        @XmlElementRef(name = "LiteralData", namespace = "http://www.opengis.net/wps/2.0", type = LiteralDataType.class),
-        @XmlElementRef(name = "ComplexData", namespace = "http://www.opengis.net/wps/2.0", type = ComplexDataType.class)
+        @XmlElementRef(name = "LiteralValue", namespace = "http://www.opengis.net/wps/2.0", type = LiteralValue.class),
+        @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml/3.2", type = AbstractGeometryType.class),
+        @XmlElementRef(name = "math", namespace = "http://www.w3.org/1998/Math/MathML", type = org.geotoolkit.mathml.xml.Math.class)
     })
     @XmlAnyElement(lax = true)
     protected List<Object> content;
@@ -99,8 +96,8 @@ public class Data implements DataType {
             this.content.add(content);
         }
     }
-    
-    public Data(org.geotoolkit.wps.xml.Format format, Object content) {
+
+    public Data(Format format, Object content) {
         if (content != null) {
             this.content = new ArrayList<>();
             this.content.add(content);
@@ -234,19 +231,17 @@ public class Data implements DataType {
         return otherAttributes;
     }
 
-    @Override
-    public ComplexDataType getComplexData() {
+    public ComplexData getComplexData() {
         if (content != null) {
             for (Object obj : content) {
-                if (obj instanceof ComplexDataType) {
-                    return (ComplexDataType) obj;
+                if (obj instanceof ComplexData) {
+                    return (ComplexData) obj;
 }
             }
         }
         return null;
     }
 
-    @Override
     public LiteralValue getLiteralData() {
         if (content != null) {
             for (Object obj : content) {
@@ -258,12 +253,11 @@ public class Data implements DataType {
         return null;
     }
 
-    @Override
-    public BoundingBox getBoundingBoxData() {
+    public BoundingBoxType getBoundingBoxData() {
         if (content != null) {
             for (Object obj : content) {
-                if (obj instanceof BoundingBox) {
-                    return (BoundingBox) obj;
+                if (obj instanceof BoundingBoxType) {
+                    return (BoundingBoxType) obj;
                 }
             }
         }

@@ -18,8 +18,6 @@
 package org.geotoolkit.wps.xml.v200;
 
 import java.util.Objects;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
@@ -75,22 +73,22 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "jobID",
     "status",
     "expirationDate",
     "estimatedCompletion",
     "nextPoll",
-    "percentCompleted"
+    "percentCompleted",
+    "message"
 })
 @XmlRootElement(name = "StatusInfo")
-public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
+public class StatusInfo extends DocumentBase {
 
     @XmlElement(name = "JobID", required = true)
     protected String jobID;
     @XmlElement(name = "Status", required = true)
-    protected String status;
+    protected Status status;
     @XmlElement(name = "ExpirationDate")
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar expirationDate;
@@ -103,16 +101,24 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
     @XmlElement(name = "PercentCompleted")
     protected Integer percentCompleted;
 
+    /**
+     * NON-STANDARD FIELD: added for compatibility with WPS-RESTfull bindings.
+     * Also, it's provide a way to get more detailed information about process
+     * execution.
+     */
+    @XmlElement(name="message", required = false)
+    protected String message;
+
     public StatusInfo() {
 
     }
 
-    public StatusInfo(String status, String jobId) {
+    public StatusInfo(Status status, String jobId) {
         this.status = status;
         this.jobID = jobId;
     }
 
-    public StatusInfo(String status, Integer percentCompleted, String jobId) {
+    public StatusInfo(Status status, Integer percentCompleted, String jobId) {
         this.status = status;
         this.percentCompleted = percentCompleted;
         this.jobID = jobId;
@@ -150,11 +156,10 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
      *     {@link String }
      *
      */
-    @Override
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
-    
+
     /**
      * Sets the value of the status property.
      *
@@ -163,13 +168,16 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
      *     {@link String }
      *
      */
-    public void setStatus(String value) {
+    public void setStatus(Status value) {
         this.status = value;
     }
-    
-    @Override
+
     public String getMessage() {
-        return null;
+        return message;
+    }
+
+    public void setMessage(final String message) {
+        this.message = message;
     }
 
     /**
@@ -252,7 +260,6 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
      *     {@link Integer }
      *
      */
-    @Override
     public Integer getPercentCompleted() {
         return percentCompleted;
     }

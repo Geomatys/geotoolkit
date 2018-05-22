@@ -44,16 +44,16 @@ import org.geotoolkit.ows.xml.v200.AdditionalParametersType;
 import org.geotoolkit.ows.xml.v200.AdditionalParameter;
 import org.geotoolkit.wps.xml.ProcessOfferings;
 import org.geotoolkit.wps.xml.v200.BoundingBoxData;
-import org.geotoolkit.wps.xml.v200.ComplexDataType;
-import org.geotoolkit.wps.xml.v200.DataDescriptionType;
-import org.geotoolkit.wps.xml.v200.DescriptionType;
+import org.geotoolkit.wps.xml.v200.ComplexData;
+import org.geotoolkit.wps.xml.v200.DataDescription;
+import org.geotoolkit.wps.xml.v200.Description;
 import org.geotoolkit.wps.xml.v200.Format;
-import org.geotoolkit.wps.xml.v200.InputDescriptionType;
-import org.geotoolkit.wps.xml.v200.LiteralDataType;
-import org.geotoolkit.wps.xml.v200.OutputDescriptionType;
-import org.geotoolkit.wps.xml.v200.ProcessDescriptionType;
+import org.geotoolkit.wps.xml.v200.InputDescription;
+import org.geotoolkit.wps.xml.v200.LiteralData;
+import org.geotoolkit.wps.xml.v200.OutputDescription;
+import org.geotoolkit.wps.xml.v200.ProcessDescription;
 import org.geotoolkit.wps.xml.v200.ProcessOffering;
-import org.geotoolkit.wps.xml.v200.ProcessSummaryType;
+import org.geotoolkit.wps.xml.v200.ProcessSummary;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -69,7 +69,7 @@ import org.opengis.util.InternationalString;
 public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
 
     private final WPSProcessingRegistry registry;
-    private ProcessSummaryType summary;
+    private ProcessSummary summary;
 
     public WPS2ProcessDescriptor(String name, WPSProcessingRegistry registry, InternationalString abs,
             InternationalString displayName, ParameterDescriptorGroup inputs, ParameterDescriptorGroup outputs) {
@@ -77,7 +77,7 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
         this.registry = registry;
     }
 
-    public ProcessSummaryType getSummary() {
+    public ProcessSummary getSummary() {
         return summary;
     }
 
@@ -110,15 +110,15 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
             displayName = new DefaultInternationalString("");
         }
 
-        final ProcessDescriptionType process = offering.getProcessDescription();
+        final ProcessDescription process = offering.getProcess();
 
         final List<GeneralParameterDescriptor> inputLst = new ArrayList<>();
         final List<GeneralParameterDescriptor> outputLst = new ArrayList<>();
-        for (final InputDescriptionType input : process.getInputs()) {
+        for (final InputDescription input : process.getInputs()) {
             inputLst.add(toDescriptor(processIdentifier,input));
         }
 
-        for (final OutputDescriptionType outputDesc : process.getOutputs()) {
+        for (final OutputDescription outputDesc : process.getOutputs()) {
             outputLst.add(toDescriptor(processIdentifier,outputDesc));
         }
 
@@ -131,26 +131,26 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
     }
 
     /**
-     * Convert DescriptionType to GeneralParameterDescriptor.
+     * Convert Description to GeneralParameterDescriptor.
      *
      * @param input
      * @return
      * @throws UnsupportedOperationException if data type could not be mapped
      */
-    private static GeneralParameterDescriptor toDescriptor(String processId, DescriptionType input) throws UnsupportedParameterException{
+    private static GeneralParameterDescriptor toDescriptor(String processId, Description input) throws UnsupportedParameterException{
 
-        final List<? extends DescriptionType> subInputs;
-        final DataDescriptionType dataDescType;
+        final List<? extends Description> subInputs;
+        final DataDescription dataDescType;
         final int min;
         final int max;
-        if (input instanceof InputDescriptionType) {
-            final InputDescriptionType id = (InputDescriptionType) input;
+        if (input instanceof InputDescription) {
+            final InputDescription id = (InputDescription) input;
             subInputs = id.getInput();
             dataDescType = id.getDataDescription();
             max = id.getMaxOccurs();
             min = id.getMinOccurs();
-        } else if(input instanceof OutputDescriptionType) {
-            final OutputDescriptionType od = (OutputDescriptionType) input;
+        } else if(input instanceof OutputDescription) {
+            final OutputDescription od = (OutputDescription) input;
             subInputs = od.getOutput();
             dataDescType = od.getDataDescription();
             min = 1;
@@ -173,10 +173,10 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
             }
         }
 
-        if (dataDescType instanceof LiteralDataType) {
-            final LiteralDataType cd = (LiteralDataType) dataDescType;
+        if (dataDescType instanceof LiteralData) {
+            final LiteralData cd = (LiteralData) dataDescType;
 
-            for(LiteralDataType.LiteralDataDomain domain : cd.getLiteralDataDomain()) {
+            for(LiteralData.LiteralDataDomain domain : cd.getLiteralDataDomain()) {
 
                 final LiteralAdaptor adaptor = LiteralAdaptor.create(domain);
                 if (adaptor==null) continue;
@@ -204,8 +204,8 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
 
             throw new UnsupportedParameterException(processId,inputName,"Unidentifiable literal input "+inputName);
 
-        } else if (dataDescType instanceof ComplexDataType) {
-            final ComplexDataType cdt = (ComplexDataType) dataDescType;
+        } else if (dataDescType instanceof ComplexData) {
+            final ComplexData cdt = (ComplexData) dataDescType;
 
             //ensure default format is first in the list
             Collections.sort(cdt.getFormat(), (Format o1, Format o2) -> {
@@ -244,7 +244,7 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
             //sub group type
 
             final List<GeneralParameterDescriptor> params = new ArrayList<>();
-            for (DescriptionType dt : subInputs) {
+            for (Description dt : subInputs) {
                 params.add(toDescriptor(processId,dt));
             }
 

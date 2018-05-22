@@ -19,8 +19,8 @@ package org.geotoolkit.wps.converters.outputs.references;
 import java.util.Map;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSDefaultConverter;
-import org.geotoolkit.wps.xml.Reference;
-import org.geotoolkit.wps.xml.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.Reference;
+import org.geotoolkit.wps.xml.v200.ComplexData;
 
 /**
  *
@@ -37,10 +37,10 @@ public abstract class AbstractReferenceOutputConverter<S> extends WPSDefaultConv
     }
 
     /**
-     * Convert the data from source Map into {@link ComplexDataType}.
+     * Convert the data from source Map into {@link ComplexData}.
      * The {@code source} Map contain :
      * <ul>
-     *      <li>outData : the object to convert into {@link ComplexDataType}.</li>
+     *      <li>outData : the object to convert into {@link ComplexData}.</li>
      *      <li>outMime : the requested mime type for the output.</li>
      *      <li>outEncoding : the requested encoding for the output</li>
      *      <li>outSchema : the schema of the complex output</li>
@@ -48,7 +48,7 @@ public abstract class AbstractReferenceOutputConverter<S> extends WPSDefaultConv
      *      <li>outTempDirectoryUrl : the URL path to the web accessible storage folder.</li>
      * </ul>
      * @param source
-     * @return the converted outData into {@link ComplexDataType}.
+     * @return the converted outData into {@link ComplexData}.
      * @throws UnconvertibleObjectException if an error occurs durring the convertion processing.
      */
     @Override

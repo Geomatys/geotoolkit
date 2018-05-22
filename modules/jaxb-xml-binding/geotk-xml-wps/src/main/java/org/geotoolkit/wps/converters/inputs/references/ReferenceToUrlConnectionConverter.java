@@ -18,13 +18,9 @@ package org.geotoolkit.wps.converters.inputs.references;
 
 import org.apache.sis.util.UnconvertibleObjectException;
 
-import java.io.IOException;
-import java.net.URL;
 import java.net.URLConnection;
-import java.util.List;
 import java.util.Map;
-import org.geotoolkit.wps.xml.Reference;
-import org.geotoolkit.wps.xml.v100.InputReferenceType;
+import org.geotoolkit.wps.xml.v200.Reference;;
 
 /**
  * Implementation of ObjectConverter to convert a reference into an URL connection.
@@ -53,20 +49,6 @@ public class ReferenceToUrlConnectionConverter extends AbstractReferenceInputCon
 
     @Override
     public URLConnection convert(Reference source, Map<String, Object> params) throws UnconvertibleObjectException {
-        try {
-            URLConnection con = new URL(source.getHref()).openConnection();
-            if (source instanceof InputReferenceType) {
-                final List<InputReferenceType.Header> headers = ((InputReferenceType) source).getHeader();
-                for (final InputReferenceType.Header h : headers)
-                    con.setRequestProperty(h.getKey(), h.getValue());
-                final String method = ((InputReferenceType) source).getMethod();
-                if ("POST".equalsIgnoreCase(method))
-                    con.setDoOutput(true);
-            }
-
-            return con;
-        } catch (IOException ex) {
-            throw new UnconvertibleObjectException("Can't reach the reference data.", ex);
-        }
+        return connect(source);
     }
 }

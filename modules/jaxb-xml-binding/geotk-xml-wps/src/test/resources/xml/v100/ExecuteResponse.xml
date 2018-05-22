@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wps:ExecuteResponse xmlns:gco="http://www.isotc211.org/2005/gco"
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                     xmlns:gmx="http://www.isotc211.org/2005/gmx" 
+                     xmlns:gmi="http://www.isotc211.org/2005/gmi"
+                     xmlns:gmd="http://www.isotc211.org/2005/gmd"
+                     xmlns:xlink="http://www.w3.org/1999/xlink"
+                     xmlns:wps="http://www.opengis.net/wps/1.0.0"
+                     xmlns:ows="http://www.opengis.net/ows/1.1"
+                     xmlns:mml="http://www.w3.org/1998/Math/MathML"
+                     serviceInstance="http://recette.examind.com/examind/WS/wps/littleWPS?SERVICE=WPS&amp;REQUEST=GetCapabilities"
+                     service="WPS" version="1.0.0" xml:lang="en-EN">
+    <wps:Process wps:processVersion="1.0.0">
+        <ows:Title>
+            Geotoolkit : Math:add
+        </ows:Title>
+        <ows:Abstract>
+            Adds two double.
+        </ows:Abstract>
+        <ows:Identifier>
+            urn:ogc:cstl:wps:geotoolkit:math:add
+        </ows:Identifier>
+    </wps:Process>
+    <wps:Status creationTime="2018-05-29T07:23:34.346Z">
+        <wps:ProcessSucceeded>
+            Process completed.
+        </wps:ProcessSucceeded>
+    </wps:Status>
+    <wps:ProcessOutputs>
+        <wps:Output>
+            <ows:Identifier>
+                urn:ogc:cstl:wps:geotoolkit:math:add:output:result
+            </ows:Identifier>
+            <ows:Title>
+                Result
+            </ows:Title>
+            <ows:Abstract>
+                Addition result
+            </ows:Abstract>
+            <wps:Data>
+                <wps:LiteralData dataType="http://www.w3.org/TR/xmlschema-2/#double">
+                    4.0
+                </wps:LiteralData>
+            </wps:Data>
+        </wps:Output>
+    </wps:ProcessOutputs>
+</wps:ExecuteResponse>

@@ -95,7 +95,7 @@ public abstract class AbstractDescriptionBaseType {
         }
         return this.metadataLink;
     }
-    
+
     /**
      * Gets the value of the metadataLink property.
      *

@@ -31,19 +31,19 @@ import org.geotoolkit.ows.xml.AbstractMetadata;
 public class DescriptionType {
 
   private String id = null;
-  
+
   private String title = null;
-  
+
   @JsonProperty("abstract")
   private String _abstract = null;
-  
+
   private List<String> keywords = null;
-  
+
   private List<Metadata> metadata = null;
-  
+
   public DescriptionType() {
   }
-  
+
     public DescriptionType(AbstractDescription desc) {
         if (desc != null) {
             this.id = desc.getIdentifier().getValue();
@@ -59,13 +59,13 @@ public class DescriptionType {
             }
         }
     }
-  
+
   public DescriptionType id(String id) {
     this.id = id;
     return this;
   }
 
-  
+
   /**
   * Get id
   * @return id
@@ -76,13 +76,13 @@ public class DescriptionType {
   public void setId(String id) {
     this.id = id;
   }
-  
+
   public DescriptionType title(String title) {
     this.title = title;
     return this;
   }
 
-  
+
   /**
   * Get title
   * @return title
@@ -93,13 +93,13 @@ public class DescriptionType {
   public void setTitle(String title) {
     this.title = title;
   }
-  
+
   public DescriptionType _abstract(String _abstract) {
     this._abstract = _abstract;
     return this;
   }
 
-  
+
   /**
   * Get _abstract
   * @return _abstract
@@ -110,32 +110,32 @@ public class DescriptionType {
   public void setAbstract(String _abstract) {
     this._abstract = _abstract;
   }
-  
+
   public DescriptionType keywords(List<String> keywords) {
     this.keywords = keywords;
     return this;
   }
 
   public DescriptionType addKeywordsItem(String keywordsItem) {
-    
+
     if (this.keywords == null) {
       this.keywords = new ArrayList<>();
     }
-    
+
     this.keywords.add(keywordsItem);
     return this;
   }
-  
+
   public DescriptionType addKeywordsItems(List<String> keywordsItems) {
-    
+
     if (this.keywords == null) {
       this.keywords = new ArrayList<>();
     }
-    
+
     this.keywords.addAll(keywordsItems);
     return this;
   }
-  
+
   /**
   * Get keywords
   * @return keywords
@@ -146,22 +146,22 @@ public class DescriptionType {
   public void setKeywords(List<String> keywords) {
     this.keywords = keywords;
   }
-  
+
   public DescriptionType metadata(List<Metadata> metadata) {
     this.metadata = metadata;
     return this;
   }
 
   public DescriptionType addMetadataItem(Metadata metadataItem) {
-    
+
     if (this.metadata == null) {
       this.metadata = new ArrayList<Metadata>();
     }
-    
+
     this.metadata.add(metadataItem);
     return this;
   }
-  
+
   /**
   * Get metadata
   * @return metadata
@@ -172,7 +172,7 @@ public class DescriptionType {
   public void setMetadata(List<Metadata> metadata) {
     this.metadata = metadata;
   }
-  
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -193,12 +193,12 @@ public class DescriptionType {
   public int hashCode() {
     return Objects.hash(id, title, _abstract, keywords, metadata);
   }
-  
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class DescriptionType {\n");
-    
+
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    _abstract: ").append(toIndentedString(_abstract)).append("\n");
@@ -219,7 +219,7 @@ public class DescriptionType {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
+
 }
 
 

@@ -21,7 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import javax.xml.bind.Marshaller;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
-import org.geotoolkit.wps.xml.v100.GetCapabilities;
+import org.geotoolkit.wps.xml.v100.TOREMOVE.GetCapabilities;
 import org.junit.Test;
 
 import static org.apache.sis.test.Assert.*;

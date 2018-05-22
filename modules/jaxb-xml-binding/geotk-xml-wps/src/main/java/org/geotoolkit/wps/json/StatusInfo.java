@@ -17,21 +17,22 @@
 package org.geotoolkit.wps.json;
 
 import java.util.Objects;
+import org.geotoolkit.wps.xml.v200.Status;
 
 /**
  * StatusInfo
  */
 public class StatusInfo implements WPSJSONResponse {
-    
+
     public StatusInfo() {
-        
+
     }
-    
-    public StatusInfo(org.geotoolkit.wps.xml.StatusInfo status) {
+
+    public StatusInfo(org.geotoolkit.wps.xml.v200.StatusInfo status) {
         if (status != null) {
             this.progress = status.getPercentCompleted();
-            this.message = status.getStatus();
-            this.status = StatusEnum.fromValue(status.getStatus());
+            this.message = status.getMessage();
+            this.status = status.getStatus();
         }
     }
 
@@ -39,7 +40,7 @@ public class StatusInfo implements WPSJSONResponse {
    * Gets or Sets status
    */
   public enum StatusEnum {
-    
+
     ACCEPTED("accepted"),
     RUNNING("running"),
     SUCCESSFUL("successful"),
@@ -50,7 +51,7 @@ public class StatusInfo implements WPSJSONResponse {
     StatusEnum(String value) {
       this.value = value;
     }
-    
+
     public String getValue() {
       return value;
     }
@@ -59,7 +60,7 @@ public class StatusInfo implements WPSJSONResponse {
     public String toString() {
       return String.valueOf(value);
     }
-    
+
     public static StatusEnum fromValue(String text) {
       for (StatusEnum b : StatusEnum.values()) {
         if (String.valueOf(b.value).equals(text)) {
@@ -68,38 +69,38 @@ public class StatusInfo implements WPSJSONResponse {
       }
       return null;
     }
-    
+
   }
-  
-  private StatusEnum status = null;
-  
+
+  private Status status = null;
+
   private String message = null;
-  
+
   private Integer progress = null;
-  
-  public StatusInfo status(StatusEnum status) {
+
+  public StatusInfo status(Status status) {
     this.status = status;
     return this;
   }
 
-  
+
   /**
   * Get status
   * @return status
   **/
-  public StatusEnum getStatus() {
+  public Status getStatus() {
     return status;
   }
-  public void setStatus(StatusEnum status) {
+  public void setStatus(Status status) {
     this.status = status;
   }
-  
+
   public StatusInfo message(String message) {
     this.message = message;
     return this;
   }
 
-  
+
   /**
   * Get message
   * @return message
@@ -110,13 +111,13 @@ public class StatusInfo implements WPSJSONResponse {
   public void setMessage(String message) {
     this.message = message;
   }
-  
+
   public StatusInfo progress(Integer progress) {
     this.progress = progress;
     return this;
   }
 
-  
+
   /**
   * Get progress
   * minimum: 0
@@ -129,7 +130,7 @@ public class StatusInfo implements WPSJSONResponse {
   public void setProgress(Integer progress) {
     this.progress = progress;
   }
-  
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -148,12 +149,12 @@ public class StatusInfo implements WPSJSONResponse {
   public int hashCode() {
     return Objects.hash(status, message, progress);
   }
-  
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class StatusInfo {\n");
-    
+
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    message: ").append(toIndentedString(message)).append("\n");
     sb.append("    progress: ").append(toIndentedString(progress)).append("\n");
@@ -172,7 +173,7 @@ public class StatusInfo implements WPSJSONResponse {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
+
 }
 
 

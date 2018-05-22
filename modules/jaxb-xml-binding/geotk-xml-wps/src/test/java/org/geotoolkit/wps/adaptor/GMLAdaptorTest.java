@@ -23,7 +23,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.wps.xml.v200.DataInputType;
+import org.geotoolkit.wps.xml.v200.DataInput;
 import org.geotoolkit.wps.xml.v200.Format;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
@@ -65,7 +65,7 @@ public class GMLAdaptorTest {
         feature.setPropertyValue("code", "id-1");
         feature.setPropertyValue("geom", polygon);
         
-        DataInputType out = adaptor.toWPS2Input(feature);
+        DataInput out = adaptor.toWPS2Input(feature);
         System.out.println(out);
         
         

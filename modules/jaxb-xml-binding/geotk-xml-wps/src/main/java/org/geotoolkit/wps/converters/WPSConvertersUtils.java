@@ -49,7 +49,6 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.mathml.xml.*;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.ZipUtilities;
@@ -69,14 +68,11 @@ import org.geotoolkit.data.geojson.utils.GeometryUtils;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.wps.io.WPSIO;
-import org.geotoolkit.wps.xml.ComplexDataType;
-import org.geotoolkit.wps.xml.Reference;
 import org.opengis.coverage.Coverage;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
-import org.geotoolkit.wps.xml.v100.ext.GeoJSONType;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
@@ -92,10 +88,14 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.ows.xml.DomainMetadata;
-import org.geotoolkit.wps.xml.WPSXmlFactory;
+import org.geotoolkit.ows.xml.v200.DomainMetadataType;
 import org.geotoolkit.storage.DataStores;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_PATH;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_URL;
+import org.geotoolkit.wps.xml.v200.ComplexData;
+import org.geotoolkit.wps.xml.v200.Data;
+import org.geotoolkit.wps.xml.v200.Format;
+import org.geotoolkit.wps.xml.v200.Reference;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Property;
@@ -124,63 +124,6 @@ public class WPSConvertersUtils {
     static {
         GML_VERSION.put("1.0.0", "3.1.1");
         GML_VERSION.put("2.0.0", "3.2.1");
-    }
-
-    /**
-     * Fix the CRS problem for a Feature or a FeatureCollection
-     *
-     * @param dataValue a Feature or a FeatureCollection
-     * @return the sale Feature/FeatureCollection fixed
-     * @throws UnconvertibleObjectException
-     */
-    public static Object fixFeature(final Object dataValue) throws FactoryException {
-
-        if (dataValue instanceof Feature) {
-
-            final Feature featureIN = (Feature) dataValue;
-            FeatureType ft = featureIN.getType();
-            fixFeatureType(featureIN, ft);
-
-            return featureIN;
-        }
-
-        if (dataValue instanceof FeatureCollection) {
-            final FeatureCollection featureColl = (FeatureCollection) dataValue;
-
-            FeatureType ft = featureColl.getType();
-            try (FeatureIterator featureIter = featureColl.iterator()) {
-                if (featureIter.hasNext()) {
-                    final Feature feature = featureIter.next();
-                    fixFeatureType(feature, ft);
-                }
-            }
-            return featureColl;
-        }
-
-        throw new IllegalArgumentException("Invalid Feature");
-    }
-
-    /**
-     * Fix a FeatureType in spread the geometry CRS from a feature to the geometry descriptor CRS
-     *
-     * @param featureIN feature with geometry used to fix the geometry descriptor
-     * @param type the featureType to fix
-     * @throws UnconvertibleObjectException
-     */
-    private static FeatureType fixFeatureType(final Feature featureIN, FeatureType type) throws FactoryException {
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder(type);
-
-        //Fetch each geometry, get his CRS and
-        for (PropertyTypeBuilder pt : ftb.properties()) {
-            if (pt instanceof AttributeTypeBuilder && Geometry.class.isAssignableFrom( ((AttributeTypeBuilder)pt).getValueClass())) {
-                final String propertyName = pt.getName().toString();
-                final Geometry propertyGeom = (Geometry) featureIN.getPropertyValue(propertyName);
-                final CoordinateReferenceSystem extractCRS = JTS.findCoordinateReferenceSystem(propertyGeom);
-                ((AttributeTypeBuilder)pt).setCRS(extractCRS);
-            }
-        }
-
-        return ftb.build();
     }
 
     /**
@@ -267,11 +210,11 @@ public class WPSConvertersUtils {
      * @return
      * @throws UnconvertibleObjectException
      */
-    public static Object convertFromComplex(final String wpsVersion, final ComplexDataType complex, final Class expectedClass) throws UnconvertibleObjectException {
+    public static Object convertFromComplex(final String wpsVersion, final Data data, final Class expectedClass) throws UnconvertibleObjectException {
 
-        final String mime = complex.getMimeType();
-        final String encoding = complex.getEncoding();
-        final String schema = complex.getSchema();
+        final String mime = data.getMimeType();
+        final String encoding = data.getEncoding();
+        final String schema = data.getSchema();
 
         WPSIO.checkSupportedFormat(expectedClass, WPSIO.IOType.INPUT, mime, encoding, schema);
 
@@ -283,6 +226,7 @@ public class WPSConvertersUtils {
 
         ensureParametersDefined(expectedClass, WPSIO.IOType.INPUT, parameters);
 
+        ComplexData complex = data.getComplexData();
         final List<Object> content = complex.getContent();
 
         //remove white spaces
@@ -298,7 +242,7 @@ public class WPSConvertersUtils {
     }
 
     /**
-     * Get an convert an object int a {@link ComplexDataType complex}.
+     * Get an convert an object int a {@link ComplexData complex}.
      *
      * @param wpsVersion
      * @param object
@@ -309,7 +253,7 @@ public class WPSConvertersUtils {
      * @return
      * @throws UnconvertibleObjectException
      */
-    public static ComplexDataType convertToComplex(final String wpsVersion, final Object object, final String mime, final String encoding, final String schema,
+    public static ComplexData convertToComplex(final String wpsVersion, final Object object, final String mime, final String encoding, final String schema,
             final Map<String, Object> params) throws UnconvertibleObjectException {
 
         ArgumentChecks.ensureNonNull("Object", object);
@@ -332,11 +276,11 @@ public class WPSConvertersUtils {
             throw new UnconvertibleObjectException("Output complex not supported, no converter found.");
         }
 
-        return (ComplexDataType) converter.convert(object, parameters);
+        return (ComplexData) converter.convert(object, parameters);
     }
 
 
-    public static ComplexDataType convertToWMSComplex(String wpsVersion, Object object, String mimeType, String encoding, String schema, Map<String, Object> params)
+    public static ComplexData convertToWMSComplex(String wpsVersion, Object object, String mimeType, String encoding, String schema, Map<String, Object> params)
             throws UnconvertibleObjectException {
 
         ArgumentChecks.ensureNonNull("Object", object);
@@ -352,7 +296,7 @@ public class WPSConvertersUtils {
         parameters.put(WPSObjectConverter.WPSVERSION, wpsVersion);
         parameters.put(WPSObjectConverter.GMLVERSION, GML_VERSION.get(wpsVersion));
 
-        final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(wpsVersion, encoding, mimeType, schema);
+        final ComplexData complex = new ComplexData(Collections.singletonList(new Format(encoding, mimeType, schema, null)));
 
         final Map<String,Object> jsonMap = new HashMap<>();
         jsonMap.put("url", (String)params.get(WMS_INSTANCE_URL));
@@ -458,7 +402,7 @@ public class WPSConvertersUtils {
     }
 
     /**
-     * Get an convert an object int a {@link ReferenceType reference}.
+     * Get an convert an object int a {@link Reference reference}.
      *
      * @param version WPS version
      * @param object
@@ -506,25 +450,23 @@ public class WPSConvertersUtils {
      * @throws UnconvertibleObjectException
      */
     public static DomainMetadata createDataType(final String version, final Class clazz) {
-
-
         if (clazz.equals(Double.class)) {
-            return WPSXmlFactory.buildDomainMetadata(version, "Double", "http://www.w3.org/TR/xmlschema-2/#double");
+            return new DomainMetadataType("Double", "http://www.w3.org/TR/xmlschema-2/#double");
 
         } else if (clazz.equals(Float.class)) {
-            return WPSXmlFactory.buildDomainMetadata(version, "Float", "http://www.w3.org/TR/xmlschema-2/#float");
+            return new DomainMetadataType("Float", "http://www.w3.org/TR/xmlschema-2/#float");
 
         } else if (clazz.equals(Boolean.class)) {
-            return WPSXmlFactory.buildDomainMetadata(version, "Boolean", "http://www.w3.org/TR/xmlschema-2/#boolean");
+            return new DomainMetadataType("Boolean", "http://www.w3.org/TR/xmlschema-2/#boolean");
 
         } else if (clazz.equals(Integer.class)) {
-            return WPSXmlFactory.buildDomainMetadata(version, "Integer", "http://www.w3.org/TR/xmlschema-2/#integer");
+            return new DomainMetadataType("Integer", "http://www.w3.org/TR/xmlschema-2/#integer");
 
         } else if (clazz.equals(Long.class)) {
-            return WPSXmlFactory.buildDomainMetadata(version, "Long", "http://www.w3.org/TR/xmlschema-2/#long");
+            return new DomainMetadataType("Long", "http://www.w3.org/TR/xmlschema-2/#long");
 
         } else if (clazz.equals(String.class) || WPSIO.isSupportedInputClass(clazz) || WPSIO.isSupportedOutputClass(clazz)) {
-            return WPSXmlFactory.buildDomainMetadata(version, "String", "http://www.w3.org/TR/xmlschema-2/#string");
+            return new DomainMetadataType("String", "http://www.w3.org/TR/xmlschema-2/#string");
 
         } else {
            return null;
@@ -734,13 +676,7 @@ public class WPSConvertersUtils {
      * @return A reference equivalent to the input URI.
      */
     public static Reference UriToReference(String version, URI toConvert, WPSIO.IOType type, String mimeType) {
-        Reference ref;
-        if(WPSIO.IOType.INPUT.equals(type)) {
-            ref = WPSXmlFactory.buildInputReference(version, "UTF-8", mimeType, toConvert.toString());
-        } else {
-            ref = WPSXmlFactory.buildOutputReference(version, "UTF-8", mimeType, toConvert.toString());
-        }
-        return ref;
+        return new Reference("UTF-8", mimeType, toConvert.toString());
     }
 
 
@@ -880,6 +816,9 @@ public class WPSConvertersUtils {
     }
 
     /**
+     * TODO : completely change the content. The algorithm is not adapted to
+     * WPS references. But to do so, we'll need a proper GeoJSON streaming reader.
+     *
      * Read one feature collection from a GeoJSON file containing one feature collection
      * @param url location of the file to read
      * @return the read feature collection
@@ -900,7 +839,7 @@ public class WPSConvertersUtils {
         final Session session = store.createSession(false);
 
         if (typesNumber != 1)
-            throw new DataStoreException("One feature expected. Found " + typesNumber);
+            throw new DataStoreException("Multiple feature types found from datasource: " + typesNumber);
 
         final GenericName name = iterator.next();
         return session.getFeatureCollection(QueryBuilder.all(name));
@@ -947,13 +886,16 @@ public class WPSConvertersUtils {
 
     /**
      * Helper method that encapsulates a String into an XML CDATA section before
-     * adding it to the content of a ComplexDataType instance.
+     * adding it to the content of a ComplexData instance.
      *
      * @param content content to put in a CDATA section
      * @param complex complex in which to add the CDATA section
      */
-    public static void addCDATAToComplex(final String content, final ComplexDataType complex) {
-        complex.getContent().add(new GeoJSONType(content));
+    public static void addCDATAToComplex(String content, final Data complex) {
+        if (content != null && !content.startsWith("<![CDATA[")) {
+            content = "<![CDATA["+content+"]]>";
+        }
+        complex.getContent().add(content);
     }
 
     /**
@@ -981,27 +923,19 @@ public class WPSConvertersUtils {
      * Pre-condition : the content must be either of the type GeoJSONType, String
      * or Node
      *
-     * @param complex the complex to read
+     * @param objContent the complex to read
      * @return the complex content as a String
      */
-    public static String extractGeoJSONContentAsStringFromComplex(final ComplexDataType complex) {
-        ArgumentChecks.ensureNonNull("complex", complex);
+    public static String geojsonContentAsString(final Object objContent) {
+        ArgumentChecks.ensureNonNull("Data", objContent);
 
-        if (complex.getContent().size() != 1)
-            throw new UnconvertibleObjectException("Expected a complex with a content size of 1. Actual content size : " + complex.getContent().size());
-
-        final Object objContent = complex.getContent().get(0);
-
-        if (objContent instanceof GeoJSONType)
-            return ((GeoJSONType)objContent).getContent();
-        else if (objContent instanceof String)
+        if (objContent instanceof String)
             return (String) objContent;
         else if (objContent instanceof Node)
             return ((Node) objContent).getTextContent();
         else
             throw new UnconvertibleObjectException("Expected content type was "
-                                    + GeoJSONType.class.getName()
-                                    + ", Node or String. Actual content type : "
+                                    + "Node or String. Actual content type : "
                                     + objContent.getClass().getName());
     }
 

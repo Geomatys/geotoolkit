@@ -31,10 +31,13 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -52,12 +55,14 @@ import org.geotoolkit.nio.IOUtilities;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_PATH;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_URL;
 import org.geotoolkit.wps.io.WPSIO;
-import org.geotoolkit.wps.xml.Reference;
-import org.geotoolkit.wps.xml.WPSXmlFactory;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.ComplexData;
+import org.geotoolkit.wps.xml.v200.Data;
+import org.geotoolkit.wps.xml.v200.Format;
+import org.geotoolkit.wps.xml.v200.Reference;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import org.opengis.feature.Feature;
 import org.opengis.util.FactoryException;
@@ -150,9 +155,9 @@ public final class ConvertersTestUtils {
                                                                         encoding);
 
         // Setup the resource and run conversion
-        if (sourceClass.equals(ComplexDataType.class)) {
+        if (sourceClass.equals(ComplexData.class)) {
             final String resource = ConvertersTestUtils.getTestResource(ConvertersTestUtils.class, resourcePath);
-            final ComplexDataType complex = ConvertersTestUtils.createComplex(mimeType, encoding, schema, resource);
+            final ComplexData complex = ConvertersTestUtils.createComplex(mimeType, encoding, schema, resource);
 
             return converter.convert((SourceType) complex, param);
         } else if (sourceClass.equals(Reference.class)) {
@@ -217,11 +222,11 @@ public final class ConvertersTestUtils {
      * Helper method to initialize a converter and run with its parameters.
      *
      * The converters are the one that convert Geometry or Feature types to
-     * Complex or Reference.
-     *
-     * The method is in charge of setting up the parameters map, the resource
-     * (either a java URL or String containg json datas) and calling conversion
-     * method.
+ Complex or Reference.
+
+ The method is in charge of setting up the parameters map, the resource
+ (either a java URL or String containg json datas) and calling conversion
+ method.
      *
      * @param <SourceType> type of the input data in the conversion
      * @param <TargetType> type of the output data in the conversion
@@ -255,7 +260,7 @@ public final class ConvertersTestUtils {
         // Setup the parameters map
         Path tmpDirPath;
         Map<String, Object> parametersMap = null;
-        if (targetClass.equals(ComplexDataType.class))
+        if (targetClass.equals(ComplexData.class))
             parametersMap = ConvertersTestUtils.createParameters(mimeType, encoding);
         else if (targetClass.equals(Reference.class)) {
             tmpDirPath = Files.createTempDirectory(UUID.randomUUID().toString());
@@ -304,11 +309,9 @@ public final class ConvertersTestUtils {
      * @param content can be null
      * @return the complex with its field filled using the above parameters
      */
-    public static final ComplexDataType createComplex(String mimeType, String encoding, String schema, String content) {
-        final ComplexDataType complex = new ComplexDataType();
-        complex.setMimeType(mimeType);
-        complex.setEncoding(encoding);
-        complex.setSchema(schema);
+    public static final ComplexData createComplex(String mimeType, String encoding, String schema, String content) {
+        final Format myFormat = new Format(encoding, mimeType, schema, null);
+        final ComplexData complex = new ComplexData(Collections.singletonList(myFormat));
 
         if (content != null)
             complex.getContent().add(content);
@@ -317,7 +320,7 @@ public final class ConvertersTestUtils {
     }
 
     /**
-     * Helper method that creates a ReferenceType with all its field filled
+     * Helper method that creates a Reference with all its field filled
      * @param mimeType can be null
      * @param encoding can be null
      * @param schema can be null
@@ -325,7 +328,7 @@ public final class ConvertersTestUtils {
      * @return the reference with its field filled using the above parameters
      */
     public static final Reference createReference(String version, String mimeType, String encoding, String schema, URL url) {
-        final Reference reference = WPSXmlFactory.buildInOutReference(version, WPSIO.IOType.INPUT);
+        final Reference reference = new Reference();
         reference.setMimeType(mimeType);
         reference.setEncoding(encoding);
         reference.setSchema(schema);
@@ -559,5 +562,58 @@ public final class ConvertersTestUtils {
         assertNotNull(geometry);
         assertEquals(-80.87088507656375, geometry.getCoordinate().x, DELTA);
         assertEquals(35.21515162500578, geometry.getCoordinate().y, DELTA);
+    }
+
+    /**
+     * Verify that given complex data has exactly one format available, and that
+     * its parameters match given ones. If a given parameter is null, we expect
+     * it to be null in tested format.
+     *
+     * @param toTest The complex data to test.
+     * @param encoding The expected format encoding (Example: UTF-8, US-ASCII, etc.)
+     * @param mime Expected format mime-type (Example: image/png, application/geo+json, etc.)
+     * @param schema Expected schema information.
+     */
+    public static void assertSingleFormat(final ComplexData toTest, final String encoding, final String mime, final String schema) {
+        assertNotNull("Complex data to test", toTest);
+        final List<Format> formats = toTest.getFormat();
+        assertNotNull("No format list associated to the complex data", formats);
+        assertEquals("Only one format should be available", 1, formats.size());
+        final Format f = formats.get(0);
+        assertEquals("Data mime type", mime, f.getMimeType());
+        assertEquals("Data encoding", encoding, f.getEncoding());
+        assertEquals("Data schema", schema, f.getSchema());
+    }
+
+    /**
+     * Verify that given data attributes match input format specifications.
+     * @param data The data to test.
+     * @param encoding The expected format encoding (Example: UTF-8, US-ASCII, etc.)
+     * @param mime Expected format mime-type (Example: image/png, application/geo+json, etc.)
+     * @param schema Expected schema information.
+     */
+    public static void assertFormatMatch(final Data data, final String encoding, final String mime, final String schema) {
+        assertNotNull("Data to test", data);
+        assertEquals("Data mime type", mime, data.getMimeType());
+        assertEquals("Data encoding", encoding, data.getEncoding());
+        assertEquals("Data schema", schema, data.getSchema());
+    }
+
+    public static void useDataContentAsFile(final Data input, Consumer<Path> fileUser) throws IOException {
+        final List<Object> content = input.getContent();
+        assertEquals(1, content.size());
+        assertNotNull(content);
+        assertFalse("No content available in test data", content.isEmpty());
+        assertTrue(content.get(0) instanceof String);
+
+        String geoJson = (String) content.get(0);
+
+        // Write the json in a tmp file in order to be able to read it
+        Path tmpFilePath = WPSConvertersUtils.writeTempJsonFile(geoJson);
+        try {
+            fileUser.accept(tmpFilePath);
+        } finally {
+            Files.delete(tmpFilePath);
+        }
     }
 }

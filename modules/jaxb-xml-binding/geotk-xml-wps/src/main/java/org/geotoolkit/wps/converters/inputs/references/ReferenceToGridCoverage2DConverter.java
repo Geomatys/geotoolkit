@@ -32,7 +32,7 @@ import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
-import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.v200.Reference;;
 
 /**
  * Implementation of ObjectConverter to convert a reference into a GridCoverage2D.
@@ -101,9 +101,9 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
             }
 
         } catch (IOException ex) {
-            throw new UnconvertibleObjectException("Reference coverage invalid input : IO", ex);
+            throw new UnconvertibleObjectException("ReferenceType coverage invalid input : IO", ex);
         } catch (CoverageStoreException ex) {
-            throw new UnconvertibleObjectException("Reference coverage invalid input : Can't read coverage", ex);
+            throw new UnconvertibleObjectException("ReferenceType coverage invalid input : Can't read coverage", ex);
         } finally {
             if (imageStream != null) {
                 try {

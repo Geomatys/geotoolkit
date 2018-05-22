@@ -235,7 +235,7 @@ public class DescriptionType implements AbstractDescription {
             this.keywords.add(new KeywordsType(keywords));
         }
     }
-    
+
     @Override
     public AbstractCodeType getIdentifier() {
         return null;
