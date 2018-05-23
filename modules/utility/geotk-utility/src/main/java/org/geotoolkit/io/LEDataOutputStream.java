@@ -133,4 +133,20 @@ public class LEDataOutputStream extends FilterOutputStream implements DataOutput
     public void writeUTF(String s) throws IOException {
         throw new IOException("Not supported");
     }
+
+    /**
+     * Align byte stream to a padding value, 0 bytes will be added until padding
+     * value is reached.
+     * Padding values are usually very small, 2, 4 or 8 bytes to ensure primitive
+     * types such as Short, Integer, Float are aligned in memory.
+     *
+     * @param padding value to realign.
+     * @throws IOException
+     */
+    public void realign(int padding) throws IOException{
+        while ((position%padding) != 0) {
+            write(0);
+        }
+    }
+
 }
