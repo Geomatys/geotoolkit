@@ -44,7 +44,7 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.util.converter.LongStringConverter;
 import org.apache.sis.geometry.DirectPosition2D;
-import org.apache.sis.gui.crs.CRSButton;
+import org.apache.sis.gui.referencing.CRSButton;
 import org.controlsfx.control.StatusBar;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
