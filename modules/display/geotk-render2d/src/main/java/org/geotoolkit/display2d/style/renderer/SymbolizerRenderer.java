@@ -16,13 +16,15 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.display2d.style.CachedSymbolizer;
 
 
 /**
@@ -88,5 +90,27 @@ public interface SymbolizerRenderer {
      * @return true if the searcharea hit this graphic object, false otherwise.
      */
     boolean hit(ProjectedCoverage graphic, SearchAreaJ2D mask, VisitFilter filter);
+
+    /**
+     * Obtain the presentation for given graphic.
+     *
+     * @param graphic : cached graphic object
+     * @return Spliterator never null
+     * @throws PortrayalException
+     */
+    default Spliterator<Presentation> presentation(ProjectedObject graphic) throws PortrayalException {
+        return presentation(Collections.singleton(graphic).iterator());
+    }
+
+    /**
+     * Obtain the presentation for given graphics.
+     *
+     * @param graphics : iterator over all graphics to render
+     * @return Spliterator never null
+     * @throws PortrayalException
+     */
+    default Spliterator<Presentation> presentation(Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
+        return Spliterators.emptySpliterator();
+    }
 
 }
