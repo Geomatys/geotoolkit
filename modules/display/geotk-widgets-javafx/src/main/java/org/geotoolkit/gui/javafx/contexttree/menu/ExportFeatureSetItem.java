@@ -64,7 +64,7 @@ import org.opengis.geometry.Geometry;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ExportItem extends TreeMenuItem {
+public class ExportFeatureSetItem extends TreeMenuItem {
 
     private static final Image ICON = SwingFXUtils.toFXImage(
             IconBuilder.createImage(FontAwesomeIcons.ICON_DOWNLOAD, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
@@ -72,7 +72,7 @@ public class ExportItem extends TreeMenuItem {
     private final Map<FileChooser.ExtensionFilter,DataStoreFactory> index = new HashMap<>();
     private WeakReference<TreeItem> itemRef;
 
-    public ExportItem() {
+    public ExportFeatureSetItem() {
 
         menuItem = new Menu(GeotkFX.getString(this,"export"));
         menuItem.setGraphic(new ImageView(ICON));
@@ -122,7 +122,7 @@ public class ExportItem extends TreeMenuItem {
                     final FeatureMapLayer layer = (FeatureMapLayer) ti.getValue();
 
                     final DirectoryChooser chooser = new DirectoryChooser();
-                    chooser.setTitle(GeotkFX.getString(ExportItem.class, "folder"));
+                    chooser.setTitle(GeotkFX.getString(ExportFeatureSetItem.class, "folder"));
                     File folder = chooser.showDialog(null);
                     final FeatureSet baseCol = layer.getResource();
 
