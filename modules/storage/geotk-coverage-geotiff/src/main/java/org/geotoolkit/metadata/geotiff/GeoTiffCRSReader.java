@@ -1319,7 +1319,7 @@ final class GeoTiffCRSReader {
         final String unitCode = metadata.getAsString(key);
 
         // if not defined, return the default unit of measure
-        if (unitCode == null) {
+        if (unitCode == null || "65535".equals(unitCode)) {
             return def;
         }
 
