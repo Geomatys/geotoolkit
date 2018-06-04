@@ -28,23 +28,20 @@ import org.xml.sax.SAXException;
  *
  * @author Johann Sorel (Geomatys)
  * @module
- *
- * @deprecated Replaced by {@link org.apache.sis.test.Assert#assertXmlEquals(Object, Object, String[])}.
  */
-@Deprecated
 public class DomCompare {
-
     /**
-     * convenient method to test xml comparison by ignoring irrevelant details
-     * like formating, different attribute order, comments ...
+     * convenient method to test XML comparison by ignoring irrelevant details
+     * like formatting, different attribute order, comments ...
      *
-     * @param expected : the expected structure (File,Stream,Document)
-     * @param result : the obtained result (File,Stream,Document)
+     * @param expected  the expected structure (File,Stream,Document)
+     * @param result    the obtained result (File,Stream,Document)
      */
     public static void compare(final Object expected, final Object result)
             throws ParserConfigurationException, SAXException, IOException
     {
         final XMLComparator comparator = new XMLComparator(expected, result);
+        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns");
         comparator.compare();
     }
 }

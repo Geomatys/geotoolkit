@@ -16,9 +16,13 @@
  */
 package org.geotoolkit.internal.jaxb;
 
+import java.util.Collections;
+import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import org.apache.sis.internal.jaxb.LegacyNamespaces;
 import org.apache.sis.xml.MarshallerPool;
+import org.apache.sis.xml.XML;
 
 /**
  *
@@ -27,8 +31,9 @@ import org.apache.sis.xml.MarshallerPool;
 public final class JTSWrapperMarshallerPool {
     private static final MarshallerPool instance;
     static {
+        final Map<String, Object> properties = Collections.singletonMap(XML.METADATA_VERSION, LegacyNamespaces.VERSION_2007);
         try {
-            instance = new MarshallerPool(JAXBContext.newInstance(ObjectFactory.class), null);
+            instance = new MarshallerPool(JAXBContext.newInstance(ObjectFactory.class), properties);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }

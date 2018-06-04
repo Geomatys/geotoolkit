@@ -362,7 +362,7 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
     public void testReadBiefType321() throws Exception {
         testReadBiefType(XmlFeatureTypeTest.class.getResource("bief321.xsd"));
     }
-    
+
     /**
      * Read and check Bief datatype. The bief type is a schema extracted from
      * real-world WFS service. We want to ensure that its geometry and simple

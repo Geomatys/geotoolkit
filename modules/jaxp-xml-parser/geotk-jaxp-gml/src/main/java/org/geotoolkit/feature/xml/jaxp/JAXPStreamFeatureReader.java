@@ -154,8 +154,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
     @Override
     public void dispose() {
-        // do nothing
-        if(unmarshaller!=null){
+        if (unmarshaller != null) {
             getPool().recycle(unmarshaller);
             unmarshaller = null;
         }

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<gml:FeatureCollection xmlns:ms="http://mapserver.gis.umn.edu/mapserver" xmlns:gml="http://www.opengis.net/gml" xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/gml http://schemas.opengis.net/gml/3.1.1/base.xsd http://mapserver.gis.umn.edu/mapserver http://www.ifremer.fr/services/wfs1?SERVICE=WFS&amp;VERSION=1.1.0&amp;REQUEST=DescribeFeatureType&amp;TYPENAME=quadrige&amp;OUTPUTFORMAT=text/xml;%20subtype=gml/3.1.1">
+<gml:FeatureCollection xmlns:ms="http://mapserver.gis.umn.edu/mapserver"
+                       xmlns:gml="http://www.opengis.net/gml"
+                       xmlns:wfs="http://www.opengis.net/wfs"
+                       xmlns:ogc="http://www.opengis.net/ogc"
+                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xsi:schemaLocation="http://www.opengis.net/gml http://schemas.opengis.net/gml/3.1.1/base.xsd
+                                           http://mapserver.gis.umn.edu/mapserver http://www.ifremer.fr/services/wfs1?SERVICE=WFS&amp;VERSION=1.1.0&amp;REQUEST=DescribeFeatureType&amp;TYPENAME=quadrige&amp;OUTPUTFORMAT=text/xml;%20subtype=gml/3.1.1">
       <gml:boundedBy>
       	<gml:Envelope srsName="EPSG:4326">
       		<gml:lowerCorner>-21.377488 -61.841000</gml:lowerCorner>

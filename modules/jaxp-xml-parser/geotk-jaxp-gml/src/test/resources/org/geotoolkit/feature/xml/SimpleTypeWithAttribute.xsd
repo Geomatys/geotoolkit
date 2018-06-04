@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<xsd:schema elementFormDefault="qualified" 
+<xs:schema elementFormDefault="qualified"
     targetNamespace="http://www.opengis.net/gml/3.2"
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <xsd:import schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd" namespace="http://www.opengis.net/gml/3.2"/>
-    <xsd:element xmlns:gml="http://www.opengis.net/gml/3.2" name="TestSimple" type="gml:TestSimpleType" substitutionGroup="gml:_Feature"/>
-    <xsd:attribute name="attString" type="string"/>
-    <xsd:attribute name="attInteger" type="xsd:integer"/>
-    <xsd:complexType name="TestSimpleType">
-        <xsd:complexContent>
-            <xsd:extension xmlns:gml="http://www.opengis.net/gml/3.2" base="gml:AbstractFeatureType" >
-                <xsd:attribute ref="gml:attString" default="hello"/>
-                <xsd:attribute ref="gml:attInteger" default="23"/>
-                <xsd:sequence>
-                    <xsd:element name="ID"                  maxOccurs="1" minOccurs="1" nillable="true" type="xsd:integer"/>
-                    <xsd:element name="eleString"           maxOccurs="1" minOccurs="1" nillable="true" type="xsd:string"/>
-                    <xsd:element name="eleInteger"          maxOccurs="1" minOccurs="1" nillable="true" type="xsd:integer"/>
-                </xsd:sequence>
-            </xsd:extension>
-        </xsd:complexContent>
-    </xsd:complexType>
-</xsd:schema>
+    <xs:import schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd" namespace="http://www.opengis.net/gml/3.2"/>
+    <xs:element xmlns:gml="http://www.opengis.net/gml/3.2" name="TestSimple" type="gml:TestSimpleType" substitutionGroup="gml:_Feature"/>
+    <xs:attribute name="attString" type="string"/>
+    <xs:attribute name="attInteger" type="xs:integer"/>
+    <xs:complexType name="TestSimpleType">
+        <xs:complexContent>
+            <xs:extension xmlns:gml="http://www.opengis.net/gml/3.2" base="gml:AbstractFeatureType" >
+                <xs:attribute ref="gml:attString" default="hello"/>
+                <xs:attribute ref="gml:attInteger" default="23"/>
+                <xs:sequence>
+                    <xs:element name="ID"                  maxOccurs="1" minOccurs="1" nillable="true" type="xs:integer"/>
+                    <xs:element name="eleString"           maxOccurs="1" minOccurs="1" nillable="true" type="xs:string"/>
+                    <xs:element name="eleInteger"          maxOccurs="1" minOccurs="1" nillable="true" type="xs:integer"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>
