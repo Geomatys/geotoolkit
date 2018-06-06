@@ -6,6 +6,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLEventWriter;
 import org.apache.sis.util.Version;
 import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
+import org.geotoolkit.util.Versioned;
 import org.geotoolkit.wps.xml.MarshallerProxy;
 
 /**
@@ -28,6 +29,8 @@ public class WPSMarshaller extends MarshallerProxy {
             version = ((DocumentBase) jaxbElement).getVersion();
         } else if (jaxbElement instanceof AbstractCapabilitiesBase) {
             version = new Version(((AbstractCapabilitiesBase)jaxbElement).getVersion());
+        } else if (jaxbElement instanceof Versioned) {
+            version = ((Versioned)jaxbElement).getVersion();
         }
 
         if (version != null) {
@@ -42,8 +45,8 @@ public class WPSMarshaller extends MarshallerProxy {
     @Override
     public void marshal(Object jaxbElement, XMLEventWriter writer) throws JAXBException {
         try {
-        checkElement(jaxbElement);
-        super.marshal(jaxbElement, new TransformingWriter(writer));
+            checkElement(jaxbElement);
+            super.marshal(jaxbElement, new TransformingWriter(writer));
         } finally {
             FilterByVersion.IS_LEGACY.remove();
         }

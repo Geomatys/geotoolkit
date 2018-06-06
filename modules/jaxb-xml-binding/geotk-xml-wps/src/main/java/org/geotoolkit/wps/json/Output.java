@@ -17,31 +17,32 @@
 package org.geotoolkit.wps.json;
 
 import java.util.Objects;
+import org.geotoolkit.wps.xml.v200.DataTransmissionMode;
 
 /**
  * Output
  */
 public class Output extends DataType {
 
-  private TransmissionMode transmissionMode = null;
-  
-  public Output transmissionMode(TransmissionMode transmissionMode) {
+  private DataTransmissionMode transmissionMode = null;
+
+  public Output transmissionMode(DataTransmissionMode transmissionMode) {
     this.transmissionMode = transmissionMode;
     return this;
   }
 
-  
+
   /**
   * Get transmissionMode
   * @return transmissionMode
   **/
-  public TransmissionMode getTransmissionMode() {
+  public DataTransmissionMode getTransmissionMode() {
     return transmissionMode;
   }
-  public void setTransmissionMode(TransmissionMode transmissionMode) {
+  public void setTransmissionMode(DataTransmissionMode transmissionMode) {
     this.transmissionMode = transmissionMode;
   }
-  
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -59,7 +60,7 @@ public class Output extends DataType {
   public int hashCode() {
     return Objects.hash(transmissionMode, super.hashCode());
   }
-  
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -81,7 +82,7 @@ public class Output extends DataType {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
+
 }
 
 

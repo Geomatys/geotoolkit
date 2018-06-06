@@ -14,10 +14,11 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wps;
+package org.geotoolkit.wps.client;
 
 import java.io.*;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,13 +33,17 @@ import org.geotoolkit.ows.xml.ExceptionResponse;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.ows.xml.v110.AcceptVersionsType;
+import org.geotoolkit.ows.xml.v200.AcceptVersionsType;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.wps.xml.ProcessOfferings;
-import org.geotoolkit.wps.xml.WPSCapabilities;
+import org.geotoolkit.wps.xml.v200.Capabilities;
+import org.geotoolkit.wps.xml.v200.DescribeProcess;
+import org.geotoolkit.wps.xml.v200.Execute;
+import org.geotoolkit.wps.xml.v200.GetCapabilities;
+import org.geotoolkit.wps.xml.v200.GetStatus;
+import org.geotoolkit.wps.xml.v200.ProcessOfferings;
 
 /**
- * WPS server, used to aquiere capabilites and requests process.
+ * WPS server, used to acquire capabilities and requests process.
  *
  * @author Quentin Boileau (Geomatys)
  * @author Johann Sorel (Geomatys)
@@ -49,10 +54,8 @@ public class WebProcessingClient extends AbstractClient {
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wps");
     private static final int TIMEOUT_CAPS = 10000;
 
-    private WPSCapabilities capabilities;
+    private Capabilities capabilities;
     private boolean forceGET = true;
-    private WPSProcessingRegistry registry = null;
-
 
     /**
      * Constructor
@@ -190,13 +193,6 @@ public class WebProcessingClient extends AbstractClient {
         LOGGER.log(Level.INFO, "Web processing client initialization complete.");
     }
 
-    public synchronized WPSProcessingRegistry asRegistry() throws CapabilitiesException {
-        if (registry==null) {
-            registry = new WPSProcessingRegistry(this, parameters.getOrCreate(WPSClientFactory.DYNAMIC_LOADING).booleanValue());
-        }
-        return registry;
-    }
-
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(WPSClientFactory.NAME);
@@ -218,7 +214,7 @@ public class WebProcessingClient extends AbstractClient {
      * @return WPSCapabilitiesType : WPS server capabilities
      * @throws org.geotoolkit.client.CapabilitiesException
      */
-    public WPSCapabilities getServiceCapabilities() throws CapabilitiesException {
+    public Capabilities getServiceCapabilities() throws CapabilitiesException {
         return getServiceCapabilities(false);
     }
 
@@ -228,8 +224,7 @@ public class WebProcessingClient extends AbstractClient {
      * @return WPSCapabilitiesType : WPS server capabilities
      * @throws org.geotoolkit.client.CapabilitiesException
      */
-    public WPSCapabilities getServiceCapabilities(boolean refresh) throws CapabilitiesException {
-
+    public Capabilities getServiceCapabilities(boolean refresh) throws CapabilitiesException {
         if (capabilities != null && !refresh) {
             return capabilities;
         }
@@ -243,10 +238,13 @@ public class WebProcessingClient extends AbstractClient {
                 obj = ((JAXBElement)obj).getValue();
             }
             if(obj instanceof ExceptionResponse) {
-                final ExceptionResponse er = (ExceptionResponse) obj;
-                throw new CapabilitiesException(er.toException().getMessage(), er.toException());
+                final Exception er = ((ExceptionResponse) obj).toException();
+                throw new CapabilitiesException(er.getMessage(), er);
+            } else if (obj instanceof Capabilities) {
+                capabilities = (Capabilities) obj;
+            } else {
+                throw new CapabilitiesException("Unexpected jaxb mapping for capabilities: "+(obj == null ? "null" : obj.getClass()));
             }
-            capabilities = (WPSCapabilities) obj;
             WPSMarshallerPool.getInstance().recycle(unmarshaller);
         } catch (Exception ex) {
             capabilities = null;
@@ -266,31 +264,21 @@ public class WebProcessingClient extends AbstractClient {
      * @return GetCapabilitiesRequest : getCapabilities request.
      */
     public GetCapabilitiesRequest createGetCapabilities() {
+        GetCapabilities cap = new GetCapabilities();
+        cap.setService("WPS");
+        final WPSVersion version = getVersion();
+        if (version == null || WPSVersion.auto.equals(version)) {
+            final String[] availableVersions = Arrays.stream(WPSVersion.values())
+                    .filter(v -> !WPSVersion.auto.equals(v))
+                    .map(WPSVersion::getCode)
+                    .toArray(size -> new String[size]);
+            cap.setAcceptVersions(new AcceptVersionsType(availableVersions));
+        } else {
+            cap.setAcceptVersions(new AcceptVersionsType(version.getCode()));
+        }
 
         final GetCapabilitiesRequest request = new GetCapabilitiesRequest(serverURL.toString(), getClientSecurity(), forceGET, getTimeOutValue());
-        switch (getVersion()) {
-            case v100: {
-                final org.geotoolkit.wps.xml.v100.TOREMOVE.GetCapabilities cap = new org.geotoolkit.wps.xml.v100.TOREMOVE.GetCapabilities();
-                cap.setService("WPS");
-                cap.setAcceptVersions(new AcceptVersionsType("1.0.0"));
-                request.setContent(cap);
-                } break;
-            case v200: {
-                final org.geotoolkit.wps.xml.v200.GetCapabilities cap = new org.geotoolkit.wps.xml.v200.GetCapabilities();
-                cap.setService("WPS");
-                cap.setAcceptVersions(new org.geotoolkit.ows.xml.v200.AcceptVersionsType("2.0.0"));
-                request.setContent(cap);
-                } break;
-            default:{
-                if(LOGGER.isLoggable(Level.FINE)){
-                    LOGGER.log(Level.FINE, "Version was not defined");
-                }
-                final org.geotoolkit.wps.xml.v200.GetCapabilities cap = new org.geotoolkit.wps.xml.v200.GetCapabilities();
-                cap.setService("WPS");
-                cap.setAcceptVersions(new org.geotoolkit.ows.xml.v200.AcceptVersionsType("1.0.0","2.0.0"));
-                request.setContent(cap);
-                } break;
-        }
+        request.setContent(cap);
 
         return request;
     }
@@ -301,24 +289,12 @@ public class WebProcessingClient extends AbstractClient {
      * @return DescribeProcessRequest : describe process request.
      */
     public DescribeProcessRequest createDescribeProcess() {
-
+        final WPSVersion version = ensureVersionSet();
         final DescribeProcessRequest request = new DescribeProcessRequest(serverURL.toString(), getClientSecurity(), forceGET, getTimeOutValue());
-        switch (getVersion()) {
-            case v100: {
-                final org.geotoolkit.wps.xml.v100.TOREMOVE.DescribeProcess content = new org.geotoolkit.wps.xml.v100.TOREMOVE.DescribeProcess();
-                content.setService("WPS");
-                content.setVersion("1.0.0");
-                request.setContent(content);
-                } break;
-            case v200: {
-                final org.geotoolkit.wps.xml.v200.DescribeProcess content = new org.geotoolkit.wps.xml.v200.DescribeProcess();
-                content.setService("WPS");
-                content.setVersion("2.0.0");
-                request.setContent(content);
-                } break;
-            default:
-                throw new IllegalArgumentException("Version not defined or unsupported.");
-        }
+        DescribeProcess content = new DescribeProcess();
+        content.setService("WPS");
+        content.setVersion(version.getCode());
+        request.setContent(content);
 
         return request;
     }
@@ -333,10 +309,10 @@ public class WebProcessingClient extends AbstractClient {
      */
     public ProcessOfferings getDescribeProcess(final List<String> processIDs) throws Exception {
 
-        ProcessOfferings description = null;
+        ProcessOfferings description;
 
         //Thread to prevent infinite request on a server
-        final DescribeProcessRequest describe = registry.getClient().createDescribeProcess();
+        final DescribeProcessRequest describe = createDescribeProcess();
         describe.setTimeout(getTimeOutValue());
         describe.getContent().setIdentifier(processIDs);
         try (final InputStream request = describe.getResponseStream()) {
@@ -349,7 +325,7 @@ public class WebProcessingClient extends AbstractClient {
                 ExceptionResponse report = (ExceptionResponse) response;
                 throw report.toException();
             } else {
-                throw new Exception("Unexpected response type from the WPS server.");
+                throw new Exception("Unexpected response type from the WPS server: "+(response == null? "null" : response.getClass()));
             }
         }
         return description;
@@ -361,26 +337,12 @@ public class WebProcessingClient extends AbstractClient {
      * @return Execute : execute request.
      */
     public ExecuteRequest createExecute() {
+        final WPSVersion version = ensureVersionSet();
+        final Execute content = new Execute();
+        content.setService("WPS");
+        content.setVersion(version.getCode());
 
-        final ExecuteRequest request = new ExecuteRequest(serverURL.toString(), getClientSecurity(), getTimeOutValue());
-
-        switch (getVersion()) {
-            case v100: {
-                final org.geotoolkit.wps.xml.v100.TOREMOVE.Execute content = new org.geotoolkit.wps.xml.v100.TOREMOVE.Execute();
-                content.setService("WPS");
-                content.setVersion("1.0.0");
-                request.setContent(content);
-                } break;
-            case v200: {
-                final org.geotoolkit.wps.xml.v200.Execute content = new org.geotoolkit.wps.xml.v200.Execute();
-                content.setService("WPS");
-                content.setVersion("2.0.0");
-                request.setContent(content);
-                } break;
-            default:
-                throw new IllegalArgumentException("Version was not defined or unsupported.");
-        }
-        return request;
+        return new ExecuteRequest(content, serverURL.toString(), getClientSecurity(), getTimeOutValue());
     }
 
     /**
@@ -390,21 +352,16 @@ public class WebProcessingClient extends AbstractClient {
      * @return GetStatusRequest
      */
     public GetStatusRequest createGetStatus(final String jobId) {
-
+        final WPSVersion version = ensureVersionSet();
         final GetStatusRequest request = new GetStatusRequest(serverURL.toString(), getClientSecurity(), true, getTimeOutValue());
 
-        switch (getVersion()) {
+        switch (version) {
             case v100:
                 throw new IllegalArgumentException("GetStatus requests are not available in WPS 1.0.0");
-            case v200: {
-                final org.geotoolkit.wps.xml.v200.GetStatus content = new org.geotoolkit.wps.xml.v200.GetStatus();
-                content.setService("WPS");
-                content.setVersion("2.0.0");
-                content.setJobID(jobId);
-                request.setContent(content);
-                } break;
             default:
-                throw new IllegalArgumentException("Version was not defined or unsupported.");
+                final GetStatus content = new GetStatus("WPS", jobId);
+                content.setVersion(version.getCode());
+                request.setContent(content);
         }
         return request;
     }
@@ -461,4 +418,18 @@ public class WebProcessingClient extends AbstractClient {
         return request;
     }
 
+    /**
+     * Verify this client is configured with a well-known WPS version. Note that
+     * {@link WPSVersion#auto} is considered as illegal by this method.
+     *
+     * @return The currently set version, once checked.
+     */
+    private WPSVersion ensureVersionSet() {
+        final WPSVersion version = getVersion();
+        if (version == null || WPSVersion.auto.equals(version)) {
+            throw new IllegalArgumentException("Version not defined (auto is not allowed here)");
+        }
+
+        return version;
+    }
 }

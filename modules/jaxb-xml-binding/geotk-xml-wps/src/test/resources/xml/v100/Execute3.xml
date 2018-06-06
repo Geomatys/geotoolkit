@@ -10,7 +10,7 @@
         <wps:Input>
             <ows:Identifier>urn:ogc:cstl:wps:jts:intersection:input:geom1</ows:Identifier>
             <wps:Data>
-                <wps:ComplexData maximumMegabytes="5" mimeType="application/gml+xml" encoding="UTF-8" schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd">
+                <wps:ComplexData mimeType="application/gml+xml" encoding="UTF-8" schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd">
                     <Polygon srsName="EPSG:4326"  xmlns="http://www.opengis.net/gml">
                         <exterior>
                             <LinearRing>
@@ -25,7 +25,7 @@
         <wps:Input>
             <ows:Identifier>urn:ogc:cstl:wps:jts:intersection:input:geom2</ows:Identifier>
             <wps:Data>
-                <wps:ComplexData maximumMegabytes="5" mimeType="application/gml+xml" encoding="UTF-8" schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd">
+                <wps:ComplexData mimeType="application/gml+xml" encoding="UTF-8" schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd">
                     <gml:Polygon srsName="EPSG:4326" xmlns:gml="http://www.opengis.net/gml">
                         <gml:exterior>
                             <gml:LinearRing>

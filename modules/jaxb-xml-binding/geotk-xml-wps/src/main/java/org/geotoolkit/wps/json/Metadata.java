@@ -26,20 +26,20 @@ import org.geotoolkit.ows.xml.AbstractMetadata;
 public class Metadata {
 
   private String role = null;
-  
+
   private String href = null;
-  
+
   public Metadata() {
-      
+
   }
-  
+
   public Metadata(AbstractMetadata that) {
       if (that != null) {
           this.href = that.getHref();
           this.role = that.getRole();
       }
   }
-  
+
   public Metadata role(String role) {
     this.role = role;
     return this;
@@ -55,13 +55,13 @@ public class Metadata {
   public void setRole(String role) {
     this.role = role;
   }
-  
+
   public Metadata href(String href) {
     this.href = href;
     return this;
   }
 
-  
+
   /**
   * Get href
   * @return href
@@ -72,7 +72,7 @@ public class Metadata {
   public void setHref(String href) {
     this.href = href;
   }
-  
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -90,12 +90,12 @@ public class Metadata {
   public int hashCode() {
     return Objects.hash(role, href);
   }
-  
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Metadata {\n");
-    
+
     sb.append("    role: ").append(toIndentedString(role)).append("\n");
     sb.append("    href: ").append(toIndentedString(href)).append("\n");
     sb.append("}");
@@ -113,7 +113,7 @@ public class Metadata {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
+
 }
 
 

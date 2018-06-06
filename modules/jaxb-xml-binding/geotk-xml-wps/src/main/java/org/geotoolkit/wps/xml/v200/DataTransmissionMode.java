@@ -17,6 +17,8 @@
 
 package org.geotoolkit.wps.xml.v200;
 
+import java.util.Arrays;
+import java.util.Optional;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
@@ -55,13 +57,14 @@ public enum DataTransmissionMode {
         return value;
     }
 
-    public static DataTransmissionMode fromValue(String v) {
-        for (DataTransmissionMode c: DataTransmissionMode.values()) {
-            if (c.value.equals(v)) {
-                return c;
-            }
+    public static Optional<DataTransmissionMode> fromValue(String v) {
+        if (v == null || (v = v.trim()).isEmpty()) {
+            return Optional.empty();
         }
-        throw new IllegalArgumentException(v);
-    }
 
+        final String queriedVal = v;
+        return Arrays.stream(values())
+                .filter(mode -> mode.value().equalsIgnoreCase(queriedVal))
+                .findAny();
+    }
 }

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wps;
+package org.geotoolkit.wps.client;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +25,7 @@ import javax.xml.bind.Marshaller;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
-import org.geotoolkit.wps.xml.DescribeProcess;
+import org.geotoolkit.wps.xml.v200.DescribeProcess;
 
 /**
  * WPS DescribeProcess mutable request.
@@ -88,17 +88,15 @@ public class DescribeProcessRequest extends AbstractRequest {
             conec.setDoOutput(true);
             conec.setRequestProperty("Content-Type", "text/xml");
 
-            OutputStream stream = conec.getOutputStream();
-            stream = security.encrypt(stream);
-            Marshaller marshaller = null;
-            try {
-                marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
-                marshaller.marshal(request, stream);
+            try (final OutputStream connecStream = conec.getOutputStream();
+                    final OutputStream secureStream = security.encrypt(connecStream);) {
+                final Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
+                marshaller.marshal(request, secureStream);
                 WPSMarshallerPool.getInstance().recycle(marshaller);
             } catch (JAXBException ex) {
                 throw new IOException(ex);
             }
-            stream.close();
+
             return security.decrypt(conec.getInputStream());
         }
     }

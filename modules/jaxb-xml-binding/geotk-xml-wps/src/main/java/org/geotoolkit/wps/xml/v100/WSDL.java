@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
 public class WSDL {
 
     WSDL() {}
-    
+
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink", required = true)
     @XmlSchemaType(name = "anyURI")
     protected String href;

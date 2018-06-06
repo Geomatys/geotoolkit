@@ -122,7 +122,7 @@ public class LiteralData extends DataDescription {
      * but I cannot understand why it's not part of wps namespace.
      * Also, we use a private method for marshalling, as we return a null value
      * when marshalling WPS 1.
-     * 
+     *
      * @return The list of domains to marshal.
      */
     @XmlElement(name = "LiteralDataDomain", namespace="", required = true)

@@ -24,15 +24,15 @@ import java.util.Objects;
 public class DataType {
 
   private String id = null;
-  
+
   private Format format = null;
-  
+
   public DataType id(String id) {
     this.id = id;
     return this;
   }
 
-  
+
   /**
   * Get id
   * @return id
@@ -43,13 +43,13 @@ public class DataType {
   public void setId(String id) {
     this.id = id;
   }
-  
+
   public DataType format(Format format) {
     this.format = format;
     return this;
   }
 
-  
+
   /**
   * Get format
   * @return format
@@ -60,7 +60,7 @@ public class DataType {
   public void setFormat(Format format) {
     this.format = format;
   }
-  
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -78,12 +78,12 @@ public class DataType {
   public int hashCode() {
     return Objects.hash(id, format);
   }
-  
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class DataType {\n");
-    
+
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    format: ").append(toIndentedString(format)).append("\n");
     sb.append("}");
@@ -101,7 +101,7 @@ public class DataType {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
+
 }
 
 

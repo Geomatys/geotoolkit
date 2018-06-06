@@ -31,7 +31,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +54,7 @@ import org.geotoolkit.nio.IOUtilities;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_PATH;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_URL;
 import org.geotoolkit.wps.io.WPSIO;
+import org.geotoolkit.wps.xml.WPSUtilities;
 import org.geotoolkit.wps.xml.v200.ComplexData;
 import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.Format;
@@ -155,9 +155,9 @@ public final class ConvertersTestUtils {
                                                                         encoding);
 
         // Setup the resource and run conversion
-        if (sourceClass.equals(ComplexData.class)) {
+        if (sourceClass.equals(Data.class)) {
             final String resource = ConvertersTestUtils.getTestResource(ConvertersTestUtils.class, resourcePath);
-            final ComplexData complex = ConvertersTestUtils.createComplex(mimeType, encoding, schema, resource);
+            final Data complex = ConvertersTestUtils.createComplex(mimeType, encoding, schema, resource);
 
             return converter.convert((SourceType) complex, param);
         } else if (sourceClass.equals(Reference.class)) {
@@ -260,7 +260,7 @@ public final class ConvertersTestUtils {
         // Setup the parameters map
         Path tmpDirPath;
         Map<String, Object> parametersMap = null;
-        if (targetClass.equals(ComplexData.class))
+        if (targetClass.equals(Data.class))
             parametersMap = ConvertersTestUtils.createParameters(mimeType, encoding);
         else if (targetClass.equals(Reference.class)) {
             tmpDirPath = Files.createTempDirectory(UUID.randomUUID().toString());
@@ -309,14 +309,9 @@ public final class ConvertersTestUtils {
      * @param content can be null
      * @return the complex with its field filled using the above parameters
      */
-    public static final ComplexData createComplex(String mimeType, String encoding, String schema, String content) {
+    public static final Data createComplex(String mimeType, String encoding, String schema, String content) {
         final Format myFormat = new Format(encoding, mimeType, schema, null);
-        final ComplexData complex = new ComplexData(Collections.singletonList(myFormat));
-
-        if (content != null)
-            complex.getContent().add(content);
-
-        return complex;
+        return new Data(myFormat, content);
     }
 
     /**
@@ -607,6 +602,9 @@ public final class ConvertersTestUtils {
         assertTrue(content.get(0) instanceof String);
 
         String geoJson = (String) content.get(0);
+        if (geoJson.startsWith(WPSUtilities.CDATA_START_TAG)) {
+            geoJson = geoJson.substring(WPSUtilities.CDATA_START_TAG.length(), geoJson.length() - WPSUtilities.CDATA_END_TAG.length());
+        }
 
         // Write the json in a tmp file in order to be able to read it
         Path tmpFilePath = WPSConvertersUtils.writeTempJsonFile(geoJson);

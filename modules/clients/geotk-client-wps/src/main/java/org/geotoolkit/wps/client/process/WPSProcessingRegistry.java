@@ -14,9 +14,11 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wps;
+package org.geotoolkit.wps.client.process;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import org.geotoolkit.wps.client.WebProcessingClient;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,16 +31,21 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBException;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessingRegistry;
-import org.geotoolkit.wps.xml.ProcessOffering;
-import org.geotoolkit.wps.xml.ProcessOfferings;
-import org.geotoolkit.wps.xml.WPSCapabilities;
+import org.geotoolkit.wps.client.WPSClientFactory;
+import org.geotoolkit.wps.xml.v200.Capabilities;
+import org.geotoolkit.wps.xml.v200.Contents;
+import org.geotoolkit.wps.xml.v200.ProcessOffering;
+import org.geotoolkit.wps.xml.v200.ProcessOfferings;
+import org.geotoolkit.wps.xml.v200.ProcessSummary;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.util.NoSuchIdentifierException;
@@ -57,7 +64,6 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
 
     //process descriptors
     private Map<String, Object> descriptors;
-    private boolean allLoaded = false;
 
    /**
     * If set to true, when asking for a descriptor not yet in the cache,
@@ -70,7 +76,11 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
     private String storageURL;
 
 
-    public WPSProcessingRegistry(WebProcessingClient client, boolean dynamicLoading) throws CapabilitiesException {
+    public WPSProcessingRegistry(WebProcessingClient client) throws CapabilitiesException {
+        this(client, isDynamicLoading(client));
+    }
+
+    public WPSProcessingRegistry(WebProcessingClient client, final boolean dynamicLoading) throws CapabilitiesException {
         this.client = client;
         this.dynamicLoading = dynamicLoading;
         client.getCapabilities();
@@ -121,21 +131,33 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
             }
         }
 
+        if (desc instanceof ProcessDescriptor) {
+            return (ProcessDescriptor) desc;
+        }
+
+        final ProcessDescriptor pd;
         if (desc == null) {
             throw new NoSuchIdentifierException("No process descriptor for name :" + name, name);
         } else if (desc instanceof ProcessOffering) {
             try {
-                final ProcessDescriptor processDesc = toProcessDescriptor(((ProcessOffering) desc).getIdentifier().getValue());
-                descriptors.put(processDesc.getIdentifier().getCode(), processDesc);
-                return processDesc;
+                pd =WPS2ProcessDescriptor.create(this, (ProcessOffering) desc);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            } catch (JAXBException|UnsupportedParameterException ex) {
+                throw new RuntimeException(ex);
+            }
+        } else if (desc instanceof ProcessSummary) {
+            try {
+                pd = toProcessDescriptor(((ProcessSummary) desc).getIdentifier().getValue());
             } catch(UnsupportedParameterException ex) {
                 throw new RuntimeException(ex.getMessage(), ex);
             } catch(Throwable ex) {
                 throw new RuntimeException(ex.getMessage(), ex);
             }
-        } else {
-            return (ProcessDescriptor) desc;
-        }
+        } else throw new UnsupportedOperationException("Cannot work with "+desc.getClass());
+
+        descriptors.put(pd.getIdentifier().getCode(), pd);
+        return pd;
     }
 
     public String getStorageDirectory() {
@@ -159,10 +181,10 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
      * @param loadDescription force loading all descriptor
      */
     private synchronized void checkDescriptors(boolean loadDescription) {
-        if (descriptors!=null && allLoaded) return;
+        if (descriptors!=null && !loadDescription) return;
 
         if (descriptors==null) descriptors = new ConcurrentHashMap<>();
-        final WPSCapabilities capabilities;
+        final Capabilities capabilities;
         try {
             capabilities = client.getServiceCapabilities();
         } catch(CapabilitiesException ex) {
@@ -171,15 +193,17 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
             throw new RuntimeException(ex);
         }
 
-        if (capabilities.getProcessOfferings() == null) {
+        final Contents contents = capabilities.getContents();
+        if (contents == null) {
             return;
         }
-        final List<? extends ProcessOffering> processBrief = capabilities.getProcessOfferings().getProcesses();
+
+        final List<ProcessSummary> processBrief = contents.getProcessSummary();
 
         if (loadDescription) {
             final ExecutorService exec = Executors.newFixedThreadPool(8);
 
-            for (final ProcessOffering processBriefType : processBrief) {
+            for (final ProcessSummary processBriefType : processBrief) {
                 final String processId = processBriefType.getIdentifier().getValue();
                 if (descriptors.get(processId) instanceof ProcessDescriptor) continue;
 
@@ -190,9 +214,9 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
                             final ProcessDescriptor processDesc = toProcessDescriptor(processId);
                             descriptors.put(processDesc.getIdentifier().getCode(), processDesc);
                         } catch(UnsupportedParameterException ex) {
-                            LOGGER.log(Level.INFO, ex.getMessage());
-                        } catch(Throwable ex) {
-                            LOGGER.log(Level.INFO, ex.getMessage(),ex);
+                            LOGGER.log(Level.WARNING, ex.getMessage());
+                        } catch(Exception ex) {
+                            LOGGER.log(Level.WARNING, ex.getMessage(),ex);
                         }
                     }
                 });
@@ -200,17 +224,15 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
 
             exec.shutdown();
             try {
-                exec.awaitTermination(10, TimeUnit.MINUTES);
+                exec.awaitTermination(10, TimeUnit.MINUTES);// TODO: better timeout management
             } catch (InterruptedException ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
         } else {
-
-            for (final ProcessOffering processBriefType : processBrief) {
+            for (final ProcessSummary processBriefType : processBrief) {
                 descriptors.put(processBriefType.getIdentifier().getValue(), processBriefType);
             }
         }
-
     }
 
     /**
@@ -222,7 +244,7 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
      */
     private ProcessDescriptor checkDescriptor(String name) throws Exception {
         ProcessOfferings processBrief = client.getDescribeProcess(Collections.singletonList(name));
-        if (processBrief == null || processBrief.getProcesses().isEmpty()) {
+        if (processBrief == null || processBrief.getProcessOffering().isEmpty()) {
             return null;
         }
 
@@ -232,66 +254,12 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
     }
 
     private ProcessDescriptor toProcessDescriptor(String processID) throws Exception {
-        switch (client.getVersion()) {
-            case v100 : return WPS1ProcessDescriptor.create(WPSProcessingRegistry.this, processID);
-            case v200 : return WPS2ProcessDescriptor.create(WPSProcessingRegistry.this, processID);
-            default : throw new IOException("Unknown wps version : "+ client.getVersion());
-        }
+        return WPS2ProcessDescriptor.create(WPSProcessingRegistry.this, processID);
     }
 
-
-    /**
-     * Specify if you want outputs sent back as references for the process identified by given name.
-     * @param processId The identifier of the process wanted.
-     * @param asReference True if you want references in output, false otherwise.
-     * @throws NoSuchIdentifierException If we can't find a process matching given name.
-     */
-    public void setOutputsAsReference(final String processId, final boolean asReference) throws NoSuchIdentifierException {
-        final WPS1ProcessDescriptor desc = (WPS1ProcessDescriptor) getDescriptor(processId);
-        desc.setOutputAsReference(asReference && desc.isStorageSupported());
+    private static boolean isDynamicLoading(final WebProcessingClient client) {
+        final Parameters p = Parameters.castOrWrap(client.getOpenParameters());
+        final Boolean isDynamic = p.getValue(WPSClientFactory.DYNAMIC_LOADING);
+        return isDynamic == null? false : isDynamic;
     }
-
-    /**
-     * Check the current output settings for this process.
-     * @param processId The name of the process to check.
-     * @return True if the process return its outputs as reference, false otherwise.
-     * @throws NoSuchIdentifierException If we can't find a process matching given name.
-     */
-    public boolean isOutputAsReference(final String processId) throws NoSuchIdentifierException {
-        return ((WPS1ProcessDescriptor)getDescriptor(processId)).isOutputAsReference();
-    }
-
-    /**
-     * Set all processes to send (or not) references for its outputs. Default behaviour is no reference. An important
-     * fact is that references are going to be used only if the process support storage (see
-     * {@link WebProcessingClient#supportStorage(String)}).
-     * @param choice True if you want reference as output, false otherwise.
-     */
-    public void setOutputAsReferenceForAll(final boolean choice) {
-        checkDescriptors(true);
-        for (Object desc : descriptors.values()) {
-            ((WPS1ProcessDescriptor)desc).setOutputAsReference(choice && ((WPS1ProcessDescriptor)desc).isStorageSupported());
-        }
-    }
-
-    /**
-     * Inform the user if the process identified by given String can return outputs as reference or not.
-     * @param processId The name of the process to check.
-     * @return True if this process can use reference for its outputs, false otherwise.
-     * @throws NoSuchIdentifierException If we can't find the named process on WPS server, or if we can't manage it.
-     */
-    public boolean supportStorage(final String processId) throws NoSuchIdentifierException {
-        return ((WPS1ProcessDescriptor)getDescriptor(processId)).isStorageSupported();
-    }
-
-    /**
-     * Inform the user if the process identified by given String can do quick updates of its status document.
-     * @param processId The name of the process to check.
-     * @return True if this process can update status before process ending, false otherwise.
-     * @throws NoSuchIdentifierException If we can't find the named process on WPS server, or if we can't manage it.
-     */
-    public boolean supportStatus(final String processId) throws NoSuchIdentifierException {
-        return ((WPS1ProcessDescriptor)getDescriptor(processId)).isStatusSupported();
-    }
-
 }

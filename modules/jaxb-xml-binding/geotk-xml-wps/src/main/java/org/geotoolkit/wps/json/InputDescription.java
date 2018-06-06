@@ -25,18 +25,18 @@ import java.util.Objects;
 public class InputDescription {
 
   private Integer minOccurs = null;
-  
+
   private Integer maxOccurs = null;
-  
+
   @JsonProperty("LiteralDataDomain")
   private Object literalDataDomain = null;
-  
+
   public InputDescription minOccurs(Integer minOccurs) {
     this.minOccurs = minOccurs;
     return this;
   }
 
-  
+
   /**
   * Get minOccurs
   * @return minOccurs
@@ -47,13 +47,13 @@ public class InputDescription {
   public void setMinOccurs(Integer minOccurs) {
     this.minOccurs = minOccurs;
   }
-  
+
   public InputDescription maxOccurs(Integer maxOccurs) {
     this.maxOccurs = maxOccurs;
     return this;
   }
 
-  
+
   /**
   * Get maxOccurs
   * @return maxOccurs
@@ -64,13 +64,13 @@ public class InputDescription {
   public void setMaxOccurs(Integer maxOccurs) {
     this.maxOccurs = maxOccurs;
   }
-  
+
   public InputDescription literalDataDomain(Object literalDataDomain) {
     this.literalDataDomain = literalDataDomain;
     return this;
   }
 
-  
+
   /**
   * Get literalDataDomain
   * @return literalDataDomain
@@ -81,7 +81,7 @@ public class InputDescription {
   public void setLiteralDataDomain(Object literalDataDomain) {
     this.literalDataDomain = literalDataDomain;
   }
-  
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -100,12 +100,12 @@ public class InputDescription {
   public int hashCode() {
     return Objects.hash(minOccurs, maxOccurs, literalDataDomain);
   }
-  
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class InputDescription {\n");
-    
+
     sb.append("    minOccurs: ").append(toIndentedString(minOccurs)).append("\n");
     sb.append("    maxOccurs: ").append(toIndentedString(maxOccurs)).append("\n");
     sb.append("    literalDataDomain: ").append(toIndentedString(literalDataDomain)).append("\n");
@@ -124,7 +124,7 @@ public class InputDescription {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
+
 }
 
 

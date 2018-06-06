@@ -26,22 +26,22 @@ import java.util.List;
 public class JobList implements WPSJSONResponse {
 
   private List<String> jobs = null;
-  
+
   public JobList jobs(List<String> jobs) {
     this.jobs = jobs;
     return this;
   }
 
   public JobList addJobsItem(String jobsItem) {
-    
+
     if (this.jobs == null) {
       this.jobs = new ArrayList<>();
     }
-    
+
     this.jobs.add(jobsItem);
     return this;
   }
-  
+
   /**
   * Get jobs
   * @return jobs
@@ -52,7 +52,7 @@ public class JobList implements WPSJSONResponse {
   public void setJobs(List<String> jobs) {
     this.jobs = jobs;
   }
-  
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -69,12 +69,12 @@ public class JobList implements WPSJSONResponse {
   public int hashCode() {
     return Objects.hash(jobs);
   }
-  
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class JobList {\n");
-    
+
     sb.append("    jobs: ").append(toIndentedString(jobs)).append("\n");
     sb.append("}");
     return sb.toString();
@@ -91,7 +91,7 @@ public class JobList implements WPSJSONResponse {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
+
 }
 
 

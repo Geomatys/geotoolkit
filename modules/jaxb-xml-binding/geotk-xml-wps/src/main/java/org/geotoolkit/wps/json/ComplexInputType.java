@@ -68,7 +68,7 @@ public class ComplexInputType extends DataDescriptionType {
      * Get maxOccurs
      *
      * @return maxOccurs
-  *
+     *
      */
     public Integer getMaxOccurs() {
         return maxOccurs;

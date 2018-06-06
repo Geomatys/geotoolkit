@@ -96,7 +96,7 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
         if ( !(source instanceof Geometry)) {
             throw new UnconvertibleObjectException("The geometry is not an JTS geometry.");
         }
-        
+
         Reference reference = new Reference();
 
         reference.setMimeType((String) params.get(MIME));

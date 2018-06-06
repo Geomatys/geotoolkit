@@ -1,7 +1,11 @@
 package org.geotoolkit.wps.xml.v200;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.ArrayList;
 import org.apache.sis.util.iso.Types;
+import org.geotoolkit.wps.json.JobOptionsDeserializer;
+import org.geotoolkit.wps.json.JobOptionsSerializer;
 import org.opengis.util.CodeList;
 
 /**
@@ -12,11 +16,13 @@ import org.opengis.util.CodeList;
  *
  * @author Alexis Manin (Geomatys)
  */
+@JsonDeserialize(using = JobOptionsDeserializer.class)
+@JsonSerialize(using = JobOptionsSerializer.class)
 public class JobControlOptions extends CodeList<JobControlOptions> {
 
     private static final ArrayList<JobControlOptions> VALUES = new ArrayList<>(4);
 
-    public static final JobControlOptions SYNC_EXECUTE = new JobControlOptions("sync");
+    public static final JobControlOptions SYNC_EXECUTE = new JobControlOptions("sync-execute");
     public static final JobControlOptions ASYNC_EXECUTE = new JobControlOptions("async-execute");
     public static final JobControlOptions DISMISS = new JobControlOptions("dismiss");
 

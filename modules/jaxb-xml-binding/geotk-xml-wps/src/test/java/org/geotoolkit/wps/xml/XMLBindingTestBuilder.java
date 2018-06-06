@@ -75,7 +75,7 @@ public class XMLBindingTestBuilder<T> {
         pool.recycle(marsh);
 
         final byte[] outputArray = out.toByteArray();
-        LOGGER.info(() -> "Generated Document:" + System.lineSeparator() + new String(outputArray, StandardCharsets.UTF_8));
+        LOGGER.fine(() -> "Generated Document:" + System.lineSeparator() + new String(outputArray, StandardCharsets.UTF_8));
 
         final XMLComparator comparator = new XMLComparator(input.get(), new ByteArrayInputStream(outputArray));
         comparator.ignoredAttributes.add("xmlns:*");

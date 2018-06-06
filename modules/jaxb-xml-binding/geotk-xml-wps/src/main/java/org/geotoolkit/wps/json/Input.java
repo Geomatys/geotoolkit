@@ -25,13 +25,13 @@ import java.util.Objects;
 public class Input extends DataType {
 
   private String value = null;
-  
+
   public Input value(String value) {
     this.value = value;
     return this;
   }
 
-  
+
   /**
   * Get value
   * @return value
@@ -42,7 +42,7 @@ public class Input extends DataType {
   public void setValue(String value) {
     this.value = value;
   }
-  
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -60,7 +60,7 @@ public class Input extends DataType {
   public int hashCode() {
     return Objects.hash(value, super.hashCode());
   }
-  
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -82,7 +82,7 @@ public class Input extends DataType {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
+
 }
 
 

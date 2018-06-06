@@ -24,6 +24,8 @@ import java.io.Writer;
 import java.util.Arrays;
 import org.apache.commons.lang.StringEscapeUtils;
 
+import static org.geotoolkit.wps.xml.WPSUtilities.CDATA_START_TAG;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -32,9 +34,6 @@ import org.apache.commons.lang.StringEscapeUtils;
  * This class avoid escaping special character that are in CDATA xml tags
  */
 public class NoCharacterEscapeHandler implements CharacterEscapeHandler {
-
-    private static final String CDATA_START_TAG = "<![CDATA[";
-
 
     @Override
     public void escape(char[] buf, int start, int len, boolean b, Writer out) throws IOException {

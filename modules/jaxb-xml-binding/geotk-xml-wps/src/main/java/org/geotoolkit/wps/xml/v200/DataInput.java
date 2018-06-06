@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.ows.xml.LanguageString;
 import org.geotoolkit.ows.xml.v200.CodeType;
 
@@ -72,6 +73,7 @@ public class DataInput {
     protected List<DataInput> input;
     @XmlAttribute(name = "id", required = true)
     @XmlSchemaType(name = "anyURI")
+    @XmlJavaTypeAdapter(FilterV2.String.class)
     protected String id;
 
     public DataInput() {

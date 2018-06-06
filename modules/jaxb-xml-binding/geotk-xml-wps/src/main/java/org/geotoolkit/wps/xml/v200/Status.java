@@ -21,6 +21,7 @@ public class Status extends CodeList<Status> {
     public static final Status RUNNING = new Status("Running");
     public static final Status FAILED = new Status("Failed");
     public static final Status SUCCEEDED = new Status("Succeeded");
+    public static final Status DISMISS = new Status("Dismissed");
 
     private Status(String value) {
         super(value, VALUES);

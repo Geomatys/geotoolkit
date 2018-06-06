@@ -26,14 +26,17 @@ import java.util.Objects;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
+import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.ows.xml.v200.BoundingBoxType;
 import org.w3c.dom.Element;
 
@@ -60,28 +63,21 @@ import org.w3c.dom.Element;
  *
  *
  */
-@XmlType(name = "", propOrder = {
-    "content"
-})
+@XmlType(name = "")
 @XmlRootElement(name = "Data")
 public class Data {
 
-    @XmlMixed
-    @XmlElementRefs({
-        @XmlElementRef(name = "BoundingBox", namespace = "http://www.opengis.net/ows/2.0", type = BoundingBoxType.class),
-        @XmlElementRef(name = "LiteralValue", namespace = "http://www.opengis.net/wps/2.0", type = LiteralValue.class),
-        @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml/3.2", type = AbstractGeometryType.class),
-        @XmlElementRef(name = "math", namespace = "http://www.w3.org/1998/Math/MathML", type = org.geotoolkit.mathml.xml.Math.class)
-    })
-    @XmlAnyElement(lax = true)
     protected List<Object> content;
     @XmlAttribute(name = "mimeType")
+    @XmlJavaTypeAdapter(FilterV2.String.class)
     protected String mimeType;
     @XmlAttribute(name = "encoding")
     @XmlSchemaType(name = "anyURI")
+    @XmlJavaTypeAdapter(FilterV2.String.class)
     protected String encoding;
     @XmlAttribute(name = "schema")
     @XmlSchemaType(name = "anyURI")
+    @XmlJavaTypeAdapter(FilterV2.String.class)
     protected String schema;
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<>();
@@ -139,6 +135,22 @@ public class Data {
             content = new ArrayList<>();
         }
         return this.content;
+    }
+
+    @XmlMixed
+    @XmlElementRefs({
+        @XmlElementRef(name = "BoundingBox", namespace = "http://www.opengis.net/ows/2.0", type = BoundingBoxType.class),
+        @XmlElementRef(name = "LiteralValue", namespace = "http://www.opengis.net/wps/2.0", type = LiteralValue.class),
+        @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml/3.2", type = AbstractGeometryType.class),
+        @XmlElementRef(name = "math", namespace = "http://www.w3.org/1998/Math/MathML", type = org.geotoolkit.mathml.xml.Math.class)
+    })
+    @XmlAnyElement(lax = true)
+    private List<Object> getContentToMarshal() {
+        if (getLegacyComplexData() != null) {
+            return null;
+        }
+
+        return getContent();
     }
 
     /**
@@ -231,17 +243,6 @@ public class Data {
         return otherAttributes;
     }
 
-    public ComplexData getComplexData() {
-        if (content != null) {
-            for (Object obj : content) {
-                if (obj instanceof ComplexData) {
-                    return (ComplexData) obj;
-}
-            }
-        }
-        return null;
-    }
-
     public LiteralValue getLiteralData() {
         if (content != null) {
             for (Object obj : content) {
@@ -322,4 +323,90 @@ public class Data {
         return hash;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // Following section is boilerplate code for WPS v1 retro-compatibility.
+    //
+    ////////////////////////////////////////////////////////////////////////////
+
+    private boolean hasComplexContent() {
+        final boolean notOnlyStrings = getContent().stream()
+                .filter(obj -> !(obj instanceof String))
+                .findAny()
+                .isPresent();
+
+        return notOnlyStrings && !getContent().stream()
+                .anyMatch(obj -> obj instanceof LiteralValue || obj instanceof BoundingBox);
+    }
+
+    @XmlElement(name="ComplexData")
+    private ComplexData getLegacyComplexData() {
+        if (FilterByVersion.isV1()) {
+            // In WPS 1, only ComplexData has one of the following attributes.
+            if (
+                    getMimeType() != null ||
+                    getEncoding() != null ||
+                    getSchema() != null   ||
+                    hasComplexContent()
+                    ) {
+                ComplexData complexData = new ComplexData();
+                complexData.parent = this;
+                return complexData;
+            }
+        }
+
+        return null;
+    }
+
+    private void setLegacyComplexData(ComplexData legacyData) {
+        // Nothing to do, attributes are filled directly in legacy data.
+    }
+
+    private static class ComplexData extends ParentAware<Data> {
+
+        public ComplexData() {
+            super(Data.class);
+        }
+
+        @XmlAttribute(name = "mimeType")
+        private String getMimeType() {
+            return checkParent().getMimeType();
+        }
+
+        @XmlAttribute(name = "encoding")
+        @XmlSchemaType(name = "anyURI")
+        private String getEncoding() {
+            return checkParent().getEncoding();
+        }
+
+        @XmlAttribute(name = "schema")
+        @XmlSchemaType(name = "anyURI")
+        private String getSchema() {
+            return checkParent().getSchema();
+        }
+
+        private void setMimeType(String value) {
+            checkParent().setMimeType(value);
+        }
+
+        private void setEncoding(String value) {
+            checkParent().setEncoding(value);
+        }
+
+        private void setSchema(String value) {
+            checkParent().setSchema(value);
+        }
+
+        @XmlMixed
+        @XmlElementRefs({
+            @XmlElementRef(name = "BoundingBox", namespace = "http://www.opengis.net/ows/2.0", type = BoundingBoxType.class),
+            @XmlElementRef(name = "LiteralValue", namespace = "http://www.opengis.net/wps/2.0", type = LiteralValue.class),
+            @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml/3.2", type = AbstractGeometryType.class),
+            @XmlElementRef(name = "math", namespace = "http://www.w3.org/1998/Math/MathML", type = org.geotoolkit.mathml.xml.Math.class)
+        })
+        @XmlAnyElement(lax = true)
+        private List<Object> getContent() {
+            return checkParent().getContent();
+        }
+    }
 }

@@ -13,7 +13,7 @@ import org.geotoolkit.wps.xml.WPSMarshallerPool;
  * WPS service (requests and responses).
  *
  * TODO: Maybe it can be generified for all OGC services.
- * 
+ *
  * @author Alexis Manin (Geomatys)
  */
 public class DocumentBase implements Versioned {

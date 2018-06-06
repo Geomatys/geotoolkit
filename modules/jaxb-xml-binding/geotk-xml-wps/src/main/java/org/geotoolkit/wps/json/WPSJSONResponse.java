@@ -21,5 +21,5 @@ package org.geotoolkit.wps.json;
  * @author Guilhem Legal (Geomatys)
  */
 public interface WPSJSONResponse {
-    
+
 }

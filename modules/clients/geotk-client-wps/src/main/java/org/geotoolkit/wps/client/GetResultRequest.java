@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011-2017, Geomatys
+ *    (C) 2011-2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wps;
+package org.geotoolkit.wps.client;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,36 +29,36 @@ import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
-import org.geotoolkit.wps.xml.v200.Dismiss;
+import org.geotoolkit.wps.xml.v200.GetResult;
 
 /**
- * WPS Dismiss request.
+ * WPS GetResult request.
  *
- * Request is only for WPS 2.0.0 with dismiss extension
+ * Request is only for WPS 2.0.0
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DismissRequest extends AbstractRequest {
+public class GetResultRequest extends AbstractRequest {
 
-    private Dismiss content;
+    private GetResult content;
     protected final boolean doGET;
 
-    public DismissRequest(final String serverURL, final ClientSecurity security){
+    public GetResultRequest(final String serverURL, final ClientSecurity security){
         this(serverURL, security, true, null);
     }
 
-    public DismissRequest(final String serverURL, final ClientSecurity security, final boolean doGET, Integer timeout) {
+    public GetResultRequest(final String serverURL, final ClientSecurity security, final boolean doGET, final Integer timeout){
         super(serverURL, security, null, timeout);
         this.doGET = doGET;
     }
 
-    public Dismiss getContent() {
+    public GetResult getContent() {
         return content;
     }
 
-    public void setContent(Dismiss dismiss) {
-        this.content = dismiss;
+    public void setContent(GetResult cap) {
+        this.content = cap;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class DismissRequest extends AbstractRequest {
     @Override
     public InputStream getResponseStream() throws IOException {
 
-        final Dismiss request = getContent();
+        final GetResult request = getContent();
 
         if (doGET) {
 
@@ -93,9 +93,6 @@ public class DismissRequest extends AbstractRequest {
 
             try (OutputStream stream = security.encrypt(conec.getOutputStream())) {
                 Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
-                if (debug) {
-                    marshaller.marshal(request, System.out);
-                }
                 marshaller.marshal(request, stream);
                 WPSMarshallerPool.getInstance().recycle(marshaller);
             } catch (JAXBException ex) {
@@ -119,7 +116,7 @@ public class DismissRequest extends AbstractRequest {
         try (final InputStream in = getResponseStream()) {
             final Unmarshaller unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
             if (debug) {
-                String s = IOUtilities.toString(in);
+                final String s = IOUtilities.toString(in);
                 System.out.println(s);
                 response = unmarshaller.unmarshal(new StringReader(s));
             } else {

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wps;
+package org.geotoolkit.wps.client.process;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.measure.Unit;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.ParameterBuilder;
@@ -42,7 +41,6 @@ import org.geotoolkit.wps.adaptor.DataAdaptor;
 import org.geotoolkit.ows.xml.v200.MetadataType;
 import org.geotoolkit.ows.xml.v200.AdditionalParametersType;
 import org.geotoolkit.ows.xml.v200.AdditionalParameter;
-import org.geotoolkit.wps.xml.ProcessOfferings;
 import org.geotoolkit.wps.xml.v200.BoundingBoxData;
 import org.geotoolkit.wps.xml.v200.ComplexData;
 import org.geotoolkit.wps.xml.v200.DataDescription;
@@ -50,10 +48,11 @@ import org.geotoolkit.wps.xml.v200.Description;
 import org.geotoolkit.wps.xml.v200.Format;
 import org.geotoolkit.wps.xml.v200.InputDescription;
 import org.geotoolkit.wps.xml.v200.LiteralData;
+import org.geotoolkit.wps.xml.v200.LiteralDataDomain;
 import org.geotoolkit.wps.xml.v200.OutputDescription;
 import org.geotoolkit.wps.xml.v200.ProcessDescription;
 import org.geotoolkit.wps.xml.v200.ProcessOffering;
-import org.geotoolkit.wps.xml.v200.ProcessSummary;
+import org.geotoolkit.wps.xml.v200.ProcessOfferings;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -66,19 +65,38 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
+class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
 
     private final WPSProcessingRegistry registry;
-    private ProcessSummary summary;
+    private final ProcessOffering offering;
 
-    public WPS2ProcessDescriptor(String name, WPSProcessingRegistry registry, InternationalString abs,
-            InternationalString displayName, ParameterDescriptorGroup inputs, ParameterDescriptorGroup outputs) {
-        super(name,registry.getIdentification(),abs,displayName,inputs,outputs);
+    /**
+     * Do not make this constructor public. We NEED the original process offering
+     * for control purpose (accepted modes, response types, etc.).
+     * @param offering The offering served by the WPS to use for execution.
+     * @param name Identifier to use for this process.
+     * @param registry The parent processing registry to use for execution.
+     * @param abs Description of the process
+     * @param displayName Title of the process.
+     * @param inputs Process input, converted from original offering.
+     * @param outputs Process output, converted from original offering.
+     */
+    private WPS2ProcessDescriptor(
+            ProcessOffering offering,
+            String name,
+            WPSProcessingRegistry registry,
+            InternationalString abs,
+            InternationalString displayName,
+            ParameterDescriptorGroup inputs,
+            ParameterDescriptorGroup outputs
+    ) {
+        super(name, registry.getIdentification(), abs, displayName, inputs, outputs);
+        this.offering = offering;
         this.registry = registry;
     }
 
-    public ProcessSummary getSummary() {
-        return summary;
+    public ProcessOffering getOffering() {
+        return offering;
     }
 
     @Override
@@ -88,29 +106,38 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
 
     public static ProcessDescriptor create(WPSProcessingRegistry registry, final String processIdentifier) throws Exception {
         final ProcessOfferings offerings = registry.getClient().getDescribeProcess(Collections.singletonList(processIdentifier));
-        final ProcessOffering offering = (ProcessOffering) offerings.getProcesses().get(0);
+        final List<ProcessOffering> offeringList = offerings.getProcessOffering();
+        if (offeringList == null || offeringList.isEmpty()) {
+            throw new RuntimeException("No process description has been found for identifier "+processIdentifier);
+        } else if (offeringList.size() != 1) {
+            throw new RuntimeException(String.format(
+                    "We asked for exactly one process descriptor (%s), but we've got %d results.",
+                    processIdentifier, offeringList.size()
+            ));
+        }
+
+        final ProcessOffering offering = offeringList.get(0);
 
         return create(registry, offering);
     }
 
     public static ProcessDescriptor create(WPSProcessingRegistry registry, ProcessOffering offering) throws IOException, JAXBException, UnsupportedParameterException {
-        final String processIdentifier = offering.getIdentifier().getValue();
+        final ProcessDescription process = offering.getProcess();
+        final String processIdentifier = process.getIdentifier().getValue();
 
         final InternationalString abs;
-        if (offering.getFirstAbstract()!= null) {
-            abs = new DefaultInternationalString(offering.getFirstAbstract());
+        if (process.getFirstAbstract()!= null) {
+            abs = new DefaultInternationalString(process.getFirstAbstract());
         } else {
             abs = new DefaultInternationalString("");
         }
 
         final InternationalString displayName;
-        if (offering.getFirstTitle()!= null) {
-            displayName = new DefaultInternationalString(offering.getFirstTitle());
+        if (process.getFirstTitle()!= null) {
+            displayName = new DefaultInternationalString(process.getFirstTitle());
         } else {
             displayName = new DefaultInternationalString("");
         }
-
-        final ProcessDescription process = offering.getProcess();
 
         final List<GeneralParameterDescriptor> inputLst = new ArrayList<>();
         final List<GeneralParameterDescriptor> outputLst = new ArrayList<>();
@@ -127,7 +154,7 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
         final ParameterDescriptorGroup outputs = new ParameterBuilder().addName("ouptuts").createGroup(
                 outputLst.toArray(new GeneralParameterDescriptor[outputLst.size()]));
 
-        return new WPS2ProcessDescriptor(processIdentifier, registry, abs, displayName, inputs, outputs);
+        return new WPS2ProcessDescriptor(offering, processIdentifier, registry, abs, displayName, inputs, outputs);
     }
 
     /**
@@ -137,8 +164,7 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
      * @return
      * @throws UnsupportedOperationException if data type could not be mapped
      */
-    private static GeneralParameterDescriptor toDescriptor(String processId, Description input) throws UnsupportedParameterException{
-
+    private static GeneralParameterDescriptor toDescriptor(String processId, Description input) throws UnsupportedParameterException {
         final List<? extends Description> subInputs;
         final DataDescription dataDescType;
         final int min;
@@ -176,7 +202,7 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
         if (dataDescType instanceof LiteralData) {
             final LiteralData cd = (LiteralData) dataDescType;
 
-            for(LiteralData.LiteralDataDomain domain : cd.getLiteralDataDomain()) {
+            for(LiteralDataDomain domain : cd.getLiteralDataDomain()) {
 
                 final LiteralAdaptor adaptor = LiteralAdaptor.create(domain);
                 if (adaptor==null) continue;

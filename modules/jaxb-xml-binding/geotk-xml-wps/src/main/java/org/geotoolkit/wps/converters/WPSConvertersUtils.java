@@ -101,6 +101,10 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.Property;
 import org.w3c.dom.Node;
 
+import static org.geotoolkit.wps.xml.WPSUtilities.CDATA_START_TAG;
+import static org.geotoolkit.wps.xml.WPSUtilities.CDATA_END_TAG;
+import org.geotoolkit.wps.xml.v200.LiteralValue;
+
 /**
  *
  * @author Quentin Boileau (Geomatys).
@@ -226,8 +230,7 @@ public class WPSConvertersUtils {
 
         ensureParametersDefined(expectedClass, WPSIO.IOType.INPUT, parameters);
 
-        ComplexData complex = data.getComplexData();
-        final List<Object> content = complex.getContent();
+        final List<Object> content = data.getContent();
 
         //remove white spaces
         removeWhiteSpaceFromList(content);
@@ -238,7 +241,7 @@ public class WPSConvertersUtils {
             throw new UnconvertibleObjectException("Input complex not supported, no converter found.");
         }
 
-        return converter.convert(complex, parameters);
+        return converter.convert(data, parameters);
     }
 
     /**
@@ -833,16 +836,18 @@ public class WPSConvertersUtils {
 
         if (store == null)
             throw new DataStoreException("No available factory found");
-
-        final Iterator<GenericName> iterator = store.getNames().iterator();
-        int typesNumber = store.getNames().size();
-        final Session session = store.createSession(false);
-
-        if (typesNumber != 1)
-            throw new DataStoreException("Multiple feature types found from datasource: " + typesNumber);
+        final Set<GenericName> names = store.getNames();
+        final Iterator<GenericName> iterator;
+        if (names == null || !(iterator = names.iterator()).hasNext()) {
+            throw new DataStoreException("No GeoJSON content available at "+url);
+        }
 
         final GenericName name = iterator.next();
-        return session.getFeatureCollection(QueryBuilder.all(name));
+        if (iterator.hasNext()) {
+            throw new DataStoreException("Multiple feature types found from datasource " + url);
+        }
+
+        return store.createSession(false).getFeatureCollection(QueryBuilder.all(name));
     }
 
     /**
@@ -892,8 +897,8 @@ public class WPSConvertersUtils {
      * @param complex complex in which to add the CDATA section
      */
     public static void addCDATAToComplex(String content, final Data complex) {
-        if (content != null && !content.startsWith("<![CDATA[")) {
-            content = "<![CDATA["+content+"]]>";
+        if (content != null && !content.startsWith(CDATA_START_TAG)) {
+            content = CDATA_START_TAG+content+CDATA_END_TAG;
         }
         complex.getContent().add(content);
     }
@@ -928,15 +933,32 @@ public class WPSConvertersUtils {
      */
     public static String geojsonContentAsString(final Object objContent) {
         ArgumentChecks.ensureNonNull("Data", objContent);
+        Object content = objContent;
+        if (content instanceof Data) {
+            List<Object> contents = ((Data)content).getContent();
+            if (contents == null || contents.isEmpty()) {
+                content = "";
+            } else if (contents.size() > 1) {
+                throw new UnconvertibleObjectException("We search for a single text content, but given data contains "+contents.size());
+            } else {
+                content = contents.get(0);
+            }
+        }
 
-        if (objContent instanceof String)
-            return (String) objContent;
-        else if (objContent instanceof Node)
-            return ((Node) objContent).getTextContent();
-        else
-            throw new UnconvertibleObjectException("Expected content type was "
-                                    + "Node or String. Actual content type : "
-                                    + objContent.getClass().getName());
+        // Data can contain a literal value, so we test it after
+        if (content instanceof LiteralValue) {
+            content = ((LiteralValue)content).getValue();
+        } else if (content instanceof Node) {
+            // Otherwise, data could contain a Dom node (rarely), so we also test it
+            content = ((Node) content).getTextContent();
+        }
+
+        if (content instanceof String)
+            return (String) content; // TODO: remove CDATA ?
+
+        throw new UnconvertibleObjectException(
+                "Cannot extract text content from source " + objContent.getClass().getName()
+        );
     }
 
     /**

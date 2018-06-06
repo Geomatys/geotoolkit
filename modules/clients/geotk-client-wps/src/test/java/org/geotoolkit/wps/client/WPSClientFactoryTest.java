@@ -14,8 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wps;
+package org.geotoolkit.wps.client;
 
+import org.geotoolkit.wps.client.WPSClientFactory;
 import java.util.Iterator;
 import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.storage.DataStores;

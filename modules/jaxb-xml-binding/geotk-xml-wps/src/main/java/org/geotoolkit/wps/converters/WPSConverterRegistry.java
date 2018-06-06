@@ -37,6 +37,7 @@ import org.geotoolkit.wps.converters.outputs.literal.*;
 import org.geotoolkit.wps.converters.outputs.references.*;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.wps.xml.v200.ComplexData;
+import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.Reference;
 
 /**
@@ -182,7 +183,7 @@ public class WPSConverterRegistry {
         for (final WPSObjectConverter converter : converters) {
             if (converter.getTargetClass().isAssignableFrom(target)) {
                 final Class sourceClass = converter.getSourceClass();
-                if (BoundingBox.class.isAssignableFrom(sourceClass) || ComplexData.class.isAssignableFrom(sourceClass)
+                if (BoundingBox.class.isAssignableFrom(sourceClass) || Data.class.isAssignableFrom(sourceClass)
                         || Reference.class.isAssignableFrom(sourceClass) || String.class.isAssignableFrom(sourceClass)) {
                     inputConverters.add(converter);
                 }
@@ -204,7 +205,7 @@ public class WPSConverterRegistry {
         for (final WPSObjectConverter converter : converters) {
             if (converter.getSourceClass().isAssignableFrom(source)) {
                 final Class targetClass = converter.getTargetClass();
-                if (BoundingBox.class.isAssignableFrom(targetClass) || ComplexData.class.isAssignableFrom(targetClass)
+                if (BoundingBox.class.isAssignableFrom(targetClass) || Data.class.isAssignableFrom(targetClass)
                         || Reference.class.isAssignableFrom(targetClass) || String.class.isAssignableFrom(targetClass)) {
                     inputConverters.add(converter);
                 }

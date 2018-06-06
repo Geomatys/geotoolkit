@@ -14,25 +14,21 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wps;
+package org.geotoolkit.wps.client;
 
-import java.io.IOException;
+import org.geotoolkit.wps.client.WPSVersion;
+import org.geotoolkit.wps.client.WebProcessingClient;
+import org.geotoolkit.wps.client.DescribeProcessRequest;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.parsers.ParserConfigurationException;
-import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
-import org.geotoolkit.wps.xml.v100.TOREMOVE.DescribeProcess;
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 import static org.apache.sis.test.Assert.*;
+import org.geotoolkit.wps.xml.v200.DescribeProcess;
 
 
 /**
@@ -52,7 +48,7 @@ public class DescribeProcessTest extends org.geotoolkit.test.TestBase {
         final WebProcessingClient client = new WebProcessingClient(new URL("http://test.com"), null, WPSVersion.v100);
 
         final DescribeProcessRequest request = client.createDescribeProcess();
-        final org.geotoolkit.wps.xml.DescribeProcess content = request.getContent();
+        final DescribeProcess content = request.getContent();
         content.setIdentifier(Arrays.asList("identifier1","identifier2","identifier3"));
 
         final URL url;
@@ -72,42 +68,28 @@ public class DescribeProcessTest extends org.geotoolkit.test.TestBase {
     }
 
    @Test
-   public void testRequestAndMarshall() throws IOException, ParserConfigurationException, SAXException{
+   public void testRequestAndMarshall() throws Exception{
         final WebProcessingClient client = new WebProcessingClient(new URL("http://test.com"), null, WPSVersion.v100);
 
         final DescribeProcessRequest request = client.createDescribeProcess();
-        final org.geotoolkit.wps.xml.DescribeProcess content = request.getContent();
-        content.setIdentifier(Arrays.asList("identifier1","identifier2","identifier3"));
+        final DescribeProcess content = request.getContent();
+        content.setIdentifier(Arrays.asList("identifier1", "identifier2", "identifier3"));
 
-        try {
-            final List<CodeType> identifierList = new ArrayList<>();
-            identifierList.add(new CodeType("identifier1"));
-            identifierList.add(new CodeType("identifier2"));
-            identifierList.add(new CodeType("identifier3"));
+        final StringWriter stringWriter = new StringWriter();
+        final Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
+        marshaller.marshal(content, stringWriter);
 
-            assertEquals("WPS", content.getService());
-            assertEquals("1.0.0", content.getVersion().toString());
-            assertEquals(content.getIdentifier(),identifierList);
-
-            final StringWriter stringWriter = new StringWriter();
-            final Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
-            marshaller.marshal(content,stringWriter);
-
-            String result = stringWriter.toString();
-            final String expectedMarshalledRequest =
-                    "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                    + "<wps:DescribeProcess version=\"1.0.0\" service=\"WPS\""
-                    + " xmlns:wps=\"http://www.opengis.net/wps/1.0.0\""
-                    + " xmlns:ows=\"http://www.opengis.net/ows/1.1\">\n"
-                    + "    <ows:Identifier>identifier1</ows:Identifier>\n"
-                    + "    <ows:Identifier>identifier2</ows:Identifier>\n"
-                    + "    <ows:Identifier>identifier3</ows:Identifier>\n"
-                    + "</wps:DescribeProcess>\n";
-            assertXmlEquals(expectedMarshalledRequest, result, "xmlns:*");
-            WPSMarshallerPool.getInstance().recycle(marshaller);
-        } catch (JAXBException ex) {
-            fail(ex.getLocalizedMessage());
-        }
-   }
-
+        String result = stringWriter.toString();
+        final String expectedMarshalledRequest
+                = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                + "<wps:DescribeProcess version=\"1.0.0\" service=\"WPS\""
+                + " xmlns:wps=\"http://www.opengis.net/wps/1.0.0\""
+                + " xmlns:ows=\"http://www.opengis.net/ows/1.1\">\n"
+                + "    <ows:Identifier>identifier1</ows:Identifier>\n"
+                + "    <ows:Identifier>identifier2</ows:Identifier>\n"
+                + "    <ows:Identifier>identifier3</ows:Identifier>\n"
+                + "</wps:DescribeProcess>\n";
+        assertXmlEquals(expectedMarshalledRequest, result, "xmlns:*");
+        WPSMarshallerPool.getInstance().recycle(marshaller);
+    }
 }

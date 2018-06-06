@@ -25,6 +25,7 @@ import java.util.Arrays;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.gml.xml.v321.CoordinatesType;
 import org.geotoolkit.gml.xml.v321.PointType;
+import org.geotoolkit.wps.xml.v200.DataTransmissionMode;
 import org.geotoolkit.wps.xml.v200.JobControlOptions;
 import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
@@ -111,7 +112,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
 
         Output output = new Output();
         output.setId("out-1");
-        output.setTransmissionMode(TransmissionMode.VALUE);
+        output.setTransmissionMode(DataTransmissionMode.VALUE);
         executeRoot.setOutputs(Arrays.asList(output));
 
 
@@ -136,7 +137,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
 
         Output output = new Output();
         output.setId("out-1");
-        output.setTransmissionMode(TransmissionMode.REFERENCE);
+        output.setTransmissionMode(DataTransmissionMode.REFERENCE);
         executeRoot.setOutputs(Arrays.asList(output));
 
         ObjectMapper m = new ObjectMapper();
@@ -176,7 +177,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         ObjectMapper m = new ObjectMapper();
         StringWriter sw = new StringWriter();
         m.writeValue(sw, collec);
-        String expResult = "{\"processes\":[{\"id\":\"urn:process:2\",\"title\":\"title p2\",\"keywords\":[\"kw4\",\"kw3\"],\"metadata\":null,\"version\":\"1.0\",\"jobControlOptions\":[\"SYNC_EXECUTE\"],\"processDescriptionURL\":\"http://process/2\",\"abstract\":\"some process 2\"},{\"id\":null,\"title\":null,\"keywords\":null,\"metadata\":null,\"version\":null,\"jobControlOptions\":[\"ASYNC_EXECUTE\"],\"processDescriptionURL\":null,\"abstract\":null}]}";
+        String expResult = "{\"processes\":[{\"id\":\"urn:process:2\",\"title\":\"title p2\",\"keywords\":[\"kw4\",\"kw3\"],\"metadata\":null,\"version\":\"1.0\",\"jobControlOptions\":[\"sync-execute\"],\"processDescriptionURL\":\"http://process/2\",\"abstract\":\"some process 2\"},{\"id\":null,\"title\":null,\"keywords\":null,\"metadata\":null,\"version\":null,\"jobControlOptions\":[\"async-execute\"],\"processDescriptionURL\":null,\"abstract\":null}]}";
         assertEquals(expResult, sw.toString());
 
     }
@@ -194,7 +195,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         summary.setExecuteEndpoint("http://process/1");
         summary.setTitle("title p1");
         summary.setVersion("1.0");
-        summary.setOutputTransmission(Arrays.asList(TransmissionMode.REFERENCE));
+        summary.setOutputTransmission(Arrays.asList(DataTransmissionMode.REFERENCE));
 
         // inputs
         FormatDescription format = (FormatDescription) new FormatDescription()._default(true).encoding("UTF8").mimeType("text/xml").schema("http://kk.com");
@@ -222,7 +223,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         ObjectMapper m = new ObjectMapper();
         StringWriter sw = new StringWriter();
         m.writeValue(sw, collec);
-        String expResult = "{\"process\":{\"id\":\"urn:process:1\",\"title\":\"title p1\",\"keywords\":[\"kw1\",\"kw2\"],\"metadata\":null,\"inputs\":[{\"id\":null,\"title\":\"in put 1 title\",\"keywords\":[\"in1\"],\"metadata\":null,\"formats\":[{\"mimeType\":\"text/xml\",\"schema\":\"http://kk.com\",\"encoding\":\"UTF8\",\"maximumMegabytes\":null,\"default\":true}],\"minOccurs\":0,\"maxOccurs\":2147483647,\"abstract\":\"some input 1\",\"LiteralDataDomain\":{\"mimeType\":\"text/xml\",\"schema\":\"http://kk.com\",\"encoding\":\"UTF8\",\"maximumMegabytes\":null,\"default\":true}}],\"outputs\":[{\"id\":\"out-1\",\"title\":\"out title\",\"keywords\":[\"kw-out\"],\"metadata\":null,\"formats\":[{\"mimeType\":\"text/xml\",\"schema\":\"http://kk.com\",\"encoding\":\"UTF8\",\"maximumMegabytes\":null,\"default\":true}],\"abstract\":\"some output\"}],\"version\":\"1.0\",\"jobControlOptions\":[\"SYNC_EXECUTE\"],\"outputTransmission\":[\"REFERENCE\"],\"executeEndpoint\":\"http://process/1\",\"abstract\":\"some process 1\"}}";
+        String expResult = "{\"process\":{\"id\":\"urn:process:1\",\"title\":\"title p1\",\"keywords\":[\"kw1\",\"kw2\"],\"metadata\":null,\"inputs\":[{\"id\":null,\"title\":\"in put 1 title\",\"keywords\":[\"in1\"],\"metadata\":null,\"formats\":[{\"mimeType\":\"text/xml\",\"schema\":\"http://kk.com\",\"encoding\":\"UTF8\",\"maximumMegabytes\":null,\"default\":true}],\"minOccurs\":0,\"maxOccurs\":2147483647,\"abstract\":\"some input 1\",\"LiteralDataDomain\":{\"mimeType\":\"text/xml\",\"schema\":\"http://kk.com\",\"encoding\":\"UTF8\",\"maximumMegabytes\":null,\"default\":true}}],\"outputs\":[{\"id\":\"out-1\",\"title\":\"out title\",\"keywords\":[\"kw-out\"],\"metadata\":null,\"formats\":[{\"mimeType\":\"text/xml\",\"schema\":\"http://kk.com\",\"encoding\":\"UTF8\",\"maximumMegabytes\":null,\"default\":true}],\"abstract\":\"some output\"}],\"version\":\"1.0\",\"jobControlOptions\":[\"sync-execute\"],\"outputTransmission\":[\"REFERENCE\"],\"executeEndpoint\":\"http://process/1\",\"abstract\":\"some process 1\"}}";
         assertEquals(expResult, sw.toString());
 
     }

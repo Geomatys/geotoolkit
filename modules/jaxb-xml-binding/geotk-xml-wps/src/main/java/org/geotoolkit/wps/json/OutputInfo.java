@@ -24,15 +24,15 @@ import java.util.Objects;
 public class OutputInfo {
 
   private String id = null;
-  
+
   private String value = null;
-  
+
   public OutputInfo id(String id) {
     this.id = id;
     return this;
   }
 
-  
+
   /**
   * Get id
   * @return id
@@ -43,13 +43,13 @@ public class OutputInfo {
   public void setId(String id) {
     this.id = id;
   }
-  
+
   public OutputInfo value(String value) {
     this.value = value;
     return this;
   }
 
-  
+
   /**
   * Get value
   * @return value
@@ -60,7 +60,7 @@ public class OutputInfo {
   public void setValue(String value) {
     this.value = value;
   }
-  
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -78,12 +78,12 @@ public class OutputInfo {
   public int hashCode() {
     return Objects.hash(id, value);
   }
-  
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class OutputInfo {\n");
-    
+
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    value: ").append(toIndentedString(value)).append("\n");
     sb.append("}");
@@ -101,7 +101,7 @@ public class OutputInfo {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
+
 }
 
 

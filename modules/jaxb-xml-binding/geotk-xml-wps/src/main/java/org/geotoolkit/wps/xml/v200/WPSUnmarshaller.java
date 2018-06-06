@@ -78,7 +78,7 @@ public class WPSUnmarshaller extends UnmarshallerProxy {
             checkServiceVersion(reader);
             return super.unmarshal(new TransformingReader(reader), declaredType);
         } finally {
-            FilterByVersion.IS_LEGACY.set(null);
+            FilterByVersion.IS_LEGACY.remove();
         }
     }
 

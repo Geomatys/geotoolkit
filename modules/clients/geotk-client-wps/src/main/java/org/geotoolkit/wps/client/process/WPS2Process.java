@@ -14,19 +14,29 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wps;
+package org.geotoolkit.wps.client.process;
 
+import org.geotoolkit.wps.client.GetStatusRequest;
+import org.geotoolkit.wps.client.GetResultRequest;
+import org.geotoolkit.wps.client.DismissRequest;
+import org.geotoolkit.wps.client.ExecuteRequest;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.UnmarshalException;
+import javax.xml.bind.Unmarshaller;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.ows.xml.ExceptionResponse;
+import org.geotoolkit.ows.xml.v200.ExceptionReport;
 import org.geotoolkit.process.DismissProcessException;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -35,11 +45,17 @@ import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
 import org.geotoolkit.wps.adaptor.ComplexAdaptor;
 import org.geotoolkit.wps.adaptor.DataAdaptor;
 import org.geotoolkit.wps.adaptor.LiteralAdaptor;
-import org.geotoolkit.wps.xml.ExecuteResponse;
+import org.geotoolkit.wps.xml.WPSMarshallerPool;
+import org.geotoolkit.wps.xml.WPSUtilities;
+import org.geotoolkit.wps.xml.v100.LegacyStatus;
+import org.geotoolkit.wps.xml.v100.ProcessFailed;
 import org.geotoolkit.wps.xml.v200.DataInput;
 import org.geotoolkit.wps.xml.v200.DataOutput;
+import org.geotoolkit.wps.xml.v200.Execute;
 import org.geotoolkit.wps.xml.v200.OutputDefinition;
+import org.geotoolkit.wps.xml.v200.ProcessOffering;
 import org.geotoolkit.wps.xml.v200.Result;
+import org.geotoolkit.wps.xml.v200.Status;
 import org.geotoolkit.wps.xml.v200.StatusInfo;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.GeneralParameterValue;
@@ -51,18 +67,37 @@ import org.opengis.parameter.ParameterValueGroup;
 /**
  * WPS 2 process.
  *
+ * TODO : allow to define transmission mode individualy for each output.
+ * TODO : simplify by creating a better level of abstraction. I.E : We should
+ * introduce new objects for pure WPS execution tracing, with listeners for status
+ * updates and a completable future for the final Result. Once done, all this
+ * process adapter have to do is listen to status changes and wait for the final
+ * result, to fill outputs. Such amelioration would lead to lighter classes,
+ * code duplication reduction, better responsability separation and code re-use.
+ * For now, we cannot have a pure WPS client without the process abstraction,
+ * which is overkill (harder to maintain, more bugs and less performances due to
+ * overhead code and java type conversions, etc.).
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WPS2Process extends AbstractProcess {
+class WPS2Process extends AbstractProcess {
 
     private final WPSProcessingRegistry registry;
 
     private ClientSecurity security;
     private boolean asReference    = false;
-    private boolean statusReport   = false;
     private boolean rawLiteralData = false;
+    /**
+     * Indicates if process output should be raw (not decorated in a WPS document).
+     */
+    private boolean rawOutput = false;
     private boolean debug          = false;
+
+    /**
+     * Specify if WPS execution should be done in synchronous or asynchronous mode.
+     */
+    private Execute.Mode executionMode;
 
     private final WPS2ProcessDescriptor desc;
 
@@ -123,9 +158,42 @@ public class WPS2Process extends AbstractProcess {
         this.rawLiteralData = rawLiteralData;
     }
 
+    @Deprecated
     public void setAsync(boolean async) {
-        this.asReference = async;
-        this.statusReport = async;
+        setExecutionMode(async? Execute.Mode.async : Execute.Mode.sync);
+    }
+
+    public void setExecutionMode(final Execute.Mode executionMode) {
+        final ProcessOffering offering = desc.getOffering();
+        boolean isCompatible = WPSUtilities.testCompatibility(offering, executionMode);
+        if (isCompatible) {
+            this.executionMode = executionMode;
+        }
+
+        throw new IllegalArgumentException(String.format(
+                "%s mode is not compatible with available job control options: %s",
+                executionMode, Arrays.toString(offering.getJobControlOptions().toArray())
+        ));
+    }
+
+    public Execute.Mode getExecutionMode() {
+        return executionMode;
+    }
+
+    public boolean isAsReference() {
+        return asReference;
+    }
+
+    public void setAsReference(boolean asReference) {
+        this.asReference = asReference;
+    }
+
+    public boolean isRawOutput() {
+        return rawOutput;
+    }
+
+    public void setRawOutput(boolean rawOutput) {
+        this.rawOutput = rawOutput;
     }
 
     public void setDebug(boolean debug) {
@@ -152,7 +220,7 @@ public class WPS2Process extends AbstractProcess {
      * @throws javax.xml.bind.UnmarshalException
      * @throws java.io.IOException
      */
-    public StatusInfo getStatus() throws ProcessException, JAXBException, IOException {
+    private StatusInfo getStatus() throws ProcessException, JAXBException, IOException {
         if (jobId==null) throw new ProcessException("Process is not started.", this);
 
         if (isCanceled()) {
@@ -260,35 +328,38 @@ public class WPS2Process extends AbstractProcess {
      * @param response The execute response given by service.
      */
     private Result checkResult(Object response) throws IOException, JAXBException, InterruptedException, ProcessException {
-
         if (response instanceof ExceptionResponse) {
             final ExceptionResponse report = (ExceptionResponse) response;
             throw new ProcessException("Exception when executing the process.", this, report.toException());
 
         } else if (response instanceof StatusInfo) {
             final StatusInfo statusInfo = (StatusInfo) response;
-            final String status = statusInfo.getStatus();
+            Status status = statusInfo.getStatus();
             jobId = statusInfo.getJobID();
 
-            if (StatusInfo.STATUS_SUCCEEDED.equalsIgnoreCase(status)) {
+            if (Status.SUCCEEDED.equals(status)) {
                 fireProgressing("WPS remote process has been successfully executed", 100f, false);
                 return null;
-            } else if (StatusInfo.STATUS_FAILED.equalsIgnoreCase(status)) {
+            } else if (Status.FAILED.equals(status)) {
                 throw new ProcessException("Process failed", this);
-            } else if (StatusInfo.STATUS_DISSMISED.equalsIgnoreCase(status)) {
+            } else if (Status.DISMISS.equals(status)) {
                 throw new DismissProcessException("WPS remote process has been canceled",this);
-            } else if (StatusInfo.STATUS_ACCEPTED.equalsIgnoreCase(status)) {
+            } else if (Status.ACCEPTED.equals(status)) {
                 // Initial status
                 fireProgressing("Process accepted: "+jobId, 0, false);
             } else {
                 // Running
                 final Integer progress = statusInfo.getPercentCompleted();
-                fireProgressing(statusInfo.getStatus(), progress == null? Float.NaN : progress, false);
+                String message = statusInfo.getMessage(); // Not in the standard
+                if (message == null || (message = message.trim()).isEmpty()) {
+                    message = status.name();
+                }
+                fireProgressing(message, progress == null? Float.NaN : progress, false);
             }
 
             //loop until we have an answer
             Object tmpResponse;
-            int timeLapse = 3000;
+            int timeLapse = 3000; // TODO : make timelapse configurable
 
             //we tolerate a few unmarshalling or IO errors, the servers behave differentely
             //and may not offer the result file right from the start
@@ -320,22 +391,28 @@ public class WPS2Process extends AbstractProcess {
 
                 if (tmpResponse instanceof StatusInfo) {
                     final StatusInfo statInfo = (StatusInfo) tmpResponse;
-                    final String stat = statInfo.getStatus();
+                    status = statInfo.getStatus();
 
-                    if (StatusInfo.STATUS_SUCCEEDED.equalsIgnoreCase(stat)) {
+                    if (Status.SUCCEEDED.equals(status)) {
                         fireProgressing("WPS remote process has been successfully executed", 100f, false);
                         return null;
-                    } else if (StatusInfo.STATUS_FAILED.equalsIgnoreCase(stat)) {
+                    } else if (Status.FAILED.equals(status)) {
                         throw new ProcessException("Process failed", this);
-                    } else if (StatusInfo.STATUS_DISSMISED.equalsIgnoreCase(stat)) {
+                    } else if (Status.DISMISS.equals(status)) {
                         throw new DismissProcessException("WPS remote process has been canceled", this);
                     }
 
-                    lastMessage = stat;
-                    if (statInfo.getPercentCompleted() != null) {
-                        lastProgress = statInfo.getPercentCompleted();
+                    String message = statusInfo.getMessage(); // Not in the standard
+                    if (message == null || (message = message.trim()).isEmpty()) {
+                        message = status.name();
                     }
-                    fireProgressing(lastMessage, lastProgress, false);
+
+                    final Integer percentCompleted = statInfo.getPercentCompleted();
+                    if (!Objects.equals(message, lastMessage) || !Objects.equals(percentCompleted, lastProgress)) {
+                        lastMessage = message;
+                        lastProgress = percentCompleted;
+                        fireProgressing(lastMessage, lastProgress, false);
+                    }
 
                 } else if (tmpResponse instanceof ExceptionResponse) {
                     final ExceptionResponse report = (ExceptionResponse) tmpResponse;
@@ -343,13 +420,80 @@ public class WPS2Process extends AbstractProcess {
                 }
             }
         } else if (response instanceof Result) {
-            final Result result = (Result)response;
+            final Result result = checkLegacyResult((Result)response);
             if (result.getJobID() != null) {
                 jobId = result.getJobID();
             }
             return result;
         } else {
             throw new ProcessException("Unexpected response "+response,this);
+        }
+    }
+
+    private Result checkLegacyResult(Result r) throws ProcessException, JAXBException, IOException, InterruptedException {
+        LegacyStatus legacyStatus = r.getStatus();
+        if (legacyStatus == null) {
+            return r;
+        }
+
+        // WPS 1 case
+        ProcessFailed failure = legacyStatus.getProcessFailed();
+        if (failure != null) {
+            ExceptionReport error = failure.getExceptionReport();
+            throw new ProcessException(
+                    "Exception when executing the process.", this,
+                    error != null ? error.toException() : new RuntimeException("No exception report attached")
+            );
+        }
+
+        if (legacyStatus.getProcessSucceeded() != null) {
+            return r;
+        }
+
+        final Integer currentProgress = legacyStatus.getPercentCompleted();
+        final String currentMessage = legacyStatus.getMessage();
+        if (!Objects.equals(lastProgress, currentProgress) || !Objects.equals(lastMessage, currentMessage)) {
+            lastProgress = currentProgress;
+            lastMessage = currentMessage;
+            fireProgressing(lastMessage, lastProgress, false);
+        }
+
+        registry.getClient().getLogger().log(Level.INFO, "WPS 1 Response is neither a succes nor a fail. Start querying statusLocation.");
+        legacyStatus.getPercentCompleted();
+        final Unmarshaller unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
+        String brutLocation = r.getStatusLocation();
+        if (brutLocation == null || (brutLocation = brutLocation.trim()).isEmpty()) {
+            throw new ProcessException("Received response is neither a success nor a fail, but no status location can be found.", this);
+        }
+        final URL statusLocation = security.secure(new URL(brutLocation));
+        Object tmpResponse;
+        int timeLapse = 3000; // TODO: make configurable
+
+        //we tolerate a few unmarshalling or IO errors, the servers behave differentely
+        //and may not offer the result file right from the start
+        int failCount = 0;
+        while (true) {
+            synchronized (this) {
+                wait(timeLapse);
+            }
+
+            try {
+                tmpResponse = unmarshaller.unmarshal(security.decrypt(statusLocation.openStream()));
+                if (tmpResponse instanceof JAXBElement) {
+                    tmpResponse = ((JAXBElement) tmpResponse).getValue();
+                }
+
+                return checkResult(tmpResponse);
+            } catch (UnmarshalException | IOException ex) {
+                if (failCount < 5) {
+                    failCount++;
+                } else {
+                    //server seems to have a issue or can't provide status
+                    //informations in any case we don't known what is
+                    //happenning so we consider the process failed
+                    throw ex;
+                }
+            }
         }
     }
 
@@ -493,22 +637,15 @@ public class WPS2Process extends AbstractProcess {
 
             final ExecuteRequest request = registry.getClient().createExecute();
             request.setClientSecurity(security);
-            final org.geotoolkit.wps.xml.v200.Execute execute = (org.geotoolkit.wps.xml.v200.Execute) request.getContent();
+            final Execute execute = request.getContent();
             execute.setIdentifier(processId);
-            if (asReference) {
-                execute.setMode("async");
-            } else {
-                execute.setMode("auto");
-            }
-            execute.setResponse("document");
+            final Execute.Mode mode = executionMode == null? Execute.Mode.auto : executionMode;
+            execute.setMode(mode);
+            execute.setResponse(rawOutput? Execute.Response.raw : Execute.Response.document);
             execute.getInput().addAll(wpsIN);
             execute.getOutput().addAll(wpsOUT);
-            request.setStorageDirectory(registry.getStorageDirectory());
-            request.setOutputStorage(asReference);
-            // Status can be activated only if we ask outputs as references.
-            request.setOutputStatus(asReference && statusReport);
-            request.setStorageURL(registry.getStorageURL());
-            WPSProcessingRegistry.LOGGER.log(Level.INFO, "Execute request created for {0} in {1} mode.", new Object[]{processId, (asReference)? "asynchronous": "synchronous"});
+
+            WPSProcessingRegistry.LOGGER.log(Level.INFO, "Execute request created for {0} in {1} mode.", new Object[]{processId, mode});
 
             return request;
 
@@ -516,5 +653,4 @@ public class WPS2Process extends AbstractProcess {
             throw new ProcessException("Error during conversion step.", null, ex);
         }
     }
-
 }

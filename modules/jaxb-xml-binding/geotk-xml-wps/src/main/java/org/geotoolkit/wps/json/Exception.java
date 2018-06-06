@@ -24,15 +24,15 @@ import java.util.Objects;
 public class Exception implements WPSJSONResponse {
 
   private String code = null;
-  
+
   private String description = null;
-  
+
   public Exception code(String code) {
     this.code = code;
     return this;
   }
 
-  
+
   /**
   * Get code
   * @return code
@@ -43,13 +43,13 @@ public class Exception implements WPSJSONResponse {
   public void setCode(String code) {
     this.code = code;
   }
-  
+
   public Exception description(String description) {
     this.description = description;
     return this;
   }
 
-  
+
   /**
   * Get description
   * @return description
@@ -60,7 +60,7 @@ public class Exception implements WPSJSONResponse {
   public void setDescription(String description) {
     this.description = description;
   }
-  
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -78,12 +78,12 @@ public class Exception implements WPSJSONResponse {
   public int hashCode() {
     return Objects.hash(code, description);
   }
-  
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Exception {\n");
-    
+
     sb.append("    code: ").append(toIndentedString(code)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("}");
@@ -101,7 +101,7 @@ public class Exception implements WPSJSONResponse {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
+
 }
 
 

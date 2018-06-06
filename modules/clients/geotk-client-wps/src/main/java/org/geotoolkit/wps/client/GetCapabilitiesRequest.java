@@ -14,50 +14,45 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wps;
+package org.geotoolkit.wps.client;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringReader;
 import java.net.URLConnection;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.client.AbstractRequest;
-import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
-import org.geotoolkit.wps.xml.v200.GetResult;
+import org.geotoolkit.wps.xml.v200.GetCapabilities;
 
 /**
- * WPS GetResult request.
+ * WPS GetCapabilities request.
  *
- * Request is only for WPS 2.0.0
- *
+ * @author Quentin Boileau (Geomatys)
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class GetResultRequest extends AbstractRequest {
+public class GetCapabilitiesRequest extends AbstractRequest {
 
-    private GetResult content;
+    private GetCapabilities content;
     protected final boolean doGET;
 
-    public GetResultRequest(final String serverURL, final ClientSecurity security){
+    public GetCapabilitiesRequest(final String serverURL, final ClientSecurity security){
         this(serverURL, security, true, null);
     }
 
-    public GetResultRequest(final String serverURL, final ClientSecurity security, final boolean doGET, final Integer timeout){
+    public GetCapabilitiesRequest(final String serverURL, final ClientSecurity security, final boolean doGET, Integer timeout) {
         super(serverURL, security, null, timeout);
         this.doGET = doGET;
     }
 
-    public GetResult getContent() {
+    public GetCapabilities getContent() {
         return content;
     }
 
-    public void setContent(GetResult cap) {
+    public void setContent(GetCapabilities cap) {
         this.content = cap;
     }
 
@@ -73,7 +68,7 @@ public class GetResultRequest extends AbstractRequest {
     @Override
     public InputStream getResponseStream() throws IOException {
 
-        final GetResult request = getContent();
+        final GetCapabilities request = getContent();
 
         if (doGET) {
 
@@ -81,53 +76,28 @@ public class GetResultRequest extends AbstractRequest {
             if (debug) {
                 System.out.println("GET " + getURL());
             }
-            final URLConnection conec = openConnection();
+            URLConnection conec = openConnection();
             return conec.getInputStream();
 
         } else {
 
             //POST
-            final URLConnection conec = openPostConnection();
+            URLConnection conec = openPostConnection();
             conec.setDoOutput(true);
             conec.setRequestProperty("Content-Type", "text/xml");
 
-            try (OutputStream stream = security.encrypt(conec.getOutputStream())) {
+            try (
+                    final OutputStream stream = conec.getOutputStream();
+                    final OutputStream securedStream = security.encrypt(stream)) {
                 Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
-                marshaller.marshal(request, stream);
+                marshaller.marshal(request, securedStream);
                 WPSMarshallerPool.getInstance().recycle(marshaller);
             } catch (JAXBException ex) {
                 throw new IOException(ex);
             }
+
             return security.decrypt(conec.getInputStream());
         }
     }
 
-    /**
-     * Send the request to the server URL in POST mode and return the unmarshalled response.
-     *
-     * @return Response of this request
-     * @throws IOException if can't reach the server
-     * @throws JAXBException if there is an error during Marshalling/Unmarshalling request or response.
-     */
-    public Object getResponse() throws JAXBException, IOException {
-
-        // Parse the response
-        Object response;
-        try (final InputStream in = getResponseStream()) {
-            final Unmarshaller unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
-            if (debug) {
-                final String s = IOUtilities.toString(in);
-                System.out.println(s);
-                response = unmarshaller.unmarshal(new StringReader(s));
-            } else {
-                response = unmarshaller.unmarshal(in);
-            }
-            if (response instanceof JAXBElement) {
-                return ((JAXBElement) response).getValue();
-            }
-            WPSMarshallerPool.getInstance().recycle(unmarshaller);
-        }
-
-        return response;
-    }
 }

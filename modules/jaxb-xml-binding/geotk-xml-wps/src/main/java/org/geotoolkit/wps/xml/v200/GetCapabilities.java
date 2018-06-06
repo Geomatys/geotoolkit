@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
 import org.geotoolkit.ows.xml.v200.AcceptFormatsType;
@@ -46,6 +47,7 @@ import org.geotoolkit.ows.xml.v200.SectionsType;
  *
  */
 @XmlType(name = "GetCapabilitiesType")
+@XmlRootElement(name="GetCapabilities")
 public class GetCapabilities extends org.geotoolkit.ows.xml.v200.GetCapabilitiesType {
 
     public GetCapabilities() {

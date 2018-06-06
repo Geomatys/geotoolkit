@@ -465,7 +465,6 @@ public class Execute extends RequestBase {
     })
     static class ResponseForm extends ParentAware<Execute> {
 
-        @XmlElement(name = "ResponseDocument")
         private ResponseDocument responseDocument;
 
         ResponseForm() {
@@ -478,6 +477,7 @@ public class Execute extends RequestBase {
          * @return possible object is {@link ResponseDocument }
          *
          */
+        @XmlElement(name = "ResponseDocument")
         public ResponseDocument getResponseDocument() {
             if (responseDocument == null) {
                 responseDocument = new ResponseDocument();
@@ -643,10 +643,6 @@ public class Execute extends RequestBase {
         @XmlElement(name = "Output", required = true)
         private List<OutputDefinition> getOutput() {
             return checkParent().checkParent().getOutput();
-        }
-
-        private void setOutput(final List<OutputDefinition> out) {
-            checkParent().checkParent().getOutput().addAll(out);
         }
     }
 }

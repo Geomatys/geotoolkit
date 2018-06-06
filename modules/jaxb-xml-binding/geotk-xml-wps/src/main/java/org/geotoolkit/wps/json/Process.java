@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.wps.xml.v200.BoundingBoxData;
 import org.geotoolkit.wps.xml.v200.ComplexData;
+import org.geotoolkit.wps.xml.v200.DataTransmissionMode;
 import org.geotoolkit.wps.xml.v200.JobControlOptions;
 import org.geotoolkit.wps.xml.v200.LiteralData;
 import org.geotoolkit.wps.xml.v200.ProcessDescription;
@@ -39,7 +40,7 @@ public class Process extends DescriptionType {
 
     private List<JobControlOptions> jobControlOptions = null;
 
-    private List<TransmissionMode> outputTransmission = null;
+    private List<DataTransmissionMode> outputTransmission = null;
 
     private String executeEndpoint = null;
 
@@ -50,7 +51,7 @@ public class Process extends DescriptionType {
     public Process(org.geotoolkit.wps.xml.v200.ProcessOffering offering) {
         super(offering.getProcess());
         this.executeEndpoint = null; // TODO
-        this.outputTransmission = null; // TODO
+        this.outputTransmission = offering.getOutputTransmission(); // TODO
 
         this.version = offering.getProcessVersion();
         this.jobControlOptions = new ArrayList<>(offering.getJobControlOptions());
@@ -170,7 +171,7 @@ public class Process extends DescriptionType {
      * Get jobControlOptions
      *
      * @return jobControlOptions
-  *
+     *
      */
     public List<JobControlOptions> getJobControlOptions() {
         return jobControlOptions;
@@ -180,12 +181,12 @@ public class Process extends DescriptionType {
         this.jobControlOptions = jobControlOptions;
     }
 
-    public Process outputTransmission(List<TransmissionMode> outputTransmission) {
+    public Process outputTransmission(List<DataTransmissionMode> outputTransmission) {
         this.outputTransmission = outputTransmission;
         return this;
     }
 
-    public Process addOutputTransmissionItem(TransmissionMode outputTransmissionItem) {
+    public Process addOutputTransmissionItem(DataTransmissionMode outputTransmissionItem) {
 
         if (this.outputTransmission == null) {
             this.outputTransmission = new ArrayList<>();
@@ -201,11 +202,11 @@ public class Process extends DescriptionType {
      * @return outputTransmission
   *
      */
-    public List<TransmissionMode> getOutputTransmission() {
+    public List<DataTransmissionMode> getOutputTransmission() {
         return outputTransmission;
     }
 
-    public void setOutputTransmission(List<TransmissionMode> outputTransmission) {
+    public void setOutputTransmission(List<DataTransmissionMode> outputTransmission) {
         this.outputTransmission = outputTransmission;
     }
 

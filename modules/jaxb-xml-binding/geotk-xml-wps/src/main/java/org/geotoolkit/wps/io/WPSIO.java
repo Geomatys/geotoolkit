@@ -50,7 +50,7 @@ import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.converters.WPSObjectConverterAdapter;
 import org.geotoolkit.wps.converters.inputs.references.ReferenceToUrlConnectionConverter;
-import org.geotoolkit.wps.xml.v200.ComplexData;
+import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.Reference;
 import org.opengis.coverage.Coverage;
 import org.opengis.feature.Feature;
@@ -254,7 +254,7 @@ public final class WPSIO {
                 } else if (dataType.equals(FormChoice.BBOX)) {
                     formClass = BoundingBoxType.class;
                 } else if (dataType.equals(FormChoice.COMPLEX)) {
-                    formClass = ComplexData.class;
+                    formClass = Data.class;
                 } else if (dataType.equals(FormChoice.REFERENCE)) {
                     formClass = Reference.class;
                 }
@@ -274,7 +274,7 @@ public final class WPSIO {
                 final WPSConverterRegistry registry = WPSConverterRegistry.getInstance();
                 WPSObjectConverter converter = null;
                 int loop = 0;
-                final Class[] testClass = new Class[]{String.class, Reference.class, BoundingBoxType.class, ComplexData.class};
+                final Class[] testClass = new Class[]{String.class, Reference.class, BoundingBoxType.class, Data.class};
 
                 while (converter == null) {
                     try {
@@ -633,7 +633,7 @@ public final class WPSIO {
 
                 for (WPSObjectConverter conv : candidates) {
                     final Class sourceClass = conv.getSourceClass();
-                    if ((dataType.equals(FormChoice.COMPLEX) && ComplexData.class.isAssignableFrom(sourceClass))
+                    if ((dataType.equals(FormChoice.COMPLEX) && Data.class.isAssignableFrom(sourceClass))
                             || (dataType.equals(FormChoice.REFERENCE) && Reference.class.isAssignableFrom(sourceClass))
                             || (dataType.equals(FormChoice.BBOX) && BoundingBoxType.class.isAssignableFrom(sourceClass))
                             || (dataType.equals(FormChoice.LITERAL) && String.class.isAssignableFrom(sourceClass))) {
@@ -652,7 +652,7 @@ public final class WPSIO {
 
                 for (WPSObjectConverter conv : candidates) {
                     final Class targetClass = conv.getTargetClass();
-                    if ((dataType.equals(FormChoice.COMPLEX) && ComplexData.class.isAssignableFrom(targetClass))
+                    if ((dataType.equals(FormChoice.COMPLEX) && Data.class.isAssignableFrom(targetClass))
                             || (dataType.equals(FormChoice.REFERENCE) && Reference.class.isAssignableFrom(targetClass))
                             || (dataType.equals(FormChoice.BBOX) && BoundingBoxType.class.isAssignableFrom(targetClass))
                             || (dataType.equals(FormChoice.LITERAL) && String.class.isAssignableFrom(targetClass))) {

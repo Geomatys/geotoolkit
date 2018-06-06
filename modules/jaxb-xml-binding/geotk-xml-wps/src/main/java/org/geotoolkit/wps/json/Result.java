@@ -27,18 +27,18 @@ import java.util.List;
 public class Result implements WPSJSONResponse {
 
   private List<OutputInfo> outputs = new ArrayList<>();
-  
+
   public Result outputs(List<OutputInfo> outputs) {
     this.outputs = outputs;
     return this;
   }
 
   public Result addOutputsItem(OutputInfo outputsItem) {
-    
+
     this.outputs.add(outputsItem);
     return this;
   }
-  
+
   /**
   * Get outputs
   * @return outputs
@@ -49,7 +49,7 @@ public class Result implements WPSJSONResponse {
   public void setOutputs(List<OutputInfo> outputs) {
     this.outputs = outputs;
   }
-  
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -66,12 +66,12 @@ public class Result implements WPSJSONResponse {
   public int hashCode() {
     return Objects.hash(outputs);
   }
-  
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Result {\n");
-    
+
     sb.append("    outputs: ").append(toIndentedString(outputs)).append("\n");
     sb.append("}");
     return sb.toString();
@@ -88,7 +88,7 @@ public class Result implements WPSJSONResponse {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
+
 }
 
 
