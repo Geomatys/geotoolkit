@@ -88,6 +88,11 @@ public final class GeometryToComplexConverter extends AbstractComplexOutputConve
             complex.setEncoding((String) tmpEncoding);
         }
 
+        final Object tmpSchema = params.get(SCHEMA);
+        if (tmpSchema instanceof String) {
+            complex.setSchema((String) tmpSchema);
+        }
+
         Object tmpGmlVersion = params.get(GMLVERSION);
         final String gmlVersion;
         if (tmpGmlVersion instanceof String) {

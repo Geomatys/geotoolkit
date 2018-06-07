@@ -142,24 +142,6 @@ public class DataOutput {
     /**
      * Gets the value of the output property.
      *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the output property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getOutput().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link DataOutput }
-     *
-     *
      */
     public List<DataOutput> getOutput() {
         if (output == null) {
@@ -248,6 +230,26 @@ public class DataOutput {
 
     private String title;
     private List<String> _abstract;
+
+    @Deprecated
+    public DataOutput(String id, String title, String _abstract, Reference reference) {
+        this(id, reference);
+        this.title = title;
+        if (_abstract != null) {
+            this._abstract = new ArrayList<>();
+            this._abstract.add(_abstract);
+        }
+    }
+
+    @Deprecated
+    public DataOutput(String id, String title, String _abstract, Data data) {
+        this(id, data);
+        this.title = title;
+        if (_abstract != null) {
+            this._abstract = new ArrayList<>();
+            this._abstract.add(_abstract);
+        }
+    }
 
     /**
      *

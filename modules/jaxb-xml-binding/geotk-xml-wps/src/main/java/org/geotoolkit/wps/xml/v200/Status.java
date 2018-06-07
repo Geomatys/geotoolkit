@@ -22,6 +22,12 @@ public class Status extends CodeList<Status> {
     public static final Status FAILED = new Status("Failed");
     public static final Status SUCCEEDED = new Status("Succeeded");
     public static final Status DISMISS = new Status("Dismissed");
+    // Added this new values  TODO review if really needed
+    @Deprecated
+    public static final Status STARTED = new Status("Started");
+    @Deprecated
+    public static final Status PAUSED = new Status("Paused");
+
 
     private Status(String value) {
         super(value, VALUES);

@@ -18,6 +18,7 @@ package org.geotoolkit.wps.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
@@ -27,6 +28,7 @@ import org.geotoolkit.ows.xml.v200.CodeType;
 import org.geotoolkit.ows.xml.v200.KeywordsType;
 import org.geotoolkit.ows.xml.v200.LanguageStringType;
 import org.geotoolkit.ows.xml.v200.MetadataType;
+import static org.geotoolkit.wps.xml.WPSMarshallerPool.OWS_1_1_NAMESPACE;
 
 import static org.geotoolkit.wps.xml.WPSMarshallerPool.OWS_2_0_NAMESPACE;
 
@@ -61,10 +63,11 @@ import static org.geotoolkit.wps.xml.WPSMarshallerPool.OWS_2_0_NAMESPACE;
  *
  */
 @XmlType(name = "DescriptionType", propOrder = {
+    "identifierV1",
     "title",
     "_abstract",
     "keywords",
-    "identifier",
+    "identifierV2",
     "metadata"
 })
 @XmlSeeAlso({
@@ -78,7 +81,6 @@ import static org.geotoolkit.wps.xml.WPSMarshallerPool.OWS_2_0_NAMESPACE;
 })
 public class Description implements AbstractDescription {
 
-    @XmlElement(name = "Identifier", namespace=OWS_2_0_NAMESPACE, required=true)
     private CodeType identifier;
     @XmlElement(name = "Title", namespace=OWS_2_0_NAMESPACE)
     private LanguageStringType title;
@@ -103,8 +105,51 @@ public class Description implements AbstractDescription {
         this.keywords = keywords;
     }
 
+    public Description(
+            CodeType identifier,
+            final LanguageStringType title,
+            final LanguageStringType _abstract,
+            final KeywordsType keywords
+    ) {
+        this.identifier = identifier;
+        this.title = title;
+        if (_abstract != null) {
+            this._abstract = new ArrayList<>();
+            this._abstract.add(_abstract);
+        }
+        if (keywords != null) {
+            this.keywords = new ArrayList<>();
+            this.keywords.add(keywords);
+        }
+    }
+
+    @Override
     public CodeType getIdentifier() {
         return identifier;
+    }
+
+    @XmlElement(name = "Identifier", namespace = OWS_2_0_NAMESPACE)
+    private CodeType getIdentifierV2() {
+        if (FilterByVersion.isV2()) {
+            return identifier;
+        }
+        return null;
+    }
+
+    private void setIdentifierV2(CodeType identifier) {
+        this.identifier = identifier;
+    }
+
+    @XmlElement(name = "Identifier", namespace = OWS_1_1_NAMESPACE)
+    private CodeType getIdentifierV1() {
+        if (FilterByVersion.isV1()) {
+            return identifier;
+        }
+        return null;
+    }
+
+    private void setIdentifierV1(CodeType identifier) {
+        this.identifier = identifier;
     }
 
     public LanguageStringType getTitle() {
@@ -142,5 +187,67 @@ public class Description implements AbstractDescription {
         final List<LanguageStringType> a = getAbstract();
         if (a.isEmpty()) return null;
         return a.get(0).getValue();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (identifier != null) {
+            sb.append("identifier:").append(identifier).append('\n');
+        }
+        if (title != null) {
+            sb.append("title:").append(title).append('\n');
+        }
+        if (_abstract != null) {
+            sb.append("_abstract:\n");
+            for (LanguageStringType jb : _abstract) {
+                sb.append(jb).append('\n');
+            }
+        }
+        if (keywords != null) {
+            sb.append("keywords:\n");
+            for (KeywordsType jb : keywords) {
+                sb.append(jb).append('\n');
+            }
+        }
+        if (metadata != null) {
+            sb.append("metadata:\n");
+            for (MetadataType jb : metadata) {
+                sb.append(jb).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify that this entry is identical to the specified object.
+     *
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Description) {
+            final Description that = (Description) object;
+            return Objects.equals(this._abstract, that._abstract)
+                    && Objects.equals(this.identifier, that.identifier)
+                    && Objects.equals(this.keywords, that.keywords)
+                    && Objects.equals(this.metadata, that.metadata)
+                    && Objects.equals(this.title, that.title);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this._abstract);
+        hash = 97 * hash + Objects.hashCode(this.identifier);
+        hash = 97 * hash + Objects.hashCode(this.keywords);
+        hash = 97 * hash + Objects.hashCode(this.metadata);
+        hash = 97 * hash + Objects.hashCode(this.title);
+        return hash;
     }
 }

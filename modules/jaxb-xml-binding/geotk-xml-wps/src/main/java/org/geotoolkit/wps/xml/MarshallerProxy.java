@@ -20,6 +20,7 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.validation.Schema;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.wps.xml.v200.WriterWrapper;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 
@@ -61,7 +62,7 @@ public class MarshallerProxy implements Marshaller {
     @Override
     public void marshal(Object jaxbElement, Writer writer) throws JAXBException {
         try {
-            marshal(jaxbElement, XML_FACTORY.createXMLEventWriter(writer));
+            marshal(jaxbElement, XML_FACTORY.createXMLEventWriter(new WriterWrapper(writer)));
         } catch (XMLStreamException ex) {
             throw new JAXBException(ex);
         }

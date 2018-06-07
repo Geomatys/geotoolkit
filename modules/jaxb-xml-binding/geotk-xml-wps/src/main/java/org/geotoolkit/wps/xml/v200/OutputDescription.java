@@ -58,7 +58,7 @@ import org.geotoolkit.ows.xml.v200.LanguageStringType;
 })
 public class OutputDescription extends Description {
 
-    @XmlElementRef(name = "", namespace = "", required = false)
+    @XmlElementRef
     protected DataDescription dataDescription;
     @XmlElement(name = "Output")
     protected List<OutputDescription> output;
@@ -73,30 +73,18 @@ public class OutputDescription extends Description {
         this.dataDescription = dataDescription;
     }
 
+    public OutputDescription(CodeType identifier, LanguageStringType title, LanguageStringType _abstract,
+            KeywordsType keywords, DataDescription dataDescription) {
+        super(identifier, title, _abstract, keywords);
+        this.dataDescription = dataDescription;
+    }
+
     public DataDescription getDataDescription() {
         return dataDescription;
     }
 
     /**
      * Gets the value of the output property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the output property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getOutput().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link OutputDescription }
-     *
      *
      */
     public List<OutputDescription> getOutput() {

@@ -35,8 +35,13 @@ import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.*;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import net.sf.json.JSONObject;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
@@ -87,7 +92,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
-import org.geotoolkit.ows.xml.DomainMetadata;
 import org.geotoolkit.ows.xml.v200.DomainMetadataType;
 import org.geotoolkit.storage.DataStores;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_PATH;
@@ -104,6 +108,9 @@ import org.w3c.dom.Node;
 import static org.geotoolkit.wps.xml.WPSUtilities.CDATA_START_TAG;
 import static org.geotoolkit.wps.xml.WPSUtilities.CDATA_END_TAG;
 import org.geotoolkit.wps.xml.v200.LiteralValue;
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 
 /**
  *
@@ -256,7 +263,7 @@ public class WPSConvertersUtils {
      * @return
      * @throws UnconvertibleObjectException
      */
-    public static ComplexData convertToComplex(final String wpsVersion, final Object object, final String mime, final String encoding, final String schema,
+    public static Object convertToComplex(final String wpsVersion, final Object object, final String mime, final String encoding, final String schema,
             final Map<String, Object> params) throws UnconvertibleObjectException {
 
         ArgumentChecks.ensureNonNull("Object", object);
@@ -279,7 +286,7 @@ public class WPSConvertersUtils {
             throw new UnconvertibleObjectException("Output complex not supported, no converter found.");
         }
 
-        return (ComplexData) converter.convert(object, parameters);
+        return converter.convert(object, parameters);
     }
 
 
@@ -355,7 +362,7 @@ public class WPSConvertersUtils {
             final double xMax = env.getUpperCorner().getOrdinate(0);
             final double yMin = env.getLowerCorner().getOrdinate(1);
             final double yMax = env.getUpperCorner().getOrdinate(1);
-            final Map<String,String> bboxMap = new HashMap<String, String>();
+            final Map<String,String> bboxMap = new HashMap<>();
             bboxMap.put("bounds", xMin+","+yMin+","+xMax+","+yMax);
             bboxMap.put("crs", "EPSG:4326");
             jsonMap.put("bbox", bboxMap);
@@ -388,7 +395,7 @@ public class WPSConvertersUtils {
         final String schema = reference.getSchema();
         WPSIO.checkSupportedFormat(expectedClass, WPSIO.IOType.INPUT, mime, encoding, schema);
 
-        final Map<String, Object> parameters = new HashMap<String, Object>();
+        final Map<String, Object> parameters = new HashMap<>();
         parameters.put(WPSObjectConverter.ENCODING, encoding);
         parameters.put(WPSObjectConverter.MIME, mime);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
@@ -452,7 +459,7 @@ public class WPSConvertersUtils {
      * @return
      * @throws UnconvertibleObjectException
      */
-    public static DomainMetadata createDataType(final String version, final Class clazz) {
+    public static DomainMetadataType createDataType(final String version, final Class clazz) {
         if (clazz.equals(Double.class)) {
             return new DomainMetadataType("Double", "http://www.w3.org/TR/xmlschema-2/#double");
 
@@ -560,7 +567,7 @@ public class WPSConvertersUtils {
      * @return
      */
     public static double[] getCells (final Mtr row) {
-        final List<Double> cells = new ArrayList<Double>();
+        final List<Double> cells = new ArrayList<>();
         final List<JAXBElement<TableCellExpression>> tableCellExpressionList = row.getTableCellExpression();
 
         for (JAXBElement<TableCellExpression> jAXBElement : tableCellExpressionList) {

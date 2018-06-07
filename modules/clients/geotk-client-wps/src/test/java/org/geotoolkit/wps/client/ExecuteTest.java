@@ -91,7 +91,7 @@ public class ExecuteTest extends org.geotoolkit.test.TestBase {
 
         String result = stringWriter.toString();
         try (final InputStream expected = expectedRequest()) {
-            assertXmlEquals(expected, result, "xmlns:*");
+            assertXmlEquals(expected, result, "xmlns:*", "crs", "srsName");
         }
 
         WPSMarshallerPool.getInstance().recycle(marshaller);

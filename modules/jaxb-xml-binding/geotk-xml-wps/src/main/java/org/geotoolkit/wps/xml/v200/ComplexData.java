@@ -25,10 +25,13 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
 import org.w3c.dom.Element;
 
 
@@ -65,6 +68,11 @@ public class ComplexData extends DataDescription {
      * IS NOT DESTINED TO HANDLE VALUES !
      */
     @XmlMixed
+    @XmlElementRefs({
+        @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml/3.2", type = AbstractGeometryType.class),
+        @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml", type = org.geotoolkit.gml.xml.v311.AbstractGeometryType.class),
+        @XmlElementRef(name = "math", namespace = "http://www.w3.org/1998/Math/MathML", type = org.geotoolkit.mathml.xml.Math.class)
+    })
     @XmlAnyElement(lax = true)
     protected List<Object> any;
 
@@ -150,6 +158,12 @@ public class ComplexData extends DataDescription {
     @XmlAttribute(name = "schema")
     @XmlSchemaType(name = "anyURI")
     protected String schema;
+
+    @Deprecated
+    public ComplexData(List<Format> format, Integer legacyMaxMb) {
+        super(format);
+        this.legacyMaxMb = legacyMaxMb;
+    }
 
     @XmlAttribute(name="maximumMegabytes")
     private Integer getLegacyMaxMb() {

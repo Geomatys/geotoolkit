@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
+import javax.xml.bind.JAXBElement;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.data.geojson.binding.GeoJSONFeature;
@@ -76,7 +77,11 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
                 WPSMimeType.TEXT_XML.val().equalsIgnoreCase(source.getMimeType()) ||
                 WPSMimeType.TEXT_GML.val().equalsIgnoreCase(source.getMimeType()) ) {
                 dataMimeTypeIdentifier = "GML";
-                AbstractGeometry abstractGeo = (AbstractGeometry) data.get(0);
+                Object value = data.get(0);
+                if (value instanceof JAXBElement) {
+                    value = ((JAXBElement) value).getValue();
+                }
+                AbstractGeometry abstractGeo = (AbstractGeometry) value;
                 return GeometrytoJTS.toJTS(abstractGeo);
             } else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(source.getMimeType())) {
                 dataMimeTypeIdentifier = "GeoJSON";

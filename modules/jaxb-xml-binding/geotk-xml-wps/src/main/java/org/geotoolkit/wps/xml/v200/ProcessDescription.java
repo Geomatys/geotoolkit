@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.ows.xml.v200.CodeType;
 import org.geotoolkit.ows.xml.v200.KeywordsType;
 import org.geotoolkit.ows.xml.v200.LanguageStringType;
+import static org.geotoolkit.wps.xml.WPSMarshallerPool.WPS_1_0_NAMESPACE;
 import static org.geotoolkit.wps.xml.WPSMarshallerPool.WPS_2_0_NAMESPACE;
 
 
@@ -80,6 +81,14 @@ public class ProcessDescription extends Description {
         this.input = input;
         this.output = output;
     }
+
+    public ProcessDescription(CodeType identifier, final LanguageStringType title, final LanguageStringType _abstract,
+            final KeywordsType keywords, List<InputDescription> input, List<OutputDescription> output) {
+        super(identifier, title, _abstract, keywords);
+        this.input = input;
+        this.output = output;
+    }
+
     /**
      * Gets the value of the input property.
      *
@@ -163,7 +172,7 @@ public class ProcessDescription extends Description {
      * stored into the {@link ProcessOffering} containing this description.
      */
     @Deprecated
-    @XmlAttribute(name="processVersion", namespace=WPS_2_0_NAMESPACE)
+    @XmlAttribute(name="processVersion", namespace=WPS_1_0_NAMESPACE)
     @XmlJavaTypeAdapter(FilterV1.String.class)
     String processVersion;
 
@@ -172,7 +181,7 @@ public class ProcessDescription extends Description {
      *
      * @return
      */
-    @XmlElement(name = "DataInputs")
+    @XmlElement(name = "DataInputs", namespace = "")
     private DataInputs getDataInputs() {
         if (FilterByVersion.isV1()) {
             final DataInputs in = new DataInputs();
@@ -197,7 +206,7 @@ public class ProcessDescription extends Description {
      *
      * @return
      */
-    @XmlElement(name = "ProcessOutputs")
+    @XmlElement(name = "ProcessOutputs", namespace = "")
     private ProcessOutputs getProcessOutputs() {
         if (FilterByVersion.isV1() && !getOutputs().isEmpty()) {
             final ProcessOutputs in = new ProcessOutputs();
@@ -299,7 +308,7 @@ public class ProcessDescription extends Description {
          * {@link InputDescription }
          *
          */
-        @XmlElement(name = "Input", required = true)
+        @XmlElement(name = "Input", namespace = "", required = true)
         private List<InputDescription> getInput() {
             return checkParent().getInputs();
         }
@@ -381,7 +390,7 @@ public class ProcessDescription extends Description {
          *
          *
          */
-        @XmlElement(name = "Output", required = true)
+        @XmlElement(name = "Output", namespace = "", required = true)
         private List<OutputDescription> getOutput() {
             return checkParent().getOutputs();
         }

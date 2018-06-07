@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.ows.xml.LanguageString;
 import org.geotoolkit.ows.xml.v200.CodeType;
+import org.geotoolkit.ows.xml.v200.LanguageStringType;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 
 
@@ -58,6 +58,8 @@ import org.geotoolkit.wps.xml.WPSMarshallerPool;
  */
 @XmlType(name = "OutputDefinitionType", propOrder = {
     "id",
+    "title",
+    "abstract",
     "output"
 })
 public class OutputDefinition {
@@ -108,24 +110,6 @@ public class OutputDefinition {
     /**
      * Gets the value of the output property.
      *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the output property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getOutput().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link OutputDefinition }
-     *
-     *
      */
     public List<OutputDefinition> getOutput() {
         if (output == null) {
@@ -136,9 +120,11 @@ public class OutputDefinition {
 
     @XmlAttribute(name = "id", required = true)
     @XmlSchemaType(name = "anyURI")
-    @XmlJavaTypeAdapter(FilterV2.String.class)
     public String getIdentifier() {
-        return id;
+        if (FilterByVersion.isV2()) {
+            return id;
+        }
+        return null;
     }
 
     /**
@@ -249,15 +235,6 @@ public class OutputDefinition {
         this.schema = value;
     }
 
-    public LanguageString getTitle() {
-        return null; //nothing in this implementation
-    }
-
-    public LanguageString getAbstract() {
-        return null; //nothing in this implementation
-    }
-
-
     ////////////////////////////////////////////////////////////////////////////
     //
     // Following section is boilerplate code for WPS v1 retro-compatibility.
@@ -268,12 +245,16 @@ public class OutputDefinition {
     @XmlSchemaType(name = "anyURI")
     private String uom;
 
+    private LanguageStringType title;
+
+    private LanguageStringType _abstract;
+
     @XmlElement(name = "Identifier", namespace=WPSMarshallerPool.OWS_2_0_NAMESPACE, required = true)
-    private CodeType getId() {
+    public CodeType getId() {
         return id != null && FilterByVersion.isV1()? new CodeType(id) : null;
     }
 
-    private void setId(final CodeType code) {
+    public void setId(final CodeType code) {
         id = code == null? null : code.getValue();
     }
 
@@ -327,4 +308,29 @@ public class OutputDefinition {
             setTransmission(null);
         }
     }
+
+    @XmlElement(name = "Title", namespace = WPSMarshallerPool.OWS_2_0_NAMESPACE)
+    public LanguageStringType getTitle() {
+        if (FilterByVersion.isV1()) {
+            return title;
+        }
+        return null;
+    }
+
+    private void setTitle(final LanguageStringType value) {
+        this.title = value;
+    }
+
+    @XmlElement(name = "Abstract", namespace = WPSMarshallerPool.OWS_2_0_NAMESPACE)
+    public LanguageStringType getAbstract() {
+        if (FilterByVersion.isV1()) {
+            return _abstract;
+        }
+        return null;
+    }
+
+    public void setAbstract(final LanguageStringType value) {
+        this._abstract = value;
+    }
+
 }

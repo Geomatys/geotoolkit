@@ -56,8 +56,8 @@ public class GetResult extends RequestBase {
 
     }
 
-    public GetResult(final String service, final String jobId) {
-        super(service);
+    public GetResult(final String service, final String version, final String jobId) {
+        super(service, version);
         this.jobID = jobId;
     }
 

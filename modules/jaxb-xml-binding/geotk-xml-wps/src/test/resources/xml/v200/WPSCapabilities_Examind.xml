@@ -9,11 +9,14 @@
                   xmlns:mml="http://www.w3.org/1998/Math/MathML" 
                   xmlns:ows="http://www.opengis.net/ows/2.0" 
                   xmlns:wps="http://www.opengis.net/wps/2.0" 
-                  service="WPS" version="2.0.0" updateSequence="1527589424971">
+                  service="WPS" version="2.0.0" updateSequence="1527589424971"
+                  xsi:schemaLocation="http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd">
     <ows:ServiceIdentification>
         <ows:Title>littleWPS</ows:Title>
         <ows:Abstract>WPS</ows:Abstract>
-        <ows:Keywords/>
+        <ows:Keywords>
+            <ows:Keyword>WPS</ows:Keyword>
+        </ows:Keywords>
         <ows:ServiceType>WPS</ows:ServiceType>
         <ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
         <ows:ServiceTypeVersion>2.0.0</ows:ServiceTypeVersion>
@@ -106,37 +109,37 @@
         <ows:Language>en-EN</ows:Language>
     </ows:Languages>
     <wps:Contents>
-        <wps:ProcessSummary processVersion="1.0.0">
+        <wps:ProcessSummary processVersion="1.0.0" jobControlOptions="sync-execute async-execute dismiss">
             <ows:Title>Cesium : CesiumHeightMap</ows:Title>
             <ows:Abstract>Cesium quantized-mesh pyramid process</ows:Abstract>
             <ows:Identifier>urn:ogc:cstl:wps:cesium:cesiumHeightMap</ows:Identifier>
         </wps:ProcessSummary>
-        <wps:ProcessSummary processVersion="1.0.0">
+        <wps:ProcessSummary processVersion="1.0.0" jobControlOptions="sync-execute async-execute dismiss">
             <ows:Title>Cesium : CesiumPyramid</ows:Title>
             <ows:Abstract>Cesium quantized-mesh pyramid process</ows:Abstract>
             <ows:Identifier>urn:ogc:cstl:wps:cesium:cesiumPyramid</ows:Identifier>
         </wps:ProcessSummary>
-        <wps:ProcessSummary processVersion="1.0.0">
+        <wps:ProcessSummary processVersion="1.0.0" jobControlOptions="sync-execute async-execute dismiss">
             <ows:Title>Hadoop : Hadoop-feature-intersect</ows:Title>
             <ows:Abstract>Launch an remote hadoop process sample : Feature intersect.</ows:Abstract>
             <ows:Identifier>urn:ogc:cstl:wps:hadoop:hadoop-feature-intersect</ows:Identifier>
         </wps:ProcessSummary>
-        <wps:ProcessSummary processVersion="1.0.0">
+        <wps:ProcessSummary processVersion="1.0.0" jobControlOptions="sync-execute async-execute dismiss">
             <ows:Title>Hadoop : Ndvi3g-avg</ows:Title>
             <ows:Abstract>Download NDVI3G from an S3 repository, and then compute average NDVI value.</ows:Abstract>
             <ows:Identifier>urn:ogc:cstl:wps:hadoop:ndvi3g-avg</ows:Identifier>
         </wps:ProcessSummary>
-        <wps:ProcessSummary processVersion="1.0.0">
+        <wps:ProcessSummary processVersion="1.0.0" jobControlOptions="sync-execute async-execute dismiss">
             <ows:Title>Hadoop : Hadoop-word-count</ows:Title>
             <ows:Abstract>Launch an remote hadoop process sample : Word count.</ows:Abstract>
             <ows:Identifier>urn:ogc:cstl:wps:hadoop:hadoop-word-count</ows:Identifier>
         </wps:ProcessSummary>
-        <wps:ProcessSummary processVersion="1.0.0">
+        <wps:ProcessSummary processVersion="1.0.0" jobControlOptions="sync-execute async-execute dismiss">
             <ows:Title>Geotoolkit : Math:add</ows:Title>
             <ows:Abstract>Adds two double.</ows:Abstract>
             <ows:Identifier>urn:ogc:cstl:wps:geotoolkit:math:add</ows:Identifier>
         </wps:ProcessSummary>
-        <wps:ProcessSummary processVersion="1.0.0">
+        <wps:ProcessSummary processVersion="1.0.0" jobControlOptions="sync-execute async-execute dismiss">
             <ows:Title>Geotoolkit : Jts:buffer</ows:Title>
             <ows:Abstract>Apply JTS buffer to a geometry.</ows:Abstract>
             <ows:Identifier>urn:ogc:cstl:wps:geotoolkit:jts:buffer</ows:Identifier>

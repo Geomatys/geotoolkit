@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -115,7 +114,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
      * Build a new GetCapabilities base request.
      */
     public GetCapabilitiesType(final AcceptVersionsType acceptVersions, final SectionsType sections,
-            final AcceptFormatsType acceptFormats, final String updateSequence, final String service){
+            final AcceptFormatsType acceptFormats, final String updateSequence, final String service, final GetCapabilitiesType.AcceptLanguages acceptLanguage){
         this.acceptFormats  = acceptFormats;
         this.acceptVersions = acceptVersions;
         this.sections       = sections;
@@ -362,6 +361,21 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
         @XmlSchemaType(name = "language")
         private List<String> language;
+
+        public AcceptLanguages() {
+
+        }
+
+        public AcceptLanguages(List<String> language) {
+            this.language = language;
+        }
+
+        public AcceptLanguages(String language) {
+            if (language != null) {
+                this.language = new ArrayList<>();
+                this.language.add(language);
+            }
+        }
 
         /**
          * Gets the value of the language property.

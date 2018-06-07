@@ -66,6 +66,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import org.opengis.feature.Feature;
 import org.opengis.util.FactoryException;
+import org.w3c.dom.CDATASection;
 
 /**
  *
@@ -605,7 +606,7 @@ public final class ConvertersTestUtils {
         if (geoJson.startsWith(WPSUtilities.CDATA_START_TAG)) {
             geoJson = geoJson.substring(WPSUtilities.CDATA_START_TAG.length(), geoJson.length() - WPSUtilities.CDATA_END_TAG.length());
         }
-
+        
         // Write the json in a tmp file in order to be able to read it
         Path tmpFilePath = WPSConvertersUtils.writeTempJsonFile(geoJson);
         try {

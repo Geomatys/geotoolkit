@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
 import org.geotoolkit.ows.xml.BoundingBox;
@@ -110,18 +111,6 @@ public class Data {
      * This element is used to embed the data in a WPS request or response.
      * The content can be XML data, plain character data, or specially encoded binary data (i.e. base64).
      *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the content property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getContent().add(newItem);
-     * </pre>
-     *
      *
      * <p>
      * Objects of the following type(s) are allowed in the list
@@ -142,6 +131,7 @@ public class Data {
         @XmlElementRef(name = "BoundingBox", namespace = "http://www.opengis.net/ows/2.0", type = BoundingBoxType.class),
         @XmlElementRef(name = "LiteralValue", namespace = "http://www.opengis.net/wps/2.0", type = LiteralValue.class),
         @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml/3.2", type = AbstractGeometryType.class),
+        @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml", type = org.geotoolkit.gml.xml.v311.AbstractGeometryType.class),
         @XmlElementRef(name = "math", namespace = "http://www.w3.org/1998/Math/MathML", type = org.geotoolkit.mathml.xml.Math.class)
     })
     @XmlAnyElement(lax = true)
@@ -151,6 +141,10 @@ public class Data {
         }
 
         return getContent();
+    }
+
+    private void setContentToMarshal(List<Object> objects) {
+        // Nothing to do, attributes are filled directly in legacy data ??
     }
 
     /**
@@ -402,6 +396,7 @@ public class Data {
             @XmlElementRef(name = "BoundingBox", namespace = "http://www.opengis.net/ows/2.0", type = BoundingBoxType.class),
             @XmlElementRef(name = "LiteralValue", namespace = "http://www.opengis.net/wps/2.0", type = LiteralValue.class),
             @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml/3.2", type = AbstractGeometryType.class),
+            @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml", type = org.geotoolkit.gml.xml.v311.AbstractGeometryType.class),
             @XmlElementRef(name = "math", namespace = "http://www.w3.org/1998/Math/MathML", type = org.geotoolkit.mathml.xml.Math.class)
         })
         @XmlAnyElement(lax = true)

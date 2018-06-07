@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <wps:StatusInfo xmlns:ows="http://www.opengis.net/ows/2.0"
-  xmlns:wps="http://www.opengis.net/wps/2.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <wps:JobID>FB6DD4B0-A2BB-11E3-A5E2-0800200C9A66</wps:JobID>
-  <wps:Status>Accepted</wps:Status>
-  <wps:NextPoll>2014-12-24T16:00:00Z</wps:NextPoll>
+                xmlns:wps="http://www.opengis.net/wps/2.0"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd">
+    <wps:JobID>FB6DD4B0-A2BB-11E3-A5E2-0800200C9A66</wps:JobID>
+    <wps:Status>Accepted</wps:Status>
+    <wps:NextPoll>2014-12-24T16:00:00Z</wps:NextPoll>
 </wps:StatusInfo>

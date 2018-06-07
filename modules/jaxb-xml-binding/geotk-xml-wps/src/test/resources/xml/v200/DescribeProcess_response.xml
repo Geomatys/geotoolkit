@@ -2,7 +2,8 @@
 <wps:ProcessOfferings xmlns:wps="http://www.opengis.net/wps/2.0"
                       xmlns:ows="http://www.opengis.net/ows/2.0"
                       xmlns:xlink="http://www.w3.org/1999/xlink"
-                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd">
     <wps:ProcessOffering
         jobControlOptions="sync-execute async-execute dismiss"
         outputTransmission="value reference">
@@ -19,25 +20,17 @@
                 http://my.wps.server/processes/proximity/Planar-Buffer
             </ows:Identifier>
             <ows:Metadata
-                xlink:role="http://www.opengis.net/spec/wps/2.0/
-def/process-profile/concept"
-                xlink:href="http://some.host/profileregistry/
-concept/buffer"/>
+                xlink:role="http://www.opengis.net/spec/wps/2.0/def/process-profile/concept"
+                xlink:href="http://some.host/profileregistry/concept/buffer"/>
             <ows:Metadata
-                xlink:role="http://www.opengis.net/spec/wps/2.0/
-def/process-profile/concept"
-                xlink:href="http://some.host/profileregistry/
-concept/planarbuffer"/>
+                xlink:role="http://www.opengis.net/spec/wps/2.0/def/process-profile/concept"
+                xlink:href="http://some.host/profileregistry/concept/planarbuffer"/>
             <ows:Metadata
-                xlink:role="http://www.opengis.net/spec/wps/2.0/
-def/process-profile/generic"
-                xlink:href="http://some.host/profileregistry/
-generic/SF-Buffer"/>
+                xlink:role="http://www.opengis.net/spec/wps/2.0/def/process-profile/generic"
+                xlink:href="http://some.host/profileregistry/generic/SF-Buffer"/>
             <ows:Metadata
-                xlink:role="http://www.opengis.net/spec/wps/2.0/
-def/process/description/documentation"
-                xlink:href="http://my.wps.server/processes/
-proximity/Planar-Buffer.html"/>
+                xlink:role="http://www.opengis.net/spec/wps/2.0/def/process/description/documentation"
+                xlink:href="http://my.wps.server/processes/proximity/Planar-Buffer.html"/>
             <wps:Input>
                 <ows:Title>Geometry to be buffered</ows:Title>
                 <ows:Abstract>
@@ -45,14 +38,11 @@ proximity/Planar-Buffer.html"/>
                 </ows:Abstract>
                 <ows:Identifier>INPUT_GEOMETRY</ows:Identifier>
                 <ows:Metadata
-                    xlink:role="http://www.opengis.net/spec/wps/2.0/
-def/process/description/documentation"
-                    xlink:href="http://my.wps.server/processes/
-proximity/Planar-Buffer.html#input_geometry"/>
+                    xlink:role="http://www.opengis.net/spec/wps/2.0/def/process/description/documentation"
+                    xlink:href="http://my.wps.server/processes/proximity/Planar-Buffer.html#input_geometry"/>
                 <wps:ComplexData>
                     <wps:Format mimeType="text/xml" encoding="UTF-8"
-                                schema="http://schemas.opengis.net/gml/
-3.2.1/feature.xsd" default="true"/>
+                                schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" default="true"/>
                     <wps:Format mimeType="application/json"
                                 encoding="UTF-8"/>
                 </wps:ComplexData>
@@ -64,10 +54,8 @@ proximity/Planar-Buffer.html#input_geometry"/>
                 </ows:Abstract>
                 <ows:Identifier>DISTANCE</ows:Identifier>
                 <ows:Metadata
-                    xlink:role="http://www.opengis.net/spec/wps/2.0/
-def/process/description/documentation"
-                    xlink:href="http://my.wps.server/processes/
-proximity/Planar-Buffer.html#distance"/>
+                    xlink:role="http://www.opengis.net/spec/wps/2.0/def/process/description/documentation"
+                    xlink:href="http://my.wps.server/processes/proximity/Planar-Buffer.html#distance"/>
                 <wps:LiteralData>
                     <wps:Format mimeType="text/plain" default="true"/>
                     <wps:Format mimeType="text/xml"/>
@@ -79,8 +67,7 @@ proximity/Planar-Buffer.html#distance"/>
                             </ows:Range>
                         </ows:AllowedValues>
                         <ows:DataType
-                            ows:reference="http://www.w3.org/2001/
-XMLSchema#double">
+                            ows:reference="http://www.w3.org/2001/XMLSchema#double">
                             Double
                         </ows:DataType>
                     </LiteralDataDomain>
@@ -93,14 +80,11 @@ XMLSchema#double">
                 </ows:Abstract>
                 <ows:Identifier>BUFFERED_GEOMETRY</ows:Identifier>
                 <ows:Metadata
-                    xlink:role="http://www.opengis.net/spec/wps/2.0/
-def/process/description/documentation"
-                    xlink:href="http://my.wps.server/processes/
-proximity/Planar-Buffer.html#buffered_geometry"/>
+                    xlink:role="http://www.opengis.net/spec/wps/2.0/def/process/description/documentation"
+                    xlink:href="http://my.wps.server/processes/proximity/Planar-Buffer.html#buffered_geometry"/>
                 <wps:ComplexData>
                     <wps:Format mimeType="text/xml" encoding="UTF-8"
-                                schema="http://schemas.opengis.net/gml/
-3.2.1/feature.xsd" default="true"/>
+                                schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" default="true"/>
                     <wps:Format mimeType="application/json"
                                 encoding="UTF-8"/>
                 </wps:ComplexData>

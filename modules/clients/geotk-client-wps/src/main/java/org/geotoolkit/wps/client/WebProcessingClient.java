@@ -359,7 +359,7 @@ public class WebProcessingClient extends AbstractClient {
             case v100:
                 throw new IllegalArgumentException("GetStatus requests are not available in WPS 1.0.0");
             default:
-                final GetStatus content = new GetStatus("WPS", jobId);
+                final GetStatus content = new GetStatus("WPS", "2.0.0", jobId);
                 content.setVersion(version.getCode());
                 request.setContent(content);
         }

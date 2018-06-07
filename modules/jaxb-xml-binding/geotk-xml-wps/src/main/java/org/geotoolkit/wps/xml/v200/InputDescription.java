@@ -87,6 +87,14 @@ public class InputDescription extends Description {
         this.dataDescription = dataDescription;
     }
 
+    public InputDescription(CodeType identifier, LanguageStringType title, LanguageStringType _abstract,
+            KeywordsType keywords, Integer minOccur, String maxOccur, DataDescription dataDescription) {
+        super(identifier, title, _abstract, keywords);
+        this.minOccurs = minOccur;
+        this.maxOccurs = maxOccur;
+        this.dataDescription = dataDescription;
+    }
+
     public DataDescription getDataDescription() {
         return dataDescription;
     }

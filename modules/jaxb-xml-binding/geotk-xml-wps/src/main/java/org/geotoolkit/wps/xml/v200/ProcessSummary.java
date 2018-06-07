@@ -19,6 +19,7 @@ package org.geotoolkit.wps.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
@@ -70,33 +71,18 @@ public class ProcessSummary extends Description implements ProcessProperties {
             CodeType identifier,
             final LanguageStringType title,
             final List<LanguageStringType> _abstract,
-            final List<KeywordsType> keywords
+            final List<KeywordsType> keywords,
+            final String processVersion
     ) {
         super(identifier, title, _abstract, keywords);
+        this.processVersion = processVersion;
     }
 
     /**
      * Gets the value of the jobControlOptions property.
      *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the jobControlOptions property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getJobControlOptions().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     *
-     *
      */
+    @Override
     public List<JobControlOptions> getJobControlOptions() {
         if (jobControlOptions == null) {
             jobControlOptions = new ArrayList<>();
@@ -179,13 +165,15 @@ public class ProcessSummary extends Description implements ProcessProperties {
      *
      */
     @XmlAttribute(name = "processModel")
-    @XmlJavaTypeAdapter(FilterV2.String.class)
     public String getProcessModel() {
-        if (processModel == null) {
-            return "native";
-        } else {
-            return processModel;
+        if (FilterByVersion.isV2()) {
+            if (processModel == null) {
+                return "native";
+            } else {
+                return processModel;
+            }
         }
+        return null;
     }
 
     /**
@@ -198,6 +186,73 @@ public class ProcessSummary extends Description implements ProcessProperties {
      */
     public void setProcessModel(String value) {
         this.processModel = value;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        if (jobControlOptions != null) {
+            sb.append("jobControlOptions:\n");
+            for (JobControlOptions jb : jobControlOptions) {
+                sb.append(jb).append('\n');
+            }
+        }
+        if (outputTransmission != null) {
+            sb.append("outputTransmission:\n");
+            for (DataTransmissionMode jb : outputTransmission) {
+                sb.append(jb).append('\n');
+            }
+        }
+        if (processModel != null) {
+            sb.append("processModel:").append(processModel).append('\n');
+        }
+        if (processVersion != null) {
+            sb.append("processVersion:").append(processVersion).append('\n');
+        }
+        if (profile != null) {
+            sb.append("profile:\n");
+            for (String jb : profile) {
+                sb.append(jb).append('\n');
+            }
+        }
+        if (wsdl != null) {
+            sb.append("wsdl:").append(wsdl).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify that this entry is identical to the specified object.
+     *
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ProcessSummary && super.equals(object)) {
+            final ProcessSummary that = (ProcessSummary) object;
+            return Objects.equals(this.jobControlOptions, that.jobControlOptions)
+                    && Objects.equals(this.outputTransmission, that.outputTransmission)
+                    && Objects.equals(this.processModel, that.processModel)
+                    && Objects.equals(this.processVersion, that.processVersion)
+                    && Objects.equals(this.profile, that.profile)
+                    && Objects.equals(this.wsdl, that.wsdl);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.jobControlOptions);
+        hash = 97 * hash + Objects.hashCode(this.outputTransmission);
+        hash = 97 * hash + Objects.hashCode(this.processVersion);
+        hash = 97 * hash + Objects.hashCode(this.processModel);
+        hash = 97 * hash + Objects.hashCode(this.profile);
+        hash = 97 * hash + Objects.hashCode(this.wsdl);
+        return hash;
     }
 
     ////////////////////////////////////////////////////////////////////////////

@@ -237,13 +237,15 @@ public class ProcessOffering implements ProcessProperties {
      *
      */
     @XmlAttribute(name = "processModel")
-    @XmlJavaTypeAdapter(FilterV2.String.class)
     public String getProcessModel() {
-        if (processModel == null) {
-            return "native";
-        } else {
-            return processModel;
+        if (FilterByVersion.isV2()) {
+            if (processModel == null) {
+                return "native";
+            } else {
+                return processModel;
+            }
         }
+        return null;
     }
 
     /**

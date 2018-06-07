@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.wps.xml.WPSResponse;
 import org.geotoolkit.wps.xml.v100.LegacyStatus;
 
 /**
@@ -56,10 +57,12 @@ import org.geotoolkit.wps.xml.v100.LegacyStatus;
     "outputV2",
     "process",
     "status",
-    "processOutputs"
+    "dataInputs",
+    "processOutputs",
+    "outputDefinitions"
 })
 @XmlRootElement(name = "Result")
-public class Result extends DocumentBase {
+public class Result extends DocumentBase  implements WPSResponse{
 
     protected String jobID;
     @XmlElement(name = "ExpirationDate")
@@ -98,9 +101,11 @@ public class Result extends DocumentBase {
      *
      */
     @XmlElement(name = "JobID")
-    @XmlJavaTypeAdapter(FilterV2.String.class)
     public String getJobID() {
-        return jobID;
+        if (FilterByVersion.isV2()) {
+            return jobID;
+        }
+        return null;
     }
 
     /**
@@ -144,24 +149,6 @@ public class Result extends DocumentBase {
 
     /**
      * Gets the value of the output property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the output property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getOutput().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link DataOutput }
-     *
      *
      */
     public List<DataOutput> getOutput() {
@@ -234,9 +221,24 @@ public class Result extends DocumentBase {
 
     private ProcessSummary process;
     private LegacyStatus legacyStatus;
+    private DataInputs inputs;
 
     private String serviceInstance;
     private String statusLocation;
+
+    private OutputDefinitions outputDefinitions;
+
+    public Result(String service, String version, String lang, String serviceInstance, ProcessSummary process, List<DataInput> input, List<OutputDefinition> outputDefinitions, List<DataOutput> output, StatusInfo status, String jobID) {
+        super(service, version, lang);
+        this.output = output;
+        this.jobID = jobID;
+        this.serviceInstance = serviceInstance;
+        this.process = process;
+        this.inputs = new DataInputs(input);
+        if (status != null) {
+            this.legacyStatus = new LegacyStatus(status);
+        }
+    }
 
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
@@ -304,6 +306,30 @@ public class Result extends DocumentBase {
         legacyOutput.parent = this;
     }
 
+    @XmlElement(name = "DataInputs")
+    public DataInputs getDataInputs() {
+        if (FilterByVersion.isV1()) {
+            return inputs;
+        }
+        return null;
+    }
+
+    public void setDataInputs(DataInputs legacyInput) {
+        this.inputs = legacyInput;
+    }
+
+    @XmlElement(name = "OutputDefinitions")
+    public OutputDefinitions getOutputDefinitions() {
+        if (FilterByVersion.isV1()) {
+            return outputDefinitions;
+        }
+        return null;
+    }
+
+    public void setOutputDefinitions(OutputDefinitions outputDefinitions) {
+        this.outputDefinitions = outputDefinitions;
+    }
+
     private static class ProcessOutputs extends ParentAware<Result> {
 
         ProcessOutputs() {
@@ -317,6 +343,50 @@ public class Result extends DocumentBase {
 
         private void setOutput(final List<DataOutput> output) {
             checkParent().getOutput().addAll(output);
+        }
+    }
+
+    private static class DataInputs {
+
+        private List<DataInput> inputs;
+
+        private DataInputs() {
+
+        }
+
+        private DataInputs(List<DataInput> inputs) {
+            this.inputs = inputs;
+        }
+
+        @XmlElement(name = "Input")
+        private List<DataInput> getInputs() {
+            return inputs;
+        }
+
+        private void setInputs(final List<DataInput> inputs) {
+            this.inputs = inputs;
+        }
+    }
+
+    private static class OutputDefinitions {
+
+        private List<OutputDefinition> outputs;
+
+        private OutputDefinitions() {
+
+        }
+
+        private OutputDefinitions(List<OutputDefinition> outputs) {
+            this.outputs = outputs;
+        }
+
+        @XmlElement(name = "Output")
+        private List<OutputDefinition> getOutputs() {
+            return outputs;
+        }
+
+        private void setOutputs(final List<OutputDefinition> outputs) {
+            this.outputs = outputs;
         }
     }
 }

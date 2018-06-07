@@ -75,10 +75,11 @@ public class XMLBindingTestBuilder<T> {
         pool.recycle(marsh);
 
         final byte[] outputArray = out.toByteArray();
-        LOGGER.fine(() -> "Generated Document:" + System.lineSeparator() + new String(outputArray, StandardCharsets.UTF_8));
+        LOGGER.info(() -> "Generated Document:" + System.lineSeparator() + new String(outputArray, StandardCharsets.UTF_8));
 
         final XMLComparator comparator = new XMLComparator(input.get(), new ByteArrayInputStream(outputArray));
-        comparator.ignoredAttributes.add("xmlns:*");
+        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
+        comparator.ignoredAttributes.add("http://www.w3.org/2001/XMLSchema-instance:schemaLocation");
         comparator.ignoreComments = true;
         comparator.compare();
     }

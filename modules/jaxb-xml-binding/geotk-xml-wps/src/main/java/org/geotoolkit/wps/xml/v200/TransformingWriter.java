@@ -14,6 +14,7 @@ import javax.xml.namespace.QName;
 import org.apache.sis.util.resources.Errors;
 
 import static javax.xml.stream.XMLStreamConstants.*;
+import org.geotoolkit.wps.xml.WPSMarshallerPool;
 
 final class TransformingWriter extends LegacyTransformer implements XMLEventWriter {
 
@@ -21,6 +22,8 @@ final class TransformingWriter extends LegacyTransformer implements XMLEventWrit
      * Where events are sent.
      */
     private final XMLEventWriter out;
+
+    private static final ThreadLocal supressNamespace = new ThreadLocal();
 
     /**
      * Creates a new writer for the given version of the standards.
@@ -82,12 +85,17 @@ final class TransformingWriter extends LegacyTransformer implements XMLEventWrit
     private EndElement convert(EndElement event) {
         final QName originalName = event.getName();
 
-        final QName newName = exportName(originalName);
+        QName newName = exportName(originalName);
+        if (Boolean.TRUE.equals(supressNamespace.get()) && WPSMarshallerPool.WPS_1_0_NAMESPACE.equals(newName.getNamespaceURI())) {
+            newName = new QName(newName.getLocalPart());
+        }
+        if (newName.getLocalPart().equals("ProcessDescription")) {
+            supressNamespace.remove();
+        }
         if (!Objects.equals(newName, originalName)) {
             eventFactory.setLocation(event.getLocation());
             event = eventFactory.createEndElement(newName, event.getNamespaces());
         }
-
         context.removeLast();
 
         return event;
@@ -97,7 +105,13 @@ final class TransformingWriter extends LegacyTransformer implements XMLEventWrit
         final QName originalName = event.getName();
         final String originalLocalName = originalName.getLocalPart();
 
-        final QName newName = exportName(originalName);
+        QName newName = exportName(originalName);
+        if (newName.getLocalPart().equals("ProcessDescription")) {
+            supressNamespace.set(Boolean.TRUE);
+        }
+        if (Boolean.TRUE.equals(supressNamespace.get()) && WPSMarshallerPool.WPS_1_0_NAMESPACE.equals(newName.getNamespaceURI())) {
+            newName = new QName(newName.getLocalPart());
+        }
         if (!Objects.equals(newName, originalName)) {
             eventFactory.setLocation(event.getLocation());
             event = eventFactory.createStartElement(newName, event.getAttributes(), event.getNamespaces());

@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.ows.xml.LanguageString;
 import org.geotoolkit.ows.xml.v200.CodeType;
+import org.geotoolkit.wps.xml.WPSMarshallerPool;
 
 import static org.geotoolkit.wps.xml.WPSMarshallerPool.OWS_2_0_NAMESPACE;
 
@@ -59,6 +59,8 @@ import static org.geotoolkit.wps.xml.WPSMarshallerPool.OWS_2_0_NAMESPACE;
  */
 @XmlType(name = "DataInputType", propOrder = {
     "identifier",
+    "title",
+    "abstract",
     "data",
     "reference",
     "input"
@@ -191,27 +193,43 @@ public class DataInput {
         this.id = value;
     }
 
-    /**
-     * WPS 1.0 compatibility
-     * @return
-     */
-    public LanguageString getTitle() {
-        return null; // not defnied in WPS 2.0
-    }
-
-    /**
-     * WPS 1.0 compatiblity.
-     * @return
-     */
-    public LanguageString getAbstract() {
-        return null; // not defnied in WPS 2.0
-    }
-
     ////////////////////////////////////////////////////////////////////////////
     //
     // Following section is boilerplate code for WPS v1 retro-compatibility.
     //
     ////////////////////////////////////////////////////////////////////////////
+    private String title;
+    private List<String> _abstract;
+
+    /**
+     *
+     * @deprecated WPS 1 retro-compatibility purpose. Avoid if possible.
+     */
+    @XmlElement(name = "Title", namespace = WPSMarshallerPool.OWS_2_0_NAMESPACE)
+    @XmlJavaTypeAdapter(FilterV1.String.class)
+    @Deprecated
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
+     *
+     * @deprecated WPS 1 retro-compatibility purpose. Avoid if possible.
+     */
+    @XmlElement(name = "Abstract", namespace = WPSMarshallerPool.OWS_2_0_NAMESPACE)
+    @XmlJavaTypeAdapter(FilterV1.String.class)
+    @Deprecated
+    public List<String> getAbstract() {
+        return _abstract;
+    }
+
+    public void setAbstract(List<String> _abstract) {
+        this._abstract = _abstract;
+    }
 
     @XmlElement(name = "Identifier", namespace=OWS_2_0_NAMESPACE, required = true)
     private CodeType getIdentifier() {

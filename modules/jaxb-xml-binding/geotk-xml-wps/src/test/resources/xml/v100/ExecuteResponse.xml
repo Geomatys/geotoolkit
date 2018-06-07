@@ -9,17 +9,18 @@
                      xmlns:ows="http://www.opengis.net/ows/1.1"
                      xmlns:mml="http://www.w3.org/1998/Math/MathML"
                      serviceInstance="http://recette.examind.com/examind/WS/wps/littleWPS?SERVICE=WPS&amp;REQUEST=GetCapabilities"
-                     service="WPS" version="1.0.0" xml:lang="en-EN">
+                     service="WPS" version="1.0.0" xml:lang="en-EN"
+                     xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd">
     <wps:Process wps:processVersion="1.0.0">
+        <ows:Identifier>
+            urn:ogc:cstl:wps:geotoolkit:math:add
+        </ows:Identifier>
         <ows:Title>
             Geotoolkit : Math:add
         </ows:Title>
         <ows:Abstract>
             Adds two double.
         </ows:Abstract>
-        <ows:Identifier>
-            urn:ogc:cstl:wps:geotoolkit:math:add
-        </ows:Identifier>
     </wps:Process>
     <wps:Status creationTime="2018-05-29T07:23:34.346Z">
         <wps:ProcessSucceeded>

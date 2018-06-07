@@ -91,24 +91,6 @@ public class LiteralData extends DataDescription {
     /**
      * Gets the value of the literalDataDomain property.
      *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the literalDataDomain property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getLiteralDataDomain().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link LiteralDataType.LiteralDataDomain }
-     *
-     *
      */
     public List<LiteralDataDomain> getLiteralDataDomain() {
         if (literalDataDomain == null) {
@@ -351,7 +333,7 @@ public class LiteralData extends DataDescription {
     }
 
     @XmlElement(name = "DataType", namespace=WPSMarshallerPool.OWS_2_0_NAMESPACE)
-    private DomainMetadataType getDataType() {
+    public DomainMetadataType getDataType() {
         if (FilterByVersion.isV2())
             return null;
         return getDefaultOrFirstDomain()
@@ -359,7 +341,7 @@ public class LiteralData extends DataDescription {
                 .orElse(null);
     }
 
-    private void setDataType(final DomainMetadataType meta) {
+    public void setDataType(final DomainMetadataType meta) {
         if (meta == null)
             return;
         getDefaultOrFirstDomain()

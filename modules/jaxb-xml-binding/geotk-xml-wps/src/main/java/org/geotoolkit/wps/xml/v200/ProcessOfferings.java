@@ -24,6 +24,7 @@ import java.util.function.Function;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wps.xml.WPSResponse;
 
 
 /**
@@ -50,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
     "legacyDescriptions"
 })
 @XmlRootElement(name = "ProcessOfferings")
-public class ProcessOfferings extends DocumentBase {
+public class ProcessOfferings extends DocumentBase implements WPSResponse{
 
     protected List<ProcessOffering> processOffering;
 
@@ -68,24 +69,6 @@ public class ProcessOfferings extends DocumentBase {
      * descriptions, listed in the order in which they were requested
      * in the DescribeProcess operation request.
      * Gets the value of the processOffering property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the processOffering property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getProcessOffering().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ProcessOffering }
-     *
      *
      */
     public List<ProcessOffering> getProcessOffering() {
@@ -115,7 +98,7 @@ public class ProcessOfferings extends DocumentBase {
     private static final Function<ProcessOffering, ProcessDescription> TO_DESCRIPTION = o ->  o == null ? null : o.getProcess();
     private static final Function<ProcessDescription, ProcessOffering> TO_OFFERING = d -> d == null ? null : new ProcessOffering(d);
 
-    @XmlElement(name="ProcessDescription")
+    @XmlElement(name="ProcessDescription", namespace = "")
     private List<ProcessDescription> getLegacyDescriptions() {
         final List<ProcessOffering> po = getProcessOffering();
         if (po.isEmpty() && offeringAdapter == null) {

@@ -116,12 +116,25 @@ public class Execute extends RequestBase {
 
     }
 
-    public Execute(String service, CodeType identifier, List<DataInput> input, List<OutputDefinition> output, Response response) {
-        super(service);
+    public Execute(String service, String version, String language, CodeType identifier, List<DataInput> input, List<OutputDefinition> output, Response response) {
+        super(service, version, language);
         this.identifier = identifier;
         this.input = input;
         this.output = output;
         this.response = response;
+    }
+
+    public Execute(String service, String version, String language, CodeType identifier, List<DataInput> input, List<OutputDefinition> output, Response response,
+            boolean storeExecuteResp, boolean lineage, boolean status) {
+        super(service, version, language);
+        this.identifier = identifier;
+        this.input = input;
+        this.output = output;
+        this.response = response;
+        this.form = new ResponseForm(new ResponseDocument(lineage, status));
+        if (storeExecuteResp) {
+            this.mode = Mode.async;
+        }
     }
 
     /**
@@ -161,24 +174,6 @@ public class Execute extends RequestBase {
     /**
      * Gets the value of the input property.
      *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the input property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getInput().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link DataInput }
-     *
-     *
      * @return
      */
     public List<DataInput> getInput() {
@@ -199,24 +194,6 @@ public class Execute extends RequestBase {
 
     /**
      * Gets the value of the output property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the output property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getOutput().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link OutputDefinition }
-     *
      *
      * @return
      */
@@ -316,6 +293,42 @@ public class Execute extends RequestBase {
             form.parent = this;
         }
         return form;
+    }
+
+    @Deprecated
+    public boolean isStatus() {
+        if (getResponseForm() != null && getResponseForm().getResponseDocument() != null
+                && getResponseForm().getResponseDocument().isStatus() != null) {
+            return getResponseForm().getResponseDocument().isStatus();
+        }
+        return false;
+    }
+
+    @Deprecated
+    public boolean isLineage() {
+        if (getResponseForm() != null && getResponseForm().getResponseDocument() != null
+                && getResponseForm().getResponseDocument().isLineage() != null) {
+            return getResponseForm().getResponseDocument().isLineage();
+        }
+        return false;
+    }
+
+    public boolean isRawOutput() {
+        if (response != null) {
+            return "raw".equalsIgnoreCase(response.name());
+        } else if (getResponseForm() != null && getResponseForm().getRawDataOutput()!= null) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isDocumentOutput() {
+        if (getResponseForm() != null) {
+            if (getResponseForm().getRawDataOutput() != null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -463,12 +476,17 @@ public class Execute extends RequestBase {
         "responseDocument",
         "rawDataOutput"
     })
-    static class ResponseForm extends ParentAware<Execute> {
+    public static class ResponseForm extends ParentAware<Execute> {
 
         private ResponseDocument responseDocument;
 
         ResponseForm() {
             super(Execute.class);
+        }
+
+        ResponseForm(ResponseDocument responseDocument) {
+            super(Execute.class);
+            this.responseDocument = responseDocument;
         }
 
         /**
@@ -536,6 +554,7 @@ public class Execute extends RequestBase {
          *
          */
         public void setRawDataOutput(final OutputDefinition value) {
+            checkParent().setResponse(Response.raw);
             checkParent().getOutput().add(0, value);
         }
     }
@@ -568,7 +587,7 @@ public class Execute extends RequestBase {
     @XmlType(name = "ResponseDocumentType", propOrder = {
         "output"
     })
-    private static class ResponseDocument extends ParentAware<ResponseForm> {
+    public static class ResponseDocument extends ParentAware<ResponseForm> {
 
         @XmlAttribute
         protected Boolean lineage;
@@ -579,12 +598,18 @@ public class Execute extends RequestBase {
             super(ResponseForm.class);
         }
 
+        ResponseDocument(Boolean lineage, Boolean status) {
+            super(ResponseForm.class);
+            this.lineage = lineage;
+            this.status = status;
+        }
+
         /**
          * @Deprecated WPS 1.0 compatibility
          * @return
          */
         @Deprecated
-        public boolean isLineage() {
+        public Boolean isLineage() {
             return lineage;
         }
 
@@ -607,7 +632,7 @@ public class Execute extends RequestBase {
          * @return
          */
         @Deprecated
-        public boolean isStatus() {
+        public Boolean isStatus() {
             return status;
         }
 

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.geotoolkit.ows.xml.v200.ExceptionReport;
+import org.geotoolkit.wps.xml.v200.StatusInfo;
 
 
 /**
@@ -101,6 +102,28 @@ public class LegacyStatus {
         this.creationTime = creationTime;
         if (processFailed != null) {
             this.processFailed = new ProcessFailed(processFailed);
+        }
+    }
+
+    public LegacyStatus(StatusInfo status) {
+        this.creationTime = status.getCreationTime();
+        if (status.getStatus() != null) {
+            switch (status.getStatus().name()) {
+                case "Accepted":
+                    this.processAccepted = status.getMessage();break;
+                case "Running":
+                    this.processStarted = new ProcessStarted(status.getMessage(), status.getPercentCompleted());break;
+                case "Failed":
+                    this.processFailed = new ProcessFailed(null);break; // impossible to get the exception report back
+                case "Succeeded":
+                    this.processSucceeded = status.getMessage();break;
+                case "Dismissed":
+                    this.processFailed = new ProcessFailed(null);break;
+                case "Started":
+                    this.processStarted = new ProcessStarted(status.getMessage(), status.getPercentCompleted());break;
+                case "Paused":
+                    this.processPaused = new ProcessStarted(status.getMessage(), status.getPercentCompleted());break;
+            }
         }
     }
 

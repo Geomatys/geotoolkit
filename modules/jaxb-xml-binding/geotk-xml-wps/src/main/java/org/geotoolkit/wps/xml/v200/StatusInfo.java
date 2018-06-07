@@ -18,11 +18,15 @@
 package org.geotoolkit.wps.xml.v200;
 
 import java.util.Objects;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.wps.xml.WPSMarshallerPool;
+import org.geotoolkit.wps.xml.WPSResponse;
 
 
 /**
@@ -77,13 +81,14 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "jobID",
     "status",
     "expirationDate",
+    "creationTime",
     "estimatedCompletion",
     "nextPoll",
     "percentCompleted",
     "message"
 })
 @XmlRootElement(name = "StatusInfo")
-public class StatusInfo extends DocumentBase {
+public class StatusInfo extends DocumentBase implements WPSResponse{
 
     @XmlElement(name = "JobID", required = true)
     protected String jobID;
@@ -316,6 +321,7 @@ public class StatusInfo extends DocumentBase {
                    Objects.equals(this.jobID, that.jobID) &&
                    Objects.equals(this.nextPoll, that.nextPoll) &&
                    Objects.equals(this.percentCompleted, that.percentCompleted) &&
+                   Objects.equals(this.creationTime, that.creationTime) &&
                    Objects.equals(this.status, that.status);
         }
         return false;
@@ -330,6 +336,47 @@ public class StatusInfo extends DocumentBase {
         hash = 79 * hash + Objects.hashCode(this.estimatedCompletion);
         hash = 79 * hash + Objects.hashCode(this.nextPoll);
         hash = 79 * hash + Objects.hashCode(this.percentCompleted);
+        hash = 79 * hash + Objects.hashCode(this.creationTime);
         return hash;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // Following section is boilerplate code for WPS v1 retro-compatibility.
+    //
+    ////////////////////////////////////////////////////////////////////////////
+    private XMLGregorianCalendar creationTime;
+
+    @Deprecated
+    public StatusInfo(Status status, XMLGregorianCalendar creationTime, Integer percentCompleted, String msg, String jobId) {
+        this.status = status;
+        this.percentCompleted = percentCompleted;
+        this.jobID = jobId;
+        this.creationTime = creationTime;
+        this.message = msg;
+    }
+
+    @Deprecated
+    public StatusInfo(Status status, XMLGregorianCalendar creationTime, String msg, String jobId) {
+        this.status = status;
+        this.jobID = jobId;
+        this.creationTime = creationTime;
+        this.message = msg;
+    }
+
+    /**
+     *
+     * @deprecated WPS 1 retro-compatibility purpose. Avoid if possible.
+     */
+    @XmlAttribute(name = "creationTime", namespace = WPSMarshallerPool.OWS_2_0_NAMESPACE, required = true)
+    @XmlJavaTypeAdapter(FilterV1.XMLGregorianCalendar.class)
+    @Deprecated
+    public XMLGregorianCalendar getCreationTime() {
+        return creationTime;
+    }
+
+    public void setTitle(XMLGregorianCalendar creationTime) {
+        this.creationTime = creationTime;
+    }
+
 }

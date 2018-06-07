@@ -28,4 +28,6 @@ class FilterV1<V> extends FilterByVersion<V> {
     static class WSDL extends FilterV1<org.geotoolkit.wps.xml.v100.WSDL> {}
 
     static class LegacyStatus extends FilterV1<org.geotoolkit.wps.xml.v100.LegacyStatus> {}
+
+    static class XMLGregorianCalendar extends FilterV1<javax.xml.datatype.XMLGregorianCalendar> {}
 }

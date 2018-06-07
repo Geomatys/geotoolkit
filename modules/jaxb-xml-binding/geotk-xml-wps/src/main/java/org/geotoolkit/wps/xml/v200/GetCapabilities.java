@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
 import org.geotoolkit.ows.xml.v200.AcceptFormatsType;
 import org.geotoolkit.ows.xml.v200.AcceptVersionsType;
+import org.geotoolkit.ows.xml.v200.GetCapabilitiesType;
 import org.geotoolkit.ows.xml.v200.SectionsType;
 
 
@@ -55,8 +56,8 @@ public class GetCapabilities extends org.geotoolkit.ows.xml.v200.GetCapabilities
     }
 
     public GetCapabilities(final AcceptVersionsType acceptVersions, final SectionsType sections,
-            final AcceptFormatsType acceptFormats, final String updateSequence, final String service) {
-        super(acceptVersions, sections, acceptFormats, updateSequence, service);
+            final AcceptFormatsType acceptFormats, final String updateSequence, final String service, GetCapabilitiesType.AcceptLanguages acceptLanguage) {
+        super(acceptVersions, sections, acceptFormats, updateSequence, service, acceptLanguage);
     }
 
     public List<String> getLanguages() {

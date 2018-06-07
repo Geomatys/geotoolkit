@@ -58,8 +58,8 @@ public class DescribeProcess extends RequestBase {
 
     public DescribeProcess() {}
 
-    public DescribeProcess(String service, String language, List<CodeType> identifiers) {
-        super(service, null, language);
+    public DescribeProcess(String service, String version, String language, List<CodeType> identifiers) {
+        super(service, version, language);
         this.identifier = identifiers;
     }
 
@@ -68,24 +68,6 @@ public class DescribeProcess extends RequestBase {
      * One or more identifiers for which the process description shall be obtained.
      * "ALL"" is reserved to retrieve the  descriptions for all available process offerings.
      * Gets the value of the identifier property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the identifier property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getIdentifier().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link CodeType }
-     *
      *
      */
     public List<CodeType> getIdentifier() {

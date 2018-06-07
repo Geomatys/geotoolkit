@@ -56,8 +56,8 @@ public class GetStatus extends RequestBase {
 
     }
 
-    public GetStatus(final String service, final String jobId) {
-        super(service);
+    public GetStatus(final String service, final String version, final String jobId) {
+        super(service, version);
         this.jobID = jobId;
     }
 
