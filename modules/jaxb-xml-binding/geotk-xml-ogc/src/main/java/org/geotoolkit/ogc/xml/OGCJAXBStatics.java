@@ -43,6 +43,7 @@ public class OGCJAXBStatics {
     public static final String FILTER_COMPARISON_ISGREATEROREQUAL = "PropertyIsGreaterThanOrEqualTo";
     public static final String FILTER_COMPARISON_ISLIKE = "PropertyIsLike";
     public static final String FILTER_COMPARISON_ISNULL = "PropertyIsNull";
+    public static final String FILTER_COMPARISON_ISNIL = "PropertyIsNil";
     public static final String FILTER_COMPARISON_ISBETWEEN = "PropertyIsBetween";
 
     public static final String FILTER_LOGIC_AND = "And";

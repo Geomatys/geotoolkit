@@ -94,6 +94,10 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
              } else if (obj instanceof SpatialOpsType) {
                  this.comparisonOpsOrSpatialOpsOrTemporalOps.add(FilterType.createSpatialOps((SpatialOpsType) obj));
 
+             // ID
+             } else if (obj instanceof AbstractIdType) {
+                 this.comparisonOpsOrSpatialOpsOrTemporalOps.add(FilterType.createIdOps((AbstractIdType) obj));
+
              } else {
                  throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
              }

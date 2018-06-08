@@ -86,6 +86,7 @@ import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.opengis.referencing.crs.SingleCRS;
 
 
 /**
@@ -648,10 +649,20 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     private static GridCoverage2D readCoverage(final ProjectedCoverage projectedCoverage, final boolean isElevation,
                                                final Envelope paramEnvelope, final double[] paramResolution, final int[] sourceBands,
                                                final Envelope inputCoverageEnvelope)
-            throws CoverageStoreException {
+            throws CoverageStoreException, TransformException {
 
-        if (paramEnvelope != null && GeneralEnvelope.castOrCopy(paramEnvelope).isEmpty()) {
-            return null;
+        //check if the envelope is not reduced to an empty area
+        if (paramEnvelope != null) {
+            GeneralEnvelope genv = GeneralEnvelope.castOrCopy(paramEnvelope);
+            if (genv.getDimension() != 2) {
+                //extract 2d component, we do not want to test other dimensions
+                //time or height may have the same value for min/max which
+                //result in a slice which would be 'empty'.
+                final SingleCRS crs2d = CRS.getHorizontalComponent(genv.getCoordinateReferenceSystem());
+                genv = GeneralEnvelope.castOrCopy(Envelopes.transform(genv, crs2d));
+            }
+
+            if (genv.isEmpty()) return null;
         }
         final GridCoverageReadParam param = new GridCoverageReadParam();
         param.setEnvelope(paramEnvelope);

@@ -315,12 +315,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
             final QName type         = Utils.getQNameFromType(role, gmlVersion);
             final String typeName    = Utils.getNameWithoutTypeSuffix(valueType.getName().tip().toString());
             final String propertyName = Utils.getNameWithPropertyTypeSuffix(typeName);
-            final QName proptype;
-            if ("3.2.1".equals(gmlVersion)) {
-                proptype = new QName(GMLConvention.GML_321_NAMESPACE, propertyName);
-            } else {
-                proptype = new QName(GMLConvention.GML_311_NAMESPACE, propertyName);
-            }
+            final QName proptype = new QName(schema.getTargetNamespace(), propertyName);
 
             //property type
             //<xsd:element name="Address" type="gml:AddressType" xmlns:gml="http://www.opengis.net/gml" nillable="false" minOccurs="1" maxOccurs="1" />

@@ -77,28 +77,66 @@ public class BinaryLogicOpType extends LogicOpsType {
                 final Object obj = jb.getValue();
 
                 // comparison operator
-                if (obj instanceof ComparisonOpsType)  {
-                    final ComparisonOpsType co = ((ComparisonOpsType)obj).getClone();
+                if (obj instanceof ComparisonOpsType) {
+                    final ComparisonOpsType co = ((ComparisonOpsType) obj).getClone();
                     this.comparisonOpsOrSpatialOpsOrLogicOps.add(FilterType.createComparisonOps(co));
 
-                // logical operator
+                    // logical operator
                 } else if (obj instanceof LogicOpsType) {
-                    final LogicOpsType lo = ((LogicOpsType)obj).getClone();
+                    final LogicOpsType lo = ((LogicOpsType) obj).getClone();
                     this.comparisonOpsOrSpatialOpsOrLogicOps.add(FilterType.createLogicOps(lo));
 
-                // spatial operator
+                    // spatial operator
                 } else if (obj instanceof SpatialOpsType) {
-                    final SpatialOpsType so = ((SpatialOpsType)obj).getClone();
+                    final SpatialOpsType so = ((SpatialOpsType) obj).getClone();
                     this.comparisonOpsOrSpatialOpsOrLogicOps.add(FilterType.createSpatialOps(so));
 
-                // function
+                    // function
                 } else if (obj instanceof FunctionType) {
-                    final FunctionType fu = new FunctionType((FunctionType)obj);
+                    final FunctionType fu = new FunctionType((FunctionType) obj);
                     this.comparisonOpsOrSpatialOpsOrLogicOps.add(factory.createFunction(fu));
 
                 } else {
                     throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
                 }
+            }
+        }
+    }
+
+    /**
+     * Build a new Binary logic operator
+     */
+     public BinaryLogicOpType(final Object... operators) {
+         this.comparisonOpsOrSpatialOpsOrLogicOps = new ArrayList<>();
+         final ObjectFactory factory = new ObjectFactory();
+         for (Object obj: operators) {
+
+             if(obj instanceof JAXBElement){
+                 obj = ((JAXBElement)obj).getValue();
+             }
+
+             // comparison operator
+            if (obj instanceof ComparisonOpsType)  {
+                final ComparisonOpsType co = ((ComparisonOpsType)obj).getClone();
+                this.comparisonOpsOrSpatialOpsOrLogicOps.add(FilterType.createComparisonOps(co));
+
+            // logical operator
+            } else if (obj instanceof LogicOpsType) {
+                final LogicOpsType lo = ((LogicOpsType)obj).getClone();
+                this.comparisonOpsOrSpatialOpsOrLogicOps.add(FilterType.createLogicOps(lo));
+
+            // spatial operator
+            } else if (obj instanceof SpatialOpsType) {
+                final SpatialOpsType so = ((SpatialOpsType)obj).getClone();
+                this.comparisonOpsOrSpatialOpsOrLogicOps.add(FilterType.createSpatialOps(so));
+
+            // function
+            } else if (obj instanceof FunctionType) {
+                final FunctionType fu = new FunctionType((FunctionType)obj);
+                this.comparisonOpsOrSpatialOpsOrLogicOps.add(factory.createFunction(fu));
+
+            } else {
+                throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
             }
          }
      }

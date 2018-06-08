@@ -64,6 +64,12 @@ public class Chain implements Comparable<Chain>,Parameterized {
     @XmlElement(name="name")
     protected String name;
 
+    @XmlElement(name="title")
+    private String title;
+
+    @XmlElement(name="abstract")
+    private String _abstract;
+
     @XmlElement(name="input")
     protected List<Parameter> inputs;
 
@@ -180,7 +186,7 @@ public class Chain implements Comparable<Chain>,Parameterized {
      * @return a list of LinkDto
      */
     public List<DataLink> getInputLinks(final int sourceId) {
-        final List<DataLink> result = new ArrayList<DataLink>();
+        final List<DataLink> result = new ArrayList<>();
         if (links != null) {
             for (DataLink link : links) {
                 if (link.getSourceId() == sourceId) {
@@ -198,7 +204,7 @@ public class Chain implements Comparable<Chain>,Parameterized {
      * @return a list of LinkDto
      */
     public List<DataLink> getOutputLinks(final int targetId) {
-        final List<DataLink> result = new ArrayList<DataLink>();
+        final List<DataLink> result = new ArrayList<>();
         if (links != null) {
             for (DataLink link : links) {
                 if (link.getTargetId() == targetId) {
@@ -211,7 +217,7 @@ public class Chain implements Comparable<Chain>,Parameterized {
 
     public List<DataLink> getDataLinks() {
         if(links == null){
-            links = new ArrayList<DataLink>();
+            links = new ArrayList<>();
         }
         return links;
     }
@@ -222,7 +228,7 @@ public class Chain implements Comparable<Chain>,Parameterized {
 
     public List<FlowLink> getFlowLinks() {
         if (executionLinks == null) {
-            executionLinks = new ArrayList<FlowLink>();
+            executionLinks = new ArrayList<>();
         }
         return executionLinks;
     }
@@ -233,7 +239,7 @@ public class Chain implements Comparable<Chain>,Parameterized {
 
     public List<Element> getElements() {
         if(chainElements == null){
-            chainElements = new ArrayList<Element>();
+            chainElements = new ArrayList<>();
         }
         return chainElements;
     }
@@ -244,7 +250,7 @@ public class Chain implements Comparable<Chain>,Parameterized {
 
     public List<Constant> getConstants() {
         if(constants == null){
-            constants = new ArrayList<Constant>();
+            constants = new ArrayList<>();
         }
         return constants;
     }
@@ -253,24 +259,28 @@ public class Chain implements Comparable<Chain>,Parameterized {
         this.constants = constants;
     }
 
+    @Override
     public List<Parameter> getInputs() {
         if(inputs == null){
-            inputs = new ArrayList<Parameter>();
+            inputs = new ArrayList<>();
         }
         return inputs;
     }
 
+    @Override
     public void setInputs(final List<Parameter> inputs) {
         this.inputs = inputs;
     }
 
+    @Override
     public List<Parameter> getOutputs() {
         if(outputs == null){
-            outputs = new ArrayList<Parameter>();
+            outputs = new ArrayList<>();
         }
         return outputs;
     }
 
+    @Override
     public void setOutputs(final List<Parameter> outputs) {
         this.outputs = outputs;
     }
@@ -283,8 +293,24 @@ public class Chain implements Comparable<Chain>,Parameterized {
         this.name = name;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAbstract() {
+        return _abstract;
+    }
+
+    public void setAbstract(String _abstract) {
+        this._abstract = _abstract;
+    }
+
     public List<ClassFull> getAllUsedClasses() {
-        final List<ClassFull> result = new ArrayList<ClassFull>();
+        final List<ClassFull> result = new ArrayList<>();
         if (inputs != null) {
             for (Parameter param : inputs) {
                 if (!result.contains(param.getType())) {
@@ -313,7 +339,9 @@ public class Chain implements Comparable<Chain>,Parameterized {
                 && Objects.equals(this.getElements(), that.getElements())
                 && Objects.equals(this.getDataLinks(), that.getDataLinks())
                 && Objects.equals(this.getFlowLinks(), that.getFlowLinks())
-                && Objects.equals(this.name, that.name)
+                && Objects.equals(this.name,      that.name)
+                && Objects.equals(this.title,     that.title)
+                && Objects.equals(this._abstract, that._abstract)
                 && Objects.equals(this.getOutputs(), that.getOutputs())
                 && Objects.equals(this.getInputs(), that.getInputs());
         }
@@ -330,6 +358,12 @@ public class Chain implements Comparable<Chain>,Parameterized {
         final StringBuilder sb = new StringBuilder("[ChainDto]");
         if (name != null) {
             sb.append("name:").append(name).append('\n');
+        }
+        if (title != null) {
+            sb.append("title:").append(title).append('\n');
+        }
+        if (_abstract != null) {
+            sb.append("_abstract:").append(_abstract).append('\n');
         }
         sb.append(StringUtilities.toStringTree("Inputs", getInputs())).append('\n');
         sb.append(StringUtilities.toStringTree("Outputs", getOutputs())).append('\n');

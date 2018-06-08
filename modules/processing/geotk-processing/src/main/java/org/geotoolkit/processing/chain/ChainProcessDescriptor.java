@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
@@ -83,8 +84,8 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
     public ChainProcessDescriptor(final Chain model, final Identification registryId,
             final Collection<? extends ProcessingRegistry> factories){
         super(new DerivateIdentifier(model.getName(), registryId),
-                new SimpleInternationalString(model.getName()),
-                new SimpleInternationalString(model.getName()),
+                model.getAbstract() != null ? new SimpleInternationalString(model.getAbstract()) : new SimpleInternationalString(model.getName()),
+                model.getTitle() != null ? new SimpleInternationalString(model.getTitle()) : new SimpleInternationalString(model.getName()),
                 createParams(model.getInputs(), "inputParameters", true),
                 createParams(model.getOutputs(), "outputParameters", true));
 
@@ -107,7 +108,7 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
     public Collection<? extends ProcessingRegistry> getFactories() {
         if(factories == null){
             final Iterator<ProcessingRegistry> ite = ProcessFinder.getProcessFactories();
-            final Collection<ProcessingRegistry> factories = new ArrayList<ProcessingRegistry>();
+            final Collection<ProcessingRegistry> factories = new ArrayList<>();
             while(ite.hasNext()){
                 factories.add(ite.next());
             }
@@ -142,7 +143,7 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
                         .setRequired(param.getMinOccurs()!=0)
                         .create(type, convertDefaultValueInClass(param.getDefaultValue(), type));
             } else {
-                final Map<String, Object> ext = new HashMap<String,Object>();
+                final Map<String, Object> ext = new HashMap<>();
                 ext.put(KEY_DISTANT_CLASS, param.getType());
 
                 Class clazz = Object.class;
@@ -173,7 +174,7 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
                     .create(type, convertDefaultValueInClass(param.getDefaultValue(), type));
         }
 
-        final Map<String, Object> ext = new HashMap<String,Object>();
+        final Map<String, Object> ext = new HashMap<>();
         ext.put(KEY_DISTANT_CLASS, param.getType());
 
         Class clazz;
@@ -212,5 +213,24 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
             return ConstantUtilities.stringToValue(defaultValue.toString(), clazz);
         }
         return null;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ChainProcessDescriptor) {
+            ChainProcessDescriptor that = (ChainProcessDescriptor) obj;
+            return Objects.equals(this.model, that.model);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 29 * hash + Objects.hashCode(this.model);
+        return hash;
     }
 }

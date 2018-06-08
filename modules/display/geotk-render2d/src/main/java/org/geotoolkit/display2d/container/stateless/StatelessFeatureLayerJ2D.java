@@ -104,14 +104,12 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import static org.geotoolkit.display2d.container.stateless.StatelessMapItemJ2D.createBufferedImage;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.map.CollectionMapLayer;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.expression.Literal;
 import org.opengis.style.Style;
 import org.opengis.style.TextSymbolizer;
 
@@ -123,8 +121,6 @@ import org.opengis.style.TextSymbolizer;
  * @module
  */
 public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLayer> implements FeatureStoreListener{
-
-    private static final Literal ID_EXPRESSION = FactoryFinder.getFilterFactory(null).literal(AttributeConvention.IDENTIFIER_PROPERTY.toString());
 
     protected FeatureStoreListener.Weak weakSessionListener = new FeatureStoreListener.Weak(this);
 
@@ -984,7 +980,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
     /**
      * @return the valid rules at this scale, selection rules will be mixed in.
      */
-    protected static List<Rule> getValidRules(final RenderingContext2D renderingContext,
+    public static List<Rule> getValidRules(final RenderingContext2D renderingContext,
             final FeatureMapLayer item, final FeatureType type){
 
         final List<Rule> normalRules = GO2Utilities.getValidRules(
@@ -995,7 +991,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             //merge the style and filter with the selection
             final List<Rule> selectionRules;
 
-            final List<Rule> mixedRules = new ArrayList<Rule>();
+            final List<Rule> mixedRules = new ArrayList<>();
             final MutableStyle selectionStyle = item.getSelectionStyle();
             if(selectionStyle == null){
                 selectionRules = GO2Utilities.getValidRules(
@@ -1040,7 +1036,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         return normalRules;
     }
 
-    protected static CachedRule[] toCachedRules(Collection<? extends Rule> rules, final FeatureType expected){
+    public static CachedRule[] toCachedRules(Collection<? extends Rule> rules, final FeatureType expected){
         final CachedRule[] cached = new CachedRule[rules.size()];
 
         int i=0;

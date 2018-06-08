@@ -37,6 +37,14 @@ public class OrType extends BinaryLogicOpType {
         super(that);
     }
 
+    /**
+     * Build a new Binary logic operator
+     */
+    public OrType(final Object... operators) {
+        super(operators);
+
+    }
+
     @Override
     public LogicOpsType getClone() {
         return new OrType(this);

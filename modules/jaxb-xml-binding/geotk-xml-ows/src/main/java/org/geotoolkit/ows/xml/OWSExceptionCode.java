@@ -151,9 +151,10 @@ public class OWSExceptionCode extends CodeList<OWSExceptionCode> {
      */
     public static final OWSExceptionCode TILE_OUT_OF_RANGE = new OWSExceptionCode("TileOutOfRange");
 
+    public static final OWSExceptionCode DUPLICATE_STORED_QUERY_ID_VALUE = new OWSExceptionCode("DuplicateStoredQueryIdValue");
+
     /**
-     * Constructs an enum with the given name. The new enum is
-     * automatically added to the list returned by {@link #values}.
+     * Constructs an enum with the given name. The new enum is automatically added to the list returned by {@link #values}.
      *
      * @param name The enum name. This name must not be in use by an other enum of this type.
      */

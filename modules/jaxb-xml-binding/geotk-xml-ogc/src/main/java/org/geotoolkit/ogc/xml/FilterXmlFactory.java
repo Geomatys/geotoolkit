@@ -62,6 +62,37 @@ public class FilterXmlFactory {
         }
     }
 
+    public static XMLFilter buildFeatureIDFilter(final String currentVersion, final List<String> featureIds) {
+        if (featureIds.size() == 1) {
+            return buildFeatureIDFilter(currentVersion, featureIds.get(0));
+        }
+        if ("2.0.0".equals(currentVersion)) {
+
+            List<org.geotoolkit.ogc.xml.v200.ResourceIdType> filters = new ArrayList<>();
+            for (String featureId : featureIds) {
+                filters.add(new org.geotoolkit.ogc.xml.v200.ResourceIdType(featureId));
+            }
+            return new org.geotoolkit.ogc.xml.v200.FilterType(new org.geotoolkit.ogc.xml.v200.OrType(filters.toArray()));
+
+        } else if ("1.1.0".equals(currentVersion)) {
+            List<org.geotoolkit.ogc.xml.v110.FeatureIdType> filters = new ArrayList<>();
+            for (String featureId : featureIds) {
+                filters.add(new org.geotoolkit.ogc.xml.v110.FeatureIdType(featureId));
+            }
+            return new org.geotoolkit.ogc.xml.v110.FilterType(new org.geotoolkit.ogc.xml.v110.OrType(filters.toArray()));
+
+        } else if ("1.0.0".equals(currentVersion)) {
+            List<org.geotoolkit.ogc.xml.v100.FeatureIdType> filters = new ArrayList<>();
+            for (String featureId : featureIds) {
+                filters.add(new org.geotoolkit.ogc.xml.v100.FeatureIdType(featureId));
+            }
+            return new org.geotoolkit.ogc.xml.v100.FilterType(new org.geotoolkit.ogc.xml.v100.OrType(filters.toArray()));
+
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
     public static Literal buildLiteral(final String currentVersion, final Object value) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.LiteralType(value);

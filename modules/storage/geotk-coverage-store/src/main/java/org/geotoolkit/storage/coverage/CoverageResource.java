@@ -16,10 +16,13 @@
  */
 package org.geotoolkit.storage.coverage;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Image;
 import java.util.stream.Stream;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -31,6 +34,9 @@ import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.metadata.content.CoverageDescription;
 import org.geotoolkit.data.FeatureSet;
+import org.geotoolkit.geometry.GeometricUtilities;
+import org.geotoolkit.geometry.jts.JTS;
+import org.opengis.geometry.Envelope;
 
 /**
  * Resource to a coverage in the coverage store.
@@ -126,6 +132,28 @@ public interface CoverageResource extends FeatureSet {
         final FeatureType type = getType();
         final FeatureAssociationRole role = (FeatureAssociationRole) type.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
         final Feature feature = type.newInstance();
+
+        final GridCoverageReader reader = acquireReader();
+        try {
+            final GeneralGridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
+            Envelope envelope = gridGeom.getEnvelope();
+            if (envelope != null) {
+                Geometry geom = GeometricUtilities.toJTSGeometry(envelope, GeometricUtilities.WrapResolution.SPLIT);
+                if (geom != null) {
+                    JTS.setCRS(geom, gridGeom.getCoordinateReferenceSystem());
+                    feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
+                }
+            }
+            recycle(reader);
+        } catch (CoverageStoreException ex) {
+            try {
+                reader.dispose();
+            } catch (CoverageStoreException ex2) {
+                ex.addSuppressed(ex2);
+            }
+            throw ex;
+        }
+
         feature.setProperty(CoverageFeature.coverageRecords(this,role));
         return Stream.of(feature);
     }
