@@ -22,6 +22,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.RenderingHints.Key;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -37,12 +38,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
+import java.util.Spliterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 import javax.imageio.IIOException;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -50,10 +55,12 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
-
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -69,31 +76,44 @@ import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
-import static org.geotoolkit.display2d.GO2Utilities.*;
 import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
+import org.geotoolkit.display2d.canvas.J2DCanvasSVG;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.container.ContextContainer2D;
+import org.geotoolkit.display2d.container.stateless.DefaultCachedRule;
+import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
+import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
+import org.geotoolkit.display2d.primitive.ProjectedFeature;
+import org.geotoolkit.display2d.primitive.ProjectedObject;
+import org.geotoolkit.display2d.style.CachedRule;
+import org.geotoolkit.display2d.style.renderer.Presentation;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.portrayal.PortrayalService;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.display2d.canvas.J2DCanvasSVG;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import static org.geotoolkit.display2d.GO2Utilities.*;
 
 /**
  * Default implementation of portrayal service.
@@ -716,6 +736,107 @@ public final class DefaultPortrayalService implements PortrayalService{
 
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // PRESENTING A CONTEXT ////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Generate presentation objects for a scene.
+     *
+     * @param canvasDef
+     * @param sceneDef
+     * @param viewDef
+     * @return
+     * @throws PortrayalException
+     */
+    public static Spliterator<Presentation> present(final CanvasDef canvasDef,
+            final SceneDef sceneDef, final ViewDef viewDef) throws PortrayalException, DataStoreException{
+
+        final Envelope contextEnv = viewDef.getEnvelope();
+        final CoordinateReferenceSystem crs = contextEnv.getCoordinateReferenceSystem();
+        final Dimension dim = canvasDef.getDimension();
+        final BufferedImage img = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
+
+        final J2DCanvasBuffered canvas = new J2DCanvasBuffered(crs,
+                canvasDef.getDimension(),sceneDef.getHints());
+        prepareCanvas(canvas, canvasDef, sceneDef, viewDef);
+        final RenderingContext2D renderContext = new RenderingContext2D(canvas);
+        canvas.prepareContext(renderContext, img.createGraphics(), new Rectangle(canvasDef.getDimension()));
+
+        final List<Presentation> presentations = new ArrayList<>();
+
+        final MapContext context = sceneDef.getContext();
+        final List<MapLayer> layers = context.layers();
+        for (MapLayer layer : layers) {
+            if (!layer.isVisible()) continue;
+            if (!(layer instanceof FeatureMapLayer)) continue;
+
+            final FeatureMapLayer fml = (FeatureMapLayer) layer;
+            final FeatureSet resource = fml.getResource();
+            final FeatureType type = resource.getType();
+            final List<Rule> rules = StatelessFeatureLayerJ2D.getValidRules(renderContext, fml, type);
+
+            if (rules.isEmpty()) continue;
+
+            final CachedRule[] cachedRules = StatelessFeatureLayerJ2D.toCachedRules(rules, type);
+
+            //prepare the renderers
+            final DefaultCachedRule renderers = new DefaultCachedRule(cachedRules, renderContext);
+
+            final StatelessContextParams params = new StatelessContextParams(canvas,layer);
+            params.update(renderContext);
+            final ProjectedFeature projectedFeature = new ProjectedFeature(params,null);
+
+            try (final Stream<Feature> stream = resource.features(false)) {
+
+                final Iterator<ProjectedFeature> ite = stream.map((Feature t) -> {
+                    projectedFeature.setCandidate(t);
+                    return projectedFeature;
+                }).iterator();
+
+                //performance routine, only one symbol to render
+                if (renderers.rules.length == 1
+                   && (renderers.rules[0].getFilter() == null || renderers.rules[0].getFilter() == Filter.INCLUDE)
+                   && renderers.rules[0].symbolizers().length == 1) {
+                    renderers.renderers[0][0].presentation(ite).forEachRemaining(presentations::add);
+                    continue;
+                }
+
+                while (ite.hasNext()) {
+                    final ProjectedObject projectedCandidate = ite.next();
+
+                    boolean painted = false;
+                    for (int i=0; i<renderers.elseRuleIndex; i++) {
+                        final CachedRule rule = renderers.rules[i];
+                        final Filter ruleFilter = rule.getFilter();
+                        //test if the rule is valid for this feature
+                        if (ruleFilter == null || ruleFilter.evaluate(projectedCandidate.getCandidate())) {
+                            painted = true;
+                            for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
+                                renderer.presentation(projectedCandidate).forEachRemaining(presentations::add);
+                            }
+                        }
+                    }
+
+                    //the feature hasn't been painted, paint it with the 'else' rules
+                    if(!painted){
+                        for (int i=renderers.elseRuleIndex; i<renderers.rules.length; i++) {
+                            final CachedRule rule = renderers.rules[i];
+                            final Filter ruleFilter = rule.getFilter();
+                            //test if the rule is valid for this feature
+                            if (ruleFilter == null || ruleFilter.evaluate(projectedCandidate.getCandidate())) {
+                                for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
+                                    renderer.presentation(projectedCandidate).forEachRemaining(presentations::add);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return presentations.spliterator();
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // OTHER USEFULL ///////////////////////////////////////////////////////////
