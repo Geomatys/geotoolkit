@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Image;
 import java.util.stream.Stream;
 import org.apache.sis.internal.feature.AttributeConvention;
@@ -36,6 +35,7 @@ import org.opengis.metadata.content.CoverageDescription;
 import org.geotoolkit.data.FeatureSet;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.geometry.Envelope;
 
 /**
