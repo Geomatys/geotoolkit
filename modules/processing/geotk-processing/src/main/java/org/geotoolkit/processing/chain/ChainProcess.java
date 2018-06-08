@@ -179,8 +179,12 @@ public class ChainProcess extends AbstractProcess {
                     if (processVersion.length() > 0) {
                         processVersion.append(", ");
                     }
-                    processVersion.append(processId).append(" ")
-                            .append(((AbstractProcessDescriptor)currentProcess.getDescriptor()).getVersion());
+                    processVersion.append(processId).append(" ");
+                    if (currentProcess.getDescriptor() instanceof AbstractProcessDescriptor) {
+                        processVersion.append(((AbstractProcessDescriptor) currentProcess.getDescriptor()).getVersion());
+                    } else {
+                        processVersion.append("1.0");
+                    }
 
                     final ParameterValueGroup result = currentProcess.call();
                     fireProgressing(pdesc.getIdentifier().getCode() + " completed", i * part, false);
