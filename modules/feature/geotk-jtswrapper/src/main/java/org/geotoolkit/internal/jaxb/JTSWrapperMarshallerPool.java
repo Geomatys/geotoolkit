@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.internal.jaxb;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -31,7 +31,9 @@ import org.apache.sis.xml.XML;
 public final class JTSWrapperMarshallerPool {
     private static final MarshallerPool instance;
     static {
-        final Map<String, Object> properties = Collections.singletonMap(XML.METADATA_VERSION, LegacyNamespaces.VERSION_2007);
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put(XML.GML_VERSION, "3.1.1");
+        properties.put(XML.METADATA_VERSION, LegacyNamespaces.VERSION_2007);
         try {
             instance = new MarshallerPool(JAXBContext.newInstance(ObjectFactory.class), properties);
         } catch (JAXBException ex) {

@@ -66,7 +66,9 @@ import org.geotoolkit.gml.xml.v321.SolidPropertyType;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.xml.XML;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
@@ -214,7 +216,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         //the root element of the xml document (type of the feature)
         final FeatureType type = feature.getType();
         final GenericName typeName    = type.getName();
-        final String namespace = NamesExt.getNamespace(typeName);
+        final String namespace = getNamespace(typeName);
         final String localPart = typeName.tip().toString();
         final String gmlid = getId(feature, null);
 
@@ -300,7 +302,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             Object value = feature.getPropertyValue(desc.getName().toString());
             final GenericName nameA = desc.getName();
             String nameProperty = nameA.tip().toString();
-            String namespaceProperty = NamesExt.getNamespace(nameA);
+            String namespaceProperty = getNamespace(nameA);
 
             //remove the @
             nameProperty = nameProperty.substring(1);
@@ -370,7 +372,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }else if(Utils.isNillable(pt)){
                 //we must have at least one tag with nil=1
                 final GenericName nameA = pt.getName();
-                final String namespaceProperty = NamesExt.getNamespace(nameA);
+                final String namespaceProperty = getNamespace(nameA);
                 final String nameProperty = nameA.tip().toString();
                 if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
                     writer.writeStartElement(namespaceProperty, nameProperty);
@@ -388,7 +390,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         while (ite.hasNext()) {
             final Attribute chara = ite.next();
             final GenericName name = chara.getName();
-            final String namespace = NamesExt.getNamespace(name);
+            final String namespace = getNamespace(name);
             String localPart = name.tip().toString();
             if(localPart.startsWith("@")){
                 //remove the @
@@ -409,7 +411,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         if (AttributeConvention.contains(nameA) || isAttributeProperty(nameA)) return;
 
         final String nameProperty = nameA.tip().toString();
-        String namespaceProperty = NamesExt.getNamespace(nameA);
+        String namespaceProperty = getNamespace(nameA);
         final boolean hasChars = typeA instanceof AttributeType && !((AttributeType)typeA).characteristics().isEmpty();
 
         //TODO : search for link operation which match
@@ -571,7 +573,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                         //properties again, we ensure to write then as proper xml tags
                         final Feature prop = (Feature) valueA;
                         final GenericName propName = prop.getType().getName();
-                        final String namespaceURI = NamesExt.getNamespace(propName);
+                        final String namespaceURI = getNamespace(propName);
                         final String localPart = Utils.getNameWithoutTypeSuffix(propName.tip().toString());
                         if (namespaceURI != null && !namespaceURI.isEmpty()) {
                             writer.writeStartElement(namespaceURI, localPart);
@@ -841,6 +843,24 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         }
     }
 
+
+    /**
+     * Extract namespace from GenericName.
+     * In the case the namespace is a GML namespace but of a different version
+     * the namespace will be replaced by this writer GML version namespace.
+     *
+     * @param name
+     * @return
+     */
+    private String getNamespace(GenericName name) {
+        final String namespace = NamesExt.getNamespace(name);
+        if ("http://www.opengis.net/gml/3.2".equals(namespace)
+           || "http://www.opengis.net/gml".equals(namespace)) {
+            //avoid 2 different version of gml namespace declared in same file
+            return gmlNamespace;
+        }
+        return namespace;
+    }
 
     /**
      *
