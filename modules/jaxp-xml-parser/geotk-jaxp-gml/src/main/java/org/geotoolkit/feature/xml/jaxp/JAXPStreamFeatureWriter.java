@@ -66,9 +66,7 @@ import org.geotoolkit.gml.xml.v321.SolidPropertyType;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.ObjectConverters;
-import org.apache.sis.xml.XML;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
@@ -149,7 +147,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             gmlNamespace = "http://www.opengis.net/gml";
             gmlLocation  = "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd";
         }
-
         if (schemaLocations != null && schemaLocations.size() > 0) {
             final StringBuilder sb = new StringBuilder();
             for (Entry<String, String> entry : schemaLocations.entrySet()) {
@@ -160,7 +157,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             sb.append(gmlNamespace).append(' ').append(gmlLocation).append(' ');
             schemaLocation = sb.toString();
         }
-
     }
 
     public JAXPStreamFeatureWriter(final Map<String, String> schemaLocations)  {
@@ -169,9 +165,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
     /**
      * Dispose the allocated resources. <strong>Must</strong> be called when closing the feautre writer.
-     *
-     * @throws IOException
-     * @throws XMLStreamException
      */
     @Override
     public void dispose() throws IOException, XMLStreamException{
@@ -206,8 +199,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      * Write the feature into the stream.
      *
      * @param feature The feature
-     * @param root
-     * @throws XMLStreamException
      */
     private void writeFeature(final Feature feature, final boolean root) throws XMLStreamException {
         //reset geometry id increment
@@ -242,9 +233,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 writer.writeAttribute("gml", gmlNamespace, "id", gmlid);
             }
         }
-
         writeComplexProperties(feature, gmlid);
-
         writer.writeEndElement();
         writer.flush();
     }
@@ -277,11 +266,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      *
      * TODO this is not a perfect way to know if a propery is null.
      * but if we don't declare the property then we don't know the reason either...
-     *
-     *
-     * @param feature
-     * @return
-     * @throws XMLStreamException
      */
     private boolean writeAttributeProperties(final Feature feature) throws XMLStreamException {
 
@@ -321,7 +305,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 }
             }
         }
-
         return nil;
     }
 
@@ -437,8 +420,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 //            }
 //        }
 
-
-
         if (typeA instanceof FeatureAssociationRole && valueA instanceof Feature) {
             final FeatureAssociationRole far = (FeatureAssociationRole) typeA;
             final Feature ca = (Feature)valueA;
@@ -474,7 +455,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 } else {
                     writer.writeStartElement(encapName);
                 }
-
                 writeComplexProperties(ca, getId(ca, id));
 
                 //close encapsulation
@@ -483,9 +463,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
                 writeComplexProperties(ca, getId(ca, id));
             }
-
-
-
             writer.writeEndElement();
 
         } else if (valueA instanceof Collection && !(AttributeConvention.isGeometryAttribute(typeA))) {
@@ -599,7 +576,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         // we add the geometry
         } else {
-
             if (valueA != null) {
                 final boolean descIsType = Utils.isGeometricType(typeA.getName()) && Utils.isGeometricType(nameA);
 
@@ -610,7 +586,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                         writer.writeStartElement(nameProperty);
                     }
                 }
-
                 final CoordinateReferenceSystem crs = FeatureExt.getCRS(typeA);
                 final JAXBElement element;
                 final MarshallerPool POOL;
@@ -647,7 +622,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 } catch (JAXBException ex) {
                     LOGGER.log(Level.WARNING, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
                 }
-
                 if(!descIsType)writer.writeEndElement();
             }
         }
@@ -655,8 +629,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
     /**
      *
-     * @param gmlGeometry
-     * @param id
      * @param inc auto increment value, ids must be unique
      */
     private void setId(AbstractGeometry gmlGeometry, String id){
@@ -665,7 +637,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             gmlGeometry.setId(id+(gidInc));
             gidInc++;
         }
-
         if(gmlGeometry instanceof MultiCurve){
             for(CurveProperty po : ((MultiCurve)gmlGeometry).getCurveMember()){
                 final AbstractCurve child = po.getAbstractCurve();
@@ -702,20 +673,15 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 }
             }
         }
-
     }
 
     /**
      *
-     * @param featureCollection
-     * @param writer
-     * @param fragment : true if we write in a stream, dont write start and end elements
-     * @throws DataStoreException
+     * @param fragment true if we write in a stream, dont write start and end elements
      */
     public void writeFeatureCollection(final FeatureCollection featureCollection, final boolean fragment, final Integer nbMatched)
                                                             throws DataStoreException, XMLStreamException
     {
-
         // the XML header
         if(!fragment){
             writer.writeStartDocument("UTF-8", "1.0");
@@ -800,12 +766,10 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         if(!fragment){
             writer.close();
         }
-
     }
 
     private void writeBounds(final Envelope bounds, final XMLStreamWriter streamWriter) throws XMLStreamException {
         if (bounds != null) {
-
             String srsName = null;
             if (bounds.getCoordinateReferenceSystem() != null) {
                 try {
@@ -848,9 +812,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      * Extract namespace from GenericName.
      * In the case the namespace is a GML namespace but of a different version
      * the namespace will be replaced by this writer GML version namespace.
-     *
-     * @param name
-     * @return
      */
     private String getNamespace(GenericName name) {
         final String namespace = NamesExt.getNamespace(name);
@@ -864,12 +825,10 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
     /**
      *
-     * @param name
      * @return true if property is an atribute, starts by a @
      */
     private static boolean isAttributeProperty(GenericName name){
         final String localPart = name.tip().toString();
         return !localPart.isEmpty() && localPart.charAt(0) == '@';
     }
-
 }

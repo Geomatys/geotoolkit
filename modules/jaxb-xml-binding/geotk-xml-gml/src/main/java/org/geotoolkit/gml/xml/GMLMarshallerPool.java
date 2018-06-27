@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import org.apache.sis.internal.jaxb.LegacyNamespaces;
+import org.apache.sis.internal.xml.LegacyNamespaces;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.xml.XML;
 

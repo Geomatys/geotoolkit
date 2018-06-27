@@ -60,7 +60,6 @@ import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.DefaultPropertyName;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.w3c.dom.Element;
