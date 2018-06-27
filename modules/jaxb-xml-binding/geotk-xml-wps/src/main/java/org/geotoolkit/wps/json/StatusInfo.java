@@ -32,149 +32,166 @@ public class StatusInfo implements WPSJSONResponse {
         if (status != null) {
             this.progress = status.getPercentCompleted();
             this.message = status.getMessage();
-            this.status = status.getStatus();
+            this.status = StatusEnum.fromValue(status.getStatus());
         }
     }
 
-  /**
-   * Gets or Sets status
-   */
-  public enum StatusEnum {
+    /**
+     * Gets or Sets status
+     */
+    public enum StatusEnum {
 
-    ACCEPTED("accepted"),
-    RUNNING("running"),
-    SUCCESSFUL("successful"),
-    FAILED("failed");
+        ACCEPTED("accepted"),
+        RUNNING("running"),
+        SUCCESSFUL("successful"), //"Succeeded"
+        FAILED("failed"),
+        DISMISS("dismissed"),
+        // Added this new values  TODO review if really needed
+        STARTED("started"),
+        PAUSED("paused");
 
-    private String value;
+        private String value;
 
-    StatusEnum(String value) {
-      this.value = value;
+        StatusEnum(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+
+        public static StatusEnum fromValue(String text) {
+            for (StatusEnum b : StatusEnum.values()) {
+                if (String.valueOf(b.value).equals(text)) {
+                    return b;
+                }
+            }
+            return null;
+        }
+
+        public static StatusEnum fromValue(Status status) {
+            for (StatusEnum b : StatusEnum.values()) {
+                // special case
+                if (b.equals(SUCCESSFUL) && status.name().toLowerCase().equals("succeeded")) {
+                    return b;
+                }
+                if (String.valueOf(b.value).equals(status.name().toLowerCase())) {
+                    return b;
+                }
+            }
+            return null;
+        }
+
     }
 
-    public String getValue() {
-      return value;
+    private StatusEnum status = null;
+
+    private String message = null;
+
+    private Integer progress = null;
+
+    public StatusInfo status(Status status) {
+        this.status = StatusEnum.fromValue(status);
+        return this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return status
+  *
+     */
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEnum status) {
+        this.status = status;
+    }
+
+    public StatusInfo message(String message) {
+        this.message = message;
+        return this;
+    }
+
+    /**
+     * Get message
+     *
+     * @return message
+  *
+     */
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public StatusInfo progress(Integer progress) {
+        this.progress = progress;
+        return this;
+    }
+
+    /**
+     * Get progress minimum: 0 maximum: 100
+     *
+     * @return progress
+  *
+     */
+    public Integer getProgress() {
+        return progress;
+    }
+
+    public void setProgress(Integer progress) {
+        this.progress = progress;
+    }
+
+    @Override
+    public boolean equals(java.lang.Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        StatusInfo statusInfo = (StatusInfo) o;
+        return Objects.equals(this.status, statusInfo.status)
+                && Objects.equals(this.message, statusInfo.message)
+                && Objects.equals(this.progress, statusInfo.progress);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(status, message, progress);
     }
 
     @Override
     public String toString() {
-      return String.valueOf(value);
+        StringBuilder sb = new StringBuilder();
+        sb.append("class StatusInfo {\n");
+
+        sb.append("    status: ").append(toIndentedString(status)).append("\n");
+        sb.append("    message: ").append(toIndentedString(message)).append("\n");
+        sb.append("    progress: ").append(toIndentedString(progress)).append("\n");
+        sb.append("}");
+        return sb.toString();
     }
 
-    public static StatusEnum fromValue(String text) {
-      for (StatusEnum b : StatusEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(java.lang.Object o) {
+        if (o == null) {
+            return "null";
         }
-      }
-      return null;
+        return o.toString().replace("\n", "\n    ");
     }
-
-  }
-
-  private Status status = null;
-
-  private String message = null;
-
-  private Integer progress = null;
-
-  public StatusInfo status(Status status) {
-    this.status = status;
-    return this;
-  }
-
-
-  /**
-  * Get status
-  * @return status
-  **/
-  public Status getStatus() {
-    return status;
-  }
-  public void setStatus(Status status) {
-    this.status = status;
-  }
-
-  public StatusInfo message(String message) {
-    this.message = message;
-    return this;
-  }
-
-
-  /**
-  * Get message
-  * @return message
-  **/
-  public String getMessage() {
-    return message;
-  }
-  public void setMessage(String message) {
-    this.message = message;
-  }
-
-  public StatusInfo progress(Integer progress) {
-    this.progress = progress;
-    return this;
-  }
-
-
-  /**
-  * Get progress
-  * minimum: 0
-  * maximum: 100
-  * @return progress
-  **/
-  public Integer getProgress() {
-    return progress;
-  }
-  public void setProgress(Integer progress) {
-    this.progress = progress;
-  }
-
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    StatusInfo statusInfo = (StatusInfo) o;
-    return Objects.equals(this.status, statusInfo.status) &&
-        Objects.equals(this.message, statusInfo.message) &&
-        Objects.equals(this.progress, statusInfo.progress);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(status, message, progress);
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class StatusInfo {\n");
-
-    sb.append("    status: ").append(toIndentedString(status)).append("\n");
-    sb.append("    message: ").append(toIndentedString(message)).append("\n");
-    sb.append("    progress: ").append(toIndentedString(progress)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
-  }
-
 
 }
-
-
-
