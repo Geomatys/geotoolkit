@@ -30,6 +30,7 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.CoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.Resource;
@@ -41,9 +42,9 @@ import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Decorates a coverage reference adding possibility to override properties.
@@ -59,10 +60,10 @@ import org.opengis.metadata.Metadata;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class AmendedCoverageResource implements Resource,CoverageResource{
+public class AmendedCoverageResource implements Resource,GridCoverageResource{
 
     protected final Set<StorageListener> listeners = new HashSet<>();
-    protected final CoverageResource ref;
+    protected final GridCoverageResource ref;
     protected final DataStore store;
 
     //source unmodified informations
@@ -75,7 +76,7 @@ public class AmendedCoverageResource implements Resource,CoverageResource{
     protected MathTransform overrideGridToCrs;
     protected List<GridSampleDimension> overrideDims;
 
-    public AmendedCoverageResource(CoverageResource ref, DataStore store) {
+    public AmendedCoverageResource(GridCoverageResource ref, DataStore store) {
         this.store = store;
         this.ref = ref;
     }
@@ -109,7 +110,7 @@ public class AmendedCoverageResource implements Resource,CoverageResource{
      *
      * @return CoverageResource, never null.
      */
-    public CoverageResource getDecorated(){
+    public GridCoverageResource getDecorated(){
         return ref;
     }
 
@@ -312,7 +313,7 @@ public class AmendedCoverageResource implements Resource,CoverageResource{
      * {@inheritDoc }
      */
     @Override
-    public void recycle(GridCoverageWriter writer) {
+    public void recycle(CoverageWriter writer) {
         throw new UnsupportedOperationException("Not supported.");
     }
 

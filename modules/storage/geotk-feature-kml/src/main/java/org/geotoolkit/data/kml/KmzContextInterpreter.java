@@ -83,7 +83,7 @@ import org.apache.sis.storage.FeatureSet;
 import org.opengis.feature.Feature;
 import org.opengis.feature.PropertyType;
 import org.geotoolkit.data.kml.xml.KmlConstants;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -377,7 +377,7 @@ public class KmzContextInterpreter {
         final Feature groundOverlay = KML_FACTORY.createGroundOverlay();
         final CoordinateReferenceSystem targetCrs = CommonCRS.WGS84.normalizedGeographic();
 
-        final CoverageResource ref = coverageMapLayer.getCoverageReference();
+        final GridCoverageResource ref = coverageMapLayer.getCoverageReference();
         final CoverageReader reader = ref.acquireReader();
         final GridCoverage2D coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), null);
         ref.recycle(reader);

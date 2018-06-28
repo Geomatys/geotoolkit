@@ -48,7 +48,6 @@ import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.feature.TypeConventions;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
@@ -72,6 +71,7 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -244,7 +244,7 @@ public final class CoverageFeature {
 
     }
 
-    public static FeatureAssociation coverageRecords(final CoverageResource res, final FeatureAssociationRole role) {
+    public static FeatureAssociation coverageRecords(final GridCoverageResource res, final FeatureAssociationRole role) {
 
         final Collection<Feature> pixels = new AbstractCollection<Feature>() {
 

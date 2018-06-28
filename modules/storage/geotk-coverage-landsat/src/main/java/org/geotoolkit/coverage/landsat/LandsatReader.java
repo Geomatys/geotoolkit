@@ -40,7 +40,6 @@ import org.geotoolkit.image.io.plugin.TiffImageReader;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.GeoReferencedGridCoverageReader;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
@@ -54,6 +53,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NoSuchIdentifierException;
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Reader to read Landsat datas.
@@ -93,7 +93,7 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
      * @param metadata path to metadata file.
      * @throws IOException if problem during metadatas parser building.
      */
-    LandsatReader(CoverageResource res, final Path parentDirectory, final Path metadata, LandsatConstants.CoverageGroup group) throws IOException {
+    LandsatReader(GridCoverageResource res, final Path parentDirectory, final Path metadata, LandsatConstants.CoverageGroup group) throws IOException {
         super(res);
         ArgumentChecks.ensureNonNull("parent directory path", parentDirectory);
         ArgumentChecks.ensureNonNull("metadata path", metadata);
@@ -109,7 +109,7 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
      * @param metadataParser metadata parser for Landsat8.
      * @throws IOException if problem during metadatas parser building.
      */
-    LandsatReader(CoverageResource res, final Path parentDirectory, final LandsatMetadataParser metadataParser, LandsatConstants.CoverageGroup group) throws IOException {
+    LandsatReader(GridCoverageResource res, final Path parentDirectory, final LandsatMetadataParser metadataParser, LandsatConstants.CoverageGroup group) throws IOException {
         super(res);
         ArgumentChecks.ensureNonNull("parent directory path", parentDirectory);
         ArgumentChecks.ensureNonNull("metadata parser", metadataParser);

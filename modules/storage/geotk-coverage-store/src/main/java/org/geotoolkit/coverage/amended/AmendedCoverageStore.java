@@ -33,7 +33,7 @@ import org.geotoolkit.storage.coverage.CoverageStoreListener;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Decorates a coverage store adding possibility to override properties of each coverage reference.
@@ -102,8 +102,8 @@ public class AmendedCoverageStore extends AbstractCoverageStore implements Aggre
         if (resources == null) {
             resources = new ArrayList<>();
             for (Resource res : DataStores.flatten(store,true)) {
-                if (res instanceof CoverageResource) {
-                    resources.add(new AmendedCoverageResource((CoverageResource) res, this));
+                if (res instanceof GridCoverageResource) {
+                    resources.add(new AmendedCoverageResource((GridCoverageResource) res, this));
                 } else if(res == store) {
                     //skip it
                 } else {

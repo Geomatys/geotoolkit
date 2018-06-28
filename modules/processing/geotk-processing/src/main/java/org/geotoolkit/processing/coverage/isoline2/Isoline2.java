@@ -94,7 +94,7 @@ public class Isoline2 extends AbstractProcess {
 
     @Override
     protected void execute() throws ProcessException {
-        final CoverageResource coverageRef = inputParameters.getValue(COVERAGE_REF);
+        final GridCoverageResource coverageRef = inputParameters.getValue(COVERAGE_REF);
         final GridCoverageReadParam readParam = inputParameters.getValue(READ_PARAM);
         FeatureStore featureStore = inputParameters.getValue(FEATURE_STORE);
         final String featureTypeName = inputParameters.getValue(FEATURE_NAME);

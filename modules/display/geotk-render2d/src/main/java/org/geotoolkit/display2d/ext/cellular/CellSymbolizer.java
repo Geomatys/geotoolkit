@@ -58,7 +58,7 @@ import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.Rule;
 import org.opengis.style.StyleVisitor;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -206,7 +206,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         return buildCellType(layer.getCoverageReference());
     }
 
-    public static FeatureType buildCellType(CoverageResource ref) throws DataStoreException{
+    public static FeatureType buildCellType(GridCoverageResource ref) throws DataStoreException{
         final GridCoverageReader reader = ref.acquireReader();
         final FeatureType sft = buildCellType(reader, ref.getImageIndex());
         ref.recycle(reader);

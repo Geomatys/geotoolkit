@@ -75,9 +75,9 @@ import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescripto
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.REDUCE_TO_DOMAIN;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.STORE_IN;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.STORE_OUT;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Copy a {@linkplain CoverageStore coverage store} into another one, that supports
@@ -147,8 +147,8 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
 
                 fireProgressing("Copying "+n+".", (int)((inc*100f)/size), false);
                 final Resource resource = inStore.findResource(n.toString());
-                if (resource instanceof CoverageResource) {
-                    final CoverageResource inRef = (CoverageResource) resource;
+                if (resource instanceof GridCoverageResource) {
+                    final GridCoverageResource inRef = (GridCoverageResource) resource;
                     final GenericName name = inRef.getIdentifier();
 
                     //remove if exist
@@ -161,7 +161,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
                         }
                     }
 
-                    final CoverageResource outRef = (CoverageResource) outAggregate.add(new DefiningCoverageResource(name, null));
+                    final GridCoverageResource outRef = (GridCoverageResource) outAggregate.add(new DefiningCoverageResource(name, null));
 
                     if(inRef instanceof PyramidalCoverageResource && outRef instanceof PyramidalCoverageResource){
                         savePMtoPM((PyramidalCoverageResource)inRef, (PyramidalCoverageResource)outRef);
@@ -338,7 +338,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
     }
 
     /**
-     * Save a {@link CoverageResource coverage} into a {@linkplain CoverageStore coverage store}.
+     * Save a {@link GridCoverageResource coverage} into a {@linkplain CoverageStore coverage store}.
      *
      * @param outStore Coverage store in which to copy values.
      * @param inRef Coverage to store.
@@ -347,7 +347,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      * @throws DataStoreException
      * @throws TransformException
      */
-    private void savePlainToPM(final CoverageResource inRef, final PyramidalCoverageResource outPM, Boolean reduce)
+    private void savePlainToPM(final GridCoverageResource inRef, final PyramidalCoverageResource outPM, Boolean reduce)
             throws DataStoreException, TransformException, ProcessException {
 
         if(reduce == null) reduce = Boolean.TRUE;

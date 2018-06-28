@@ -41,7 +41,7 @@ import org.apache.sis.storage.Resource;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.metadata.MetadataUtilities;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -102,7 +102,7 @@ public class ResourceNameColumn extends TreeTableColumn<Resource,String>{
     }
 
     private static Image getTypeIcon(Resource resource){
-        if (resource instanceof CoverageResource) {
+        if (resource instanceof GridCoverageResource) {
             return ICON_RASTER;
         } else if (resource instanceof FeatureSet) {
             return ICON_VECTOR;

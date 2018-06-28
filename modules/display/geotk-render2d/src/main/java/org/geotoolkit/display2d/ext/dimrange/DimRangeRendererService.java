@@ -41,7 +41,7 @@ import org.geotoolkit.map.MapLayer;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -87,7 +87,7 @@ public class DimRangeRendererService extends AbstractSymbolizerRendererService<D
 
         if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final CoverageResource ref = cml.getCoverageReference();
+            final GridCoverageResource ref = cml.getCoverageReference();
             try {
                 final GridCoverageReader reader = ref.acquireReader();
                 final GridCoverageReadParam param = new GridCoverageReadParam();

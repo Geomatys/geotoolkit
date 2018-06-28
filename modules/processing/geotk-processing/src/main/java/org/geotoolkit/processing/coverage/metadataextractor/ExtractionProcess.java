@@ -32,7 +32,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.opengis.coverage.Coverage;
 import org.opengis.metadata.Metadata;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -89,9 +89,9 @@ public class ExtractionProcess extends AbstractProcess {
         //Coverage case is not supported yet
         if (input instanceof Coverage) {
             //TODO : add a convenience method into coverage interface to get metadata
-        } else if (input instanceof CoverageResource) {
+        } else if (input instanceof GridCoverageResource) {
             try {
-                reader = ((CoverageResource)input).acquireReader();
+                reader = ((GridCoverageResource)input).acquireReader();
             } catch (DataStoreException ex) {
                 Logging.getLogger("org.geotoolkit.processing.coverage.metadataextractor").log(Level.SEVERE, null, ex);
             }

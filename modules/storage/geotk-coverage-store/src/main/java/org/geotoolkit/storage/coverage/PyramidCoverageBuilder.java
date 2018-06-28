@@ -292,7 +292,7 @@ public class PyramidCoverageBuilder {
      * @throws TransformException if problems during resampling operation.
      * @throws FactoryException if impossible to find {@code MathTransform} between two {@link CoordinateReferenceSystem}.
      */
-    public void create(CoverageResource gridCoverageRef, CoverageStore coverageStore, GenericName coverageName,
+    public void create(GridCoverageResource gridCoverageRef, CoverageStore coverageStore, GenericName coverageName,
             Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue,
             ProcessListener processListener, ProgressMonitor monitor)
             throws DataStoreException, TransformException, FactoryException, IOException {
@@ -302,7 +302,7 @@ public class PyramidCoverageBuilder {
         ArgumentChecks.ensureNonNull("resolution_Per_Envelope", resolution_Per_Envelope);
 
         //one coverageReference for each reader.
-        final CoverageResource cv = getOrCreateCRef(coverageStore,coverageName);
+        final GridCoverageResource cv = getOrCreateCRef(coverageStore,coverageName);
 
         if (!(cv instanceof PyramidalCoverageResource)) {
             final IllegalArgumentException ex = new IllegalArgumentException("CoverageStore parameter should be instance of PyramidalModel."+coverageStore.toString());
@@ -531,7 +531,7 @@ public class PyramidCoverageBuilder {
             throw ex;
         }
 
-        final CoverageResource cv  = getOrCreateCRef(coverageStore,coverageName);
+        final GridCoverageResource cv  = getOrCreateCRef(coverageStore,coverageName);
         if (!(cv instanceof PyramidalCoverageResource)) {
             final IllegalArgumentException ex = new IllegalArgumentException("CoverageReference not instance of PyramidalCoverageReference");
             if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
@@ -648,7 +648,7 @@ public class PyramidCoverageBuilder {
         final GridCoverageReadParam rp = new GridCoverageReadParam();
 
         //one coverageReference for each reader.
-        final CoverageResource cv = getOrCreateCRef(coverageStore,coverageName);
+        final GridCoverageResource cv = getOrCreateCRef(coverageStore,coverageName);
 
         if (!(cv instanceof PyramidalCoverageResource)) {
             final IllegalArgumentException ex = new IllegalArgumentException("CoverageStore parameter should be instance of PyramidalModel."+coverageStore.toString());
@@ -894,29 +894,29 @@ public class PyramidCoverageBuilder {
     }
 
     /**
-     * Search and return a {@link CoverageResource} in a {@link CoverageStore} from its {@link GenericName}.<br/>
-     * If it doesn't exist a {@link CoverageResource} is created, added in {@link CoverageStore} parameter and returned.
+     * Search and return a {@link GridCoverageResource} in a {@link CoverageStore} from its {@link GenericName}.<br/>
+     * If it doesn't exist a {@link GridCoverageResource} is created, added in {@link CoverageStore} parameter and returned.
      *
      * @param coverageStore
      * @param coverageName
-     * @return a {@link CoverageResource} in a {@link CoverageStore} from its {@link GenericName}.
+     * @return a {@link GridCoverageResource} in a {@link CoverageStore} from its {@link GenericName}.
      * @throws DataStoreException
      */
-    private CoverageResource getOrCreateCRef(CoverageStore coverageStore, GenericName coverageName) throws DataStoreException {
-        CoverageResource cv = null;
+    private GridCoverageResource getOrCreateCRef(CoverageStore coverageStore, GenericName coverageName) throws DataStoreException {
+        GridCoverageResource cv = null;
         for (GenericName n : coverageStore.getNames()) {
             if (n.tip().toString().equals(coverageName.tip().toString())) {
                 final Resource candidate = coverageStore.findResource(n.toString());
-                if (!(candidate instanceof CoverageResource)) {
+                if (!(candidate instanceof GridCoverageResource)) {
                     throw new DataStoreException("Resource "+coverageName+" is not a coverage.");
                 }
-                cv = (CoverageResource) candidate;
+                cv = (GridCoverageResource) candidate;
             }
         }
         if (cv == null) {
             if (coverageStore instanceof WritableAggregate) {
                 final WritableAggregate agg = (WritableAggregate) coverageStore;
-                cv = (CoverageResource) agg.add(new DefiningCoverageResource(coverageName, null));
+                cv = (GridCoverageResource) agg.add(new DefiningCoverageResource(coverageName, null));
             } else {
                 throw new DataStoreException("Store do not support creation operation.");
             }

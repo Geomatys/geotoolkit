@@ -52,7 +52,6 @@ import org.geotoolkit.client.Client;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.wms.v100.GetCapabilities100;
 import org.geotoolkit.wms.v100.GetFeatureInfo100;
 import org.geotoolkit.wms.v100.GetMap100;
@@ -60,6 +59,7 @@ import org.geotoolkit.wms.v111.GetCapabilities111;
 import org.geotoolkit.wms.v111.GetFeatureInfo111;
 import org.geotoolkit.wms.v111.GetLegend111;
 import org.geotoolkit.wms.v111.GetMap111;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 
 /**
@@ -414,7 +414,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
      * @param name
      * @return
      */
-    protected CoverageResource createReference(GenericName name) throws DataStoreException{
+    protected GridCoverageResource createReference(GenericName name) throws DataStoreException{
         return new WMSCoverageResource(this,name);
     }
 

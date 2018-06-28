@@ -85,8 +85,8 @@ import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.opengis.referencing.crs.SingleCRS;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 
 /**
@@ -128,8 +128,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
                 portray(pc);
-            }else  if(obj instanceof CoverageResource){
-                final CoverageMapLayer ml = MapBuilder.createCoverageLayer((CoverageResource)obj);
+            }else  if(obj instanceof GridCoverageResource){
+                final CoverageMapLayer ml = MapBuilder.createCoverageLayer((GridCoverageResource)obj);
                 final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
@@ -291,7 +291,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         resolution = checkResolution(resolution, renderingBound);
 
         final CoverageMapLayer coverageLayer               = projectedCoverage.getLayer();
-        final CoverageResource ref                         = coverageLayer.getCoverageReference();
+        final GridCoverageResource ref                         = coverageLayer.getCoverageReference();
         final GridCoverageReader reader                    = ref.acquireReader();
         final GeneralGridGeometry gridGeometry             = reader.getGridGeometry(ref.getImageIndex());
         final Envelope inputCoverageEnvelope               = gridGeometry.getEnvelope();

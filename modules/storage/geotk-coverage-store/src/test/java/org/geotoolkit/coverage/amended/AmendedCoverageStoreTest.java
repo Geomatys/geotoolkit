@@ -43,8 +43,8 @@ import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
 import static org.junit.Assert.*;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 
 /**
@@ -84,7 +84,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         final GridCoverage coverage = gcb.build();
 
         final MemoryCoverageStore store = new MemoryCoverageStore();
-        final CoverageResource ref = store.add(new DefiningCoverageResource(name));
+        final GridCoverageResource ref = store.add(new DefiningCoverageResource(name));
         ref.acquireWriter().write(coverage, null);
 
         return store;
@@ -166,7 +166,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         final GridCoverage coverage = gcb.build();
 
         final MemoryCoverageStore store = new MemoryCoverageStore();
-        final CoverageResource ref = store.add(new DefiningCoverageResource(name));
+        final GridCoverageResource ref = store.add(new DefiningCoverageResource(name));
         ref.acquireWriter().write(coverage, null);
 
         //decorate this coverage

@@ -144,7 +144,7 @@ import org.opengis.style.Symbolizer;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.measure.Units;
 import org.opengis.feature.AttributeType;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Style editor which handle Raster colormap edition.
@@ -553,7 +553,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         //update nbBands spinner
         try {
             if (layer instanceof CoverageMapLayer) {
-                final CoverageResource covRef = ((CoverageMapLayer) layer).getCoverageReference();
+                final GridCoverageResource covRef = ((CoverageMapLayer) layer).getCoverageReference();
                 final GridCoverageReader reader = covRef.acquireReader();
                 final GeneralGridGeometry gridGeometry = reader.getGridGeometry(covRef.getImageIndex());
 
@@ -598,7 +598,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
     private void initializeSpinners() {
         if(layer != null && layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer)layer;
-            final CoverageResource cref = cml.getCoverageReference();
+            final GridCoverageResource cref = cml.getCoverageReference();
             GridCoverageReader reader = null;
             GeneralGridGeometry gridGeometry = null;
             GridCoverageReadParam readParam = null;

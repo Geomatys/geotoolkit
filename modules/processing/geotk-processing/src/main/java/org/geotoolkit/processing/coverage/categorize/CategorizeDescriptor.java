@@ -6,11 +6,11 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * A process whose aim is to classify a single banded image according to a given
@@ -49,12 +49,12 @@ public class CategorizeDescriptor extends AbstractProcessDescriptor {
     /**
      * Handle on input data to categorize.
      */
-    public static final ParameterDescriptor<CoverageResource> IN_COVERAGE;
+    public static final ParameterDescriptor<GridCoverageResource> IN_COVERAGE;
 
     /**
      * Handle on output data source to write into.
      */
-    public static final ParameterDescriptor<CoverageResource> OUT_COVERAGE;
+    public static final ParameterDescriptor<GridCoverageResource> OUT_COVERAGE;
 
     /**
      * An optional envelope region of interest to focus on for classification.
@@ -72,11 +72,11 @@ public class CategorizeDescriptor extends AbstractProcessDescriptor {
         IN_COVERAGE = builder.addName("source")
                 .setRemarks("Resource to classify.")
                 .setRequired(true)
-                .create(CoverageResource.class, null);
+                .create(GridCoverageResource.class, null);
 
         OUT_COVERAGE = builder.addName("destination")
                 .setRemarks("Resource to send classified data into.")
-                .create(CoverageResource.class, null);
+                .create(GridCoverageResource.class, null);
 
         ENVELOPE = builder.addName("envelope")
                 .setRemarks("An envelope representing a subset of the source grid coverage to work with.")

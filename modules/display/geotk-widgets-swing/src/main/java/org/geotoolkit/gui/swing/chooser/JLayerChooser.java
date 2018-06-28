@@ -60,9 +60,9 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Panel allowing to choose layer among the available datas of the source.

@@ -66,7 +66,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
     protected final Parameters parameters;
     protected final Set<StorageListener> storeListeners = new HashSet<>();
 
-    private GenericNameIndex<CoverageResource> cachedRefs = null;
+    private GenericNameIndex<GridCoverageResource> cachedRefs = null;
 
     protected AbstractCoverageStore(final ParameterValueGroup params) {
         this.parameters = Parameters.castOrWrap(params);
@@ -108,12 +108,12 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
         // Queries data specific information
         final Map<GenericName, GeneralGridGeometry> geometries = new HashMap<>();
-        final List<CoverageResource> refs = DataStores.flatten(this,true).stream()
-                .filter(node -> node instanceof CoverageResource)
-                .map(node -> ((CoverageResource) node))
+        final List<GridCoverageResource> refs = DataStores.flatten(this,true).stream()
+                .filter(node -> node instanceof GridCoverageResource)
+                .map(node -> ((GridCoverageResource) node))
                 .collect(Collectors.toList());
 
-        for (final CoverageResource ref : refs) {
+        for (final GridCoverageResource ref : refs) {
             final GridCoverageReader reader = ref.acquireReader();
             final SpatialMetadata md;
             final GeneralGridGeometry gg;
@@ -225,11 +225,11 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
     @Override
     public final Set<GenericName> getNames() throws DataStoreException {
-        final GenericNameIndex<CoverageResource> map = listReferences();
+        final GenericNameIndex<GridCoverageResource> map = listReferences();
         return map.getNames();
     }
 
-    protected synchronized GenericNameIndex<CoverageResource> listReferences() throws DataStoreException {
+    protected synchronized GenericNameIndex<GridCoverageResource> listReferences() throws DataStoreException {
         if (cachedRefs==null) {
             cachedRefs = new GenericNameIndex<>();
             listReferences(this, cachedRefs);
@@ -237,11 +237,11 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         return cachedRefs;
     }
 
-    private GenericNameIndex<CoverageResource> listReferences(org.apache.sis.storage.Resource candidate, GenericNameIndex<CoverageResource> map)
+    private GenericNameIndex<GridCoverageResource> listReferences(org.apache.sis.storage.Resource candidate, GenericNameIndex<GridCoverageResource> map)
             throws IllegalNameException, DataStoreException{
 
-        if(candidate instanceof CoverageResource){
-            final CoverageResource cr = (CoverageResource) candidate;
+        if(candidate instanceof GridCoverageResource){
+            final GridCoverageResource cr = (GridCoverageResource) candidate;
             map.add(cr.getIdentifier(), cr);
         }
 

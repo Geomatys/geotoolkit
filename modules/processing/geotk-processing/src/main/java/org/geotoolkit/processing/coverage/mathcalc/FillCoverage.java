@@ -75,7 +75,7 @@ public class FillCoverage {
      * @param env , envelope where new values will be evaluated.
      * @throws org.geotoolkit.coverage.io.CoverageStoreException
      */
-    public void fill(CoverageResource outRef, SampleEvaluator evaluator, Envelope env) throws DataStoreException {
+    public void fill(GridCoverageResource outRef, SampleEvaluator evaluator, Envelope env) throws DataStoreException {
 
         final GeneralGridGeometry gg;
         final GridCoverageWriter outWriter;

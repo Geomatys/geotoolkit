@@ -53,7 +53,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -62,7 +62,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  */
 public class DefaultElevationLoader extends AbstractElevationLoader {
 
-    private final CoverageResource coverageRef;
+    private final GridCoverageResource coverageRef;
     private final GeneralGridGeometry gridGeom;
     private final double minElevation;
     private final double maxElevation;
@@ -70,7 +70,7 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
     private CoordinateReferenceSystem outputCrs;
     private MathTransform coverageToOutput, outputToCoverage;
 
-    public DefaultElevationLoader(CoverageResource ref) throws FactoryException, IncommensurableException, DataStoreException {
+    public DefaultElevationLoader(GridCoverageResource ref) throws FactoryException, IncommensurableException, DataStoreException {
         this.coverageRef = ref;
 
         final GridCoverageReader reader = coverageRef.acquireReader();

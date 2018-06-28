@@ -22,8 +22,8 @@ import org.opengis.metadata.extent.TemporalExtent;
 import org.opengis.metadata.extent.VerticalExtent;
 import org.opengis.metadata.identification.DataIdentification;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -33,7 +33,7 @@ public class MemoryStoreTest {
 
     private static MemoryCoverageStore create() throws DataStoreException {
         final MemoryCoverageStore mcs = new MemoryCoverageStore();
-        final CoverageResource ref = mcs.add(new DefiningCoverageResource(Names.createLocalName("test", ":", "mock")));
+        final GridCoverageResource ref = mcs.add(new DefiningCoverageResource(Names.createLocalName("test", ":", "mock")));
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(new BufferedImage(13, 13, BufferedImage.TYPE_BYTE_GRAY));
@@ -50,14 +50,14 @@ public class MemoryStoreTest {
 
         final Metadata md = store.getMetadata();
 
-        final CoverageResource[] refs = DataStores.flatten(store,true).stream()
-                .filter(CoverageResource.class::isInstance)
-                .map(CoverageResource.class::cast)
-                .toArray(size -> new CoverageResource[size]);
+        final GridCoverageResource[] refs = DataStores.flatten(store,true).stream()
+                .filter(GridCoverageResource.class::isInstance)
+                .map(GridCoverageResource.class::cast)
+                .toArray(size -> new GridCoverageResource[size]);
 
         final DefaultExtent expectedExtent = new DefaultExtent();
         final Set<CoordinateReferenceSystem> crss = new HashSet<>();
-        for (final CoverageResource ref : refs) {
+        for (final GridCoverageResource ref : refs) {
             final GridCoverageReader reader = ref.acquireReader();
             try {
                 final GeneralGridGeometry gg = reader.getGridGeometry(ref.getImageIndex());

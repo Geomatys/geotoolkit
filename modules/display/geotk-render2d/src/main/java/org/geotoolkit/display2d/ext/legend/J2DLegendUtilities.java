@@ -51,7 +51,7 @@ import org.opengis.util.GenericName;
 import org.opengis.style.Description;
 import org.opengis.style.Rule;
 import org.opengis.util.InternationalString;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Utility class to render legend using a provided template.
@@ -507,7 +507,7 @@ public class J2DLegendUtilities {
             testwms:
             if (layer instanceof DefaultCoverageMapLayer) {
                 final DefaultCoverageMapLayer covLayer = (DefaultCoverageMapLayer)layer;
-                final CoverageResource covRef = covLayer.getCoverageReference();
+                final GridCoverageResource covRef = covLayer.getCoverageReference();
 
                 if (covRef == null) {
                     continue;

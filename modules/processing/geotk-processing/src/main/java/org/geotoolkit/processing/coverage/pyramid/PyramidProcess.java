@@ -33,7 +33,7 @@ import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * <p>Build and store a image pyramid.<br/><br/>
@@ -59,13 +59,13 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
      * @param reuseTile reuse tiles
      * @param tileSize tile size
      */
-    public PyramidProcess(CoverageResource covref,CoverageStore covstore,double[] fillValues,
+    public PyramidProcess(GridCoverageResource covref,CoverageStore covstore,double[] fillValues,
             InterpolationCase interpolation,String pyramidName,Map resPerEnvelope, Boolean reuseTile, Dimension tileSize){
         super(PyramidDescriptor.INSTANCE, asParameters(covref,covstore,fillValues,
                 interpolation,pyramidName,resPerEnvelope,reuseTile,tileSize));
     }
 
-    private static ParameterValueGroup asParameters(CoverageResource covref,CoverageStore covstore,double[] fillValues,
+    private static ParameterValueGroup asParameters(GridCoverageResource covref,CoverageStore covstore,double[] fillValues,
             InterpolationCase interpolation,String pyramidName,Map resPerEnvelope, Boolean reuseTile, Dimension tileSize){
         final Parameters params = Parameters.castOrWrap(PyramidDescriptor.INPUT_DESC.createValue());
         params.getOrCreate(PyramidDescriptor.IN_COVERAGEREF).setValue(covref);
@@ -98,7 +98,7 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
 
         ArgumentChecks.ensureNonNull("inputParameters", inputParameters);
 
-        final CoverageResource coverageref        = inputParameters.getValue(PyramidDescriptor.IN_COVERAGEREF      );
+        final GridCoverageResource coverageref        = inputParameters.getValue(PyramidDescriptor.IN_COVERAGEREF      );
         final CoverageStore coverageStore         = inputParameters.getValue(PyramidDescriptor.IN_COVERAGESTORE    );
         final InterpolationCase interpolationcase = inputParameters.getValue(PyramidDescriptor.IN_INTERPOLATIONCASE);
         final Map resolution_per_envelope         = inputParameters.getValue(PyramidDescriptor.IN_RES_PER_ENVELOPE );

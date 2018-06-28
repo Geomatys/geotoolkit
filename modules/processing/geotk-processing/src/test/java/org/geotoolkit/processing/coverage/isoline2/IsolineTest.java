@@ -38,7 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -62,7 +62,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         });
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
         final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
-        final CoverageResource ref = (CoverageResource) store.findResource(store.getNames().iterator().next().toString());
+        final GridCoverageResource ref = (GridCoverageResource) store.findResource(store.getNames().iterator().next().toString());
 
 
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor2.NAME);
@@ -96,7 +96,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         });
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
         final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
-        final CoverageResource ref = (CoverageResource) store.findResource(store.getNames().iterator().next().toString());
+        final GridCoverageResource ref = (GridCoverageResource) store.findResource(store.getNames().iterator().next().toString());
 
 
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor2.NAME);
@@ -130,7 +130,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         });
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
         final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
-        final CoverageResource ref = (CoverageResource) store.findResource(store.getNames().iterator().next().toString());
+        final GridCoverageResource ref = (GridCoverageResource) store.findResource(store.getNames().iterator().next().toString());
 
 
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor2.NAME);
@@ -167,7 +167,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
 
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
         final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
-        final CoverageResource ref = (CoverageResource) store.findResource(store.getNames().iterator().next().toString());
+        final GridCoverageResource ref = (GridCoverageResource) store.findResource(store.getNames().iterator().next().toString());
 
         double[] intervales = {3.163};
 

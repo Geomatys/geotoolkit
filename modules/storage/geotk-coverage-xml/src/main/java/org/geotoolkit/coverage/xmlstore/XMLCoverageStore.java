@@ -44,8 +44,8 @@ import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Coverage store relying on an xml file.
@@ -159,7 +159,7 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
     }
 
     @Override
-    public CoverageResource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
+    public GridCoverageResource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
         if (!(resource instanceof DefiningCoverageResource)) {
             throw new DataStoreException("Unsupported resource "+resource);
         }
@@ -171,10 +171,10 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
 
     @Override
     public void remove(org.apache.sis.storage.Resource resource) throws DataStoreException {
-        if (!(resource instanceof CoverageResource)) {
+        if (!(resource instanceof GridCoverageResource)) {
             throw new DataStoreException("Unknown resource "+resource);
         }
-        final CoverageResource cr = (CoverageResource) resource;
+        final GridCoverageResource cr = (GridCoverageResource) resource;
         final NamedIdentifier name = cr.getIdentifier();
 
         //TODO
@@ -191,7 +191,7 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
      * @return new CoverageResource.
      * @throws DataStoreException
      */
-    public CoverageResource create(GenericName name, ViewType packMode, String preferredFormat) throws DataStoreException {
+    public GridCoverageResource create(GenericName name, ViewType packMode, String preferredFormat) throws DataStoreException {
         if (Files.isRegularFile(root)) {
             throw new DataStoreException("Store root is a file, not a directory, no reference creation allowed.");
         }
