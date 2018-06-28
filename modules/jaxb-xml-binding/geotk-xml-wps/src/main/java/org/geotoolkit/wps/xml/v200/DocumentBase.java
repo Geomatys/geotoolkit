@@ -26,7 +26,7 @@ public class DocumentBase implements Versioned {
      */
     private List<Object> extension;
     @XmlAttribute(name = "service", required = true)
-    private String service = "WPS";
+    private String service;
     @XmlAttribute(name = "version", required = true)
     private String version;
     @XmlAttribute(namespace = "http://www.w3.org/XML/1998/namespace", required = true)
