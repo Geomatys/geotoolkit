@@ -100,12 +100,22 @@ public class ProcessOfferings extends DocumentBase implements WPSResponse{
 
     @XmlElement(name="ProcessDescription", namespace = "")
     private List<ProcessDescription> getLegacyDescriptions() {
-        final List<ProcessOffering> po = getProcessOffering();
-        if (po.isEmpty() && offeringAdapter == null) {
-            offeringAdapter = new ListAdapter<>(po, TO_DESCRIPTION, TO_OFFERING);
+        if (!FilterByVersion.isMarshalling() || FilterByVersion.isV1()) {
+            final List<ProcessOffering> po = getProcessOffering();
+            if (offeringAdapter == null) {
+                offeringAdapter = new ListAdapter<>(po, TO_DESCRIPTION, TO_OFFERING);
+            }
         }
-
         return offeringAdapter;
+    }
+
+    private void setLegacyDescriptions(List<ProcessDescription> processDescriptions) {
+        if (processDescriptions != null && !processDescriptions.isEmpty()) {
+            if (offeringAdapter == null) {
+                offeringAdapter = new ListAdapter<>(getProcessOffering(), TO_DESCRIPTION, TO_OFFERING);
+            }
+            offeringAdapter.addAll(processDescriptions);
+        }
     }
 
     private static class ListAdapter<U, V> extends AbstractList<V> {

@@ -1,6 +1,7 @@
 package org.geotoolkit.wps.xml.v200;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import org.apache.sis.internal.jaxb.Context;
 
 /**
  *
@@ -21,5 +22,9 @@ abstract class FilterByVersion<V> extends XmlAdapter<V,V> {
     @Override
     public final V unmarshal(V v) {
         return v;
+    }
+
+    public static boolean isMarshalling() {
+        return Context.isFlagSet(Context.current(), Context.MARSHALLING);
     }
 }
