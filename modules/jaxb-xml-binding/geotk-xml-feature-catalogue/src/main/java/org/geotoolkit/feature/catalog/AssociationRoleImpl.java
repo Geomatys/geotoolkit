@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.internal.jaxb.gco.Multiplicity;
 import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.AssociationRole;
 import org.opengis.feature.catalog.Constraint;
@@ -33,7 +34,6 @@ import org.opengis.feature.catalog.FeatureAssociation;
 import org.opengis.feature.catalog.FeatureType;
 import org.opengis.feature.catalog.RoleType;
 import org.opengis.util.LocalName;
-import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
 
 
 /**
@@ -95,7 +95,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
     /**
      * Clone a AssociationRole
      */
-    public AssociationRoleImpl(final String id, final LocalName memberName, final String definition, final MultiplicityImpl cardinality,
+    public AssociationRoleImpl(final String id, final LocalName memberName, final String definition, final Multiplicity cardinality,
             final FeatureType featureType, final List<Constraint> constrainedBy, final DefinitionReference definitionReference,
             final RoleType type, final Boolean isOrdered, final Boolean isNavigable, final FeatureAssociation relation, final FeatureType rolePlayer) {
         super(id, memberName, definition, cardinality, featureType, constrainedBy, definitionReference);

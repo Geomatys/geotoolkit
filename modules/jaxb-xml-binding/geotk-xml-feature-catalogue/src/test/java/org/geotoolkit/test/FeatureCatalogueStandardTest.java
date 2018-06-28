@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.internal.jaxb.gco.Multiplicity;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.metadata.KeyNamePolicy;
 import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.metadata.ValueExistencePolicy;
@@ -32,17 +34,15 @@ import org.geotoolkit.feature.catalog.FeatureCatalogueImpl;
 import org.geotoolkit.feature.catalog.FeatureCatalogueStandard;
 import org.geotoolkit.feature.catalog.FeatureTypeImpl;
 import org.geotoolkit.feature.catalog.ListedValueImpl;
-import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
-import org.geotoolkit.feature.catalog.util.MultiplicityRangeImpl;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.metadata.MetadataFactory;
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
 import org.opengis.feature.catalog.Constraint;
 import org.opengis.feature.catalog.FeatureType;
 import org.opengis.feature.catalog.PropertyType;
-import org.opengis.feature.catalog.util.Multiplicity;
-import org.opengis.feature.catalog.util.MultiplicityRange;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
 
 /**
  *
@@ -71,14 +71,15 @@ public class FeatureCatalogueStandardTest {
         FeatureAttributeImpl fa1 = new FeatureAttributeImpl("fa-1",
                                                             Names.createMemberName("nmsp", ":", "fa-1", String.class),
                                                             "some def",
-                                                            new MultiplicityImpl(new MultiplicityRangeImpl(0, Integer.MAX_VALUE)),
+                                                            new Multiplicity(new NumberRange<>(Integer.class, 0, true, null, false)),
                                                             null,
                                                             cst,
                                                             "cd-2",
                                                             Arrays.asList(new ListedValueImpl("cd-3", "lab", "def", null)),
                                                             Names.createTypeName("nmsp", ":", "CharacterString"));
         carrierOfCharacteristics.add(fa1);
-        FeatureTypeImpl featureType = new FeatureTypeImpl("ft-1", Names.createLocalName("nmsp", ":", "ft-1"), "some def", "cd-1", Boolean.FALSE, new ArrayList<>(), metadata, carrierOfCharacteristics);
+        FeatureTypeImpl featureType = new FeatureTypeImpl("ft-1", Names.createLocalName("nmsp", ":", "ft-1"),
+                "some def", "cd-1", Boolean.FALSE, new ArrayList<>(), metadata, carrierOfCharacteristics);
         fa1.setFeatureType(featureType);
 
         metadata.setFeatureType(featureType);
@@ -99,9 +100,9 @@ public class FeatureCatalogueStandardTest {
 
         factory.create(FeatureType.class, Collections.<String,Object>emptyMap());
 
-        factory.create(Multiplicity.class, Collections.<String,Object>emptyMap());
+        //factory.create(Multiplicity.class, Collections.<String,Object>emptyMap());
 
-        factory.create(MultiplicityRange.class, Collections.<String,Object>emptyMap());
+        //factory.create(MultiplicityRange.class, Collections.<String,Object>emptyMap());
 
         //factory.create(UnlimitedInteger.class, Collections.<String,Object>emptyMap());
     }

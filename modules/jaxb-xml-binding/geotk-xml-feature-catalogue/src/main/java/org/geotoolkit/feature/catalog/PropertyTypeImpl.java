@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.sis.internal.jaxb.gco.GO_GenericName;
+import org.apache.sis.internal.jaxb.gco.Multiplicity;
 import org.apache.sis.metadata.AbstractMetadata;
 import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.util.ComparisonMode;
@@ -43,7 +44,7 @@ import org.opengis.feature.catalog.Constraint;
 import org.opengis.feature.catalog.DefinitionReference;
 import org.opengis.feature.catalog.FeatureType;
 import org.opengis.feature.catalog.PropertyType;
-import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
+
 
 /**
  * Abstract class for feature properties.
@@ -100,7 +101,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
     private LocalName memberName;
     private String definition;
     @XmlElement(required = true)
-    private MultiplicityImpl cardinality;
+    private Multiplicity cardinality;
     @XmlElement(required = true)
     private FeatureType featureType;
     private List<Constraint> constrainedBy;
@@ -136,7 +137,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
     /**
      * Build a new PropertyTypeImpl
      */
-    public PropertyTypeImpl(final String id, final LocalName memberName, final String definition, final MultiplicityImpl cardinality,
+    public PropertyTypeImpl(final String id, final LocalName memberName, final String definition, final Multiplicity cardinality,
             final FeatureType featureType, final List<Constraint> constrainedBy, final DefinitionReference definitionReference) {
         this.id                  = id;
         this.cardinality         = cardinality;
@@ -185,7 +186,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
      *
      */
     @Override
-    public MultiplicityImpl getCardinality() {
+    public Multiplicity getCardinality() {
         return cardinality;
     }
 
@@ -193,7 +194,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
      * Sets the value of the cardinality property.
      *
     */
-    public void setCardinality(final MultiplicityImpl value) {
+    public void setCardinality(final Multiplicity value) {
         this.cardinality = value;
     }
 

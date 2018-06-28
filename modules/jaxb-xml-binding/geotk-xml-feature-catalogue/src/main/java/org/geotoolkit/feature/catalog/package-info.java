@@ -31,8 +31,6 @@ xmlns = {
     //CodeList handling
     @XmlJavaTypeAdapter(RoleTypeAdapter.class),
     // Primitive type handling
-    @XmlJavaTypeAdapter(MultiplicityAdapter.class),
-    @XmlJavaTypeAdapter(MultiplicityRangeAdapter.class),
     @XmlJavaTypeAdapter(StringAdapter.class),
     @XmlJavaTypeAdapter(GO_DateTime.class),
     @XmlJavaTypeAdapter(GO_Decimal.class),
@@ -61,5 +59,3 @@ import org.geotoolkit.internal.jaxb.CI_ResponsibleParty;
 import org.geotoolkit.resources.jaxb.feature.catalog.*;
 import org.geotoolkit.resources.jaxb.feature.catalog.code.*;
 import org.geotoolkit.resources.jaxb.feature.catalog.GO_Decimal32;
-import org.geotoolkit.resources.jaxb.feature.catalog.MultiplicityAdapter;
-import org.geotoolkit.resources.jaxb.feature.catalog.MultiplicityRangeAdapter;

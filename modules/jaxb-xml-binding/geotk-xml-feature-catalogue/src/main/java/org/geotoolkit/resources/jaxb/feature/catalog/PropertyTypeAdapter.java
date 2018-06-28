@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.geotoolkit.feature.catalog.PropertyTypeImpl;
 import org.opengis.feature.catalog.PropertyType;
 
+
 /**
  * JAXB adapter in order to map implementing class with the Types PropertyType. See
  * package documentation for more infoFeatureTypermation about JAXB and PropertyType.
@@ -52,7 +53,7 @@ public class PropertyTypeAdapter extends XmlAdapter<PropertyTypeAdapter, Propert
      */
     protected PropertyTypeAdapter(final PropertyType feature) {
         if (feature instanceof PropertyTypeImpl && ((PropertyTypeImpl)feature).isReference()) {
-            this.href    = (PropertyTypeImpl) feature;
+            this.href = (PropertyTypeImpl) feature;
         } else {
             this.feature = feature;
         }
@@ -78,7 +79,7 @@ public class PropertyTypeAdapter extends XmlAdapter<PropertyTypeAdapter, Propert
             return null;
         }
         return (feature instanceof PropertyTypeImpl) ?
-            (PropertyTypeImpl)feature : new PropertyTypeImpl(feature);
+                (PropertyTypeImpl)feature : new PropertyTypeImpl(feature);
     }
 
     /**
@@ -118,9 +119,4 @@ public class PropertyTypeAdapter extends XmlAdapter<PropertyTypeAdapter, Propert
     public PropertyTypeAdapter marshal(final PropertyType value) throws Exception {
         return new PropertyTypeAdapter(value);
     }
-
-
-
-
 }
-
