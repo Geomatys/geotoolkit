@@ -45,7 +45,6 @@ import org.xml.sax.SAXException;
 import org.geotoolkit.ows.xml.v200.AdditionalParameter;
 import org.geotoolkit.ows.xml.v200.AdditionalParametersType;
 import org.geotoolkit.ows.xml.v200.CodeType;
-import org.geotoolkit.ows.xml.v200.MetadataType;
 import org.geotoolkit.ows.xml.v200.ObjectFactory;
 
 import static org.apache.sis.test.MetadataAssert.*;
@@ -178,11 +177,11 @@ public class OWSXmlBindingTest extends org.geotoolkit.test.TestBase {
         "<ns4:AdditionalParameters xmlns:ows=\"http://www.opengis.net/ows\" xmlns:ns4=\"http://www.opengis.net/ows/2.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:ins=\"http://www.inspire.org\">\n" +
         "  <ns4:AdditionalParameter>\n" +
         "    <ns4:Name>param-1</ns4:Name>\n" +
-        "    <ns4:Value xsi:type=\"xsd:string\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">value 1</ns4:Value>\n" +
+        "    <ns4:Value xsi:type=\"xs:string\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">value 1</ns4:Value>\n" +
         "  </ns4:AdditionalParameter>\n" +
         "  <ns4:AdditionalParameter>\n" +
         "    <ns4:Name>param-2</ns4:Name>\n" +
-        "    <ns4:Value xsi:type=\"xsd:string\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">value 2</ns4:Value>\n" +
+        "    <ns4:Value xsi:type=\"xs:string\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">value 2</ns4:Value>\n" +
         "  </ns4:AdditionalParameter>\n" +
         "</ns4:AdditionalParameters>"                                                  + '\n';
         assertXmlEquals(expResult, result, "xmlns:*");
@@ -198,11 +197,11 @@ public class OWSXmlBindingTest extends org.geotoolkit.test.TestBase {
         "<ns4:AdditionalParameters xmlns:ows=\"http://www.opengis.net/ows\" xmlns:ns4=\"http://www.opengis.net/ows/2.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:ins=\"http://www.inspire.org\">\n" +
         "  <ns4:AdditionalParameter>\n" +
         "    <ns4:Name>param-1</ns4:Name>\n" +
-        "    <ns4:Value xsi:type=\"xsd:string\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">value 1</ns4:Value>\n" +
+        "    <ns4:Value xsi:type=\"xs:string\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">value 1</ns4:Value>\n" +
         "  </ns4:AdditionalParameter>\n" +
         "  <ns4:AdditionalParameter>\n" +
         "    <ns4:Name>param-2</ns4:Name>\n" +
-        "    <ns4:Value xsi:type=\"xsd:string\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">value 2</ns4:Value>\n" +
+        "    <ns4:Value xsi:type=\"xs:string\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">value 2</ns4:Value>\n" +
         "  </ns4:AdditionalParameter>\n" +
         "</ns4:AdditionalParameters>"+ '\n';
 

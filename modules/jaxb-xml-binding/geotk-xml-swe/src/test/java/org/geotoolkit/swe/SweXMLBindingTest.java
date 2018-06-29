@@ -38,7 +38,6 @@ import org.geotoolkit.swe.xml.v101.DataRecordType;
 import org.geotoolkit.swe.xml.v101.DataComponentPropertyType;
 import org.geotoolkit.swe.xml.v101.ObjectFactory;
 
-//Junit dependencies
 import org.geotoolkit.util.StringUtilities;
 import javax.xml.bind.JAXBContext;
 import org.apache.sis.xml.MarshallerPool;
@@ -86,12 +85,9 @@ public class SweXMLBindingTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Test simple Record Marshalling.
-     *
-     * @throws JAXBException
      */
     @Test
     public void marshallingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
-
         Text text = new Text("definition", "some value");
 
         StringWriter sw = new StringWriter();
@@ -105,8 +101,8 @@ public class SweXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         String expResult = "<swe:Text definition=\"definition\" >" + '\n' +
                            "  <swe:value>some value</swe:value>" + '\n' +
-                           "</swe:Text>" + '\n' ;
-        assertEquals(expResult, result);
+                           "</swe:Text>";
+        assertEquals(expResult, result.trim());
 
         SimpleDataRecordType elementType = new SimpleDataRecordType();
         AnyScalarPropertyType any = new AnyScalarPropertyType("id-1", "any name", text);
@@ -176,7 +172,6 @@ public class SweXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         assertEquals(expResult.getEncoding(), result.getEncoding());
         assertEquals(expResult, result);
-
     }
 
     @Test

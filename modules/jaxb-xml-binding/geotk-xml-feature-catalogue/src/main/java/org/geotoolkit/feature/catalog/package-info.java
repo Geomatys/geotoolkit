@@ -55,7 +55,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.apache.sis.internal.jaxb.gco.*;
 import org.apache.sis.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.CI_ResponsibleParty;
 import org.geotoolkit.resources.jaxb.feature.catalog.*;
 import org.geotoolkit.resources.jaxb.feature.catalog.code.*;
 import org.geotoolkit.resources.jaxb.feature.catalog.GO_Decimal32;

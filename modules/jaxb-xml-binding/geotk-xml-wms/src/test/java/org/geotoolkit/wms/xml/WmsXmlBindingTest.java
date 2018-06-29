@@ -37,6 +37,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import org.apache.sis.internal.xml.LegacyNamespaces;
 import org.apache.sis.util.iso.DefaultInternationalString;
 
 import org.geotoolkit.inspire.xml.vs.ExtendedCapabilitiesType;
@@ -70,13 +71,12 @@ import org.opengis.metadata.maintenance.ScopeCode;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.temporal.Period;
 import org.apache.sis.referencing.NamedIdentifier;
-
-import static org.apache.sis.test.TestUtilities.getSingleton;
-
+import org.apache.sis.xml.XML;
 import org.geotoolkit.temporal.object.DefaultInstant;
 import org.opengis.referencing.IdentifiedObject;
 
 import static org.apache.sis.test.MetadataAssert.*;
+import static org.apache.sis.test.TestUtilities.getSingleton;
 
 
 /**
@@ -97,6 +97,7 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
     @Before
     public void setUp() throws JAXBException {
         final Map<String, Object> properties = new HashMap<>();
+        properties.put(XML.METADATA_VERSION, LegacyNamespaces.VERSION_2007);
         pool = new MarshallerPool(JAXBContext.newInstance(
                 "org.geotoolkit.wms.xml.v111:" +
                 "org.geotoolkit.wms.xml.v130:" +
@@ -116,9 +117,6 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         }
     }
 
-    /**
-     * @throws javax.xml.bind.JAXBException
-     */
     @Test
     public void WMSCUnmarshallingTest() throws JAXBException {
         String xml =
@@ -181,9 +179,6 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
 
     }
 
-    /**
-     * @throws java.lang.Exception
-     */
     @Test
     public void WMSCMarshallingTest() throws Exception {
         String expResult =
@@ -209,8 +204,6 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         "        </TileSet>" + '\n' +
         "    </VendorSpecificCapabilities>" + '\n' +
         "</Capability>" + '\n';
-
-
 
         org.geotoolkit.wms.xml.v111.Capability capa = new org.geotoolkit.wms.xml.v111.Capability(null, null,null,null);
         VendorSpecificCapabilities spec = new VendorSpecificCapabilities();
@@ -247,8 +240,6 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Test simple Record Marshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void inpsireExtensionmarshallingTest() throws Exception {
@@ -422,18 +413,13 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
 //      org.apache.sis.internal.jaxb.gml.GMLAdapter.IDs.removeUUID(period);
 
         assertXmlEquals(expResult, result, "http://www.w3.org/2000/xmlns:*");
-
     }
 
     /**
      * Test simple Record Marshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void inpsireExtensionUnmarshallingTest() throws Exception {
-
-
         String xml =
         "<wms:Capability xmlns:wms=\"http://www.opengis.net/wms\" xmlns:gml=\"http://www.opengis.net/gml/3.2\" xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" xmlns:srv=\"http://www.isotc211.org/2005/srv\" xmlns:gco=\"http://www.isotc211.org/2005/gco\" xmlns:sld=\"http://www.opengis.net/sld\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:inspire_vs=\"http://inspira.europa.eu/networkservice/view/1.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + '\n' +
         "    <inspire_vs:ExtendedCapabilities>" + '\n' +

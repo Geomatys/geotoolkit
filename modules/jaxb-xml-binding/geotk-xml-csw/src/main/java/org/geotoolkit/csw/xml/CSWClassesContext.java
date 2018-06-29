@@ -109,7 +109,7 @@ public class CSWClassesContext {
                                         org.geotoolkit.feature.catalog.InheritanceRelationImpl.class,
                                         org.geotoolkit.feature.catalog.ListedValueImpl.class,
                                         org.geotoolkit.feature.catalog.PropertyTypeImpl.class,
-                                        org.geotoolkit.feature.catalog.util.MultiplicityImpl.class));
+                                        org.apache.sis.internal.jaxb.gco.Multiplicity.class));
 
 
 
