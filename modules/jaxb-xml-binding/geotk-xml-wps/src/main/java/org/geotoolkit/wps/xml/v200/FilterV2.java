@@ -23,8 +23,6 @@ class FilterV2<V> extends FilterByVersion<V> {
 
     static class JobControlOptions extends FilterV2<org.geotoolkit.wps.xml.v200.JobControlOptions> {}
 
-    static class DataTransmissionMode extends FilterV2<org.geotoolkit.wps.xml.v200.DataTransmissionMode> {}
-
     static class CapabilitiesExtension extends FilterV2<Capabilities.Extension> {}
 
     static class CapabilitiesLanguages extends FilterV2<CapabilitiesBaseType.Languages> {}

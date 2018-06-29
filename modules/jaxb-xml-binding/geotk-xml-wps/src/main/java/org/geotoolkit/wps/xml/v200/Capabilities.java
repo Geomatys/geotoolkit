@@ -97,14 +97,19 @@ public class Capabilities extends CapabilitiesBaseType implements WPSResponse{
     public Capabilities(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
             final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final Contents contents,
             final CapabilitiesBaseType.Languages languages) {
-        super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence, languages);
-        this.contents = contents;
+        this(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence, contents, languages, null, null);
     }
 
-     public Capabilities(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
+    public Capabilities(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
             final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final Contents contents,
             final CapabilitiesBaseType.Languages languages, final Extension ext) {
-        super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence, languages);
+        this(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence, contents, languages, ext, null);
+    }
+
+    public Capabilities(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
+            final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final Contents contents,
+            final CapabilitiesBaseType.Languages languages, final Extension ext, final String lang) {
+        super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence, languages, lang);
         this.contents = contents;
         this.extension = ext;
     }

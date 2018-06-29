@@ -124,12 +124,18 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
      */
     public CapabilitiesBaseType(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
             final OperationsMetadata operationsMetadata, final String version, final String updateSequence, CapabilitiesBaseType.Languages languages) {
+        this(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence, languages, null);
+    }
+
+    public CapabilitiesBaseType(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
+            final OperationsMetadata operationsMetadata, final String version, final String updateSequence, CapabilitiesBaseType.Languages languages, final String lang) {
         this.operationsMetadata    = operationsMetadata;
         this.serviceIdentification = serviceIdentification;
         this.serviceProvider       = serviceProvider;
         this.updateSequence        = updateSequence;
         this.version               = version;
-        this.languages = languages;
+        this.languages             = languages;
+        this.lang                  = lang;
     }
 
     /**

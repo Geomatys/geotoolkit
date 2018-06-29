@@ -58,8 +58,8 @@ import org.geotoolkit.wps.xml.v100.LegacyStatus;
     "process",
     "status",
     "dataInputs",
-    "processOutputs",
-    "outputDefinitions"
+    "outputDefinitions",
+    "processOutputs"
 })
 @XmlRootElement(name = "Result")
 public class Result extends DocumentBase  implements WPSResponse{
@@ -238,6 +238,9 @@ public class Result extends DocumentBase  implements WPSResponse{
         if (status != null) {
             this.legacyStatus = new LegacyStatus(status);
         }
+        if (outputDefinitions != null && !outputDefinitions.isEmpty()) {
+            this.outputDefinitions = new OutputDefinitions(outputDefinitions);
+        }
     }
 
     @XmlAttribute
@@ -295,6 +298,10 @@ public class Result extends DocumentBase  implements WPSResponse{
         if (FilterByVersion.isV1()) {
             final ProcessOutputs outputs = new ProcessOutputs();
             outputs.parent = this;
+            // we don't want to write the mark if there is no outputs
+            if (outputs.getOutput().isEmpty()) {
+                return null;
+            }
             return outputs;
         }
 
@@ -309,6 +316,10 @@ public class Result extends DocumentBase  implements WPSResponse{
     @XmlElement(name = "DataInputs")
     public DataInputs getDataInputs() {
         if (FilterByVersion.isV1()) {
+            // we don't want to write the mark if there is no outputs
+            if (inputs != null && (inputs.getInputs() == null || inputs.getInputs().isEmpty())) {
+                return null;
+            }
             return inputs;
         }
         return null;

@@ -67,7 +67,6 @@ public class OutputDefinition {
     @XmlElement(name = "Output")
     protected List<OutputDefinition> output;
     protected String id;
-    @XmlAttribute(name = "transmission")
     protected DataTransmissionMode transmission;
     @XmlAttribute(name = "mimeType")
     protected String mimeType;
@@ -160,6 +159,18 @@ public class OutputDefinition {
      *
      */
     public void setTransmission(DataTransmissionMode value) {
+        this.transmission = value;
+    }
+
+    @XmlAttribute(name = "transmission")
+    private DataTransmissionMode getTransmissionMarshall() {
+        if (FilterByVersion.isV1()) {
+            return null;
+        }
+        return transmission;
+    }
+
+    private void setTransmissionMarshall(DataTransmissionMode value) {
         this.transmission = value;
     }
 

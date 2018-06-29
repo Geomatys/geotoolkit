@@ -192,12 +192,14 @@ public class ProcessOffering implements ProcessProperties {
      *
      */
     @XmlAttribute(name = "outputTransmission")
-    @XmlJavaTypeAdapter(FilterV2.DataTransmissionMode.class)
     public List<DataTransmissionMode> getOutputTransmission() {
-        if (outputTransmission == null) {
-            outputTransmission = new ArrayList<>();
+        if (FilterByVersion.isV2()) {
+            if (outputTransmission == null) {
+                outputTransmission = new ArrayList<>();
+            }
+            return this.outputTransmission;
         }
-        return this.outputTransmission;
+        return null;
     }
 
     /**
