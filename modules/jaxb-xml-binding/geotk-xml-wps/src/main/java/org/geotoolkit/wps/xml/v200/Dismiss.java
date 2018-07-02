@@ -50,8 +50,17 @@ import javax.xml.bind.annotation.XmlType;
 public class Dismiss extends RequestBase {
 
     @XmlElement(name = "JobID", required = true)
-    protected String jobID;
+    private String jobID;
 
+    public Dismiss() {
+
+    }
+
+    public Dismiss(final String service, final String version, final String jobID) {
+        super(service, version);
+        this.jobID = jobID;
+    }
+    
     /**
      * Gets the value of the jobID property.
      *
