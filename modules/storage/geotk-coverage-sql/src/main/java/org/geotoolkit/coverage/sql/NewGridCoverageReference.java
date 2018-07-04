@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.awt.Rectangle;
+import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +52,6 @@ import org.apache.sis.util.Localized;
 import org.geotoolkit.util.DateRange;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SampleDimension;
@@ -221,20 +220,11 @@ public final class NewGridCoverageReference {
     private final ImageReaderSpi spi;
 
     /**
-     * The image bounds. The rectangle {@linkplain Rectangle#width width} and
-     * {@linkplain Rectangle#height height} must be set to the image size. The
-     * ({@linkplain Rectangle#x x},{@linkplain Rectangle#y y}) origin is usually (0,0),
-     * but different value are allowed. For example the origin can be set to
-     * the {@linkplain Tile#getLocation location of a tile} in tiled images.
-     * <p>
-     * If the (x,y) origin is different than (0,0), then it will be interpreted as the
-     * translation to apply on the grid <em>before</em> to apply the {@link #gridToCRS}
-     * transform at reading time.
-     * <p>
+     * The image size.
      * This field is never {@code null}. However users can modify it before the
      * new entry is inserted in the database.
      */
-    public final Rectangle imageBounds;
+    public final Dimension imageSize;
 
     /**
      * The <cite>grid to CRS</cite> transform, which maps always the pixel
@@ -344,36 +334,13 @@ public final class NewGridCoverageReference {
         this.bestFormat         = master.bestFormat;
         this.alternativeFormats = master.alternativeFormats;
         this.spi                = master.spi;
-        this.imageBounds        = master.imageBounds;
+        this.imageSize          = master.imageSize;
         this.gridToCRS          = master.gridToCRS;
         this.horizontalSRID     = master.horizontalSRID;
         this.verticalSRID       = master.verticalSRID;
         this.verticalValues     = master.verticalValues;
         this.dateRanges         = new DateRange[] {master.dateRanges[dateIndex]};
         // 'imageIndex' needs to be left to 0.
-    }
-
-    /**
-     * Creates an entry for the given tile. This constructor does <strong>not</strong> read the
-     * image file, since we usually don't want to parse the metadata for every tiles (usually,
-     * every tiles share the same metadata). Consequently, caller may need to set the metadata
-     * explicitly using their own {@link CoverageDatabaseController} instance.
-     *
-     * @param  database The database where the new entry will be added.
-     * @param  tile The tile to use for the entry.
-     * @throws IOException If an error occurred while fetching some tile properties.
-     */
-    NewGridCoverageReference(final SpatialDatabase database, final Tile tile)
-            throws SQLException, IOException, FactoryException
-    {
-        this(database, null,
-             tile.getInput(),
-             tile.getImageIndex(),
-             tile.getImageReaderSpi(),
-             tile.getRegion(),
-             tile.getGridToCRS(),
-             (tile instanceof NewGridCoverage) ? ((NewGridCoverage) tile).crs : null,
-             null);
     }
 
     /**
@@ -394,7 +361,7 @@ public final class NewGridCoverageReference {
             throws SQLException, IOException, FactoryException
     {
         this(database, reader, input, imageIndex, reader.getOriginatingProvider(),
-             new Rectangle(reader.getWidth(imageIndex), reader.getHeight(imageIndex)), null, null,
+             new Dimension(reader.getWidth(imageIndex), reader.getHeight(imageIndex)), null, null,
              getSpatialMetadata(reader, imageIndex));
         /*
          * Close the reader but do not dispose it (unless we were asked to),
@@ -413,8 +380,8 @@ public final class NewGridCoverageReference {
      * @param  reader        The image reader with its input set, or {@code null} if none.
      * @param  input         The original input (<strong>not</strong> the input stream).
      * @param  imageIndex    Index of the image to read.
-     * @param  spi           The provider of the {@code reader}, or {@link Tile#getImageReaderSpi()}.
-     * @param  imageBounds   The image size (in pixels) and its location (in the case of tiles only).
+     * @param  spi           The provider of the {@code reader}.
+     * @param  imageSize     The image size (in pixels).
      * @param  gridToCRS     The transform to real world, or {@code null} for fetching from metadata.
      * @param  crs           The coordinate reference system, or {@code null} for fetching from metadata.
      * @param  metadata      The metadata, or {@code null} if none,
@@ -422,13 +389,13 @@ public final class NewGridCoverageReference {
      */
     private NewGridCoverageReference(final SpatialDatabase database,
             final ImageReader reader, Object input, final int imageIndex, final ImageReaderSpi spi,
-            final Rectangle imageBounds, AffineTransform gridToCRS, CoordinateReferenceSystem crs,
+            final Dimension imageSize, AffineTransform gridToCRS, CoordinateReferenceSystem crs,
             SpatialMetadata metadata) throws SQLException, IOException, FactoryException
     {
         this.database    = database;
         this.imageIndex  = imageIndex;
         this.spi         = spi;
-        this.imageBounds = imageBounds;
+        this.imageSize   = imageSize;
         /*
          * Get the input, which must be an instance of File.
          * Split that input file into the path components.
@@ -464,7 +431,7 @@ public final class NewGridCoverageReference {
         final MetadataHelper helper = (metadata != null) ? new MetadataHelper(
                 (reader instanceof Localized) ? (Localized) reader : null) : null;
         /*
-         * Get the geolocalization from the image, if it was not provided by a Tile instance.
+         * Get the geolocalization from the image.
          */
         if (gridToCRS != null) {
             // Tile.getGridToCRS() returns an immutable AffineTransform.

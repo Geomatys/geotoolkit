@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.awt.Dimension;
 import java.io.File;
-import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -168,7 +168,7 @@ public final strictfp class WritableGridCoverageTableTest extends CatalogTestBas
                 assertEquals("txt",                 reference.extension);
                 assertEquals("matrix",              reference.format);
                 assertEquals("imageIndex", 0,       reference.imageIndex);
-                assertEquals(new Rectangle(20, 42), reference.imageBounds);
+                assertEquals(new Dimension(20, 42), reference.imageSize);
                 assertEquals(     0,                reference.gridToCRS.getShearX(),     0);
                 assertEquals(     0,                reference.gridToCRS.getShearY(),     0);
                 assertEquals(  1000,                reference.gridToCRS.getScaleX(),     0);
@@ -270,7 +270,7 @@ public final strictfp class WritableGridCoverageTableTest extends CatalogTestBas
                 assertEquals ("nc",                    reference.extension);
                 assertEquals ("NetCDF",                reference.format);
                 assertEquals ("imageIndex", 0,         reference.imageIndex);
-                assertEquals (new Rectangle(273, 423), reference.imageBounds);
+                assertEquals (new Dimension(273, 423), reference.imageSize);
                 assertEquals ( 0.0,                    reference.gridToCRS.getShearX(),     0.0);
                 assertEquals ( 0.0,                    reference.gridToCRS.getShearY(),     0.0);
                 assertEquals ( 0.0040461,              reference.gridToCRS.getScaleX(),     EPS);
@@ -374,7 +374,7 @@ public final strictfp class WritableGridCoverageTableTest extends CatalogTestBas
                 assertEquals ("ncml",                  reference.extension);
                 assertEquals ("Coriolis (salinity)",   reference.format);
                 assertEquals ("imageIndex", 0,         reference.imageIndex);
-                assertEquals (new Rectangle(720, 499), reference.imageBounds);
+                assertEquals (new Dimension(720, 499), reference.imageSize);
                 assertEquals (        0.00,            reference.gridToCRS.getShearX(),     0);
                 assertEquals (        0.00,            reference.gridToCRS.getShearY(),     0);
                 assertEquals (    55597.46,            reference.gridToCRS.getScaleX(),     0.01);

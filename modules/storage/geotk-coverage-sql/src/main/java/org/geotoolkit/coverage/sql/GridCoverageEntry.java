@@ -43,7 +43,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.image.palette.IIOListeners;
-import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -97,11 +96,6 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
     private final long endTime;
 
     /**
-     * If the image is tiled, the tiles. Otherwise {@code null}.
-     */
-    private final TileManager[] tiles;
-
-    /**
      * The value returned by {@link #getCoverage}, cached for reuse.
      */
     private transient Reference<GridCoverage2D> cached;
@@ -121,12 +115,11 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
      * @param  identifier The identifier of this grid geometry.
      * @param  startTime  The coverage start time, or {@code null} if none.
      * @param  endTime    The coverage end time, or {@code null} if none.
-     * @param  tiles      If the image is tiled, the tiles. Otherwise {@code null}.
      * @param  comments   Optional remarks, or {@code null} if none.
      */
     protected GridCoverageEntry(final GridCoverageIdentifier identifier,
             final Date startTime, final Date endTime,
-            final TileManager[] tiles, final String comments) throws SQLException
+            final String comments) throws SQLException
     {
         super(identifier, comments);
         this.startTime = (startTime != null) ? startTime.getTime() : Long.MIN_VALUE;
@@ -134,7 +127,6 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
         if (identifier.geometry.isEmpty() || this.startTime > this.endTime) {
             throw new IllegalRecordException(Errors.format(Errors.Keys.EmptyEnvelope2d));
         }
-        this.tiles = tiles;
     }
 
     /**
@@ -188,9 +180,6 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
      * exception is thrown.
      */
     final Object getInput() throws URISyntaxException {
-        if (tiles != null) {
-            return tiles;
-        }
         final GridCoverageIdentifier identifier = getIdentifier();
         final File file = identifier.file();
         if (file.isAbsolute()) {

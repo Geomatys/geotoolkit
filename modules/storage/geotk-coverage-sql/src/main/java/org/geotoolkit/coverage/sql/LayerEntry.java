@@ -194,13 +194,6 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
     private transient SortedSet<GeneralGridGeometry> gridGeometries;
 
     /**
-     * Whatever this layer has tiles, or {@code null} if not yet determined.
-     * This method is for {@link GridCoverageTable#createEntry} usage only;
-     * it is not used by this {@code LayerEntry}.
-     */
-    transient volatile Boolean isTiled;
-
-    /**
      * The envelope for all coverages in this layer. Will be computed when first needed.
      * This field is serialized because its computation requires a connection to the database.
      *
