@@ -124,8 +124,13 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
             throw new CancellationException();
         }
         try {
-            pgcb.create(coverageref, coverageStore, NamesExt.create(pyramid_name), resolution_per_envelope, fillvalue,
-                    this, new PyramidMonitor(this));
+            pgcb.setMonitor(new PyramidMonitor(this));
+            pgcb.setListener(this);
+            pgcb.setFillValues(fillvalue);
+            pgcb.setResolutionPerEnvelope(resolution_per_envelope);
+            pgcb.setSourceResource(coverageref);
+            pgcb.setTargetStore(coverageStore, NamesExt.create(pyramid_name));
+            pgcb.execute();
         } catch (Exception ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }

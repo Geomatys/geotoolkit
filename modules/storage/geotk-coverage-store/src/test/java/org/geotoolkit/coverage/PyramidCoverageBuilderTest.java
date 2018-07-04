@@ -65,7 +65,11 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
         map.put(env1, scales);
 
         final GenericName name = NamesExt.create("memory_store_test");
-        pcb.create(ref1, mpCovStore, name, map, fillValue, null, null);
+        pcb.setResolutionPerEnvelope(map);
+        pcb.setFillValues(fillValue);
+        pcb.setSourceResource(ref1);
+        pcb.setTargetStore(mpCovStore, name);
+        pcb.execute();
 
         //test reference
         GridCoverageResource outRef = (GridCoverageResource) mpCovStore.findResource(name.toString());
@@ -145,10 +149,16 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
         map.put(env, scales);
 
         final GenericName name = NamesExt.create("memory_store_test");
+        pcb.setFillValues(fillValue);
+        pcb.setResolutionPerEnvelope(map);
         //pyramid 1st coverage
-        pcb.create(ref1, mpCovStore, name, map, fillValue, null, null);
+        pcb.setSourceResource(ref1);
+        pcb.setTargetStore(mpCovStore, name);
+        pcb.execute();
         //append 2nd coverage
-        pcb.create(ref2, mpCovStore, name, map, fillValue, null, null);
+        pcb.setSourceResource(ref2);
+        pcb.setTargetStore(mpCovStore, name);
+        pcb.execute();
 
         //test reference
         GridCoverageResource outRef = (GridCoverageResource) mpCovStore.findResource(name.toString());
@@ -275,11 +285,17 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
 
         final GenericName name = NamesExt.create("memory_store_test");
         //pyramid 1st coverage
-        pcb.create(ref1, mpCovStore, name, map, fillValue, null, null);
+        pcb.setFillValues(fillValue);
+        pcb.setResolutionPerEnvelope(map);
+        pcb.setSourceResource(ref1);
+        pcb.setTargetStore(mpCovStore, name);
+        pcb.execute();
 
         //append 2nd coverage should fail
         try {
-            pcb.create(ref2, mpCovStore, name, map, fillValue, null, null);
+            pcb.setSourceResource(ref2);
+            pcb.setTargetStore(mpCovStore, name);
+            pcb.execute();
             fail("Append of coverage with different sample dimension should have failed.");
         } catch (DataStoreException e) {
            //test success
