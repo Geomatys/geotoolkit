@@ -459,7 +459,7 @@ public class WPSConvertersUtils {
      * @return
      * @throws UnconvertibleObjectException
      */
-    public static DomainMetadataType createDataType(final String version, final Class clazz) {
+    public static DomainMetadataType createDataType(final Class clazz) {
         if (clazz.equals(Double.class)) {
             return new DomainMetadataType("Double", "http://www.w3.org/TR/xmlschema-2/#double");
 
@@ -484,7 +484,7 @@ public class WPSConvertersUtils {
     }
 
     public static String getDataTypeString(final String version, final Class clazz) {
-        String ref = createDataType(version, clazz).getReference();
+        String ref = createDataType(clazz).getReference();
 
         if (ref == null) {
             ref = "http://www.w3.org/TR/xmlschema-2/#string";
@@ -686,7 +686,11 @@ public class WPSConvertersUtils {
      * @return A reference equivalent to the input URI.
      */
     public static Reference UriToReference(String version, URI toConvert, WPSIO.IOType type, String mimeType) {
-        return new Reference("UTF-8", mimeType, toConvert.toString());
+        Reference ref = new Reference("UTF-8", mimeType, toConvert.toString());
+        if (WPSIO.IOType.INPUT.equals(type)) {
+            ref.setIsParentInput(true);
+        }
+        return ref;
     }
 
 

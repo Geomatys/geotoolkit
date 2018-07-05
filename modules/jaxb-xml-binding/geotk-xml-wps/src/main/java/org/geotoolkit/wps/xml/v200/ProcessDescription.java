@@ -76,17 +76,19 @@ public class ProcessDescription extends Description {
     }
 
     public ProcessDescription(CodeType identifier, final LanguageStringType title,  final List<LanguageStringType> _abstract,
-            final List<KeywordsType> keywords, List<InputDescription> input, List<OutputDescription> output) {
+            final List<KeywordsType> keywords, List<InputDescription> input, List<OutputDescription> output, String processVersion) {
         super(identifier, title, _abstract, keywords);
         this.input = input;
         this.output = output;
+        this.processVersion = processVersion;
     }
 
     public ProcessDescription(CodeType identifier, final LanguageStringType title, final LanguageStringType _abstract,
-            final KeywordsType keywords, List<InputDescription> input, List<OutputDescription> output) {
+            final KeywordsType keywords, List<InputDescription> input, List<OutputDescription> output, String processVersion) {
         super(identifier, title, _abstract, keywords);
         this.input = input;
         this.output = output;
+        this.processVersion = processVersion;
     }
 
     /**
@@ -208,7 +210,7 @@ public class ProcessDescription extends Description {
      */
     @XmlElement(name = "ProcessOutputs", namespace = "")
     private ProcessOutputs getProcessOutputs() {
-        if (FilterByVersion.isV1() && !getOutputs().isEmpty()) {
+        if (FilterByVersion.isV1()) {
             final ProcessOutputs in = new ProcessOutputs();
             in.parent = this;
             return in;

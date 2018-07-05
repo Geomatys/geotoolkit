@@ -84,8 +84,8 @@ import org.geotoolkit.wps.xml.WPSResponse;
     "creationTime",
     "estimatedCompletion",
     "nextPoll",
-    "percentCompleted",
-    "message"
+    "percentCompleted"
+  //  "message"
 })
 @XmlRootElement(name = "StatusInfo")
 public class StatusInfo extends DocumentBase implements WPSResponse{
@@ -111,7 +111,7 @@ public class StatusInfo extends DocumentBase implements WPSResponse{
      * Also, it's provide a way to get more detailed information about process
      * execution.
      */
-    @XmlElement(name="message", required = false)
+    //@XmlElement(name="message", required = false)
     protected String message;
 
     public StatusInfo() {

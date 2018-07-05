@@ -106,9 +106,10 @@ public class LiteralDataDomain {
         this._default = _default;
     }
 
-    public LiteralDataDomain(DomainMetadataType dataType, DomainMetadataType uom) {
+    public LiteralDataDomain(DomainMetadataType dataType, DomainMetadataType uom, AnyValue anyValue) {
         this.dataType = dataType;
         this.uom = uom;
+        this.anyValue = anyValue;
     }
 
     /**

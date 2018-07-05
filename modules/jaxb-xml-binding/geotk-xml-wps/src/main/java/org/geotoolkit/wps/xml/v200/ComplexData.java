@@ -221,10 +221,6 @@ public class ComplexData extends DataDescription {
             return null;
         final Supported s = new Supported();
         s.getFormats().addAll(getFormat());
-        Default ld = getLegacyDefault();
-        if (ld != null && ld.f != null) {
-            s.getFormats().remove(ld.f);
-        }
         return s;
     }
 

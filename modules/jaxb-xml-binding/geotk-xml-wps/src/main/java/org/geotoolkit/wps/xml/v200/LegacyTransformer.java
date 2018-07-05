@@ -119,6 +119,7 @@ abstract class LegacyTransformer {
         replacements.put("Data.LiteralData", "Data.LiteralValue");
         replacements.put("Output.ComplexOutput", "Output.ComplexData");
         replacements.put("Output.LiteralOutput", "Output.LiteralData");
+        replacements.put("Output.BoundingBoxOutput", "Output.BoundingBoxData");
         replacements.put("ProcessOfferings.Process", "Contents.ProcessSummary");
 
         return Collections.unmodifiableMap(replacements);

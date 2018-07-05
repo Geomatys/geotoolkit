@@ -67,6 +67,8 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class Reference {
 
+    private boolean isParentInput = true;
+
     /**
      * Header to set on request when connecting to reference HRef.
      * Note: This is not standard WPS 2.0, we ported it from WPS 1.0. The reason
@@ -78,9 +80,8 @@ public class Reference {
     protected Object body;
     protected Reference.BodyReference bodyReference;
 
-    @XmlAttribute(name = "href", namespace = "http://www.w3.org/1999/xlink", required = true)
-    @XmlSchemaType(name = "anyURI")
     protected String href;
+
     @XmlAttribute(name = "mimeType")
     protected String mimeType;
     @XmlAttribute(name = "encoding")
@@ -174,6 +175,32 @@ public class Reference {
         this.href = value;
     }
 
+    @XmlAttribute(name = "href", namespace = "http://www.w3.org/1999/xlink", required = true)
+    @XmlSchemaType(name = "anyURI")
+    private String getHrefV2() {
+        if (FilterByVersion.isV2() || isParentInput) {
+            return href;
+        }
+        return null;
+    }
+
+    private void setHrefV2(String value) {
+        this.href = value;
+    }
+
+    @XmlAttribute(name = "href", required = true)
+    @XmlSchemaType(name = "anyURI")
+    private String getHrefV1() {
+        if (FilterByVersion.isV1() && !isParentInput) {
+            return href;
+        }
+        return null;
+    }
+
+    private void setHrefV1(String value) {
+        this.href = value;
+    }
+
     /**
      * Gets the value of the mimeType property.
      *
@@ -259,6 +286,13 @@ public class Reference {
             header = new ArrayList<>();
         }
         return this.header;
+    }
+
+    /**
+     * @param isParentOutput the isParentOutput to set
+     */
+    public void setIsParentInput(boolean isParentInput) {
+        this.isParentInput = isParentInput;
     }
 
     @Override

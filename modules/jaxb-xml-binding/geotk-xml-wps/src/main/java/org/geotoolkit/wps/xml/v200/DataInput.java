@@ -206,10 +206,12 @@ public class DataInput {
      * @deprecated WPS 1 retro-compatibility purpose. Avoid if possible.
      */
     @XmlElement(name = "Title", namespace = WPSMarshallerPool.OWS_2_0_NAMESPACE)
-    @XmlJavaTypeAdapter(FilterV1.String.class)
     @Deprecated
     public String getTitle() {
-        return title;
+        if (FilterByVersion.isV1()) {
+            return title;
+        }
+        return null;
     }
 
     public void setTitle(String title) {
@@ -221,10 +223,12 @@ public class DataInput {
      * @deprecated WPS 1 retro-compatibility purpose. Avoid if possible.
      */
     @XmlElement(name = "Abstract", namespace = WPSMarshallerPool.OWS_2_0_NAMESPACE)
-    @XmlJavaTypeAdapter(FilterV1.String.class)
     @Deprecated
     public List<String> getAbstract() {
-        return _abstract;
+        if (FilterByVersion.isV1()) {
+            return _abstract;
+        }
+        return null;
     }
 
     public void setAbstract(List<String> _abstract) {

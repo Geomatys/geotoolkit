@@ -23,6 +23,7 @@ class FilterV1<V> extends FilterByVersion<V> {
 
     static class CodeType extends FilterV1<org.geotoolkit.ows.xml.v200.CodeType> {}
 
+    // Warning works only for XMLAttribute, not XMLElement
     static class String extends FilterV1<java.lang.String> {}
 
     static class WSDL extends FilterV1<org.geotoolkit.wps.xml.v100.WSDL> {}

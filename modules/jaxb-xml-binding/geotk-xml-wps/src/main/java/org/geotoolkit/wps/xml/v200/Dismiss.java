@@ -60,7 +60,7 @@ public class Dismiss extends RequestBase {
         super(service, version);
         this.jobID = jobID;
     }
-    
+
     /**
      * Gets the value of the jobID property.
      *

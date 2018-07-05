@@ -81,6 +81,12 @@ public class Format {
 
     }
 
+    public Format(final String mimeType, final Boolean _default) {
+        this.mimeType = mimeType;
+        this._default = _default;
+    }
+
+
     public Format(final String encoding, final String mimeType, final String schema, final Integer maximumMegabytes) {
         this.encoding = encoding;
         this.mimeType = mimeType;

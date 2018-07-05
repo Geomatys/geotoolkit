@@ -18,9 +18,11 @@
 package org.geotoolkit.wps.xml.v200;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -64,28 +66,32 @@ import org.geotoolkit.wps.xml.v100.LegacyValuesReference;
 @XmlType(name = "LiteralDataType", propOrder = {
     "domainToMarshal",
     "dataType",
+    "UOMs",
     "allowedValues",
     "anyValue",
     "valuesReference",
-    "defaultValue",
-    "UOMs"
+    "defaultValue"
 })
 @XmlRootElement(name = "LiteralData")
 public class LiteralData extends DataDescription {
+
+    private boolean isParentOutput = false;
 
     protected List<LiteralDataDomain> literalDataDomain;
 
     public LiteralData() {}
 
-    public LiteralData(AllowedValues allowedValues, AnyValue anyValue, ValuesReference valuesReference, DomainMetadataType dataType, DomainMetadataType uom,
+    public LiteralData(List<Format> formats, AllowedValues allowedValues, AnyValue anyValue, ValuesReference valuesReference, DomainMetadataType dataType, DomainMetadataType uom,
                 String defaultValue, Boolean _default) {
+        super(formats);
         literalDataDomain = new ArrayList<>();
         literalDataDomain.add(new LiteralDataDomain(allowedValues, anyValue, valuesReference, dataType, uom, defaultValue, _default));
-
     }
-    public LiteralData(DomainMetadataType dataType, DomainMetadataType uom) {
+
+    public LiteralData(List<Format> formats, DomainMetadataType dataType, DomainMetadataType uom, AnyValue anyValue) {
+        super(formats);
         literalDataDomain = new ArrayList<>();
-        literalDataDomain.add(new LiteralDataDomain(dataType, uom));
+        literalDataDomain.add(new LiteralDataDomain(dataType, uom, anyValue));
     }
 
     /**
@@ -199,7 +205,7 @@ public class LiteralData extends DataDescription {
      *     {@link AllowedValues }
      *
      */
-    @XmlElement(name = "AllowedValues")
+    @XmlElement(name = "AllowedValues", namespace=WPSMarshallerPool.OWS_2_0_NAMESPACE)
     private AllowedValues getAllowedValues() {
         if (FilterByVersion.isV2())
             return null;
@@ -236,7 +242,7 @@ public class LiteralData extends DataDescription {
      */
     @XmlElement(name = "AnyValue", namespace=WPSMarshallerPool.OWS_2_0_NAMESPACE)
     private AnyValue getAnyValue() {
-        if (FilterByVersion.isV2())
+        if (FilterByVersion.isV2() || isParentOutput)
             return null;
         return getDefaultOrFirstDomain()
                 .map(LiteralDataDomain::getAnyValue)
@@ -366,7 +372,7 @@ public class LiteralData extends DataDescription {
                     .map(LiteralDataDomain::getUOM)
                     .orElse(null);
             if (defaultUom != null) {
-                uoMs = new SupportedUOMs(defaultUom, new ArrayList<>());
+                uoMs = new SupportedUOMs(defaultUom, Arrays.asList(defaultUom));
             }
         }
         return uoMs;
@@ -383,5 +389,12 @@ public class LiteralData extends DataDescription {
     @Deprecated
     public void setUOMs(final SupportedUOMs value) {
         this.uoMs = value;
+    }
+
+    /**
+     * @param isParentOutput the isParentOutput to set
+     */
+    public void setIsParentOutput(boolean isParentOutput) {
+        this.isParentOutput = isParentOutput;
     }
 }
