@@ -17,32 +17,19 @@
 package org.geotoolkit.storage;
 
 import org.apache.sis.referencing.NamedIdentifier;
-import org.apache.sis.storage.DataStoreException;
-import org.opengis.metadata.Metadata;
+
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 public interface Resource extends org.apache.sis.storage.Resource {
-
     /**
      * Data identifier.
      *
      * @return Identifier, never null
      */
     NamedIdentifier getIdentifier();
-
-    /**
-     * Returns information about the resource. The returned metadata object, can contain
-     * information such as the spatiotemporal extent of the resource, contact information about the creator
-     * or distributor, data quality, update frequency, usage constraints and more.
-     *
-     * @return information about the resource, not null.
-     * @throws DataStoreException if an error occurred while reading the data.
-     */
-    @Override
-    Metadata getMetadata() throws DataStoreException;
 
     /**
      * Add a storage listener which will be notified when structure changes or
@@ -58,5 +45,4 @@ public interface Resource extends org.apache.sis.storage.Resource {
      * @param listener to remove
      */
     void removeStorageListener(final StorageListener listener);
-
 }

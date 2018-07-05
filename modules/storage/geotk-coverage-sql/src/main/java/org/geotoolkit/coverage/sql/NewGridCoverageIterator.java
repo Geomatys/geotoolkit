@@ -31,7 +31,6 @@ import javax.imageio.IIOException;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.AggregatedImageStore;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
@@ -71,7 +70,6 @@ final class NewGridCoverageIterator {
     /**
      * An iterator over the inputs to read.
      * If input are {@link File} or {@link URI}, they shall be relative to current directory.
-     * Inputs may also be {@link Tile} or {@link ImageReader} instances.
      */
     private final Iterator<?> inputToAdd;
 
@@ -122,9 +120,6 @@ final class NewGridCoverageIterator {
         aggregatedFiles = null;
         if (input instanceof NewGridCoverageReference) {
             return (NewGridCoverageReference) input;
-        }
-        if (input instanceof Tile) {
-            return new NewGridCoverageReference(database, (Tile) input);
         }
         final ImageReader reader;
         final boolean disposeReader;

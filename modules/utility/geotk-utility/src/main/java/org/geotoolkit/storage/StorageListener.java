@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.storage;
 
 import java.lang.ref.WeakReference;
@@ -29,6 +28,7 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.apache.sis.util.Disposable;
 import org.apache.sis.util.logging.Logging;
 
+
 /**
  * Listener for storage objects.
  *
@@ -40,7 +40,7 @@ import org.apache.sis.util.logging.Logging;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface StorageListener<S extends StorageEvent,C extends StorageEvent> extends EventListener{
+public interface StorageListener<S extends StorageEvent, C extends StorageEvent> extends EventListener{
 
     static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage");
 
@@ -61,13 +61,13 @@ public interface StorageListener<S extends StorageEvent,C extends StorageEvent> 
      * Weak style listener. Use it when you are not
      * sure that the listener will be correctly removed by your class.
      */
-    public static final class Weak extends WeakReference<StorageListener> implements StorageListener,Disposable{
+    public static final class Weak extends WeakReference<StorageListener> implements StorageListener, Disposable {
 
         private static final String ERROR_MSG = "Potential memory leak in StorageListener, could "
                         + "not remove listener because source object does not have a removeStorageListener method. "
                         + "Source object is : {0}";
 
-        private final Collection<Object> sources = new ArrayList<Object>(1);
+        private final Collection<Object> sources = new ArrayList<>(1);
 
         public Weak(final StorageListener ref) {
             this(null,ref);
@@ -81,9 +81,9 @@ public interface StorageListener<S extends StorageEvent,C extends StorageEvent> 
         /**
          * Register this listener on the given source.
          */
-        public synchronized void registerSource(final Object source){
-            if(source != null && !sources.contains(source)){
-                //register in the new source
+        public synchronized void registerSource(final Object source) {
+            if (source != null && !sources.contains(source)) {
+                // register in the new source
                 this.sources.add(source);
                 try {
                     final Method method = source.getClass().getMethod("addStorageListener", StorageListener.class);
@@ -105,7 +105,7 @@ public interface StorageListener<S extends StorageEvent,C extends StorageEvent> 
         /**
          * Unregister this listener on the given source.
          */
-        public synchronized void unregisterSource(final Object source){
+        public synchronized void unregisterSource(final Object source) {
             sources.remove(source);
             remove(source);
         }
@@ -114,7 +114,7 @@ public interface StorageListener<S extends StorageEvent,C extends StorageEvent> 
          * Unregister this listener from all it's sources.
          */
         public synchronized void unregisterAll(){
-            for(final Object mc : sources.toArray(new Object[sources.size()])){
+            for (final Object mc : sources.toArray(new Object[sources.size()])) {
                 unregisterSource(mc);
             }
         }
@@ -123,22 +123,14 @@ public interface StorageListener<S extends StorageEvent,C extends StorageEvent> 
             try {
                 final Method method = source.getClass().getMethod("removeStorageListener", StorageListener.class);
                 method.invoke(source, this);
-            } catch (IllegalAccessException ex) {
-                LOGGER.log(Level.WARNING, ERROR_MSG, source);
-            } catch (IllegalArgumentException ex) {
-                LOGGER.log(Level.WARNING, ERROR_MSG, source);
-            } catch (InvocationTargetException ex) {
-                LOGGER.log(Level.WARNING, ERROR_MSG, source);
-            } catch (NoSuchMethodException ex) {
-                LOGGER.log(Level.WARNING, ERROR_MSG, source);
-            } catch (SecurityException ex) {
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
                 LOGGER.log(Level.WARNING, ERROR_MSG, source);
             }
         }
 
         @Override
         public synchronized void dispose() {
-            for(Object source : sources){
+            for (Object source : sources) {
                 remove(source);
             }
             sources.clear();
@@ -159,7 +151,5 @@ public interface StorageListener<S extends StorageEvent,C extends StorageEvent> 
                 listener.contentChanged(event);
             }
         }
-
     }
-
 }

@@ -42,6 +42,7 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.processing.ForwardProcessListener;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
@@ -82,7 +83,8 @@ public class ChainProcess extends AbstractProcess {
         final Chain model = getDescriptor().getModel();
 
         // processing progress
-        final float part = 100 / model.getElements().size();
+        final float workLoadPart = 100 / model.getElements().size();
+        float currentProgress = 0;
         int i = 1;
 
         final Collection<FlowNode> nodes = Flow.createFlow(model);
@@ -133,8 +135,9 @@ public class ChainProcess extends AbstractProcess {
         //run processes in order
         for (int j = 0; j < ranked.size(); j++) {
             final List<FlowNode> rank = ranked.get(j);
+            currentProgress = (i - 1) * workLoadPart;
 
-            for(FlowNode node : rank){
+            for (FlowNode node : rank) {
                 final Object obj = node.getObject();
                 if (obj == ElementProcess.BEGIN) {
                     //copy input params in children nodes
@@ -152,7 +155,7 @@ public class ChainProcess extends AbstractProcess {
                     }
                     // handle process pause
                     if (isPaused()) {
-                        fireProcessPaused(descriptor.getIdentifier().getCode() + " paused", i * part);
+                        fireProcessPaused(descriptor.getIdentifier().getCode() + " paused", currentProgress);
                         while (isPaused()) {
                             try {
                                 Thread.sleep(1000);
@@ -160,7 +163,7 @@ public class ChainProcess extends AbstractProcess {
                                 LOGGER.log(Level.WARNING, "Interruption while process is in pause", ex);
                             }
                         }
-                        fireProcessResumed(descriptor.getIdentifier().getCode() + " resumed", i * part);
+                        fireProcessResumed(descriptor.getIdentifier().getCode() + " resumed", currentProgress);
                     }
 
                     //execute process
@@ -173,6 +176,7 @@ public class ChainProcess extends AbstractProcess {
                         throw new ProcessException("Sub process not found", this, ex);
                     }
                     currentProcess = pdesc.createProcess(config);
+                    currentProcess.addListener(new ForwardProcessListener(this, currentProgress, workLoadPart));
 
                     final String processId = pdesc.getIdentifier().getCode();
                     // Fill process version with values coming from the current process.
@@ -187,7 +191,7 @@ public class ChainProcess extends AbstractProcess {
                     }
 
                     final ParameterValueGroup result = currentProcess.call();
-                    fireProgressing(pdesc.getIdentifier().getCode() + " completed", i * part, false);
+                    //fireProgressing(pdesc.getIdentifier().getCode() + " completed", i * part, false);
                     i++;
 
                     //set result in children

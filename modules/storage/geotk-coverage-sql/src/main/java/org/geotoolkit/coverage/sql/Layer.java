@@ -302,17 +302,11 @@ public interface Layer {
      *   <li><p>{@link java.io.File}, {@link java.net.URL}, {@link java.net.URI} or
      *       {@link String} instances.</p></li>
      *
-     *   <li><p>{@link org.geotoolkit.image.io.mosaic.Tile} instances, which will be added to the
-     *       {@code "GridCoverages"} table (not to the {@code "Tiles"} table).</p></li>
-     *
      *   <li><p>{@link javax.imageio.ImageReader} instances with their
      *       {@linkplain javax.imageio.ImageReader#getInput() input} set and
      *       {@linkplain javax.imageio.ImageReader#getImageMetadata image metadata} conform to the Geotk
      *       {@linkplain org.geotoolkit.image.io.metadata.SpatialMetadata spatial metadata} format. The
-     *       reader input shall be one of the above-cited instances. If this is not possible (for example
-     *       because a {@link javax.imageio.stream.ImageInputStream} is required), consider wrapping
-     *       the {@link javax.imageio.spi.ImageReaderSpi} and the input in a
-     *       {@link org.geotoolkit.image.io.mosaic.Tile} instance.</p></li>
+     *       reader input shall be one of the above-cited instances.</p></li>
      * </ul>
      *
      * This method will typically read only the required metadata rather than the full image.

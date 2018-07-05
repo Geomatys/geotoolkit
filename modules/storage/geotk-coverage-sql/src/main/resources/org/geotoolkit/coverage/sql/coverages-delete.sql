@@ -8,13 +8,10 @@
 --------------------------------------------------------------------------------------------------
 
 SET client_encoding = 'UTF8';
-SET search_path = coverages, metadata, postgis;
+SET search_path = coverages, metadata, public;
 
 DROP VIEW     "DomainOfLayers";
 DROP VIEW     "DomainOfSeries";
-DROP VIEW     "DomainOfTiles";
-DROP VIEW     "Tiling";
-DROP TABLE    "Tiles";
 DROP TABLE    "GridCoverages";
 DROP VIEW     "BoundingBoxes";
 DROP FUNCTION "ComputeDefaultExtent"() CASCADE;
