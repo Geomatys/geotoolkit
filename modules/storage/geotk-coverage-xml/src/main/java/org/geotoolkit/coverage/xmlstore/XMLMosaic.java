@@ -42,7 +42,6 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
-import javax.swing.ProgressMonitor;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -62,6 +61,7 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.coverage.AbstractGridMosaic;
 import org.geotoolkit.storage.coverage.DefaultTileReference;
 import org.geotoolkit.storage.coverage.GridMosaic;
@@ -674,7 +674,7 @@ public class XMLMosaic implements GridMosaic {
         }
     }
 
-     void writeTiles(final RenderedImage image, final Rectangle area, final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException{
+     void writeTiles(final RenderedImage image, final Rectangle area, final boolean onlyMissing, final Monitor monitor) throws DataStoreException{
 
          try {
              checkMosaicFolderExist();
@@ -846,9 +846,9 @@ public class XMLMosaic implements GridMosaic {
         private final int tileIndex;
         private final ColorModel cm;
         private final String formatName;
-        private final ProgressMonitor monitor;
+        private final Monitor monitor;
 
-        public TileWriter(Path tilePath, RenderedImage image, int idx, int idy, int tileIndex, ColorModel cm, String formatName, ProgressMonitor monitor) {
+        public TileWriter(Path tilePath, RenderedImage image, int idx, int idy, int tileIndex, ColorModel cm, String formatName, Monitor monitor) {
             ArgumentChecks.ensureNonNull("file", tilePath);
             ArgumentChecks.ensureNonNull("image", image);
             this.tilePath = tilePath;

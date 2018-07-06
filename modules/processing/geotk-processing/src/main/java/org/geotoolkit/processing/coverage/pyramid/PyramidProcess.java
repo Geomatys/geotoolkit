@@ -20,7 +20,6 @@ import java.awt.Dimension;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 import javax.swing.JLabel;
-import javax.swing.ProgressMonitor;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.util.NamesExt;
@@ -29,6 +28,7 @@ import org.geotoolkit.storage.coverage.PyramidCoverageBuilder;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.process.Monitor;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
 import org.opengis.geometry.Envelope;
@@ -200,11 +200,10 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
     /**
      * Allow to cancel the tiles creation process.
      */
-    private class PyramidMonitor extends ProgressMonitor {
+    private class PyramidMonitor implements Monitor {
         private final PyramidProcess process;
 
         public PyramidMonitor(final PyramidProcess process) {
-            super(new JLabel(), "", "", 0, 100);
             this.process = process;
         }
 

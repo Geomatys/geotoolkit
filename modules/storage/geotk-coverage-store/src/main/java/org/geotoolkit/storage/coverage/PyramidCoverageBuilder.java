@@ -33,7 +33,6 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.imageio.ImageReader;
-import javax.swing.ProgressMonitor;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -79,6 +78,7 @@ import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
+import org.geotoolkit.process.Monitor;
 
 /**
  * <p>Resampling, re-project, tile cut and insert in given datastore, image from
@@ -179,7 +179,7 @@ public class PyramidCoverageBuilder {
     private int niemeTile;
 
     private ProcessListener processListener;
-    private ProgressMonitor monitor;
+    private Monitor monitor;
     private double[] fillValue;
     private Map<Envelope, double[]> resolutionPerEnvelope;
 
@@ -295,14 +295,14 @@ public class PyramidCoverageBuilder {
      *
      * @param monitor A progress monitor used for detecting a cancel request during the process. Can be {@code null}.
      */
-    public void setMonitor(ProgressMonitor monitor) {
+    public void setMonitor(Monitor monitor) {
         this.monitor = monitor;
     }
 
     /**
      * @return current attached monitor
      */
-    public ProgressMonitor getMonitor() {
+    public Monitor getMonitor() {
         return monitor;
     }
 

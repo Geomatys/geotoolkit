@@ -31,7 +31,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
-import javax.swing.ProgressMonitor;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -65,6 +64,7 @@ import org.geotoolkit.image.internal.SampleType;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
+import org.geotoolkit.process.Monitor;
 
 /**
  * XML implementation of {@link PyramidalCoverageReference}.
@@ -803,7 +803,7 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
      */
     @Override
     public void writeTiles(final String pyramidId, final String mosaicId, final RenderedImage image, final Rectangle area,
-                           final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException {
+                           final boolean onlyMissing, final Monitor monitor) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
         final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
         final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
