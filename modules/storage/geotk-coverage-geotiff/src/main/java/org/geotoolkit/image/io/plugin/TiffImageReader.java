@@ -32,7 +32,6 @@ import java.nio.ByteOrder;
 import java.nio.ByteBuffer;
 
 import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.SampleModel;
@@ -53,6 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
@@ -67,7 +67,6 @@ import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 
 import org.opengis.coverage.grid.RectifiedGrid;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
@@ -83,19 +82,16 @@ import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.io.SpatialImageReadParam;
-import org.geotoolkit.internal.image.io.SupportFiles;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.lang.SystemOverride;
 import org.geotoolkit.metadata.geotiff.GeoTiffExtension;
-import org.geotoolkit.metadata.geotiff.GeoTiffCRSWriter;
 import org.geotoolkit.metadata.geotiff.GeoTiffConstants;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader;
-import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataStack;
 import org.geotoolkit.resources.Errors;
-import org.w3c.dom.Node;
 
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
+import org.geotoolkit.metadata.geotiff.ThirdPartyMetaDataReader;
 
 /**
  * An image reader for uncompressed TIFF files or RGB images. This image reader duplicates the works
@@ -411,97 +407,38 @@ public class TiffImageReader extends SpatialImageReader {
 
         fillRootMetadataNode(layerIndex);
 
-        if (IOUtilities.canProcessAsPath(input)) {
-
-            //-- stack use to store any CRS or TFW informationif exist.
-            GeoTiffMetaDataStack stack = null;
-
-            //-- if prjFile founded give priority to prj
-            CoordinateReferenceSystem prjCRS = null;
-            final Object inCrs = getVerifiedInput("prj");
-            if (inCrs != null) {
-                prjCRS = PrjFiles.read(IOUtilities.open(inCrs), true);
-
-                //-- if a CRS is found by prj file we add it into native tiff metadata.
-                if (prjCRS != null) {
-
-                    //-- some times exist some CRS tags but not enought to build correct CRS
-                    //-- remove Tag 34735, 34736 and 34737 from metadatas
-                    Node currentChild = roots[layerIndex].getFirstChild();
-                    while (currentChild != null) {
-                        final IIOMetadataNode iioNod = (IIOMetadataNode) currentChild;
-                        final String currentIIOTag = iioNod.getAttribute(ATT_NUMBER);
-                        currentChild = currentChild.getNextSibling();
-                        if (String.valueOf(GeoTiffConstants.GeoKeyDirectoryTag).equalsIgnoreCase(currentIIOTag)
-                         || String.valueOf(GeoTiffConstants.GeoDoubleParamsTag).equalsIgnoreCase(currentIIOTag)
-                         || String.valueOf(GeoTiffConstants.GeoAsciiParamsTag).equalsIgnoreCase(currentIIOTag))
-                            roots[layerIndex].removeChild(iioNod);
-                    }
-
-                    //-- add crs into metadata node
-                    //container for informations which will be written
-                    stack = new GeoTiffMetaDataStack(roots[layerIndex]);
-
-                    //-- fill geotiff crs information
-                    final GeoTiffCRSWriter crsWriter = new GeoTiffCRSWriter();
-                    try {
-                        crsWriter.fillCRSMetaDatas(stack, prjCRS);
-                    } catch (FactoryException ex) {
-                        throw new IIOException("impossible to insert CRS ("+prjCRS.toString()+") into native tiff metadatas.", ex);
-                    }
-                }
-            }
-
-            //-- if tfwFile founded give priority to tfw
-            final Object gtCrs = getVerifiedInput("tfw");
-            if (gtCrs != null) {
-
-                final AffineTransform gridToCRS = SupportFiles.parseTFW(IOUtilities.open(gtCrs), gtCrs);
-                if (gridToCRS != null) {
-
-                    //-- remove gridToCrs tags
-                    //-- remove Tag 34264, 33550 and 33922 from metadatas
-                    Node currentChild = roots[layerIndex].getFirstChild();
-                    while (currentChild != null) {
-                        final IIOMetadataNode iioNod = (IIOMetadataNode) currentChild;
-                        final String currentIIOTag = iioNod.getAttribute(ATT_NUMBER);
-                        currentChild = currentChild.getNextSibling();
-                        if (String.valueOf(GeoTiffConstants.ModelTransformationTag).equalsIgnoreCase(currentIIOTag)
-                         || String.valueOf(GeoTiffConstants.ModelPixelScaleTag).equalsIgnoreCase(currentIIOTag)
-                         || String.valueOf(GeoTiffConstants.ModelTiepointTag).equalsIgnoreCase(currentIIOTag))
-                            roots[layerIndex].removeChild(iioNod);
-                    }
-
-                    //-- add gridToCrs into metadata node
-                    //-- container for informations which will be written
-                    if (stack == null) stack = new GeoTiffMetaDataStack(roots[layerIndex]);
-                    stack.setModelTransformation(gridToCRS);
-                }
-            }
-
-            //-- fill root metadata node by stack stored values
-            if (stack != null) stack.flush();
+        //-- find geotiff extensions
+        if (extensions == null) {
+            extensions = Collections.unmodifiableList(
+                    Arrays.stream(GeoTiffExtension.getExtensions())
+                            .filter(ext -> ext.isPresent(input))
+                            .map(GeoTiffExtension::newInstance)
+                            .collect(Collectors.toList()));
         }
 
         final IIOTiffMetadata metadata = new IIOTiffMetadata(roots[layerIndex]);
         final GeoTiffMetaDataReader metareader = new GeoTiffMetaDataReader(metadata);
         SpatialMetadata spatialMetadata;
+
+        /*
+         * We'll try to fill referencing information from GeoTiff file. If it
+         * fails, we delay error, because there's a chance that one of the
+         * declared extensions is able to provide it. For example, user could
+         * have provided prj and tfw file, transforming the geotiff in a world
+         * file tiff image.
+         */
+        FactoryException referencingError = null;
         try {
             spatialMetadata = metareader.readSpatialMetaData();
-        } catch (NoSuchAuthorityCodeException ex) {
-            throw new IOException(ex);
         } catch (FactoryException ex) {
-            throw new IOException(ex);
-        }
-
-        //-- find geotiff extensions
-        if (extensions == null) {
-            extensions = new ArrayList<>();
-            for (GeoTiffExtension ext : GeoTiffExtension.getExtensions()) {
-                if (ext.isPresent(input)) {
-                    extensions.add(ext.newInstance());
-                }
+            if (extensions.isEmpty()) {
+                throw new IOException("Bad referencing information found in GeoTiff", ex);
             }
+
+            LOGGER.log(Level.WARNING, "Bad referencing information found. We'll continue and try to check on potential extensions (Dimap, Worldd file, etc.)", ex);
+            spatialMetadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(SpatialMetadataFormat.GEOTK_FORMAT_NAME));
+            // Even if geographic information is bad, we try to get other metadata, as it could be important for data description.
+            new ThirdPartyMetaDataReader(metadata).fillSpatialMetaData(spatialMetadata);
         }
 
         //-- fill extensions informations
@@ -509,16 +446,20 @@ public class TiffImageReader extends SpatialImageReader {
             spatialMetadata = ext.fillSpatialMetaData(this, spatialMetadata);
         }
 
+        final CoordinateReferenceSystem crs = spatialMetadata.getInstanceForType(CoordinateReferenceSystem.class);
+        final RectifiedGrid rectifiedGrid = spatialMetadata.getInstanceForType(RectifiedGrid.class);
+        if ((crs == null || rectifiedGrid == null) && referencingError != null) {
+            // Geotiff referencing is bad, and no extension allowed for proper correction, so we stop reading immediately.
+            throw new IOException("Bad referencing information found", referencingError);
+        }
 
         //-- verify CRS pertinency
         //-- search for the coordinate reference system
-        final CoordinateReferenceSystem crs = spatialMetadata.getInstanceForType(CoordinateReferenceSystem.class);
         if (crs == null) {
             LOGGER.log(Level.FINE, "Current data : "+input.toString()+" doesn't contain any Coordinate Reference System.");
         }
 
         //-- verify GridToCrs pertinency
-        final RectifiedGrid rectifiedGrid = spatialMetadata.getInstanceForType(RectifiedGrid.class);
         if (rectifiedGrid == null) {
             LOGGER.log(Level.FINE, "Current data : "+input.toString()+" doesn't contain any Tie Points or GridToCrs transformation function.");
         }
