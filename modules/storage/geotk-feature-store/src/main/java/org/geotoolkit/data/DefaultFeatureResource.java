@@ -46,7 +46,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class DefaultFeatureResource extends AbstractFeatureSet implements FeatureSet, WritableFeatureSet, ChangeListener<ChangeEvent> {
+public class DefaultFeatureResource extends AbstractFeatureSet implements FeatureSet, WritableFeatureSet, ChangeListener<ChangeEvent> {
 
     private final StorageListener.Weak weakListener = new StorageListener.Weak(this);
     private final FeatureStore store;
