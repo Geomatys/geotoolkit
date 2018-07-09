@@ -180,15 +180,19 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
         final Set<CoordinateReferenceSystem> crss = new HashSet<>();
         geometries.forEach((name, gg) -> {
-            try {
-                extent.addElements(gg.getEnvelope());
-            } catch (TransformException | InvalidGridGeometryException ex) {
-                LOGGER.log(Level.WARNING, "Extent cannot be computed for reference " + name, ex);
+            if (gg.isDefined(GeneralGridGeometry.ENVELOPE)) {
+                try {
+                    extent.addElements(gg.getEnvelope());
+                } catch (TransformException | InvalidGridGeometryException ex) {
+                    LOGGER.log(Level.WARNING, "Extent cannot be computed for reference " + name, ex);
+                }
             }
-            try {
-                crss.add(gg.getCoordinateReferenceSystem());
-            } catch (InvalidGridGeometryException ex) {
-                LOGGER.log(Level.WARNING, "CRS cannot be computed for reference " + name, ex);
+            if (gg.isDefined(GeneralGridGeometry.CRS)) {
+                try {
+                    crss.add(gg.getCoordinateReferenceSystem());
+                } catch (InvalidGridGeometryException ex) {
+                    LOGGER.log(Level.WARNING, "CRS cannot be computed for reference " + name, ex);
+                }
             }
         });
 
@@ -200,7 +204,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         ddi.getExtents().add(new DefaultExtent(extent));
         ((Collection)md.getIdentificationInfo()).add(ddi);
 
-        // Ensure we'll have no doublon
+        // Ensure we'll have no duplicate
         crss.removeAll(md.getReferenceSystemInfo());
         md.getReferenceSystemInfo().addAll((Collection)crss);
     }
