@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * Interface implemented by the various geometry classes of LiteGO1 that allows

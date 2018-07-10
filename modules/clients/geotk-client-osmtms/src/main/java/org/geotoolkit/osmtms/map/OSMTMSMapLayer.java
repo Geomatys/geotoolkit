@@ -23,7 +23,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 
 /**
@@ -34,9 +34,9 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  */
 public class OSMTMSMapLayer extends DefaultCoverageMapLayer {
 
-    private static CoverageResource getReference(OSMTileMapClient server){
+    private static GridCoverageResource getReference(OSMTileMapClient server){
         try {
-            return (CoverageResource) server.findResource(server.getNames().iterator().next().toString());
+            return (GridCoverageResource) server.findResource(server.getNames().iterator().next().toString());
         } catch (DataStoreException ex) {
             throw new RuntimeException(ex);
         }

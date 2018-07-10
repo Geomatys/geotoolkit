@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.processing.coverage.volume;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -45,7 +45,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *      <td>&nbsp;{@code true}&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link #jtsGeom}&nbsp;</td>
- *     <td>&nbsp;{@linkplain #setAnotherArea(com.vividsolutions.jts.geom.Geometry) JTS Geometry instance} or
+ *     <td>&nbsp;{@linkplain #setAnotherArea(org.locationtech.jts.geom.Geometry) JTS Geometry instance} or
  *               by builder constructor &nbsp;</td>
  *     <td>&nbsp;&nbsp;</td>
  *     <td>&nbsp;{@code true}&nbsp;</td>

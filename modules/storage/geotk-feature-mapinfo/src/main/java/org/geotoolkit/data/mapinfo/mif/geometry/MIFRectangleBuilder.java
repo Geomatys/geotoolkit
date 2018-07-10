@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.style.Brush;

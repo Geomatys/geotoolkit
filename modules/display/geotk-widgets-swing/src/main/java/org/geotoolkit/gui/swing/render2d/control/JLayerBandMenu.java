@@ -58,7 +58,7 @@ import org.opengis.referencing.crs.TemporalCRS;
 
 import org.opengis.style.Description;
 import org.opengis.util.InternationalString;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -139,7 +139,7 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
                 CoordinateReferenceSystem crs = null;
                 if(ml instanceof CoverageMapLayer){
                     final CoverageMapLayer cml = (CoverageMapLayer) ml;
-                    final CoverageResource ref = cml.getCoverageReference();
+                    final GridCoverageResource ref = cml.getCoverageReference();
                     try {
                         final GridCoverageReader reader = ref.acquireReader();
                         crs = reader.getGridGeometry(ref.getImageIndex()).getCoordinateReferenceSystem();

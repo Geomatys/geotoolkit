@@ -17,12 +17,12 @@
  */
 package org.geotoolkit.filter.binaryspatial;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.prep.PreparedGeometry;
-import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.prep.PreparedGeometry;
+import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 
 import java.util.logging.Level;
 import org.geotoolkit.feature.FeatureExt;
@@ -67,7 +67,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
 
     //cache the bbox geometry
     protected transient PreparedGeometry boundingGeometry;
-    protected final com.vividsolutions.jts.geom.Envelope boundingEnv;
+    protected final org.locationtech.jts.geom.Envelope boundingEnv;
     protected final CoordinateReferenceSystem crs;
     protected final int srid;
 
@@ -208,7 +208,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         }
 
 
-        final com.vividsolutions.jts.geom.Envelope candidateEnv = candidate.getEnvelopeInternal();
+        final org.locationtech.jts.geom.Envelope candidateEnv = candidate.getEnvelopeInternal();
 
         if(boundingEnv.contains(candidateEnv) || candidateEnv.contains(boundingEnv)) {
             return true;

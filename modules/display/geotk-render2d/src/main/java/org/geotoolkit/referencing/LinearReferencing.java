@@ -16,14 +16,14 @@
  */
 package org.geotoolkit.referencing;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.operation.distance.DistanceOp;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.operation.distance.DistanceOp;
 
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
@@ -102,7 +102,7 @@ public class LinearReferencing extends Static{
      * Compute geographic / projected position from linear information.
      *
      * @param geom Reference linear. If it's not a {@link LineString}, it will be
-     * converted as specified by {@link #asLineString(com.vividsolutions.jts.geom.Geometry) } method.
+     * converted as specified by {@link #asLineString(org.locationtech.jts.geom.Geometry) } method.
      * @param reference A point on reference linear.
      * @param distanceAlongLinear A distance (can be negative to rewind on linear)
      * from reference point along input linear.

@@ -65,13 +65,6 @@ import static org.apache.sis.util.collection.Containers.hashMapCapacity;
  *   <li>Spherical longitude of origin</li>
  *   <li>Longitude of projection centre</li>
  * </ul>
- * <p>
- * In every {@link MapProjection} subclass, only the official parameter names are declared.
- * For example the {@link Mercator1SP} class uses "<cite>Longitude of natural origin</cite>"
- * for the above-cited {@code CENTRAL_MERIDIAN} parameter, while {@link ObliqueMercator} uses
- * "<cite>Longitude of projection centre</cite>". However not every softwares use the right
- * parameter name with the right projection. This {@code UniversalParameters} class can be
- * used for processing parameters which may have the wrong name.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20

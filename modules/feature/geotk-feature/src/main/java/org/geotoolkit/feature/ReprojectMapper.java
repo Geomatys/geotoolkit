@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.feature;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

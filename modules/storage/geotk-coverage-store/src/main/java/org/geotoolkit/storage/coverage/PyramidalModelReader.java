@@ -81,7 +81,7 @@ import org.apache.sis.util.Utilities;
  */
 public class PyramidalModelReader extends GridCoverageReader{
 
-    private CoverageResource ref;
+    private GridCoverageResource ref;
     private final CoverageFinder coverageFinder;
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
@@ -96,7 +96,7 @@ public class PyramidalModelReader extends GridCoverageReader{
     }
 
     @Override
-    public CoverageResource getInput() {
+    public GridCoverageResource getInput() {
         return ref;
     }
 
@@ -106,10 +106,10 @@ public class PyramidalModelReader extends GridCoverageReader{
 
     @Override
     public void setInput(Object input) throws CoverageStoreException {
-        if(!(input instanceof CoverageResource) || !(input instanceof PyramidalCoverageResource)){
+        if(!(input instanceof GridCoverageResource) || !(input instanceof PyramidalCoverageResource)){
             throw new CoverageStoreException("Unsupported input type, can only be CoverageReference implementing PyramidalModel.");
         }
-        this.ref = (CoverageResource) input;
+        this.ref = (GridCoverageResource) input;
         super.setInput(input);
     }
 

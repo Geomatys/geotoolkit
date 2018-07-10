@@ -16,16 +16,23 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import java.awt.*;
-import java.awt.image.*;
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ImagingOpException;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
+import java.awt.image.WritableRenderedImage;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.imageio.ImageReader;
-import javax.swing.ProgressMonitor;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -51,11 +58,9 @@ import org.geotoolkit.process.ProcessListener;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtilities;
@@ -72,6 +77,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
+import org.geotoolkit.process.Monitor;
 
 /**
  * <p>Resampling, re-project, tile cut and insert in given datastore, image from
@@ -171,6 +178,19 @@ public class PyramidCoverageBuilder {
      */
     private int niemeTile;
 
+    private ProcessListener processListener;
+    private Monitor monitor;
+    private double[] fillValue;
+    private Map<Envelope, double[]> resolutionPerEnvelope;
+
+    //source and target description
+    private GridCoverageResource sourceResource;
+    private GridCoverage sourceCoverage;
+    private GridCoverageReader sourceReader;
+    private CoverageResource targetResource;
+    private CoverageStore targetStore;
+    private GenericName targetName;
+
     /**
      * Used for events.
      */
@@ -249,124 +269,414 @@ public class PyramidCoverageBuilder {
     }
 
     /**
-     * <p>Effectuate resampling, re-projection, tile cutting and insertion in datastore on {@link GridCoverage}.<br/><br/>
+     * Set process listener.
+     * The listener will be notified of the pyramid creation progress and errors.
      *
-     * Note : <br/>
-     * {@link GridGeometry} from {@link GridCoverage} must be instance of {@link GridGeometry2D}
-     * else a {@link IllegalArgumentException} will be thrown.<br/>
-     * fillValue parameter must have same length than pixel size from image within coverage.<br/>
-     * If fill value is {@code null} a table of zero value with appropriate length is use.
-     * </p>
-     * @param gridCoverage {@link GridCoverage} which will be stored.
-     * @param coverageStore {@link CoverageStore} where operation on {@link GridCoverage} are stored.
-     * @param coverageName name given to the set of operations results, performed on the coverage in the datastore.
-     * @param resolution_Per_Envelope reprojection and resampling attibuts.
-     * @param fillValue contains value use when pixel transformation is out of source image boundary.
-     * @throws DataStoreException if tile writing throw exception.
-     * @throws TransformException if problems during resampling operation.
-     * @throws FactoryException if impossible to find {@code MathTransform} between two {@link CoordinateReferenceSystem}.
+     * @param processListener {@link ProcessListener} to send state informations.
      */
-    public void create(GridCoverage gridCoverage, CoverageStore coverageStore, GenericName coverageName,
-            Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue)
-            throws DataStoreException, TransformException, FactoryException, IOException {
-        create(gridCoverage, coverageStore, coverageName, resolution_Per_Envelope, fillValue, null, null);
+    public void setListener(ProcessListener processListener) {
+        this.processListener = processListener;
     }
 
     /**
-     * <p>Effectuate resampling, re-projection, tile cutting and insertion in datastore on {@link GridCoverage}.<br/><br/>
+     * @return current attached listener
+     */
+    public ProcessListener getListener() {
+        return processListener;
+    }
+
+    /**
+     * Set control monitor.
+     * <p>
+     * The monitor allows the user to stop the process.
+     * Stopping a pyramid creation process may take some time until the process
+     * reachs a safe state to abort.
+     * </p>
      *
+     * @param monitor A progress monitor used for detecting a cancel request during the process. Can be {@code null}.
+     */
+    public void setMonitor(Monitor monitor) {
+        this.monitor = monitor;
+    }
+
+    /**
+     * @return current attached monitor
+     */
+    public Monitor getMonitor() {
+        return monitor;
+    }
+
+    /**
+     * If fill value is not set, default fille values are computed from the
+     * sample dimensions descriptions.
+     *
+     * @param fillValue contains value use when pixel transformation is out of source image boundary.
+     */
+    public void setFillValues(double[] fillValue) {
+        this.fillValue = fillValue;
+    }
+
+    /**
+     * @return user defined fill values, can be null.
+     */
+    public double[] getFillValues() {
+        return fillValue;
+    }
+
+    /**
+     * @param resolution_Per_Envelope reprojection and resampling attibuts.
+     */
+    public void setResolutionPerEnvelope(Map<Envelope, double[]> resolution_Per_Envelope) {
+        this.resolutionPerEnvelope = resolution_Per_Envelope;
+    }
+
+    /**
+     * @return map of envelope and scales to pyramid
+     */
+    public Map<Envelope, double[]> getResolutionPerEnvelope() {
+        return resolutionPerEnvelope;
+    }
+
+    /**
+     * This method unset any previous source defined and replace it
+     * by given source.
+     *
+     * @param sourceCoverage {@link GridCoverage} which will be stored.
+     */
+    public void setSourceCoverage(GridCoverage sourceCoverage) {
+        this.sourceCoverage = sourceCoverage;
+        this.sourceReader = null;
+        this.sourceResource = null;
+    }
+
+    /**
+     * This method unset any previous source defined and replace it
+     * by given source.
+     *
+     * @param sourceReader {@link GridCoverageReader} which will be stored.
+     */
+    public void setSourceReader(GridCoverageReader sourceReader) {
+        this.sourceCoverage = null;
+        this.sourceReader = sourceReader;
+        this.sourceResource = null;
+    }
+
+    /**
+     * This method unset any previous source defined and replace it
+     * by given source.
+     *
+     * @param sourceResource {@link GridCoverageResource} which will be stored.
+     */
+    public void setSourceResource(GridCoverageResource sourceResource) {
+        this.sourceCoverage = null;
+        this.sourceReader = null;
+        this.sourceResource = sourceResource;
+    }
+
+    /**
+     * @see #setSourceCoverage(org.opengis.coverage.grid.GridCoverage)
+     * @return {@link GridCoverage} , can be null
+     */
+    public GridCoverage getSourceCoverage() {
+        return sourceCoverage;
+    }
+
+    /**
+     * @see #setSourceReader(org.geotoolkit.coverage.io.GridCoverageReader)
+     * @return {@link GridCoverageReader} , can be null
+     */
+    public GridCoverageReader getSourceReader() {
+        return sourceReader;
+    }
+
+    /**
+     * @see #setSourceResource(org.geotoolkit.storage.coverage.GridCoverageResource) e)
+     * @return {@link GridCoverageResource} , can be null
+     */
+    public GridCoverageResource getSourceResource() {
+        return sourceResource;
+    }
+
+    /**
+     * @param targetResource resource where the pyramid will be created
+     */
+    public void setTargetResource(CoverageResource targetResource) {
+        this.targetResource = targetResource;
+        this.targetStore = null;
+        this.targetName = null;
+    }
+
+    /**
+     * @param targetStore {@link CoverageStore} where the pyramid will be created.
+     * @param targetName name given to the set of operations results, performed on the coverage in the datastore.
+     */
+    public void setTargetStore(CoverageStore targetStore, GenericName targetName) {
+        this.targetResource = null;
+        this.targetStore = targetStore;
+        this.targetName = targetName;
+    }
+
+    /**
+     * @see #setTargetResource(org.geotoolkit.storage.coverage.CoverageResource)
+     * @return target resource where to write pyramid
+     */
+    public CoverageResource getTargetResource() {
+        return targetResource;
+    }
+
+    /**
+     * @see #setTargetStore(org.geotoolkit.storage.coverage.CoverageStore, org.opengis.util.GenericName)
+     * @return target store where to write pyramid
+     */
+    public CoverageStore getTargetStore() {
+        return targetStore;
+    }
+
+    /**
+     * @see #setTargetStore(org.geotoolkit.storage.coverage.CoverageStore, org.opengis.util.GenericName)
+     * @return target store resource name where to write pyramid
+     */
+    public GenericName getTargetName() {
+        return targetName;
+    }
+
+    /**
+     * Effectuate resampling, re-projection, tile cutting and insertion in datastore on {@link GridCoverage}.
+     *
+     * <p>
      * Note : <br/>
      * {@link GridGeometry} from {@link GridCoverage} must be instance of {@link GridGeometry2D}
      * else a {@link IllegalArgumentException} will be thrown.<br/>
      * fillValue parameter must have same length than pixel size from image within coverage.<br/>
      * If fill value is {@code null} a table of zero value with appropriate length is use.
      * </p>
-     * @param gridCoverageRef {@link GridCoverage} which will be stored.
-     * @param coverageStore {@link CoverageStore} where operation on {@link GridCoverage} are stored.
-     * @param coverageName name given to the set of operations results, performed on the coverage in the datastore.
-     * @param resolution_Per_Envelope reprojection and resampling attibuts.
-     * @param fillValue contains value use when pixel transformation is out of source image boundary.
-     * @param processListener {@link ProcessListener} to send state informations (should be null).
-     * @param monitor A progress monitor used for detecting a cancel request during the process. Can be {@code null}.
+     *
      * @throws DataStoreException if tile writing throw exception.
      * @throws TransformException if problems during resampling operation.
      * @throws FactoryException if impossible to find {@code MathTransform} between two {@link CoordinateReferenceSystem}.
      */
-    public void create(CoverageResource gridCoverageRef, CoverageStore coverageStore, GenericName coverageName,
-            Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue,
-            ProcessListener processListener, ProgressMonitor monitor)
-            throws DataStoreException, TransformException, FactoryException, IOException {
-        ArgumentChecks.ensureNonNull("CoverageReference"      , gridCoverageRef);
-        ArgumentChecks.ensureNonNull("output CoverageStore", coverageStore);
-        ArgumentChecks.ensureNonNull("coverageName"           , coverageName);
-        ArgumentChecks.ensureNonNull("resolution_Per_Envelope", resolution_Per_Envelope);
+    public void execute() throws DataStoreException, TransformException, FactoryException, IOException {
 
-        //one coverageReference for each reader.
-        final CoverageResource cv = getOrCreateCRef(coverageStore,coverageName);
+        // get or create target pyramid
 
-        if (!(cv instanceof PyramidalCoverageResource)) {
-            final IllegalArgumentException ex = new IllegalArgumentException("CoverageStore parameter should be instance of PyramidalModel."+coverageStore.toString());
+        final PyramidalCoverageResource pm;
+        if (targetResource != null) {
+            if (!(targetResource instanceof PyramidalCoverageResource)) {
+                final IllegalArgumentException ex = new IllegalArgumentException("CoverageStore parameter must be instance of Pyramid resource."+targetResource.toString());
+                if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
+                throw ex;
+            }
+            pm = (PyramidalCoverageResource) targetResource;
+        } else {
+            ArgumentChecks.ensureNonNull("output CoverageStore", targetStore);
+            ArgumentChecks.ensureNonNull("coverageName", targetName);
+            final GridCoverageResource cv = getOrCreateCRef(targetStore,targetName);
+            if (!(cv instanceof PyramidalCoverageResource)) {
+                final IllegalArgumentException ex = new IllegalArgumentException("Target resource must be an instance of Pyramid."+targetStore.toString());
+                if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
+                throw ex;
+            }
+            pm = (PyramidalCoverageResource) cv;
+        }
+
+
+        //get or create sub resolutions TODO
+        Map<Envelope, double[]> resPerEnv = resolutionPerEnvelope;
+        if (resolutionPerEnvelope == null) {
+            //compute default resolutions
+
+            //get grid geometry
+            final GeneralGridGeometry gg;
+            if (sourceCoverage != null) {
+                gg = (GeneralGridGeometry) sourceCoverage.getGridGeometry();
+            } else if (sourceReader != null) {
+                gg = sourceReader.getGridGeometry(0);
+            } else if (sourceResource != null) {
+                final GridCoverageReader reader = sourceResource.acquireReader();
+                try {
+                    gg = reader.getGridGeometry(sourceResource.getImageIndex());
+                } finally {
+                    sourceResource.recycle(reader);
+                }
+            } else {
+                final IllegalArgumentException ex = new IllegalArgumentException("Source parameter is not defined.");
+                if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
+                throw ex;
+            }
+            final Envelope dataEnv = gg.getEnvelope();
+
+            resPerEnv = new HashMap<>();
+            final double geospanX = dataEnv.getSpan(0);
+            final double baseScale = geospanX / gg.getExtent().getSpan(0);
+            final int tileSize = tileWidth;
+            double scale = geospanX / tileSize;
+            final GeneralDirectPosition ul = new GeneralDirectPosition(dataEnv.getCoordinateReferenceSystem());
+            ul.setOrdinate(0, dataEnv.getMinimum(0));
+            ul.setOrdinate(1, dataEnv.getMaximum(1));
+            final List<Double> scalesList = new ArrayList<>();
+            while (true) {
+                if (scale <= baseScale) {
+                    //fit to exact match to preserve base quality.
+                    scale = baseScale;
+                }
+                scalesList.add(scale);
+                if (scale <= baseScale) {
+                    break;
+                }
+                scale = scale / 2;
+            }
+            final double[] scales = new double[scalesList.size()];
+            for (int i = 0; i < scales.length; i++) scales[i] = scalesList.get(i);
+            resPerEnv.put(dataEnv, scales);
+        }
+
+        //check canceled
+        if (monitor != null && monitor.isCanceled()) {
+            final CancellationException ex = new CancellationException();
             if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
             throw ex;
         }
-        final PyramidalCoverageResource pm = (PyramidalCoverageResource) cv;
 
-        //----------------------- sample dimensions-----------------------------
-        final GridCoverageReader gridReader = gridCoverageRef.acquireReader();
-        final int imageIndex                = gridCoverageRef.getImageIndex();
-        List<GridSampleDimension> coverageSampleDims = gridReader.getSampleDimensions(imageIndex);
-        if (!isDimensionsCompatible(pm, coverageSampleDims))
-            throw new DataStoreException("Incompatible GridSampleDimensions. " +
-                    "Input coverage should have compatible GridSampleDimension with output Pyramid.");
+        if (sourceCoverage != null) {
 
-        pm.setSampleDimensions(coverageSampleDims);
-        //----------------------------------------------------------------------
+            final GridGeometry currentGridGeometry = sourceCoverage.getGridGeometry();
 
-        final GridGeometry currentgridGeometry = gridReader.getGridGeometry(imageIndex);
-
-        //-- init listener ---
-        if (processListener != null) initListener(resolution_Per_Envelope, currentgridGeometry, processListener);
-
-        for (Envelope outEnv : resolution_Per_Envelope.keySet()) {
-            final CoordinateReferenceSystem crs = outEnv.getCoordinateReferenceSystem();
-            final int minOrdi0 = CRSUtilities.firstHorizontalAxis(crs);
-            final int minOrdi1 = minOrdi0 + 1;
-            final int outDim   = crs.getCoordinateSystem().getDimension();
-            final DirectPosition upperLeft = new GeneralDirectPosition(crs);
-            upperLeft.setOrdinate(minOrdi0, outEnv.getMinimum(minOrdi0));
-            upperLeft.setOrdinate(minOrdi1, outEnv.getMaximum(minOrdi1));
-
-            //one pyramid for each CoordinateReferenceSystem.
-            final Pyramid pyram         = getOrCreatePyramid(pm, crs);
-//            final CombineIterator itEnv = new CombineIterator(new GeneralEnvelope(outEnv));
-            final GridCombineIterator gitenv = new GridCombineIterator(new GeneralGridGeometry(currentgridGeometry));
-            while (gitenv.hasNext()) {
-                final Envelope gcEnv = gitenv.next();
-                //-- temporary reprojection
-                //-- try later to concatene gridtocrs + findmathtransform srcCrs -> outCrs
-                final GeneralEnvelope envDest = GeneralEnvelope.castOrCopy(Envelopes.transform(gcEnv, crs));
-                final GeneralEnvelope clipped = new GeneralEnvelope(envDest);
-
-                //set upperLeft ordinate
-                for (int d = 0; d < outDim; d++) {
-                    if (d != minOrdi0 && d != minOrdi1) {
-                        upperLeft.setOrdinate(d, envDest.getMedian(d));
-                    } else {
-                        //-- set horizontal crs part coordinates from out envelope into destination envelope
-                        envDest.setRange(d, outEnv.getMinimum(d), outEnv.getMaximum(d));
-                        // clip envelope 2D part
-                        clipped.setRange(d, Math.max(clipped.getMinimum(d),outEnv.getMinimum(d)), Math.min(clipped.getMaximum(d),outEnv.getMaximum(d)));
-                    }
-                }
-                final GridCoverageReadParam rp = new GridCoverageReadParam();
-                rp.setEnvelope(clipped);
-                rp.setDeferred(true);
-
-                resample(pm, pyram.getId(), gridReader, imageIndex, rp, resolution_Per_Envelope.get(outEnv), upperLeft, envDest, minOrdi0, minOrdi1, fillValue, processListener);
+            if (!(currentGridGeometry instanceof GridGeometry2D)) {
+                final IllegalArgumentException ex = new IllegalArgumentException("GridGeometry not instance of GridGeometry2D");
+                if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
+                throw ex;
             }
+
+            if (processListener != null) {
+                initListener(resPerEnv, currentGridGeometry, processListener);
+            }
+
+            //------------------------ add sampleDimension -------------------------
+            final int nbSampleDimension = sourceCoverage.getNumSampleDimensions();
+            final List<GridSampleDimension> sampleList = new ArrayList<>();
+            for (int nbs = 0; nbs < nbSampleDimension; nbs++) {
+                final SampleDimension s = sourceCoverage.getSampleDimension(nbs);
+                if (s instanceof GridSampleDimension) {
+                    sampleList.add((GridSampleDimension) s);
+                } else {
+                    //-- should never append for the moment the only sampleDimension type is GridSampleDimension.
+                    throw new IllegalStateException("The only supported SampleDimension type is GridSampleDimension. Found : "+s.getClass());
+                }
+            }
+            if (!isDimensionsCompatible(pm, sampleList)) {
+                throw new DataStoreException("Incompatible GridSampleDimensions. " +
+                        "Input coverage should have compatible GridSampleDimension with output Pyramid.");
+            }
+
+            pm.setSampleDimensions(sampleList);
+            //----------------------------------------------------------------------
+
+            //Image
+            fillValue = getFillValue((GridCoverage2D)sourceCoverage, fillValue);
+
+            for (Envelope envDest : resPerEnv.keySet()) {
+                if (monitor != null && monitor.isCanceled()) {
+                    final CancellationException ex = new CancellationException();
+                    if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
+                    throw ex;
+                }
+                final CoordinateReferenceSystem crs = envDest.getCoordinateReferenceSystem();
+                final int minOrdi0                  = CRSUtilities.firstHorizontalAxis(crs);
+                final int minOrdi1                  = minOrdi0 + 1;
+                final DirectPosition upperLeft      = new GeneralDirectPosition(crs);
+                upperLeft.setOrdinate(minOrdi0, envDest.getMinimum(minOrdi0));
+                upperLeft.setOrdinate(minOrdi1, envDest.getMaximum(minOrdi1));
+                //one pyramid for each CoordinateReferenceSystem.
+                final Pyramid pyram                 = getOrCreatePyramid(pm, crs);
+                resample(pm, pyram.getId(), ((GridCoverage2D)sourceCoverage), resPerEnv.get(envDest), upperLeft, envDest, minOrdi0, minOrdi1);
+            }
+
+        } else if (sourceResource != null || sourceReader != null) {
+
+            final GridCoverageReader reader;
+            final int imageIndex;
+
+            if (sourceResource != null) {
+                reader = sourceResource.acquireReader();
+                imageIndex = sourceResource.getImageIndex();
+            } else {
+                reader = sourceReader;
+                imageIndex = 0;
+            }
+
+            //----------------------- sample dimensions-----------------------------
+            List<GridSampleDimension> coverageSampleDims = reader.getSampleDimensions(imageIndex);
+            if (!isDimensionsCompatible(pm, coverageSampleDims)) {
+                throw new DataStoreException("Incompatible GridSampleDimensions. " +
+                        "Input coverage should have compatible GridSampleDimension with output Pyramid.");
+            }
+            pm.setSampleDimensions(coverageSampleDims);
+            //----------------------------------------------------------------------
+
+            final GridGeometry currentGridGeometry = reader.getGridGeometry(imageIndex);
+
+            //-- init listener ---
+            if (processListener != null) initListener(resPerEnv, currentGridGeometry, processListener);
+
+            for (Envelope outEnv : resPerEnv.keySet()) {
+                final CoordinateReferenceSystem crs = outEnv.getCoordinateReferenceSystem();
+                final int minOrdi0 = CRSUtilities.firstHorizontalAxis(crs);
+                final int minOrdi1 = minOrdi0 + 1;
+                final int outDim   = crs.getCoordinateSystem().getDimension();
+                final DirectPosition upperLeft = new GeneralDirectPosition(crs);
+                upperLeft.setOrdinate(minOrdi0, outEnv.getMinimum(minOrdi0));
+                upperLeft.setOrdinate(minOrdi1, outEnv.getMaximum(minOrdi1));
+
+                //one pyramid for each CoordinateReferenceSystem.
+                final Pyramid pyram = getOrCreatePyramid(pm, crs);
+                final GridGeometryIterator gitenv = new GridGeometryIterator(new GeneralGridGeometry(currentGridGeometry));
+                while (gitenv.hasNext()) {
+                    final GeneralEnvelope envDest = new GeneralEnvelope(Envelopes.transform(gitenv.next().getEnvelope(), crs));
+                    final GeneralEnvelope clipped = new GeneralEnvelope(envDest);
+
+                    for (int d = 0; d < outDim; d++) {
+                        if (d != minOrdi0 && d != minOrdi1) {
+                            //set upperLeft ordinate
+                            upperLeft.setOrdinate(d, envDest.getMedian(d));
+                        } else {
+                            //-- set horizontal crs part coordinates from out envelope into destination envelope
+                            envDest.setRange(d, outEnv.getMinimum(d), outEnv.getMaximum(d));
+                            // clip envelope 2D part
+                            clipped.setRange(d, Math.max(clipped.getMinimum(d),outEnv.getMinimum(d)), Math.min(clipped.getMaximum(d),outEnv.getMaximum(d)));
+                        }
+                    }
+
+                    final GridCoverageReadParam rp = new GridCoverageReadParam();
+                    rp.setEnvelope(clipped);
+                    rp.setDeferred(true);
+
+                    final GridCoverage gridCoverage = reader.read(imageIndex, rp);
+                    final GridGeometry gg = gridCoverage.getGridGeometry();
+                    if (!(gg instanceof GridGeometry2D)) {
+                        final IllegalArgumentException ex = new IllegalArgumentException("GridGeometry should be instance of GridGeometry2D");
+                        if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
+                        throw ex;
+                    }
+
+                    final GridCoverage2D gridCoverage2D = (GridCoverage2D) gridCoverage;
+                    resample(pm, pyram.getId(), gridCoverage2D, resPerEnv.get(outEnv), upperLeft, envDest, minOrdi0, minOrdi1);
+                }
+            }
+
+            if (sourceResource != null) {
+                sourceResource.recycle(reader);
+            }
+
+        } else {
+            final IllegalArgumentException ex = new IllegalArgumentException("Source parameter is not defined.");
+            if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
+            throw ex;
         }
-        gridCoverageRef.recycle(gridReader);
-        if (processListener != null)  processListener.completed(new ProcessEvent(fakeProcess, "Pyramid coverage builder successfully submitted.", 100));
+
+        //finished event
+        if (processListener != null)  {
+            processListener.completed(new ProcessEvent(fakeProcess, "Pyramid coverage builder successfully submitted.", 100));
+        }
     }
 
     /**
@@ -387,7 +697,7 @@ public class PyramidCoverageBuilder {
      */
     private void resample (final PyramidalCoverageResource pm, String pyramidID, GridCoverageReader coverageReader,
             int imageIndex, GridCoverageReadParam readParam, double[] scaleLevel, DirectPosition upperLeft,
-            Envelope envDest, int widthAxis, int heightAxis, double[] fillValue, final ProcessListener processListener)
+            Envelope envDest, int widthAxis, int heightAxis)
             throws NoninvertibleTransformException, FactoryException, TransformException, DataStoreException, IOException {
 
         final GeneralGridGeometry ggg = coverageReader.getGridGeometry(imageIndex);
@@ -481,10 +791,10 @@ public class PyramidCoverageBuilder {
                     sx,sy,min0,max1
                     );
 
-            try{
+            try {
                 pm.writeTiles(pyramidID, mosaicId, img, false, null);
-            }catch(ImagingOpException ex){
-                if(processListener!=null){
+            } catch(ImagingOpException ex) {
+                if (processListener!=null) {
                     float prc = (float)niemeTile / globalTileNumber;
                     processListener.failed(new ProcessEvent(fakeProcess, "writing tiles", prc, ex));
                 }
@@ -492,221 +802,6 @@ public class PyramidCoverageBuilder {
             }
 
         }
-    }
-
-    /**
-     * <p>Effectuate resampling, re-projection, tile cutting and insertion in datastore on {@link GridCoverage}.<br/><br/>
-     *
-     * Note : <br/>
-     * {@link GridGeometry} from {@link GridCoverage} must be instance of {@link GridGeometry2D}
-     * else a {@link IllegalArgumentException} will be thrown.<br/>
-     * fillValue parameter must have same length than pixel size from image within coverage.<br/>
-     * If fill value is {@code null} a table of zero value with appropriate length is use.
-     * </p>
-     * @param gridCoverage {@link GridCoverage} which will be stored.
-     * @param coverageStore {@link CoverageStore} where operation on {@link GridCoverage} are stored.
-     * @param coverageName name given to the set of operations results, performed on the coverage in the datastore.
-     * @param resolution_Per_Envelope reprojection and resampling attibuts.
-     * @param fillValue contains value use when pixel transformation is out of source image boundary.
-     * @param processListener {@link ProcessListener} to send state informations (should be null).
-     * @param monitor A progress monitor used for detecting a cancel request during the process. Can be {@code null}.
-     * @throws DataStoreException if tile writing throw exception.
-     * @throws TransformException if problems during resampling operation.
-     * @throws FactoryException if impossible to find {@code MathTransform} between two {@link CoordinateReferenceSystem}.
-     */
-    public void create(GridCoverage gridCoverage, CoverageStore coverageStore, GenericName coverageName,
-            Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue,
-            ProcessListener processListener, ProgressMonitor monitor)
-            throws DataStoreException, TransformException, FactoryException, IOException {
-        ArgumentChecks.ensureNonNull("GridCoverage"           , gridCoverage);
-        ArgumentChecks.ensureNonNull("output CoverageStore"   , coverageStore);
-        ArgumentChecks.ensureNonNull("coverageName"           , coverageName);
-        ArgumentChecks.ensureNonNull("resolution_Per_Envelope", resolution_Per_Envelope);
-
-        final GridGeometry gg = gridCoverage.getGridGeometry();
-
-        if (!(gg instanceof GridGeometry2D)) {
-            final IllegalArgumentException ex = new IllegalArgumentException("GridGeometry not instance of GridGeometry2D");
-            if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
-            throw ex;
-        }
-
-        final CoverageResource cv  = getOrCreateCRef(coverageStore,coverageName);
-        if (!(cv instanceof PyramidalCoverageResource)) {
-            final IllegalArgumentException ex = new IllegalArgumentException("CoverageReference not instance of PyramidalCoverageReference");
-            if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
-            throw ex;
-        }
-        if (monitor != null && monitor.isCanceled()) {
-            final CancellationException ex = new CancellationException();
-            if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
-            throw ex;
-        }
-
-        if (processListener != null) initListener(resolution_Per_Envelope, gg, processListener);
-
-        final PyramidalCoverageResource pm     = (PyramidalCoverageResource) cv;
-
-        //------------------------ add sampleDimension -------------------------
-        final int nbSampleDimension                     = gridCoverage.getNumSampleDimensions();
-        final ArrayList<GridSampleDimension> sampleList = new ArrayList<GridSampleDimension>();
-        for (int nbs = 0; nbs < nbSampleDimension; nbs++) {
-            final SampleDimension s = gridCoverage.getSampleDimension(nbs);
-            if (s instanceof GridSampleDimension) {
-                sampleList.add((GridSampleDimension) s);
-            } else {
-                //-- should never append for the moment the only sampleDimension type is GridSampleDimension.
-                throw new IllegalStateException("The only supported SampleDimension type is GridSampleDimension. Found : "+s.getClass());
-            }
-        }
-        if (!isDimensionsCompatible(pm, sampleList))
-            throw new DataStoreException("Incompatible GridSampleDimensions. " +
-                    "Input coverage should have compatible GridSampleDimension with output Pyramid.");
-
-        pm.setSampleDimensions(sampleList);
-        //----------------------------------------------------------------------
-
-
-        //Image
-        fillValue = getFillValue((GridCoverage2D)gridCoverage, fillValue);
-
-        for (Envelope envDest : resolution_Per_Envelope.keySet()) {
-            if (monitor != null && monitor.isCanceled()) {
-                final CancellationException ex = new CancellationException();
-                if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
-                throw ex;
-            }
-            final CoordinateReferenceSystem crs = envDest.getCoordinateReferenceSystem();
-            final int minOrdi0                  = CoverageUtilities.getMinOrdinate(crs);
-            final int minOrdi1                  = minOrdi0 + 1;
-            final DirectPosition upperLeft      = new GeneralDirectPosition(crs);
-            upperLeft.setOrdinate(minOrdi0, envDest.getMinimum(minOrdi0));
-            upperLeft.setOrdinate(minOrdi1, envDest.getMaximum(minOrdi1));
-            //one pyramid for each CoordinateReferenceSystem.
-            final Pyramid pyram                 = getOrCreatePyramid(pm, crs);
-            resample(pm, pyram.getId(), ((GridCoverage2D)gridCoverage), resolution_Per_Envelope.get(envDest), upperLeft, envDest, minOrdi0, minOrdi1, fillValue, processListener);
-        }
-        if (processListener != null)  processListener.completed(new ProcessEvent(fakeProcess, "Pyramid coverage builder successfully submitted.", 100));
-    }
-
-    /**
-     * <p>Effectuate resampling, re-projection, tile cutting and insertion in datastore on {@link GridCoverage} from {@link GridCoverageReader}.<br/><br/>
-     *
-     * Note : <br/>
-     * {@link GridGeometry} from {@link GridCoverage} must be instance of {@link GridGeometry2D}
-     * else a {@link IllegalArgumentException} will be thrown.<br/>
-     * fillValue parameter must have same length than pixel size from image within coverage.<br/>
-     * If fill value is {@code null} a table of zero value with appropriate length is use.
-     * </p>
-     *
-     * @param reader {@link GridCoverageReader} which contain {@link GridCoverage} will be stored.
-     * @param coverageStore {@link CoverageStore} where operation on {@link GridCoverage} are stored.
-     * @param coverageName name given to the set of operations results, performed on the coverage in the datastore.
-     * @param resolution_Per_Envelope reprojection and resampling attibuts.
-     * @param fillValue contains value use when pixel transformation is out of source image boundary.(should be {@code null}).
-     * @throws DataStoreException if tile writing throw exception.
-     * @throws TransformException if problems during resampling operation.
-     * @throws FactoryException if impossible to find {@code MathTransform} between two {@link CoordinateReferenceSystem}.
-     */
-    public void create(GridCoverageReader reader, CoverageStore coverageStore, GenericName coverageName,
-            Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue)
-            throws DataStoreException, TransformException, FactoryException, IOException {
-        create(reader, coverageStore, coverageName, resolution_Per_Envelope, fillValue, null);
-    }
-
-    /**
-     * <p>Effectuate resampling, re-projection, tile cutting and insertion in datastore on {@link GridCoverage} from {@link GridCoverageReader}.<br/><br/>
-     *
-     * Note : <br/>
-     * {@link GridGeometry} from {@link GridCoverage} must be instance of {@link GridGeometry2D}
-     * else a {@link IllegalArgumentException} will be thrown.<br/>
-     * fillValue parameter must have same length than pixel size from image within coverage.<br/>
-     * If fill value is {@code null} a table of zero value with appropriate length is use.
-     * </p>
-     *
-     * @param reader {@link GridCoverageReader} which contain {@link GridCoverage} will be stored.
-     * @param coverageStore {@link CoverageStore} where operation on {@link GridCoverage} are stored.
-     * @param coverageName name given to the set of operations results, performed on the coverage in the datastore.
-     * @param resolution_Per_Envelope reprojection and resampling attibuts.
-     * @param fillValue contains value use when pixel transformation is out of source image boundary.
-     * @param processListener {@link ProcessListener} to send state informations (should be null).
-     * @throws DataStoreException if tile writing throw exception.
-     * @throws TransformException if problems during resampling operation.
-     * @throws FactoryException if impossible to find {@code MathTransform} between two {@link CoordinateReferenceSystem}.
-     */
-    public void create(GridCoverageReader reader, CoverageStore coverageStore, GenericName coverageName,
-            Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue, ProcessListener processListener)
-            throws DataStoreException, TransformException, FactoryException, IOException {
-        ArgumentChecks.ensureNonNull("GridCoverageReader"     , reader);
-        ArgumentChecks.ensureNonNull("output CoverageStore"   , coverageStore);
-        ArgumentChecks.ensureNonNull("coverageName"           , coverageName);
-        ArgumentChecks.ensureNonNull("resolution_Per_Envelope", resolution_Per_Envelope);
-
-        final GridGeometry currentGridGeometry = reader.getGridGeometry(0);
-        if (processListener != null) initListener(resolution_Per_Envelope, currentGridGeometry, processListener);
-
-        final GridCoverageReadParam rp = new GridCoverageReadParam();
-
-        //one coverageReference for each reader.
-        final CoverageResource cv = getOrCreateCRef(coverageStore,coverageName);
-
-        if (!(cv instanceof PyramidalCoverageResource)) {
-            final IllegalArgumentException ex = new IllegalArgumentException("CoverageStore parameter should be instance of PyramidalModel."+coverageStore.toString());
-            if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
-            throw ex;
-        }
-        final PyramidalCoverageResource pm = (PyramidalCoverageResource) cv;
-
-        //----------------------- sample dimensions-----------------------------
-        List<GridSampleDimension> coverageSampleDims = reader.getSampleDimensions(0);
-        if (!isDimensionsCompatible(pm, coverageSampleDims))
-            throw new DataStoreException("Incompatible GridSampleDimensions. " +
-                    "Input coverage should have compatible GridSampleDimension with output Pyramid.");
-        pm.setSampleDimensions(coverageSampleDims); //-- default image index
-        //----------------------------------------------------------------------
-
-        for (Envelope outEnv : resolution_Per_Envelope.keySet()) {
-            final CoordinateReferenceSystem crs = outEnv.getCoordinateReferenceSystem();
-            final int minOrdi0 = CoverageUtilities.getMinOrdinate(crs);
-            final int minOrdi1 = minOrdi0 + 1;
-            final int outDim   = crs.getCoordinateSystem().getDimension();
-            final DirectPosition upperLeft = new GeneralDirectPosition(crs);
-            upperLeft.setOrdinate(minOrdi0, outEnv.getMinimum(minOrdi0));
-            upperLeft.setOrdinate(minOrdi1, outEnv.getMaximum(minOrdi1));
-
-            //one pyramid for each CoordinateReferenceSystem.
-            final Pyramid pyram         = getOrCreatePyramid(pm, crs);
-//            final CombineIterator itEnv = new CombineIterator(new GeneralEnvelope(outEnv));
-            final GridCombineIterator gitenv = new GridCombineIterator(new GeneralGridGeometry(currentGridGeometry));
-            while (gitenv.hasNext()) {
-                final GeneralEnvelope envDest = GeneralEnvelope.castOrCopy(Envelopes.transform(gitenv.next(), crs));
-
-                for (int d = 0; d < outDim; d++) {
-                    if (d != minOrdi0 && d != minOrdi1) {
-                        //set upperLeft ordinate
-                        upperLeft.setOrdinate(d, envDest.getMedian(d));
-                    } else {
-                        //-- set horizontal crs part coordinates from out envelope into destination envelope
-                        envDest.setRange(d, outEnv.getMinimum(d), outEnv.getMaximum(d));
-                    }
-                }
-                rp.clear();
-                rp.setEnvelope(envDest);
-                rp.setDeferred(true);
-                final GridCoverage gridCoverage = reader.read(0, rp);
-                final GridGeometry gg           = gridCoverage.getGridGeometry();
-                if (!(gg instanceof GridGeometry2D)) {
-                    final IllegalArgumentException ex = new IllegalArgumentException("GridGeometry should be instance of GridGeometry2D");
-                    if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
-                    throw ex;
-                }
-
-                final GridCoverage2D gridCoverage2D = (GridCoverage2D) gridCoverage;
-
-                resample(pm, pyram.getId(), gridCoverage2D, resolution_Per_Envelope.get(outEnv), upperLeft, envDest, minOrdi0, minOrdi1, fillValue, processListener);
-            }
-        }
-        if (processListener != null)  processListener.completed(new ProcessEvent(fakeProcess, "Pyramid coverage builder successfully submitted.", 100));
     }
 
     /**
@@ -726,7 +821,7 @@ public class PyramidCoverageBuilder {
      * with length equal to source coverage image band number is created.
      */
     private void resample (final PyramidalCoverageResource pm, String pyramidID, GridCoverage2D gridCoverage2D, double[] scaleLevel,
-            DirectPosition upperLeft, Envelope envDest, int widthAxis, int heightAxis, double[] fillValue, final ProcessListener processListener)
+            DirectPosition upperLeft, Envelope envDest, int widthAxis, int heightAxis)
             throws NoninvertibleTransformException, FactoryException, TransformException, DataStoreException, IOException {
 
         final GridGeometry2D gg2d       = gridCoverage2D.getGridGeometry();
@@ -871,10 +966,9 @@ public class PyramidCoverageBuilder {
                 final int minOrdi0 = CoverageUtilities.getMinOrdinate(crs);
                 final int minOrdi1 = minOrdi0 + 1;
                 final int outDim   = crs.getCoordinateSystem().getDimension();
-//                final CombineIterator itEnv = new CombineIterator(new GeneralEnvelope(outEnv));
-                final GridCombineIterator gitEnv = new GridCombineIterator(new GeneralGridGeometry(currentGridGeom));
+                final GridGeometryIterator gitEnv = new GridGeometryIterator(new GeneralGridGeometry(currentGridGeom));
                 while (gitEnv.hasNext()) {
-                    final Envelope envGit = gitEnv.next();
+                    final Envelope envGit = gitEnv.next().getEnvelope();
                     final GeneralEnvelope envDest = GeneralEnvelope.castOrCopy(Envelopes.transform(envGit, crs));
                     for (int d = 0; d < outDim; d++) {
                         if (d == minOrdi0 || d == minOrdi1) {
@@ -894,29 +988,29 @@ public class PyramidCoverageBuilder {
     }
 
     /**
-     * Search and return a {@link CoverageResource} in a {@link CoverageStore} from its {@link GenericName}.<br/>
-     * If it doesn't exist a {@link CoverageResource} is created, added in {@link CoverageStore} parameter and returned.
+     * Search and return a {@link GridCoverageResource} in a {@link CoverageStore} from its {@link GenericName}.<br/>
+     * If it doesn't exist a {@link GridCoverageResource} is created, added in {@link CoverageStore} parameter and returned.
      *
      * @param coverageStore
      * @param coverageName
-     * @return a {@link CoverageResource} in a {@link CoverageStore} from its {@link GenericName}.
+     * @return a {@link GridCoverageResource} in a {@link CoverageStore} from its {@link GenericName}.
      * @throws DataStoreException
      */
-    private CoverageResource getOrCreateCRef(CoverageStore coverageStore, GenericName coverageName) throws DataStoreException {
-        CoverageResource cv = null;
+    private GridCoverageResource getOrCreateCRef(CoverageStore coverageStore, GenericName coverageName) throws DataStoreException {
+        GridCoverageResource cv = null;
         for (GenericName n : coverageStore.getNames()) {
             if (n.tip().toString().equals(coverageName.tip().toString())) {
                 final Resource candidate = coverageStore.findResource(n.toString());
-                if (!(candidate instanceof CoverageResource)) {
+                if (!(candidate instanceof GridCoverageResource)) {
                     throw new DataStoreException("Resource "+coverageName+" is not a coverage.");
                 }
-                cv = (CoverageResource) candidate;
+                cv = (GridCoverageResource) candidate;
             }
         }
         if (cv == null) {
             if (coverageStore instanceof WritableAggregate) {
                 final WritableAggregate agg = (WritableAggregate) coverageStore;
-                cv = (CoverageResource) agg.add(new DefiningCoverageResource(coverageName, null));
+                cv = (GridCoverageResource) agg.add(new DefiningCoverageResource(coverageName, null));
             } else {
                 throw new DataStoreException("Store do not support creation operation.");
             }
@@ -933,7 +1027,7 @@ public class PyramidCoverageBuilder {
      * @return a {@link Pyramid} in a {@link PyramidalCoverageResource} from its {@link CoordinateReferenceSystem} properties.
      * @throws DataStoreException
      */
-    public static synchronized Pyramid getOrCreatePyramid(final PyramidalCoverageResource pm, final CoordinateReferenceSystem crs) throws DataStoreException {
+    private static synchronized Pyramid getOrCreatePyramid(final PyramidalCoverageResource pm, final CoordinateReferenceSystem crs) throws DataStoreException {
         Pyramid pyramid = null;
         for (Pyramid p : pm.getPyramidSet().getPyramids()) {
             if (Utilities.equalsIgnoreMetadata(p.getCoordinateReferenceSystem(), crs)) {
@@ -949,7 +1043,7 @@ public class PyramidCoverageBuilder {
         return pyramid;
     }
 
-    public static synchronized GridMosaic getOrCreateMosaic(final PyramidalCoverageResource pm,
+    private static synchronized GridMosaic getOrCreateMosaic(final PyramidalCoverageResource pm,
             String pyramidID, Dimension gridsize, Dimension tileSize, DirectPosition upperLeft, double pixelScal) throws DataStoreException {
         final Pyramid pyramid = pm.getPyramidSet().getPyramid(pyramidID);
         for(GridMosaic gm : pyramid.getMosaics()){
@@ -959,35 +1053,6 @@ public class PyramidCoverageBuilder {
         }
         return pm.createMosaic(pyramidID, gridsize, tileSize, upperLeft, pixelScal);
     }
-
-    /**
-     * Returns a {@link GridMosaic} which already exist.<br><br>
-     * <strong>
-     * Note : an exception is thrown if tile does not exist.
-     * </strong>
-     *
-     * @param pm {@link PyramidalCoverageResource} where the requested {@link GridMosaic} is looking for.
-     * @param pyramidID {@link Pyramid} identifier of the requested {@link GridMosaic}.
-     * @param envDest requested {@link Envelope} in relation with needed {@link GridMosaic}.
-     * @param pixelScal requested scale in relation with needed {@link GridMosaic}.
-     * @return a {@link GridMosaic} which already exist.
-     * @throws DataStoreException if pyramid does not match with the pyramid_ID or
-     * also if requested {@link GridMosaic} was not found.
-     */
-    public static synchronized GridMosaic getMosaic(final PyramidalCoverageResource pm,
-            String pyramidID, Envelope envDest, double pixelScal) throws DataStoreException {
-        final Pyramid pyramid = pm.getPyramidSet().getPyramid(pyramidID);
-        for (GridMosaic gm : pyramid.getMosaics()) {
-            if (gm.getScale() == pixelScal) {
-                final GeneralEnvelope mosGenEnv = new GeneralEnvelope(gm.getEnvelope());
-                if (mosGenEnv.intersects(envDest, true)) { //-- return a mosaic only if they have more than just touch intersection
-                    return gm;
-                }
-            }
-        }
-        throw new DataStoreException("getOrCreateMosaic : with reuse tile. No already built mosaic can contains new data.");
-    }
-
 
     /**
      * Check if two GridSampleDimension list are compatible.

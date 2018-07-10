@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.feature.op;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;

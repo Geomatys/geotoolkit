@@ -32,16 +32,6 @@ import static org.junit.Assert.*;
  * @author Guilhem Legal (Geomatys)
  */
 public class TimePeriodTypeTest extends org.geotoolkit.test.TestBase {
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
     @Test
     public void getTimeTest() throws Exception {
         final String id = "id-1";
@@ -118,6 +108,5 @@ public class TimePeriodTypeTest extends org.geotoolkit.test.TestBase {
 
         tp = new TimePeriodType(null, snull);
         assertEquals(-1, tp.getTime());
-
     }
 }

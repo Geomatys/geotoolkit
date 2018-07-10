@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.om.xml;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;

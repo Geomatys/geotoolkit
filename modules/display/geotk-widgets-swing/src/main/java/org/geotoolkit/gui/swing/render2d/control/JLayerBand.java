@@ -77,7 +77,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Description;
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -179,7 +179,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
 
             GeneralGridGeometry gridGeometry;
             try {
-                final CoverageResource covRef = coverageLayer.getCoverageReference();
+                final GridCoverageResource covRef = coverageLayer.getCoverageReference();
                 final GridCoverageReader reader = covRef.acquireReader();
                 gridGeometry = reader.getGridGeometry(covRef.getImageIndex());
                 covRef.recycle(reader);

@@ -1,6 +1,6 @@
 package org.geotoolkit.pending.demo.datamodel;
 
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Point;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.Query;

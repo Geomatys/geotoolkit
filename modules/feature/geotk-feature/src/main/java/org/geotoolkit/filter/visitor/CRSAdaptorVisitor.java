@@ -1,6 +1,6 @@
 package org.geotoolkit.filter.visitor;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;

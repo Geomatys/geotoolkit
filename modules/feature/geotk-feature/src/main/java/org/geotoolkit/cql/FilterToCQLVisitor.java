@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.cql;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.WKTWriter;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.WKTWriter;
 import java.util.Date;
 import java.util.List;
 import java.util.SimpleTimeZone;

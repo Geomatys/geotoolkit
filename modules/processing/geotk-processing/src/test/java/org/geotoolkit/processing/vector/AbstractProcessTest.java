@@ -17,8 +17,8 @@
 
 package org.geotoolkit.processing.vector;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
 import java.util.Objects;
 import org.geotoolkit.data.FeatureCollection;
 import org.opengis.util.NoSuchIdentifierException;

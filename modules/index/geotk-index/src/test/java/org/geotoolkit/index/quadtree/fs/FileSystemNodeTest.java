@@ -6,7 +6,7 @@
 package org.geotoolkit.index.quadtree.fs;
 
 import org.geotoolkit.index.quadtree.AbstractNode;
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 import java.io.IOException;
 import org.geotoolkit.index.quadtree.DataReader;
 import org.geotoolkit.index.Data;

@@ -19,6 +19,7 @@ package org.geotoolkit.gml.v311;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Date;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.Duration;
 import javax.xml.bind.JAXBElement;
@@ -33,14 +34,15 @@ import org.geotoolkit.gml.xml.v311.LineStringSegmentType;
 import org.geotoolkit.gml.xml.v311.ObjectFactory;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.gml.xml.v311.TimePositionType;
+import org.geotoolkit.gml.xml.v311.TimeInstantType;
 import org.apache.sis.xml.MarshallerPool;
 
 //Junit dependencies
-import org.apache.sis.xml.Namespaces;
 import org.junit.*;
 
-import static org.apache.sis.test.Assert.*;
-import org.geotoolkit.gml.xml.v311.TimeInstantType;
+import static org.apache.sis.test.MetadataAssert.*;
+import org.opengis.temporal.Instant;
+import org.opengis.temporal.Period;
 
 /**
  *
@@ -57,15 +59,11 @@ public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
     private static MarshallerPool pool;
     private Marshaller   marshaller;
     private Unmarshaller unmarshaller;
-    private static ObjectFactory FACTORY = new ObjectFactory();
+    private static final ObjectFactory FACTORY = new ObjectFactory();
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         pool = GMLMarshallerPool.getInstance();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
     }
 
     @Before
@@ -101,7 +99,7 @@ public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         String result = sw.toString();
         //we remove the first line
-        result = result.substring(result.indexOf("?>") + 3);
+        result = result.substring(result.indexOf("?>") + 2).trim();
 
         String expResult = "<gml:Envelope xmlns:gml=\"" + GML + '"' +
                            " srsName=\"urn:ogc:def:crs:EPSG:6.8:4283\">" + '\n' +
@@ -134,7 +132,7 @@ public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         result = sw.toString();
         //we remove the first line
-        result = result.substring(result.indexOf("?>") + 3);
+        result = result.substring(result.indexOf("?>") + 2).trim();
 
         expResult = "<gml:LineStringSegment xmlns:gml=\"" + GML + "\">\n" +
                     "  <gml:posList>1.0 1.1 1.2</gml:posList>" + '\n' +
@@ -152,7 +150,7 @@ public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         result = sw.toString();
         //we remove the first line
-        result = result.substring(result.indexOf("?>") + 3);
+        result = result.substring(result.indexOf("?>") + 2).trim();
 
         expResult = "<gml:LineStringSegment xmlns:gml=\"" + GML + "\">\n" +
                     "  <gml:pos>1.1 1.2</gml:pos>" + '\n' +
@@ -216,9 +214,9 @@ public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
         Object result = unmarshaller.unmarshal(new StringReader(xml));
 
         if (result instanceof JAXBElement) {
-            result = ((JAXBElement)result).getValue();
+            result = ((JAXBElement) result).getValue();
         }
-        assertEquals(expResult, result);
+        assertPeriodEquals(expResult, (Period) result);
 
         end       = null;
         expResult = new TimePeriodType(new TimeInstantType(begin), new TimeInstantType(end));
@@ -231,9 +229,17 @@ public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
         result = unmarshaller.unmarshal(new StringReader(xml));
 
         if (result instanceof JAXBElement) {
-            result = ((JAXBElement)result).getValue();
+            result = ((JAXBElement) result).getValue();
         }
-        assertEquals(expResult, result);
+        assertPeriodEquals(expResult, (Period) result);
+    }
 
+    private static void assertPeriodEquals(Period p1, Period p2) {
+        assertEquals(getDate(p1.getBeginning()), getDate(p2.getBeginning()));
+        assertEquals(getDate(p1.getEnding()),    getDate(p2.getEnding()));
+    }
+
+    private static Date getDate(Instant ins) {
+        return (ins != null) ? ins.getDate() : null;
     }
 }

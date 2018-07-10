@@ -18,7 +18,7 @@
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import java.awt.event.MouseEvent;
 import java.awt.geom.NoninvertibleTransformException;

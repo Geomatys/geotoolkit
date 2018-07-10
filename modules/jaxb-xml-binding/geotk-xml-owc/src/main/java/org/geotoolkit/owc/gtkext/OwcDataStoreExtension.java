@@ -44,7 +44,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -166,7 +166,7 @@ public class OwcDataStoreExtension extends OwcExtension {
             }
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final CoverageResource covref = cml.getCoverageReference();
+            final GridCoverageResource covref = cml.getCoverageReference();
             final DataStore store = covref.getStore();
             if(store!=null){
                 final DataStoreProvider factory = store.getProvider();
@@ -188,7 +188,7 @@ public class OwcDataStoreExtension extends OwcExtension {
             }
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final CoverageResource covref = cml.getCoverageReference();
+            final GridCoverageResource covref = cml.getCoverageReference();
             final DataStore store = covref.getStore();
             if(store!=null){
                 return store.getOpenParameters();
@@ -207,7 +207,7 @@ public class OwcDataStoreExtension extends OwcExtension {
             }
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final CoverageResource covref = cml.getCoverageReference();
+            final GridCoverageResource covref = cml.getCoverageReference();
             return covref.getIdentifier().toString();
         }
         return null;

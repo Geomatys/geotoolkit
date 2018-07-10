@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.WKTReader;
-import com.vividsolutions.jts.io.WKTWriter;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.WKTReader;
+import org.locationtech.jts.io.WKTWriter;
 import java.awt.BorderLayout;
 import org.geotoolkit.cql.JCQLTextPane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;

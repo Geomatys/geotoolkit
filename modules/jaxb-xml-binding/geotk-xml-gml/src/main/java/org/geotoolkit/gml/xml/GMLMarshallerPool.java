@@ -14,16 +14,16 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.gml.xml;
 
 import java.util.Map;
 import java.util.Collections;
-import java.util.HashMap;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import org.apache.sis.internal.xml.LegacyNamespaces;
 import org.apache.sis.xml.MarshallerPool;
-import org.apache.sis.internal.jaxb.LegacyNamespaces;
+import org.apache.sis.xml.XML;
+
 /**
  *
  * @author Quentin Boileau (Geomatys)
@@ -32,8 +32,8 @@ public final class GMLMarshallerPool {
 
     private static final MarshallerPool instance;
     static {
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put(LegacyNamespaces.APPLY_NAMESPACE_REPLACEMENTS, Boolean.FALSE);
+        final Map<String, Object> properties = Collections.singletonMap
+                (XML.METADATA_VERSION, LegacyNamespaces.VERSION_2007);
         try {
             instance = new MarshallerPool(createJAXBContext(
                     "org.geotoolkit.gml.xml.v311:" +
@@ -60,8 +60,7 @@ public final class GMLMarshallerPool {
      * @throws JAXBException If the JAXB context can not be created.
      */
     public static JAXBContext createJAXBContext(final String packages, final ClassLoader loader) throws JAXBException {
-        final Map<String,?> properties = properties();
-        return JAXBContext.newInstance(packages, loader, properties);
+        return JAXBContext.newInstance(packages, loader, properties());
     }
 
     /**
@@ -73,8 +72,7 @@ public final class GMLMarshallerPool {
      * @throws JAXBException If the JAXB context can not be created.
      */
     public static JAXBContext createJAXBContext(final Class<?>... classes) throws JAXBException {
-        final Map<String,?> properties = properties();
-        return JAXBContext.newInstance(classes, properties);
+        return JAXBContext.newInstance(classes, properties());
     }
 
     /**

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.gui.javafx.feature;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.util.List;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -30,7 +30,7 @@ import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.BorderPane;
 import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.gui.crs.CRSButton;
+import org.apache.sis.gui.referencing.CRSButton;
 import org.geotoolkit.internal.GeotkFX;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;

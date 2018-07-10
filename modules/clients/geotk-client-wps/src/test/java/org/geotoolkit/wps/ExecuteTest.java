@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.wps;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
@@ -36,7 +36,6 @@ import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import static org.apache.sis.test.Assert.*;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.io.WPSSchema;
 import org.apache.sis.referencing.CommonCRS;
@@ -44,6 +43,8 @@ import org.geotoolkit.wps.xml.Execute;
 import org.geotoolkit.wps.xml.v100.InputType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
+
+import static org.apache.sis.test.MetadataAssert.*;
 
 
 /**

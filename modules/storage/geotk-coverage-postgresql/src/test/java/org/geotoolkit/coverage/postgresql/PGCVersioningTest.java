@@ -52,9 +52,9 @@ import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -95,7 +95,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
             store = factory.open(params);
         }
 
-        for (CoverageResource r : DataStores.flatten(store, true, CoverageResource.class)) {
+        for (GridCoverageResource r : DataStores.flatten(store, true, GridCoverageResource.class)) {
             store.remove(r);
         }
         assertTrue(store.getNames().isEmpty());

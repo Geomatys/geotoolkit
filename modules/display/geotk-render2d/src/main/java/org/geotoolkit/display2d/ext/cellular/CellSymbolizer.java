@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.display2d.ext.cellular;
 
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +58,7 @@ import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.Rule;
 import org.opengis.style.StyleVisitor;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -206,7 +206,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         return buildCellType(layer.getCoverageReference());
     }
 
-    public static FeatureType buildCellType(CoverageResource ref) throws DataStoreException{
+    public static FeatureType buildCellType(GridCoverageResource ref) throws DataStoreException{
         final GridCoverageReader reader = ref.acquireReader();
         final FeatureType sft = buildCellType(reader, ref.getImageIndex());
         ref.recycle(reader);

@@ -52,8 +52,8 @@ import org.opengis.geometry.Envelope;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Description;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.CollectionCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -133,9 +133,9 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
         }
 
         final CollectionCoverageResource ref = (CollectionCoverageResource) item.getCoverageReference();
-        final Collection<CoverageResource> references = ref.getCoverages(null);
+        final Collection<GridCoverageResource> references = ref.getCoverages(null);
         final LoopLayer layer = new LoopLayer();
-        for (CoverageResource cref : references) {
+        for (GridCoverageResource cref : references) {
             layer.ref = cref;
             paintRaster(layer, rules, renderingContext);
         }
@@ -260,10 +260,10 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
      */
     private class LoopLayer implements CoverageMapLayer {
 
-        private CoverageResource ref;
+        private GridCoverageResource ref;
 
         @Override
-        public CoverageResource getCoverageReference() {
+        public GridCoverageResource getCoverageReference() {
             return ref;
         }
 

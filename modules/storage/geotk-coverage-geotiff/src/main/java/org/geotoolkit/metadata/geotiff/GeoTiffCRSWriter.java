@@ -55,7 +55,7 @@ import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.referencing.operation.provider.Orthographic;
-import org.geotoolkit.referencing.operation.provider.ObliqueMercator;
+import org.apache.sis.internal.referencing.provider.ObliqueMercator;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
 import org.geotoolkit.resources.Errors;
 
@@ -478,7 +478,7 @@ public final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // Oblique Mercator
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.isHeuristicMatchForName(ObliqueMercator.PARAMETERS, desc)) {
+        if (IdentifiedObjects.isHeuristicMatchForName(new ObliqueMercator().getParameters(), desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_ObliqueMercator);
             stack.addAscii(PCSCitationGeoKey, name);

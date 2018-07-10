@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;

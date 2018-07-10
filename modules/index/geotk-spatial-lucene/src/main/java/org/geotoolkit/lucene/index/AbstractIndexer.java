@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.logging.Level;
 
 // JTS dependencies
-import com.vividsolutions.jts.geom.*;
+import org.locationtech.jts.geom.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Logger;

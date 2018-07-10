@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.kml.xml;
 
-import com.vividsolutions.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.CoordinateSequence;
 
 import java.awt.Color;
 import java.io.IOException;

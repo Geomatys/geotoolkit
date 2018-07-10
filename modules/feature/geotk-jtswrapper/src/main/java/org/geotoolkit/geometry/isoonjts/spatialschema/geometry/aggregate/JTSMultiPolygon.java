@@ -44,8 +44,8 @@ public class JTSMultiPolygon extends AbstractJTSGeometry {
      * {@inheritDoc }
      */
     @Override
-    protected com.vividsolutions.jts.geom.Geometry computeJTSPeer() {
-        List<com.vividsolutions.jts.geom.Geometry> childParts = new ArrayList<com.vividsolutions.jts.geom.Geometry>();
+    protected org.locationtech.jts.geom.Geometry computeJTSPeer() {
+        List<org.locationtech.jts.geom.Geometry> childParts = new ArrayList<org.locationtech.jts.geom.Geometry>();
         for(Polygon prim : elements) {
             if(prim instanceof JTSGeometry){
                 JTSGeometry jtsGeom = (JTSGeometry) prim;
@@ -57,9 +57,9 @@ public class JTSMultiPolygon extends AbstractJTSGeometry {
 
         // we want a multi geometry event if there is only one geometry
         if (childParts.size() == 1) {
-            com.vividsolutions.jts.geom.Geometry geom = childParts.get(0);
-            if (geom instanceof com.vividsolutions.jts.geom.Polygon) {
-                return JTSUtils.GEOMETRY_FACTORY.createMultiPolygon(new com.vividsolutions.jts.geom.Polygon[] {(com.vividsolutions.jts.geom.Polygon)geom});
+            org.locationtech.jts.geom.Geometry geom = childParts.get(0);
+            if (geom instanceof org.locationtech.jts.geom.Polygon) {
+                return JTSUtils.GEOMETRY_FACTORY.createMultiPolygon(new org.locationtech.jts.geom.Polygon[] {(org.locationtech.jts.geom.Polygon)geom});
             }
 
         }

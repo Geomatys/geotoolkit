@@ -130,7 +130,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
             //find global envelope and finest resolution
             GeneralEnvelope env = null;
             double[] resolution = null;
-            for (CoverageResource ref : getCoverages(null)) {
+            for (GridCoverageResource ref : getCoverages(null)) {
                 final GridCoverageReader reader = ref.acquireReader();
                 final GeneralGridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
                 ref.recycle(reader);
@@ -173,9 +173,9 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
     private synchronized List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException {
         if (sampleDimensions != null) return sampleDimensions;
 
-        final Collection<CoverageResource> references = getCoverages(null);
+        final Collection<GridCoverageResource> references = getCoverages(null);
         if (!references.isEmpty()) {
-            final CoverageResource ref = references.iterator().next();
+            final GridCoverageResource ref = references.iterator().next();
             GridCoverageReader reader = ref.acquireReader();
             sampleDimensions = reader.getSampleDimensions(ref.getImageIndex());
             ref.recycle(reader);
@@ -203,9 +203,9 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
         @Override
         protected GridCoverage readInNativeCRS(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
 
-            final Collection<CoverageResource> references = getCoverages(param);
+            final Collection<GridCoverageResource> references = getCoverages(param);
             final List<GridCoverage2D> coverages = new ArrayList<>();
-            for (CoverageResource ref : references) {
+            for (GridCoverageResource ref : references) {
                 final GridCoverageReader reader = ref.acquireReader();
                 try {
                     coverages.add((GridCoverage2D) reader.read(ref.getImageIndex(), param));

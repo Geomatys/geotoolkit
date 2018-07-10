@@ -36,7 +36,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import javax.imageio.ImageReader;
-import javax.swing.ProgressMonitor;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.metadata.iso.DefaultMetadata;
@@ -57,6 +56,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.process.Monitor;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -214,7 +214,7 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
      */
     @Override
     public void writeTiles(final String pyramidId, final String mosaicId, final RenderedImage image, final boolean onlyMissing,
-            final ProgressMonitor monitor) throws DataStoreException {
+            final Monitor monitor) throws DataStoreException {
 
         final Rectangle fullArea = new Rectangle(image.getNumXTiles(), image.getNumYTiles());
         writeTiles(pyramidId, mosaicId, image, fullArea, onlyMissing, monitor);
@@ -225,7 +225,7 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
      */
     @Override
     public void writeTiles(final String pyramidId, final String mosaicId, final RenderedImage image, final Rectangle area,
-                           final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException {
+                           final boolean onlyMissing, final Monitor monitor) throws DataStoreException {
         if(!isWritable()){
             throw new DataStoreException("Pyramid writing not supported.");
         }

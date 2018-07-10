@@ -46,21 +46,21 @@ public final class RenderingWrapParams {
     /**
      * Perpendicular line on the lowest wrap point.
      */
-    public com.vividsolutions.jts.geom.LineString wrapDecLine = null;
+    public org.locationtech.jts.geom.LineString wrapDecLine = null;
     /**
      * Perpendicular line on the highest wrap point.
      */
-    public com.vividsolutions.jts.geom.LineString wrapIncLine = null;
+    public org.locationtech.jts.geom.LineString wrapIncLine = null;
     /**
      * Polygon containing the valid area, between wrap lines.
      */
-    public com.vividsolutions.jts.geom.Polygon wrapArea = null;
+    public org.locationtech.jts.geom.Polygon wrapArea = null;
     /**
      * Envelope in Objective CRS of the visible area, NOT clipped to crs wraparound.
      * This is a simple affinetransform of the canvas rectangle to objective with the
      * Display to Objective transform.
      */
-    public com.vividsolutions.jts.geom.Envelope objectiveJTSEnvelope = null;
+    public org.locationtech.jts.geom.Envelope objectiveJTSEnvelope = null;
 
     /**
      * Normal objective to display transform.

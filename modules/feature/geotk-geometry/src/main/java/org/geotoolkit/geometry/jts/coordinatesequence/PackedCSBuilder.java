@@ -18,9 +18,9 @@
  */
 package org.geotoolkit.geometry.jts.coordinatesequence;
 
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
-import com.vividsolutions.jts.geom.impl.PackedCoordinateSequenceFactory;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
+import org.locationtech.jts.geom.impl.PackedCoordinateSequenceFactory;
 
 /**
  * An implementation of a JTS CSBuilder which uses a PackedCoordinateSequence.

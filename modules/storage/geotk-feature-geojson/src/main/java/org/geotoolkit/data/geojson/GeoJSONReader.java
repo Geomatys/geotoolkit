@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.geojson;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;

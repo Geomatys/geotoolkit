@@ -62,7 +62,7 @@ import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -106,7 +106,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                 ////////////////////
                 final CoverageMapLayer coverageLayer = graphic.getLayer();
                 final CoordinateReferenceSystem coverageMapLayerCRS = coverageLayer.getBounds().getCoordinateReferenceSystem();
-                final CoverageResource coverageReference = coverageLayer.getCoverageReference();
+                final GridCoverageResource coverageReference = coverageLayer.getCoverageReference();
 
                 double[] resolution = renderingContext.getResolution();
                 Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
@@ -154,7 +154,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                 final MemoryCoverageStore memoryCoverageStore = new MemoryCoverageStore(resampledCoverage, coverageReference.getIdentifier().tip().toString());
 
                 final GenericName name = memoryCoverageStore.getNames().iterator().next();
-                final CoverageResource resampledCovRef = (CoverageResource) memoryCoverageStore.findResource(name.toString());
+                final GridCoverageResource resampledCovRef = (GridCoverageResource) memoryCoverageStore.findResource(name.toString());
 
                 /////////////////////
                 // 2.2 - Compute isolines

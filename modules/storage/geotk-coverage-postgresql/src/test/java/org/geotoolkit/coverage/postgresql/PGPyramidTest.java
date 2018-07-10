@@ -92,7 +92,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
             store = factory.open(params);
         }
 
-        for (CoverageResource r : DataStores.flatten(store, true, CoverageResource.class)) {
+        for (GridCoverageResource r : DataStores.flatten(store, true, GridCoverageResource.class)) {
             store.remove(r);
         }
         assertTrue(store.getNames().isEmpty());

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.display2d.container.fx;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.awt.Color;
 import java.awt.Paint;
 import java.util.logging.Level;

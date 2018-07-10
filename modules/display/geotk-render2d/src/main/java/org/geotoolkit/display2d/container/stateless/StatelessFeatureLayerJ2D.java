@@ -162,7 +162,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         params.update(context);
         //expand the search area by the maximum symbol size
         if(symbolsMargin>0 && params.objectiveJTSEnvelope!=null){
-            params.objectiveJTSEnvelope = new com.vividsolutions.jts.geom.Envelope(params.objectiveJTSEnvelope);
+            params.objectiveJTSEnvelope = new org.locationtech.jts.geom.Envelope(params.objectiveJTSEnvelope);
             params.objectiveJTSEnvelope.expandBy(symbolsMargin);
         }
         return params;

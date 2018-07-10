@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.PrecisionModel;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.PrecisionModel;
 import java.util.Collections;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.util.GenericName;

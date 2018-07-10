@@ -16,9 +16,13 @@
  */
 package org.geotoolkit.internal.jaxb;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import org.apache.sis.internal.xml.LegacyNamespaces;
 import org.apache.sis.xml.MarshallerPool;
+import org.apache.sis.xml.XML;
 
 /**
  *
@@ -27,8 +31,17 @@ import org.apache.sis.xml.MarshallerPool;
 public final class JTSWrapperMarshallerPool {
     private static final MarshallerPool instance;
     static {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put(XML.METADATA_VERSION, LegacyNamespaces.VERSION_2007);
+        /*
+         * Do NOT set the XML.GML_VERSION version property, even if the intent is to marshal GML 3.1.1.
+         * The reason is that both Apache SIS and Geotk defines objects in the GML namespace, and the
+         * way Apache SIS handles different versions conflicts with the way Geotk does that. A call to
+         * properties.put(XML.GML_VERSION, "3.1.1") cause Apache SIS to replace all GML 3.1.1 namespace
+         * by GML 3.2.1 namespace, which is NOT what Geotk wants.
+         */
         try {
-            instance = new MarshallerPool(JAXBContext.newInstance(ObjectFactory.class), null);
+            instance = new MarshallerPool(JAXBContext.newInstance(ObjectFactory.class), properties);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }

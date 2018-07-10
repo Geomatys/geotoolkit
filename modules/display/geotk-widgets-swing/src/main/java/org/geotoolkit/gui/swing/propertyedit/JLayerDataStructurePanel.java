@@ -52,8 +52,8 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.InternationalString;
 import org.apache.sis.io.wkt.Warnings;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.util.StringUtilities;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -108,7 +108,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
 
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final CoverageResource ref = cml.getCoverageReference();
+            final GridCoverageResource ref = cml.getCoverageReference();
             try {
                 final GridCoverageReader reader = ref.acquireReader();
                 final GeneralGridGeometry gridgeom = reader.getGridGeometry(0);

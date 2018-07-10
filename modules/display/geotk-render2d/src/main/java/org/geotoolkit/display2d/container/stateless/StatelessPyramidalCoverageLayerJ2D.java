@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractGridMosaic;

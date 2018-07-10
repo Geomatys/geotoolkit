@@ -47,8 +47,8 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Context tree column with name and type icon.
@@ -204,7 +204,7 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
     public static Image getTypeIcon(Resource resource){
         if (resource instanceof FeatureSet) {
             return ICON_VECTOR;
-        } else if(resource instanceof CoverageResource) {
+        } else if(resource instanceof GridCoverageResource) {
             return ICON_RASTER;
         } else {
             //container

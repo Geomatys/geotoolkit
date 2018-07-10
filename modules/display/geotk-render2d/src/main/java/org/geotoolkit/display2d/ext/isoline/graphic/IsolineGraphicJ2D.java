@@ -17,7 +17,7 @@
 
 package org.geotoolkit.display2d.ext.isoline.graphic;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;

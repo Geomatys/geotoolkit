@@ -73,9 +73,9 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -259,8 +259,8 @@ public class FXStoreChooser extends BorderPane {
         final List<Resource> selected = resourceChooser.getSelected();
         final List<MapLayer> layers = new ArrayList<>();
         for (Resource selection : selected) {
-            if (selection instanceof CoverageResource) {
-                final CoverageResource ref = (CoverageResource) selection;
+            if (selection instanceof GridCoverageResource) {
+                final GridCoverageResource ref = (GridCoverageResource) selection;
                 final CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref);
                 layer.setName(ref.getIdentifier().tip().toString());
                 layers.add(layer);

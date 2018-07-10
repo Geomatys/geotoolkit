@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.display2d.style;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Point;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;

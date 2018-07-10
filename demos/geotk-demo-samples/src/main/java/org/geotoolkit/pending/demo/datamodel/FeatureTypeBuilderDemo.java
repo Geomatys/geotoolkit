@@ -1,8 +1,8 @@
 
 package org.geotoolkit.pending.demo.datamodel;
 
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
 import java.util.Date;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.geotoolkit.util.NamesExt;

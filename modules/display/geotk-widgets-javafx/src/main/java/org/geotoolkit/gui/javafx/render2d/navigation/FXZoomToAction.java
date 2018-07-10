@@ -34,7 +34,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.gui.crs.CRSButton;
+import org.apache.sis.gui.referencing.CRSButton;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;

@@ -28,7 +28,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
-import org.apache.sis.gui.crs.CRSButton;
+import org.apache.sis.gui.referencing.CRSButton;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.coverage.amended.AmendedCoverageResource;
 import org.geotoolkit.coverage.io.CoverageStoreException;

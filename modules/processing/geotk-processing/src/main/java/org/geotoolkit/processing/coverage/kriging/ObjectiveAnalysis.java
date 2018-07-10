@@ -25,7 +25,7 @@
  */
 package org.geotoolkit.processing.coverage.kriging;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;

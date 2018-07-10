@@ -36,8 +36,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -45,7 +45,7 @@ import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
  */
 public class MathCalcProcess extends AbstractProcess {
 
-    public MathCalcProcess(Coverage[] inCoverages, String inFormula, String[] inMapping, CoverageResource outCoverage){
+    public MathCalcProcess(Coverage[] inCoverages, String inFormula, String[] inMapping, GridCoverageResource outCoverage){
         this(toParameters(inCoverages, inFormula, inMapping, outCoverage));
     }
 
@@ -53,7 +53,7 @@ public class MathCalcProcess extends AbstractProcess {
         super(MathCalcDescriptor.INSTANCE, params);
     }
 
-    private static ParameterValueGroup toParameters(Coverage[] inCoverages, String inFormula, String[] inMapping, CoverageResource outCoverage){
+    private static ParameterValueGroup toParameters(Coverage[] inCoverages, String inFormula, String[] inMapping, GridCoverageResource outCoverage){
         final Parameters params = Parameters.castOrWrap(MathCalcDescriptor.INSTANCE.getInputDescriptor().createValue());
         params.getOrCreate(MathCalcDescriptor.IN_COVERAGES).setValue(inCoverages);
         params.getOrCreate(MathCalcDescriptor.IN_FORMULA).setValue(inFormula);
@@ -67,7 +67,7 @@ public class MathCalcProcess extends AbstractProcess {
         final Coverage[] inCoverages = inputParameters.getValue(MathCalcDescriptor.IN_COVERAGES);
         final String inFormula = inputParameters.getValue(MathCalcDescriptor.IN_FORMULA);
         final String[] inMapping = inputParameters.getValue(MathCalcDescriptor.IN_MAPPING);
-        final CoverageResource outRef = inputParameters.getValue(MathCalcDescriptor.IN_RESULT_COVERAGE);
+        final GridCoverageResource outRef = inputParameters.getValue(MathCalcDescriptor.IN_RESULT_COVERAGE);
 
         final GeneralGridGeometry gg;
         final GridCoverageReader outReader;

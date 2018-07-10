@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.geometry.jts;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
 import org.apache.sis.util.ArgumentChecks;
 import static java.lang.StrictMath.*;
 import org.apache.sis.util.NullArgumentException;
@@ -33,13 +33,13 @@ public class LineStringTranslator {
 
     /**
      * Accepted tolerance.
-     * @see #intersectionRightLine(com.vividsolutions.jts.geom.Coordinate, com.vividsolutions.jts.geom.Coordinate, com.vividsolutions.jts.geom.Coordinate, com.vividsolutions.jts.geom.Coordinate)
+     * @see #intersectionRightLine(org.locationtech.jts.geom.Coordinate, org.locationtech.jts.geom.Coordinate, org.locationtech.jts.geom.Coordinate, org.locationtech.jts.geom.Coordinate)
      */
     private static final double TOLERANCE = 1E-9;
 
     /**
      * {@link IllegalArgumentException} use to stipulate that impossible to translate current {@link LineString}.
-     * @see #intersectionRightLine(com.vividsolutions.jts.geom.Coordinate, com.vividsolutions.jts.geom.Coordinate, com.vividsolutions.jts.geom.Coordinate, com.vividsolutions.jts.geom.Coordinate)
+     * @see #intersectionRightLine(org.locationtech.jts.geom.Coordinate, org.locationtech.jts.geom.Coordinate, org.locationtech.jts.geom.Coordinate, org.locationtech.jts.geom.Coordinate)
      */
     private static final IllegalArgumentException NO_INTERSECTION_EXCEPTION = new IllegalArgumentException("no intersection between lines.");
 

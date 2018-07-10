@@ -19,7 +19,7 @@
 
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Point;
 
 import java.util.Collections;
 import java.awt.event.MouseEvent;

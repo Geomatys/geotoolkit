@@ -32,7 +32,7 @@ import org.geotoolkit.wps.xml.v100.DescribeProcess;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import static org.apache.sis.test.Assert.*;
+import static org.apache.sis.test.MetadataAssert.*;
 
 
 /**

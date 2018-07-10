@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.gui.javafx.filter;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import javafx.scene.Node;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.opengis.filter.Filter;

@@ -168,8 +168,8 @@
            Global properties.
        =========================================================== -->
   <properties>
-    <geoapi.version>4.0-M08</geoapi.version> <!-- Must be same than the version used by SIS. -->
-    <sis.version>1.0-jdk8-MC0024</sis.version>
+    <geoapi.version>4.0-M09</geoapi.version> <!-- Must be same than the version used by SIS. -->
+    <sis.version>dev-1.0-M0032</sis.version>
     <sis.epsg.version>0.8</sis.epsg.version>
     <netcdf.version>4.3.21</netcdf.version>
     <lucene.version>5.4.1</lucene.version>
@@ -313,9 +313,9 @@
 
       <!-- Geometries -->
       <dependency>
-        <groupId>com.vividsolutions</groupId>
-        <artifactId>jts</artifactId>
-        <version>1.13</version>
+        <groupId>org.locationtech.jts</groupId>
+        <artifactId>jts-core</artifactId>
+        <version>1.15.0</version>
         <exclusions>
           <exclusion>
             <groupId>xerces</groupId>
@@ -353,14 +353,9 @@
         <version>2.7.1</version>
       </dependency>
       <dependency>
-        <groupId>org.codehaus.woodstox</groupId>
-        <artifactId>woodstox-core-lgpl</artifactId>
-        <version>4.1.2</version>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.woodstox</groupId>
-        <artifactId>wstx-lgpl</artifactId>
-        <version>4.0.6</version> <!-- @todo - mismatched dependency version. -->
+        <groupId>com.fasterxml.woodstox</groupId>
+        <artifactId>woodstox-core</artifactId>
+        <version>5.1.0</version>
       </dependency>
       <dependency>
         <groupId>jaxen</groupId>

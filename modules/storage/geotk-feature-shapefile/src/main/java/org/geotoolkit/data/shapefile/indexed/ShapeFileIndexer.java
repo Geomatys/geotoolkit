@@ -37,7 +37,7 @@ import org.geotoolkit.index.quadtree.fs.IndexHeader;
 import org.geotoolkit.util.NullProgressListener;
 import org.geotoolkit.process.ProgressController;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 /**
  * Utility class for Shapefile spatial indexing

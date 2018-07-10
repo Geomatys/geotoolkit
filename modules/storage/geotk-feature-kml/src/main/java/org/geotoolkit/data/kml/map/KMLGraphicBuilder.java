@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.kml.map;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -553,7 +553,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
 
             // Apply styles
             final Style s = retrieveStyle(placemark,cache);
-            com.vividsolutions.jts.geom.Point centroid = null;
+            org.locationtech.jts.geom.Point centroid = null;
 
             // display geometries
             final AbstractGeometry geometry = (AbstractGeometry) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
@@ -721,11 +721,11 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             MathTransform transform = null;
             context2d.switchToDisplayCRS();
             final Graphics2D graphic = context2d.getGraphics();
-            com.vividsolutions.jts.geom.Geometry ls = null;
+            org.locationtech.jts.geom.Geometry ls = null;
 
             try {
                 transform = context2d.getMathTransform(CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS());
-                ls = JTS.transform((com.vividsolutions.jts.geom.LineString) lineString, transform);
+                ls = JTS.transform((org.locationtech.jts.geom.LineString) lineString, transform);
             } catch (MismatchedDimensionException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
                 return;
@@ -759,11 +759,11 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             MathTransform transform = null;
             context2d.switchToDisplayCRS();
             final Graphics2D graphic = context2d.getGraphics();
-            com.vividsolutions.jts.geom.Geometry pol = null;
+            org.locationtech.jts.geom.Geometry pol = null;
 
             try {
                 transform = context2d.getMathTransform(CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS());
-                pol = JTS.transform((com.vividsolutions.jts.geom.Polygon) polygon, transform);
+                pol = JTS.transform((org.locationtech.jts.geom.Polygon) polygon, transform);
             } catch (MismatchedDimensionException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
                 return;
@@ -817,7 +817,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
                     final BasicLink icon = iconStyle.getIcon();
                     final URL img = new URL(icon.getHref());
                     final BufferedImage image = ImageIO.read(img);
-                    com.vividsolutions.jts.geom.Point p = (com.vividsolutions.jts.geom.Point) point;
+                    org.locationtech.jts.geom.Point p = (org.locationtech.jts.geom.Point) point;
                     final double[] tab = new double[]{p.getX(), p.getY()};
                     try {
                         transform.transform(tab, 0, tab, 0, 1);
@@ -836,11 +836,11 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             MathTransform transform = null;
             context2d.switchToDisplayCRS();
             final Graphics2D graphic = context2d.getGraphics();
-            com.vividsolutions.jts.geom.Geometry lr = null;
+            org.locationtech.jts.geom.Geometry lr = null;
 
             try {
                 transform = context2d.getMathTransform(CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS());
-                lr = JTS.transform((com.vividsolutions.jts.geom.LinearRing) linearRing, transform);
+                lr = JTS.transform((org.locationtech.jts.geom.LinearRing) linearRing, transform);
             } catch (MismatchedDimensionException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
                 return;

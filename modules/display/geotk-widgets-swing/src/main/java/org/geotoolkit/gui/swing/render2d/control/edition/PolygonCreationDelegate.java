@@ -19,8 +19,8 @@ package org.geotoolkit.gui.swing.render2d.control.edition;
 
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Polygon;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;

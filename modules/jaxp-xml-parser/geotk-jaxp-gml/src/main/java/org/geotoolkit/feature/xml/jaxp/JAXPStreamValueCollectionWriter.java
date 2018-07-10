@@ -162,12 +162,12 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
 
             }
 
-         } else if (valueA instanceof com.vividsolutions.jts.geom.Geometry) {
+         } else if (valueA instanceof org.locationtech.jts.geom.Geometry) {
             writer.writeStartElement("wfs", "member", WFS_NAMESPACE);
 
             AbstractGeometry gmlGeometry = null;
             try {
-                gmlGeometry = JTStoGeometry.toGML("3.2.1", (com.vividsolutions.jts.geom.Geometry) valueA,  FeatureExt.getCRS(type));
+                gmlGeometry = JTStoGeometry.toGML("3.2.1", (org.locationtech.jts.geom.Geometry) valueA,  FeatureExt.getCRS(type));
             } catch (FactoryException ex) {
                 LOGGER.log(Level.WARNING, "Factory exception when transforming JTS geometry to GML binding", ex);
             }

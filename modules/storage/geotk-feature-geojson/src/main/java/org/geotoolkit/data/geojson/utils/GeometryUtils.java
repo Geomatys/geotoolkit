@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.data.geojson.utils;
 
-import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
+import org.locationtech.jts.geom.*;
+import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.geotoolkit.data.geojson.binding.*;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.lang.Static;

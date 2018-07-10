@@ -17,7 +17,7 @@
 
 package org.geotoolkit.feature.xml.jaxb;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;

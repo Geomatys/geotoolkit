@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.data.csv;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.WKTWriter;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.WKTWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;

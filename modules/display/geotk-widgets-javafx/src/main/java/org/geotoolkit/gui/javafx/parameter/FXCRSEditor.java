@@ -18,7 +18,7 @@ package org.geotoolkit.gui.javafx.parameter;
 
 import javafx.beans.property.Property;
 import javafx.scene.Node;
-import org.apache.sis.gui.crs.CRSButton;
+import org.apache.sis.gui.referencing.CRSButton;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

@@ -41,7 +41,7 @@ import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.geotoolkit.feature.FeatureExt;

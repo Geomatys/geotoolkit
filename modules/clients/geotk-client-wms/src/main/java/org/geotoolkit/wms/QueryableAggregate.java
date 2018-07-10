@@ -23,19 +23,20 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.CoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.content.CoverageDescription;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
  * @author Alexis Manin (Geomatys)
  */
-public class QueryableAggregate extends WMSAggregate implements CoverageResource {
+public class QueryableAggregate extends WMSAggregate implements GridCoverageResource {
 
     final AbstractLayer layer;
     final WMSCoverageResource queryableResource;
@@ -95,7 +96,7 @@ public class QueryableAggregate extends WMSAggregate implements CoverageResource
     }
 
     @Override
-    public void recycle(GridCoverageWriter writer) {
+    public void recycle(CoverageWriter writer) {
         queryableResource.recycle(writer);
     }
 

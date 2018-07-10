@@ -49,6 +49,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.process.Monitor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -258,15 +259,13 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
     /**
      * Allow to cancel the tiles creation process.
      */
-    private class MapcontextPyramidMonitor extends ProgressMonitor {
+    private class MapcontextPyramidMonitor implements Monitor {
         private final MapcontextPyramidProcess process;
 
-        public MapcontextPyramidMonitor(final MapcontextPyramidProcess process) {
-            super(new JLabel(), "", "", 0, 100);
+        public MapcontextPyramidMonitor(MapcontextPyramidProcess process) {
             this.process = process;
         }
 
-        @Override
         public boolean isCanceled() {
             return process.isCanceled();
         }

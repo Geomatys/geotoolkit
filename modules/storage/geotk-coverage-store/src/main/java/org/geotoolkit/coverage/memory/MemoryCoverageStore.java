@@ -39,7 +39,6 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.DefaultCoverageResource;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
@@ -47,6 +46,7 @@ import org.geotoolkit.util.NamesExt;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Simple implementation to provide a {@link MemoryCoverageStore} for a {@link GridCoverage2D}.
@@ -74,7 +74,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
     public MemoryCoverageStore(final GridCoverage2D gridCov, final String name) {
         this();
         try {
-            final CoverageResource ref = add(new DefiningCoverageResource(NamesExt.create(name),null));
+            final GridCoverageResource ref = add(new DefiningCoverageResource(NamesExt.create(name),null));
             final GridCoverageWriter writer = ref.acquireWriter();
             writer.write(gridCov, null);
             ref.recycle(writer);
@@ -101,7 +101,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
     }
 
     @Override
-    public CoverageResource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
+    public GridCoverageResource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
         if (!(resource instanceof DefiningCoverageResource)) {
             throw new DataStoreException("Unsupported resource "+resource);
         }
@@ -120,10 +120,10 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
 
     @Override
     public void remove(org.apache.sis.storage.Resource resource) throws DataStoreException {
-        if (!(resource instanceof CoverageResource)) {
+        if (!(resource instanceof GridCoverageResource)) {
             throw new DataStoreException("Unknown resource "+resource);
         }
-        final CoverageResource cr = (CoverageResource) resource;
+        final GridCoverageResource cr = (GridCoverageResource) resource;
         final NamedIdentifier name = cr.getIdentifier();
 
         //TODO

@@ -1,23 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:gml="http://www.opengis.net/gml" xmlns:rb="http://bretagne.fr/rb" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://bretagne.fr/rb">
-  <xsd:import namespace="http://www.opengis.net/gml" schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"/>
-  <xsd:complexType name="biefType">
-    <xsd:complexContent>
-      <xsd:extension base="gml:AbstractFeatureType">
-        <xsd:sequence>
-          <xsd:element maxOccurs="1" minOccurs="0" name="id" nillable="true" type="xsd:string"/>
-          <xsd:element maxOccurs="1" minOccurs="0" name="search_id" nillable="true" type="xsd:string"/>
-          <xsd:element maxOccurs="1" minOccurs="0" name="nom" nillable="true" type="xsd:string"/>
-          <xsd:element maxOccurs="1" minOccurs="0" name="cote_gest" nillable="true" type="xsd:string"/>
-          <xsd:element maxOccurs="1" minOccurs="0" name="subdi" nillable="true" type="xsd:string"/>
-          <xsd:element maxOccurs="1" minOccurs="0" name="brigade" nillable="true" type="xsd:string"/>
-          <xsd:element maxOccurs="1" minOccurs="0" name="section" nillable="true" type="xsd:string"/>
-          <xsd:element maxOccurs="1" minOccurs="0" name="trafic" nillable="true" type="xsd:int"/>
-          <xsd:element maxOccurs="1" minOccurs="0" name="longueur" nillable="true" type="xsd:string"/>
-          <xsd:element maxOccurs="1" minOccurs="0" name="enjeu_bio" nillable="true" type="xsd:string"/>
-          <xsd:element maxOccurs="1" minOccurs="0" name="geom" nillable="true" type="gml:LineStringPropertyType"/>
-        </xsd:sequence>
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-  <xsd:element name="bief" substitutionGroup="gml:_Feature" type="rb:biefType"/>
-</xsd:schema>
+<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:gml="http://www.opengis.net/gml" xmlns:rb="http://bretagne.fr/rb" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://bretagne.fr/rb">
+  <xs:import namespace="http://www.opengis.net/gml" schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"/>
+  <xs:complexType name="biefType">
+    <xs:complexContent>
+      <xs:extension base="gml:AbstractFeatureType">
+        <xs:sequence>
+          <xs:element maxOccurs="1" minOccurs="0" name="id" nillable="true" type="xs:string"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="search_id" nillable="true" type="xs:string"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="nom" nillable="true" type="xs:string"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="cote_gest" nillable="true" type="xs:string"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="subdi" nillable="true" type="xs:string"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="brigade" nillable="true" type="xs:string"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="section" nillable="true" type="xs:string"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="trafic" nillable="true" type="xs:int"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="longueur" nillable="true" type="xs:string"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="enjeu_bio" nillable="true" type="xs:string"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="geom" nillable="true" type="gml:LineStringPropertyType"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="bief" substitutionGroup="gml:_Feature" type="rb:biefType"/>
+</xs:schema>

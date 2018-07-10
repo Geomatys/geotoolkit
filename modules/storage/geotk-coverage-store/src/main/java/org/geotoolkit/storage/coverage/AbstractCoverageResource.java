@@ -38,6 +38,7 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
+import org.geotoolkit.coverage.io.CoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.metadata.ImageStatistics;
@@ -55,7 +56,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  */
 @XmlTransient
-public abstract class AbstractCoverageResource extends AbstractFeatureSet implements CoverageResource {
+public abstract class AbstractCoverageResource extends AbstractFeatureSet implements GridCoverageResource {
 
     private static final int DEFAULT_SUBSET_SIZE = 256;
 
@@ -194,7 +195,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
      * @param writer
      */
     @Override
-    public void recycle(GridCoverageWriter writer) {
+    public void recycle(CoverageWriter writer) {
         try {
             writer.dispose();
         } catch (CoverageStoreException ex) {

@@ -30,8 +30,6 @@ import org.apache.sis.util.StringBuilders;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Guilhem Legal (Geomatys)
- *
- * @since 3.07
  */
 public final class StringUtilities {
 
@@ -49,7 +47,7 @@ public final class StringUtilities {
     /**
      * Encode the specified string with MD5 algorithm.
      *
-     * @param key :  the string to encode.
+     * @param key   the string to encode.
      * @return the value (string) hexadecimal on 32 bits
      */
     public static String MD5encode(final String key) {
@@ -79,9 +77,6 @@ public final class StringUtilities {
     /**
      * Clean a string from its leading and trailing whitespaces, and the tabulation or end of line
      * characters.
-     *
-     * @param s
-     * @return
      */
     public static String clean(String s) {
         s = s.trim();
@@ -93,9 +88,6 @@ public final class StringUtilities {
 
     /**
      * Clean a list of String by removing all the white space, tabulation and carriage in all the strings.
-     *
-     * @param list
-     * @return
      */
     public static List<String> cleanCharSequences(final List<String> list) {
         final List<String> result = new ArrayList<String>();
@@ -117,7 +109,6 @@ public final class StringUtilities {
      *
      * @param list A list of String.
      * @param str The value searched.
-     * @return
      */
     public static boolean containsIgnoreCase(final List<String> list, final String str) {
         boolean strAvailable = false;
@@ -153,17 +144,17 @@ public final class StringUtilities {
     }
 
     /**
-     * Search a string for all occurence of the char.
+     * Search a string for all occurrence of the char.
      *
-     * @param s : String to search in
-     * @param occ : Occurence to search
-     * @return array of all occurence indexes
+     * @param s  String to search in
+     * @param occ  Occurrence to search
+     * @return array of all occurrence indexes
      */
     public static int[] getIndexes(final String s, final char occ) {
         int pos = s.indexOf(occ);
-        if(pos <0){
+        if (pos <0) {
             return EMPTY_INT_ARRAY;
-        }else{
+        } else {
             int[] indexes = new int[]{pos};
             pos = s.indexOf(occ, pos+1);
             for(; pos >= 0; pos = s.indexOf(occ, pos+1)){
@@ -219,21 +210,17 @@ public final class StringUtilities {
 
     /**
      * Replace all the <ns**:localPart and </ns**:localPart by <prefix:localPart and </prefix:localPart>
-     *
-     * @param s
-     * @param localPart
-     * @return
      */
     public static String replacePrefix(final String s, final String localPart, final String prefix) {
-
         return s.replaceAll("[a-zA-Z0-9]*:" + localPart, prefix + ":" + localPart);
     }
 
     /**
      * Remove all the XML namespace declaration.
-     * @param xml
-     * @return
+     *
+     * @deprecated Used only in test classes. Tests should use XML comparator instead.
      */
+    @Deprecated
     public static String removeXmlns(final String xml) {
         String s = xml;
         s = s.replaceAll("xmlns=\"[^\"]*\" ", "");
@@ -242,6 +229,7 @@ public final class StringUtilities {
         s = s.replaceAll("xmlns:[^=]*=\"[^\"]*\"", "");
         return s;
     }
+
     /**
      * Remove the prefix on propertyName.
      * example : removePrefix(csw:GetRecords) return "GetRecords".
@@ -391,9 +379,6 @@ public final class StringUtilities {
     /**
      * Transform an exception code into the OWS specification.
      * Example : MISSING_PARAMETER_VALUE become MissingParameterValue.
-     *
-     * @param code
-     * @return
      */
     public static String transformCodeName(String code) {
         final StringBuilder result = new StringBuilder();
@@ -443,7 +428,6 @@ public final class StringUtilities {
                 }
             }
         }
-
         return sb.toString();
     }
 
@@ -455,8 +439,6 @@ public final class StringUtilities {
      *
      * @param  text The text with X3.64 sequences.
      * @return The text with HTML {@code <font>} instructions.
-     *
-     * @since 3.12
      */
     public static String X364toHTML(final String text) {
 
@@ -515,5 +497,4 @@ public final class StringUtilities {
         final String result = buffer.toString();
         return result.equals(text) ? text : result;
     }
-
 }

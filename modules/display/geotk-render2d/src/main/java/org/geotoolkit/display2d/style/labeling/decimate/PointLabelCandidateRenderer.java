@@ -17,9 +17,9 @@
 
 package org.geotoolkit.display2d.style.labeling.decimate;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Shape;

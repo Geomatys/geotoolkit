@@ -18,7 +18,6 @@ import org.apache.sis.referencing.operation.builder.LocalizationGridBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.filestore.FileCoverageStore;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.coverage.grid.GridCoverage;
@@ -27,6 +26,7 @@ import ucar.ma2.ArrayFloat;
 import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.VariableDS;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 
 /**
@@ -190,7 +190,7 @@ abstract class VelocityComponent {
 
         MeteoFrance(final URI file) throws DataStoreException, IOException, URISyntaxException {
             try (FileCoverageStore store = new FileCoverageStore(file, "geotiff")) {
-                final CoverageResource ref = (CoverageResource) store.findResource(singleton(store.getNames()));
+                final GridCoverageResource ref = (GridCoverageResource) store.findResource(singleton(store.getNames()));
                 final GridCoverageReader reader = ref.acquireReader();
                 coverage = reader.read(0, null);
                 ref.recycle(reader);

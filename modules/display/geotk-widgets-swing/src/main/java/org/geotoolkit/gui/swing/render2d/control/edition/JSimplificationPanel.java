@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
-import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
+import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.feature.FeatureExt;

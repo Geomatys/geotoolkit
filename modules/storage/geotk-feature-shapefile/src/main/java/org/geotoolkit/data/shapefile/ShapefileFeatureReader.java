@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.data.shapefile;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;

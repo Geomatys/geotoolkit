@@ -13,10 +13,10 @@ import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.style.DefaultDescription;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.wmts.WMTSClientFactory;
 import org.geotoolkit.wmts.WebMapTileClient;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * This demo connects to the IGN test serveur provided for developement purpose only.

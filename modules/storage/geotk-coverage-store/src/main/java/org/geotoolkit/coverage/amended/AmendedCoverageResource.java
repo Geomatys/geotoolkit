@@ -23,26 +23,28 @@ import java.util.Set;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.CoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Decorates a coverage reference adding possibility to override properties.
@@ -58,10 +60,10 @@ import org.opengis.metadata.Metadata;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class AmendedCoverageResource implements Resource,CoverageResource{
+public class AmendedCoverageResource implements Resource,GridCoverageResource{
 
     protected final Set<StorageListener> listeners = new HashSet<>();
-    protected final CoverageResource ref;
+    protected final GridCoverageResource ref;
     protected final DataStore store;
 
     //source unmodified informations
@@ -74,7 +76,7 @@ public class AmendedCoverageResource implements Resource,CoverageResource{
     protected MathTransform overrideGridToCrs;
     protected List<GridSampleDimension> overrideDims;
 
-    public AmendedCoverageResource(CoverageResource ref, DataStore store) {
+    public AmendedCoverageResource(GridCoverageResource ref, DataStore store) {
         this.store = store;
         this.ref = ref;
     }
@@ -108,7 +110,7 @@ public class AmendedCoverageResource implements Resource,CoverageResource{
      *
      * @return CoverageResource, never null.
      */
-    public CoverageResource getDecorated(){
+    public GridCoverageResource getDecorated(){
         return ref;
     }
 
@@ -311,7 +313,7 @@ public class AmendedCoverageResource implements Resource,CoverageResource{
      * {@inheritDoc }
      */
     @Override
-    public void recycle(GridCoverageWriter writer) {
+    public void recycle(CoverageWriter writer) {
         throw new UnsupportedOperationException("Not supported.");
     }
 
@@ -326,6 +328,14 @@ public class AmendedCoverageResource implements Resource,CoverageResource{
     @Override
     public Metadata getMetadata() throws DataStoreException {
         return ref.getMetadata();
+    }
+
+    @Override
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    }
+
+    @Override
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 
     @Override

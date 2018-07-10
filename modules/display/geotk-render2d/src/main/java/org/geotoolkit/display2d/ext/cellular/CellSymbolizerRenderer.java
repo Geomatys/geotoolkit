@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.display2d.ext.cellular;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -222,7 +222,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         float symbolsMargin = renderers.getMargin(null, renderingContext);
         if(symbolsMargin==0) symbolsMargin = 300f;
         if(symbolsMargin>0 && params.objectiveJTSEnvelope!=null){
-            params.objectiveJTSEnvelope = new com.vividsolutions.jts.geom.Envelope(params.objectiveJTSEnvelope);
+            params.objectiveJTSEnvelope = new org.locationtech.jts.geom.Envelope(params.objectiveJTSEnvelope);
             params.objectiveJTSEnvelope.expandBy(symbolsMargin);
         }
 
@@ -328,7 +328,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         final Feature feature = cellType.newInstance();
         final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(), null);
         params.update(renderingContext);
-        params.objectiveJTSEnvelope = new com.vividsolutions.jts.geom.Envelope(
+        params.objectiveJTSEnvelope = new org.locationtech.jts.geom.Envelope(
                 env.getMinimum(0), env.getMaximum(0),
                 env.getMinimum(1), env.getMaximum(1));
         params.displayClipRect = null;

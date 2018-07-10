@@ -70,10 +70,12 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.Utilities;
 import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.referencing.operation.Matrix;
 
 
 /**
@@ -203,25 +205,35 @@ public final class ReferencingUtilities {
             System.arraycopy(oldResolution, 0, newResolution, targetMinOrdi, oldResolution.length);
         } else {
             final int srcMinOrdi = CRSUtilities.firstHorizontalAxis(srcCRS);
-
-            //-- grid envelope
-            final int displayWidth  = (int) StrictMath.ceil(srcEnvelope.getSpan(srcMinOrdi)     / oldResolution[0]);
-            final int displayHeight = (int) StrictMath.ceil(srcEnvelope.getSpan(srcMinOrdi + 1) / oldResolution[1]);
-
-            //-- resolution working is only available on 2D horizontal CRS part
-            //-- also avoid mismatch dimension problem
             final CoordinateReferenceSystem srcCRS2D    = CRSUtilities.getCRS2D(srcCRS);
             final CoordinateReferenceSystem targetCRS2D = CRSUtilities.getCRS2D(targetCrs);
 
-            final GeneralEnvelope srcEnvelope2D = new GeneralEnvelope(srcCRS2D);
-            srcEnvelope2D.setRange(0, srcEnvelope.getMinimum(srcMinOrdi),     srcEnvelope.getMaximum(srcMinOrdi));
-            srcEnvelope2D.setRange(1, srcEnvelope.getMinimum(srcMinOrdi + 1), srcEnvelope.getMaximum(srcMinOrdi + 1));
+            final DirectPosition center = new GeneralDirectPosition(srcCRS2D);
+            center.setOrdinate(0, srcEnvelope.getMedian(srcMinOrdi));
+            center.setOrdinate(1, srcEnvelope.getMedian(srcMinOrdi+1));
 
-            //-- target image into target CRS 2D
-            final Envelope targetEnvelope2D = Envelopes.transform(srcEnvelope2D, targetCRS2D);
+            try {
+                final MathTransform trs = CRS.findOperation(srcCRS2D, targetCRS2D, null).getMathTransform();
+                final Matrix derivative = trs.derivative(center);
+                newResolution = MatrixSIS.castOrCopy(derivative).multiply(oldResolution);
 
-            newResolution[targetMinOrdi]     = targetEnvelope2D.getSpan(0) / displayWidth;
-            newResolution[targetMinOrdi + 1] = targetEnvelope2D.getSpan(1) / displayHeight;
+            } catch (FactoryException ex) {
+                //uncorrect fallback solution, better then nothing
+                //-- grid envelope
+                final int displayWidth  = (int) StrictMath.ceil(srcEnvelope.getSpan(srcMinOrdi)     / oldResolution[0]);
+                final int displayHeight = (int) StrictMath.ceil(srcEnvelope.getSpan(srcMinOrdi + 1) / oldResolution[1]);
+
+                final GeneralEnvelope srcEnvelope2D = new GeneralEnvelope(srcCRS2D);
+                srcEnvelope2D.setRange(0, srcEnvelope.getMinimum(srcMinOrdi),     srcEnvelope.getMaximum(srcMinOrdi));
+                srcEnvelope2D.setRange(1, srcEnvelope.getMinimum(srcMinOrdi + 1), srcEnvelope.getMaximum(srcMinOrdi + 1));
+
+                //-- target image into target CRS 2D
+                final Envelope targetEnvelope2D = Envelopes.transform(srcEnvelope2D, targetCRS2D);
+
+                newResolution[targetMinOrdi]     = targetEnvelope2D.getSpan(0) / displayWidth;
+                newResolution[targetMinOrdi + 1] = targetEnvelope2D.getSpan(1) / displayHeight;
+            }
+
         }
         return newResolution;
     }

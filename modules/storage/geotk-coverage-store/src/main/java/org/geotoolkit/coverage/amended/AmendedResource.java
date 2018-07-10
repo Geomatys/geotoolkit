@@ -25,11 +25,11 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.identification.Identification;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Wrap a DataNode and it's children.
@@ -97,9 +97,9 @@ final class AmendedResource extends DefaultAggregate {
         for(Resource n : children){
             if(n instanceof PyramidalCoverageResource){
                 //TODO : create an amended reference which declares itself as a pyramid.
-                resources.add(new AmendedCoverageResource((CoverageResource)n, store));
-            }else if(n instanceof CoverageResource){
-                resources.add(new AmendedCoverageResource((CoverageResource)n, store));
+                resources.add(new AmendedCoverageResource((GridCoverageResource)n, store));
+            }else if(n instanceof GridCoverageResource){
+                resources.add(new AmendedCoverageResource((GridCoverageResource)n, store));
             }else if(n instanceof Aggregate){
                 resources.add(new AmendedResource((Aggregate)n, store));
             }

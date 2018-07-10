@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.geometry.jts.transform;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequenceFactory;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.CoordinateSequenceFactory;
+import org.locationtech.jts.geom.impl.CoordinateArraySequenceFactory;
 import java.util.Arrays;
 
 import org.opengis.geometry.MismatchedDimensionException;

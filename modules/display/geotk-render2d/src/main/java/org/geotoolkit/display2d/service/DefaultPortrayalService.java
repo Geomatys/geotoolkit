@@ -99,7 +99,6 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -114,6 +113,7 @@ import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.portrayal.PortrayalService;
 import static org.geotoolkit.display2d.GO2Utilities.*;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Default implementation of portrayal service.
@@ -561,7 +561,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         final CoverageMapLayer cml = (CoverageMapLayer) layer;
 
         try{
-            final CoverageResource ref = cml.getCoverageReference();
+            final GridCoverageResource ref = cml.getCoverageReference();
             final CoverageReader reader = ref.acquireReader();
             final String mime = outputDef.getMime();
             final Envelope env = viewDef.getEnvelope();

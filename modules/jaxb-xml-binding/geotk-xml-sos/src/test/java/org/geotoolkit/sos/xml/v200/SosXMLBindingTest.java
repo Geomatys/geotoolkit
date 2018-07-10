@@ -29,8 +29,6 @@ import org.apache.sis.test.XMLComparator;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.gml.xml.v321.CodeType;
-import org.geotoolkit.observation.xml.v200.NamedValueType;
 
 //Junit dependencies
 import org.junit.*;
@@ -88,7 +86,7 @@ public class SosXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         String result = sw.toString();
         //we remove the first line
-        result = result.substring(result.indexOf("?>") + 3);
+        result = result.substring(result.indexOf("?>") + 2).trim();
 
         String expResult = "<sos:InsertObservationResponse xmlns:sos=\"http://www.opengis.net/sos/2.0\">\n" +
                            "  <sos:observation>new-id</sos:observation>\n" +

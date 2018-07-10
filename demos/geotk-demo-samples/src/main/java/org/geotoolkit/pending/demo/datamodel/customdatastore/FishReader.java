@@ -1,7 +1,7 @@
 package org.geotoolkit.pending.demo.datamodel.customdatastore;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Iterator;

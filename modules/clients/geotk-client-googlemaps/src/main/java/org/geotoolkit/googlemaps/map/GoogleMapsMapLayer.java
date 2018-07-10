@@ -25,7 +25,7 @@ import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 
 /**
@@ -47,11 +47,11 @@ public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
     private static final String DEFAULT_FORMAT = GetMapRequest.FORMAT_PNG8;
 
 
-    private static CoverageResource getReference(StaticGoogleMapsClient server, String mapType){
+    private static GridCoverageResource getReference(StaticGoogleMapsClient server, String mapType){
         try {
             for(GenericName n : server.getNames()){
                 if(n.tip().toString().equalsIgnoreCase(mapType)){
-                    return (CoverageResource) server.findResource(n.toString());
+                    return (GridCoverageResource) server.findResource(n.toString());
                 }
             }
             throw new RuntimeException("Not layer for name : " + mapType);

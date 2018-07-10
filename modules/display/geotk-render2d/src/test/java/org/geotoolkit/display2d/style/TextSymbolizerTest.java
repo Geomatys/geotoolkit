@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.display2d.style;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 import java.awt.image.Raster;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.style.TextSymbolizer;
@@ -28,8 +28,8 @@ import org.opengis.style.Font;
 import org.opengis.filter.FilterFactory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.opengis.filter.expression.Expression;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;

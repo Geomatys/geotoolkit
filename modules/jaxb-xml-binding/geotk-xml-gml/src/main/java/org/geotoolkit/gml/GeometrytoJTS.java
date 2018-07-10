@@ -17,7 +17,7 @@
 
 package org.geotoolkit.gml;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.io.Reader;
 import java.io.StringReader;
 

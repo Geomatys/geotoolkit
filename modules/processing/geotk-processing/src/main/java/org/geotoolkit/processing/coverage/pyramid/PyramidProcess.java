@@ -20,7 +20,6 @@ import java.awt.Dimension;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 import javax.swing.JLabel;
-import javax.swing.ProgressMonitor;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.util.NamesExt;
@@ -29,11 +28,12 @@ import org.geotoolkit.storage.coverage.PyramidCoverageBuilder;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.process.Monitor;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * <p>Build and store a image pyramid.<br/><br/>
@@ -59,13 +59,13 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
      * @param reuseTile reuse tiles
      * @param tileSize tile size
      */
-    public PyramidProcess(CoverageResource covref,CoverageStore covstore,double[] fillValues,
+    public PyramidProcess(GridCoverageResource covref,CoverageStore covstore,double[] fillValues,
             InterpolationCase interpolation,String pyramidName,Map resPerEnvelope, Boolean reuseTile, Dimension tileSize){
         super(PyramidDescriptor.INSTANCE, asParameters(covref,covstore,fillValues,
                 interpolation,pyramidName,resPerEnvelope,reuseTile,tileSize));
     }
 
-    private static ParameterValueGroup asParameters(CoverageResource covref,CoverageStore covstore,double[] fillValues,
+    private static ParameterValueGroup asParameters(GridCoverageResource covref,CoverageStore covstore,double[] fillValues,
             InterpolationCase interpolation,String pyramidName,Map resPerEnvelope, Boolean reuseTile, Dimension tileSize){
         final Parameters params = Parameters.castOrWrap(PyramidDescriptor.INPUT_DESC.createValue());
         params.getOrCreate(PyramidDescriptor.IN_COVERAGEREF).setValue(covref);
@@ -98,7 +98,7 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
 
         ArgumentChecks.ensureNonNull("inputParameters", inputParameters);
 
-        final CoverageResource coverageref        = inputParameters.getValue(PyramidDescriptor.IN_COVERAGEREF      );
+        final GridCoverageResource coverageref        = inputParameters.getValue(PyramidDescriptor.IN_COVERAGEREF      );
         final CoverageStore coverageStore         = inputParameters.getValue(PyramidDescriptor.IN_COVERAGESTORE    );
         final InterpolationCase interpolationcase = inputParameters.getValue(PyramidDescriptor.IN_INTERPOLATIONCASE);
         final Map resolution_per_envelope         = inputParameters.getValue(PyramidDescriptor.IN_RES_PER_ENVELOPE );
@@ -124,8 +124,13 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
             throw new CancellationException();
         }
         try {
-            pgcb.create(coverageref, coverageStore, NamesExt.create(pyramid_name), resolution_per_envelope, fillvalue,
-                    this, new PyramidMonitor(this));
+            pgcb.setMonitor(new PyramidMonitor(this));
+            pgcb.setListener(this);
+            pgcb.setFillValues(fillvalue);
+            pgcb.setResolutionPerEnvelope(resolution_per_envelope);
+            pgcb.setSourceResource(coverageref);
+            pgcb.setTargetStore(coverageStore, NamesExt.create(pyramid_name));
+            pgcb.execute();
         } catch (Exception ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
@@ -195,11 +200,10 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
     /**
      * Allow to cancel the tiles creation process.
      */
-    private class PyramidMonitor extends ProgressMonitor {
+    private class PyramidMonitor implements Monitor {
         private final PyramidProcess process;
 
         public PyramidMonitor(final PyramidProcess process) {
-            super(new JLabel(), "", "", 0, 100);
             this.process = process;
         }
 

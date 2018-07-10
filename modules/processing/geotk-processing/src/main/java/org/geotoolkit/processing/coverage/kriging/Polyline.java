@@ -17,9 +17,9 @@ package org.geotoolkit.processing.coverage.kriging;
 
 import java.util.Set;
 import java.util.Arrays;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.Envelope;
 
 
 /**
@@ -747,5 +747,14 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
             }
         }
         return false;
+    }
+
+    /**
+     * Overridden because the JTS API require us to do so, but returns {@code this} since
+     * {@code Polyline} are unmodifiable through the JTS API.
+     */
+    @Override
+    public CoordinateSequence copy() {
+        return this;
     }
 }

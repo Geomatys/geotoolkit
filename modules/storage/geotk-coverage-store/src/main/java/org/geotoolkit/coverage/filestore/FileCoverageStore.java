@@ -48,12 +48,12 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Coverage Store which rely on standard java readers and writers.
@@ -313,7 +313,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
     }
 
     @Override
-    public CoverageResource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
+    public GridCoverageResource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
         if (!(resource instanceof DefiningCoverageResource)) {
             throw new DataStoreException("Unsupported resource "+resource);
         }
@@ -336,10 +336,10 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
 
     @Override
     public void remove(org.apache.sis.storage.Resource resource) throws DataStoreException {
-        if (!(resource instanceof CoverageResource)) {
+        if (!(resource instanceof GridCoverageResource)) {
             throw new DataStoreException("Unknown resource "+resource);
         }
-        final CoverageResource cr = (CoverageResource) resource;
+        final GridCoverageResource cr = (GridCoverageResource) resource;
         final NamedIdentifier name = cr.getIdentifier();
 
         //TODO

@@ -29,7 +29,7 @@ import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Define input and output objects necessary to {@link PyramidProcess}.
@@ -45,11 +45,11 @@ public class PyramidDescriptor extends AbstractProcessDescriptor{
     /**
      * Input coverage which will be resample.
      */
-    public static final ParameterDescriptor<CoverageResource> IN_COVERAGEREF = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverageResource> IN_COVERAGEREF = new ParameterBuilder()
             .addName("coverageref")
             .setRemarks("Coverage which will be tile.")
             .setRequired(true)
-            .create(CoverageResource.class, null);
+            .create(GridCoverageResource.class, null);
 
     /**
      * Coverage store within pyramid will be store.

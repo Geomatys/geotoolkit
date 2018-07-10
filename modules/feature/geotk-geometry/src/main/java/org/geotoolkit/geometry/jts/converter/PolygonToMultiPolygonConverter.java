@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.geometry.jts.converter;
 
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Polygon;
 import java.util.Collections;
 import java.util.Set;
 import org.apache.sis.math.FunctionProperty;

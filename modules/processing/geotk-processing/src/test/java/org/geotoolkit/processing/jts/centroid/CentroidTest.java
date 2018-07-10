@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.processing.jts.centroid;
 
-import com.vividsolutions.jts.geom.*;
+import org.locationtech.jts.geom.*;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;

@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.geometry.jts.converter;
 
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.Point;
 import java.util.Collections;
 import java.util.Set;
 import org.apache.sis.math.FunctionProperty;

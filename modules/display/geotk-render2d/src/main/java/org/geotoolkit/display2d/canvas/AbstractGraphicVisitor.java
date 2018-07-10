@@ -52,7 +52,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.measure.Units;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * A visitor which can be applied to the
@@ -169,7 +169,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
 
         final GridCoverage2D coverage;
         try {
-            final CoverageResource ref = layer.getCoverageReference();
+            final GridCoverageResource ref = layer.getCoverageReference();
             final GridCoverageReader reader = ref.acquireReader();
             coverage = (GridCoverage2D) reader.read(ref.getImageIndex(),param);
             ref.recycle(reader);
@@ -226,7 +226,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         dp.setOrdinate(1, bounds2D.getCenterY());
 
         final CoverageMapLayer layer = projectedCoverage.getLayer();
-        final CoverageResource covRef = layer.getCoverageReference();
+        final GridCoverageResource covRef = layer.getCoverageReference();
         GridCoverageReader reader = null;
         try {
             reader = covRef.acquireReader();

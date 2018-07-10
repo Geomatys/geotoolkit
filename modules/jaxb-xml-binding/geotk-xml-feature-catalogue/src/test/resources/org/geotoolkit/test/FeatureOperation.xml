@@ -14,7 +14,7 @@
                         <gco:Integer>1</gco:Integer>
                     </gco:lower>
                     <gco:upper>
-                        <gco:UnlimitedInteger isInfinite="false">1</gco:UnlimitedInteger>
+                        <gco:UnlimitedInteger>1</gco:UnlimitedInteger>
                     </gco:upper>
                 </gco:MultiplicityRange>
             </gco:range>

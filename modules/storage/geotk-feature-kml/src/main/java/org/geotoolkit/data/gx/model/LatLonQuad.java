@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.gx.model;
 
-import com.vividsolutions.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.CoordinateSequence;
 import org.geotoolkit.data.kml.model.AbstractObject;
 
 /**
