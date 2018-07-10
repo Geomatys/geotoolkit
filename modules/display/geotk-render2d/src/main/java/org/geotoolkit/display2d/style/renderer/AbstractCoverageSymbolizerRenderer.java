@@ -647,7 +647,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * @throws CoverageStoreException if problem during reading action.
      */
     private static GridCoverage2D readCoverage(final ProjectedCoverage projectedCoverage, final boolean isElevation,
-                                               final Envelope paramEnvelope, final double[] paramResolution, final int[] sourceBands,
+                                               final Envelope paramEnvelope, double[] paramResolution, final int[] sourceBands,
                                                final Envelope inputCoverageEnvelope)
             throws CoverageStoreException, TransformException {
 
@@ -666,8 +666,16 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         }
         final GridCoverageReadParam param = new GridCoverageReadParam();
         param.setEnvelope(paramEnvelope);
-        param.setResolution(paramResolution);
         if (sourceBands!=null) param.setSourceBands(sourceBands);
+
+        //ensure dimension match, resolution is often in 2D while data is actualy N-Dimension
+        if (paramEnvelope != null && paramEnvelope.getDimension() != paramResolution.length) {
+            final int dim = paramEnvelope.getDimension();
+            final double[] cp = Arrays.copyOf(paramResolution, dim);
+            for (int i=paramResolution.length; i<cp.length; i++) cp[i] = 1;
+            paramResolution = cp;
+        }
+        param.setResolution(paramResolution);
 
         GridCoverage2D dataCoverage = (isElevation) ? projectedCoverage.getElevationCoverage(param) : projectedCoverage.getCoverage(param);
 
