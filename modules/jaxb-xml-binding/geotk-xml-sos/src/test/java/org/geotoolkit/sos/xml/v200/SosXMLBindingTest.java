@@ -25,7 +25,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.XMLComparator;
+import org.apache.sis.test.xml.DocumentComparator;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 
 import org.apache.sis.xml.MarshallerPool;
@@ -123,7 +123,7 @@ public class SosXMLBindingTest extends org.geotoolkit.test.TestBase {
     /**
      * TODO move to utilities modules
      */
-    public static class ExtendedDOMComparator extends XMLComparator {
+    public static class ExtendedDOMComparator extends DocumentComparator {
 
         public ExtendedDOMComparator(final Object expected, final Object actual) throws IOException, ParserConfigurationException, SAXException {
             super(expected, actual);
@@ -153,6 +153,5 @@ public class SosXMLBindingTest extends org.geotoolkit.test.TestBase {
             }
             assertPropertyEquals("name",      expectedNodeName,     actualNodeName,     expected, actual);
         }
-
     }
 }

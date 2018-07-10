@@ -30,7 +30,7 @@ import org.geotoolkit.sld.xml.v110.StyledLayerDescriptor;
 import org.geotoolkit.sld.xml.v110.UserLayer;
 import org.geotoolkit.sld.xml.v110.UserStyle;
 import javax.xml.bind.JAXBContext;
-import org.apache.sis.test.XMLComparator;
+import org.apache.sis.test.xml.DocumentComparator;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -144,7 +144,7 @@ public class ProvidersXmlTest extends org.geotoolkit.test.TestBase {
         }
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        XMLComparator comparator = new XMLComparator(RESULT_MARSHALLING_WITHOUT_SLD, result.trim());
+        DocumentComparator comparator = new DocumentComparator(RESULT_MARSHALLING_WITHOUT_SLD, result.trim());
         comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
     }
@@ -192,7 +192,7 @@ public class ProvidersXmlTest extends org.geotoolkit.test.TestBase {
         }
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        XMLComparator comparator = new XMLComparator(RESULT_MARSHALLING_WITH_SLD, result.trim());
+        DocumentComparator comparator = new DocumentComparator(RESULT_MARSHALLING_WITH_SLD, result.trim());
         comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
     }

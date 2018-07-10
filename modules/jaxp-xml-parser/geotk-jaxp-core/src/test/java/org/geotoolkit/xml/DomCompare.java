@@ -20,7 +20,7 @@ package org.geotoolkit.xml;
 
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.XMLComparator;
+import org.apache.sis.test.xml.DocumentComparator;
 import org.xml.sax.SAXException;
 
 
@@ -40,7 +40,7 @@ public class DomCompare {
     public static void compare(final Object expected, final Object result)
             throws ParserConfigurationException, SAXException, IOException
     {
-        final XMLComparator comparator = new XMLComparator(expected, result);
+        final DocumentComparator comparator = new DocumentComparator(expected, result);
         comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns");
         comparator.compare();
     }
