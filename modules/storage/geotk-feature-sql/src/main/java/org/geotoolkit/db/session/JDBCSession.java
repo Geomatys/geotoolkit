@@ -117,7 +117,7 @@ public class JDBCSession extends DefaultSession {
         fireSessionChanged();
 
         for (GenericName deltaChange : deltaChanges) {
-            ((DefaultJDBCFeatureStore)store).forwardContentEvent(FeatureStoreContentEvent.createUpdateEvent(store, deltaChange, null));
+            ((DefaultJDBCFeatureStore)store).forwardEvent(FeatureStoreContentEvent.createUpdateEvent(store, deltaChange, null));
         }
     }
 

@@ -36,6 +36,8 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -46,7 +48,6 @@ import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.StorageEvent;
-import org.geotoolkit.storage.StorageListener;
 import org.opengis.util.GenericName;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
@@ -64,7 +65,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
     protected final Parameters parameters;
-    protected final Set<StorageListener> storeListeners = new HashSet<>();
+    protected final Set<ChangeListener> storeListeners = new HashSet<>();
 
     private GenericNameIndex<GridCoverageResource> cachedRefs = null;
 
@@ -260,82 +261,82 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
     protected CoverageStoreManagementEvent fireCoverageAdded(final GenericName name){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createCoverageAddEvent(this, name);
-        sendStructureEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent fireCoverageUpdated(final GenericName name){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createCoverageUpdateEvent(this, name);
-        sendStructureEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent fireCoverageDeleted(final GenericName name){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createCoverageDeleteEvent(this, name);
-        sendStructureEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent firePyramidAdded(final GenericName name, final String pyramidId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidAddEvent(this, name, pyramidId);
-        sendStructureEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent firePyramidUpdated(final GenericName name, final String pyramidId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidUpdateEvent(this, name, pyramidId);
-        sendStructureEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent firePyramidDeleted(final GenericName name, final String pyramidId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidDeleteEvent(this, name, pyramidId);
-        sendStructureEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent fireMosaicAdded(final GenericName name, final String pyramidId, final String mosaicId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicAddEvent(this, name, pyramidId, mosaicId);
-        sendStructureEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent fireMosaicUpdated(final GenericName name, final String pyramidId, final String mosaicId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicUpdateEvent(this, name, pyramidId, mosaicId);
-        sendStructureEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent fireMosaicDeleted(final GenericName name, final String pyramidId, final String mosaicId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicDeleteEvent(this, name, pyramidId, mosaicId);
-        sendStructureEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreContentEvent fireDataUpdated(final GenericName name){
         final CoverageStoreContentEvent event = CoverageStoreContentEvent.createDataUpdateEvent(this, name);
-        sendContentEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreContentEvent fireTileAdded(final GenericName name,
             final String pyramidId, final String mosaicId, final List<Point> tiles){
         final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileAddEvent(this, name, pyramidId, mosaicId, tiles);
-        sendContentEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreContentEvent fireTileUpdated(final GenericName name,
             final String pyramidId, final String mosaicId, final List<Point> tiles){
         final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileUpdateEvent(this, name, pyramidId, mosaicId, tiles);
-        sendContentEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreContentEvent fireTileDeleted(final GenericName name,
             final String pyramidId, final String mosaicId, final List<Point> tiles){
         final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileDeleteEvent(this, name, pyramidId, mosaicId, tiles);
-        sendContentEvent(event);
+        sendEvent(event);
         return event;
     }
 
@@ -360,45 +361,31 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
     }
 
     @Override
-    public void addStorageListener(final StorageListener listener) {
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
         synchronized (storeListeners) {
             storeListeners.add(listener);
         }
     }
 
     @Override
-    public void removeStorageListener(final StorageListener listener) {
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
         synchronized (storeListeners) {
             storeListeners.remove(listener);
         }
     }
 
     /**
-     * Forward a structure event to all listeners.
+     * Forward event to all listeners.
      * @param event , event to send to listeners.
      */
-    protected synchronized void sendStructureEvent(final StorageEvent event){
+    protected synchronized void sendEvent(final ChangeEvent event){
         cachedRefs = null;
-        final StorageListener[] lst;
+        final ChangeListener[] lst;
         synchronized (storeListeners) {
-            lst = storeListeners.toArray(new StorageListener[storeListeners.size()]);
+            lst = storeListeners.toArray(new ChangeListener[storeListeners.size()]);
         }
-        for(final StorageListener listener : lst){
-            listener.structureChanged(event);
-        }
-    }
-
-    /**
-     * Forward a data event to all listeners.
-     * @param event , event to send to listeners.
-     */
-    protected void sendContentEvent(final StorageEvent event){
-        final StorageListener[] lst;
-        synchronized (storeListeners) {
-            lst = storeListeners.toArray(new StorageListener[storeListeners.size()]);
-        }
-        for(final StorageListener listener : lst){
-            listener.contentChanged(event);
+        for (final ChangeListener listener : lst){
+            listener.changeOccured(event);
         }
     }
 
@@ -407,17 +394,8 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
      * For implementation use only.
      * @param event
      */
-    public void forwardStructureEvent(StorageEvent event){
-        sendStructureEvent(event.copy(this));
-    }
-
-    /**
-     * Forward given event, changing the source by this object.
-     * For implementation use only.
-     * @param event
-     */
-    public void forwardContentEvent(StorageEvent event){
-        sendContentEvent(event.copy(this));
+    public void forwardEvent(StorageEvent event){
+        sendEvent(event.copy(this));
     }
 
 }

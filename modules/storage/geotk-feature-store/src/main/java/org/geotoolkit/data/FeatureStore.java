@@ -28,7 +28,6 @@ import org.apache.sis.storage.Resource;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -293,19 +292,6 @@ public interface FeatureStore extends AutoCloseable, Resource {
     default FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
         throw new ReadOnlyStorageException("Writing operations not supported.");
     }
-
-    /**
-     * Add a storage listener which will be notified when schema are added, modified or deleted
-     * and when features are added, modified or deleted.
-     * @param listener to add
-     */
-    void addStorageListener(StorageListener listener);
-
-    /**
-     * Remove a storage listener
-     * @param listener to remove
-     */
-    void removeStorageListener(StorageListener listener);
 
     /**
      * refresh metaModel (in case someone else had changed by an other way)

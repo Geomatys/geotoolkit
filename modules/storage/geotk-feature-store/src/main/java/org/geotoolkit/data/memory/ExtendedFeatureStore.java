@@ -29,6 +29,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStore;
@@ -36,7 +38,6 @@ import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.storage.StorageListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.internal.data.GenericNameIndex;
@@ -260,13 +261,13 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public void addStorageListener(final StorageListener listener) {
-        wrapped.addStorageListener(listener);
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+        wrapped.addListener(listener, eventType);
     }
 
     @Override
-    public void removeStorageListener(final StorageListener listener) {
-        wrapped.removeStorageListener(listener);
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+        wrapped.removeListener(listener, eventType);
     }
 
     @Override

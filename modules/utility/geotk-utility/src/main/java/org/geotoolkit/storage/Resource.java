@@ -31,18 +31,4 @@ public interface Resource extends org.apache.sis.storage.Resource {
      */
     NamedIdentifier getIdentifier();
 
-    /**
-     * Add a storage listener which will be notified when structure changes or
-     * when coverage data changes.
-     *
-     * @param listener to add
-     */
-    void addStorageListener(final StorageListener listener);
-
-    /**
-     * Remove a storage listener.
-     *
-     * @param listener to remove
-     */
-    void removeStorageListener(final StorageListener listener);
 }

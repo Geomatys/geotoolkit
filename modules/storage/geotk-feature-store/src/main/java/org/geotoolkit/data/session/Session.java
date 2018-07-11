@@ -20,14 +20,14 @@ package org.geotoolkit.data.session;
 import java.util.Collection;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.opengis.feature.Feature;
-import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 
@@ -157,12 +157,12 @@ public interface Session {
      *
      * @param listener to add
      */
-    void addStorageListener(StorageListener listener);
+    <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType);
 
     /**
      * Remove a storage listener
      * @param listener to remove
      */
-    void removeStorageListener(StorageListener listener);
+    <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType);
 
 }

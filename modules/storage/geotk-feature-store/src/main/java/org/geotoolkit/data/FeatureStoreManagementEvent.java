@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data;
 
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.StorageEvent;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.feature.FeatureType;
@@ -28,7 +29,7 @@ import org.opengis.util.GenericName;
  * @todo work in progress
  * @author Johann Sorel (Geomatys)
  */
-public class FeatureStoreManagementEvent extends StorageEvent{
+public class FeatureStoreManagementEvent extends StorageEvent {
 
     public static enum Type{
         ADD,
@@ -41,7 +42,7 @@ public class FeatureStoreManagementEvent extends StorageEvent{
     private final FeatureType oldType;
     private final FeatureType newType;
 
-    private FeatureStoreManagementEvent(final Object source, final Type type, final GenericName name, final FeatureType oldtype, final FeatureType newtype){
+    private FeatureStoreManagementEvent(final Resource source, final Type type, final GenericName name, final FeatureType oldtype, final FeatureType newtype){
         super(source);
 
         ensureNonNull("type", type);
@@ -91,19 +92,19 @@ public class FeatureStoreManagementEvent extends StorageEvent{
     }
 
     @Override
-    public FeatureStoreManagementEvent copy(Object source) {
+    public FeatureStoreManagementEvent copy(Resource source) {
         return new FeatureStoreManagementEvent(source, type, name, oldType, newType);
     }
 
-    public static FeatureStoreManagementEvent createAddEvent(final Object source, final GenericName name, final FeatureType type){
+    public static FeatureStoreManagementEvent createAddEvent(final Resource source, final GenericName name, final FeatureType type){
         return new FeatureStoreManagementEvent(source, Type.ADD, name, null, type);
     }
 
-    public static FeatureStoreManagementEvent createUpdateEvent(final Object source, final GenericName name, final FeatureType oldType, final FeatureType newType){
+    public static FeatureStoreManagementEvent createUpdateEvent(final Resource source, final GenericName name, final FeatureType oldType, final FeatureType newType){
         return new FeatureStoreManagementEvent(source, Type.UPDATE, name, oldType, newType);
     }
 
-    public static FeatureStoreManagementEvent createDeleteEvent(final Object source, final GenericName name, final FeatureType type){
+    public static FeatureStoreManagementEvent createDeleteEvent(final Resource source, final GenericName name, final FeatureType type){
         return new FeatureStoreManagementEvent(source, Type.DELETE, name, type, null);
     }
 

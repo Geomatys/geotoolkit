@@ -18,6 +18,8 @@ package org.geotoolkit.pending.demo.datamodel.nmea;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -28,8 +30,6 @@ import org.geotoolkit.data.nmea.NMEASerialPortReader;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.lang.Setup;
-import org.geotoolkit.storage.StorageEvent;
-import org.geotoolkit.storage.StorageListener;
 
 /**
  * Connect and activate a GPS on COM/USB port first.
@@ -57,22 +57,17 @@ public class NMEASerialPortReaderDemo {
         LOGGER.log(Level.INFO, "Port reading ended.");
     }
 
-    private static class TestListener implements StorageListener {
+    private static class TestListener implements ChangeListener<ChangeEvent> {
 
         public final Session session;
 
         public TestListener(final MemoryFeatureStore store) {
-            store.addStorageListener(this);
+            store.addListener(this, ChangeEvent.class);
             session = store.createSession(false);
         }
 
         @Override
-        public void structureChanged(StorageEvent event) {
-            LOGGER.log(Level.SEVERE, "Input store structure have been modified. IT MUST NEVER HAPPEND !");
-        }
-
-        @Override
-        public void contentChanged(StorageEvent event) {
+        public void changeOccured(ChangeEvent event) {
             if (event instanceof FeatureStoreContentEvent) {
                 final FeatureStoreContentEvent tmp = (FeatureStoreContentEvent) event;
                 if (tmp.getType().equals(FeatureStoreContentEvent.Type.ADD)) {

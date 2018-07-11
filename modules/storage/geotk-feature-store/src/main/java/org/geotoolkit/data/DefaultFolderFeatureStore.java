@@ -47,6 +47,9 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
+import org.geotoolkit.storage.StorageEvent;
 
 /**
  * Handle a folder of single file FeatureStore.
@@ -60,18 +63,14 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
     /**
      * Listen to changes in sub stores and propagate them.
      */
-    private final FeatureStoreListener subListener = new FeatureStoreListener() {
+    private final ChangeListener subListener = new ChangeListener() {
 
         @Override
-        public void structureChanged(FeatureStoreManagementEvent event) {
-            event = event.copy(DefaultFolderFeatureStore.this);
-            sendStructureEvent(event);
-        }
-
-        @Override
-        public void contentChanged(FeatureStoreContentEvent event) {
-            event = event.copy(DefaultFolderFeatureStore.this);
-            sendContentEvent(event);
+        public void changeOccured(ChangeEvent event) {
+            if (event instanceof StorageEvent) {
+                event = ((StorageEvent)event).copy(DefaultFolderFeatureStore.this);
+            }
+            sendEvent(event);
         }
     };
 
@@ -192,7 +191,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
         if (singleFileFactory.canProcess(params)) {
             try {
                 final FeatureStore fileDS = (FeatureStore) singleFileFactory.open(params);
-                fileDS.addStorageListener(subListener);
+                fileDS.addListener(subListener, ChangeEvent.class);
                 stores.add(this, fileDS.getNames().iterator().next(), fileDS);
             } catch (DataStoreException ex) {
                 getLogger().log(Level.WARNING, ex.getLocalizedMessage(), ex);
@@ -222,7 +221,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
         }
 
         final FeatureStore store = (FeatureStore) singleFileFactory.create(params);
-        store.addStorageListener(subListener);
+        store.addListener(subListener, ChangeEvent.class);
         store.createFeatureType(featureType);
         stores.add(this, typeName, store);
     }

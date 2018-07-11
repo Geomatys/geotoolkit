@@ -35,13 +35,14 @@ import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.StorageEvent;
-import org.geotoolkit.storage.StorageListener;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
@@ -62,7 +63,7 @@ public abstract class AbstractClient extends DataStore implements Client{
 
     private final Map<String,Object> userProperties = new HashMap<>();
     private String sessionId = null;
-    protected final Set<StorageListener> listeners = new HashSet<>();
+    protected final Set<ChangeListener> listeners = new HashSet<>();
 
 
     public AbstractClient(final ParameterValueGroup params) {
@@ -210,14 +211,15 @@ public abstract class AbstractClient extends DataStore implements Client{
         //do nothing
     }
 
-
-    public void addStorageListener(final StorageListener listener) {
+    @Override
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
-    public void removeStorageListener(final StorageListener listener) {
+    @Override
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -227,27 +229,13 @@ public abstract class AbstractClient extends DataStore implements Client{
      * Forward a structure event to all listeners.
      * @param event , event to send to listeners.
      */
-    protected void sendStructureEvent(final StorageEvent event){
-        final StorageListener[] lst;
+    protected void sendEvent(final StorageEvent event){
+        final ChangeListener[] lst;
         synchronized (listeners) {
-            lst = listeners.toArray(new StorageListener[listeners.size()]);
+            lst = listeners.toArray(new ChangeListener[listeners.size()]);
         }
-        for(final StorageListener listener : lst){
-            listener.structureChanged(event);
-        }
-    }
-
-    /**
-     * Forward a data event to all listeners.
-     * @param event , event to send to listeners.
-     */
-    protected void sendContentEvent(final StorageEvent event){
-        final StorageListener[] lst;
-        synchronized (listeners) {
-            lst = listeners.toArray(new StorageListener[listeners.size()]);
-        }
-        for(final StorageListener listener : lst){
-            listener.contentChanged(event);
+        for(final ChangeListener listener : lst){
+            listener.changeOccured(event);
         }
     }
 
@@ -256,17 +244,8 @@ public abstract class AbstractClient extends DataStore implements Client{
      * For implementation use only.
      * @param event
      */
-    public void forwardStructureEvent(StorageEvent event){
-        sendStructureEvent(event.copy(this));
-    }
-
-    /**
-     * Forward given event, changing the source by this object.
-     * For implementation use only.
-     * @param event
-     */
-    public void forwardContentEvent(StorageEvent event){
-        sendContentEvent(event.copy(this));
+    public void forwardEvent(StorageEvent event){
+        sendEvent(event.copy(this));
     }
 
 }

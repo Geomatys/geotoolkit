@@ -168,7 +168,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
 
         pyramidSet.mustUpdate();
         final CoverageStoreManagementEvent event = firePyramidAdded(pyramidId);
-        getStore().forwardStructureEvent(event);
+        getStore().forwardEvent(event);
         for(Pyramid p : pyramidSet.getPyramids()){
             if(p.getId().equals(pyramidId)){
                 return p;
@@ -262,7 +262,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
 
         pyramidSet.mustUpdate();
         final CoverageStoreManagementEvent event = fireMosaicAdded(pyramidId, String.valueOf(mosaicId));
-        getStore().forwardStructureEvent(event);
+        getStore().forwardEvent(event);
         for (final Pyramid p : pyramidSet.getPyramids()) {
             if (p.getId().equals(pyramidId)) {
                 for(GridMosaic mosaic : p.getMosaics()){
@@ -405,7 +405,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
             insertStmt.executeUpdate(query.toString());
 
             final CoverageStoreContentEvent event = fireTileUpdated(pyramidId, mosaicId, Collections.singletonList(new Point(col,row)));
-            getStore().forwardContentEvent(event);
+            getStore().forwardEvent(event);
         }catch(IOException ex){
             throw new DataStoreException(ex.getMessage(), ex);
         }catch(SQLException ex){

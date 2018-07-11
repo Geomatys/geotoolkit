@@ -22,7 +22,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractGridMosaic;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
-import org.geotoolkit.storage.coverage.CoverageStoreListener;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.Pyramid;
@@ -72,8 +71,13 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
@@ -82,9 +86,10 @@ import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer> implements CoverageStoreListener{
+public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer> implements ChangeListener<ChangeEvent> {
 
-    protected CoverageStoreListener.Weak weakStoreListener = new CoverageStoreListener.Weak(this);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d");
+    protected StorageListener.Weak weakStoreListener = new StorageListener.Weak(this);
 
     private final PyramidalCoverageResource model;
     private final double tolerance;
@@ -455,17 +460,12 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
     }
 
     @Override
-    public void structureChanged(CoverageStoreManagementEvent event) {
-    }
-
-    @Override
-    public void contentChanged(CoverageStoreContentEvent event) {
-        if(item.isVisible() && getCanvas().isAutoRepaint()){
+    public void changeOccured(ChangeEvent event) {
+        if (event instanceof CoverageStoreContentEvent && item.isVisible() && getCanvas().isAutoRepaint()) {
             //TODO should call a repaint only on this graphic
             getCanvas().repaint();
         }
     }
-
 
     private static class TileSetResult{
         //style informations

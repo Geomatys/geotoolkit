@@ -25,10 +25,10 @@ import java.util.List;
 import java.util.Set;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
-import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -36,7 +36,6 @@ import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
-import org.geotoolkit.storage.StorageListener;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
@@ -53,7 +52,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class CoverageSQLStore extends AbstractCoverageStore implements Aggregate {
 
     private final CoverageDatabase db;
-    private final Set<StorageListener> geotkListeners = new HashSet<>();
+    private final Set<ChangeListener> geotkListeners = new HashSet<>();
 
     private static ParameterValueGroup adaptParameter(ParameterValueGroup parameters) {
         final ParameterValueGroup params = CoverageDatabase.PARAMETERS.createValue();
@@ -116,7 +115,7 @@ public class CoverageSQLStore extends AbstractCoverageStore implements Aggregate
      * {@inheritDoc}
      */
     @Override
-    public void addStorageListener(final StorageListener listener) {
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
         synchronized (geotkListeners) {
             geotkListeners.add(listener);
         }
@@ -126,37 +125,23 @@ public class CoverageSQLStore extends AbstractCoverageStore implements Aggregate
      * {@inheritDoc}
      */
     @Override
-    public void removeStorageListener(final StorageListener listener) {
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
         synchronized (geotkListeners) {
             geotkListeners.remove(listener);
         }
     }
 
     /**
-     * Forward a structure event to all listeners.
+     * Forward an event to all listeners.
      * @param event event to send to listeners.
      */
-    protected void sendEvent(final CoverageStoreManagementEvent event) {
-        final StorageListener[] lst;
+    protected void sendEvent(final ChangeEvent event) {
+        final ChangeListener[] lst;
         synchronized (geotkListeners) {
-            lst = geotkListeners.toArray(new StorageListener[geotkListeners.size()]);
+            lst = geotkListeners.toArray(new ChangeListener[geotkListeners.size()]);
         }
-        for (final StorageListener listener : lst) {
-            listener.structureChanged(event);
-        }
-    }
-
-    /**
-     * Forward a data event to all listeners.
-     * @param event event to send to listeners.
-     */
-    protected void sendEvent(final CoverageStoreContentEvent event){
-        final StorageListener[] lst;
-        synchronized (geotkListeners) {
-            lst = geotkListeners.toArray(new StorageListener[geotkListeners.size()]);
-        }
-        for (final StorageListener listener : lst) {
-            listener.contentChanged(event);
+        for (final ChangeListener listener : lst) {
+            listener.changeOccured(event);
         }
     }
 
