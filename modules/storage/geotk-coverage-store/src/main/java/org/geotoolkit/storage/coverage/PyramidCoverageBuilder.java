@@ -47,7 +47,6 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.image.io.XImageIO;
 import org.opengis.util.GenericName;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.image.interpolation.LanczosInterpolation;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -148,18 +147,18 @@ public class PyramidCoverageBuilder {
     /**
      * Tile width.
      */
-    private final int tileWidth;
+    private int tileWidth = DEFAULT_TILE_SIZE;
 
     /**
      * Tile height.
      */
-    private final int tileHeight;
+    private int tileHeight = DEFAULT_TILE_SIZE;
 
     /**
      * Interpolation properties.
      */
-    private final InterpolationCase interpolationCase;
-    private final int lanczosWindow;
+    private InterpolationCase interpolationCase = InterpolationCase.NEIGHBOR;
+    private int lanczosWindow = 1;
 
     /**
      * Flag to re-use mosaic tiles if already exist in output pyramid.
@@ -225,47 +224,70 @@ public class PyramidCoverageBuilder {
         }
     };
 
-    /**
-     * <p>Define tile size and interpolation properties use during resampling operation.<br/><br/>
-     *
-     * Note : if lanczos interpolation doesn't choose lanczosWindow parameter has no impact.</p>
-     *
-     * @param tileSize size of tile from mosaic if null a default tile size of 256 x 256 is chosen. Minimum tile size is 64 x 64.
-     * @param interpolation pixel operation use during resampling operation.
-     * @param lanczosWindow only use about Lanczos interpolation.
-     * @see Resample#fillImage()
-     * @see LanczosInterpolation#LanczosInterpolation(org.geotoolkit.image.iterator.PixelIterator, int)
-     * @see InterpolationCase
-     */
-    public PyramidCoverageBuilder(Dimension tileSize, InterpolationCase interpolation, int lanczosWindow) {
-        this(tileSize, interpolation, lanczosWindow, false);
+    public PyramidCoverageBuilder() {
     }
 
     /**
-     * <p>Define tile size and interpolation properties use during resampling operation.<br/><br/>
-     *
-     * Note : if lanczos interpolation doesn't choose lanczosWindow parameter has no impact.</p>
-     *
-     * @param tileSize size of tile from mosaic if null a default tile size of 256 x 256 is chosen. Minimum tile size is 64 x 64.
-     * @param interpolation pixel operation use during resampling operation.
-     * @param lanczosWindow only use about Lanczos interpolation.
-     * @param reuseTiles flag to re-use mosaic tiles if already exist in output pyramid.
-     * @see Resample#fillImage()
-     * @see LanczosInterpolation#LanczosInterpolation(org.geotoolkit.image.iterator.PixelIterator, int)
-     * @see InterpolationCase
+     * @param tileSize size of tile from mosaic. The minimum tile size is 64 x 64.
      */
-    public PyramidCoverageBuilder(Dimension tileSize, InterpolationCase interpolation, int lanczosWindow, boolean reuseTiles) {
+    public void setTileSize(Dimension tileSize) {
+        this.tileWidth = tileSize.width;
+        this.tileHeight = tileSize.height;
+    }
+
+    /**
+     * @return current tile sizes
+     */
+    public Dimension getTileSize() {
+        return new Dimension(tileWidth, tileHeight);
+    }
+
+    /**
+     * Set interpolation method.
+     * Default is set to NEAREST_NEIGHBOR
+     *
+     * @param interpolation pixel interpolation use during resampling operation.
+     */
+    public void setInterpolation(InterpolationCase interpolation) {
         ArgumentChecks.ensureNonNull("interpolation", interpolation);
-        ArgumentChecks.ensureStrictlyPositive("lanczosWindow", lanczosWindow);
-        if (tileSize == null) {
-            tileWidth = tileHeight = DEFAULT_TILE_SIZE;
-        } else {
-            tileWidth  = Math.min(DEFAULT_TILE_SIZE, Math.max(tileSize.width, MIN_TILE_SIZE));
-            tileHeight = Math.min(DEFAULT_TILE_SIZE, Math.max(tileSize.height, MIN_TILE_SIZE));
-        }
         this.interpolationCase = interpolation;
-        this.lanczosWindow     = lanczosWindow;
-        this.reuseTiles        = reuseTiles;
+    }
+
+    /**
+     *
+     * @return interpolation method.
+     */
+    public InterpolationCase getInterpolation() {
+        return interpolationCase;
+    }
+
+    /**
+     * @param lanczosWindow only used with Lanczos interpolation.
+     */
+    public void setLanczosWindow(int lanczosWindow) {
+        ArgumentChecks.ensureStrictlyPositive("lanczosWindow", lanczosWindow);
+        this.lanczosWindow = lanczosWindow;
+    }
+
+    /**
+     * @return Lanczos window size, used only when interpolation is Lanczos
+     */
+    public int getLanczosWindow() {
+        return lanczosWindow;
+    }
+
+    /**
+     * @param reuseTiles flag to re-use mosaic tiles if already exist in output pyramid.
+     */
+    public void setReuseTiles(boolean reuseTiles) {
+        this.reuseTiles = reuseTiles;
+    }
+
+    /**
+     * @return true if tiles already existing are preserved
+     */
+    public boolean isReuseTiles() {
+        return reuseTiles;
     }
 
     /**
