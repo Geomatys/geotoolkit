@@ -16,29 +16,23 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.AbstractCoverageResource;
-import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
-import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.util.NamesExt;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
-import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.util.NamesExt;
+import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValue;
-import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 
@@ -50,13 +44,13 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class CoverageSQLStore extends AbstractCoverageStore implements Aggregate {
+public class CoverageSQLStore extends DataStore implements Aggregate {
 
-    private final CoverageDatabase db;
-    private final Set<StorageListener> geotkListeners = new HashSet<>();
+    private final Parameters parameters;
+    final CoverageDatabase db;
 
-    private static ParameterValueGroup adaptParameter(ParameterValueGroup parameters) {
-        final ParameterValueGroup params = CoverageDatabase.PARAMETERS.createValue();
+    private static Parameters adaptParameter(ParameterValueGroup parameters) {
+        final Parameters params = Parameters.castOrWrap(CoverageDatabase.PARAMETERS.createValue());
 
         final StringBuilder url = new StringBuilder("jdbc:postgresql://");
         url.append(parameters.parameter("host").getValue());
@@ -84,13 +78,18 @@ public class CoverageSQLStore extends AbstractCoverageStore implements Aggregate
     }
 
     public CoverageSQLStore(ParameterValueGroup parameters) {
-        super(adaptParameter(parameters));
-        this.db = new CoverageDatabase(getOpenParameters());
+        this.parameters = adaptParameter(parameters);
+        this.db = new CoverageDatabase(parameters);
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(CoverageSQLStoreFactory.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(CoverageSQLProvider.NAME);
+    }
+
+    @Override
+    public ParameterValueGroup getOpenParameters() {
+        return Parameters.unmodifiable(parameters);
     }
 
     @Override
@@ -98,7 +97,7 @@ public class CoverageSQLStore extends AbstractCoverageStore implements Aggregate
         final List<Resource> resources = new ArrayList<>();
         final Set<String> layers = db.getLayers().result();
         for (String layer : layers) {
-            resources.add(new CoverageSQLLayerResource(NamesExt.create(layer)));
+            resources.add(new CoverageSQLResource(this, NamesExt.create(layer)));
         }
         return Collections.unmodifiableList(resources);
     }
@@ -108,86 +107,17 @@ public class CoverageSQLStore extends AbstractCoverageStore implements Aggregate
         db.dispose();
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    // listeners methods ///////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void addStorageListener(final StorageListener listener) {
-        synchronized (geotkListeners) {
-            geotkListeners.add(listener);
-        }
+    public Metadata getMetadata() throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void removeStorageListener(final StorageListener listener) {
-        synchronized (geotkListeners) {
-            geotkListeners.remove(listener);
-        }
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 
-    /**
-     * Forward a structure event to all listeners.
-     * @param event event to send to listeners.
-     */
-    protected void sendEvent(final CoverageStoreManagementEvent event) {
-        final StorageListener[] lst;
-        synchronized (geotkListeners) {
-            lst = geotkListeners.toArray(new StorageListener[geotkListeners.size()]);
-        }
-        for (final StorageListener listener : lst) {
-            listener.structureChanged(event);
-        }
+    @Override
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 
-    /**
-     * Forward a data event to all listeners.
-     * @param event event to send to listeners.
-     */
-    protected void sendEvent(final CoverageStoreContentEvent event){
-        final StorageListener[] lst;
-        synchronized (geotkListeners) {
-            lst = geotkListeners.toArray(new StorageListener[geotkListeners.size()]);
-        }
-        for (final StorageListener listener : lst) {
-            listener.contentChanged(event);
-        }
-    }
-
-    private final class CoverageSQLLayerResource extends AbstractCoverageResource {
-        private CoverageSQLLayerResource(GenericName name) {
-            super(CoverageSQLStore.this, name);
-        }
-
-        @Override
-        public int getImageIndex() {
-            return 0;
-        }
-
-        @Override
-        public boolean isWritable() {
-            return true;
-        }
-
-        @Override
-        public GridCoverageReader acquireReader() throws CoverageStoreException {
-            return db.createGridCoverageReader(getIdentifier().tip().toString());
-        }
-
-        @Override
-        public GridCoverageWriter acquireWriter() throws CoverageStoreException {
-            return db.createGridCoverageWriter(getIdentifier().tip().toString());
-        }
-
-        @Override
-        public Image getLegend() throws DataStoreException {
-            return null;
-        }
-    }
 }

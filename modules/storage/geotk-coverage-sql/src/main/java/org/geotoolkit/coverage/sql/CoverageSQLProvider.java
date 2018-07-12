@@ -18,9 +18,14 @@ package org.geotoolkit.coverage.sql;
 
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.storage.DataStoreFactory;
+import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
+import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -34,12 +39,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.GRID, canWrite = true)
-public class CoverageSQLStoreFactory extends DataStoreFactory {
+public class CoverageSQLProvider extends DataStoreProvider {
 
     /** factory identification **/
     public static final String NAME = "coverage-sql";
-
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
      /** parameter for database host */
     public static final ParameterDescriptor<String> HOST = new ParameterBuilder()
@@ -92,17 +95,11 @@ public class CoverageSQLStoreFactory extends DataStoreFactory {
 
 
     public static final ParameterDescriptorGroup PARAMETERS = new ParameterBuilder()
-            .addName(NAME).addName("CoverageDatabase").createGroup(
-            IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,USER,PASSWORD,ROOTDIRECTORY);
+            .addName(NAME).createGroup(HOST,PORT,DATABASE,SCHEMA,USER,PASSWORD,ROOTDIRECTORY);
 
     @Override
-    public CharSequence getDescription() {
-        return Bundle.formatInternational(Bundle.Keys.coverageSQLDescription);
-    }
-
-    @Override
-    public CharSequence getDisplayName() {
-        return Bundle.formatInternational(Bundle.Keys.coverageSQLTitle);
+    public String getShortName() {
+        return NAME;
     }
 
     @Override
@@ -112,8 +109,34 @@ public class CoverageSQLStoreFactory extends DataStoreFactory {
 
     @Override
     public CoverageSQLStore open(ParameterValueGroup params) throws DataStoreException {
-        ensureCanProcess(params);
+        if (!canProcess(params)) {
+            throw new DataStoreException("Parameter values not supported by this factory.");
+        }
         return new CoverageSQLStore(params);
+    }
+
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        return new ProbeResult(false, null, null);
+    }
+
+    @Override
+    public DataStore open(StorageConnector connector) throws DataStoreException {
+        throw new DataStoreException("Not supported.");
+    }
+
+    public boolean canProcess(final ParameterValueGroup params) {
+        if(params == null){
+            return false;
+        }
+
+        final ParameterDescriptorGroup desc = getOpenParameters();
+        if(!desc.getName().getCode().equalsIgnoreCase(params.getDescriptor().getName().getCode())){
+            return false;
+        }
+
+        final ConformanceResult result = Parameters.isValid(params, desc);
+        return (result != null) && Boolean.TRUE.equals(result.pass());
     }
 
 }
