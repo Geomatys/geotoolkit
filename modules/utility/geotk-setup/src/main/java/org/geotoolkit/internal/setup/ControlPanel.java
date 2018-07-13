@@ -87,7 +87,6 @@ public final class ControlPanel extends JPanel implements ActionListener {
      * @param locale The locale.
      */
     public static void show(final Locale locale) {
-        Installation.allowSystemPreferences = true;
         final Vocabulary resources = Vocabulary.getResources(locale);
         final JFrame frame = new JFrame(resources.getString(Vocabulary.Keys.Installation_1, "Geotoolkit.org"));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

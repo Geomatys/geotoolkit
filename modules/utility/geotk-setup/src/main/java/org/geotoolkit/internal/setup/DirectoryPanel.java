@@ -52,7 +52,7 @@ final class DirectoryPanel extends JComponent {
         /**
          * The mode index.
          */
-        private static final int AUTO=0, USER=1, SYSTEM=2;
+        private static final int AUTO=0, USER=1;
 
         /**
          * Specifies if the directory should be determined automatically,
@@ -93,10 +93,9 @@ final class DirectoryPanel extends JComponent {
         Item(final GridBagConstraints c, final String text, final Installation config) {
             this.config = config;
             final Vocabulary resources = data.resources;
-            final String[] modes = new String[3];
+            final String[] modes = new String[2];
             modes[AUTO]   = resources.getString(Vocabulary.Keys.Automatic);
             modes[USER]   = resources.getString(Vocabulary.Keys.CurrentUser);
-            modes[SYSTEM] = resources.getString(Vocabulary.Keys.AllUsers);
             mode = new JComboBox<>(modes);
             directory = new JTextField();
             directory.addFocusListener(this);
@@ -126,14 +125,10 @@ final class DirectoryPanel extends JComponent {
          */
         final void reload() {
             automatic = config.directory(false).toString();
-            final String user   = config.get(true);
-            final String system = config.get(false);
+            final String user   = config.get();
             if (user != null) {
                 supplied = user;
                 currentMode = USER;
-            } else if (system != null) {
-                supplied = system;
-                currentMode = SYSTEM;
             } else {
                 supplied = this.automatic;
                 currentMode = AUTO;
@@ -182,13 +177,11 @@ final class DirectoryPanel extends JComponent {
                 directory.setText(text);
                 directory.setEnabled(manual);
             }
-            boolean user = false;
             switch (currentMode) {
                 case AUTO: text = null; break;
-                case USER: user = true; break;
-                case SYSTEM: break;
+                case USER: break;
             }
-            config.set(user, text);
+            config.set(text);
             reloadAll();
         }
     }

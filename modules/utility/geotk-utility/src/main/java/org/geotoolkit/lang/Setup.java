@@ -193,7 +193,6 @@ public final class Setup extends Static {
         }
         state = 1;
         if ("server".equalsIgnoreCase(get(properties, "platform", "desktop"))) {
-            Installation.allowSystemPreferences = false;
         } else {
             MonolineFormatter.install();
         }
