@@ -33,7 +33,7 @@ import org.opengis.geometry.DirectPosition;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class CollectionCoverage extends AbstractCoverage {
+public final class CollectionCoverage extends AbstractCoverage {
 
     /**
      * Parameter used to control evaluation method.
@@ -54,8 +54,8 @@ public class CollectionCoverage extends AbstractCoverage {
     private final int evaluationMode;
 
     /**
-     * Constructs a coverage collection using provided list.The list order is used when evaluating samples.
-     * The first coverage which do not return NaN values will be used.
+     * Constructs a coverage collection using provided list.
+     * The list order is used when evaluating samples.
      *
      * @param name
      *          The coverage name, or {@code null} if none.
@@ -65,8 +65,13 @@ public class CollectionCoverage extends AbstractCoverage {
      *          The set of properties for this coverage, or {@code null} if there is none.
      *          Keys are {@link String} objects ({@link javax.media.jai.util.CaselessStringKey}
      *          are accepted as well), while values may be any {@link Object}.
+     * @return created coverage collection
      */
-    public CollectionCoverage(CharSequence name, List<Coverage> coverages, Map<?,?> properties) {
+    public static Coverage create(CharSequence name, List<Coverage> coverages, Map<?,?> properties) {
+        return new CollectionCoverage(name, coverages, properties);
+    }
+
+    private CollectionCoverage(CharSequence name, List<Coverage> coverages, Map<?,?> properties) {
         super(name, coverages.get(0).getCoordinateReferenceSystem(), null, properties);
         this.coverages = new ArrayList<>(coverages);
 
@@ -90,7 +95,6 @@ public class CollectionCoverage extends AbstractCoverage {
      */
     @Override
     public Object evaluate(DirectPosition point) throws PointOutsideCoverageException, CannotEvaluateException {
-
         double[] values = null;
 
         search:

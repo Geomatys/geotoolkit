@@ -43,7 +43,7 @@ import org.opengis.util.FactoryException;
 
 /**
  * Rasterize a Coverage to a GridCoverage.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class CoverageRasterizer {
