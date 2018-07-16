@@ -19,8 +19,6 @@ package org.geotoolkit.display2d.container.statefull;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
-import org.geotoolkit.storage.coverage.CoverageStoreListener;
-import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.storage.coverage.PyramidSet;
@@ -52,9 +50,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
@@ -63,9 +66,10 @@ import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<CoverageMapLayer> implements CoverageStoreListener{
+public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<CoverageMapLayer> implements ChangeListener<ChangeEvent> {
 
-    protected CoverageStoreListener.Weak weakStoreListener = new CoverageStoreListener.Weak(this);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d");
+    protected StorageListener.Weak weakStoreListener = new StorageListener.Weak(this);
 
     private final PyramidalCoverageResource model;
     private final double tolerance;
@@ -306,14 +310,12 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
     }
 
     @Override
-    public void structureChanged(CoverageStoreManagementEvent event) {
-    }
-
-    @Override
-    public void contentChanged(CoverageStoreContentEvent event) {
-        //TODO should call a repaint only on this graphic
-        gtiles.clear();
-        getCanvas().repaint();
+    public void changeOccured(ChangeEvent event) {
+        if (event instanceof CoverageStoreContentEvent) {
+            //TODO should call a repaint only on this graphic
+            gtiles.clear();
+            getCanvas().repaint();
+        }
     }
 
     private Point3d[] getReplacements(Pyramid pyramid, Point3d coord, final GridMosaic mosaicUpdate,

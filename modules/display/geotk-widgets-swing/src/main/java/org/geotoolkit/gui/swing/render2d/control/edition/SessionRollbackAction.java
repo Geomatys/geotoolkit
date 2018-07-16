@@ -21,27 +21,27 @@ package org.geotoolkit.gui.swing.render2d.control.edition;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.data.FeatureCollection;
-
 import org.geotoolkit.data.FeatureStoreContentEvent;
-import org.geotoolkit.data.FeatureStoreListener;
-import org.geotoolkit.data.FeatureStoreManagementEvent;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.storage.StorageListener;
 
 /**
  *
  * @author Johann Sorel
  * @module
  */
-public class SessionRollbackAction extends AbstractAction implements FeatureStoreListener {
+public class SessionRollbackAction extends AbstractAction implements ChangeListener<ChangeEvent> {
 
     private static final ImageIcon ICON_ROLLBACK = IconBuilder.createIcon(FontAwesomeIcons.ICON_UNDO, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_WAIT = IconBuilder.createIcon(FontAwesomeIcons.ICON_SPINNER, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
-    private final FeatureStoreListener.Weak weakListener = new Weak(this);
+    private final StorageListener.Weak weakListener = new StorageListener.Weak(this);
     private FeatureMapLayer layer;
 
     public SessionRollbackAction() {
@@ -102,14 +102,13 @@ public class SessionRollbackAction extends AbstractAction implements FeatureStor
     }
 
     @Override
-    public void structureChanged(final FeatureStoreManagementEvent event) {
-    }
-
-    @Override
-    public void contentChanged(final FeatureStoreContentEvent event) {
-        if(event.getType() == FeatureStoreContentEvent.Type.SESSION){
-            //refresh enable state
-            setLayer(layer);
+    public void changeOccured(ChangeEvent event) {
+        if (event instanceof FeatureStoreContentEvent) {
+            final FeatureStoreContentEvent fevent = (FeatureStoreContentEvent) event;
+            if(fevent.getType() == FeatureStoreContentEvent.Type.SESSION){
+                //refresh enable state
+                setLayer(layer);
+            }
         }
     }
 

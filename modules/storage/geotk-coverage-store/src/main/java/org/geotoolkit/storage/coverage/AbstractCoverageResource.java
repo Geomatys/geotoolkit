@@ -205,61 +205,61 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
 
     protected CoverageStoreManagementEvent firePyramidAdded(final String pyramidId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidAddEvent(this, getIdentifier(), pyramidId);
-        sendStructureEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent firePyramidUpdated(final String pyramidId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidUpdateEvent(this, getIdentifier(), pyramidId);
-        sendStructureEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent firePyramidDeleted(final String pyramidId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidDeleteEvent(this, getIdentifier(), pyramidId);
-        sendStructureEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent fireMosaicAdded(final String pyramidId, final String mosaicId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicAddEvent(this, getIdentifier(), pyramidId, mosaicId);
-        sendStructureEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent fireMosaicUpdated(final String pyramidId, final String mosaicId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicUpdateEvent(this, getIdentifier(), pyramidId, mosaicId);
-        sendStructureEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent fireMosaicDeleted(final String pyramidId, final String mosaicId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicDeleteEvent(this, getIdentifier(), pyramidId, mosaicId);
-        sendStructureEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreContentEvent fireDataUpdated(){
         final CoverageStoreContentEvent event = CoverageStoreContentEvent.createDataUpdateEvent(this, getIdentifier());
-        sendContentEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreContentEvent fireTileAdded(final String pyramidId, final String mosaicId, final List<Point> tiles){
         final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileAddEvent(this, getIdentifier(), pyramidId, mosaicId, tiles);
-        sendContentEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreContentEvent fireTileUpdated(final String pyramidId, final String mosaicId, final List<Point> tiles){
         final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileUpdateEvent(this, getIdentifier(), pyramidId, mosaicId, tiles);
-        sendContentEvent(event);
+        sendEvent(event);
         return event;
     }
 
     protected CoverageStoreContentEvent fireTileDeleted(final String pyramidId, final String mosaicId, final List<Point> tiles){
         final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileDeleteEvent(this, getIdentifier(), pyramidId, mosaicId, tiles);
-        sendContentEvent(event);
+        sendEvent(event);
         return event;
     }
 

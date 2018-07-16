@@ -38,7 +38,6 @@ import org.geotoolkit.data.memory.mapping.FeatureMapper;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.storage.StorageListener;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
@@ -137,16 +136,6 @@ public class GenericMappingFeatureCollection extends AbstractCollection<Feature>
 
     @Override
     public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
-    @Override
-    public void addStorageListener(final StorageListener listener) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void removeStorageListener(final StorageListener listener) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

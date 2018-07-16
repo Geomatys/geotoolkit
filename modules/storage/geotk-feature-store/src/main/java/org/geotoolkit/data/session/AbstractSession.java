@@ -17,14 +17,19 @@
 
 package org.geotoolkit.data.session;
 
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreContentEvent;
-import org.geotoolkit.data.FeatureStoreListener;
-import org.geotoolkit.data.FeatureStoreManagementEvent;
 import org.geotoolkit.storage.AbstractStorage;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.storage.StorageEvent;
+import org.geotoolkit.storage.StorageListener;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Id;
+import org.opengis.metadata.Metadata;
 
 /**
  *  Abstract session which handle listeners and add convenient fire event methods.
@@ -32,15 +37,20 @@ import org.opengis.filter.Id;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractSession extends AbstractStorage implements Session, FeatureStoreListener{
+public abstract class AbstractSession extends AbstractStorage implements Resource, Session, ChangeListener<ChangeEvent> {
 
-    private final FeatureStoreListener.Weak weakListener = new Weak(this);
+    private final StorageListener.Weak weakListener = new StorageListener.Weak(this);
     protected final FeatureStore store;
 
     public AbstractSession(final FeatureStore store){
         ensureNonNull("feature store", store);
         this.store = store;
         weakListener.registerSource(store);
+    }
+
+    @Override
+    public Metadata getMetadata() throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -59,19 +69,10 @@ public abstract class AbstractSession extends AbstractStorage implements Session
      * Forward event to listeners by changing source.
      */
     @Override
-    public void structureChanged(FeatureStoreManagementEvent event){
-        event = event.copy(this);
-        sendStructureEvent(event);
+    public void changeOccured(ChangeEvent event) {
+        if (event instanceof StorageEvent) event = ((StorageEvent)event).copy(this);
+        sendEvent(event);
     }
-
-    /**
-     * Forward event to listeners by changing source.
-     */
-    @Override
-    public void contentChanged(final FeatureStoreContentEvent event){
-        sendContentEvent(event.copy(this));
-    }
-
     /**
      * Fires a features add event.
      *
@@ -79,7 +80,7 @@ public abstract class AbstractSession extends AbstractStorage implements Session
      * @param ids modified feature ids.
      */
     protected void fireFeaturesAdded(final GenericName name, final Id ids){
-        sendContentEvent(FeatureStoreContentEvent.createAddEvent(this, name, ids));
+        sendEvent(FeatureStoreContentEvent.createAddEvent(this, name, ids));
     }
 
     /**
@@ -89,7 +90,7 @@ public abstract class AbstractSession extends AbstractStorage implements Session
      * @param ids modified feature ids.
      */
     protected void fireFeaturesUpdated(final GenericName name, final Id ids){
-        sendContentEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, ids));
+        sendEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, ids));
     }
 
     /**
@@ -99,14 +100,14 @@ public abstract class AbstractSession extends AbstractStorage implements Session
      * @param ids modified feature ids.
      */
     protected void fireFeaturesDeleted(final GenericName name, final Id ids){
-        sendContentEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, ids));
+        sendEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, ids));
     }
 
     /**
      * Fires a session event. when new pending changes are added.
      */
     protected void fireSessionChanged(){
-        sendContentEvent(FeatureStoreContentEvent.createSessionEvent(this));
+        sendEvent(FeatureStoreContentEvent.createSessionEvent(this));
     }
 
 }

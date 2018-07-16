@@ -39,7 +39,7 @@ import org.opengis.util.GenericName;
  */
 public abstract class AbstractResource implements Resource {
 
-    protected final Set<StorageListener> listeners = new HashSet<>();
+    protected final Set<ChangeListener> listeners = new HashSet<>();
 
     protected NamedIdentifier identifier;
     private DefaultMetadata metadata;
@@ -90,21 +90,13 @@ public abstract class AbstractResource implements Resource {
 
     @Override
     public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
-    @Override
-    public void addStorageListener(final StorageListener listener) {
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
     @Override
-    public void removeStorageListener(final StorageListener listener) {
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -114,27 +106,13 @@ public abstract class AbstractResource implements Resource {
      * Forward a structure event to all listeners.
      * @param event , event to send to listeners.
      */
-    protected void sendStructureEvent(final StorageEvent event){
-        final StorageListener[] lst;
+    protected void sendEvent(final ChangeEvent event){
+        final ChangeListener[] lst;
         synchronized (listeners) {
-            lst = listeners.toArray(new StorageListener[listeners.size()]);
+            lst = listeners.toArray(new ChangeListener[listeners.size()]);
         }
-        for(final StorageListener listener : lst){
-            listener.structureChanged(event);
-        }
-    }
-
-    /**
-     * Forward a data event to all listeners.
-     * @param event , event to send to listeners.
-     */
-    protected void sendContentEvent(final StorageEvent event){
-        final StorageListener[] lst;
-        synchronized (listeners) {
-            lst = listeners.toArray(new StorageListener[listeners.size()]);
-        }
-        for(final StorageListener listener : lst){
-            listener.contentChanged(event);
+        for(final ChangeListener listener : lst){
+            listener.changeOccured(event);
         }
     }
 
@@ -143,17 +121,8 @@ public abstract class AbstractResource implements Resource {
      * For implementation use only.
      * @param event
      */
-    public void forwardStructureEvent(StorageEvent event){
-        sendStructureEvent(event.copy(this));
-    }
-
-    /**
-     * Forward given event, changing the source by this object.
-     * For implementation use only.
-     * @param event
-     */
-    public void forwardContentEvent(StorageEvent event){
-        sendContentEvent(event.copy(this));
+    public void forwardEvent(StorageEvent event){
+        sendEvent(event.copy(this));
     }
 
     @Override

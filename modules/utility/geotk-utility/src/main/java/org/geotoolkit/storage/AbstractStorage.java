@@ -18,6 +18,9 @@ package org.geotoolkit.storage;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 
 /**
  * Abstract storage class, adds convinient event methods.
@@ -26,45 +29,31 @@ import java.util.Set;
  */
 public abstract class AbstractStorage {
 
-    protected final Set<StorageListener> listeners = new HashSet<>();
+    protected final Set<ChangeListener> listeners = new HashSet<>();
 
-    public void addStorageListener(final StorageListener listener) {
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType){
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
-    public void removeStorageListener(final StorageListener listener) {
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
     }
 
     /**
-     * Forward a structure event to all listeners.
+     * Forward an event to all listeners.
      * @param event , event to send to listeners.
      */
-    protected void sendStructureEvent(final StorageEvent event){
-        final StorageListener[] lst;
+    protected void sendEvent(final ChangeEvent event){
+        final ChangeListener[] lst;
         synchronized (listeners) {
-            lst = listeners.toArray(new StorageListener[listeners.size()]);
+            lst = listeners.toArray(new ChangeListener[listeners.size()]);
         }
-        for(final StorageListener listener : lst){
-            listener.structureChanged(event);
-        }
-    }
-
-    /**
-     * Forward a data event to all listeners.
-     * @param event , event to send to listeners.
-     */
-    protected void sendContentEvent(final StorageEvent event){
-        final StorageListener[] lst;
-        synchronized (listeners) {
-            lst = listeners.toArray(new StorageListener[listeners.size()]);
-        }
-        for(final StorageListener listener : lst){
-            listener.contentChanged(event);
+        for (final ChangeListener listener : lst) {
+            listener.changeOccured(event);
         }
     }
 
@@ -73,17 +62,8 @@ public abstract class AbstractStorage {
      * For implementation use only.
      * @param event
      */
-    public void forwardStructureEvent(StorageEvent event){
-        sendStructureEvent(event.copy(this));
-    }
-
-    /**
-     * Forward given event, changing the source by this object.
-     * For implementation use only.
-     * @param event
-     */
-    public void forwardContentEvent(StorageEvent event){
-        sendContentEvent(event.copy(this));
+    public void forwardEvent(StorageEvent event){
+        sendEvent(event.copy((Resource) this));
     }
 
 }

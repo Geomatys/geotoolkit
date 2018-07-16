@@ -20,7 +20,6 @@ import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.StorageListener;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
 
@@ -55,21 +54,7 @@ public interface CoverageStore extends AutoCloseable, Resource {
 
     Resource findResource(final String name) throws DataStoreException;
 
-    /**
-     * Add a storage listener which will be notified when structure changes or
-     * when coverage data changes.
-     *
-     * @param listener to add
-     */
-    public abstract void addStorageListener(StorageListener listener);
-
-    /**
-     * Remove a storage listener.
-     *
-     * @param listener to remove
-     */
-    public abstract void removeStorageListener(StorageListener listener);
-
+    @Override
     void close() throws DataStoreException;
 
 }

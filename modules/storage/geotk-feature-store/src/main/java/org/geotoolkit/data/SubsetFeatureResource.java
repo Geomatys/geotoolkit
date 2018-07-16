@@ -18,12 +18,15 @@ package org.geotoolkit.data;
 
 import java.util.stream.Stream;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.storage.AbstractFeatureSet;
+import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -33,9 +36,9 @@ import org.opengis.feature.FeatureType;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class SubsetFeatureResource extends AbstractFeatureSet implements FeatureSet, FeatureStoreListener {
+final class SubsetFeatureResource extends AbstractFeatureSet implements FeatureSet, ChangeListener<ChangeEvent> {
 
-    private final FeatureStoreListener.Weak weakListener = new StorageListener.Weak(this);
+    private final StorageListener.Weak weakListener = new StorageListener.Weak(this);
 
     private final FeatureSet parent;
     private final Query query;
@@ -75,15 +78,12 @@ final class SubsetFeatureResource extends AbstractFeatureSet implements FeatureS
     }
 
     @Override
-    public void structureChanged(FeatureStoreManagementEvent event) {
+    public void changeOccured(ChangeEvent event) {
         //forward events
-        sendStructureEvent(event.copy(this));
-    }
-
-    @Override
-    public void contentChanged(FeatureStoreContentEvent event) {
-        //forward events
-        sendContentEvent(event.copy(this));
+        if (event instanceof StorageEvent) {
+            event = ((StorageEvent)event).copy(this);
+        }
+        sendEvent(event);
     }
 
 }

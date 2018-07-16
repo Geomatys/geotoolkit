@@ -30,6 +30,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.filter.FilterFactory;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.event.ChangeEvent;
 
 /**
  * Generic schema manipulation tests
@@ -79,8 +80,8 @@ public abstract class AbstractModelTests {
             //add listeners
             StorageCountListener storeListen = new StorageCountListener();
             StorageCountListener sessionListen = new StorageCountListener();
-            store.addStorageListener(storeListen);
-            session.addStorageListener(sessionListen);
+            store.addListener(storeListen, ChangeEvent.class);
+            session.addListener(sessionListen, ChangeEvent.class);
 
             store.createFeatureType(sft);
 
@@ -106,8 +107,8 @@ public abstract class AbstractModelTests {
 //            assertEquals(null, storeListen.lastManagementEvent.getOldFeatureType());
 //            assertEquals(null, sessionListen.lastManagementEvent.getOldFeatureType());
 
-            store.removeStorageListener(storeListen);
-            session.removeStorageListener(sessionListen);
+            store.removeListener(storeListen, ChangeEvent.class);
+            session.removeListener(sessionListen, ChangeEvent.class);
 
 
             //delete the created schema ----------------------------------------
@@ -125,8 +126,8 @@ public abstract class AbstractModelTests {
             //add listeners
             storeListen = new StorageCountListener();
             sessionListen = new StorageCountListener();
-            store.addStorageListener(storeListen);
-            session.addStorageListener(sessionListen);
+            store.addListener(storeListen, ChangeEvent.class);
+            session.addListener(sessionListen, ChangeEvent.class);
 
             store.deleteFeatureType(nsname.toString());
 
@@ -148,8 +149,8 @@ public abstract class AbstractModelTests {
 //            assertEquals(sft, storeListen.lastManagementEvent.getOldFeatureType());
 //            assertEquals(sft, sessionListen.lastManagementEvent.getOldFeatureType());
 
-            store.removeStorageListener(storeListen);
-            session.removeStorageListener(sessionListen);
+            store.removeListener(storeListen, ChangeEvent.class);
+            session.removeListener(sessionListen, ChangeEvent.class);
 
             try{
                 store.getFeatureType(nsname.toString());

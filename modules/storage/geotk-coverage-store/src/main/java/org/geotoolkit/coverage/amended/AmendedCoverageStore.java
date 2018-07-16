@@ -24,13 +24,13 @@ import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
-import org.geotoolkit.storage.coverage.CoverageStoreListener;
-import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
@@ -63,16 +63,15 @@ public class AmendedCoverageStore extends AbstractCoverageStore implements Aggre
         super(store.getOpenParameters());
         this.store = store;
 
-        store.addStorageListener(new CoverageStoreListener() {
+        store.addListener(new ChangeListener() {
             @Override
-            public void structureChanged(CoverageStoreManagementEvent event) {
-                sendStructureEvent(event.copy(this));
+            public void changeOccured(ChangeEvent event) {
+                if (event instanceof StorageEvent) {
+                    event = ((StorageEvent)event).copy(AmendedCoverageStore.this);
+                }
+                sendEvent(event);
             }
-            @Override
-            public void contentChanged(CoverageStoreContentEvent event) {
-                sendContentEvent(event.copy(this));
-            }
-        });
+        }, ChangeEvent.class);
 
     }
 

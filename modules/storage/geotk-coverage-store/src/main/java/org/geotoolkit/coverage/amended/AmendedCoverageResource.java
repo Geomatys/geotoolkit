@@ -35,7 +35,6 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.StorageEvent;
-import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.content.CoverageDescription;
@@ -62,7 +61,7 @@ import org.geotoolkit.storage.coverage.GridCoverageResource;
  */
 public class AmendedCoverageResource implements Resource,GridCoverageResource{
 
-    protected final Set<StorageListener> listeners = new HashSet<>();
+    protected final Set<ChangeListener> listeners = new HashSet<>();
     protected final GridCoverageResource ref;
     protected final DataStore store;
 
@@ -332,21 +331,13 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
 
     @Override
     public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
-    @Override
-    public void addStorageListener(final StorageListener listener) {
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
     @Override
-    public void removeStorageListener(final StorageListener listener) {
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -357,12 +348,12 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      * @param event , event to send to listeners.
      */
     private void sendStructureEvent(final StorageEvent event){
-        final StorageListener[] lst;
+        final ChangeListener[] lst;
         synchronized (listeners) {
-            lst = listeners.toArray(new StorageListener[listeners.size()]);
+            lst = listeners.toArray(new ChangeListener[listeners.size()]);
         }
-        for(final StorageListener listener : lst){
-            listener.structureChanged(event);
+        for (final ChangeListener listener : lst) {
+            listener.changeOccured(event);
         }
     }
 
