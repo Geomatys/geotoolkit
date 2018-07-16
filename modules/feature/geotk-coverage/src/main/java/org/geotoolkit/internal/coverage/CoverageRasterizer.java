@@ -20,6 +20,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
@@ -30,6 +31,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
@@ -40,7 +42,8 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
- *
+ * Rasterize a Coverage to a GridCoverage.
+ * 
  * @author Johann Sorel (Geomatys)
  */
 public class CoverageRasterizer {
@@ -122,6 +125,8 @@ public class CoverageRasterizer {
         final BufferedImage image = (BufferedImage) coverage.getRenderedImage();
         final WritableRaster raster = image.getRaster();
         final double[] pixel = new double[image.getSampleModel().getNumDataElements()];
+        final double[] fillValues = new double[pixel.length];
+        Arrays.fill(fillValues, Double.NaN);
 
         final MathTransform gridToCRS = sliceGridGeom.getGridToCRS();
         final MathTransform crsToSource = CRS.findOperation(coverage.getCoordinateReferenceSystem(), source.getCoordinateReferenceSystem(), null).getMathTransform();
@@ -139,8 +144,12 @@ public class CoverageRasterizer {
                 imgPos[1] = y;
                 gridToSource.transform(imgPos, 0, crsPos, 0, 1);
                 pos.setCoordinate(crsPos);
-                source.evaluate(pos, pixel);
-                raster.setPixel(x, y, pixel);
+                try {
+                    source.evaluate(pos, pixel);
+                    raster.setPixel(x, y, pixel);
+                } catch (CannotEvaluateException ex) {
+                    raster.setPixel(x, y, fillValues);
+                }
             }
         }
 
