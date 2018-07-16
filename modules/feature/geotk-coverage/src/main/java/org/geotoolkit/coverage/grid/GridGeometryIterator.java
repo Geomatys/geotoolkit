@@ -8,6 +8,7 @@ import org.apache.sis.internal.metadata.AxisDirections;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 
@@ -22,7 +23,7 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
     /**
      * Source grid. It defines the entire space this iterator will move into.
      */
-    final GeneralGridGeometry source;
+    final GridGeometry source;
 
     /**
      * Component in charge of grid iteration.
@@ -44,7 +45,24 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
      * specified dimensions.
      */
     public GridGeometryIterator(final GeneralGridGeometry source) throws IllegalArgumentException {
-        this(GridGeometryIterator.buildSteps(source), source);
+        this(source, source.getCoordinateReferenceSystem());
+    }
+
+    /**
+     * Create an iterator which will try to split given geometry as a series of
+     * 2D geometries.
+     *
+     * @param source The grid geometry to split.
+     * @param crs source CRS.
+     * @throws IllegalArgumentException If we cannot determine horizontal axes
+     * of the given geometry. We do so because we cannot safely determine axes
+     * to iterate over without this information. If you know the indices you
+     * must iterate on, you can use {@link #GridGeometryIterator(org.geotoolkit.coverage.grid.GeneralGridGeometry, int...) },
+     * which won't make any analysis of the geometry, and just iterate over
+     * specified dimensions.
+     */
+    public GridGeometryIterator(final GridGeometry source, CoordinateReferenceSystem crs) throws IllegalArgumentException {
+        this(GridGeometryIterator.buildSteps(source, crs), source, crs);
     }
 
     /**
@@ -58,7 +76,22 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
      * @param movableIndices indices for the dimensions to split and move along.
      */
     public GridGeometryIterator(final GeneralGridGeometry source, final int... movableIndices) {
-        this(buildSteps(source, movableIndices), source);
+        this(source, source.getCoordinateReferenceSystem(), movableIndices);
+    }
+
+    /**
+     * Create subsets of the given geometry along specified axes. Note that this
+     * constructor does not enforce generation of 2D geometries. It will produce
+     * geometries whose dimension match the number of fixed axis.
+     * Example : If you've got a 5D geometry, and specify only 2 indices to
+     * iterate on, this iterator will produce 3D geometries.
+     *
+     * @param source The geometry to split.
+     * @param crs source CRS.
+     * @param movableIndices indices for the dimensions to split and move along.
+     */
+    public GridGeometryIterator(final GridGeometry source, CoordinateReferenceSystem crs, final int... movableIndices) {
+        this(buildSteps(source, movableIndices), source, crs);
     }
 
     /**
@@ -68,7 +101,7 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
      * This parameter meaning is the same as {@link GridIterator#steps}.
      * @param source The geometry to move into.
      */
-    GridGeometryIterator(final int[] steps, final GeneralGridGeometry source) {
+    GridGeometryIterator(final int[] steps, final GridGeometry source, final CoordinateReferenceSystem crs) {
         ArgumentChecks.ensureNonNull("Source grid", source);
         this.source = source;
         gridIterator = new GridIterator(source.getExtent(), steps);
@@ -80,9 +113,9 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
         }
 
         if (fixed < 3) {
-            generator = grid -> new GridGeometry2D(grid, source.gridToCRS, source.getCoordinateReferenceSystem());
+            generator = grid -> new GridGeometry2D(grid, source.getGridToCRS(), crs);
         } else {
-            generator = grid -> new GeneralGridGeometry(grid, source.gridToCRS, source.getCoordinateReferenceSystem());
+            generator = grid -> new GeneralGridGeometry(grid, source.getGridToCRS(), crs);
         }
     }
 
@@ -114,16 +147,15 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
      * @throws IllegalArgumentException If no horizontal coordinate system can
      * be found in input geometry.
      */
-    static int[] buildSteps(final GeneralGridGeometry source) throws IllegalArgumentException {
+    static int[] buildSteps(final GridGeometry source, CoordinateReferenceSystem crs) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("Source grid", source);
-
-        final CoordinateReferenceSystem crs = source.getCoordinateReferenceSystem();
+        final GridEnvelope extent = source.getExtent();
         if (crs != null) {
             final SingleCRS horizontal = CRS.getHorizontalComponent(crs);
             if (horizontal != null) {
                 final int xAxis = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), horizontal.getCoordinateSystem());
                 if (xAxis >= 0) {
-                    final int[] steps = new int[source.getDimension()];
+                    final int[] steps = new int[extent.getDimension()];
                     Arrays.fill(steps, 1);
                     steps[xAxis] = 0;
                     steps[xAxis + 1] = 0;
@@ -143,9 +175,9 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
      * @param movableIndices Indices of the axes we want to move upon.
      * @return A set of ready-to use increments for iterating over a grid envelope.
      */
-    static int[] buildSteps(final GeneralGridGeometry source, final int... movableIndices) {
+    static int[] buildSteps(final GridGeometry source, final int... movableIndices) {
         ArgumentChecks.ensureNonNull("Source grid", source);
-        final int[] steps = new int[source.getDimension()];
+        final int[] steps = new int[source.getExtent().getDimension()];
         for (int idx : movableIndices) {
             steps[idx] = 1;
         }

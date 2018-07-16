@@ -247,7 +247,7 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
          //-- Iteration on elevation axis only, two steps at a time --//
         //-----------------------------------------------------------//
 
-        it = new GridGeometryIterator(new int[]{0, 0, 0, 2}, sourceGeom);
+        it = new GridGeometryIterator(new int[]{0, 0, 0, 2}, sourceGeom, sourceGeom.getCoordinateReferenceSystem());
 
         expectedEnvelope.setEnvelope(-7, -180, -90, 8, -3, 180, 90, 11);
         expectedGrid = new GeneralGridEnvelope(new int[]{-2, 0, 0, 1}, new int[]{-1, 9, 9, 1}, true);
