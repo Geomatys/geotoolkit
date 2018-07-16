@@ -48,6 +48,7 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.storage.StorageListener.Weak;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.AttributeType;
@@ -69,10 +70,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module
  */
 public abstract class AbstractFeatureCollection extends AbstractCollection<Feature>
-        implements FeatureCollection, FeatureStoreListener{
+        implements FeatureCollection, ChangeListener<ChangeEvent> {
 
-    private final Set<StorageListener> listeners = new HashSet<>();
-    private final FeatureStoreListener.Weak weakListener = new Weak(this);
+    private final Set<ChangeListener> listeners = new HashSet<>();
+    private final StorageListener.Weak weakListener = new Weak(this);
 
     protected NamedIdentifier identifier;
     protected Session session;
@@ -356,52 +357,39 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
     // listeners methods ///////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * Forward event to listeners by changing source.
-     */
     @Override
-    public void structureChanged(FeatureStoreManagementEvent event){
-        final FeatureType currentType = getType();
+    public void changeOccured(ChangeEvent event) {
+        if (event instanceof FeatureStoreManagementEvent) {
+            FeatureStoreManagementEvent fevent = (FeatureStoreManagementEvent) event;
+            final FeatureType currentType = getType();
 
-        //forward events only if the collection is typed and match the type name
-        if(currentType != null && currentType.getName().equals(event.getFeatureTypeName())){
-            event = event.copy(this);
-            final FeatureStoreListener[] lst;
-            synchronized (listeners) {
-                lst = listeners.toArray(new FeatureStoreListener[listeners.size()]);
+            //forward events only if the collection is typed and match the type name
+            if (currentType != null && currentType.getName().equals(fevent.getFeatureTypeName())) {
+                fevent = fevent.copy(this);
+                final ChangeListener[] lst;
+                synchronized (listeners) {
+                    lst = listeners.toArray(new ChangeListener[listeners.size()]);
+                }
+                for (final ChangeListener listener : lst) {
+                    listener.changeOccured(fevent);
+                }
             }
-            for (final FeatureStoreListener listener : lst) {
-                listener.structureChanged(event);
+        } else if(event instanceof FeatureStoreContentEvent) {
+            final FeatureStoreContentEvent fevent = (FeatureStoreContentEvent) event;
+            final FeatureType currentType = getType();
+
+            //forward events only if the collection is typed and match the type name
+            if (currentType != null && currentType.getName().equals(fevent.getFeatureTypeName())) {
+                sendEvent(fevent.copy(this));
             }
         }
-    }
-
-    /**
-     * Forward event to listeners by changing source.
-     */
-    @Override
-    public void contentChanged(final FeatureStoreContentEvent event){
-        final FeatureType currentType = getType();
-
-        //forward events only if the collection is typed and match the type name
-        if(currentType != null && currentType.getName().equals(event.getFeatureTypeName())){
-            sendEvent(event.copy(this));
-        }
-    }
-
-    @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void addStorageListener(final StorageListener listener) {
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
         synchronized (listeners) {
             listeners.add(listener);
         }
@@ -411,7 +399,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
      * {@inheritDoc }
      */
     @Override
-    public void removeStorageListener(final StorageListener listener) {
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -451,13 +439,13 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
      * Forward a features event to all listeners.
      * @param event , event to send to listeners.
      */
-    protected void sendEvent(final FeatureStoreContentEvent event) {
-        final StorageListener[] lst;
+    protected void sendEvent(final ChangeEvent event) {
+        final ChangeListener[] lst;
         synchronized (listeners) {
-            lst = listeners.toArray(new StorageListener[listeners.size()]);
+            lst = listeners.toArray(new ChangeListener[listeners.size()]);
         }
-        for (final StorageListener listener : lst) {
-            listener.contentChanged(event);
+        for (final ChangeListener listener : lst) {
+            listener.changeOccured(event);
         }
     }
 

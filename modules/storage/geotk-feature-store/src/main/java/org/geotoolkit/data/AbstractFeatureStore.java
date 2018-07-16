@@ -63,6 +63,8 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.feature.FeatureExt;
@@ -97,7 +99,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     private static final Logger logger = Logging.getLogger("org.geotoolkit.data");
 
     protected final Parameters parameters;
-    protected final Set<StorageListener> listeners = new HashSet<>();
+    protected final Set<ChangeListener> listeners = new HashSet<>();
 
     protected AbstractFeatureStore(final ParameterValueGroup params) {
         this.parameters = Parameters.castOrWrap(params);
@@ -373,7 +375,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @param type added feature type
      */
     protected void fireSchemaAdded(final GenericName name, final FeatureType type){
-        sendStructureEvent(FeatureStoreManagementEvent.createAddEvent(this, name, type));
+        sendEvent(FeatureStoreManagementEvent.createAddEvent(this, name, type));
     }
 
     /**
@@ -384,7 +386,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @param newType featuretype after change
      */
     protected void fireSchemaUpdated(final GenericName name, final FeatureType oldType, final FeatureType newType){
-        sendStructureEvent(FeatureStoreManagementEvent.createUpdateEvent(this, name, oldType, newType));
+        sendEvent(FeatureStoreManagementEvent.createUpdateEvent(this, name, oldType, newType));
     }
 
     /**
@@ -394,7 +396,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @param type feature type of the deleted schema
      */
     protected void fireSchemaDeleted(final GenericName name, final FeatureType type){
-        sendStructureEvent(FeatureStoreManagementEvent.createDeleteEvent(this, name, type));
+        sendEvent(FeatureStoreManagementEvent.createDeleteEvent(this, name, type));
     }
 
     /**
@@ -404,7 +406,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @param ids modified feature ids
      */
     protected void fireFeaturesAdded(final GenericName name, final Id ids){
-        sendContentEvent(FeatureStoreContentEvent.createAddEvent(this, name, ids));
+        sendEvent(FeatureStoreContentEvent.createAddEvent(this, name, ids));
     }
 
     /**
@@ -414,7 +416,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @param ids modified feature ids
      */
     protected void fireFeaturesUpdated(final GenericName name, final Id ids){
-        sendContentEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, ids));
+        sendEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, ids));
     }
 
     /**
@@ -424,7 +426,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @param ids modified feature ids
      */
     protected void fireFeaturesDeleted(final GenericName name, final Id ids){
-        sendContentEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, ids));
+        sendEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, ids));
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -564,14 +566,14 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     }
 
     @Override
-    public void addStorageListener(final StorageListener listener) {
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
     @Override
-    public void removeStorageListener(final StorageListener listener) {
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -581,27 +583,13 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * Forward a structure event to all listeners.
      * @param event event to send to listeners.
      */
-    protected void sendStructureEvent(final StorageEvent event){
-        final StorageListener[] lst;
+    protected void sendEvent(final ChangeEvent event){
+        final ChangeListener[] lst;
         synchronized (listeners) {
-            lst = listeners.toArray(new StorageListener[listeners.size()]);
+            lst = listeners.toArray(new ChangeListener[listeners.size()]);
         }
-        for(final StorageListener listener : lst){
-            listener.structureChanged(event);
-        }
-    }
-
-    /**
-     * Forward a data event to all listeners.
-     * @param event event to send to listeners.
-     */
-    protected void sendContentEvent(final StorageEvent event){
-        final StorageListener[] lst;
-        synchronized (listeners) {
-            lst = listeners.toArray(new StorageListener[listeners.size()]);
-        }
-        for(final StorageListener listener : lst){
-            listener.contentChanged(event);
+        for(final ChangeListener listener : lst){
+            listener.changeOccured(event);
         }
     }
 
@@ -609,16 +597,8 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * Forward given event, changing the source by this object.
      * For implementation use only.
      */
-    public void forwardStructureEvent(StorageEvent event){
-        sendStructureEvent(event.copy(this));
-    }
-
-    /**
-     * Forward given event, changing the source by this object.
-     * For implementation use only.
-     */
-    public void forwardContentEvent(StorageEvent event){
-        sendContentEvent(event.copy(this));
+    public void forwardEvent(StorageEvent event){
+        sendEvent(event.copy(this));
     }
 
 }

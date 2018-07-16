@@ -26,12 +26,12 @@ import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
+import org.opengis.metadata.Metadata;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
-import org.geotoolkit.util.NamesExt;
-import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -48,6 +48,7 @@ public class CoverageSQLStore extends DataStore implements Aggregate {
 
     private final Parameters parameters;
     final CoverageDatabase db;
+    private final Set<ChangeListener> geotkListeners = new HashSet<>();
 
     private static Parameters adaptParameter(ParameterValueGroup parameters) {
         final Parameters params = Parameters.castOrWrap(CoverageDatabase.PARAMETERS.createValue());
@@ -114,10 +115,30 @@ public class CoverageSQLStore extends DataStore implements Aggregate {
 
     @Override
     public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+        synchronized (geotkListeners) {
+            geotkListeners.add(listener);
+        }
     }
 
     @Override
     public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+        synchronized (geotkListeners) {
+            geotkListeners.remove(listener);
+        }
+    }
+
+    /**
+     * Forward an event to all listeners.
+     * @param event event to send to listeners.
+     */
+    protected void sendEvent(final ChangeEvent event) {
+        final ChangeListener[] lst;
+        synchronized (geotkListeners) {
+            lst = geotkListeners.toArray(new ChangeListener[geotkListeners.size()]);
+        }
+        for (final ChangeListener listener : lst) {
+            listener.changeOccured(event);
+        }
     }
 
 }

@@ -16,15 +16,16 @@
  */
 package org.geotoolkit.coverage;
 
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
-import org.geotoolkit.storage.coverage.CoverageStoreListener;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 
 /**
  * Test storage listener, count the number of events and store the last event objects.
  * @author Johann Sorel (Geomatys)
  */
-public final class StorageCountListener implements CoverageStoreListener {
+public final class StorageCountListener implements ChangeListener<ChangeEvent> {
 
     public int numManageEvent = 0;
     public int numContentEvent = 0;
@@ -32,14 +33,13 @@ public final class StorageCountListener implements CoverageStoreListener {
     public CoverageStoreContentEvent lastContentEvent = null;
 
     @Override
-    public void structureChanged(final CoverageStoreManagementEvent event) {
-        numManageEvent++;
-        this.lastManagementEvent = event;
-    }
-
-    @Override
-    public void contentChanged(final CoverageStoreContentEvent event) {
-        numContentEvent++;
-        this.lastContentEvent = event;
+    public void changeOccured(ChangeEvent event) {
+        if (event instanceof CoverageStoreManagementEvent) {
+            numManageEvent++;
+            this.lastManagementEvent = (CoverageStoreManagementEvent) event;
+        } else if (event instanceof CoverageStoreContentEvent) {
+            numContentEvent++;
+            this.lastContentEvent = (CoverageStoreContentEvent) event;
+        }
     }
 }

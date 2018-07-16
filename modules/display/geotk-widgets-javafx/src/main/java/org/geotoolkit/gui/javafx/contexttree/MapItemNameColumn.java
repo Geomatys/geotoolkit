@@ -35,6 +35,8 @@ import javafx.scene.text.TextAlignment;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.session.Session;
@@ -45,9 +47,7 @@ import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapItem;
-import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
@@ -73,7 +73,7 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
         setMinWidth(120);
     }
 
-    public static class Cell<T> extends TreeTableCell<T,String> implements StorageListener<StorageEvent, StorageEvent>{
+    public static class Cell<T> extends TreeTableCell<T,String> implements ChangeListener<ChangeEvent>{
 
         private final TextField textField = new TextField();
         private final StorageListener.Weak weakListener = new StorageListener.Weak(this);
@@ -173,10 +173,7 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
         }
 
         @Override
-        public void structureChanged(StorageEvent event) {}
-
-        @Override
-        public void contentChanged(StorageEvent event) {
+        public void changeOccured(ChangeEvent event) {
             //change the edition asteriks
             if(!isEditing()){
                 Platform.runLater(()-> updateItem(getItem(), false));

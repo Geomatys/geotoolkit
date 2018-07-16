@@ -24,6 +24,7 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.event.ChangeEvent;
 import org.junit.Test;
 import org.opengis.util.GenericName;
 
@@ -48,7 +49,7 @@ public abstract class AbstractCoverageStoreEventTest extends org.geotoolkit.test
         final StorageCountListener storelistener = new StorageCountListener();
         final StorageCountListener reflistener = new StorageCountListener();
         final MemoryCoverageStore store = new MemoryCoverageStore();
-        store.addStorageListener(storelistener);
+        store.addListener(storelistener, ChangeEvent.class);
 
         assertEquals(0, store.getNames().size());
 
@@ -70,7 +71,7 @@ public abstract class AbstractCoverageStoreEventTest extends org.geotoolkit.test
         gcb.setEnvelope(-180,-90,180,90);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
 
-        ref.addStorageListener(reflistener);
+        ref.addListener(reflistener, ChangeEvent.class);
         final GridCoverageWriter writer = ref.acquireWriter();
         writer.write(coverage, null);
         ref.recycle(writer);

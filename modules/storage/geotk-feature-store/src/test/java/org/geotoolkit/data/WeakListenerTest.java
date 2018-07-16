@@ -19,8 +19,11 @@ package org.geotoolkit.data;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 
 import org.geotoolkit.data.memory.MemoryFeatureStore;
+import org.geotoolkit.storage.StorageListener;
 
 import org.junit.Test;
 
@@ -57,18 +60,14 @@ public class WeakListenerTest extends org.geotoolkit.test.TestBase {
 
         final FeatureStore store = new MemoryFeatureStore();
 
-        FeatureStoreListener listener = new FeatureStoreListener() {
+        ChangeListener listener = new ChangeListener() {
             @Override
-            public void structureChanged(FeatureStoreManagementEvent event) {
+            public void changeOccured(ChangeEvent event) {
                 count.incrementAndGet();
-            }
-            @Override
-            public void contentChanged(FeatureStoreContentEvent event) {
-                throw new UnsupportedOperationException("Not supported yet.");
             }
         };
 
-        final FeatureStoreListener.Weak ref = new FeatureStoreListener.Weak(listener);
+        final StorageListener.Weak ref = new StorageListener.Weak(listener);
         ref.registerSource(store);
 
         store.createFeatureType(type1);

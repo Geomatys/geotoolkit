@@ -25,6 +25,8 @@ import java.util.Set;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Query;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.AbstractFeatureClient;
 import org.geotoolkit.client.Client;
@@ -347,13 +349,13 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
     }
 
     @Override
-    public void addStorageListener(StorageListener listener) {
-        getStore().addStorageListener(listener);
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+        getStore().addListener(listener, eventType);
     }
 
     @Override
-    public void removeStorageListener(StorageListener listener) {
-        getStore().removeStorageListener(listener);
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+        getStore().removeListener(listener, eventType);
     }
 
     @Override

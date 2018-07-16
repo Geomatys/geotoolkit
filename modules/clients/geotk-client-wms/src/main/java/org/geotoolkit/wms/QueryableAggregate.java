@@ -20,13 +20,14 @@ import java.awt.Image;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.CoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.content.CoverageDescription;
@@ -106,13 +107,13 @@ public class QueryableAggregate extends WMSAggregate implements GridCoverageReso
     }
 
     @Override
-    public void addStorageListener(StorageListener listener) {
-        queryableResource.addStorageListener(listener);
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+        queryableResource.addListener(listener, eventType);
     }
 
     @Override
-    public void removeStorageListener(StorageListener listener) {
-        queryableResource.removeStorageListener(listener);
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+        queryableResource.removeListener(listener, eventType);
     }
 
     @Override

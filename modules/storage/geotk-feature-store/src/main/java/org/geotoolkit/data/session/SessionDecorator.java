@@ -20,15 +20,15 @@ package org.geotoolkit.data.session;
 import java.util.Collection;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.storage.StorageListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.version.Version;
 import org.opengis.feature.Feature;
-import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 
@@ -117,13 +117,13 @@ public class SessionDecorator implements Session{
     }
 
     @Override
-    public void addStorageListener(final StorageListener listener) {
-        wrapped.addStorageListener(listener);
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+        wrapped.addListener(listener, eventType);
     }
 
     @Override
-    public void removeStorageListener(final StorageListener listener) {
-        wrapped.addStorageListener(listener);
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+        wrapped.removeListener(listener, eventType);
     }
 
 }

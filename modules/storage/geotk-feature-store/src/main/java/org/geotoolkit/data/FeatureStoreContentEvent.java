@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data;
 
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.StorageEvent;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Id;
@@ -46,7 +47,7 @@ public class FeatureStoreContentEvent extends StorageEvent {
     private final GenericName name;
     private Id ids;
 
-    public FeatureStoreContentEvent(final Object source, final Type type, final GenericName name, final Id candidates){
+    public FeatureStoreContentEvent(final Resource source, final Type type, final GenericName name, final Id candidates){
         super(source);
 
         this.type = type;
@@ -79,23 +80,23 @@ public class FeatureStoreContentEvent extends StorageEvent {
         return ids;
     }
 
-    public FeatureStoreContentEvent copy(final Object source){
+    public FeatureStoreContentEvent copy(final Resource source){
         return new FeatureStoreContentEvent(source, type, name, ids);
     }
 
-    public static FeatureStoreContentEvent createAddEvent(final Object source, final GenericName name, final Id ids){
+    public static FeatureStoreContentEvent createAddEvent(final Resource source, final GenericName name, final Id ids){
         return new FeatureStoreContentEvent(source, Type.ADD, name, ids);
     }
 
-    public static FeatureStoreContentEvent createUpdateEvent(final Object source, final GenericName name, final Id ids){
+    public static FeatureStoreContentEvent createUpdateEvent(final Resource source, final GenericName name, final Id ids){
         return new FeatureStoreContentEvent(source, Type.UPDATE, name, ids);
     }
 
-    public static FeatureStoreContentEvent createDeleteEvent(final Object source, final GenericName name, final Id ids){
+    public static FeatureStoreContentEvent createDeleteEvent(final Resource source, final GenericName name, final Id ids){
         return new FeatureStoreContentEvent(source, Type.DELETE, name, ids);
     }
 
-    public static FeatureStoreContentEvent createSessionEvent(final Object source){
+    public static FeatureStoreContentEvent createSessionEvent(final Resource source){
         return new FeatureStoreContentEvent(source, Type.SESSION, null, null);
     }
 
