@@ -143,12 +143,7 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
 
     private void createReference(Path refDescriptor) {
         try {
-            //TODO useless copy here
-            final XMLCoverageResource set = XMLCoverageResource.read(refDescriptor);
-            final GenericName name = NamesExt.create(set.getId());
-            final XMLCoverageResource ref = new XMLCoverageResource(this,name,set.getPyramidSet());
-            ref.copy(set);
-            resources.add(ref);
+            resources.add(XMLCoverageResource.read(refDescriptor));
         } catch (JAXBException ex) {
             getLogger().log(Level.INFO, "file is not a pyramid : {0}", refDescriptor.toString());
         } catch (DataStoreException ex) {
