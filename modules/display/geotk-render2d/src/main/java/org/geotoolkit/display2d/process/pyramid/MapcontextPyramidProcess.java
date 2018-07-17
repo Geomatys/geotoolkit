@@ -174,8 +174,8 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                 }
 
                 //compute mosaic gridSize
-                final double gridWidth  = destEnvWidth / (scale*tileSize.width);
-                final double gridHeight = destEnvHeight / (scale*tileSize.height);
+                final double gridWidth  = viewDef.getEnvelope().getSpan(widthAxis) / (scale*tileSize.width);
+                final double gridHeight = viewDef.getEnvelope().getSpan(heightAxis) / (scale*tileSize.height);
                 final Dimension gridSize = new Dimension( (int)(Math.ceil(gridWidth)), (int)(Math.ceil(gridHeight)));
 
                 //find mosaic
