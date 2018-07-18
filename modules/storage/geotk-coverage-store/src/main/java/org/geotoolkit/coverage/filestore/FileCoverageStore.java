@@ -43,6 +43,7 @@ import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStoreFactory;
@@ -309,7 +310,37 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
 
     @Override
     public Path[] getComponentFiles() throws DataStoreException {
-        return new Path[] {root};
+        if (Files.isDirectory(root)) {
+            return new Path[] {root};
+        }
+
+        // HACK : If the file is a single image with world-file metadata, we
+        // force them to be part of the resource, as they could serve to
+        // override bad referencing data in primary image.
+        final List<Path> componentFiles = new ArrayList<>(3);
+        componentFiles.add(root);
+        final String tfwSuffix = SupportFiles.toSuffixTFW(root);
+        Path tfwFile = IOUtilities.changeExtension(root, tfwSuffix);
+        if (Files.isRegularFile(tfwFile)) {
+            componentFiles.add(tfwFile);
+        } else {
+            tfwFile = IOUtilities.changeExtension(root, tfwSuffix.toUpperCase());
+            if (Files.isRegularFile(tfwFile)) {
+                componentFiles.add(tfwFile);
+            }
+        }
+
+        Path prjFile = IOUtilities.changeExtension(root, "prj");
+        if (Files.isRegularFile(prjFile)) {
+            componentFiles.add(prjFile);
+        } else {
+            prjFile = IOUtilities.changeExtension(root, "PRJ");
+            if (Files.isRegularFile(prjFile)) {
+                componentFiles.add(prjFile);
+            }
+        }
+
+        return componentFiles.toArray(new Path[componentFiles.size()]);
     }
 
     @Override
