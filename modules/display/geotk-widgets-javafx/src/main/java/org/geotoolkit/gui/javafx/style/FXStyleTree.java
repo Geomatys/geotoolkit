@@ -75,7 +75,7 @@ import org.opengis.util.GenericName;
  */
 public class FXStyleTree {
 
-    public static final Image ICON_GROUP = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FOLDER_O,24,FontAwesomeIcons.DEFAULT_COLOR),null);
+    public static final Image ICON_GROUP = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FOLDER,24,FontAwesomeIcons.DEFAULT_COLOR),null);
 
     /**
      * Validate the editor for given path.

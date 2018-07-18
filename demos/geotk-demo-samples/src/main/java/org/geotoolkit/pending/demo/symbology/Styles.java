@@ -174,7 +174,7 @@ public class Styles {
         final Fill fill = SF.fill(Color.RED);
         final ExternalMark external = SF.externalMark(
                     SF.onlineResource(IconBuilder.FONTAWESOME.toURI()),
-                    "ttf",FontAwesomeIcons.ICON_DELICIOUS.codePointAt(0));
+                    "ttf",FontAwesomeIcons.ICON_DICE.codePointAt(0));
         final Mark mark = SF.mark(external, fill, stroke);
 
         symbols.add(mark);

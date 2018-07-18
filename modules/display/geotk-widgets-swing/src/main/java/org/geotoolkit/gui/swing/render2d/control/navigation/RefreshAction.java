@@ -32,7 +32,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class RefreshAction extends AbstractMapAction {
 
-    private static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_REFRESH, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_SYNC_ALT, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     public RefreshAction() {
         putValue(SMALL_ICON, ICON);

@@ -56,7 +56,7 @@ import org.openide.awt.DropDownButtonFactory;
  */
 public class JEditionBar extends AbstractMapControlBar implements ActionListener,PropertyChangeListener,ListSelectionListener{
 
-    private static final ImageIcon ICON_EDIT = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_EDIT = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL_ALT, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     private final SessionCommitAction commitAction = new SessionCommitAction();
     private final SessionRollbackAction rollbackAction = new SessionRollbackAction();

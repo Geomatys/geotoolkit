@@ -101,7 +101,7 @@ public class ProgressMonitor extends HBox {
 
         taskRegistry = registry;
 
-        final Label runningIcon = new Label(FontAwesomeIcons.ICON_GEARS_ALIAS);
+        final Label runningIcon = new Label(FontAwesomeIcons.ICON_COGS);
         runningIcon.setStyle(ICON_LABEL_FONT_FAMILY);
         runningIcon.getStyleClass().add(CURRENT_TASK_GRAPHIC_CSS_CLASS);
         runningTasks = new MenuButton(GeotkFX.getString(ProgressMonitor.class, "currentTasksLabel"), runningIcon);
@@ -155,7 +155,7 @@ public class ProgressMonitor extends HBox {
         final MenuItem clearErrorItem = new MenuItem(GeotkFX.getString(ProgressMonitor.class, "cleanErrorList"));
         clearErrorItem.setOnAction(evt -> taskRegistry.getTasksInError().clear());
 
-        final Label icon = new Label(FontAwesomeIcons.ICON_TRASH_O);
+        final Label icon = new Label(FontAwesomeIcons.ICON_TRASH);
         icon.setStyle(ICON_LABEL_FONT_FAMILY);
         clearErrorItem.setGraphic(icon);
 
@@ -331,7 +331,7 @@ public class ProgressMonitor extends HBox {
                 title = GeotkFX.getString(ProgressMonitor.class, "anonymOperation");
             setText(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"))+" - "+title);
 
-            final Label icon = new Label(FontAwesomeIcons.ICON_TRASH_O);
+            final Label icon = new Label(FontAwesomeIcons.ICON_TRASH);
             icon.setStyle(ICON_LABEL_FONT_FAMILY);
 
             final Button deleteButton = new Button("", icon);

@@ -1275,7 +1275,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         @Override
         public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            DeleteRenderer.this.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH_O, 16, FontAwesomeIcons.DEFAULT_COLOR));
+            DeleteRenderer.this.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, FontAwesomeIcons.DEFAULT_COLOR));
             return DeleteRenderer.this;
         }
 
@@ -1289,7 +1289,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         public DeleteEditor() {
             button.setBorderPainted(false);
             button.setContentAreaFilled(false);
-            button.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH_O, 16, FontAwesomeIcons.DEFAULT_COLOR));
+            button.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, FontAwesomeIcons.DEFAULT_COLOR));
 
             button.addActionListener(new ActionListener() {
                 @Override

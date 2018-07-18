@@ -90,7 +90,7 @@ import org.geotoolkit.storage.coverage.GridCoverageResource;
  */
 public class CoverageEditionDelegate extends AbstractEditionDelegate {
 
-    private static final ImageIcon ICON_COMMIT = IconBuilder.createIcon(FontAwesomeIcons.ICON_FLOPPY_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_COMMIT = IconBuilder.createIcon(FontAwesomeIcons.ICON_SAVE, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_ROLLBACK = IconBuilder.createIcon(FontAwesomeIcons.ICON_UNDO, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_SELECT = IconBuilder.createIcon(FontAwesomeIcons.ICON_LOCATION_ARROW, 16, FontAwesomeIcons.DEFAULT_COLOR);
 

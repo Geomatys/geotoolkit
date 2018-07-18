@@ -92,7 +92,7 @@ import org.opengis.util.GenericName;
  */
 public class JClassificationSingleStylePanel extends AbstractPropertyPane{
 
-    private static final ImageIcon ICON_DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     private final Dimension GLYPH_DIMENSION = new Dimension(30, 20);
 

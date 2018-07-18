@@ -99,7 +99,7 @@ import org.openide.util.Exceptions;
 public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements LayerListener {
 
     private static final ImageIcon ICON_TABLE = IconBuilder.createIcon(FontAwesomeIcons.ICON_LIST, 16, FontAwesomeIcons.DEFAULT_COLOR);
-    private static final ImageIcon ICON_VERSIONED = IconBuilder.createIcon(FontAwesomeIcons.ICON_CLOCK_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_VERSIONED = IconBuilder.createIcon(FontAwesomeIcons.ICON_CLOCK, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     public static final String ACTION_REF = "LayerFeaturePropertyPanel";
 
