@@ -35,7 +35,7 @@ import org.geotoolkit.internal.GeotkFX;
  */
 public final class FXPanAction extends FXMapAction {
     private final boolean infoOnClick;
-    public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_ARROWS, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
+    public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_HAND_PAPER, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
 
     public FXPanAction(FXMap map, boolean infoOnClick) {
         super(map,GeotkFX.getString(FXPanAction.class,"pan"),GeotkFX.getString(FXPanAction.class,"pan"),ICON);

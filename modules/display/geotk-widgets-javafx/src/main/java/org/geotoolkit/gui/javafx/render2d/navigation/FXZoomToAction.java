@@ -52,7 +52,7 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel (Geomatys)
  */
 public final class FXZoomToAction extends FXMapAction {
-    public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_THUMB_TACK, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
+    public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_MAP_MARKER_ALT, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
 
     public FXZoomToAction(FXMap map) {
         super(map,GeotkFX.getString(FXZoomToAction.class,"zoom_at"),GeotkFX.getString(FXZoomToAction.class,"zoom_at"),ICON);

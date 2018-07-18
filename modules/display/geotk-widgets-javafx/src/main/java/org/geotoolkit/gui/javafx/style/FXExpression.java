@@ -43,7 +43,7 @@ import org.opengis.filter.expression.Expression;
  */
 public abstract class FXExpression extends FXStyleElementController<Expression> {
 
-    private static final Image ICON_EDIT = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PENCIL, 16, FontAwesomeIcons.DEFAULT_COLOR),null);
+    private static final Image ICON_EDIT = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PENCIL_ALT, 16, FontAwesomeIcons.DEFAULT_COLOR),null);
     private static final Image ICON_ERASE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_ERASER, 16, FontAwesomeIcons.DEFAULT_COLOR),null);
 
     private final TextField textfield = new TextField();

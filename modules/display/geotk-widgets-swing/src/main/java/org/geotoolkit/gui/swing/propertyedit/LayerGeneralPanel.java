@@ -76,7 +76,7 @@ public class LayerGeneralPanel extends AbstractPropertyPane {
 
     private MapLayer layer = null;
 
-    private static final ImageIcon ICON_DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH_ALT, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     /** Creates new form LayerGeneralPanel */
     public LayerGeneralPanel() {

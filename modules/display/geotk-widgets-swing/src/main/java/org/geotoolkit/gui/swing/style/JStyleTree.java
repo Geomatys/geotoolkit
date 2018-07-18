@@ -87,8 +87,8 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     public static final ImageIcon ICON_FTS       = IconBuilder.createIcon(FontAwesomeIcons.ICON_TAG,16,FontAwesomeIcons.DEFAULT_COLOR);
     public static final ImageIcon ICON_RULE      = IconBuilder.createIcon(FontAwesomeIcons.ICON_FILTER,16,FontAwesomeIcons.DEFAULT_COLOR);
     public static final ImageIcon ICON_NEW       = IconBuilder.createIcon(FontAwesomeIcons.ICON_PLUS,16,FontAwesomeIcons.DEFAULT_COLOR);
-    public static final ImageIcon ICON_DUPLICATE = IconBuilder.createIcon(FontAwesomeIcons.ICON_FILES_O,16,FontAwesomeIcons.DEFAULT_COLOR);
-    public static final ImageIcon ICON_DELETE    = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH_O,16,FontAwesomeIcons.DEFAULT_COLOR);
+    public static final ImageIcon ICON_DUPLICATE = IconBuilder.createIcon(FontAwesomeIcons.ICON_COPY,16,FontAwesomeIcons.DEFAULT_COLOR);
+    public static final ImageIcon ICON_DELETE    = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH,16,FontAwesomeIcons.DEFAULT_COLOR);
 
     private T style = null;
     private final StyleTreeModel treemodel = new StyleTreeModel(null);

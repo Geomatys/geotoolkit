@@ -73,7 +73,7 @@ public class JAdditionalAxisNavigator extends JPanel {
 
     private static final ImageIcon ICON_ADD = IconBuilder.createIcon(FontAwesomeIcons.ICON_PLUS_CIRCLE, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_SEPARATE = IconBuilder.createIcon(FontAwesomeIcons.ICON_LIST_OL, 16, FontAwesomeIcons.DEFAULT_COLOR);
-    private static final ImageIcon ICON_VERT = IconBuilder.createIcon(FontAwesomeIcons.ICON_LEVEL_UP, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_VERT = IconBuilder.createIcon(FontAwesomeIcons.ICON_LEVEL_UP_ALT, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_MINUS_CIRCLE, 14, FontAwesomeIcons.DEFAULT_COLOR);
 
     private class AxisDef{
