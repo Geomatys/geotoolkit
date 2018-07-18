@@ -43,7 +43,7 @@ import org.geotoolkit.storage.StorageListener;
 public class SessionCommitAction extends AbstractAction implements ChangeListener<ChangeEvent> {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui");
-    private static final ImageIcon ICON_SAVE = IconBuilder.createIcon(FontAwesomeIcons.ICON_FLOPPY_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_SAVE = IconBuilder.createIcon(FontAwesomeIcons.ICON_SAVE, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_WAIT = IconBuilder.createIcon(FontAwesomeIcons.ICON_SPINNER, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     private final StorageListener.Weak weakListener = new StorageListener.Weak(this);

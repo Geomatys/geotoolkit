@@ -106,7 +106,7 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.propertyedit.styleproperty");
     private static final NumberFormat FORMAT = NumberFormat.getNumberInstance();
-    private static final ImageIcon DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     private final Dimension GLYPH_DIMENSION = new Dimension(30, 20);
 

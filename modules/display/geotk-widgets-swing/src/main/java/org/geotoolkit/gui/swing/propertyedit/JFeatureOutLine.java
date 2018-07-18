@@ -61,7 +61,7 @@ import org.opengis.feature.Feature;
  */
 public class JFeatureOutLine extends Outline{
 
-    private static final ImageIcon ICON_ADD = IconBuilder.createIcon(FontAwesomeIcons.ICON_CIRCLE_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_ADD = IconBuilder.createIcon(FontAwesomeIcons.ICON_CIRCLE_NOTCH, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_REMOVE = IconBuilder.createIcon(FontAwesomeIcons.ICON_CIRCLE, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_OCC_ADD = IconBuilder.createIcon(FontAwesomeIcons.ICON_PLUS_SQUARE, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_OCC_REMOVE = IconBuilder.createIcon(FontAwesomeIcons.ICON_MINUS_SQUARE, 16, FontAwesomeIcons.DEFAULT_COLOR);

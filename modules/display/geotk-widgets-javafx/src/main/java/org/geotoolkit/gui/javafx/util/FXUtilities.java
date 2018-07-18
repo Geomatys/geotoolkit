@@ -107,7 +107,7 @@ public final class FXUtilities {
     public static final Font FONTAWESOME;
 
     static {
-        FONTAWESOME = Font.loadFont(FXUtilities.class.getResource("/org/geotoolkit/font/fontawesome-webfont.ttf").toExternalForm(), 16);
+        FONTAWESOME = Font.loadFont(FXUtilities.class.getResource("/org/geotoolkit/font/fa-solid-900.ttf").toExternalForm(), 16);
     }
 
     private FXUtilities() {}
