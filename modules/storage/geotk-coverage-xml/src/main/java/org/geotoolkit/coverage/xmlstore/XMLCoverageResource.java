@@ -82,7 +82,7 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
      * 1.1 - number format used to name folder was using system local,
      *      local is fixed to EN in 1.1.
      */
-    private static final String CURRENT_VERSION = "1.1";
+    static final String CURRENT_VERSION = "1.1";
 
     @XmlTransient
     private static MarshallerPool POOL;

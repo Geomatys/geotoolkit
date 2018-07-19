@@ -21,6 +21,8 @@ import java.net.URL;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
@@ -162,4 +164,9 @@ public abstract class AbstractClientFactory extends DataStoreFactory implements 
         }
     }
 
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        // TODO : properly implement in each sub-type
+        return new ProbeResult(false, null, null);
+    }
 }

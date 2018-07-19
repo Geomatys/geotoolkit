@@ -123,28 +123,6 @@ public abstract class DataStoreFactory extends DataStoreProvider {
 
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-
-        GeneralParameterDescriptor desc;
-        try {
-            desc = getOpenParameters().descriptor(LOCATION);
-        } catch (ParameterNotFoundException e) {
-            return new ProbeResult(false, null, null);
-        }
-
-        if (!(desc instanceof ParameterDescriptor)) {
-            return new ProbeResult(false, null, null);
-        }
-
-        try {
-            final Object locationValue = connector.getStorageAs(((ParameterDescriptor)desc).getValueClass());
-            final ParameterValueGroup params = getOpenParameters().createValue();
-            params.parameter(LOCATION).setValue(locationValue);
-
-            if (canProcess(params)) {
-                return new ProbeResult(true, null, null);
-            }
-        } catch(IllegalArgumentException ex) {}
-
         return new ProbeResult(false, null, null);
     }
 
