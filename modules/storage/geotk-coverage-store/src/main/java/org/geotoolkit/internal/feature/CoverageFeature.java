@@ -21,6 +21,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -215,16 +216,14 @@ public final class CoverageFeature {
         //read a single pixel coverage
         final GeneralGridGeometry gridGeom = reader.getGridGeometry(imageIndex);
         final Envelope env = gridGeom.getEnvelope();
-        final GridEnvelope ext = gridGeom.getExtent();
-
-        final double[] res = new double[ext.getDimension()];
-        for(int i=0;i<res.length;i++){
-            res[i] = (env.getSpan(i) / ext.getSpan(i));
-        }
 
         final GridCoverageReadParam param = new GridCoverageReadParam();
-        param.setEnvelope(env);
+        param.setEnvelope(gridGeom.getEnvelope());
+
+        final double[] res = new double[gridGeom.getDimension()];
+        Arrays.fill(res, 1);
         param.setResolution(res);
+        
         Coverage coverage = reader.read(imageIndex, param);
 
         //in case of Nd Coverage unstack them.
