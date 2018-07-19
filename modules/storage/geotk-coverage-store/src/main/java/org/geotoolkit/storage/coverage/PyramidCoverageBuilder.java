@@ -40,7 +40,6 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -70,7 +69,6 @@ import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.lineage.ProcessStep;
-import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.*;
@@ -138,11 +136,6 @@ public class PyramidCoverageBuilder {
      * The default tile size in pixels.
      */
     private static final int DEFAULT_TILE_SIZE = 256;
-
-    /**
-     * Minimum tile size.
-     */
-    private static final int MIN_TILE_SIZE = 64;
 
     /**
      * Tile width.
@@ -228,9 +221,11 @@ public class PyramidCoverageBuilder {
     }
 
     /**
-     * @param tileSize size of tile from mosaic. The minimum tile size is 64 x 64.
+     * @param tileSize size of tile from mosaic.
      */
     public void setTileSize(Dimension tileSize) {
+        ArgumentChecks.ensureStrictlyPositive("tileWidth", tileSize.width);
+        ArgumentChecks.ensureStrictlyPositive("tileHeight", tileSize.height);
         this.tileWidth = tileSize.width;
         this.tileHeight = tileSize.height;
     }
@@ -594,7 +589,7 @@ public class PyramidCoverageBuilder {
             //----------------------------------------------------------------------
 
             //Image
-            fillValue = getFillValue((GridCoverage2D)sourceCoverage, fillValue);
+            fillValue = getFillValue(sourceCoverage, fillValue);
 
             for (Envelope envDest : resPerEnv.keySet()) {
                 if (monitor != null && monitor.isCanceled()) {
@@ -610,7 +605,7 @@ public class PyramidCoverageBuilder {
                 upperLeft.setOrdinate(minOrdi1, envDest.getMaximum(minOrdi1));
                 //one pyramid for each CoordinateReferenceSystem.
                 final Pyramid pyram                 = getOrCreatePyramid(pm, crs);
-                resample(pm, pyram.getId(), ((GridCoverage2D)sourceCoverage), resPerEnv.get(envDest), upperLeft, envDest, minOrdi0, minOrdi1);
+                resample(pm, pyram.getId(), sourceCoverage, resPerEnv.get(envDest), upperLeft, envDest, minOrdi0, minOrdi1);
             }
 
         } else if (sourceResource != null || sourceReader != null) {
@@ -680,7 +675,7 @@ public class PyramidCoverageBuilder {
                         throw ex;
                     }
 
-                    final GridCoverage2D gridCoverage2D = (GridCoverage2D) gridCoverage;
+                    final GridCoverage gridCoverage2D = gridCoverage;
                     resample(pm, pyram.getId(), gridCoverage2D, resPerEnv.get(outEnv), upperLeft, envDest, minOrdi0, minOrdi1);
                 }
             }
@@ -717,114 +712,114 @@ public class PyramidCoverageBuilder {
      * Can be {@code null}. If {@code null} a default table value filled by zero value,
      * with length equal to source coverage image band number is created.
      */
-    private void resample (final PyramidalCoverageResource pm, String pyramidID, GridCoverageReader coverageReader,
-            int imageIndex, GridCoverageReadParam readParam, double[] scaleLevel, DirectPosition upperLeft,
-            Envelope envDest, int widthAxis, int heightAxis)
-            throws NoninvertibleTransformException, FactoryException, TransformException, DataStoreException, IOException {
-
-        final GeneralGridGeometry ggg = coverageReader.getGridGeometry(imageIndex);
-        if (!(ggg instanceof GridGeometry2D)) {
-            final IllegalArgumentException ex = new IllegalArgumentException("GridGeometry should be instance of GridGeometry2D");
-            if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
-            throw ex;
-        }
-
-        final GridGeometry2D gg2d   = (GridGeometry2D) ggg;
-        final Envelope covEnv       = gg2d.getEnvelope2D();
-
-        // work on pixels coordinates.
-        final double envWidth       = envDest.getSpan(widthAxis);
-        final double envHeight      = envDest.getSpan(heightAxis);
-        final double min0           = envDest.getMinimum(widthAxis);
-        final double max1           = envDest.getMaximum(heightAxis);
-
-        //MathTransform2D
-        CoordinateReferenceSystem envDestCRS2D = CRSUtilities.getCRS2D(envDest.getCoordinateReferenceSystem());
-        GeneralEnvelope envDest2D = GeneralEnvelope.castOrCopy(Envelopes.transform(envDest, envDestCRS2D));
-        final MathTransform destCrs_to_coverageCRS = CRS.findOperation(envDestCRS2D, gg2d.getCoordinateReferenceSystem2D(), null).getMathTransform();
-
-        final Dimension tileSize              = new Dimension(tileWidth, tileHeight);
-
-        final GeneralEnvelope covEnvInDestCRS = Envelopes.transform(destCrs_to_coverageCRS.inverse(), covEnv);
-        final GeneralEnvelope clipEnv   = ReferencingUtilities.intersectEnvelopes(covEnvInDestCRS, envDest2D);
-
-        //------------------- param resolution configuration -------------------
-        final int paramDim;
-        final CoordinateReferenceSystem paramCrs = readParam.getCoordinateReferenceSystem();
-        if (paramCrs != null) {
-            paramDim = paramCrs.getCoordinateSystem().getDimension();
-        } else if (readParam.getEnvelope() != null) {
-            paramDim = readParam.getEnvelope().getDimension();
-        } else {
-            //-- assume param in the same crs than coverage
-            readParam.setCoordinateReferenceSystem(ggg.getCoordinateReferenceSystem());
-            paramDim = ggg.getDimension();
-        }
-        final double[] res = new double[paramDim];
-        Arrays.fill(res, 1.0);
-        //----------------------------------------------------------------------
-
-        //-- one mosaic for each level scale
-        for (double pixelScal : scaleLevel) {
-            res[widthAxis] = res[heightAxis] = pixelScal;
-            //-- output image size
-            readParam.setResolution(res);
-            assert Utilities.equalsIgnoreMetadata(readParam.getCoordinateReferenceSystem(), ggg.getCoordinateReferenceSystem())
-                    : "PyramidCoverageBuilder : requested CRS into GridCoverageReadParam must be same than Coverage";
-
-            final GridCoverage2D gridCoverage2D = (GridCoverage2D) coverageReader.read(imageIndex, readParam);//-- normaly with a gridGeometry2D --> gridCoverage2D
-            final RenderedImage baseImg = gridCoverage2D.getRenderedImage();
-            final MathTransform2D coverageCRS_to_grid = gridCoverage2D.getGridGeometry().getGridToCRS2D(PixelOrientation.CENTER).inverse();
-            final MathTransform destCrs_to_covGrid     = MathTransforms.concatenate(destCrs_to_coverageCRS, coverageCRS_to_grid).inverse();
-
-            final double[] fill    = getFillValue(gridCoverage2D, fillValue);
-
-            final double imgWidth  = envWidth  / pixelScal;
-            final double imgHeight = envHeight / pixelScal;
-            final double sx        = envWidth  / imgWidth;
-            final double sy        = envHeight / imgHeight;
-            final MathTransform2D globalGridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0, max1);
-
-            //-- mosaic size
-            final int nbrTileX  = (int) Math.ceil(imgWidth  / tileWidth);
-            final int nbrTileY  = (int) Math.ceil(imgHeight / tileHeight);
-
-            //-- coverage extent on mosaic space
-            final GeneralEnvelope coverageExtent = Envelopes.transform(globalGridDest_to_crs.inverse(), clipEnv);
-
-            //-- coverage intersection tile index
-            final int startTileX = (int) coverageExtent.getMinimum(widthAxis)   / tileWidth;
-            final int startTileY = (int) coverageExtent.getMinimum(heightAxis)  / tileHeight;
-            final int endTileX   = (int) (coverageExtent.getMaximum(widthAxis)  + tileWidth - 1)  / tileWidth;
-            final int endTileY   = (int) (coverageExtent.getMaximum(heightAxis) + tileHeight - 1) / tileHeight;
-
-            final GridMosaic mosaic = getOrCreateMosaic(pm, pyramidID, new Dimension(nbrTileX, nbrTileY), tileSize, upperLeft, pixelScal);
-            final String mosaicId   = mosaic.getId();
-
-            final AtomicInteger inc = new AtomicInteger();
-            final RenderedImage img = new BuildImage(
-                    startTileX*tileWidth,
-                    startTileY*tileHeight,
-                    (endTileX-startTileX)*tileWidth,
-                    (endTileY-startTileY)*tileHeight,
-                    tileSize, baseImg, mosaic,
-                    processListener,
-                    inc,fill,destCrs_to_covGrid,
-                    sx,sy,min0,max1
-                    );
-
-            try {
-                pm.writeTiles(pyramidID, mosaicId, img, false, null);
-            } catch(ImagingOpException ex) {
-                if (processListener!=null) {
-                    float prc = (float)niemeTile / globalTileNumber;
-                    processListener.failed(new ProcessEvent(fakeProcess, "writing tiles", prc, ex));
-                }
-                throw new DataStoreException(ex.getMessage(), ex);
-            }
-
-        }
-    }
+//    private void resample (final PyramidalCoverageResource pm, String pyramidID, GridCoverageReader coverageReader,
+//            int imageIndex, GridCoverageReadParam readParam, double[] scaleLevel, DirectPosition upperLeft,
+//            Envelope envDest, int widthAxis, int heightAxis)
+//            throws NoninvertibleTransformException, FactoryException, TransformException, DataStoreException, IOException {
+//
+//        final GeneralGridGeometry ggg = coverageReader.getGridGeometry(imageIndex);
+//        if (!(ggg instanceof GridGeometry2D)) {
+//            final IllegalArgumentException ex = new IllegalArgumentException("GridGeometry should be instance of GridGeometry2D");
+//            if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
+//            throw ex;
+//        }
+//
+//        final GridGeometry2D gg2d   = (GridGeometry2D) ggg;
+//        final Envelope covEnv       = gg2d.getEnvelope2D();
+//
+//        // work on pixels coordinates.
+//        final double envWidth       = envDest.getSpan(widthAxis);
+//        final double envHeight      = envDest.getSpan(heightAxis);
+//        final double min0           = envDest.getMinimum(widthAxis);
+//        final double max1           = envDest.getMaximum(heightAxis);
+//
+//        //MathTransform2D
+//        CoordinateReferenceSystem envDestCRS2D = CRSUtilities.getCRS2D(envDest.getCoordinateReferenceSystem());
+//        GeneralEnvelope envDest2D = GeneralEnvelope.castOrCopy(Envelopes.transform(envDest, envDestCRS2D));
+//        final MathTransform destCrs_to_coverageCRS = CRS.findOperation(envDestCRS2D, gg2d.getCoordinateReferenceSystem2D(), null).getMathTransform();
+//
+//        final Dimension tileSize              = new Dimension(tileWidth, tileHeight);
+//
+//        final GeneralEnvelope covEnvInDestCRS = Envelopes.transform(destCrs_to_coverageCRS.inverse(), covEnv);
+//        final GeneralEnvelope clipEnv   = ReferencingUtilities.intersectEnvelopes(covEnvInDestCRS, envDest2D);
+//
+//        //------------------- param resolution configuration -------------------
+//        final int paramDim;
+//        final CoordinateReferenceSystem paramCrs = readParam.getCoordinateReferenceSystem();
+//        if (paramCrs != null) {
+//            paramDim = paramCrs.getCoordinateSystem().getDimension();
+//        } else if (readParam.getEnvelope() != null) {
+//            paramDim = readParam.getEnvelope().getDimension();
+//        } else {
+//            //-- assume param in the same crs than coverage
+//            readParam.setCoordinateReferenceSystem(ggg.getCoordinateReferenceSystem());
+//            paramDim = ggg.getDimension();
+//        }
+//        final double[] res = new double[paramDim];
+//        Arrays.fill(res, 1.0);
+//        //----------------------------------------------------------------------
+//
+//        //-- one mosaic for each level scale
+//        for (double pixelScal : scaleLevel) {
+//            res[widthAxis] = res[heightAxis] = pixelScal;
+//            //-- output image size
+//            readParam.setResolution(res);
+//            assert Utilities.equalsIgnoreMetadata(readParam.getCoordinateReferenceSystem(), ggg.getCoordinateReferenceSystem())
+//                    : "PyramidCoverageBuilder : requested CRS into GridCoverageReadParam must be same than Coverage";
+//
+//            final GridCoverage2D gridCoverage2D = (GridCoverage2D) coverageReader.read(imageIndex, readParam);//-- normaly with a gridGeometry2D --> gridCoverage2D
+//            final RenderedImage baseImg = gridCoverage2D.getRenderedImage();
+//            final MathTransform2D coverageCRS_to_grid = gridCoverage2D.getGridGeometry().getGridToCRS2D(PixelOrientation.CENTER).inverse();
+//            final MathTransform destCrs_to_covGrid     = MathTransforms.concatenate(destCrs_to_coverageCRS, coverageCRS_to_grid).inverse();
+//
+//            final double[] fill    = getFillValue(gridCoverage2D, fillValue);
+//
+//            final double imgWidth  = envWidth  / pixelScal;
+//            final double imgHeight = envHeight / pixelScal;
+//            final double sx        = envWidth  / imgWidth;
+//            final double sy        = envHeight / imgHeight;
+//            final MathTransform2D globalGridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0, max1);
+//
+//            //-- mosaic size
+//            final int nbrTileX  = (int) Math.ceil(imgWidth  / tileWidth);
+//            final int nbrTileY  = (int) Math.ceil(imgHeight / tileHeight);
+//
+//            //-- coverage extent on mosaic space
+//            final GeneralEnvelope coverageExtent = Envelopes.transform(globalGridDest_to_crs.inverse(), clipEnv);
+//
+//            //-- coverage intersection tile index
+//            final int startTileX = (int) coverageExtent.getMinimum(widthAxis)   / tileWidth;
+//            final int startTileY = (int) coverageExtent.getMinimum(heightAxis)  / tileHeight;
+//            final int endTileX   = (int) (coverageExtent.getMaximum(widthAxis)  + tileWidth - 1)  / tileWidth;
+//            final int endTileY   = (int) (coverageExtent.getMaximum(heightAxis) + tileHeight - 1) / tileHeight;
+//
+//            final GridMosaic mosaic = getOrCreateMosaic(pm, pyramidID, new Dimension(nbrTileX, nbrTileY), tileSize, upperLeft, pixelScal);
+//            final String mosaicId   = mosaic.getId();
+//
+//            final AtomicInteger inc = new AtomicInteger();
+//            final RenderedImage img = new BuildImage(
+//                    startTileX*tileWidth,
+//                    startTileY*tileHeight,
+//                    (endTileX-startTileX)*tileWidth,
+//                    (endTileY-startTileY)*tileHeight,
+//                    tileSize, baseImg, mosaic,
+//                    processListener,
+//                    inc,fill,destCrs_to_covGrid,
+//                    sx,sy,min0,max1
+//                    );
+//
+//            try {
+//                pm.writeTiles(pyramidID, mosaicId, img, false, null);
+//            } catch(ImagingOpException ex) {
+//                if (processListener!=null) {
+//                    float prc = (float)niemeTile / globalTileNumber;
+//                    processListener.failed(new ProcessEvent(fakeProcess, "writing tiles", prc, ex));
+//                }
+//                throw new DataStoreException(ex.getMessage(), ex);
+//            }
+//
+//        }
+//    }
 
     /**
      * Create and insert pyramid from {@code GridCoverage2D} source,
@@ -842,20 +837,21 @@ public class PyramidCoverageBuilder {
      * Can be {@code null}. If {@code null} a default table value filled by zero value,
      * with length equal to source coverage image band number is created.
      */
-    private void resample (final PyramidalCoverageResource pm, String pyramidID, GridCoverage2D gridCoverage2D, double[] scaleLevel,
+    private void resample (final PyramidalCoverageResource pm, String pyramidID, GridCoverage gridCoverage, double[] scaleLevel,
             DirectPosition upperLeft, Envelope envDest, int widthAxis, int heightAxis)
             throws NoninvertibleTransformException, FactoryException, TransformException, DataStoreException, IOException {
 
-        final GridGeometry2D gg2d       = gridCoverage2D.getGridGeometry();
-        final Envelope covEnv           = gg2d.getEnvelope2D();
+        final GridGeometry gg     = gridCoverage.getGridGeometry();
+        final GridGeometry2D gg2d = GridGeometry2D.castOrCopy(gg);
+        final Envelope covEnv     = gg2d.getEnvelope2D();
 
-        final RenderedImage baseImg = gridCoverage2D.getRenderedImage();
+        final RenderedImage baseImg = gridCoverage.getRenderableImage(0, 1).createDefaultRendering();
         // work on pixels coordinates.
-        final MathTransform2D coverageCRS_to_grid = gg2d.getGridToCRS2D(PixelOrientation.CENTER).inverse();
+        final MathTransform coverageCRS_to_grid = gg2d.getGridToCRS().inverse();
         final double envWidth       = envDest.getSpan(widthAxis);
         final double envHeight      = envDest.getSpan(heightAxis);
 //        final int nbBand            = baseImg.getSampleModel().getNumBands();
-        final double[] fill         = getFillValue(gridCoverage2D, fillValue);
+        final double[] fill         = getFillValue(gridCoverage, fillValue);
 //        final int dataType          = baseImg.getSampleModel().getDataType();
         final double min0           = envDest.getMinimum(widthAxis);
         final double max1           = envDest.getMaximum(heightAxis);
@@ -863,7 +859,7 @@ public class PyramidCoverageBuilder {
         //-- MathTransform2D
         CoordinateReferenceSystem envDestCRS2D = CRSUtilities.getCRS2D(envDest.getCoordinateReferenceSystem());
         GeneralEnvelope envDest2D = GeneralEnvelope.castOrCopy(Envelopes.transform(envDest, envDestCRS2D));
-        final MathTransform destCrs_to_coverageCRS = CRS.findOperation(envDestCRS2D, gridCoverage2D.getCoordinateReferenceSystem2D(), null).getMathTransform();
+        final MathTransform destCrs_to_coverageCRS = CRS.findOperation(envDestCRS2D, gg2d.getCoordinateReferenceSystem2D(), null).getMathTransform();
 
         final MathTransform destCrs_to_covGrid     = MathTransforms.concatenate(destCrs_to_coverageCRS, coverageCRS_to_grid).inverse();
         final Dimension tileSize                   = new Dimension(tileWidth, tileHeight);
@@ -954,16 +950,21 @@ public class PyramidCoverageBuilder {
         return sourceImg;
     }
 
-    private static double[] getFillValue(GridCoverage2D gridCoverage2D, double[] fillValue){
+    private static double[] getFillValue(GridCoverage gridCoverage, double[] fillValue){
         //-- calculate fill values
         if (fillValue == null) {
-            final GridSampleDimension[] dimensions = gridCoverage2D.getSampleDimensions();
-            final int nbBand = dimensions.length;
+            final int nbBand = gridCoverage.getNumSampleDimensions();
             fillValue = new double[nbBand];
             Arrays.fill(fillValue, Double.NaN);
             for(int i=0;i<nbBand;i++){
-                final double[] nodata = dimensions[i].geophysics(true).getNoDataValues();
-                if (nodata != null && nodata.length > 0){
+                final SampleDimension dimension = gridCoverage.getSampleDimension(i);
+                final double[] nodata;
+                if (dimension instanceof GridSampleDimension) {
+                    nodata = ((GridSampleDimension)dimension).geophysics(true).getNoDataValues();
+                } else {
+                    nodata = dimension.getNoDataValues();
+                }
+                if (nodata != null && nodata.length > 0) {
                     fillValue[i] = nodata[0];
                 }
             }

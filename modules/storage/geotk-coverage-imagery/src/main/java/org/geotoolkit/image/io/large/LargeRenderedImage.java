@@ -67,11 +67,6 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
     private static final int DEFAULT_TILE_SIZE = 256;
 
     /**
-     * Minimum required tile size.
-     */
-    private static final int MIN_TILE_SIZE = 64;
-
-    /**
      * Maximum allowed tile size.
      */
     private static final int MAX_TILE_SIZE = 2048;
@@ -233,8 +228,10 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
         this.tileGridXOffset = 0;
         this.tileGridYOffset = 0;
         if (tileSize != null) {
-            tileWidth  = Math.min(Math.max(MIN_TILE_SIZE, tileSize.width),  MAX_TILE_SIZE);
-            tileHeight = Math.min(Math.max(MIN_TILE_SIZE, tileSize.height), MAX_TILE_SIZE);
+            ArgumentChecks.ensureBetween("tileWidth", 1, MAX_TILE_SIZE, tileSize.width);
+            ArgumentChecks.ensureBetween("tileHeight", 1, MAX_TILE_SIZE, tileSize.height);
+            tileWidth  = tileSize.width;
+            tileHeight = tileSize.height;
         } else {
             tileWidth = tileHeight = DEFAULT_TILE_SIZE;
         }

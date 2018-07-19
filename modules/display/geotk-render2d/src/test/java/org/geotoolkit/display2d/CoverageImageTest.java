@@ -144,7 +144,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
             for(int dy = destY; dy < destY + proportionalityCoefficient; dy++) {
                 for(int dx = destX; dx < destX + proportionalityCoefficient; dx++) {
                     destPix.moveTo(dx, dy, b);
-                    assertTrue(Math.abs(srcValue-destPix.getSampleDouble()) <= EPSILON);
+                    assertTrue("At pixel "+dx+","+dy+","+b,Math.abs(srcValue-destPix.getSampleDouble()) <= EPSILON);
                 }
             }
             if (++b == numband) b = 0;
