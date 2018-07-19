@@ -115,27 +115,44 @@ public class FXStoreChooser extends BorderPane {
 
         private int getPriority(Object o){
 
+            if (o instanceof ClientFactory) {
+                return 4;
+            }else if(o instanceof AbstractJDBCFeatureStoreFactory){
+                return 3;
+            }
+
             ResourceType[] types = new ResourceType[0];
             if (o instanceof DataStoreProvider) {
                 types = org.geotoolkit.storage.DataStores.getResourceTypes((DataStoreProvider) o);
             }
 
-            if(o instanceof FileFeatureStoreFactory){
+            if (ArraysExt.contains(types, ResourceType.VECTOR)){
                 return 1;
-            }else if((ArraysExt.contains(types, ResourceType.COVERAGE)
+            } else if ((ArraysExt.contains(types, ResourceType.COVERAGE)
                     | ArraysExt.contains(types, ResourceType.GRID)
                     | ArraysExt.contains(types, ResourceType.PYRAMID))
-                    && !(o instanceof ClientFactory)){
+                    ){
                 return 2;
-            }else if(o instanceof AbstractFolderFeatureStoreFactory){
-                return 3;
-            }else if(o instanceof AbstractJDBCFeatureStoreFactory){
-                return 4;
-            }else if(o instanceof ClientFactory){
-                return 6;
-            }else{
+            } else {
                 return 5;
             }
+
+//            if(o instanceof FileFeatureStoreFactory){
+//                return 1;
+//            }else if((ArraysExt.contains(types, ResourceType.COVERAGE)
+//                    | ArraysExt.contains(types, ResourceType.GRID)
+//                    | ArraysExt.contains(types, ResourceType.PYRAMID))
+//                    && !(o instanceof ClientFactory)){
+//                return 2;
+//            }else if(o instanceof AbstractFolderFeatureStoreFactory){
+//                return 3;
+//            }else if(o instanceof AbstractJDBCFeatureStoreFactory){
+//                return 4;
+//            }else if(o instanceof ClientFactory){
+//                return 6;
+//            }else{
+//                return 5;
+//            }
         }
 
     };
@@ -372,29 +389,54 @@ public class FXStoreChooser extends BorderPane {
 
     private static Image findIcon(Object candidate){
 
+
+        if (candidate instanceof ClientFactory) {
+            return ICON_SERVER;
+        }else if(candidate instanceof AbstractJDBCFeatureStoreFactory){
+            return ICON_DATABASE;
+        }
+
         ResourceType[] types = new ResourceType[0];
         if (candidate instanceof DataStoreProvider) {
             types = org.geotoolkit.storage.DataStores.getResourceTypes((DataStoreProvider) candidate);
         }
 
-        Image icon = EMPTY_24;
-        if(candidate instanceof AbstractFolderFeatureStoreFactory){
-            icon = ICON_FOLDER;
-        }else if(candidate instanceof FileFeatureStoreFactory){
-            icon = ICON_FILE;
-        }else if(candidate instanceof ClientFactory){
-            icon = ICON_SERVER;
-        }else if(candidate instanceof AbstractJDBCFeatureStoreFactory){
-            icon = ICON_DATABASE;
-        }else if(ArraysExt.contains(types, ResourceType.COVERAGE) | ArraysExt.contains(types, ResourceType.GRID) | ArraysExt.contains(types, ResourceType.PYRAMID)){
-            icon = ICON_COVERAGE;
-        }else if(ArraysExt.contains(types, ResourceType.VECTOR)){
-            icon = ICON_VECTOR;
-        }else if(candidate instanceof DataStoreProvider){
-            icon = ICON_OTHER;
+        if (ArraysExt.contains(types, ResourceType.VECTOR)){
+            return ICON_VECTOR;
+        } else if ((ArraysExt.contains(types, ResourceType.COVERAGE)
+                | ArraysExt.contains(types, ResourceType.GRID)
+                | ArraysExt.contains(types, ResourceType.PYRAMID))
+                ){
+            return ICON_COVERAGE;
+        } else {
+            return ICON_OTHER;
         }
 
-        return icon;
+
+
+//        ResourceType[] types = new ResourceType[0];
+//        if (candidate instanceof DataStoreProvider) {
+//            types = org.geotoolkit.storage.DataStores.getResourceTypes((DataStoreProvider) candidate);
+//        }
+//
+//        Image icon = EMPTY_24;
+//        if(candidate instanceof AbstractFolderFeatureStoreFactory){
+//            icon = ICON_FOLDER;
+//        }else if(candidate instanceof FileFeatureStoreFactory){
+//            icon = ICON_FILE;
+//        }else if(candidate instanceof ClientFactory){
+//            icon = ICON_SERVER;
+//        }else if(candidate instanceof AbstractJDBCFeatureStoreFactory){
+//            icon = ICON_DATABASE;
+//        }else if(ArraysExt.contains(types, ResourceType.COVERAGE) | ArraysExt.contains(types, ResourceType.GRID) | ArraysExt.contains(types, ResourceType.PYRAMID)){
+//            icon = ICON_COVERAGE;
+//        }else if(ArraysExt.contains(types, ResourceType.VECTOR)){
+//            icon = ICON_VECTOR;
+//        }else if(candidate instanceof DataStoreProvider){
+//            icon = ICON_OTHER;
+//        }
+//
+//        return icon;
     }
 
 }

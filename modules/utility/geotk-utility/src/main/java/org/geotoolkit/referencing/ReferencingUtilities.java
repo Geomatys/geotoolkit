@@ -235,6 +235,11 @@ public final class ReferencingUtilities {
             }
 
         }
+
+        //at current step, resolution may have negative values du to derivate.
+        for(int i=0; i<newResolution.length; i++) {
+            newResolution[i] = Math.abs(newResolution[i]);
+        }
         return newResolution;
     }
 
