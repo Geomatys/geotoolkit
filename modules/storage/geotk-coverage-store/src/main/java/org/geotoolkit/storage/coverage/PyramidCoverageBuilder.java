@@ -76,6 +76,7 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.process.Monitor;
+import org.opengis.metadata.spatial.PixelOrientation;
 
 /**
  * <p>Resampling, re-project, tile cut and insert in given datastore, image from
@@ -847,7 +848,7 @@ public class PyramidCoverageBuilder {
 
         final RenderedImage baseImg = gridCoverage.getRenderableImage(0, 1).createDefaultRendering();
         // work on pixels coordinates.
-        final MathTransform coverageCRS_to_grid = gg2d.getGridToCRS().inverse();
+        final MathTransform coverageCRS_to_grid = gg2d.getGridToCRS2D(PixelOrientation.CENTER).inverse();
         final double envWidth       = envDest.getSpan(widthAxis);
         final double envHeight      = envDest.getSpan(heightAxis);
 //        final int nbBand            = baseImg.getSampleModel().getNumBands();
