@@ -24,6 +24,9 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -869,6 +872,9 @@ public class PyramidCoverageBuilder {
         final GeneralEnvelope clipEnv   = ReferencingUtilities.intersectEnvelopes(covEnvInDestCRS, envDest2D);
 
         //one mosaic for each level scale
+        //Note,Todo : sort scale by finest, we will then be able to build each mosaic from the previous level
+        scaleLevel = scaleLevel.clone();
+        Arrays.sort(scaleLevel);
         for (double pixelScal : scaleLevel) {
             //output image size
 
@@ -908,18 +914,15 @@ public class PyramidCoverageBuilder {
                     sx,sy,min0,max1
                     );
 
-            try{
+            try {
                 pm.writeTiles(pyramidID, mosaicId, img, false, null);
-            }catch(ImagingOpException ex){
-                if(processListener!=null){
+            } catch(ImagingOpException ex) {
+                if (processListener!=null) {
                     float prc = (float)niemeTile / globalTileNumber;
                     processListener.failed(new ProcessEvent(fakeProcess, "writing tiles", prc, ex));
                 }
                 throw new DataStoreException(ex.getMessage(), ex);
             }
-
-            pm.writeTiles(pyramidID, mosaicId, img, false, null);
-
         }
     }
 
@@ -1225,7 +1228,12 @@ public class PyramidCoverageBuilder {
                 resample.fillImage();
                 return destImg.getTile(0, 0);
             }catch(Exception ex){
-                throw new ImagingOpException(ex.getMessage());
+                final StringWriter writer = new StringWriter();
+                final PrintWriter pw = new PrintWriter(writer);
+                ex.printStackTrace(pw);
+                pw.flush();
+                writer.flush();
+                throw new ImagingOpException(ex.getMessage()+"\n"+writer.toString());
             }
         }
     };
