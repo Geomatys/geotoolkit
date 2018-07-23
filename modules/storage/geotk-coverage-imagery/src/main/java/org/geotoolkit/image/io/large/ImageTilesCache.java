@@ -482,34 +482,35 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
      */
     private void checkMap() throws IOException {
         final long maxCacheSize = cache.getCacheSizePerImage();
+        if (usedCapacity.get() < maxCacheSize) return;
 
         final boolean swap = cache.isEnableSwap();
 
-        for(long currentCapacity = usedCapacity.get(); currentCapacity>maxCacheSize; currentCapacity = usedCapacity.get()){
+        Point[] pts;
+        synchronized(tiles){
+            pts = tiles.keySet().toArray(new Point[0]);
+        }
 
-            Point key = null;
-            synchronized(tiles){
-                //get oldest key
-                Iterator<Point> ite = tiles.keySet().iterator();
-                if(ite.hasNext()){
-                    key = ite.next();
-                }
-            }
+        int i=0;
+        for(long currentCapacity = usedCapacity.get(); currentCapacity>maxCacheSize && i<pts.length; currentCapacity = usedCapacity.get(),i++){
+
+            Point key = pts[i];
             if(key==null) continue;
 
             final ReadWriteLock rwl = getLock(key);
-            rwl.writeLock().lock();
-            try {
-                final TileRasterCache tr;
-                synchronized (tiles) {
-                    tr = tiles.remove(key);
-                }
+            if (rwl.writeLock().tryLock()) {
+                try {
+                    final TileRasterCache tr;
+                    synchronized (tiles) {
+                        tr = tiles.remove(key);
+                    }
 
-                if (tr != null && swap) {
-                    writeRaster(tr);
+                    if (tr != null && swap) {
+                        writeRaster(tr);
+                    }
+                } finally {
+                    rwl.writeLock().unlock();
                 }
-            } finally {
-                rwl.writeLock().unlock();
             }
         }
 
