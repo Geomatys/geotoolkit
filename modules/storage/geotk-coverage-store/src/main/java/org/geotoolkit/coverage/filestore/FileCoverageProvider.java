@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
@@ -184,7 +186,7 @@ public class FileCoverageProvider extends DataStoreFactory {
                     continue;
                 }
 
-                if (spi.canDecodeInput(input)) {
+                if (canDecode(spi, connector, input)) {
                     if (Boolean.TRUE.equals(entry.getValue())) {
                         //special case for world files, verify tfw and prj files
                         final Path path = connector.getStorageAs(Path.class);
@@ -208,6 +210,35 @@ public class FileCoverageProvider extends DataStoreFactory {
             }
         }
         return ProbeResult.UNSUPPORTED_STORAGE;
+    }
+
+    /**
+     * Test if an image spi can decode provided input.
+     * @param spi SPI to test
+     * @param connector input connector
+     * @param in base image input stream
+     * @return
+     * @throws IOException
+     */
+    private boolean canDecode(ImageReaderSpi spi, StorageConnector connector, Object in) throws IOException {
+        if (spi.canDecodeInput(in)) return true;
+
+        //check other input types
+        //example : HGT only support File or Path
+        for (Class type : spi.getInputTypes()) {
+            try {
+                Object tin = connector.getStorageAs(type);
+                if (spi.canDecodeInput(tin)) {
+                    return true;
+                } else {
+                    //all other types are expected to return false too
+                    return false;
+                }
+            } catch (IllegalArgumentException | DataStoreException ex) {
+                //don't log, it would spam the logs
+            }
+        }
+        return false;
     }
 
     @Override
