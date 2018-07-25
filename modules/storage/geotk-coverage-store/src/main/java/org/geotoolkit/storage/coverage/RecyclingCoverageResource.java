@@ -86,7 +86,7 @@ public abstract class RecyclingCoverageResource extends AbstractCoverageResource
             readers.push(reader);
             removeExpired(readers);
         } catch (CoverageStoreException e) {
-            LOGGER.log(Level.WARNING, "Reader not recycled will be disposed. Not recycled cause : "+e.getMessage(), e);
+            LOGGER.log(Level.FINE, "Reader not recycled will be disposed. Not recycled cause : "+e.getMessage(), e);
             dispose(reader);
         }
     }
