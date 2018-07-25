@@ -35,11 +35,15 @@ import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
+import org.geotoolkit.coverage.amended.AmendedCoverageResource;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.XImageIO;
@@ -51,8 +55,12 @@ import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.util.NamesExt;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.ImageCRS;
 import org.opengis.util.GenericName;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 
@@ -238,7 +246,40 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
                         name = NamesExt.create(filename + "." + i);
                     }
 
-                    final FileCoverageResource fcr = new FileCoverageResource(this, name, candidate, i);
+                    CoverageResource fcr = new FileCoverageResource(this, name, candidate, i);
+
+                    //HACK : check if the image define a CRS, if not check if grid is within CRS:84 envelope
+                    //if so we amend the resource and define the crs
+                    ImageCoverageReader covreader = null;
+                    try {
+                        covreader = new ImageCoverageReader();
+                        covreader.setInput(reader);
+                        final GridGeometry2D gg = covreader.getGridGeometry(i);
+                        final CoordinateReferenceSystem crs = gg.getCoordinateReferenceSystem();
+                        if (crs instanceof ImageCRS && crs.getCoordinateSystem().getDimension() == 2) {
+                            final Envelope dataEnv = gg.getEnvelope();
+                            final DirectPosition lowerCorner = dataEnv.getLowerCorner();
+                            final DirectPosition upperCorner = dataEnv.getUpperCorner();
+                            if (   lowerCorner.getOrdinate(0) >= -181
+                                && lowerCorner.getOrdinate(1) >= -91
+                                && upperCorner.getOrdinate(0) <= +91
+                                && upperCorner.getOrdinate(1) <= +181) {
+                                final AmendedCoverageResource acr = new AmendedCoverageResource(fcr, this);
+                                acr.setOverrideCRS(CommonCRS.WGS84.normalizedGeographic());
+                                fcr = acr;
+                            }
+                        }
+                    } catch (Exception ex) {
+                        getLogger().log(Level.FINE, ex.getMessage(), ex);
+                        //silent exception
+                    } finally {
+                        if (covreader != null) {
+                            covreader.dispose();
+                        }
+                    }
+
+
+
                     resources.add(fcr);
                 }
             }
