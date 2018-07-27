@@ -246,7 +246,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
                         name = NamesExt.create(filename + "." + i);
                     }
 
-                    CoverageResource fcr = new FileCoverageResource(this, name, candidate, i);
+                    GridCoverageResource fcr = new FileCoverageResource(this, name, candidate, i);
 
                     //HACK : check if the image define a CRS, if not check if grid is within CRS:84 envelope
                     //if so we amend the resource and define the crs

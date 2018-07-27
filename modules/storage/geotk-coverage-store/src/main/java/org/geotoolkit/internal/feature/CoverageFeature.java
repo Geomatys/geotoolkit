@@ -223,7 +223,7 @@ public final class CoverageFeature {
         final double[] res = new double[gridGeom.getDimension()];
         Arrays.fill(res, 1);
         param.setResolution(res);
-        
+
         Coverage coverage = reader.read(imageIndex, param);
 
         //in case of Nd Coverage unstack them.

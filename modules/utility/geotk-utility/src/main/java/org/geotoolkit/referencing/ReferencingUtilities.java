@@ -71,6 +71,7 @@ import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.Utilities;
@@ -217,7 +218,7 @@ public final class ReferencingUtilities {
                 final Matrix derivative = trs.derivative(center);
                 newResolution = MatrixSIS.castOrCopy(derivative).multiply(oldResolution);
 
-            } catch (FactoryException ex) {
+            } catch (FactoryException | ProjectionException ex) {
                 //uncorrect fallback solution, better then nothing
                 //-- grid envelope
                 final int displayWidth  = (int) StrictMath.ceil(srcEnvelope.getSpan(srcMinOrdi)     / oldResolution[0]);
@@ -235,8 +236,24 @@ public final class ReferencingUtilities {
             }
 
         }
+
+        //at current step, resolution may have negative values du to derivate.
+        for(int i=0; i<newResolution.length; i++) {
+            newResolution[i] = Math.abs(newResolution[i]);
+
+            if (Double.isNaN(newResolution[i]) && (i == targetMinOrdi || i == targetMinOrdi+1)) {
+                //if a value is NaN, peek resolution of the other horizontal axis
+                newResolution[i] = newResolution[i == targetMinOrdi ? i+1 : i-1];
+            }
+            if (Double.isNaN(newResolution[i])) {
+                //if a value is still NaN, use original resolution
+                newResolution[i] = oldResolution[i];
+            }
+        }
+
         return newResolution;
     }
+
 
     public static Envelope wrapNormalize(Envelope env, DirectPosition[] warp) {
         if (warp == null) return env;
