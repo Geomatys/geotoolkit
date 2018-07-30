@@ -76,7 +76,7 @@ import org.apache.sis.geometry.ImmutableEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.geotoolkit.resources.Errors;
 
 import org.apache.sis.referencing.operation.transform.TransferFunction;

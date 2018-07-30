@@ -41,7 +41,7 @@ import org.geotoolkit.factory.Hints;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.ImmutableEnvelope;
 import org.apache.sis.geometry.Shapes2D;
-import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.referencing.operation.MathTransforms;
@@ -907,7 +907,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *         for this grid geometry.
      *
      * @see #getGridToCRS(PixelInCell)
-     * @see org.geotoolkit.metadata.iso.spatial.PixelTranslation
+     * @see org.apache.sis.coverage.grid.PixelTranslation
      *
      * @since 2.3
      */

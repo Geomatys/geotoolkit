@@ -72,8 +72,6 @@ package org.geotoolkit.lang;
  * <tr><td colspan="2"><hr></td></tr>
  *
  * <tr><th colspan="2" bgcolor="lightblue">Images (except I/O)</th></tr>
- * <tr><td>{@link org.geotoolkit.metadata.iso.spatial.PixelTranslation}</td>
- *     <td>The translation to apply for different values of {@link org.opengis.metadata.spatial.PixelOrientation}.</td></tr>
  * <tr><td>{@link org.geotoolkit.image.SampleModels}</td>
  *     <td>Get the <cite>pixel stride</cite> and <cite>scan line stride</cite> of a {@linkplain java.awt.image.SampleModel sample model}.</td></tr>
  * <tr><td>{@link org.geotoolkit.coverage.TypeMap}</td>
