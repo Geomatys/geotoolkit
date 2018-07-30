@@ -23,6 +23,7 @@ import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.util.Deprecable;
 
 
@@ -73,10 +74,13 @@ final class IdentifierCode extends ImmutableIdentifier implements Deprecable {
      * Returns the code space for the given authority.
      */
     private static String codespace(final Citation authority) {
-        if (authority == org.apache.sis.metadata.iso.citation.Citations.EPSG) { // Temporary hack.
-            return "EPSG";
+        if (authority != null) {
+            String t = Citations.toCodeSpace(authority);
+            if (t != null) {
+                return t.substring(t.lastIndexOf(':') + 1).trim();
+            }
         }
-        return authority.getIdentifiers().iterator().next().getCode();
+        return null;
     }
 
     /**

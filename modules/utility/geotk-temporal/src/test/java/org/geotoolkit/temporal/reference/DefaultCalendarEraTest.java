@@ -19,27 +19,15 @@ package org.geotoolkit.temporal.reference;
 
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
-import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
-import org.geotoolkit.temporal.object.DefaultCalendarDate;
-import org.geotoolkit.temporal.object.DefaultInstant;
-import org.geotoolkit.temporal.object.DefaultJulianDate;
-import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.metadata.Identifier;
-import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.CalendarEra;
 import org.opengis.temporal.IndeterminateValue;
@@ -65,10 +53,10 @@ public class DefaultCalendarEraTest extends org.geotoolkit.test.TestBase {
 
     @Before
     public void setUp() {
-        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Julian calendar");
+        NamedIdentifier name1 = new NamedIdentifier(null, "Julian calendar");
         frame1 = FACTORY.createTemporalReferenceSystem(name1, new DefaultExtent());
 
-        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Babylonian calendar");
+        NamedIdentifier name2 = new NamedIdentifier(null, "Babylonian calendar");
         frame2 = FACTORY.createTemporalReferenceSystem(name2, new DefaultExtent());
 
         int[] calendarDate1 = {1900, 1, 1};

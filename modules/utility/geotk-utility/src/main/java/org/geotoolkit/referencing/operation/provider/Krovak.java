@@ -30,7 +30,7 @@ import org.opengis.metadata.Identifier;
 
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.DeprecatedName;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 
 
 /**
@@ -425,7 +425,6 @@ public class Krovak extends MapProjection {
             new NamedIdentifier(Citations.ESRI,       "Krovak"),
             new NamedIdentifier(Citations.GEOTIFF,    "Krovak"),
             new NamedIdentifier(Citations.PROJ4,      "krovak"),
-            new NamedIdentifier(Citations.GEOTOOLKIT, "Krovak Oblique Conformal Conic"),
         }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR,
             LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,

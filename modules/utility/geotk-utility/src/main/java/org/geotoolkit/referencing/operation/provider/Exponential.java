@@ -30,7 +30,6 @@ import org.opengis.metadata.content.TransferFunctionType;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
-import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.resources.Vocabulary;
 
 import org.apache.sis.measure.Units;
@@ -88,7 +87,7 @@ public class Exponential extends MathTransformProvider {
     @Deprecated
     public static final ParameterDescriptor<Double> SCALE;
     static {
-        final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(Citations.GEOTOOLKIT, null).setRequired(true);
+        final ParameterBuilder builder = new ParameterBuilder().setRequired(true);
         SCALE = builder.addName("scale").create(1, Units.UNITY);
     }
 
@@ -131,7 +130,7 @@ public class Exponential extends MathTransformProvider {
      */
     public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(
             new NamedIdentifier[] {
-                new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(Vocabulary.Keys.Exponential))
+                new NamedIdentifier(null, Vocabulary.formatInternational(Vocabulary.Keys.Exponential))
             }, null, new ParameterDescriptor<?>[] {
                 BASE, SCALE
             }, 0);

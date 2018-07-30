@@ -34,7 +34,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
 import org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactory;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.geotoolkit.io.IndentedLineWriter;
 import org.geotoolkit.resources.Vocabulary;
 

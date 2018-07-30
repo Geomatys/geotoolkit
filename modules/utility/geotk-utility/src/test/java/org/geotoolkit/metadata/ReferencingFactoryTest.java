@@ -22,7 +22,6 @@ import java.util.HashMap;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.PresentationForm;
-import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.util.FactoryException;
 
@@ -38,9 +37,7 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 
 /**
- * Tests the {@link MetadataFactory} class. This test is defined in the referencing module
- * instead than the metadata module in order to include the {@link CRSFactory} implementation
- * in the test.
+ * Tests the {@link MetadataFactory} class.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.03

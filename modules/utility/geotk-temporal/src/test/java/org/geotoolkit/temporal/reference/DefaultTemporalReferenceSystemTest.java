@@ -19,7 +19,6 @@ package org.geotoolkit.temporal.reference;
 
 import java.util.Collection;
 import java.util.Set;
-import org.geotoolkit.metadata.Citations;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
@@ -47,8 +46,8 @@ public class DefaultTemporalReferenceSystemTest extends org.geotoolkit.test.Test
 
     @Before
     public void setUp() {
-        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "ref system1");
-        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "ref system2");
+        NamedIdentifier name1 = new NamedIdentifier(null, "ref system1");
+        NamedIdentifier name2 = new NamedIdentifier(null, "ref system2");
         temporalReferenceSystem1 = FACTORY.createTemporalReferenceSystem(name1, new DefaultExtent());
         temporalReferenceSystem2 = FACTORY.createTemporalReferenceSystem(name2, new DefaultExtent());
     }
@@ -127,7 +126,7 @@ public class DefaultTemporalReferenceSystemTest extends org.geotoolkit.test.Test
 //    @Test
 //    public void testSetName() {
 //        Identifier result = temporalReferenceSystem1.getName();
-////        ((DefaultTemporalReferenceSystem) temporalReferenceSystem1).setName(new NamedIdentifier(Citations.CRS, "new name"));
+////        ((DefaultTemporalReferenceSystem) temporalReferenceSystem1).setName(new NamedIdentifier(null, "new name"));
 //        assertFalse(temporalReferenceSystem1.getName().equals(result));
 //    }
 
@@ -155,7 +154,7 @@ public class DefaultTemporalReferenceSystemTest extends org.geotoolkit.test.Test
 //    @Test
 //    public void testSetName() {
 //        ReferenceIdentifier result = temporalReferenceSystem1.getName();
-//        ((DefaultTemporalReferenceSystem) temporalReferenceSystem1).setName(new NamedIdentifier(Citations.CRS, "new name"));
+//        ((DefaultTemporalReferenceSystem) temporalReferenceSystem1).setName(new NamedIdentifier(null, "new name"));
 //        assertFalse(temporalReferenceSystem1.getName().equals(result));
 //    }
 //

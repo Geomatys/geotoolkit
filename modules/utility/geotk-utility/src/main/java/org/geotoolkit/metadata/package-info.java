@@ -18,11 +18,5 @@
 
 /**
  * Utility methods for {@code org.opengis.metadata} handling.
- *
- * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.19
- *
- * @since 2.0
- * @module
  */
 package org.geotoolkit.metadata;

@@ -31,13 +31,13 @@ import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 
-import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
+import org.geotoolkit.coverage.parameter.ImagingParameterDescriptors;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
 
 
@@ -139,7 +139,7 @@ public class WarpPolynomial extends MathTransformProvider {
      */
     public static final ParameterDescriptor<Float> POST_SCALE_Y;
     static {
-        final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(Citations.GEOTOOLKIT, null);
+        final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(ImagingParameterDescriptors.GEOTK, null);
         final Float ONE = 1f;
         final Class<Float> type = Float.class;
         PRE_SCALE_X  = builder.addName("preScaleX") .create(type, ONE);
@@ -246,7 +246,7 @@ public class WarpPolynomial extends MathTransformProvider {
      * </table>
      */
     public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(new NamedIdentifier[] {
-            new NamedIdentifier(Citations.GEOTOOLKIT, "WarpPolynomial")
+            new NamedIdentifier(ImagingParameterDescriptors.GEOTK, "WarpPolynomial")
         }, null, new ParameterDescriptor<?>[] {
             DEGREE, X_COEFFS, Y_COEFFS, PRE_SCALE_X, PRE_SCALE_Y, POST_SCALE_X, POST_SCALE_Y
         }, 0);

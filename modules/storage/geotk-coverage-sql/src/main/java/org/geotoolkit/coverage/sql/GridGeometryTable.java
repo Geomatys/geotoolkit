@@ -42,7 +42,6 @@ import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.SingletonTable;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
-import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
 import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
@@ -51,6 +50,7 @@ import org.geotoolkit.resources.Errors;
 
 import static java.lang.reflect.Array.getLength;
 import static java.lang.reflect.Array.getDouble;
+import org.apache.sis.internal.simple.SimpleCitation;
 
 
 /**
@@ -120,7 +120,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
         final SpatialDatabase database = (SpatialDatabase) getDatabase();
         final GeodeticAuthorityFactory factory = (GeodeticAuthorityFactory) database.getCRSAuthorityFactory();
         final IdentifiedObjectFinder finder = factory.newIdentifiedObjectFinder();
-        final Identifier srid = IdentifiedObjects.getIdentifier(finder.findSingleton(crs), Citations.POSTGIS);
+        final Identifier srid = IdentifiedObjects.getIdentifier(finder.findSingleton(crs), new SimpleCitation("PostGIS"));
         if (srid == null) {
             return 0;
         }

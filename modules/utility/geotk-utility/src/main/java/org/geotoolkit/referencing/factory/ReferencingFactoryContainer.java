@@ -40,8 +40,9 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryRegistry;
 import org.geotoolkit.factory.DynamicFactoryRegistry;
 import org.geotoolkit.internal.referencing.Identifier3D;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.internal.metadata.VerticalDatumTypes;
+import org.apache.sis.internal.simple.SimpleCitation;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.cs.Axes;
@@ -249,7 +250,7 @@ public class ReferencingFactoryContainer extends org.geotoolkit.factory.Factory 
      */
     @Override
     public Citation getVendor() {
-        return getClass().getName().startsWith("org.geotoolkit.") ? Citations.GEOTOOLKIT : Citations.UNKNOWN;
+        return new SimpleCitation(getClass().getName().startsWith("org.geotoolkit.") ? "Geotk" : "Unknown");
     }
 
     /**

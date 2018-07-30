@@ -61,7 +61,7 @@ import org.geotoolkit.internal.image.io.IIOImageHelper;
 import org.geotoolkit.image.io.DimensionSlice.API;
 import org.geotoolkit.image.io.ImageMetadataException;
 
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 
 

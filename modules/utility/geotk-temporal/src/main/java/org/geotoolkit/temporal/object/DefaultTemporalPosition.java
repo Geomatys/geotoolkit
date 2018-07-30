@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
@@ -47,7 +46,7 @@ public class DefaultTemporalPosition implements TemporalPosition {
     static {
         final Map<String, Object> gregUTCProp = new HashMap<>();
         gregUTCProp.put(IdentifiedObject.NAME_KEY, "Default Gregorian calendar for position");
-        gregUTCProp.put(IdentifiedObject.IDENTIFIERS_KEY, new NamedIdentifier(Citations.CRS, new SimpleInternationalString("Gregorian calendar")));
+        gregUTCProp.put(IdentifiedObject.IDENTIFIERS_KEY, new NamedIdentifier(null, new SimpleInternationalString("Gregorian calendar")));
         GREGORIAN_CALENDAR = new DefaultTemporalReferenceSystem(gregUTCProp);
     }
 

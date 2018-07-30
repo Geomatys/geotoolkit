@@ -27,9 +27,9 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.processing.ColorMap;
 import org.geotoolkit.coverage.processing.IndexColorOperation;
-import org.geotoolkit.metadata.Citations;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.geotoolkit.coverage.parameter.ImagingParameterDescriptors;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 
@@ -81,7 +81,7 @@ public class Recolor extends IndexColorOperation {
      */
     public static final ParameterDescriptor<ColorMap[]> COLOR_MAPS;
     static {
-        final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(Citations.GEOTOOLKIT, null).setRequired(true);
+        final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(ImagingParameterDescriptors.GEOTK, null).setRequired(true);
         COLOR_MAPS = builder.addName("ColorMaps").create(ColorMap[].class, new ColorMap[] {  // Default value - a gray scale
                 new ColorMap(new Color(16, 16, 16), new Color(240, 240, 240))});
     }
@@ -90,7 +90,7 @@ public class Recolor extends IndexColorOperation {
      * Constructs a new "Recolor" operation.
      */
     public Recolor() {
-        super(new DefaultParameterDescriptorGroup(Collections.singletonMap(NAME_KEY, new NamedIdentifier(Citations.GEOTOOLKIT, "Recolor")), 1, 1, SOURCE_0, COLOR_MAPS));
+        super(new DefaultParameterDescriptorGroup(Collections.singletonMap(NAME_KEY, new NamedIdentifier(ImagingParameterDescriptors.GEOTK, "Recolor")), 1, 1, SOURCE_0, COLOR_MAPS));
     }
 
     /**

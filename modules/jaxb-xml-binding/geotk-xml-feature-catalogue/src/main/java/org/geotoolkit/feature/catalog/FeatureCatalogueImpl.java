@@ -42,7 +42,6 @@ import org.opengis.feature.catalog.DefinitionSource;
 import org.opengis.feature.catalog.FeatureCatalogue;
 import org.opengis.feature.catalog.FeatureType;
 import org.opengis.metadata.citation.ResponsibleParty;
-import org.geotoolkit.metadata.Citations;
 
 
 /**

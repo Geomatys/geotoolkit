@@ -29,7 +29,6 @@ import org.apache.sis.internal.referencing.NilReferencingObject;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.DefaultTemporalNode;
 import org.opengis.metadata.Identifier;
@@ -37,7 +36,6 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import org.opengis.temporal.OrdinalEra;
 import org.opengis.temporal.OrdinalReferenceSystem;
 import org.opengis.temporal.TemporalNode;
-import org.opengis.util.InternationalString;
 
 /**
  * Provides a reference to the ordinal era in which the instant occurs.
@@ -274,9 +272,9 @@ public class DefaultOrdinalEra extends AbstractIdentifiedObject implements Ordin
     private DefaultTemporalNode getStart() {
         final Identifier iden = getName();
         final Map<String, Object> instantProp = new HashMap<>();
-        instantProp.put(NAME_KEY, new NamedIdentifier(Citations.CRS, iden.getCode()+"_begin instant"));
+        instantProp.put(NAME_KEY, new NamedIdentifier(null, iden.getCode()+"_begin instant"));
         final Map<String, Object> nodeProp = new HashMap<>();
-        nodeProp.put(NAME_KEY, new NamedIdentifier(Citations.CRS, iden.getCode()+"_start node"));
+        nodeProp.put(NAME_KEY, new NamedIdentifier(null, iden.getCode()+"_start node"));
         final DefaultTemporalNode start = new DefaultTemporalNode(nodeProp, new DefaultInstant(instantProp, begin), null, null);
         return start;
     }
@@ -290,9 +288,9 @@ public class DefaultOrdinalEra extends AbstractIdentifiedObject implements Ordin
     private DefaultTemporalNode getEndd() {
         final Identifier iden = getName();
         final Map<String, Object> instantProp = new HashMap<>();
-        instantProp.put(NAME_KEY, new NamedIdentifier(Citations.CRS, iden.getCode()+"_end instant"));
+        instantProp.put(NAME_KEY, new NamedIdentifier(null, iden.getCode()+"_end instant"));
         final Map<String, Object> nodeProp = new HashMap<>();
-        nodeProp.put(NAME_KEY, new NamedIdentifier(Citations.CRS, iden.getCode()+"_end node"));
+        nodeProp.put(NAME_KEY, new NamedIdentifier(null, iden.getCode()+"_end node"));
         final DefaultTemporalNode start = new DefaultTemporalNode(nodeProp, new DefaultInstant(instantProp, begin), null, null);
         return start;
     }

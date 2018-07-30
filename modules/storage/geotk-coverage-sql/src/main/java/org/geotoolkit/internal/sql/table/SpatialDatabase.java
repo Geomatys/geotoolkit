@@ -37,6 +37,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.internal.simple.SimpleCitation;
 import org.apache.sis.metadata.iso.extent.Extents;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
@@ -53,7 +54,6 @@ import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import org.geotoolkit.metadata.Citations;
 import org.opengis.metadata.Identifier;
 
 
@@ -258,7 +258,7 @@ public class SpatialDatabase extends Database {
             horizontalSRID = 0;
             return;
         }
-        final Identifier code = IdentifiedObjects.getIdentifier(horizontalCRS, Citations.POSTGIS);
+        final Identifier code = IdentifiedObjects.getIdentifier(horizontalCRS, new SimpleCitation("PostGIS"));
         if (code != null) try {
             horizontalSRID = Integer.parseInt(code.getCode());
             return;

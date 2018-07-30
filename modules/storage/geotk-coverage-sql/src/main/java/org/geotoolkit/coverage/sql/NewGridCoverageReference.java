@@ -31,6 +31,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.IIOException;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.metadata.IIOMetadata;
+import org.apache.sis.internal.simple.SimpleCitation;
 
 import org.geotoolkit.nio.IOUtilities;
 import org.opengis.util.FactoryException;
@@ -62,7 +63,7 @@ import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.NoSuchRecordException;
 import org.geotoolkit.internal.coverage.TransferFunction;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
@@ -104,7 +105,7 @@ public final class NewGridCoverageReference {
      * authority which are known to use numerical codes.
      */
     private static final Citation[] AUTHORITIES = {
-        Citations.POSTGIS,
+        new SimpleCitation("PostGIS"),
         Citations.EPSG
     };
 

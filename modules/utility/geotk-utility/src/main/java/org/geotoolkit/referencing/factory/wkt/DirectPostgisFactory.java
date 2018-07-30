@@ -34,8 +34,9 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.internal.simple.SimpleCitation;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.geotoolkit.resources.Vocabulary;
 
@@ -167,7 +168,7 @@ public class DirectPostgisFactory extends WKTParsingAuthorityFactory implements 
      */
     @Override
     public Citation getPrimaryKeyAuthority() {
-        return Citations.POSTGIS;
+        return new SimpleCitation("PostGIS");
     }
 
     /**

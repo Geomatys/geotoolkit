@@ -21,7 +21,6 @@ import java.io.StringReader;
 import java.util.List;
 import org.geotoolkit.inspire.xml.vs.LanguageType;
 import org.opengis.metadata.citation.ResponsibleParty;
-import org.geotoolkit.metadata.Citations;
 import java.util.Arrays;
 import java.util.Date;
 import java.net.URI;
@@ -48,6 +47,7 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.citation.DefaultContact;
 import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
 import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
+import org.apache.sis.metadata.iso.citation.HardCodedCitations;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.extent.DefaultTemporalExtent;
 import org.apache.sis.metadata.iso.identification.DefaultKeywords;
@@ -260,11 +260,11 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         DefaultExtent extent = new DefaultExtent();
         DefaultTemporalExtent tempExt = new DefaultTemporalExtent();
 
-        NamedIdentifier periodName = new NamedIdentifier(Citations.CRS, "period");
+        NamedIdentifier periodName = new NamedIdentifier(null, "period");
         final Map<String, Object> periodProp = new HashMap<>();
         periodProp.put(IdentifiedObject.NAME_KEY, periodName);
 
-        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "period instant");
+        NamedIdentifier name = new NamedIdentifier(null, "period instant");
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, name);
 
@@ -278,10 +278,10 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         extent.setTemporalElements(Arrays.asList(tempExt));
         ext.setTemporalRefererence(extent);
 
-        DefaultConformanceResult cresult = new DefaultConformanceResult(Citations.EPSG, new DefaultInternationalString("see the referenced specification"), true);
+        DefaultConformanceResult cresult = new DefaultConformanceResult(HardCodedCitations.EPSG, new DefaultInternationalString("see the referenced specification"), true);
         ext.setConformity(cresult);
 
-        ResponsibleParty party = DefaultResponsibleParty.castOrCopy(Citations.EPSG.getCitedResponsibleParties().iterator().next());
+        ResponsibleParty party = DefaultResponsibleParty.castOrCopy(HardCodedCitations.EPSG.getCitedResponsibleParties().iterator().next());
         ext.setMetadataPointOfContact(party);
 
         ext.setMetadataDate(new Date(82800000));
@@ -347,20 +347,31 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         "                            <gco:CharacterString>EPSG Geodetic Parameter Dataset</gco:CharacterString>" + '\n' +
         "                        </gmd:title>" + '\n' +
         "                        <gmd:identifier>" + '\n' +
-        "                            <gmd:RS_Identifier>" + '\n' +
+        "                            <gmd:MD_Identifier>" + '\n' +
         "                                <gmd:code>" + '\n' +
         "                                    <gco:CharacterString>EPSG</gco:CharacterString>" + '\n' +
         "                                </gmd:code>" + '\n' +
-        "                                <gmd:codeSpace>" + '\n' +
-        "                                    <gco:CharacterString>IOGP</gco:CharacterString>" + '\n' +
-        "                                </gmd:codeSpace>" + '\n' +
-        "                            </gmd:RS_Identifier>" + '\n' +
+        "                            </gmd:MD_Identifier>" + '\n' +
         "                        </gmd:identifier>" + '\n' +
         "                        <gmd:citedResponsibleParty>" + '\n' +
         "                            <gmd:CI_ResponsibleParty>" + '\n' +
         "                                <gmd:organisationName>" + '\n' +
-        "                                    <gco:CharacterString>International Association of Oil &amp; Gas producers</gco:CharacterString>" + '\n' +
+        "                                    <gco:CharacterString>International Association of Oil &amp; Gas Producers</gco:CharacterString>" + '\n' +
         "                                </gmd:organisationName>" + '\n' +
+        "                                <gmd:contactInfo>\n" +
+        "                                    <gmd:CI_Contact>\n" +
+        "                                        <gmd:onlineResource>\n" +
+        "                                            <gmd:CI_OnlineResource>\n" +
+        "                                                <gmd:linkage>\n" +
+        "                                                    <gmd:URL>http://www.epsg.org</gmd:URL>\n" +
+        "                                                </gmd:linkage>\n" +
+        "                                                <gmd:function>\n" +
+        "                                                    <gmd:CI_OnLineFunctionCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\">Information</gmd:CI_OnLineFunctionCode>\n" +
+        "                                                </gmd:function>\n" +
+        "                                            </gmd:CI_OnlineResource>\n" +
+        "                                        </gmd:onlineResource>\n" +
+        "                                    </gmd:CI_Contact>\n" +
+        "                                </gmd:contactInfo>\n" +
         "                                <gmd:role>" + '\n' +
         "                                    <gmd:CI_RoleCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"principalInvestigator\">Principal investigator</gmd:CI_RoleCode>" + '\n' +
         "                                </gmd:role>" + '\n' +
@@ -382,8 +393,22 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         "        <inspire_vs:MetadataPointOfContact>" + '\n' +
         "            <gmd:CI_ResponsibleParty>" + '\n' +
         "                <gmd:organisationName>" + '\n' +
-        "                    <gco:CharacterString>International Association of Oil &amp; Gas producers</gco:CharacterString>" + '\n' +
+        "                    <gco:CharacterString>International Association of Oil &amp; Gas Producers</gco:CharacterString>" + '\n' +
         "                </gmd:organisationName>" + '\n' +
+        "                <gmd:contactInfo>\n" +
+        "                    <gmd:CI_Contact>\n" +
+        "                        <gmd:onlineResource>\n" +
+        "                            <gmd:CI_OnlineResource>\n" +
+        "                                <gmd:linkage>\n" +
+        "                                    <gmd:URL>http://www.epsg.org</gmd:URL>\n" +
+        "                                </gmd:linkage>\n" +
+        "                                <gmd:function>\n" +
+        "                                    <gmd:CI_OnLineFunctionCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\">Information</gmd:CI_OnLineFunctionCode>\n" +
+        "                                </gmd:function>\n" +
+        "                            </gmd:CI_OnlineResource>\n" +
+        "                        </gmd:onlineResource>\n" +
+        "                    </gmd:CI_Contact>\n" +
+        "                </gmd:contactInfo>\n" +
         "                <gmd:role>" + '\n' +
         "                    <gmd:CI_RoleCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"principalInvestigator\">Principal investigator</gmd:CI_RoleCode>" + '\n' +
         "                </gmd:role>" + '\n' +
@@ -565,10 +590,10 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         DefaultTemporalExtent tempExt = new DefaultTemporalExtent();
 
 
-        NamedIdentifier periodName = new NamedIdentifier(Citations.CRS, "period");
+        NamedIdentifier periodName = new NamedIdentifier(null, "period");
         final Map<String, Object> periodProp = new HashMap<>();
         periodProp.put(IdentifiedObject.NAME_KEY, periodName);
-        NamedIdentifier instantName = new NamedIdentifier(Citations.CRS, "period instant");
+        NamedIdentifier instantName = new NamedIdentifier(null, "period instant");
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, instantName);
 
@@ -593,7 +618,7 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         DefaultConformanceResult cresult =  new DefaultConformanceResult(citation, new DefaultInternationalString("see the referenced specification"), true);
         ext.setConformity(cresult);
 
-        ResponsibleParty party = DefaultResponsibleParty.castOrCopy(Citations.EPSG.getCitedResponsibleParties().iterator().next());
+        ResponsibleParty party = DefaultResponsibleParty.castOrCopy(HardCodedCitations.EPSG.getCitedResponsibleParties().iterator().next());
         ext.setMetadataPointOfContact(party);
 
         ext.setMetadataDate(new Date(82800000));

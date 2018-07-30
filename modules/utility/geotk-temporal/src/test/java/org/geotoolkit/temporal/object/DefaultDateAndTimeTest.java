@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.reference.DefaultTemporalReferenceSystem;
 import org.junit.After;
@@ -47,7 +46,7 @@ public class DefaultDateAndTimeTest extends org.geotoolkit.test.TestBase {
 
     @Before
     public void setUp() {
-        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
+        NamedIdentifier name = new NamedIdentifier(null, "Gregorian calendar");
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, name);
         TemporalDatum tempdat = CommonCRS.Temporal.UNIX.datum();
