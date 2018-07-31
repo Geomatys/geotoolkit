@@ -62,11 +62,6 @@
     <developerConnection>scm:git:https://github.com/Geomatys/geotoolkit.git</developerConnection>
   </scm>
 
-  <ciManagement>
-    <system>jenkins</system>
-    <url>http://jenkins.geotoolkit.org/job/Geotoolkit/</url>
-  </ciManagement>
-
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.geotoolkit.org/</url>
