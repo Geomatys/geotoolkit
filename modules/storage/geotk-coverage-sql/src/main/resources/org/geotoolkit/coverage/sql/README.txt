@@ -1,10 +1,13 @@
-The easiest way to install the database is to run the graphical wizard:
+The following shall be run once in the database:
 
-    http://www.geotoolkit.org/modules/display/geotk-wizards-swing/CoverageDatabaseInstaller.html
+    CREATE EXTENSION postgis;
 
-The database can also be created manually by running the SQL scripts in the following order:
+The database can be created manually by running the SQL scripts in the following order:
 
-    * prepare.sql
-    * postgis-update.sql
-    * metadata-create.sql
+    * postgis-update.sql     (optional)
     * coverages-create.sql
+
+TODO:
+  Rename coverage-clean.sql  as Prune.sql
+  Rename coverage-create.sql as Create.sql
+  Rename postgis-update.sql  as PostGIS.sql

@@ -17,13 +17,12 @@
 package org.geotoolkit.sos.xml.v100;
 
 import java.util.Objects;
-import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.Entry;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
 
 /**
  *
  * @author Guilhem legal
- * @module
  */
 public class OfferingPhenomenonType implements Entry{
 

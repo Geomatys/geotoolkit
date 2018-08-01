@@ -33,7 +33,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.internal.swing.ColorRamp;
-import org.geotoolkit.internal.coverage.ColorPalette;
+import org.geotoolkit.coverage.sql.ColorPalette;
 
 
 /**

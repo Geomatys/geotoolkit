@@ -1,1 +1,1 @@
-org.geotoolkit.coverage.sql.CoverageSQLProvider
+org.geotoolkit.coverage.sql.DatabaseStore$Provider

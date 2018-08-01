@@ -25,16 +25,14 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.Entry;
 import org.geotoolkit.swe.xml.AbstractEncoding;
 
 /**
  * Cette classe n'as pas vraiment lieu d'etre.
  * Elle as été crée pour les besoin de JAXB qui ne supporte pas les interface.
  *
- * @version $Id:
  * @author Guilhem Legal
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlSeeAlso({TextBlockType.class})

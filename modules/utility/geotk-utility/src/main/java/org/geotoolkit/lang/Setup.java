@@ -17,14 +17,10 @@
  */
 package org.geotoolkit.lang;
 
-import java.util.Locale;
 import java.util.Properties;
 import java.util.ServiceLoader;
 
 import javax.imageio.spi.IIORegistry;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.UndeclaredThrowableException;
 
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.logging.MonolineFormatter;
@@ -32,8 +28,6 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.internal.io.JNDI;
 import org.geotoolkit.internal.SetupService;
 import org.geotoolkit.internal.Threads;
-import org.geotoolkit.internal.io.Installation;
-import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -233,41 +227,6 @@ public final class Setup extends Static {
              * but a search on Threads.SHUTDOWN_HOOKS and Threads.executeDisposal(Runnable) is helpful.
              */
             Threads.shutdown();
-        }
-    }
-
-    /**
-     * Shows the <cite>Swing</cite> Graphical User Interface for configuring the Geotk library.
-     * This method requires the {@code geotk-setup} module to be present on the classpath.
-     * <p>
-     * Users can also display the same GUI from the command line by running the following
-     * command in the shell (replace {@code SNAPSHOT} by the actual Geotk version number):
-     *
-     * {@preformat shell
-     *     java -jar geotk-setup-SNAPSHOT.jar
-     * }
-     *
-     * @throws UnsupportedOperationException if the {@code geotk-setup} module is not on the classpath.
-     */
-    public static void showControlPanel() throws UnsupportedOperationException {
-        try {
-            Class.forName("org.geotoolkit.internal.setup.ControlPanel")
-                 .getMethod("show", Locale.class).invoke(null, new Object[] {null});
-        } catch (ClassNotFoundException exception) {
-            throw new UnsupportedOperationException(Errors.format(
-                    Errors.Keys.MissingModule_1, "geotk-setup"), exception);
-        } catch (InvocationTargetException exception) {
-            final Throwable cause = exception.getCause();
-            if (cause instanceof RuntimeException) {
-                throw (RuntimeException) cause;
-            }
-            if (cause instanceof Error) {
-                throw (Error) cause;
-            }
-            throw new UndeclaredThrowableException(cause);
-        } catch (Exception exception) {
-            // Should never happen if we didn't broke our ControlPanel class.
-            throw new AssertionError(exception);
         }
     }
 }

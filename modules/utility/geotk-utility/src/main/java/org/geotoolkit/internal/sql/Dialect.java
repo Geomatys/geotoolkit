@@ -165,11 +165,6 @@ public enum Dialect {
         public boolean needsCreateLanguage(final DatabaseMetaData metadata) throws SQLException {
             return metadata.getDatabaseMajorVersion() < 9;
         }
-
-        @Override
-        public boolean supportsGrantStatement(final DatabaseMetaData metadata, final CreateStatementType type) {
-            return true;
-        }
     },
 
     /**
@@ -350,22 +345,6 @@ public enum Dialect {
      * @since 3.14
      */
     public boolean supportsEnumType(final DatabaseMetaData metadata) throws SQLException {
-        return false;
-    }
-
-    /**
-     * Returns {@code true} if the database supports "{@code GRANT}" statements.
-     *
-     * @param  metadata The database metadata
-     * @param  type The type of object for which to verify {@code GRANT} support.
-     * @return {@code true} if the database supports {@code "GRANT"} statements.
-     * @throws SQLException If an error occurred while querying the metadata.
-     *
-     * @since 3.20
-     */
-    public boolean supportsGrantStatement(final DatabaseMetaData metadata, final CreateStatementType type)
-            throws SQLException
-    {
         return false;
     }
 

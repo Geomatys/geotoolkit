@@ -1,601 +1,397 @@
---------------------------------------------------------------------------------------------------
--- A schema for a catalog of coverages.                                                         --
---  (C) 2010, Open Source Geospatial Foundation (OSGeo)                                         --
---  (C) 2010, Geomatys                                                                          --
---                                                                                              --
--- The "geoadmin", "geouser" and "coverages" words shall be used only for the roles and the     --
--- schema names. They can be replaced by different roles or schema names with a simple search   --
--- and replace.                                                                                 --
---------------------------------------------------------------------------------------------------
+--
+-- Schema required by org.geotoolkit.coverage.sql package.
+--
 
-SET client_encoding = 'UTF8';
-
-CREATE SCHEMA coverages;
-ALTER SCHEMA coverages OWNER TO geoadmin;
-GRANT ALL ON SCHEMA coverages TO geoadmin;
-GRANT USAGE ON SCHEMA coverages TO PUBLIC;
-
-COMMENT ON SCHEMA coverages IS 'Metadata for grid coverages';
-
-SET search_path = coverages, metadata, public;
+CREATE SCHEMA rasters;
+COMMENT ON SCHEMA rasters IS 'Catalog of grid rasters';
 
 
+--
+-- General note: For all types in this file, VARCHAR(15) is a foreigner key to an entry in "metadata" schema.
+-- The "metadata" schema is created by "sis-metadata" module. The VARCHAR(120) entries use an arbitrary length,
+-- but that length should be consistent with the length used in the "metadata" schema.
+--
 
-
---------------------------------------------------------------------------------------------------
--- Creates the "Formats" table.                                                                 --
--- Dependencies: (none)                                                                         --
---------------------------------------------------------------------------------------------------
-
-CREATE TYPE "PackMode" AS ENUM ('native', 'packed', 'geophysics', 'photographic');
-CREATE CAST (character varying AS "PackMode") WITH INOUT AS ASSIGNMENT;
-COMMENT ON TYPE "PackMode" IS
-'Indicates the relationship between the coefficients declared in the "Categories" table and the sample values in the file for a given format:
-
-''native'' means that the "Categories" table describes precisely the transfer function to be used when scaling a physical value for a given element. Those values will overwrite any values found in the image metadata.
-
-''packed'' is similar to ''native'', except that the image metadata will be checked. If negative values exist according image metadata while the "Categories" table declares only ranges of positive values, then the sample values will be shifted to a range of positive values during the reading process. The result is a more compact color model.
-
-''geophysics'' means that the sample values are already geophysics values. The inverse of the transfer function need to be applied in order to produce the packed image.
-
-''photographics'' means that the sample values have no other meaning than visual colors.';
-
-
-CREATE TABLE "Formats" (
-    "name"     character varying NOT NULL PRIMARY KEY,
-    "plugin"   character varying NOT NULL,
-    "packMode" "PackMode"        NOT NULL DEFAULT 'native',
-    "comments" character varying
+--
+-- Description of raster formats. Filled with a few pre-defined records for commonly used formats.
+-- Requires the "metadata" schema to be created and populated before this "rasters" schema.
+--
+CREATE TABLE rasters."Formats" (
+  "name"     VARCHAR(120) NOT NULL PRIMARY KEY,
+  "driver"   VARCHAR(120) NOT NULL,
+  "metadata" VARCHAR(15)  REFERENCES metadata."Format" ("ID") ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
-ALTER TABLE "Formats" OWNER TO geoadmin;
-GRANT ALL ON TABLE "Formats" TO geoadmin;
-GRANT SELECT ON TABLE "Formats" TO PUBLIC;
+COMMENT ON TABLE  rasters."Formats"            IS 'Raster formats. Each format is associated with an aribtrary number of SampleDimensions.';
+COMMENT ON COLUMN rasters."Formats"."name"     IS 'Unique name of the format to be used as an identifier.';
+COMMENT ON COLUMN rasters."Formats"."driver"   IS 'Name of the driver to use for decoding the rasters. Examples: GeoTIFF, NetCDF.';
+COMMENT ON COLUMN rasters."Formats"."metadata" IS 'Reference to additional information about the format.';
 
-COMMENT ON TABLE "Formats" IS
-    'Image formats.  Each format is associated with an aribtrary number of SampleDimensions.';
-COMMENT ON COLUMN "Formats"."name" IS
-    'Unique name of the format to be used as an identifier.';
-COMMENT ON COLUMN "Formats"."plugin" IS
-    'Name of the Java plugin to use for decoding the images.  Examples: PNG, JPEG, TIFF, NetCDF.';
-COMMENT ON COLUMN "Formats"."packMode" IS
-    'Storage mode of image data: either "geophysics" or "native".';
-COMMENT ON COLUMN "Formats"."comments" IS
-    'Free text for comments.';
+INSERT INTO rasters."Formats" ("name", "driver", "metadata") VALUES
+  ('PNG',  'Image:PNG',  'PNG'),
+  ('TIFF', 'Image:TIFF', 'GeoTIFF');
 
 
 
-
---------------------------------------------------------------------------------------------------
--- Fills the "Formats" table with a few pre-defined records.                                    --
---------------------------------------------------------------------------------------------------
-
-INSERT INTO "Formats" ("name", "plugin", "packMode") VALUES
-  ('PNG',  'PNG',  'photographic'),
-  ('TIFF', 'TIFF', 'photographic');
-
-
-
-
---------------------------------------------------------------------------------------------------
--- Creates the "SampleDimensions" table.                                                        --
--- Dependencies: Formats                                                                        --
---------------------------------------------------------------------------------------------------
-
-CREATE TABLE "SampleDimensions" (
-    "format" character varying NOT NULL REFERENCES "Formats" ON UPDATE CASCADE ON DELETE CASCADE,
-    "band"   smallint          NOT NULL DEFAULT 1 CHECK (band >= 1),
-    "name"   character varying NOT NULL,
-    "units"  character varying,
-    PRIMARY KEY ("format", "band")
+--
+-- Description of the bands for each format. This table duplicates the information provided in rich formats
+-- like netCDF. But we declare them in the database for supporting non-geospatial formats like PNG.
+-- Note that the "units" column duplicates metadata."SampleDimension"."units".
+--
+CREATE TABLE rasters."SampleDimensions" (
+  "format"     VARCHAR(120) NOT NULL REFERENCES rasters."Formats" ON UPDATE CASCADE ON DELETE CASCADE,
+  "band"       SMALLINT     NOT NULL DEFAULT 1 CHECK (band >= 1),
+  "identifier" VARCHAR(120),
+  "units"      VARCHAR(20),
+  "isPacked"   BOOLEAN      NOT NULL DEFAULT TRUE,
+  "metadata"   VARCHAR(15)  REFERENCES metadata."SampleDimension" ("ID") ON UPDATE CASCADE ON DELETE RESTRICT,
+  PRIMARY KEY ("format", "band")
 );
 
-ALTER TABLE "SampleDimensions" OWNER TO geoadmin;
-GRANT ALL ON TABLE "SampleDimensions" TO geoadmin;
-GRANT SELECT ON TABLE "SampleDimensions" TO PUBLIC;
-
-CREATE INDEX "SampleDimensions_index" ON "SampleDimensions" ("format", "band");
-
-COMMENT ON TABLE "SampleDimensions" IS
-    'Descriptions of the bands included in each image format.';
-COMMENT ON COLUMN "SampleDimensions"."format" IS
-    'Format having this band.';
-COMMENT ON COLUMN "SampleDimensions"."band" IS
-    'Band number (starting at 1).';
-COMMENT ON COLUMN "SampleDimensions"."name" IS
-    'The name of the band.  In a NetCDF file, this is typically the name of the variable stored in this band.';
-COMMENT ON COLUMN "SampleDimensions"."units" IS
-    'Geophysical measurement units.  May be left blank if not applicable.';
-COMMENT ON CONSTRAINT "SampleDimensions_format_fkey" ON "SampleDimensions" IS
-    'Each band forms part of the description of the image.';
-COMMENT ON CONSTRAINT "SampleDimensions_band_check" ON "SampleDimensions" IS
-    'The band number must be positive.';
-COMMENT ON INDEX "SampleDimensions_index" IS
-    'Index of the bands in order of appearance.';
+COMMENT ON TABLE  rasters."SampleDimensions"              IS 'Descriptions of the bands in each raster format.';
+COMMENT ON COLUMN rasters."SampleDimensions"."format"     IS 'Format having this band.';
+COMMENT ON COLUMN rasters."SampleDimensions"."band"       IS 'Band sequence number (starting at 1).';
+COMMENT ON COLUMN rasters."SampleDimensions"."identifier" IS 'If the raster format requires an identifier for accessing data (for example a variable name in a netCDF file), that identifier. Otherwise can be used as a label.';
+COMMENT ON COLUMN rasters."SampleDimensions"."units"      IS 'Units of measurement. May be left blank if not applicable. Should be consistent with units declared in metadata.';
+COMMENT ON COLUMN rasters."SampleDimensions"."isPacked"   IS 'Whether values are stored using a smaller data type, to be converted using an offset and scale factor.';
+COMMENT ON COLUMN rasters."SampleDimensions"."metadata"   IS 'Reference to additional information about the band, including offset, scale factor and units of measurement.';
+COMMENT ON CONSTRAINT "SampleDimensions_format_fkey" ON rasters."SampleDimensions" IS 'Each band forms part of the description of the image.';
+COMMENT ON CONSTRAINT "SampleDimensions_band_check"  ON rasters."SampleDimensions" IS 'The band number must be positive.';
 
 
 
-
---------------------------------------------------------------------------------------------------
--- Creates the "Categories" table.                                                              --
--- Dependencies: "SampleDimensions"                                                             --
---------------------------------------------------------------------------------------------------
-
-CREATE TABLE "Categories" (
-    "format"   character varying NOT NULL,
-    "band"     smallint          NOT NULL DEFAULT 1,
-    "name"     character varying NOT NULL,
-    "lower"    integer           NOT NULL,
-    "upper"    integer           NOT NULL,
-    "c0"       double precision,
-    "c1"       double precision,
-    "function" "MI_TransferFunctionTypeCode",
-    "colors"   character varying,
+--
+-- Description of categories in each band. There is no direct equivalence to ISO 19115,
+-- but there is a loose relationship with MI_RangeElementDescription and a duplication
+-- of "scale factor" and "offset" attributes from ISO 19115 MD_SampleDimension class.
+-- This duplication exists because this rasters schema associate the transfer function
+-- to categories instead than sample dimensions (i.e. we provide a finer grain control).
+--
+CREATE TABLE rasters."Categories" (
+    "format"   VARCHAR(120) NOT NULL,
+    "band"     SMALLINT     NOT NULL DEFAULT 1,
+    "name"     VARCHAR(120) NOT NULL,
+    "lower"    INTEGER      NOT NULL,
+    "upper"    INTEGER      NOT NULL,
+    "scale"    DOUBLE PRECISION,
+    "offset"   DOUBLE PRECISION,
+    "function" metadata."TransferFunctionTypeCode",
+    "colors"   VARCHAR(80),
     PRIMARY KEY ("format", "band", "name"),
-    FOREIGN KEY ("format", "band") REFERENCES "SampleDimensions" ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY ("format", "band") REFERENCES rasters."SampleDimensions" ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT "Categories_range" CHECK ("lower" <= "upper"),
-    CONSTRAINT "Categories_coefficients" CHECK
-                    ((("c0" IS     NULL) AND ("c1" IS     NULL)) OR
-                     (("c0" IS NOT NULL) AND ("c1" IS NOT NULL) AND ("c1" <> 0)))
+    CONSTRAINT "Categories_coefficients" CHECK (("scale" IS NULL) = ("offset" IS NULL) AND "scale" <> 0)
 );
 
-ALTER TABLE "Categories" OWNER TO geoadmin;
-GRANT ALL ON TABLE "Categories" TO geoadmin;
-GRANT SELECT ON TABLE "Categories" TO PUBLIC;
-
-CREATE INDEX "Categories_index" ON "Categories" ("band", "lower");
-
-COMMENT ON TABLE "Categories" IS
-    'Categories classify the ranges of values and scaling information for interpreting geophysical measurements from pixel values and for rendering (coloring) the image.';
-COMMENT ON COLUMN "Categories"."format" IS
-    'Name of the format to which this range of values applies.';
-COMMENT ON COLUMN "Categories"."band" IS
-    'Number of the band to which this range of values applies.';
-COMMENT ON COLUMN "Categories"."name" IS
-    'Name of the category represented by this range of values.';
-COMMENT ON COLUMN "Categories"."lower" IS
-    'Minimum pixel value (inclusive) for this category.';
-COMMENT ON COLUMN "Categories"."upper" IS
-    'Maximum pixel value (inclusive) for this category.';
-COMMENT ON COLUMN "Categories"."c0" IS
-    'Coefficient C0 of the equation y=C0+C1*x, where x is the pixel value and y is the value of the geophysical measurement.  May be left blank if not applicable.';
-COMMENT ON COLUMN "Categories"."c1" IS
-    'Coefficient C1 of the equation y=C0+C1*x, where x is the pixel value and y is the value of the geophysical measurement.  May be left blank if not applicable.';
-COMMENT ON COLUMN "Categories"."function" IS
-    'Transform function to be used when scaling a physical value: "linear" (or omitted) for y=C0+C1*x, or "expentional" for y=10^(C0+C1*x).';
-COMMENT ON COLUMN "Categories"."colors" IS
-    'This field can be either a color code or the name of a color pallet.';
-COMMENT ON CONSTRAINT "Categories_format_fkey" ON "Categories" IS
-    'Each category is an element of the band description.';
-COMMENT ON CONSTRAINT "Categories_coefficients" ON "Categories" IS
-    'Both coefficients C0 and C1 must be either null or non-null.';
-COMMENT ON INDEX "Categories_index" IS
-    'Index of categories belonging to a band.';
+CREATE INDEX "Categories_index" ON rasters."Categories" ("band", "lower");
 
 
 
+COMMENT ON TABLE  rasters."Categories"            IS 'Categories classify the ranges of values and scaling information for interpreting measurements from cell values and for rendering (coloring) the raster.';
+COMMENT ON COLUMN rasters."Categories"."format"   IS 'Name of the format to which this range of values applies.';
+COMMENT ON COLUMN rasters."Categories"."band"     IS 'Number of the band to which this range of values applies.';
+COMMENT ON COLUMN rasters."Categories"."name"     IS 'Name of the category represented by this range of values.';
+COMMENT ON COLUMN rasters."Categories"."lower"    IS 'Minimum cell value (inclusive) for this category.';
+COMMENT ON COLUMN rasters."Categories"."upper"    IS 'Maximum cell value (inclusive) for this category.';
+COMMENT ON COLUMN rasters."Categories"."scale"    IS 'Coefficient C1 of the equation y=C0+C1*x, where x is the cell value and y is the value of the geophysical measurement. May be left blank if not applicable.';
+COMMENT ON COLUMN rasters."Categories"."offset"   IS 'Coefficient C0 of the equation y=C0+C1*x, where x is the cell value and y is the value of the geophysical measurement. May be left blank if not applicable.';
+COMMENT ON COLUMN rasters."Categories"."function" IS 'Transform function to be used when scaling a physical value: "linear" (or omitted) for y=C0+C1*x, or "expentional" for y=10^(C0+C1*x).';
+COMMENT ON COLUMN rasters."Categories"."colors"   IS 'This field can be either a color code or the name of a color pallet.';
+COMMENT ON INDEX  rasters."Categories_index"      IS 'Index of categories belonging to a band.';
+COMMENT ON CONSTRAINT "Categories_format_fkey"  ON rasters."Categories" IS 'Each category is an element of the band description.';
+COMMENT ON CONSTRAINT "Categories_coefficients" ON rasters."Categories" IS 'Both coefficients C0 and C1 must be either null or non-null.';
+COMMENT ON CONSTRAINT "Categories_range"        ON rasters."Categories" IS 'Lower value shall not be greater than upper value.';
 
---------------------------------------------------------------------------------------------------
--- Creates the "RangeOfFormats" view.                                                           --
--- Dependencies: "Categories", "SampleDimensions", "Format"                                     --
---------------------------------------------------------------------------------------------------
-CREATE VIEW "RangeOfFormats" AS
+
+--
+-- Creates a view of the sample dimensions which include scale factor and fill value.
+-- This view is closer to the kind of information stored for example in netCDF files.
+--
+CREATE VIEW rasters."RangeOfFormats" AS
  SELECT "SampleDimensions"       ."format",
-        "SampleDimensions"       ."name" AS "band",
+        "SampleDimensions"       ."identifier" AS "band",
         "RangeOfSampleDimensions"."fillValue",
         "RangeOfSampleDimensions"."lower",
         "RangeOfSampleDimensions"."upper",
         "RangeOfSampleDimensions"."minimum",
         "RangeOfSampleDimensions"."maximum",
-        "SampleDimensions"       ."units",
-        "Formats"                ."packMode"
-   FROM "SampleDimensions" JOIN (
- SELECT "format", "band", count("band") AS "numCategories",
-        min("lower") AS "lower",
-        max("upper") AS "upper",
-        min(CASE WHEN "c1" IS NULL THEN "lower" ELSE NULL END) AS "fillValue",
-        min((CASE WHEN "c1" < 0 THEN "upper" ELSE "lower" END) * "c1" + "c0") AS "minimum",
-        max((CASE WHEN "c1" < 0 THEN "lower" ELSE "upper" END) * "c1" + "c0") AS "maximum"
-   FROM "Categories" GROUP BY "format", "band") AS "RangeOfSampleDimensions"
+        "SampleDimensions"       ."units"
+   FROM rasters."SampleDimensions" JOIN (
+ SELECT "format", "band", COUNT("band") AS "numCategories",
+        MIN("lower") AS "lower",
+        MAX("upper") AS "upper",
+        MIN( CASE WHEN "scale" IS NULL THEN "lower" ELSE NULL END) AS "fillValue",
+        MIN((CASE WHEN "scale" < 0 THEN "upper" ELSE "lower" END) * "scale" + "offset") AS "minimum",
+        MAX((CASE WHEN "scale" < 0 THEN "lower" ELSE "upper" END) * "scale" + "offset") AS "maximum"
+   FROM rasters."Categories" GROUP BY "format", "band") AS "RangeOfSampleDimensions"
      ON "SampleDimensions"."format" = "RangeOfSampleDimensions"."format" AND
         "SampleDimensions"."band"   = "RangeOfSampleDimensions"."band"
-   JOIN "Formats" ON "SampleDimensions"."format" = "Formats"."name"
+   JOIN rasters."Formats" ON "SampleDimensions"."format" = "Formats"."name"
   ORDER BY "SampleDimensions"."format", "SampleDimensions"."band";
 
-ALTER TABLE "RangeOfFormats" OWNER TO geoadmin;
-GRANT ALL ON TABLE "RangeOfFormats" TO geoadmin;
-GRANT SELECT ON TABLE "RangeOfFormats" TO PUBLIC;
-COMMENT ON VIEW "RangeOfFormats" IS
-    'Value range of each image format.';
+COMMENT ON VIEW rasters."RangeOfFormats" IS 'Value range of each raster format.';
 
 
 
-
---------------------------------------------------------------------------------------------------
--- Creates the "Layers" table.                                                                  --
--- Dependencies: (none)                                                                         --
---------------------------------------------------------------------------------------------------
-
-CREATE TABLE "Layers" (
-    "name"      character varying NOT NULL PRIMARY KEY,
-    "period"    double precision,
-    "minScale"  double precision CHECK ("minScale" >= 1),
-    "maxScale"  double precision CHECK ("maxScale" >= 1),
-    "fallback"  character varying REFERENCES "Layers" ON UPDATE CASCADE ON DELETE RESTRICT,
-    "comments"  character varying
+---
+-- The main list of products. Example are "Sea surface temperature", "Sea surface height", "Wave period", etc.
+-- Different products exist for different data producers, regardless if they are observing the same phenomenon.
+-- The "spatialResolution" and "temporalResolution" columns duplicate metadata "DataIdentification" attributes,
+-- but are repeated here for convenience.
+--
+CREATE TABLE rasters."Products" (
+    "name"               VARCHAR(120) NOT NULL PRIMARY KEY,
+    "parent"             VARCHAR(120) REFERENCES rasters."Products" ON UPDATE CASCADE ON DELETE RESTRICT,
+    "spatialResolution"  DOUBLE PRECISION CHECK ("spatialResolution"  > 0),
+    "temporalResolution" DOUBLE PRECISION CHECK ("temporalResolution" > 0),
+    "metadata"           VARCHAR(15) REFERENCES metadata."Metadata" ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
-ALTER TABLE "Layers" OWNER TO geoadmin;
-GRANT ALL ON TABLE "Layers" TO geoadmin;
-GRANT SELECT ON TABLE "Layers" TO PUBLIC;
-
-COMMENT ON TABLE "Layers" IS
-    'Set of a series of images belonging to the same category.';
-COMMENT ON COLUMN "Layers"."name" IS
-    'Name of the layer.';
-COMMENT ON COLUMN "Layers"."period" IS
-    'Number of days between images.  Can be approximate or left blank if not applicable.';
-COMMENT ON COLUMN "Layers"."minScale" IS
-    'Minimum scale to request this Layer.';
-COMMENT ON COLUMN "Layers"."maxScale" IS
-    'Maximum scale to request this Layer.';
-COMMENT ON COLUMN "Layers"."fallback" IS
-    'Fallback layer which is suggested if no data is available for the current layer.';
-COMMENT ON COLUMN "Layers"."comments" IS
-    'Free text for comments.';
-COMMENT ON CONSTRAINT "Layers_minScale_check" ON "Layers" IS
-    'The minimum scale shall be equals or greater than 1.';
-COMMENT ON CONSTRAINT "Layers_maxScale_check" ON "Layers" IS
-    'The maximum scale shall be equals or greater than 1.';
-COMMENT ON CONSTRAINT "Layers_fallback_fkey" ON "Layers" IS
-    'Each fallback layer must exist.';
+COMMENT ON TABLE  rasters."Products"                      IS 'Set of data series from the same producer observing the same phenomenon.';
+COMMENT ON COLUMN rasters."Products"."name"               IS 'Name of the product.';
+COMMENT ON COLUMN rasters."Products"."parent"             IS 'If this product is a sub-product of another product, the parent product.';
+COMMENT ON COLUMN rasters."Products"."spatialResolution"  IS 'Approximative resolution in metres. May be blank if unknown.';
+COMMENT ON COLUMN rasters."Products"."temporalResolution" IS 'Number of days between rasters. Can be approximate or left blank if not applicable.';
+COMMENT ON COLUMN rasters."Products"."metadata"           IS 'Reference to additional information about the product.';
+COMMENT ON CONSTRAINT "Products_spatialResolution_check"  ON rasters."Products" IS 'The spatial resolution shall be strictly positive.';
+COMMENT ON CONSTRAINT "Products_temporalResolution_check" ON rasters."Products" IS 'The temporal resolution shall be strictly positive.';
 
 
 
-
---------------------------------------------------------------------------------------------------
--- Creates the "Series" table.                                                                  --
--- Dependencies: "Layers", "Formats"                                                            --
---------------------------------------------------------------------------------------------------
-
-CREATE SEQUENCE "seq_Series" START 1000;
-
-CREATE TABLE "Series" (
-    "identifier" integer           NOT NULL PRIMARY KEY DEFAULT nextval('coverages."seq_Series"'),
-    "layer"      character varying NOT NULL REFERENCES "Layers"  ON UPDATE CASCADE ON DELETE CASCADE,
-    "pathname"   character varying NOT NULL,
-    "extension"  character varying, -- Accepts NULL since some file formats have no extension
-    "format"     character varying NOT NULL REFERENCES "Formats" ON UPDATE CASCADE ON DELETE RESTRICT,
-    "quicklook"  integer           UNIQUE   REFERENCES "Series"  ON UPDATE CASCADE ON DELETE RESTRICT,
-    "comments"   character varying
+--
+-- A collection of rasters related by a common heritage adhering to a common specification.
+-- Rasters in the same series have at least a common format and are located in a common directory.
+--
+CREATE TABLE rasters."Series" (
+    "identifier" INTEGER NOT NULL PRIMARY KEY GENERATED BY DEFAULT AS IDENTITY,
+    "product"    VARCHAR(120) NOT NULL REFERENCES rasters."Products"  ON UPDATE CASCADE ON DELETE CASCADE,
+    "directory"  VARCHAR(120) NOT NULL,
+    "extension"  VARCHAR(40),
+    "format"     VARCHAR(120) NOT NULL REFERENCES rasters."Formats" ON UPDATE CASCADE ON DELETE RESTRICT,
+    "comments"   VARCHAR(1000)
 );
 
-ALTER SEQUENCE "seq_Series" OWNED BY "Series"."identifier";
+CREATE INDEX "Series_index" ON rasters."Series" ("product");
 
-ALTER TABLE "Series" OWNER TO geoadmin;
-GRANT ALL ON TABLE "Series" TO geoadmin;
-GRANT SELECT ON TABLE "Series" TO PUBLIC;
-
-CREATE INDEX "Series_index" ON "Series" ("layer");
-
-COMMENT ON SEQUENCE "seq_Series" IS
-    'Primary keys generator for the Series table.';
-COMMENT ON TABLE "Series" IS
-    'Series of images.  Each image belongs to a series.';
-COMMENT ON COLUMN "Series"."identifier" IS
-    'Unique identifier.';
-COMMENT ON COLUMN "Series"."layer" IS
-    'The layer to which the images in the series belong.';
-COMMENT ON COLUMN "Series"."pathname" IS
-    'Relative path to the files in the group.  The root path should not be specified if it is machine-dependent.';
-COMMENT ON COLUMN "Series"."extension" IS
-    'File extention of the images in the series.';
-COMMENT ON COLUMN "Series"."format" IS
-    'Format of the images in the series.';
-COMMENT ON COLUMN "Series"."quicklook" IS
-    'Series of overview images.';
-COMMENT ON COLUMN "Series"."comments" IS
-    'Free text for comments.';
-COMMENT ON CONSTRAINT "Series_quicklook_key" ON "Series" IS
-    'Each series has only one overview series.';
-COMMENT ON CONSTRAINT "Series_layer_fkey" ON "Series" IS
-    'Each series belongs to a layer.';
-COMMENT ON CONSTRAINT "Series_format_fkey" ON "Series" IS
-    'All the images of a series use the same series.';
-COMMENT ON CONSTRAINT "Series_quicklook_fkey" ON "Series" IS
-    'The overviews apply to another series of images.';
-COMMENT ON INDEX "Series_index" IS
-    'Index of series belonging to a layer.';
+COMMENT ON TABLE  rasters."Series"              IS 'A collection of rasters related by a common heritage adhering to a common specification.';
+COMMENT ON COLUMN rasters."Series"."identifier" IS 'Unique identifier (auto-generated).';
+COMMENT ON COLUMN rasters."Series"."product"    IS 'The product to which the rasters in the series belong.';
+COMMENT ON COLUMN rasters."Series"."directory"  IS 'Relative path to the files in the series. The root path should not be specified if it is machine-dependent.';
+COMMENT ON COLUMN rasters."Series"."extension"  IS 'File extention of the rasters in the series. May be blank if the files have no extension.';
+COMMENT ON COLUMN rasters."Series"."format"     IS 'Format of the rasters in the series.';
+COMMENT ON COLUMN rasters."Series"."comments"   IS 'Free text for comments.';
+COMMENT ON INDEX  rasters."Series_index"        IS 'Index of series belonging to a product.';
+COMMENT ON CONSTRAINT "Series_product_fkey"  ON rasters."Series" IS 'Each series belongs to a product.';
+COMMENT ON CONSTRAINT "Series_format_fkey"   ON rasters."Series" IS 'All the images of a series use the same series.';
 
 
 
-
---------------------------------------------------------------------------------------------------
--- Creates the "GridGeometries" table.                                                          --
--- Dependencies: (none)                                                                         --
---------------------------------------------------------------------------------------------------
-
-CREATE SEQUENCE "seq_GridGeometries" START 1000;
-
-CREATE TABLE "GridGeometries" (
-    "identifier"        integer           NOT NULL PRIMARY KEY DEFAULT nextval('coverages."seq_GridGeometries"'),
-    "width"             integer           NOT NULL,
-    "height"            integer           NOT NULL,
-    "scaleX"            double precision  NOT NULL DEFAULT 1,
-    "shearY"            double precision  NOT NULL DEFAULT 0,
-    "shearX"            double precision  NOT NULL DEFAULT 0,
-    "scaleY"            double precision  NOT NULL DEFAULT 1,
-    "translateX"        double precision  NOT NULL DEFAULT 0,
-    "translateY"        double precision  NOT NULL DEFAULT 0,
-    "horizontalSRID"    integer           NOT NULL DEFAULT 4326,
-    CONSTRAINT "GridGeometries_size" CHECK (width > 0 AND height > 0)
+--
+-- Definition of any grid axis other than the two main axes defined in "GridGeometries".
+-- Those axes are usually vertical, but other directions are allowed.
+--
+CREATE TABLE rasters."AdditionalAxes" (
+    "name"      VARCHAR(120)             NOT NULL PRIMARY KEY,
+    "datum"     VARCHAR(120)             NOT NULL,
+    "direction" metadata."AxisDirection" NOT NULL,
+    "units"     VARCHAR(20),
+    "bounds"    DOUBLE PRECISION[] NOT NULL
 );
 
-ALTER SEQUENCE "seq_GridGeometries" OWNED BY "GridGeometries"."identifier";
-
-SELECT AddGeometryColumn('GridGeometries', 'horizontalExtent', 4326, 'POLYGON', 2);
-ALTER TABLE "GridGeometries" ALTER COLUMN "horizontalExtent" SET NOT NULL;
-ALTER TABLE "GridGeometries" ADD COLUMN "verticalSRID" integer;
-ALTER TABLE "GridGeometries" ADD COLUMN "verticalOrdinates" double precision[];
-ALTER TABLE "GridGeometries"
-  ADD CONSTRAINT "enforce_srid_verticalOrdinates" CHECK
-            (((("verticalSRID" IS     NULL) AND ("verticalOrdinates" IS     NULL)) OR
-              (("verticalSRID" IS NOT NULL) AND ("verticalOrdinates" IS NOT NULL))));
-
-ALTER TABLE "GridGeometries" OWNER TO geoadmin;
-GRANT ALL ON TABLE "GridGeometries" TO geoadmin;
-GRANT SELECT ON TABLE "GridGeometries" TO PUBLIC;
-
-ALTER TABLE ONLY "GridGeometries"
-    ADD CONSTRAINT "fk_SRID" FOREIGN KEY ("horizontalSRID") REFERENCES spatial_ref_sys(srid)
-    ON UPDATE RESTRICT ON DELETE RESTRICT;
-ALTER TABLE ONLY "GridGeometries"
-    ADD CONSTRAINT "fk_VERT_SRID" FOREIGN KEY ("verticalSRID") REFERENCES spatial_ref_sys(srid)
-    ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-CREATE INDEX "HorizontalExtent_index" ON "GridGeometries" USING gist ("horizontalExtent");
-COMMENT ON INDEX "HorizontalExtent_index" IS
-    'Index of geometries intersecting a geographical area.';
-
-COMMENT ON SEQUENCE "seq_GridGeometries" IS
-    'Primary keys generator for the GridGeometries table.';
-COMMENT ON TABLE "GridGeometries" IS
-    'Spatial referencing parameters for a Grid Coverage.  Defines the spatial envelope of the images, as well as their grid dimensions.';
-COMMENT ON COLUMN "GridGeometries"."identifier" IS
-    'Unique identifier.';
-COMMENT ON COLUMN "GridGeometries"."width" IS
-    'Number of pixels wide.';
-COMMENT ON COLUMN "GridGeometries"."height" IS
-    'Number of pixels high.';
-COMMENT ON COLUMN "GridGeometries"."scaleX" IS
-    'Element (0,0) of the affine transform.  Usually corresponds to the x size of the pixels.';
-COMMENT ON COLUMN "GridGeometries"."shearY" IS
-    'Element (1,0) of the affine transform.  Always 0 if there is no rotation.';
-COMMENT ON COLUMN "GridGeometries"."shearX" IS
-    'Element (0,1) of the affine transform.  Always 0 if there is no rotation.';
-COMMENT ON COLUMN "GridGeometries"."scaleY" IS
-    'Element (1,1) of the affine transform.  Usually corresponds to the y size of the pixels.  This value is often negative since the numbering of the lines of an image increases downwards.';
-COMMENT ON COLUMN "GridGeometries"."translateX" IS
-    'Element (0,2) of the affine transform.  Usually corresponds to the x-coordinate of the top left corner.';
-COMMENT ON COLUMN "GridGeometries"."translateY" IS
-    'Element (1,2) of the affine transform.  Usually corresponds to the y-coordinate of the top left corner.';
-COMMENT ON COLUMN "GridGeometries"."horizontalSRID" IS
-    'Horizontal coordinate system code.';
-COMMENT ON COLUMN "GridGeometries"."horizontalExtent" IS
-    'Horizontal spatial extent. (Computed automatically if none is explicitly defined).';
-COMMENT ON COLUMN "GridGeometries"."verticalSRID" IS
-    'Vertical coordinate system code.';
-COMMENT ON COLUMN "GridGeometries"."verticalOrdinates" IS
-    'Z values of each of the layers of a 3D image.';
-COMMENT ON CONSTRAINT "GridGeometries_size" ON "GridGeometries" IS
-    'The dimensions of the images must be positive.';
-COMMENT ON CONSTRAINT "enforce_srid_verticalOrdinates" ON "GridGeometries" IS
-    'The vertical coordinates and their SRID must both either be null or non-null.';
+COMMENT ON TABLE  rasters."AdditionalAxes"             IS 'Coordinate values along axes other than the two main axes defined in the "GridGeometries" table.';
+COMMENT ON COLUMN rasters."AdditionalAxes"."name"      IS 'Name of the grid axis definition.';
+COMMENT ON COLUMN rasters."AdditionalAxes"."datum"     IS 'Name of the surface or epoch used as the origin of the coordinate reference system.';
+COMMENT ON COLUMN rasters."AdditionalAxes"."direction" IS 'The direction of increasing coordinate values.';
+COMMENT ON COLUMN rasters."AdditionalAxes"."units"     IS 'Units of measurement.';
+COMMENT ON COLUMN rasters."AdditionalAxes"."bounds"    IS 'Limits of all layers. The array length is the number of layers + 1. The first and last values are the raster bounds along the axis. Other values are interstice between layers.';
 
 
 
+--
+-- Definition of grid envelopes together with the "grid to CRS" affine conversions.
+-- The same grid geometry can be shared by many rasters, especially in time series.
+-- Order of affine transform coefficients matches the order of lines in TFW files.
+-- Affine transforms shall map cell corners, not centres.
+--
+CREATE TABLE rasters."GridGeometries" (
+    "identifier" INTEGER NOT NULL PRIMARY KEY GENERATED BY DEFAULT AS IDENTITY,
+    "width"      BIGINT            NOT NULL,
+    "height"     BIGINT            NOT NULL,
+    "scaleX"     DOUBLE PRECISION  NOT NULL DEFAULT 1,
+    "shearY"     DOUBLE PRECISION  NOT NULL DEFAULT 0,
+    "shearX"     DOUBLE PRECISION  NOT NULL DEFAULT 0,
+    "scaleY"     DOUBLE PRECISION  NOT NULL DEFAULT 1,
+    "translateX" DOUBLE PRECISION  NOT NULL DEFAULT 0,
+    "translateY" DOUBLE PRECISION  NOT NULL DEFAULT 0,
+    "srid"       INTEGER           NOT NULL DEFAULT 4326 REFERENCES spatial_ref_sys(srid) ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT "GridGeometries_size" CHECK ("width" > 0 AND "height" > 0)
+);
 
---------------------------------------------------------------------------------------------------
--- Function to be applied on new records in the "GridGeometries" table.                         --
---------------------------------------------------------------------------------------------------
+SELECT AddGeometryColumn('rasters', 'GridGeometries', 'extent', 4326, 'POLYGON', 2);
+ALTER TABLE rasters."GridGeometries" ALTER COLUMN "extent" SET NOT NULL;
+ALTER TABLE rasters."GridGeometries" ADD COLUMN "additionalAxes" VARCHAR(120)[];
 
-CREATE FUNCTION "ComputeDefaultExtent"() RETURNS "trigger"
+CREATE INDEX "Extent_index" ON rasters."GridGeometries" USING GIST("extent");
+
+
+COMMENT ON TABLE  rasters."GridGeometries"                  IS 'Spatial referencing parameters for rasters. Defines the grid envelopes and "grid to CRS" affine conversions to cell corners.';
+COMMENT ON COLUMN rasters."GridGeometries"."identifier"     IS 'Unique identifier (auto-generated).';
+COMMENT ON COLUMN rasters."GridGeometries"."width"          IS 'Number of cells along the first grid axis.';
+COMMENT ON COLUMN rasters."GridGeometries"."height"         IS 'Number of cells along the second grid axis.';
+COMMENT ON COLUMN rasters."GridGeometries"."scaleX"         IS 'Element (0,0) of the affine transform. Usually corresponds to the cells resolution along the first grid axis.';
+COMMENT ON COLUMN rasters."GridGeometries"."shearY"         IS 'Element (1,0) of the affine transform. Always 0 if there is no rotation.';
+COMMENT ON COLUMN rasters."GridGeometries"."shearX"         IS 'Element (0,1) of the affine transform. Always 0 if there is no rotation.';
+COMMENT ON COLUMN rasters."GridGeometries"."scaleY"         IS 'Element (1,1) of the affine transform. Usually corresponds to the cells resolution along the second grid axis. This value is often negative since numbering of lines in rasters often increases downwards.';
+COMMENT ON COLUMN rasters."GridGeometries"."translateX"     IS 'Element (0,2) of the affine transform. Usually corresponds to the x-coordinate of the top left corner.';
+COMMENT ON COLUMN rasters."GridGeometries"."translateY"     IS 'Element (1,2) of the affine transform. Usually corresponds to the y-coordinate of the top left corner.';
+COMMENT ON COLUMN rasters."GridGeometries"."srid"           IS 'Two-dimensional coordinate reference system code.';
+COMMENT ON COLUMN rasters."GridGeometries"."extent"         IS 'Two-dimensional shape expressed in a CRS common to all rasters. Computed automatically if none is explicitly defined.';
+COMMENT ON COLUMN rasters."GridGeometries"."additionalAxes" IS 'Coordinates in dimensions other than the two main dimentions defined in this table.';
+COMMENT ON INDEX  rasters."Extent_index"                    IS 'Index of geometries intersecting a geographical area.';
+COMMENT ON CONSTRAINT "GridGeometries_size" ON rasters."GridGeometries" IS 'The dimensions of the rasters must be positive.';
+
+
+
+--
+-- Function to be applied on new records in the "GridGeometries" table.
+-- It computes automatically a new extent from the affine transform coefficients.
+--
+CREATE FUNCTION rasters."ComputeDefaultExtent"() RETURNS "trigger"
     AS $BODY$
   BEGIN
-    IF NEW."horizontalExtent" IS NULL THEN
-      NEW."horizontalExtent" := st_Transform(st_Affine(st_GeometryFromText(
+    IF NEW."extent" IS NULL THEN
+      NEW."extent" := st_Transform(st_Affine(st_GeometryFromText(
         'POLYGON((0 0,0 ' || NEW."height" || ',' || NEW."width" || ' ' || NEW."height" || ',' || NEW."width" || ' 0,0 0))',
-        NEW."horizontalSRID"), NEW."scaleX", NEW."shearX", NEW."shearY", NEW."scaleY", NEW."translateX", NEW."translateY"), 4326);
+        NEW."srid"), NEW."scaleX", NEW."shearX", NEW."shearY", NEW."scaleY", NEW."translateX", NEW."translateY"), 4326);
     END IF;
     RETURN NEW;
   END;
 $BODY$
     LANGUAGE plpgsql;
 
-ALTER FUNCTION "ComputeDefaultExtent"() OWNER TO geoadmin;
-GRANT ALL ON FUNCTION "ComputeDefaultExtent"() TO geoadmin;
-GRANT EXECUTE ON FUNCTION "ComputeDefaultExtent"() TO PUBLIC;
-
 CREATE TRIGGER "addDefaultExtent"
-    BEFORE INSERT OR UPDATE ON "GridGeometries"
+    BEFORE INSERT OR UPDATE ON rasters."GridGeometries"
     FOR EACH ROW
-    EXECUTE PROCEDURE "ComputeDefaultExtent"();
+    EXECUTE PROCEDURE rasters."ComputeDefaultExtent"();
 
-COMMENT ON TRIGGER "addDefaultExtent" ON "GridGeometries" IS
-    'Add an envelope by default if none is explicitly defined.';
-
+COMMENT ON TRIGGER "addDefaultExtent" ON rasters."GridGeometries" IS 'Add an envelope by default if none is explicitly defined.';
 
 
 
---------------------------------------------------------------------------------------------------
--- Creates the "BoundingBoxes" view.                                                            --
--- Dependencies:  "GridGeometries"                                                              --
--- Inner queries: "Corners" contains 4 (x,y) corners as 4 rows for each grid geometries.        --
---                "NativeBoxes" contains the minimum and maximum values of "Corners".           --
---------------------------------------------------------------------------------------------------
-
-CREATE VIEW "BoundingBoxes" AS
+--
+-- The bounding boxes of all rasters, for information purpose.
+-- Inner queries: "Corners" contains 4 (x,y) corners as 4 rows for each grid geometries.
+--                "NativeBoxes" contains the minimum and maximum values of "Corners".
+--
+CREATE VIEW rasters."BoundingBoxes" AS
     SELECT "GridGeometries"."identifier", "width", "height",
-           "horizontalSRID" AS "crs", "minX", "maxX", "minY", "maxY",
-           st_xmin("horizontalExtent") AS "west",
-           st_xmax("horizontalExtent") AS "east",
-           st_ymin("horizontalExtent") AS "south",
-           st_ymax("horizontalExtent") AS "north"
-      FROM "GridGeometries"
+           "srid" AS "crs", "minX", "maxX", "minY", "maxY",
+           st_xmin("extent") AS "west",
+           st_xmax("extent") AS "east",
+           st_ymin("extent") AS "south",
+           st_ymax("extent") AS "north"
+      FROM rasters."GridGeometries"
  LEFT JOIN (SELECT "identifier",
-       min("x") AS "minX",
-       max("x") AS "maxX",
-       min("y") AS "minY",
-       max("y") AS "maxY"
+       MIN("x") AS "minX",
+       MAX("x") AS "maxX",
+       MIN("y") AS "minY",
+       MAX("y") AS "maxY"
 FROM (SELECT "identifier",
              "translateX" AS "x",
-             "translateY" AS "y" FROM "GridGeometries"
+             "translateY" AS "y" FROM rasters."GridGeometries"
 UNION SELECT "identifier",
              "width"*"scaleX" + "translateX" AS "x",
-             "width"*"shearY" + "translateY" AS "y" FROM "GridGeometries"
+             "width"*"shearY" + "translateY" AS "y" FROM rasters."GridGeometries"
 UNION SELECT "identifier",
              "height"*"shearX" + "translateX" AS "x",
-             "height"*"scaleY" + "translateY" AS "y" FROM "GridGeometries"
+             "height"*"scaleY" + "translateY" AS "y" FROM rasters."GridGeometries"
 UNION SELECT "identifier",
              "width"*"scaleX" + "height"*"shearX" + "translateX" AS "x",
-             "width"*"shearY" + "height"*"scaleY" + "translateY" AS "y" FROM "GridGeometries") AS "Corners"
+             "width"*"shearY" + "height"*"scaleY" + "translateY" AS "y" FROM rasters."GridGeometries") AS "Corners"
     GROUP BY "identifier") AS "NativeBoxes"
           ON "GridGeometries"."identifier" = "NativeBoxes"."identifier"
     ORDER BY "identifier";
 
-ALTER TABLE "BoundingBoxes" OWNER TO geoadmin;
-GRANT ALL ON TABLE "BoundingBoxes" TO geoadmin;
-GRANT SELECT ON TABLE "BoundingBoxes" TO PUBLIC;
 
-COMMENT ON VIEW "BoundingBoxes" IS
-    'Comparison between the calculated envelopes and the declared envelopes.';
+COMMENT ON VIEW rasters."BoundingBoxes" IS 'Comparison between the calculated envelopes and the declared envelopes.';
 
 
 
-
---------------------------------------------------------------------------------------------------
--- Creates the "GridCoverages" table.                                                           --
--- Dependencies: "Series", "GridGeometries"                                                     --
---------------------------------------------------------------------------------------------------
-
-CREATE TABLE "GridCoverages" (
-    "series"    integer           NOT NULL REFERENCES "Series" ON UPDATE CASCADE ON DELETE CASCADE,
-    "filename"  character varying NOT NULL,
-    "index"     smallint          NOT NULL DEFAULT 1 CHECK ("index" >= 1),
-    "startTime" timestamp without time zone,
-    "endTime"   timestamp without time zone,
-    "extent"    integer           NOT NULL REFERENCES "GridGeometries" ON UPDATE CASCADE ON DELETE RESTRICT,
+--
+-- The main table listing all rasters.
+--
+CREATE TABLE rasters."GridCoverages" (
+    "series"    INTEGER           NOT NULL REFERENCES rasters."Series" ON UPDATE CASCADE ON DELETE CASCADE,
+    "filename"  VARCHAR(200)      NOT NULL,
+    "index"     SMALLINT          NOT NULL DEFAULT 1 CHECK ("index" >= 1),
+    "startTime" TIMESTAMP WITHOUT TIME ZONE,
+    "endTime"   TIMESTAMP WITHOUT TIME ZONE,
+    "grid"      INTEGER           NOT NULL REFERENCES rasters."GridGeometries" ON UPDATE CASCADE ON DELETE RESTRICT,
     PRIMARY KEY ("series", "filename", "index"),
     CHECK ((("startTime" IS     NULL) AND ("endTime" IS     NULL)) OR
            (("startTime" IS NOT NULL) AND ("endTime" IS NOT NULL) AND ("startTime" <= "endTime")))
 );
 
-ALTER TABLE "GridCoverages" OWNER TO geoadmin;
-GRANT ALL ON TABLE "GridCoverages" TO geoadmin;
-GRANT SELECT ON TABLE "GridCoverages" TO PUBLIC;
+-- Index "endTime" before "startTime" because we are often interrested in the latest raster available.
+ALTER TABLE rasters."GridCoverages" ADD CONSTRAINT "GridCoverages_series_key" UNIQUE("series", "endTime", "startTime");
+CREATE INDEX "GridCoverages_search_index" ON rasters."GridCoverages" ("series", "grid");
 
--- The unique constraint shall use the same order than the index.
-ALTER TABLE coverages."GridCoverages"
-  ADD CONSTRAINT "GridCoverages_series_key" UNIQUE(series, "endTime", "startTime");
-
--- Index "endTime" before "startTime" because we most frequently sort by
--- end time, since we are often interrested in the latest image available.
-CREATE INDEX "GridCoverages_index"        ON "GridCoverages" ("series", "endTime", "startTime");
-CREATE INDEX "GridCoverages_extent_index" ON "GridCoverages" ("series", "extent");
-
-COMMENT ON TABLE "GridCoverages" IS
-    'List of all the images available.  Each listing corresponds to an image file.';
-COMMENT ON COLUMN "GridCoverages"."series" IS
-    'Series to which the image belongs.';
-COMMENT ON COLUMN "GridCoverages"."filename" IS
-    'File name of the image.';
-COMMENT ON COLUMN "GridCoverages"."index" IS
-    'Index of the image in the file (for files containing multipal images).  Numbered from 1.';
-COMMENT ON COLUMN "GridCoverages"."startTime" IS
-    'Date and time of the image acquisition start, in UTC.  In the case of averages, the time corresponds to the beginning of the interval used to calculate the average.';
-COMMENT ON COLUMN "GridCoverages"."endTime" IS
-    'Date and time of the image acquisition end, in UTC.  This time must be greater than or equal to the acquisition start time.';
-COMMENT ON COLUMN "GridCoverages"."extent" IS
-    'Grid Geomerty ID that defines the spatial footprint of this coverage.';
-COMMENT ON CONSTRAINT "GridCoverages_series_key" ON "GridCoverages" IS
-    'The time range of the image must be unique in each series.';
-COMMENT ON CONSTRAINT "GridCoverages_series_fkey" ON "GridCoverages" IS
-    'Each image belongs to a series.';
-COMMENT ON CONSTRAINT "GridCoverages_extent_fkey" ON "GridCoverages" IS
-    'Each image must have a spatial extent.';
-COMMENT ON CONSTRAINT "GridCoverages_check" ON "GridCoverages" IS
-    'The start and end times must be both null or both non-null, and the end time must be greater than or equal to the start time.';
-COMMENT ON CONSTRAINT "GridCoverages_index_check" ON "GridCoverages" IS
-    'The image index must be positive.';
-COMMENT ON INDEX "GridCoverages_index" IS
-    'Index of all the images within a certain time range.';
-COMMENT ON INDEX "GridCoverages_extent_index" IS
-    'Index of all the images in a geographic region.';
+COMMENT ON TABLE  rasters."GridCoverages"              IS 'List of all the rasters available. Each line corresponds to a raster file.';
+COMMENT ON COLUMN rasters."GridCoverages"."series"     IS 'Series to which the raster belongs.';
+COMMENT ON COLUMN rasters."GridCoverages"."filename"   IS 'File name of the raster, relative to the directory specified in the series.';
+COMMENT ON COLUMN rasters."GridCoverages"."index"      IS 'Index of the raster in the file (for files containing multiple rasters). Numbered from 1.';
+COMMENT ON COLUMN rasters."GridCoverages"."startTime"  IS 'Date and time of the raster acquisition start (inclusive), in UTC. In the case of averages, the time corresponds to the beginning of the interval used to calculate the average.';
+COMMENT ON COLUMN rasters."GridCoverages"."endTime"    IS 'Date and time of the raster acquisition end (exclusive), in UTC. This time must be greater than or equal to the acquisition start time.';
+COMMENT ON COLUMN rasters."GridCoverages"."grid"       IS 'Grid Geomerty that defines the spatial footprint of this coverage.';
+COMMENT ON INDEX  rasters."GridCoverages_search_index" IS 'Index of all the rasters in a geographic region.';
+COMMENT ON CONSTRAINT "GridCoverages_series_key"  ON rasters."GridCoverages" IS 'The time range of the raster must be unique in each series.';
+COMMENT ON CONSTRAINT "GridCoverages_series_fkey" ON rasters."GridCoverages" IS 'Each raster belongs to a series.';
+COMMENT ON CONSTRAINT "GridCoverages_grid_fkey"   ON rasters."GridCoverages" IS 'Each raster must have a spatial extent.';
+COMMENT ON CONSTRAINT "GridCoverages_check"       ON rasters."GridCoverages" IS 'The start and end times must be both null or both non-null, and the end time must be greater than or equal to the start time.';
+COMMENT ON CONSTRAINT "GridCoverages_index_check" ON rasters."GridCoverages" IS 'The raster index must be positive.';
 
 
 
-
---------------------------------------------------------------------------------------------------
--- Creates the "DomainOfSeries" view.                                                           --
--- Dependencies: "GridCoverages", "BoundingBoxes"                                               --
---------------------------------------------------------------------------------------------------
-
-CREATE VIEW "DomainOfSeries" AS
-    SELECT "TimeRanges"."series", "count", "startTime", "endTime",
+--
+-- Creates the "DomainOfSeries" and "DomainOfProducts" views.
+-- Dependencies: "GridCoverages", "BoundingBoxes", "Series".
+--
+CREATE VIEW rasters."DomainOfSeries" AS
+    SELECT "TimeRanges"."series", "startTime", "endTime",
            "west", "east", "south", "north", "xResolution", "yResolution"
       FROM
    (SELECT "series",
-           count("extent")  AS "count",
-           min("startTime") AS "startTime",
-           max("endTime")   AS "endTime"
-      FROM ONLY "GridCoverages" GROUP BY "series") AS "TimeRanges"
+           MIN("startTime") AS "startTime",
+           MAX("endTime")   AS "endTime"
+      FROM rasters."GridCoverages" GROUP BY "series") AS "TimeRanges"
       JOIN
    (SELECT "series",
-           min("west")  AS "west",
-           max("east")  AS "east",
-           min("south") AS "south",
-           max("north") AS "north",
-           min(("east"  - "west" ) / "width" ) AS "xResolution",
-           min(("north" - "south") / "height") AS "yResolution"
-      FROM (SELECT DISTINCT "series", "extent" FROM ONLY "GridCoverages") AS "Extents"
- LEFT JOIN "BoundingBoxes" ON "Extents"."extent" = "BoundingBoxes"."identifier"
+           MIN("west")  AS "west",
+           MAX("east")  AS "east",
+           MIN("south") AS "south",
+           MAX("north") AS "north",
+           MIN(("east"  - "west" ) / "width" ) AS "xResolution",
+           MIN(("north" - "south") / "height") AS "yResolution"
+      FROM (SELECT DISTINCT "series", "grid" FROM rasters."GridCoverages") AS "Extents"
+ LEFT JOIN rasters."BoundingBoxes" ON "Extents"."grid" = "BoundingBoxes"."identifier"
   GROUP BY "series") AS "BoundingBoxRanges" ON "TimeRanges".series = "BoundingBoxRanges".series
   ORDER BY "series";
 
-ALTER TABLE "DomainOfSeries" OWNER TO geoadmin;
-GRANT ALL ON TABLE "DomainOfSeries" TO geoadmin;
-GRANT SELECT ON TABLE "DomainOfSeries" TO PUBLIC;
+CREATE VIEW rasters."DomainOfProducts" AS
+ SELECT "product",
+        MIN("startTime")   AS "startTime",
+        MAX("endTime")     AS "endTime",
+        MIN("west")        AS "west",
+        MAX("east")        AS "east",
+        MIN("south")       AS "south",
+        MAX("north")       AS "north",
+        MIN("xResolution") AS "xResolution",
+        MIN("yResolution") AS "yResolution"
+   FROM rasters."DomainOfSeries"
+   JOIN rasters."Series" ON "DomainOfSeries"."series" = "Series"."identifier"
+  GROUP BY "product"
+  ORDER BY "product";
 
-COMMENT ON VIEW "DomainOfSeries" IS
-    'List of geographical areas used by each sub-series.';
 
-
-
-
---------------------------------------------------------------------------------------------------
--- Creates the "DomainOfLayers" view.                                                           --
--- Dependencies: "DomainOfSeries", "Series"                                                     --
---------------------------------------------------------------------------------------------------
-
-CREATE VIEW "DomainOfLayers" AS
- SELECT "layer",
-        sum("count")       AS "count",
-        min("startTime")   AS "startTime",
-        max("endTime")     AS "endTime",
-        min("west")        AS "west",
-        max("east")        AS "east",
-        min("south")       AS "south",
-        max("north")       AS "north",
-        min("xResolution") AS "xResolution",
-        min("yResolution") AS "yResolution"
-   FROM "DomainOfSeries"
-   JOIN "Series" ON "DomainOfSeries"."series" = "Series"."identifier"
-  GROUP BY "layer"
-  ORDER BY "layer";
-
-ALTER TABLE "DomainOfLayers" OWNER TO geoadmin;
-GRANT ALL ON TABLE "DomainOfLayers" TO geoadmin;
-GRANT SELECT ON TABLE "DomainOfLayers" TO PUBLIC;
-
-COMMENT ON VIEW "DomainOfLayers" IS
-    'Number of images and geographical area for each layer used.';
+COMMENT ON VIEW rasters."DomainOfSeries"   IS 'List of geographical areas used by each sub-series.';
+COMMENT ON VIEW rasters."DomainOfProducts" IS 'Number of rasters and geographical area for each product used.';

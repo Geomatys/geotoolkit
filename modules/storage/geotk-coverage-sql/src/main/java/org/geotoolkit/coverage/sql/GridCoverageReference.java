@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2005-2012, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2007-2012, Geomatys
+ *    (C) 2007-2018, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,149 +17,167 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import javax.imageio.IIOException;
 import java.io.IOException;
-import java.util.concurrent.CancellationException;
-import java.awt.geom.Rectangle2D;
+import java.nio.file.Path;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Date;
 
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.extent.GeographicBoundingBox;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 
 import org.geotoolkit.image.palette.IIOListeners;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.util.DateRange;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.resources.Errors;
+
+import static java.lang.Double.NaN;
 
 
 /**
- * Reference to a {@link GridCoverage2D}. This object holds some metadata about the coverage
- * ({@linkplain #getTimeRange time range}, {@linkplain #getGeographicBoundingBox geographic
- * bounding box}, <cite>etc.</cite>) without the need to open the image file, since the metadata
- * are extracted from the database. The actual loading of pixel values occurs when
- * {@link #getCoverage(IIOListeners)} is invoked for the first time.
- * <p>
- * <b>Usage example:</b>
- * {@preformat java
- *     CoverageDatabase db       = new CoverageDatabase(...);
- *     Layer            layer    = db.getLayer("My Layer").result();
- *     CoverageEnvelope envelope = layer.getEnvelope(null, null);
- *     envelope.setHorizontalRange(...);
- *     envelope.setVerticalRange(...);
- *     envelope.setTimeRange(...);
- *     GridCoverageReference ref = layer.getCoverageReference(envelope);
- *     GridCoverage2D coverage = ref.getCoverage(null);
- * }
+ * Reference to a {@link GridCoverage2D}. This object holds some metadata about the coverage time range,
+ * envelope, <cite>etc.</cite>) without the need to open the image file, since the metadata are extracted
+ * from the database.
  *
- * {@code GridCoverageReference} instances are immutable and thread-safe.
+ * <p>{@code GridCoverageReference} instances are immutable and thread-safe.</p>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
- *
- * @see Layer#getCoverageReference(CoverageEnvelope)
- * @see Layer#getCoverageReferences(CoverageEnvelope)
- *
- * @since 3.10 (derived from Seagis)
- * @module
+ * @author Sam Hiatt
  */
-public interface GridCoverageReference extends CoverageStack.Element {
+public final class GridCoverageReference implements CoverageStack.Element {
+    /**
+     * The series in which the {@code GridCoverageReference} is defined.
+     */
+    private final SeriesTable.Entry series;
+
+    /**
+     * The grid coverage filename, not including the extension.
+     */
+    private final String filename;
+
+    /**
+     * The 1-based index of the image to read.
+     */
+    final short imageIndex;
+
+    /**
+     * Image start time, inclusive.
+     */
+    private final long startTime;
+
+    /**
+     * Image end time, exclusive.
+     */
+    private final long endTime;
+
+    /**
+     * The spatial and vertical extents of the grid coverage, together with the <cite>grid to CRS</cite> transform.
+     */
+    private final GridGeometryEntry grid;
+
+    /**
+     * Creates an entry containing coverage information (but not yet the coverage itself).
+     *
+     * @param  startTime  the coverage start time, or {@code null} if none.
+     * @param  endTime    the coverage end time, or {@code null} if none.
+     */
+    GridCoverageReference(final SeriesTable.Entry series, final String filename, final short imageIndex,
+            final Date startTime, final Date endTime, final GridGeometryEntry grid) throws SQLException
+    {
+        this.series     = series;
+        this.filename   = filename;
+        this.imageIndex = imageIndex;
+        this.startTime  = (startTime != null) ? startTime.getTime() : Long.MIN_VALUE;
+        this.endTime    = (  endTime != null) ?   endTime.getTime() : Long.MAX_VALUE;
+        this.grid       = grid;
+    }
+
     /**
      * Returns a name for the coverage, for use in graphical user interfaces.
      *
-     * @return The coverage name, suitable for use in a graphical user interface.
+     * @return the coverage name, suitable for use in a graphical user interface.
      */
     @Override
-    String getName();
+    public String getName() {
+        final StringBuilder buffer = new StringBuilder(40);
+        buffer.append(series.product).append(':').append(filename);
+        if (imageIndex != 0) {
+            buffer.append(':').append(imageIndex);
+        }
+        return buffer.toString();
+    }
 
     /**
-     * Returns the path to the image file as an object of the given type. The current
-     * implementation supports only the {@link java.io.File}, {@link java.net.URL} and
-     * {@link java.net.URI} types.
-     * <p>
-     * In the particular case of input of the {@link java.io.File} type, the returned path
-     * is expected to be {@linkplain java.io.File#isAbsolute() absolute}. If the file is not
-     * absolute, then the file is probably not accessible on the local machine (i.e. the
-     * path is relative to a distant server and can not be represented as a {@code File}
-     * object). In such case, consider using the {@code URI} type instead.
-     *
-     * @param  <T>  The compile-time type of the {@code type} argument.
-     * @param  type The desired input type: {@link java.io.File}, {@link java.net.URL} or
-     *         {@link java.net.URI}.
-     * @return The input as an object of the given type.
-     * @throws IOException If the input can not be represented as an object of the given type.
+     * Returns the name of the driver to use for reading data.
      */
-    <T> T getFile(Class<T> type) throws IOException;
+    final String getFormat() {
+        return series.format.rasterFormat;
+    }
 
     /**
-     * Returns the image format. The returned string should be one of the names recognized
-     * by the Java image I/O framework. For example, the returned string shall be understood
-     * by {@link javax.imageio.ImageIO#getImageReadersByFormatName(String)}.
+     * Returns the path to the image file. The returned path should be absolute.
      *
-     * @return The Java Image I/O format name.
+     * @return path to the file.
      */
-    String getImageFormat();
+    final Path getPath() {
+        return series.path(filename);
+    }
 
     /**
-     * Returns the native Coordinate Reference System of the coverage.
-     * The returned CRS may be up to 4-dimensional.
+     * Returns the grid geometry.
      *
-     * @param includeTime {@code true} if the returned CRS should include the time component
-     *        (if available), or {@code false} for a spatial-only CRS.
-     *
-     * @return The native CRS of the coverage.
+     * @return the grid geometry.
      */
-    CoordinateReferenceSystem getCoordinateReferenceSystem(boolean includeTime);
-
-    /**
-     * Returns the geographic bounding box of the {@linkplain #getEnvelope coverage envelope}.
-     * Invoking this method is equivalent to extracting the horizontal component of the envelope
-     * and transform the coordinates if needed.
-     * <p>
-     * This method return {@code null} if the geographic bounding box can not be computed.
-     *
-     * @return The geographic component of the envelope, or {@code null} if unknown.
-     */
-    GeographicBoundingBox getGeographicBoundingBox();
+    @Override
+    public GeneralGridGeometry getGridGeometry() {
+        return grid.getGridGeometry(startTime != Long.MIN_VALUE ? new Date(startTime) : null,
+                                      endTime != Long.MAX_VALUE ? new Date(  endTime) : null);
+    }
 
     /**
      * Returns the spatio-temporal envelope of the coverage. The CRS of the returned envelope
      * is the {@linkplain #getCoordinateReferenceSystem(boolean) spatio-temporal CRS} of this
-     * entry, which may vary on a coverage-by-coverage basis. If an envelope is some unified
-     * CRS is desired, consider using {@link #getXYRange()}, {@link #getZRange()} and
-     * {@link #getTimeRange()} instead.
-     * <p>
-     * This method is equivalent to the following call:
+     * entry, which may vary on a coverage-by-coverage basis.
      *
-     * {@preformat java
-     *     return getGridGeometry().getEnvelope();
-     * }
-     *
-     * @return The coverage spatio-temporal envelope.
+     * @return the coverage spatio-temporal envelope.
      */
     @Override
-    Envelope getEnvelope();
+    public Envelope getEnvelope() {
+        return getGridGeometry().getEnvelope();
+    }
+
+    @Override
+    public Number getZCenter() throws IOException {
+        final NumberRange<?> range = getZRange();
+        if (range != null) {
+            final Number lower = range.getMinValue();
+            final Number upper = range.getMaxValue();
+            if (lower != null) {
+                if (upper != null) {
+                    return 0.5 * (lower.doubleValue() + upper.doubleValue());
+                } else {
+                    return lower.doubleValue();
+                }
+            } else if (upper != null) {
+                return upper.doubleValue();
+            } else {
+                return NaN;
+            }
+        } else {
+            return NaN;
+        }
+    }
 
     /**
-     * Returns the range of values in the two first dimensions, which are horizontal.
-     * This method returns the range in units of the database horizontal CRS, which may
-     * not be the same than the horizontal CRS of the coverage.
-     * <p>
-     * If the range of values in units of the coverage CRS is desired, then use the
-     * {@link #getEnvelope()} method instead.
-     *
-     * @return The range of values in the two first dimensions, in units of the database CRS.
-     */
-    Rectangle2D getXYRange();
-
-    /**
-     * Returns the range of values in the third dimension, which may be vertical <strong>or
-     * temporal</strong>. The main purpose of this method is to allow sorting of entries,
-     * not to get the elevation. If the coverage is not restricted to a particular range
-     * along the third dimension, then this method returns a range with infinite bounds.
+     * Returns the range of values in the third dimension, which may be vertical or temporal.
+     * The main purpose of this method is to allow sorting of entries, not to get the elevation.
+     * If the coverage is not restricted to a particular range along the third dimension,
+     * then this method returns a range with infinite bounds.
      *
      * {@section Unit of measurement}
      * This method returns the range in units of the database vertical or temporal CRS, which
@@ -168,30 +186,24 @@ public interface GridCoverageReference extends CoverageStack.Element {
      * represents those quantities. If elevation or time in units of the coverage CRS is desired,
      * then use the {@link #getEnvelope()} method instead.
      *
-     * @return The range of values in the third dimension, in units of the database CRS.
+     * @return the range of values in the third dimension, in units of the database CRS.
      */
     @Override
-    NumberRange<?> getZRange();
-
-    /**
-     * Returns the temporal part of the {@linkplain #getEnvelope coverage envelope}.
-     * If the coverage is not restricted to a particular time range, then this method
-     * returns a range with infinite bounds.
-     * <p>
-     * Invoking this method is equivalent to extracting the temporal component of the
-     * envelope and transforming the coordinates if needed.
-     *
-     * @return The temporal component of the envelope.
-     */
-    DateRange getTimeRange();
-
-    /**
-     * Returns the coverage grid geometry.
-     *
-     * @return The coverage grid geometry.
-     */
-    @Override
-    GridGeometry2D getGridGeometry();
+    public NumberRange<Double> getZRange() {
+        double min, max;
+        final Envelope envelope = grid.standardEnvelope;
+        if (envelope.getDimension() >= 3) {
+            min = envelope.getMinimum(2);
+            max = envelope.getMaximum(2);
+        } else {
+            min = Double.NEGATIVE_INFINITY;
+            max = Double.POSITIVE_INFINITY;
+            final DefaultTemporalCRS temporalCRS = GridGeometryEntry.TEMPORAL_CRS;
+            if (startTime != Long.MIN_VALUE) min = temporalCRS.toValue(new Date(startTime));
+            if (  endTime != Long.MAX_VALUE) max = temporalCRS.toValue(new Date(  endTime));
+        }
+        return NumberRange.create(min, true, max, false);
+    }
 
     /**
      * Returns the coverage sample dimensions, or {@code null} if unknown.
@@ -199,66 +211,34 @@ public interface GridCoverageReference extends CoverageStack.Element {
      * (<code>{@linkplain GridSampleDimension#geophysics geophysics}(true)</code>), which is
      * consistent with the coverage returned by {@link #getCoverage getCoverage(...)}.
      *
-     * @return The sample dimensions, or {@code null} if unknown.
+     * @return the sample dimensions, or {@code null} if unknown.
      */
     @Override
-    GridSampleDimension[] getSampleDimensions();
+    public GridSampleDimension[] getSampleDimensions() {
+        final List<GridSampleDimension> sd = series.format.sampleDimensions;
+        if (sd == null) {
+            return null;
+        }
+        final GridSampleDimension[] bands = sd.toArray(new GridSampleDimension[sd.size()]);
+        for (int i=0; i<bands.length; i++) {
+            bands[i] = bands[i].geophysics(true);
+        }
+        return bands;
+    }
 
     /**
-     * Gets a grid coverage reader which can be used for reading the coverage represented by
-     * this {@code GridCoverageReference}. This method is provided for inter-operability with
-     * API requirying {@code GridCoverageReader} instances. When possible, callers are encouraged
-     * to use the {@link #read(CoverageEnvelope, IIOListeners)} method instead.
-     * <p>
-     * This method accepts an optional {@code GridCoverageReader} instance in argument. The
-     * provided instance will be recycled if possible, for avoiding the cost of creating a
-     * new reader on each method invocation. If the argument is {@code null} or the given
-     * instance can not be reused, then this method returns a new instance.
-     * <p>
-     * Callers should {@linkplain GridCoverageReader#setInput(Object) set the input}
-     * to {@code null}, {@linkplain GridCoverageReader#reset() reset} or
-     * {@linkplain GridCoverageReader#dispose() dispose} the reader as soon as the reading
-     * process is completed, in order to close the underlying image input stream.
-     *
-     * @param  recycle An optional existing instance to recycle if possible, or {@code null}.
-     * @return A reader which can be used for reading the grid coverage.
-     * @throws CoverageStoreException if an error occurred while creating the reader.
-     *
-     * @since 3.14
+     * Loads the data if needed and returns the coverage.
      */
-    GridCoverageReader getCoverageReader(GridCoverageReader recycle) throws CoverageStoreException;
-
-    /**
-     * Reads the data and returns the coverage. This method accepts an optional {@code envelope}
-     * parameter, which restrict the spatio-temporal extent of data to be read. If the envelope
-     * is {@code null}, then the default extent is loaded.
-     * <p>
-     * The default Geotk implementation cache the returned coverage if and only if the envelope
-     * is null. In the later case, if the coverage has already been read previously and has not
-     * yet been reclaimed by the garbage collector, then the existing coverage may be returned
-     * immediately.
-     * <p>
-     * This method returns always the {@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS
-     * geophysics} {@linkplain GridCoverage2D#view view} of data.
-     *
-     * @param  envelope The spatio-temporal envelope and the preferred resolution of the image
-     *         to be read, or {@code null} for the default.
-     * @param  listeners Objects to inform about progress, or {@code null} if none.
-     * @return The coverage.
-     *
-     * @throws CoverageStoreException if an error occurred while reading the image.
-     * @throws CancellationException if {@link #abort()} has been invoked during the reading process.
-     */
-    GridCoverage2D read(CoverageEnvelope envelope, IIOListeners listeners)
-            throws CoverageStoreException, CancellationException;
-
-    /**
-     * Aborts the image reading. This method can be invoked from any thread. If {@link #read
-     * read(...)} was in progress at the time this method is invoked, then it will stop and
-     * throw {@link CancellationException}.
-     * <p>
-     * Note that if more than one read was in progress concurrently, all of them will be
-     * aborted by the call to this method.
-     */
-    void abort();
+    @Override
+    public GridCoverage2D getCoverage(final IIOListeners listeners) throws IOException {
+        try {
+            return IO.read(getFormat(), getPath());
+        } catch (DataStoreException e) {
+            final Throwable cause = e.getCause();
+            if (cause instanceof IOException) {
+                throw (IOException) cause;
+            }
+            throw new IIOException(Errors.format(Errors.Keys.CantReadFile_1, getName()), e);
+        }
+    }
 }

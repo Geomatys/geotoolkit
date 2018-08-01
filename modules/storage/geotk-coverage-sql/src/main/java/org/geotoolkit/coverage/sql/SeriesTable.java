@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2005-2012, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2007-2012, Geomatys
+ *    (C) 2007-2018, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,379 +17,196 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.io.File;
-import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
-import java.sql.SQLNonTransientException;
-import java.util.Set;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.sql.table.CatalogException;
-import org.geotoolkit.internal.sql.table.ConfigurationKey;
-import org.geotoolkit.internal.sql.table.Database;
-import org.geotoolkit.internal.sql.table.LocalCache;
-import org.geotoolkit.internal.sql.table.QueryType;
-import org.geotoolkit.internal.sql.table.SingletonTable;
-import org.geotoolkit.internal.sql.table.DuplicatedRecordException;
-
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import static org.apache.sis.util.collection.Containers.hashMapCapacity;
+import java.sql.Types;
 
 
 /**
- * Connection to a table of series. This connection is used internally by the
- * {@linkplain LayerTable layer table}.
+ * Connection to a table of series.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.15
- *
- * @since 3.10 (derived from Seagis)
- * @module
  */
-final class SeriesTable extends SingletonTable<SeriesEntry> {
+final class SeriesTable extends CachedTable<Integer, SeriesTable.Entry> {
     /**
-     * The format table, created when first needed.
+     * A series of coverages sharing common characteristics in a {@link ProductEntry}.
+     * A product often regroup all coverages in a single series, but in some cases a product may contain
+     * more than one series. For example a <cite>Sea Surface Temperature</cite> (SST) product from
+     * Nasa <cite>Pathfinder</cite> can be subdivised in two series:
+     *
+     * <ul>
+     *   <li>Final release of historical data. Those data are often two years old.</li>
+     *   <li>More recent but not yet definitive data.</li>
+     * </ul>
+     *
+     * In most cases it is sufficient to work with {@link ProductEntry} as a whole without
+     * the need to go down to the {@code SeriesTable.Entry}.
+     *
+     * @author Martin Desruisseaux (IRD, Geomatys)
      */
-    private transient FormatTable formats;
+    static final class Entry {
+        /**
+         * Identifier of this series.
+         */
+        final int identifier;
+
+        /**
+         * Identifier of the product to which this series belong.
+         */
+        final String product;
+
+        /**
+         * The directory which contains the data files for this series.
+         */
+        private final Path directory;
+
+        /**
+         * The extension to add to filenames, not including the dot character.
+         */
+        private final String extension;
+
+        /**
+         * The format of all coverages in this series.
+         */
+        final Format format;
+
+        /**
+         * Creates a new series entry.
+         *
+         * @param root       the root directory or URL, or {@code null} if none.
+         * @param directory  the relative or absolute directory which contains the data files for this series.
+         * @param extension  the extension to add to filenames, not including the dot character.
+         * @param format     the format of all coverages in this series.
+         */
+        private Entry(final int identifier, final String product, final Path root, final URI directory, String extension, final Format format) {
+            this.identifier = identifier;
+            this.product    = product;
+            this.extension  = (extension != null && !(extension = extension.trim()).isEmpty()) ? extension : null;
+            this.format     = format;
+            this.directory  = directory.isAbsolute() ? Paths.get(directory) : root.resolve(directory.toString());
+        }
+
+        /**
+         * Returns the given filename as a {@link Path} in the directory of this series.
+         *
+         * @param  filename  the filename, not including the extension.
+         * @return path to the file.
+         */
+        public Path path(String filename) {
+            if (extension != null) {
+                filename = filename + '.' + extension;
+            }
+            return directory.resolve(filename);
+        }
+    }
 
     /**
-     * The layer for which we want the series.
+     * Name of this table in the database.
      */
-    private String layer;
+    static final String TABLE = "Series";
+
+    /**
+     * The table to use for fetching information about formats.
+     */
+    private final FormatTable formats;
 
     /**
      * Creates a series table.
-     *
-     * @param database Connection to the database.
      */
-    public SeriesTable(final Database database) {
-        this(new SeriesQuery(database));
+    SeriesTable(final Transaction transaction) {
+        super(Target.SERIES, transaction);
+        formats = new FormatTable(transaction);
     }
 
     /**
-     * Creates a series table using the specified query.
-     */
-    private SeriesTable(final SeriesQuery query) {
-        super(query, query.byIdentifier);
-    }
-
-    /**
-     * Creates a new instance having the same configuration than the given table.
-     * This is a copy constructor used for obtaining a new instance to be used
-     * concurrently with the original instance.
-     *
-     * @param table The table to use as a template.
-     */
-    private SeriesTable(final SeriesTable table) {
-        super(table);
-    }
-
-    /**
-     * Returns a copy of this table. This is a copy constructor used for obtaining
-     * a new instance to be used concurrently with the original instance.
+     * Returns the SQL {@code SELECT} statement.
      */
     @Override
-    protected SeriesTable clone() {
-        return new SeriesTable(this);
-    }
-
-    /**
-     * Returns the layer for the series to be returned by {@link #getEntries() getEntries()}.
-     * The default value is {@code null}, which means that no filtering should be performed.
-     */
-    public String getLayer() {
-        return layer;
-    }
-
-    /**
-     * Sets the layer for the series to be returned. Next call to {@link #getEntries()}
-     * will filters the series in order to return only the ones in this layer.
-     */
-    public void setLayer(final String layer) {
-        if (!Objects.equals(layer, this.layer)) {
-            this.layer = layer;
-            fireStateChanged("layer");
-        }
-    }
-
-    /**
-     * Returns the {@link FormatTable} instance, creating it if needed.
-     */
-    private FormatTable getFormatTable() throws CatalogException {
-        FormatTable table = formats;
-        if (table == null) {
-            formats = table = getDatabase().getTable(FormatTable.class);
-        }
-        return table;
-    }
-
-    /**
-     * Invoked automatically for a newly created statement or when this table
-     * changed its state. The current implementation setups the SQL parameter
-     * for the {@linkplain #getLayer currently selected layer}.
-     */
-    @Override
-    protected void configure(final LocalCache lc, final QueryType type, final PreparedStatement statement)
-            throws SQLException
-    {
-        super.configure(lc, type, statement);
-        final SeriesQuery query = (SeriesQuery) super.query;
-        final int index = query.byLayer.indexOf(type);
-        if (index != 0) {
-            final String layer = getLayer();
-            if (layer == null) {
-                throw new CatalogException(errors().getString(Errors.Keys.NoParameter_1, "layer"));
-            }
-            statement.setString(index, layer);
-        }
+    String select() {
+        return "SELECT \"product\", \"directory\", \"extension\", \"format\""
+                + " FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"identifier\" = ?";
     }
 
     /**
      * Creates a series from the current row in the specified result set.
      *
-     * @param  lc The {@link #getLocalCache()} value.
-     * @param  results The result set to read.
-     * @param  identifier The identifier of the series to create.
-     * @return The entry for current row in the specified result set.
+     * @param  results     the result set to read.
+     * @param  identifier  the identifier of the series to create.
+     * @return the entry for current row in the specified result set.
      * @throws SQLException if an error occurred while reading the database.
      */
     @Override
-    protected SeriesEntry createEntry(final LocalCache lc, final ResultSet results, final Comparable<?> identifier)
-            throws SQLException
-    {
-        final SeriesQuery query     = (SeriesQuery) super.query;
-        final String  formatID      = results.getString(indexOf(query.format));
-        final String  pathname      = results.getString(indexOf(query.pathname));
-        final String  extension     = results.getString(indexOf(query.extension));
-        final String  remarks       = results.getString(indexOf(query.comments));
-        final String  rootDirectory = getProperty(ConfigurationKey.ROOT_DIRECTORY);
-        final String  rootURL       = getProperty(ConfigurationKey.ROOT_URL);
-        final FormatEntry format = getFormatTable().getEntry(formatID);
-        return new SeriesEntry((Integer) identifier, (rootDirectory != null) ? rootDirectory : rootURL,
-                               pathname, extension, format, remarks);
-    }
-
-    /**
-     * Returns all series as (<var>identifier</var>, <var>series</var>) pairs.
-     */
-    public Map<Integer,SeriesEntry> getEntriesMap() throws SQLException {
-        final Set<SeriesEntry> entries = getEntries();
-        final Map<Integer,SeriesEntry> map = new HashMap<>(hashMapCapacity(entries.size()));
-        for (final SeriesEntry entry : entries) {
-            final Integer identifier = entry.getIdentifier();
-            if (map.put(identifier, entry) != null) {
-                throw new DuplicatedRecordException(errors().getString(Errors.Keys.DuplicatedRecord_1, identifier));
-            }
+    Entry createEntry(final ResultSet results, final Integer identifier) throws SQLException, CatalogException {
+        final String product   = results.getString(1);
+        final String directory = results.getString(2);
+        final String extension = results.getString(3);
+        final String formatID  = results.getString(4);
+        final Format format    = formats.getEntry(formatID);
+        try {
+            return new Entry(identifier, product, transaction.database.root, new URI(directory), extension, format);
+        } catch (URISyntaxException e) {
+            throw new IllegalRecordException(e, results, 2, identifier);
         }
-        return map;
-    }
-
-    /**
-     * Returns the identifier for a series having the specified properties.
-     * If no matching record is found, then this method returns {@code null}.
-     * <p>
-     * The {@link #setLayer(LayerEntry)} method must be invoked before this one.
-     *
-     * @param  path      The path relative to the root directory, or the base URL.
-     * @param  extension The extension to add to filenames.
-     * @param  format    The format for the series considered.
-     * @return The identifier of a matching entry, or {@code null} if none.
-     * @throws SQLException if an error occurred while reading from the database.
-     */
-    Integer find(final String path, final String extension, final String format) throws SQLException {
-        ensureNonNull("path",      path);
-        ensureNonNull("extension", extension);
-        ensureNonNull("format",    format);
-        Integer id = null;
-        final SeriesQuery query = (SeriesQuery) super.query;
-        final LocalCache lc = getLocalCache();
-        synchronized (lc) {
-            final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST);
-            final PreparedStatement statement = ce.statement;
-            final int idIndex = indexOf(query.identifier);
-            final int pnIndex = indexOf(query.pathname);
-            final int exIndex = indexOf(query.extension);
-            final int ftIndex = indexOf(query.format);
-            try (ResultSet results = statement.executeQuery()) {
-                while (results.next()) {
-                    final int nextID = results.getInt(idIndex);
-                    String value = results.getString(pnIndex);
-                    if (value == null || !comparePaths(value, path)) {
-                        continue;
-                    }
-                    value = results.getString(exIndex);
-                    if (value == null || !value.equals(extension)) {
-                        continue;
-                    }
-                    value = results.getString(ftIndex);
-                    if (value == null || !value.equals(format)) {
-                        continue;
-                    }
-                    if (id != null && id.intValue() != nextID) {
-                        // Could happen if there is insufficient conditions in the WHERE clause.
-                        log("find", errors().getLogRecord(Level.WARNING, Errors.Keys.DuplicatedRecord_1, id));
-                        continue;
-                    }
-                    id = nextID;
-                }
-            }
-            release(lc, ce);
-        }
-        return id;
     }
 
     /**
      * Returns the identifier for a series having the specified properties. If no
      * matching record is found, then a new one is created and added to the database.
-     * <p>
-     * The {@link #setLayer(LayerEntry)} method must be invoked before this one.
      *
-     * @param  path      The path relative to the root directory, or the base URL.
-     * @param  extension The extension to add to filenames.
-     * @param  format    The format for the series considered.
-     * @return The identifier of a matching entry (never {@code null}).
+     * @param  directory  the path relative to the root directory, or the base URL.
+     * @param  extension  the extension to add to filenames, or {@code null} or empty if none.
+     * @param  format     the format for the series considered.
+     * @return the identifier of a matching entry (never {@code null}).
      * @throws SQLException if an error occurred while reading from or writing to the database.
      */
-    int findOrCreate(final String path, final String extension, final String format) throws SQLException {
-        Integer id;
-        final LocalCache lc = getLocalCache();
-        synchronized (lc) {
-            boolean success = false;
-            transactionBegin(lc);
-            try {
-                id = find(path, extension, format);
-                if (id == null) {
-                    /*
-                     * No match found. Adds a new record in the database.
-                     */
-                    final SeriesQuery query = (SeriesQuery) super.query;
-                    final LocalCache.Stmt ce = getStatement(lc, QueryType.INSERT);
-                    final PreparedStatement statement = ce.statement;
-                    statement.setString(indexOf(query.layer),     getLayer());
-                    statement.setString(indexOf(query.pathname),  trimRoot(path));
-                    statement.setString(indexOf(query.extension), extension);
-                    statement.setString(indexOf(query.format),    format);
-                    success = updateSingleton(statement);
-                    try (ResultSet keys = statement.getGeneratedKeys()) {
-                        while (keys.next()) {
-                            id = keys.getInt(query.identifier.name);
-                            if (!keys.wasNull()) break;
-                            id = null; // Should never reach this point, but I'm paranoiac.
-                        }
-                    }
-                    release(lc, ce);
-                }
-            } finally {
-                transactionEnd(lc, success);
-            }
-        }
-        if (id == null) {
-            // Should never occur, but I'm paranoiac.
-            throw new SQLNonTransientException();
-        }
-        return id;
-    }
-
-    /**
-     * Returns {@code true} if the given paths are equals or equivalent. The two paths can
-     * be relative or absolute, or only one path can be relative and the other one absolute.
-     *
-     * @param candidate The first path to compare. Can be relative or absolute.
-     * @param path The second path to compare. Can be relative or absolute.
-     * @return {@code true} if the two paths reference the same file.
-     */
-    private boolean comparePaths(final String candidate, final String path) {
-        if (candidate.equals(path)) {
-            return true;
-        }
-        File candidateFile = new File(candidate);
-        File pathFile = new File(path);
-        if (candidateFile.equals(pathFile)) {
-            return true;
-        }
-        if (candidateFile.isAbsolute() && !pathFile.isAbsolute()) {
-            return compareRelativeAndAbsolutePaths(pathFile, candidateFile);
-        }
-        if (!candidateFile.isAbsolute() && pathFile.isAbsolute()) {
-            return compareRelativeAndAbsolutePaths(candidateFile, pathFile);
-        }
-        /*
-         * If the above failed, tries to compare absolute path.
-         */
-        final String root = getProperty(ConfigurationKey.ROOT_DIRECTORY);
-        if (root != null) {
-            if (!candidateFile.isAbsolute()) {
-                candidateFile = new File(root, candidateFile.getPath());
-            }
-            if (!pathFile.isAbsolute()) {
-                pathFile = new File(root, pathFile.getPath());
-            }
-        }
-        File cf = null; // Used for error message only.
-        try {
-            candidateFile = (cf = candidateFile).getCanonicalFile();
-            pathFile = (cf = pathFile).getCanonicalFile();
-        } catch (IOException exeption) {
-            // Logs with a FINE level rather than WARNING because this exception may be normal.
-            final LogRecord record = errors().getLogRecord(Level.FINE, Errors.Keys.NotADirectory_1, cf);
-            record.setThrown(exeption);
-            log("comparePaths", record);
-            return false;
-        }
-        return candidateFile.equals(pathFile);
-    }
-
-    /**
-     * Returns {@code true} if the given absolute path ends with the given relative path.
-     *
-     * @param relative The relative path.
-     * @param absolute The absolute path.
-     * @return {@code true} if the absolute path ends with the relative path.
-     */
-    private static boolean compareRelativeAndAbsolutePaths(File relative, File absolute) {
-        assert !relative.isAbsolute() : relative;
-        assert  absolute.isAbsolute() : absolute;
+    public int findOrCreate(final String product, final String directory, final String extension, final String format)
+            throws SQLException, IllegalUpdateException
+    {
+        boolean insert = false;
         do {
-            if (!relative.getName().equals(absolute.getName())) {
-                return false;
+            final PreparedStatement statement;
+            if (!insert) {
+                statement = prepareStatement("SELECT \"identifier\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE "
+                        + "\"product\"=? AND \"directory\"=? AND \"extension\"=? AND \"format\"=?");
+            } else {
+                statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\"("
+                        + "\"product\", \"directory\", \"extension\", \"format\" VALUES (?,?,?,?)", "identifier");
             }
-            absolute = absolute.getParentFile();
-            if (absolute == null) {
-                return false;
+            statement.setString(1, product);
+            statement.setString(2, directory);
+            if (extension != null && !extension.isEmpty()) {
+                statement.setString(3, extension);
+            } else {
+                statement.setNull(3, Types.VARCHAR);
             }
-        } while ((relative = relative.getParentFile()) != null);
-        return true;
+            statement.setString(4, format);
+            if (insert) {
+                if (statement.executeUpdate() == 0) {
+                    continue;                                           // Should never happen, but we are paranoiac.
+                }
+            }
+            try (ResultSet results = insert ? statement.getGeneratedKeys() : statement.executeQuery()) {
+                while (results.next()) {
+                    final int identifier = results.getInt(1);
+                    if (!results.wasNull()) return identifier;          // Should never be null, but we are paranoiac.
+                }
+            }
+        } while ((insert = !insert) == true);
+        throw new IllegalUpdateException("Can not add the series.");    // TODO: provide better error message.
     }
 
     /**
-     * Trims the root directory (if any) from the given path.
+     * Closes the prepared statements created by this table.
      */
-    private String trimRoot(String path) {
-        String root = getProperty(ConfigurationKey.ROOT_DIRECTORY);
-        if (root != null) {
-            final File pathFile = new File(path);
-            if (pathFile.isAbsolute()) {
-                final File rootFile = new File(root);
-                if (rootFile.isAbsolute()) {
-                    path = pathFile.getPath(); // For making sure that we use the right name separator.
-                    root = rootFile.getPath();
-                    if (path.startsWith(root)) {
-                        path = path.substring(root.length());
-                        if (path.startsWith(File.separator)) {
-                            path = path.substring(File.separator.length());
-                        }
-                    }
-                }
-            }
-        }
-        return path.replace(File.separatorChar, '/').trim();
+    @Override
+    public void close() throws SQLException {
+        super.close();
+        formats.close();
     }
 }

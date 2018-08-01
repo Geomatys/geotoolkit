@@ -73,18 +73,6 @@
       <artifactId>geotk-coverage-store</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-coverage-netcdf</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-        <groupId>javax.media</groupId>
-        <artifactId>jai_codec</artifactId>
-        <scope>test</scope>
-    </dependency>
   </dependencies>
 
 

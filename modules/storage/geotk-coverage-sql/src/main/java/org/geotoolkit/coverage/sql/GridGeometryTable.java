@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2005-2012, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2007-2012, Geomatys
+ *    (C) 2007-2018, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,35 +22,13 @@ import java.sql.Types;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
-import java.sql.SQLNonTransientException;
-import java.awt.Dimension;
-import java.awt.geom.AffineTransform;
-import java.util.Arrays;
-import java.util.logging.Level;
 
 import org.opengis.util.FactoryException;
-import org.opengis.metadata.Identifier;
+import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransformFactory;
 
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.collection.WeakHashSet;
-import org.geotoolkit.internal.sql.table.Column;
-import org.geotoolkit.internal.sql.table.Database;
-import org.geotoolkit.internal.sql.table.QueryType;
-import org.geotoolkit.internal.sql.table.LocalCache;
-import org.geotoolkit.internal.sql.table.SingletonTable;
-import org.geotoolkit.internal.sql.table.IllegalRecordException;
-import org.geotoolkit.internal.sql.table.SpatialDatabase;
-import org.apache.sis.referencing.IdentifiedObjects;
-import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
-import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.resources.Errors;
-
-import static java.lang.reflect.Array.getLength;
-import static java.lang.reflect.Array.getDouble;
-import org.apache.sis.internal.simple.SimpleCitation;
 
 
 /**
@@ -58,175 +36,83 @@ import org.apache.sis.internal.simple.SimpleCitation;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Antoine Hnawia (IRD)
- * @version 3.15
- *
- * @since 3.10 (derived from Seagis)
- * @module
  */
-final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
+final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
     /**
-     * A set of CRS descriptions created up to date. Cached because we
-     * will typically have many grid geometries using the same set of CRS.
+     * Name of this table in the database.
      */
-    private final WeakHashSet<SpatialRefSysEntry> gridCRS;
+    static final String TABLE = "GridGeometries";
 
     /**
-     * Constructs a new {@code GridGeometryTable}.
-     *
-     * @param connection The connection to the database.
+     * Tables of additional axes, created when first needed.
      */
-    public GridGeometryTable(final Database database) {
-        this(new GridGeometryQuery(database));
+    private AdditionalAxisTable axisTable;
+
+    /**
+     * Creates a new {@code GridGeometryTable}.
+     */
+    GridGeometryTable(final Transaction transaction) {
+        super(Target.GRID_GEOMETRY, transaction);
     }
 
     /**
-     * Constructs a new {@code GridGeometryTable} from the specified query.
-     */
-    private GridGeometryTable(final GridGeometryQuery query) {
-        super(query, query.byIdentifier);
-        gridCRS = new WeakHashSet<>(SpatialRefSysEntry.class);
-    }
-
-    /**
-     * Creates a new instance having the same configuration than the given table.
-     * This is a copy constructor used for obtaining a new instance to be used
-     * concurrently with the original instance.
-     *
-     * @param table The table to use as a template.
-     */
-    private GridGeometryTable(final GridGeometryTable table) {
-        super(table);
-        gridCRS = table.gridCRS;
-    }
-
-    /**
-     * Returns a copy of this table. This is a copy constructor used for obtaining
-     * a new instance to be used concurrently with the original instance.
+     * Returns the SQL {@code SELECT} statement.
      */
     @Override
-    protected GridGeometryTable clone() {
-        return new GridGeometryTable(this);
-    }
-
-    /**
-     * Returns a CRS identifier for the specified CRS. The given CRS should appears in the PostGIS
-     * {@code "spatial_ref_sys"} table. The returned value is a primary key in the same table.
-     *
-     * @param  crs The CRS to search.
-     * @return The identifier for the given CRS, or 0 if none.
-     * @throws FactoryException if an error occurred while searching for the CRS.
-     */
-    public int getSRID(final CoordinateReferenceSystem crs) throws FactoryException {
-        final SpatialDatabase database = (SpatialDatabase) getDatabase();
-        final GeodeticAuthorityFactory factory = (GeodeticAuthorityFactory) database.getCRSAuthorityFactory();
-        final IdentifiedObjectFinder finder = factory.newIdentifiedObjectFinder();
-        final Identifier srid = IdentifiedObjects.getIdentifier(finder.findSingleton(crs), new SimpleCitation("PostGIS"));
-        if (srid == null) {
-            return 0;
-        }
-        final String code = srid.getCode();
-        try {
-            return Integer.parseInt(code);
-        } catch (NumberFormatException e) {
-            throw new FactoryException(Errors.format(Errors.Keys.UnparsableNumber_1, code), e);
-        }
+    String select() {
+        return "SELECT \"width\", \"height\", \"scaleX\", \"shearY\", \"shearX\", \"scaleY\", \"translateX\", \"translateY\","
+                + " \"srid\", \"additionalAxes\""
+                + " FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"identifier\" = ?";
     }
 
     /**
      * Creates a grid geometry from the current row in the specified result set.
      *
-     * @param  results The result set to read.
-     * @param  identifier The identifier of the grid geometry to create.
-     * @return The entry for current row in the specified result set.
+     * @param  results     the result set to read.
+     * @param  identifier  the identifier of the grid geometry to create.
+     * @return the entry for current row in the specified result set.
      * @throws SQLException if an error occurred while reading the database.
      */
     @Override
     @SuppressWarnings("fallthrough")
-    protected GridGeometryEntry createEntry(final LocalCache lc, final ResultSet results, final Comparable<?> identifier)
-            throws SQLException
-    {
-        final GridGeometryQuery query  = (GridGeometryQuery) super.query;
-        final SpatialDatabase database = (SpatialDatabase) getDatabase();
-        final int    width             = results.getInt   (indexOf(query.width));
-        final int    height            = results.getInt   (indexOf(query.height));
-        final double scaleX            = results.getDouble(indexOf(query.scaleX));
-        final double shearY            = results.getDouble(indexOf(query.shearY));
-        final double shearX            = results.getDouble(indexOf(query.shearX));
-        final double scaleY            = results.getDouble(indexOf(query.scaleY));
-        final double translateX        = results.getDouble(indexOf(query.translateX));
-        final double translateY        = results.getDouble(indexOf(query.translateY));
-        final int    horizontalSRID    = results.getInt   (indexOf(query.horizontalSRID));
-        final int    verticalSRID      = results.getInt   (indexOf(query.verticalSRID));
-        final Array  verticalOrdinates = results.getArray (indexOf(query.verticalOrdinates));
-        /*
-         * Creates the SpatialRefSysEntry object, looking for an existing one in the cache first.
-         * If a new object has been created, it will be completed after insertion in the cache.
-         */
-        SpatialRefSysEntry srsEntry = new SpatialRefSysEntry(horizontalSRID, verticalSRID, database.temporalCRS);
-        synchronized (gridCRS) {
-            final SpatialRefSysEntry candidate = gridCRS.unique(srsEntry);
-            if (candidate != srsEntry) {
-                srsEntry = candidate;
-            } else try {
-                srsEntry.createSpatioTemporalCRS(database);
-            } catch (FactoryException exception) {
-                gridCRS.remove(srsEntry);
-                final Column column;
-                switch (srsEntry.uninitialized()) {
-                    case 1:  column = query.horizontalSRID; break;
-                    case 2:  column = query.verticalSRID;   break;
-                    default: column = query.identifier;     break;
-                }
-                throw new IllegalRecordException(exception, this, results, indexOf(column), identifier);
-            }
-        }
-        final double[] altitudes = asDoubleArray(verticalOrdinates);
-        final MathTransformFactory mtFactory = database.getMathTransformFactory();
-        final AffineTransform2D at = new AffineTransform2D(scaleX, shearY, shearX, scaleY, translateX, translateY);
-        final Dimension size = new Dimension(width, height);
-        final GridGeometryEntry entry;
-        try {
-            entry = new GridGeometryEntry(identifier, size, srsEntry, at, altitudes, mtFactory);
-        } catch (RuntimeException exception) {
-            throw exception;
-        } catch (Exception exception) { // We want to catch only the checked exceptions here.
-            throw new IllegalRecordException(exception, this, results, indexOf(query.identifier), identifier);
-        }
-        if (entry.isEmpty()) {
-            throw new IllegalRecordException(errors().getString(Errors.Keys.EmptyEnvelope2d), this, results,
-                    indexOf(width == 0 ? query.width : height == 0 ? query.height : query.identifier), identifier);
-        }
-        return entry;
-    }
+    GridGeometryEntry createEntry(final ResultSet results, final Integer identifier) throws SQLException, CatalogException {
+        final long width  = results.getLong(1);
+        final long height = results.getLong(2);
+        final AffineTransform2D gridToCRS = new AffineTransform2D(
+                results.getDouble(3),
+                results.getDouble(4),
+                results.getDouble(5),
+                results.getDouble(6),
+                results.getDouble(7),
+                results.getDouble(8));
 
-    /**
-     * Returns the specified SQL array as an array of type {@code double[]}, or {@code null}
-     * if the SQL array is null. The array is {@linkplain Array#free freeded} by this method.
-     */
-    private static double[] asDoubleArray(final Array verticalOrdinates) throws SQLException {
-        final double[] altitudes;
-        if (verticalOrdinates != null) {
-            final Object data = verticalOrdinates.getArray();
-            final int length = getLength(data);
-            altitudes = new double[length];
-            final Number[] asNumbers = (data instanceof Number[]) ? (Number[]) data : null;
-            for (int i=0; i<length; i++) {
-                final double z;
-                if (asNumbers != null) {
-                    z = asNumbers[i].doubleValue();
-                } else {
-                    z = getDouble(data, i);
+        final int srid = results.getInt(9);
+        final Array refs = results.getArray(10);
+        AdditionalAxisTable.Entry[] axes = null;
+        String extraDimName = null;
+        if (refs != null) {
+            final Object data = refs.getArray();
+            final int length = java.lang.reflect.Array.getLength(data);
+            if (length != 0) {
+                if (axisTable == null) {
+                    axisTable = new AdditionalAxisTable(transaction);
                 }
-                altitudes[i] = z;
+                axes = new AdditionalAxisTable.Entry[length];
+                for (int i=0; i<axes.length; i++) {
+                    final String id = (String) java.lang.reflect.Array.get(data, i);
+                    extraDimName = (i == 0) ? id : extraDimName + " + " + id;
+                    axes[i] = axisTable.getEntry(id);
+                }
             }
-// TODO: Uncomment when the JDBC driver will support this method.
-// In order to test if the JDBC driver support this method, just
-// uncomment the line below and try running GridGeometryTableTest.
-//          verticalOrdinates.free();
-        } else {
-            altitudes = null;
+            refs.free();
         }
-        return altitudes;
+        try {
+            final CoordinateReferenceSystem crs;
+            crs = transaction.database.authorityFactory.createCoordinateReferenceSystem(String.valueOf(srid));
+            return new GridGeometryEntry(width, height, gridToCRS, crs, axes, extraDimName, transaction.database);
+        } catch (FactoryException | TransformException exception) {
+            throw new IllegalRecordException(exception, results, 9, identifier);
+        }
     }
 
     /**
@@ -250,179 +136,71 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
     }
 
     /**
-     * Returns the identifier for the specified grid geometry.
+     * Returns the identifier for the specified grid geometry. If a suitable entry already exists,
+     * its identifier is returned. Otherwise a new entry is created and its identifier is returned.
      *
-     * @param  size              The image width and height in pixels.
-     * @param  gridToCRS         The transform from grid coordinates to "real world" coordinates.
-     * @param  horizontalSRID    The "real world" horizontal coordinate reference system.
-     * @param  verticalOrdinates The vertical coordinates, or {@code null}.
-     * @param  verticalSRID      The "real world" vertical coordinate reference system.
-     *                           Ignored if {@code verticalOrdinates} is {@code null}.
-     * @return The identifier of a matching entry, or {@code null} if none was found.
-     * @throws SQLException If the operation failed.
+     * @param  gridToCRS         the transform from grid coordinates to "real world" coordinates.
+     * @param  horizontalSRID    the "real world" horizontal coordinate reference system.
+     * @return the identifier of a matching entry.
+     * @throws SQLException if the operation failed.
      */
-    Integer find(final Dimension size,
-                 final AffineTransform  gridToCRS, final int horizontalSRID,
-                 final double[] verticalOrdinates, final int verticalSRID)
-            throws SQLException
+    int findOrCreate(final long width, final long height, final Matrix gridToCRS,
+                     final int srid, final Array axes) throws SQLException, IllegalUpdateException
     {
-        ArgumentChecks.ensureNonNull("size",      size);
-        ArgumentChecks.ensureNonNull("gridToCRS", gridToCRS);
-        Integer id = null;
-        final GridGeometryQuery query = (GridGeometryQuery) super.query;
-        final LocalCache lc = getLocalCache();
-        synchronized (lc) {
-            final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST);
-            final PreparedStatement statement = ce.statement;
-            statement.setInt   (indexOf(query.byWidth),          size.width );
-            statement.setInt   (indexOf(query.byHeight),         size.height);
-            statement.setDouble(indexOf(query.byScaleX),         gridToCRS.getScaleX());
-            statement.setDouble(indexOf(query.byShearY),         gridToCRS.getShearY());
-            statement.setDouble(indexOf(query.byShearX),         gridToCRS.getShearX());
-            statement.setDouble(indexOf(query.byScaleY),         gridToCRS.getScaleY());
-            statement.setDouble(indexOf(query.byTranslateX),     gridToCRS.getTranslateX());
-            statement.setDouble(indexOf(query.byTranslateY),     gridToCRS.getTranslateY());
-            statement.setInt   (indexOf(query.byHorizontalSRID), horizontalSRID);
-
-            boolean foundStrictlyEquals = false;
-            final int idIndex = indexOf(query.identifier);
-            int vsIndex = indexOf(query.verticalSRID);
-            int voIndex = indexOf(query.verticalOrdinates);
-            try (ResultSet results = statement.executeQuery()) {
-                while (results.next()) {
-                    final int nextID   = results.getInt(idIndex);
-                    final int nextSRID = results.getInt(vsIndex);
-                    /*
-                     * We check vertical SRID in Java code rather than in the SQL statement because it is
-                     * uneasy to write a statement that works for both non-null and null values (the former
-                     * requires "? IS NULL" since the "? = NULL" statement doesn't work with PostgreSQL 8.2.
-                     */
-                    if (results.wasNull() != (verticalOrdinates == null)) {
-                        // Inconsistent fields. We will ignore this entry.
-                        continue; //
-                    }
-                    if (verticalOrdinates != null && nextSRID != verticalSRID) {
-                        // Not the expected SRID. Search for an other entry.
-                        continue;
-                    }
-                    /*
-                     * We compare the arrays in this Java code rather than in the SQL statement (in the
-                     * WHERE clause) in order to make sure that we are insensitive to the array type
-                     * (since we convert to double[] in all cases), and because we need to relax the
-                     * tolerance threshold in some cases.
-                     */
-                    final double[] altitudes = asDoubleArray(results.getArray(voIndex));
-                    final boolean isStrictlyEquals;
-                    if (Arrays.equals(altitudes, verticalOrdinates)) {
-                        isStrictlyEquals = true;
-                    } else if (equalsAsFloat(altitudes, verticalOrdinates)) {
-                        isStrictlyEquals = false;
-                    } else {
-                        continue;
-                    }
-                    /*
-                     * If there is more than one record with different ID, then there is a choice:
-                     *   1) If the new record is more accurate than the previous one, keep the new one.
-                     *   2) Otherwise we keep the previous record. A warning will be logged if and only
-                     *      if the two records are strictly equals.
-                     */
-                    if (id != null && id.intValue() != nextID) {
-                        if (!isStrictlyEquals) {
-                            continue;
-                        }
-                        if (foundStrictlyEquals) {
-                            // Could happen if there is insufficient conditions in the WHERE clause.
-                            log("find", errors().getLogRecord(Level.WARNING, Errors.Keys.DuplicatedRecord_1, id));
-                            continue;
-                        }
-                    }
-                    id = nextID;
-                    foundStrictlyEquals = isStrictlyEquals;
+        boolean insert = false;
+        do {
+            final PreparedStatement statement;
+            if (!insert) {
+                statement = prepareStatement("SELECT \"identifier\" FROM " + SCHEMA + ".\"" + TABLE + '"'
+                        + " WHERE \"width\" = ? AND \"height\" = ? AND \"scaleX\" = ? AND \"shearY\" = ? AND \"shearX\" = ?"
+                        + " AND \"scaleY\" = ? AND \"translateX\" = ? AND \"translateY\" = ? AND \"srid\" = ?"
+                        + " AND \"additionalAxes\" = ?");
+            } else {
+                statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\"("
+                        + "\"width\", \"height\", \"scaleX\", \"shearY\", \"shearX\", \"scaleY\""
+                        + "\"translateX\", \"translateY\", \"srid\", \"additionalAxes\""
+                        + " VALUES (?,?,?,?,?,?,?,?,?,?)", "identifier");
+            }
+            final int trc = gridToCRS.getNumCol() - 1;
+            statement.setLong  (1, width);
+            statement.setLong  (2, height);
+            statement.setDouble(3, gridToCRS.getElement(0, 0));       // scaleX
+            statement.setDouble(4, gridToCRS.getElement(1, 0));       // shearY
+            statement.setDouble(5, gridToCRS.getElement(0, 1));       // shearX
+            statement.setDouble(6, gridToCRS.getElement(1, 1));       // scaleY
+            statement.setDouble(7, gridToCRS.getElement(0, trc));     // translateX
+            statement.setDouble(8, gridToCRS.getElement(1, trc));     // translateY
+            statement.setInt   (9, srid);
+            if (axes != null) {
+                statement.setArray(10, axes);
+            } else {
+                statement.setNull(10, Types.ARRAY);
+            }
+            if (insert) {
+                if (statement.executeUpdate() == 0) {
+                    continue;                                           // Should never happen, but we are paranoiac.
                 }
             }
-            release(lc, ce);
-        }
-        return id;
+            try (ResultSet results = insert ? statement.getGeneratedKeys() : statement.executeQuery()) {
+                while (results.next()) {
+                    final int identifier = results.getInt(1);
+                    if (!results.wasNull()) return identifier;          // Should never be null, but we are paranoiac.
+                }
+            }
+        } while ((insert = !insert) == true);
+        throw new IllegalUpdateException("Can not add the grid geometry.");    // TODO: provide better error message.
     }
 
     /**
-     * Returns the identifier for the specified grid geometry. If a suitable entry already
-     * exists, its identifier is returned. Otherwise a new entry is created and its identifier
-     * is returned.
-     *
-     * @param  size              The image width and height in pixels.
-     * @param  gridToCRS         The transform from grid coordinates to "real world" coordinates.
-     * @param  horizontalSRID    The "real world" horizontal coordinate reference system.
-     * @param  verticalOrdinates The vertical coordinates, or {@code null}.
-     * @param  verticalSRID      The "real world" vertical coordinate reference system.
-     *                           Ignored if {@code verticalOrdinates} is {@code null}.
-     * @return The identifier of a matching entry.
-     * @throws SQLException If the operation failed.
+     * Closes the statements used by this table.
      */
-    int findOrCreate(final Dimension size,
-                     final AffineTransform  gridToCRS, final int horizontalSRID,
-                     final double[] verticalOrdinates, final int verticalSRID)
-            throws SQLException
-    {
-        ArgumentChecks.ensureStrictlyPositive("horizontalSRID", horizontalSRID);
-        Integer id;
-        final LocalCache lc = getLocalCache();
-        synchronized (lc) {
-            boolean success = false;
-            transactionBegin(lc);
-            try {
-                id = find(size, gridToCRS, horizontalSRID, verticalOrdinates, verticalSRID);
-                if (id == null) {
-                    /*
-                     * No match found. Add a new record in the database.
-                     */
-                    final GridGeometryQuery query = (GridGeometryQuery) super.query;
-                    final LocalCache.Stmt ce = getStatement(lc, QueryType.INSERT);
-                    final PreparedStatement statement = ce.statement;
-                    statement.setInt   (indexOf(query.width),          size.width );
-                    statement.setInt   (indexOf(query.height),         size.height);
-                    statement.setDouble(indexOf(query.scaleX),         gridToCRS.getScaleX());
-                    statement.setDouble(indexOf(query.scaleY),         gridToCRS.getScaleY());
-                    statement.setDouble(indexOf(query.translateX),     gridToCRS.getTranslateX());
-                    statement.setDouble(indexOf(query.translateY),     gridToCRS.getTranslateY());
-                    statement.setDouble(indexOf(query.shearX),         gridToCRS.getShearX());
-                    statement.setDouble(indexOf(query.shearY),         gridToCRS.getShearY());
-                    statement.setInt   (indexOf(query.horizontalSRID), horizontalSRID);
-                    final int vsIndex = indexOf(query.verticalSRID);
-                    final int voIndex = indexOf(query.verticalOrdinates);
-                    if (verticalOrdinates == null || verticalOrdinates.length == 0) {
-                        statement.setNull(vsIndex, Types.INTEGER);
-                        statement.setNull(voIndex, Types.ARRAY);
-                    } else {
-                        statement.setInt(vsIndex, verticalSRID);
-                        final Double[] numbers = new Double[verticalOrdinates.length];
-                        for (int i=0; i<numbers.length; i++) {
-                            numbers[i] = Double.valueOf(verticalOrdinates[i]);
-                        }
-                        final Array array = statement.getConnection().createArrayOf("float8", numbers);
-                        statement.setArray(voIndex, array);
-                    }
-                    success = updateSingleton(statement);
-                    /*
-                     * Get the identifier of the entry that we just generated.
-                     */
-                    try (ResultSet keys = statement.getGeneratedKeys()) {
-                        while (keys.next()) {
-                            id = keys.getInt(query.identifier.name);
-                            if (!keys.wasNull()) break;
-                            id = null; // Should never reach this point, but I'm paranoiac.
-                        }
-                    }
-                    release(lc, ce);
-                }
-            } finally {
-                transactionEnd(lc, success);
-            }
+    @Override
+    public void close() throws SQLException {
+        super.close();
+        final AdditionalAxisTable t = axisTable;
+        if (t != null) {
+            axisTable = null;
+            t.close();
         }
-        if (id == null) {
-            // Should never occur, but I'm paranoiac.
-            throw new SQLNonTransientException();
-        }
-        return id;
     }
 }
