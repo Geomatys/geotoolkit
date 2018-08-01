@@ -114,9 +114,6 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15
- *
- * @see <a href="{@docRoot}/../modules/display/geotk-wizards-swing/AddCoverages.html">Adding layers and images to the Coverage-SQL database</a>
- *
  * @since 3.11
  * @module
  */

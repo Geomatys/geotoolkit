@@ -46,11 +46,9 @@ import static org.junit.Assume.*;
 /**
  * Base class for every tests requerying a connection to a coverage database.
  * This test requires a connection to a PostgreSQL database. In addition, some
- * test suite requires the test file to be present. See the following file for
- * more information:
- * <p>
- * <a href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/modules/coverage/geotk-coverage-sql/src/test/resources/Tests/README.html">About large test files</a>
- * <p>
+ * test suite requires the test file to be present. See {@code README.html} for
+ * more information.
+ *
  * This class inherits {@link ImageTestBase} for allowing the display of images
  * by the {@link #view(Coverage)} method if the {@link #viewEnabled} field is set
  * to {@code true}. Most subclasses does not need this feature. However since

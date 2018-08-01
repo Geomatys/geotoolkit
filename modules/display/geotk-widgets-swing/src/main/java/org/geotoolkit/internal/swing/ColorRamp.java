@@ -784,7 +784,6 @@ public class ColorRamp implements Serializable {
      * @return The color ramp as an image, or {@code null} if none.
      * @throws IllegalArgumentException If the units of the given range are incompatible
      *         with the units of measurement found in this layer.
-     * @throws CoverageStoreException If an error occurred while creating the color ramp.
      *
      * @see org.geotoolkit.coverage.sql.LayerEntry#getColorRamp(int, MeasurementRange, Map)
      *

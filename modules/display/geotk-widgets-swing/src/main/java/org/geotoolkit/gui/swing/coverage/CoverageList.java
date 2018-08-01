@@ -82,7 +82,6 @@ import org.jdesktop.swingx.JXBusyLabel;
  * @version 3.17
  *
  * @see CoverageTableModel
- * @see <a href="{@docRoot}/../modules/display/geotk-wizards-swing/AddCoverages.html">Adding layers and images to the Coverage-SQL database</a>
  *
  * @since 3.11 (derived from Seagis)
  * @module

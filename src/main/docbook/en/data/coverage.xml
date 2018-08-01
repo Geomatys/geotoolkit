@@ -50,6 +50,5 @@ and open the template in the editor.
         </para>
     </section>
 
-    <xi:include href="coverage/coveragestore.xml"/>
     <xi:include href="coverage/coveragereader.xml"/>
 </section>
