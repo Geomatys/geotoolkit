@@ -115,7 +115,13 @@ import org.opengis.util.InternationalString;
  * @author Remi Marechal (Geomatys)
  * @version 1.0
  * @since   1.0
+ *
+ * @deprecated This class has been ported to Apache SIS as {@link org.apache.sis.storage.earthobservation.LandsatReader}.
+ *             This Geotk class has not yet been replaced because SIS uses a different mapping to ISO 19115.
+ *             We need to port also the data store works before to delete this {@code LandsatMetadataParser} version.
+ *             Tests also need to be ported.
  */
+@Deprecated
 public class LandsatMetadataParser {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage");
