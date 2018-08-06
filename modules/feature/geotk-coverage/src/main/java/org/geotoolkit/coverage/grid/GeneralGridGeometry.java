@@ -40,6 +40,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.ImmutableEnvelope;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.coverage.grid.PixelTranslation;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
@@ -70,7 +71,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * GridEnvelope grid envelope} by itself.
  * <p>
  * By default, any request for an undefined attribute will thrown an
- * {@link InvalidGridGeometryException}. In order to check if an attribute is defined,
+ * {@link IncompleteGridGeometryException}. In order to check if an attribute is defined,
  * use {@link #isDefined}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
@@ -454,7 +455,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * Returns the "real world" coordinate reference system.
      *
      * @return The coordinate reference system (never {@code null}).
-     * @throws InvalidGridGeometryException if this grid geometry has no CRS (i.e.
+     * @throws IncompleteGridGeometryException if this grid geometry has no CRS (i.e.
      *         <code>{@linkplain #isDefined isDefined}({@linkplain #CRS})</code>
      *         returned {@code false}).
      *
@@ -463,7 +464,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * @since 2.2
      */
     public CoordinateReferenceSystem getCoordinateReferenceSystem()
-            throws InvalidGridGeometryException
+            throws IncompleteGridGeometryException
     {
         if (envelope != null) {
             final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
@@ -473,7 +474,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
             }
         }
         assert !isDefined(CRS);
-        throw new InvalidGridGeometryException(Errors.Keys.UnspecifiedCrs);
+        throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnspecifiedCrs));
     }
 
     /**
@@ -482,20 +483,20 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * "real world" coordinate system.
      *
      * @return The bounding box in "real world" coordinates (never {@code null}).
-     * @throws InvalidGridGeometryException if this grid geometry has no envelope (i.e.
+     * @throws IncompleteGridGeometryException if this grid geometry has no envelope (i.e.
      *         <code>{@linkplain #isDefined(int) isDefined}({@linkplain #ENVELOPE})</code>
      *         returned {@code false}).
      *
      * @see GridGeometry2D#getEnvelope2D()
      */
-    public Envelope getEnvelope() throws InvalidGridGeometryException {
+    public Envelope getEnvelope() throws IncompleteGridGeometryException {
         if (envelope != null && !envelope.isAllNaN()) {
             assert isDefined(ENVELOPE);
             return envelope;
         }
         assert !isDefined(ENVELOPE);
-        throw new InvalidGridGeometryException(gridToCRS == null ?
-                    Errors.Keys.UnspecifiedTransform : Errors.Keys.UnspecifiedImageSize);
+        throw new IncompleteGridGeometryException(Errors.format(gridToCRS == null ?
+                    Errors.Keys.UnspecifiedTransform : Errors.Keys.UnspecifiedImageSize));
     }
 
     /**
@@ -505,7 +506,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * maximum of 512, with 511 as the highest valid index.
      *
      * @return The grid envelope (never {@code null}).
-     * @throws InvalidGridGeometryException if this grid geometry has no extent (i.e.
+     * @throws IncompleteGridGeometryException if this grid geometry has no extent (i.e.
      *         <code>{@linkplain #isDefined(int) isDefined}({@linkplain #EXTENT})</code>
      *         returned {@code false}).
      *
@@ -514,7 +515,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * @since 3.20 (derived from 1.2)
      */
     @Override
-    public GridEnvelope getExtent() throws InvalidGridGeometryException {
+    public GridEnvelope getExtent() throws IncompleteGridGeometryException {
         return getGridRange();
     }
 
@@ -523,13 +524,13 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      */
     @Override
     @Deprecated
-    public GridEnvelope getGridRange() throws InvalidGridGeometryException {
+    public GridEnvelope getGridRange() throws IncompleteGridGeometryException {
         if (extent != null) {
             assert isDefined(EXTENT);
             return clone(extent);
         }
         assert !isDefined(EXTENT);
-        throw new InvalidGridGeometryException(Errors.Keys.UnspecifiedImageSize);
+        throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnspecifiedImageSize));
     }
 
     /**
@@ -543,7 +544,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * upper left corner.
      *
      * @return The transform (never {@code null}).
-     * @throws InvalidGridGeometryException if this grid geometry has no transform (i.e.
+     * @throws IncompleteGridGeometryException if this grid geometry has no transform (i.e.
      *         <code>{@linkplain #isDefined(int) isDefined}({@linkplain #GRID_TO_CRS})</code>
      *         returned {@code false}).
      *
@@ -552,13 +553,13 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * @since 2.3
      */
     @Override
-    public MathTransform getGridToCRS() throws InvalidGridGeometryException {
+    public MathTransform getGridToCRS() throws IncompleteGridGeometryException {
         if (gridToCRS != null) {
             assert isDefined(GRID_TO_CRS);
             return gridToCRS;
         }
         assert !isDefined(GRID_TO_CRS);
-        throw new InvalidGridGeometryException(Errors.Keys.UnspecifiedTransform);
+        throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnspecifiedTransform));
     }
 
     /**
@@ -568,19 +569,19 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      *
      * @param  anchor The pixel part to map.
      * @return The transform (never {@code null}).
-     * @throws InvalidGridGeometryException if this grid geometry has no transform (i.e.
+     * @throws IncompleteGridGeometryException if this grid geometry has no transform (i.e.
      *         <code>{@linkplain #isDefined(int) isDefined}({@linkplain #GRID_TO_CRS})</code>
      *         returned {@code false}).
      *
      * @see GridGeometry2D#getGridToCRS(PixelOrientation)
      * @see org.geotoolkit.referencing.cs.DiscreteReferencingFactory#getAffineTransform(GridGeometry, PixelInCell)
-     * @see org.geotoolkit.metadata.iso.spatial.PixelTranslation
+     * @see org.apache.sis.coverage.grid.PixelTranslation
      *
      * @since 2.3
      */
-    public MathTransform getGridToCRS(final PixelInCell anchor) throws InvalidGridGeometryException {
+    public MathTransform getGridToCRS(final PixelInCell anchor) throws IncompleteGridGeometryException {
         if (gridToCRS == null) {
-            throw new InvalidGridGeometryException(Errors.Keys.UnspecifiedTransform);
+            throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnspecifiedTransform));
         }
         if (PixelInCell.CELL_CENTER.equals(anchor)) {
             return gridToCRS;
@@ -786,7 +787,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * @param  bitmask Any combination of {@link #CRS}, {@link #ENVELOPE}, {@link #EXTENT}
      *         and {@link #GRID_TO_CRS}.
      * @return {@code true} if all specified attributes are defined (i.e. invoking the
-     *         corresponding method will not thrown an {@link InvalidGridGeometryException}).
+     *         corresponding method will not thrown an {@link IncompleteGridGeometryException}).
      * @throws IllegalArgumentException if the specified bitmask is not a combination of known
      *         masks.
      *

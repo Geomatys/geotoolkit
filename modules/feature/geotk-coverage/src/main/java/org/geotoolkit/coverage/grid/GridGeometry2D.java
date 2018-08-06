@@ -42,6 +42,7 @@ import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.ImmutableEnvelope;
 import org.apache.sis.geometry.Shapes2D;
 import org.apache.sis.coverage.grid.PixelTranslation;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.referencing.operation.MathTransforms;
@@ -669,9 +670,9 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * 2D CRS with only those axis.
      *
      * @return The coordinate reference system, or {@code null} if none.
-     * @throws InvalidGridGeometryException if the CRS can't be reduced.
+     * @throws IncompleteGridGeometryException if the CRS can't be reduced.
      */
-    private CoordinateReferenceSystem createCRS2D() throws InvalidGridGeometryException {
+    private CoordinateReferenceSystem createCRS2D() throws IncompleteGridGeometryException {
         if (!super.isDefined(CRS)) {
             return null;
         }
@@ -679,7 +680,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
         try {
             crs = reduce(crs);
         } catch (FactoryException exception) {
-            throw new InvalidGridGeometryException(Errors.format(
+            throw new IncompleteGridGeometryException(Errors.format(
                     Errors.Keys.IllegalArgument_2, "crs", crs.getName()), exception);
         }
         return crs;
@@ -749,7 +750,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * same order than in the complete CRS.
      *
      * @return The coordinate reference system (never {@code null}).
-     * @throws InvalidGridGeometryException if this grid geometry has no CRS (i.e.
+     * @throws IncompleteGridGeometryException if this grid geometry has no CRS (i.e.
      *         <code>{@linkplain #isDefined(int) isDefined}({@linkplain #CRS CRS})</code>
      *         returned {@code false}).
      *
@@ -758,14 +759,14 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * @since 2.2
      */
     public CoordinateReferenceSystem getCoordinateReferenceSystem2D()
-            throws InvalidGridGeometryException
+            throws IncompleteGridGeometryException
     {
         if (crs2D != null) {
             assert isDefined(CRS);
             return crs2D;
         }
         assert !isDefined(CRS);
-        throw new InvalidGridGeometryException(Errors.Keys.UnspecifiedCrs);
+        throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnspecifiedCrs));
     }
 
     /**
@@ -774,13 +775,13 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * dimensions used in the underlying rendered image are returned.
      *
      * @return The bounding box in "real world" coordinates (never {@code null}).
-     * @throws InvalidGridGeometryException if this grid geometry has no envelope (i.e.
+     * @throws IncompleteGridGeometryException if this grid geometry has no envelope (i.e.
      *         <code>{@linkplain #isDefined(int) isDefined}({@linkplain #ENVELOPE ENVELOPE})</code>
      *         returned {@code false}).
      *
      * @see #getEnvelope()
      */
-    public Envelope2D getEnvelope2D() throws InvalidGridGeometryException {
+    public Envelope2D getEnvelope2D() throws IncompleteGridGeometryException {
         final ImmutableEnvelope envelope = this.envelope;
         if (envelope != null && !envelope.isAllNaN()) {
             assert isDefined(ENVELOPE);
@@ -793,8 +794,8 @@ public class GridGeometry2D extends GeneralGridGeometry {
             //       our privated 'envelope' field is not exposed to subclasses.
         }
         assert !isDefined(ENVELOPE);
-        throw new InvalidGridGeometryException(gridToCRS == null ?
-                    Errors.Keys.UnspecifiedTransform : Errors.Keys.UnspecifiedImageSize);
+        throw new IncompleteGridGeometryException(Errors.format(gridToCRS == null ?
+                    Errors.Keys.UnspecifiedTransform : Errors.Keys.UnspecifiedImageSize));
     }
 
     /**
@@ -802,7 +803,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * as a rectangle. Note that the returned object is a {@link Rectangle} subclass.
      *
      * @return The grid envelope (never {@code null}).
-     * @throws InvalidGridGeometryException if this grid geometry has no extent (i.e.
+     * @throws IncompleteGridGeometryException if this grid geometry has no extent (i.e.
      *         <code>{@linkplain #isDefined(int) isDefined}({@linkplain #EXTENT EXTENT})</code>
      *         returned {@code false}).
      *
@@ -810,7 +811,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *
      * @since 3.20 (derived from 2.1)
      */
-    public GridEnvelope2D getExtent2D() throws InvalidGridGeometryException {
+    public GridEnvelope2D getExtent2D() throws IncompleteGridGeometryException {
         final GridEnvelope extent = this.extent;
         if (extent != null) {
             assert isDefined(EXTENT);
@@ -820,7 +821,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
                                       extent.getSpan(gridDimensionY));
         }
         assert !isDefined(EXTENT);
-        throw new InvalidGridGeometryException(Errors.Keys.UnspecifiedImageSize);
+        throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnspecifiedImageSize));
     }
 
     /**
@@ -831,18 +832,18 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *         to real world earth coordinates, operating only on two dimensions.
      *         The returned transform is often an instance of {@link AffineTransform}, which
      *         make it convenient for inter-operability with Java2D.
-     * @throws InvalidGridGeometryException if a two-dimensional transform is not available
+     * @throws IncompleteGridGeometryException if a two-dimensional transform is not available
      *         for this grid geometry.
      *
      * @see #getGridToCRS
      *
      * @since 2.3
      */
-    public MathTransform2D getGridToCRS2D() throws InvalidGridGeometryException {
+    public MathTransform2D getGridToCRS2D() throws IncompleteGridGeometryException {
         if (gridToCRS2D != null) {
             return gridToCRS2D;
         }
-        throw new InvalidGridGeometryException(Errors.Keys.NoTransform2dAvailable);
+        throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.NoTransform2dAvailable));
     }
 
     /**
@@ -854,14 +855,14 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *         {@link PixelOrientation#CENTER CENTER}.
      * @return The transform which allows for the transformations from grid coordinates
      *         to real world earth coordinates.
-     * @throws InvalidGridGeometryException if a two-dimensional transform is not available
+     * @throws IncompleteGridGeometryException if a two-dimensional transform is not available
      *         for this grid geometry.
      *
      * @since 2.3
      */
     public MathTransform2D getGridToCRS2D(final PixelOrientation orientation) {
         if (gridToCRS2D == null) {
-            throw new InvalidGridGeometryException(Errors.Keys.NoTransform2dAvailable);
+            throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.NoTransform2dAvailable));
         }
         if (!PixelOrientation.UPPER_LEFT.equals(orientation)) {
             return computeGridToCRS2D(orientation);
@@ -903,7 +904,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *         {@link PixelOrientation#CENTER CENTER}.
      * @return The transform which allows for the transformations from grid coordinates
      *         to real world earth coordinates.
-     * @throws InvalidGridGeometryException if a transform is not available
+     * @throws IncompleteGridGeometryException if a transform is not available
      *         for this grid geometry.
      *
      * @see #getGridToCRS(PixelInCell)
@@ -913,7 +914,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      */
     public MathTransform getGridToCRS(final PixelOrientation orientation) {
         if (gridToCRS == null) {
-            throw new InvalidGridGeometryException(Errors.Keys.UnspecifiedTransform);
+            throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnspecifiedTransform));
         }
         return PixelTranslation.translate(gridToCRS, PixelOrientation.CENTER, orientation,
                 gridDimensionX, gridDimensionY);
@@ -924,11 +925,11 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *
      * @param  point The point in logical coordinate system.
      * @return A new point in the grid coordinate system.
-     * @throws InvalidGridGeometryException if a two-dimensional inverse
+     * @throws IncompleteGridGeometryException if a two-dimensional inverse
      *         transform is not available for this grid geometry.
      * @throws CannotEvaluateException if the transformation failed.
      */
-    final Point2D inverseTransform(final Point2D point) throws InvalidGridGeometryException {
+    final Point2D inverseTransform(final Point2D point) throws IncompleteGridGeometryException {
         if (gridFromCRS2D != null) {
             try {
                 return gridFromCRS2D.transform(point, null);
@@ -937,7 +938,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
                           AbstractGridCoverage.toString(point, Locale.getDefault(Locale.Category.FORMAT)), exception));
             }
         }
-        throw new InvalidGridGeometryException(Errors.Keys.NoTransform2dAvailable);
+        throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.NoTransform2dAvailable));
     }
 
     /**

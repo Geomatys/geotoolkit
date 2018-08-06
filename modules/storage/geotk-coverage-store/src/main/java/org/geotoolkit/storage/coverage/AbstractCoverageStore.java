@@ -41,7 +41,7 @@ import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.grid.InvalidGridGeometryException;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.data.GenericNameIndex;
@@ -182,12 +182,12 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         geometries.forEach((name, gg) -> {
             try {
                 extent.addElements(gg.getEnvelope());
-            } catch (TransformException | InvalidGridGeometryException ex) {
+            } catch (TransformException | IncompleteGridGeometryException ex) {
                 LOGGER.log(Level.WARNING, "Extent cannot be computed for reference " + name, ex);
             }
             try {
                 crss.add(gg.getCoordinateReferenceSystem());
-            } catch (InvalidGridGeometryException ex) {
+            } catch (IncompleteGridGeometryException ex) {
                 LOGGER.log(Level.WARNING, "CRS cannot be computed for reference " + name, ex);
             }
         });

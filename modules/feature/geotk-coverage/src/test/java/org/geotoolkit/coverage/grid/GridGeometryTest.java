@@ -18,16 +18,11 @@
 package org.geotoolkit.coverage.grid;
 
 import java.awt.geom.AffineTransform;
-
-import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.metadata.spatial.PixelOrientation;
-
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.junit.Test;
 
-import org.junit.*;
 import static org.junit.Assert.*;
 
 
@@ -39,38 +34,20 @@ import static org.junit.Assert.*;
  */
 public final strictfp class GridGeometryTest extends org.geotoolkit.test.TestBase {
     /**
-     * Tests the construction with an identity transform.
+     * Tests the construction with illegal arguments.
      */
     @Test
-    public void testIdentity() {
+    public void testIllegalArgument() {
         final int[] lower = new int[] {0,     0, 2};
         final int[] upper = new int[] {100, 200, 4};
         final MathTransform identity = MathTransforms.identity(3);
-        GridGeometry2D gg;
+        GeneralGridEnvelope extent = new GeneralGridEnvelope(lower, upper, false);
         try {
-            gg = new GridGeometry2D(new GeneralGridEnvelope(lower, upper, false), identity, null);
+            new GridGeometry2D(extent, identity, null);
             fail();
         } catch (IllegalArgumentException e) {
             // This is the expected dimension.
         }
-        upper[2] = 3;
-        gg = new GridGeometry2D(new GeneralGridEnvelope(lower, upper, false), identity, null);
-        assertTrue(identity.isIdentity());
-        assertTrue(gg.getGridToCRS().isIdentity());
-        assertTrue(gg.getGridToCRS2D().isIdentity());
-        assertEquals(3, gg.getGridToCRS().getSourceDimensions());
-        assertEquals(2, gg.getGridToCRS2D().getSourceDimensions());
-        assertTrue(gg.getGridToCRS2D() instanceof AffineTransform);
-        /*
-         * Tests with a pixel orientation.
-         */
-        AffineTransform tr = (AffineTransform) gg.getGridToCRS2D(PixelOrientation.CENTER);
-        assertTrue(tr.isIdentity());
-        tr = (AffineTransform) gg.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
-        assertFalse(tr.isIdentity());
-        assertEquals(AffineTransform.TYPE_TRANSLATION, tr.getType());
-        assertEquals(-0.5, tr.getTranslateX(), 0);
-        assertEquals(-0.5, tr.getTranslateY(), 0);
     }
 
     /**
@@ -94,51 +71,5 @@ public final strictfp class GridGeometryTest extends org.geotoolkit.test.TestBas
         assertEquals(  -4, tr.getScaleY(),     0);
         assertEquals(-178, tr.getTranslateX(), 0);
         assertEquals(  88, tr.getTranslateY(), 0);
-    }
-
-    /**
-     * Tests construction with 0.5 pixel translations.
-     */
-    @Test
-    public void testPixelInCell() {
-        final MathTransform identity = MathTransforms.identity(4);
-        final int[] lower = new int[] {100, 300, 3, 6};
-        final int[] upper = new int[] {200, 400, 4, 7};
-        final GeneralGridEnvelope range = new GeneralGridEnvelope(lower, upper, false);
-        GridGeometry2D gg = new GridGeometry2D(range, PixelInCell.CELL_CORNER, identity, null, null);
-
-        assertSame (identity, gg.getGridToCRS(PixelInCell.CELL_CORNER));
-        assertFalse(identity.equals(gg.getGridToCRS(PixelInCell.CELL_CENTER)));
-        assertFalse(identity.equals(gg.getGridToCRS(PixelOrientation.CENTER)));
-        assertSame (gg.getGridToCRS(PixelInCell.CELL_CENTER), gg.getGridToCRS(PixelOrientation.CENTER));
-
-        AffineTransform tr = (AffineTransform) gg.getGridToCRS2D(PixelOrientation.CENTER);
-        assertFalse(tr.isIdentity());
-        assertEquals(AffineTransform.TYPE_TRANSLATION, tr.getType());
-        assertEquals(0.5, tr.getTranslateX(), 0);
-        assertEquals(0.5, tr.getTranslateY(), 0);
-
-        tr = (AffineTransform) gg.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
-        assertTrue(tr.isIdentity());
-    }
-
-    /**
-     * Tests {@link GeneralGridGeometry#getResolution()}.
-     */
-    @Test
-    public void testResolution() {
-        final GeneralGridEnvelope range = new GeneralGridEnvelope(
-                new int[] {0,     0, 2, 6},
-                new int[] {100, 200, 3, 9}, false);
-        final MathTransform horizontal = MathTransforms.linear(Matrices.create(3, 3, new double[] {
-            0.5, 0,    12,
-            0,   0.25, -2,
-            0,   0,     1}));
-        final MathTransform vertical = MathTransforms.interpolate(null, new double[] {1, 2, 4, 10});
-        final MathTransform temporal = MathTransforms.linear(3600, 60);
-        final MathTransform gridToCRS = MathTransforms.compound(horizontal, vertical, temporal);
-        final GeneralGridGeometry gg = new GeneralGridGeometry(range, gridToCRS, null);
-        final double[] resolution = gg.getResolution();
-        assertArrayEquals("resolution", new double[] {0.5, 0.25, Double.NaN, 3600}, resolution, STRICT);
     }
 }

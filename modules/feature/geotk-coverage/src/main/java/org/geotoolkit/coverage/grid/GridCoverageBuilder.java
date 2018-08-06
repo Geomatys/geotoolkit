@@ -76,6 +76,7 @@ import org.apache.sis.geometry.ImmutableEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.geotoolkit.resources.Errors;
 
@@ -1809,14 +1810,14 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @return The current image bounds. Never {@code null} since no image can be built
      *         without this information.
-     * @throws InvalidGridGeometryException if there is no {@linkplain #getGridGeometry()
+     * @throws IncompleteGridGeometryException if there is no {@linkplain #getGridGeometry()
      *         grid geometry} or no extent associated to that grid geometry.
      *
      * @see GridGeometry2D#getExtent2D()
      *
      * @since 3.20
      */
-    public Rectangle getImageBounds() throws InvalidGridGeometryException {
+    public Rectangle getImageBounds() throws IncompleteGridGeometryException {
         final GridGeometry2D gridGeometry = GridGeometry2D.castOrCopy(getGridGeometry());
         if (gridGeometry != null) {
             return gridGeometry.getExtent2D();
@@ -1825,7 +1826,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         if (image != null) {
             return ImageUtilities.getBounds(image);
         }
-        throw new InvalidGridGeometryException(Errors.Keys.UnspecifiedImageSize);
+        throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnspecifiedImageSize));
     }
 
     /**
