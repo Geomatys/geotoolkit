@@ -112,6 +112,20 @@ public class J2DGridUtilities {
             //reduce grid bounds to validity area
             Envelope gridBounds = Envelopes.transform(context.getCanvasObjectiveBounds2D(), gridCRS);
 
+            if (new GeneralEnvelope(gridBounds).isEmpty()) {
+                //envelope likely contains NaN values
+                gridBounds = CRS.getDomainOfValidity(gridCRS);
+                if (gridBounds == null){
+                    //try to convert target CRS validity to grid crs
+                    gridBounds = CRS.getDomainOfValidity(objectiveCRS);
+                    if (gridBounds == null){
+                        //nothing we can do
+                        return;
+                    }
+                    gridBounds = Envelopes.transform(gridBounds, gridCRS);
+                }
+            }
+
             if(Math.abs(gridBounds.getSpan(0)) < MIN || Math.abs(gridBounds.getSpan(1)) < MIN ){
                 return;
             }

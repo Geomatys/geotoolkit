@@ -21,7 +21,6 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.coverage.CoverageUtilities;
@@ -33,7 +32,6 @@ import org.geotoolkit.display2d.service.PortrayalRenderedImage;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.processing.AbstractProcess;
@@ -45,20 +43,21 @@ import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.process.Monitor;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.CancellationException;
+import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.util.Utilities;
 
 import static org.geotoolkit.display2d.process.pyramid.MapcontextPyramidDescriptor.*;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.opengis.referencing.crs.SingleCRS;
 
 /**
  * Create a pyramid in the given PyramidalModel.
@@ -88,7 +87,8 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
         final double[] scales = inputParameters.getValue(IN_SCALES);
         Integer nbpainter = inputParameters.getValue(IN_NBPAINTER);
         final PyramidalCoverageResource container = inputParameters.getValue(IN_CONTAINER);
-        final Boolean update = inputParameters.getValue(IN_UPDATE);
+        final Boolean tmpUpdate = inputParameters.getValue(IN_UPDATE);
+        final boolean update = Boolean.TRUE.equals(tmpUpdate);
 
         if(nbpainter == null){
             nbpainter = Runtime.getRuntime().availableProcessors();
@@ -108,17 +108,18 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
             throw new ProcessException(e.getMessage(), this, e);
         }
 
-        if (update != null && update) {
+        if (update) {
             context.layers().add(0, MapBuilder.createCoverageLayer(container));
         }
 
         final CoordinateReferenceSystem ctxCRS = context.getCoordinateReferenceSystem();
         final CoordinateReferenceSystem destCRS = envelope.getCoordinateReferenceSystem();
+        final SingleCRS destCRS2D = CRS.getHorizontalComponent(destCRS);
 
-        final int widthAxis = CoverageUtilities.getMinOrdinate(destCRS);
+        final int widthAxis = AxisDirections.indexOfColinear(destCRS.getCoordinateSystem(), destCRS2D.getCoordinateSystem());
         final int heightAxis = widthAxis + 1;
 
-        //calculate the number of tile to generate
+        //calculate the number of tiles to generate
         double destEnvWidth = envelope.getSpan(widthAxis);
         double destEnvHeight = envelope.getSpan(heightAxis);
 
@@ -129,20 +130,34 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
         }
 
         final CanvasDef canvasDef = new CanvasDef(new Dimension(1, 1), null);
-        final ViewDef viewDef = new ViewDef(envelope);
         final SceneDef sceneDef = new SceneDef(context,hints);
 
         //find if we already have a pyramid in the given CRS
         Pyramid pyramid = null;
         try {
-            final Envelope clipEnv = ReferencingUtilities.intersectEnvelopes(ctxEnv, envelope);
-            final MathTransform destCRS_to_ctxCRS = CRS.findOperation(CRSUtilities.getCRS2D(destCRS), CRSUtilities.getCRS2D(ctxCRS), null).getMathTransform();
+            final GeneralEnvelope clipEnv = ReferencingUtilities.intersectEnvelopes(envelope, ctxEnv);
 
             for (Pyramid candidate : container.getPyramidSet().getPyramids()) {
-                if (org.geotoolkit.referencing.CRS.equalsApproximatively(destCRS, candidate.getCoordinateReferenceSystem())) {
+                if (Utilities.equalsApproximatively(destCRS, candidate.getCoordinateReferenceSystem())) {
                     pyramid = candidate;
                     break;
                 }
+            }
+
+            /*
+             * In case of an update, we want to put data into an existing mosaic,
+             * even if input data does not cover it entirely. It allows to paint
+             * local updates (Ex: I've got a mosaic of the entire world, but I
+             * only want to erase a country, because I've got newer data for it).
+             */
+            final ViewDef viewDef;
+            if (update && pyramid != null) {
+                final GeneralEnvelope extendedView = new GeneralEnvelope(envelope);
+                final Envelope pyramid2dEnvelope = Envelopes.transform(pyramid.getEnvelope(), destCRS2D);
+                extendedView.subEnvelope(widthAxis, widthAxis + 2).add(pyramid2dEnvelope);
+                viewDef = new ViewDef(extendedView);
+            } else {
+                viewDef = new ViewDef(envelope);
             }
 
             if (pyramid == null) {
@@ -159,12 +174,12 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                 }
 
                 //compute mosaic gridSize
-                final double gridWidth  = destEnvWidth / (scale*tileSize.width);
-                final double gridHeight = destEnvHeight / (scale*tileSize.height);
+                final double gridWidth  = viewDef.getEnvelope().getSpan(widthAxis) / (scale*tileSize.width);
+                final double gridHeight = viewDef.getEnvelope().getSpan(heightAxis) / (scale*tileSize.height);
                 final Dimension gridSize = new Dimension( (int)(Math.ceil(gridWidth)), (int)(Math.ceil(gridHeight)));
 
                 //find mosaic
-                final GridMosaic mosaic = getOrCreateMosaic(container, pyramidId, scale, envelope, tileSize, gridSize);
+                final GridMosaic mosaic = getOrCreateMosaic(container, pyramidId, scale, viewDef.getEnvelope(), tileSize, gridSize);
 
                 if (isCanceled()) {
                     throw new CancellationException();
@@ -182,12 +197,11 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
 
                 // Transform context envelope into mosaic grid system to
                 // find tiles impacted on container mosaic
-                final double min0 = envelope.getMinimum(widthAxis);
-                final double max1 = envelope.getMaximum(heightAxis);
-                final MathTransform2D gridDest_to_crs = new AffineTransform2D(scale, 0, 0, -scale, min0, max1);
-                final MathTransform ctxCRS_to_gridDest = MathTransforms.concatenate(gridDest_to_crs, destCRS_to_ctxCRS).inverse();
+                final double min0 = mosaic.getEnvelope().getMinimum(widthAxis);
+                final double max1 = mosaic.getEnvelope().getMaximum(heightAxis);
+                final MathTransform2D mosaicCrsToGrid = new AffineTransform2D(1/scale, 0, 0, -1/scale, -min0/scale, max1/scale);
 
-                final GeneralEnvelope ctxExtent = Envelopes.transform(ctxCRS_to_gridDest, clipEnv);
+                final GeneralEnvelope ctxExtent = Envelopes.transform(mosaicCrsToGrid, clipEnv.subEnvelope(widthAxis, widthAxis + 2));
                 final int startTileX = (int)ctxExtent.getMinimum(widthAxis) / tileSize.width;
                 final int startTileY = (int)ctxExtent.getMinimum(heightAxis) / tileSize.height;
                 final int endTileX   = ((int)(ctxExtent.getMaximum(widthAxis) + tileSize.width - 1) / tileSize.width) - startTileX;
@@ -241,9 +255,10 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
             }
         }
 
+
         //search with scale and upperLeft
         for(GridMosaic gm : pyramid.getMosaics()){
-            if(gm.getScale() == scale && Arrays.equals(upperLeft.getCoordinate(), gm.getUpperLeftCorner().getCoordinate())){
+            if(gm.getScale() == scale && Arrays.equals(upperLeft.getCoordinate(), gm.getUpperLeftCorner().getCoordinate())) {
                 return gm;
             }
         }
@@ -266,6 +281,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
             this.process = process;
         }
 
+        @Override
         public boolean isCanceled() {
             return process.isCanceled();
         }

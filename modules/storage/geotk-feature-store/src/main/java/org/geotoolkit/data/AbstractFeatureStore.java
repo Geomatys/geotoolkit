@@ -143,9 +143,25 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
         final List<org.apache.sis.storage.Resource> resources = new ArrayList<>();
         for (GenericName name : getNames()) {
-            resources.add(new DefaultFeatureResource(this, name));
+            resources.add(create(name));
         }
         return resources;
+    }
+
+    /**
+     * Create a feature set to allow browsing of a particular identified type
+     * collection from this store.
+     *
+     * @implNote Default implementation only return a {@link DefaultFeatureResource},
+     * so you can override it to return a more optimized object.
+     *
+     * @param resourceName Name of the data type we want to browse.
+     * @return A new feature set, should never be null.
+     * @throws DataStoreException If we cannot create a connector to the queried
+     * data type.
+     */
+    protected FeatureSet create(final GenericName resourceName) throws DataStoreException {
+        return new DefaultFeatureResource(this, resourceName);
     }
 
     /**
