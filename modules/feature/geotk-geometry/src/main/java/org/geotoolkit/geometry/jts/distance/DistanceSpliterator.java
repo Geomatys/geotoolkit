@@ -8,11 +8,14 @@ import java.util.function.ToDoubleBiFunction;
 import java.util.stream.IntStream;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.util.exceptions.IllegalCrsException;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.LineString;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -94,7 +97,35 @@ public class DistanceSpliterator implements Spliterator.OfDouble {
         private CoordinateSequence polyline;
         private CoordinateReferenceSystem crs;
         private int fromInclusive;
-        private int toExclusive;
+        private int toExclusive = -1;
+
+        public Builder setpolyline(final LineString polyline) throws FactoryException {
+            ArgumentChecks.ensureNonNull("Polyline to use for distance computing", polyline);
+            final CoordinateReferenceSystem crs = JTS.findCoordinateReferenceSystem(polyline);
+            if (crs != null) {
+                this.crs = crs;
+            }
+
+            this.polyline = polyline.getCoordinateSequence();
+
+            return this;
+        }
+
+        public Builder setPolyline(CoordinateSequence polyline) {
+            this.polyline = polyline;
+            return this;
+        }
+
+        public Builder setCrs(CoordinateReferenceSystem crs) {
+            this.crs = crs;
+            return this;
+        }
+
+        public Builder setRange(final int startInclusive, final int endExclusive) {
+            fromInclusive = startInclusive;
+            toExclusive = endExclusive;
+            return this;
+        }
 
         public OfDouble buildOrthodromic() {
             return buildCustom(() -> new OrthodromicEngine(crs));
