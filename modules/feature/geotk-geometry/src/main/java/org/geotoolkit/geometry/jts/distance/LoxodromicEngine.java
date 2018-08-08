@@ -36,7 +36,7 @@ public class LoxodromicEngine implements ToDoubleBiFunction<Coordinate, Coordina
          *
          * @param crs The coordinate reference system of future given points.
          */
-        private LoxodromicEngine(final CoordinateReferenceSystem crs) {
+        LoxodromicEngine(final CoordinateReferenceSystem crs) {
             ArgumentChecks.ensureDimensionMatches("Geometry CRS", 2, crs);
             final GeographicCRS geoCrs;
             if (crs instanceof GeographicCRS) {

@@ -28,7 +28,7 @@ class OrthodromicEngine implements ToDoubleBiFunction<Coordinate, Coordinate> {
      *
      * @param crs The coordinate reference system of future given points.
      */
-    private OrthodromicEngine(final CoordinateReferenceSystem crs) {
+    OrthodromicEngine(final CoordinateReferenceSystem crs) {
         engine = new GeodeticCalculator(crs);
         if (crs instanceof GeographicCRS) {
             if (Utilities.isLatLon((GeographicCRS)crs)) {
