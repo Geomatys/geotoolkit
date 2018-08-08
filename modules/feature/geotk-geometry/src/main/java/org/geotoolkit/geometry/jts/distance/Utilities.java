@@ -37,7 +37,7 @@ class Utilities {
             // Most common cases
             if (AxisDirection.NORTH.equals(axis)) {
                 return true;
-            } else if (AxisDirection.EAST.equals(i)) {
+            } else if (AxisDirection.EAST.equals(axis)) {
                 return false;
                 // less common
             } else if (AxisDirection.SOUTH.equals(axis)) {

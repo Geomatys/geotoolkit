@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.function.ToDoubleBiFunction;
-import java.util.function.ToDoubleFunction;
 import java.util.function.UnaryOperator;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -22,7 +21,7 @@ import org.opengis.util.FactoryException;
  */
 public abstract class EngineTest {
 
-    static final double EPSI = 1;
+    static final double EPSI = 0.5;
 
     abstract ToDoubleBiFunction<Coordinate, Coordinate> getEngine(final CoordinateReferenceSystem target);
 
@@ -45,7 +44,7 @@ public abstract class EngineTest {
 
     private void testProjection(final CoordinateReferenceSystem proj) throws FactoryException {
         final CoordinateOperation op = CRS.findOperation(CommonCRS.defaultGeographic(), proj, null);
-        final  MathTransform geoToProj = op.getMathTransform();
+        final MathTransform geoToProj = op.getMathTransform();
 
         test(proj, c -> Utilities.transform(c, geoToProj, false));
     }
@@ -59,9 +58,6 @@ public abstract class EngineTest {
             throw new UncheckedIOException(ex);
         }
 
-        final ToDoubleFunction<Segment> expected = isOrthodromic()?
-                s -> s.orthodromicDistance : s -> s.loxodromicDistance;
-
         for (final Segment s : segments) {
             final double distance = engine.applyAsDouble(pointTransform.apply(s.start), pointTransform.apply(s.end));
             assertDistance(s, isOrthodromic(), distance);
@@ -73,7 +69,7 @@ public abstract class EngineTest {
         Assert.assertEquals(
                 String.format(msgFormat, source.title),
                 isOrthodromic ? source.orthodromicDistance : source.loxodromicDistance,
-                computedValue,
+                computedValue / 1000, // meter to kilometer
                 EPSI
         );
     }

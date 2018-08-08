@@ -56,6 +56,7 @@ public class LoxodromicEngine implements ToDoubleBiFunction<Coordinate, Coordina
             final boolean isLatLon = isLatLon(geoCrs);
             positionConversion = base -> transform(base, proj2Geo, isLatLon);
         } else {
+            // TODO : for geodetic systems, we should try to unravel ellipsoid from datum.
             throw new IllegalArgumentException("Loxodromic distance computing can only be applied on a geodesic system.");
         }
 

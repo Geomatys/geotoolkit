@@ -32,9 +32,9 @@ class OrthodromicEngine implements ToDoubleBiFunction<Coordinate, Coordinate> {
         engine = new GeodeticCalculator(crs);
         if (crs instanceof GeographicCRS) {
             if (Utilities.isLatLon((GeographicCRS)crs)) {
-                strategy = this::computeGeo;
-            } else {
                 strategy = this::computeGeoLatLon;
+            } else {
+                strategy = this::computeGeo;
             }
         } else strategy = this::compute;
     }
