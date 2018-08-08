@@ -1,0 +1,8 @@
+# Geographic (OGC:CRS:84) segments, and attached orthodromic/loxodromic distances (in meter).
+#
+# Special thanks: Nantes university (http://www.sciences.univ-nantes.fr/sites/genevieve_tulloue/Meca/RefTerre/Orthodromie1.php) and Le Mans university (http://ressources.univ-lemans.fr/AccesLibre/UM/Pedago/physique/02/divers/ortholoxo.html) for their online distance calculators.
+# Columns: title for the segment, longitude of start point, latitude of start point, longitude of end point, latitude of end point, orthodromic distance betweeen start and end point, loxodromic distance between start and end point
+# separator: Tabulation
+TITLE	START_LON	START_LAT	END_LON END_LAT	ORTHODROMIC	LOXODROMIC
+Paris-Tokyo 2	49	139.5	35.5	9729000	11354000
+Paris-New_York	2	49	-74.1	40.7	5826000	6067000
