@@ -6,7 +6,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  * Denote a problem with a coordinate reference system. The problematic crs can
  * be fetched using {@link #get() } method.
- * 
+ *
  * @author Alexis Manin (Geomatys)
  */
 public class IllegalCrsException extends IllegalStateException implements Supplier<CoordinateReferenceSystem> {
@@ -32,6 +32,10 @@ public class IllegalCrsException extends IllegalStateException implements Suppli
         this.crs = crs;
     }
 
+    /**
+     *
+     * @return The coordinate reference system which caused the error.
+     */
     @Override
     public CoordinateReferenceSystem get() {
         return crs;
