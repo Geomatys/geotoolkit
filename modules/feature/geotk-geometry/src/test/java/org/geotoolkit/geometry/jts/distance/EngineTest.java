@@ -21,7 +21,7 @@ import org.opengis.util.FactoryException;
  */
 public abstract class EngineTest {
 
-    static final double EPSI = 0.5;
+    static final double EPSI = 1;
 
     abstract ToDoubleBiFunction<Coordinate, Coordinate> getEngine(final CoordinateReferenceSystem target);
 
