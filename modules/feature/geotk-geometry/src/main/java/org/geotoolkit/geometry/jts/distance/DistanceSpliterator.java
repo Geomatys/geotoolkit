@@ -253,7 +253,7 @@ public class DistanceSpliterator implements Spliterator.OfDouble {
             return new DistanceSpliterator(
                     polyline,
                     crs,
-                    IntStream.range(fromInclusive + 1, toExclusive).spliterator(),
+                    IntStream.range(fromInclusive + 1, toExclusive + 1).spliterator(),
                     segmentLengthComputerProvider
             );
         }
@@ -302,7 +302,7 @@ public class DistanceSpliterator implements Spliterator.OfDouble {
             }
 
             if (toExclusive < 0) {
-                toExclusive = ptNumber;
+                toExclusive = ptNumber - 1;
             } else if (toExclusive < 1 || toExclusive >= ptNumber) {
                 throw new IllegalStateException(String.format(
                         "Invalid end position (to parameter). Given value: %d, authorized interval: [%d..%d]",
