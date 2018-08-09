@@ -19,6 +19,14 @@ import static org.geotoolkit.geometry.jts.distance.Utilities.*;
 /**
  * Loxodromic distance calculus based on <a href="http://serge.mehl.free.fr/anx/loxodromie.html">{@literal M.} Serge Mehl paper</a>.
  *
+ * Points given to this computer must all be on the coordinate system given at
+ * build time. For now, only geographic andd projected systems are managed. An
+ * evolution would be to extend support for geocentric systems.
+ *
+ * All results are in meter.
+ *
+ * @implNote NOT thread-safe.
+ *
  * @author Alexis Manin (Geomatys)
  */
 public class LoxodromicEngine implements ToDoubleBiFunction<Coordinate, Coordinate> {

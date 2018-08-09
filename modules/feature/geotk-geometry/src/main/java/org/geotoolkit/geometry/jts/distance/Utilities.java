@@ -10,7 +10,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- *
+ * Various utilities needed only for current package classes.
+ * 
  * @author Alexis Manin (Geomatys)
  */
 class Utilities {
