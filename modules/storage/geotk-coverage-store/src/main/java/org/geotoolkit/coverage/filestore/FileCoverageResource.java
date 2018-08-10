@@ -34,6 +34,8 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
+import org.geotoolkit.image.io.FileImageReader;
+import org.geotoolkit.image.io.StreamImageReader;
 import org.opengis.util.GenericName;
 
 /**
@@ -102,6 +104,13 @@ public class FileCoverageResource extends RecyclingCoverageResource{
         if (imageReader == null || imageReader.getInput() == null) {
             throw new CoverageStoreException("CoverageReader or ImageReader input is null.");
         }
+
+        if (imageReader instanceof StreamImageReader && !(imageReader instanceof FileImageReader)) {
+            //stream readers can not be reused
+            //example : AsciiGridReader line 634 : minIndex = index+1
+            throw new CoverageStoreException("ImageReader is not reusable.");
+        }
+
         super.checkReader(reader);
     }
 

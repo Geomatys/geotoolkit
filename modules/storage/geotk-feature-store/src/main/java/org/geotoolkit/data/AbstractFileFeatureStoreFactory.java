@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.Map;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterDescriptor;
@@ -50,24 +52,42 @@ public abstract class AbstractFileFeatureStoreFactory extends DataStoreFactory i
      */
     @Override
     public boolean canProcess(final ParameterValueGroup params) {
-        boolean valid = super.canProcess(params);
-
-        if(valid){
+        if (super.canProcess(params)) {
             final Object obj = params.parameter(PATH.getName().toString()).getValue();
             if(obj != null && obj instanceof URI){
-                final String path = ((URI)obj).toString().toLowerCase();
-                for(final String ext : getSuffix()){
-                    if(path.endsWith(ext) && !path.endsWith("*"+ext)){
-                        return true;
-                    }
-                }
-                return false;
-            }else{
-                return false;
+                return extensionMatch((URI)obj);
             }
-        }else{
-            return false;
         }
+
+        return false;
+    }
+
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        final URI uri = connector.getStorageAs(URI.class);
+        if (uri != null && extensionMatch(uri)) {
+            return new ProbeResult(true, null, null);
+        }
+
+        return new ProbeResult(false, null, null);
+    }
+
+    /**
+     * Check if the path of given URI ends with one of the file extensions
+     * specified as manageable by {@link #getSuffix() } method.
+     *
+     * @param location The URI to test.
+     * @return True if the path of given URI ends with a known extension. False
+     * otherwise.
+     */
+    private boolean extensionMatch(final URI location) {
+        final String path = location.getPath();
+        for (final String ext : getSuffix()) {
+            if (path.endsWith(ext) && !path.endsWith("*" + ext)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

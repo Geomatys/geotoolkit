@@ -465,8 +465,21 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
                     result = new BufferedImage(cm, cm.createCompatibleWritableRaster(tileWidth, tileHeight), cm.isAlphaPremultiplied(), null);
                 } else {
                     if (minRx < destOffset.x || minRy < destOffset.y) {
-                        imgParam.setDestination(new BufferedImage(cm, cm.createCompatibleWritableRaster(tileWidth, tileHeight), cm.isAlphaPremultiplied(), null));
+                        imgParam.setDestination(new BufferedImage(cm, cm.createCompatibleWritableRaster(this.tileWidth, this.tileHeight), cm.isAlphaPremultiplied(), null));
                         imgParam.setDestinationOffset(new Point(Math.max(0, destOffset.x - minRx), Math.max(0, destOffset.y - minRy)));
+                    } else if (tileWidth != this.tileWidth || tileHeight != this.tileHeight) {
+                        /* HACK : When using JAI (for example, to get a
+                         * geophysical view of a coverage), it requires entire
+                         * tiles, even on borders. So, we force returned tile to
+                         * have a standard size, even if there not enough pixels
+                         * remaining. Returning a tile bigger than remaining
+                         * seems weird, but it should not cause problems, as
+                         * accessors know the dimension of the complete image,
+                         * and should not go beyond its validity domain. Related
+                         *
+                         * JIRA issue : https://jira.geomatys.com/browse/DIDEV-76
+                         */
+                        imgParam.setDestination(new BufferedImage(cm, cm.createCompatibleWritableRaster(this.tileWidth, this.tileHeight), cm.isAlphaPremultiplied(), null));
                     }
 
                     final Rectangle srcRegion = sourceReadParam.getSourceRegion();

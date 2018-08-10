@@ -19,8 +19,12 @@ package org.geotoolkit.coverage.xmlstore;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
+import org.apache.sis.util.Version;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
@@ -95,5 +99,18 @@ public class XMLCoverageStoreFactory extends DataStoreFactory {
     @Override
     public XMLCoverageStore create(ParameterValueGroup params) throws DataStoreException {
         return open(params);
+    }
+
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        final Version version = new Version(XMLCoverageResource.CURRENT_VERSION);
+        final String mime = "application/"+NAME;
+        final Path root = connector.getStorageAs(Path.class);
+        final String ext = connector.getFileExtension();
+        if (ext != null && ext.equalsIgnoreCase("xml")) {
+            return new ProbeResult(true, mime, version);
+        }
+
+        return new ProbeResult(false, mime, version);
     }
 }

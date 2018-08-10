@@ -52,7 +52,9 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.data.DefaultFeatureResource;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureSet;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.FeatureWriter;
@@ -252,49 +254,50 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
         final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
         typeCheck(gquery.getTypeName());
 
-        if(QueryUtilities.queryAll(gquery)){
-
-            // This is way quick!!!
-            ReadableByteChannel in = null;
-
-            try {
-                final ByteBuffer buffer = ByteBuffer.allocate(100);
-
-                in = shpFiles.getReadChannel(SHP);
-                try {
-                    in.read(buffer);
-                    buffer.flip();
-                    final ShapefileHeader header = ShapefileHeader.read(buffer, true);
-
-                    final org.locationtech.jts.geom.Envelope env =
-                            new org.locationtech.jts.geom.Envelope(
-                            header.minX(), header.maxX(), header.minY(), header.maxY());
-
-                    if (schema != null) {
-                        return new JTSEnvelope2D(env, FeatureExt.getCRS(schema));
-                    }else{
-                        return new JTSEnvelope2D(env, null);
-                    }
-                } finally {
-                    in.close();
-                }
-
-            } catch (IOException ioe) {
-                // What now? This seems arbitrarily appropriate !
-                throw new DataStoreException("Problem getting Bbox", ioe);
-            } finally {
-                try {
-                    if (in != null) {
-                        in.close();
-                    }
-                } catch (IOException ioe) {
-                    // do nothing
-                }
-            }
+        if (QueryUtilities.queryAll(gquery)) {
+            return getHeaderEnvelope();
         }else{
             return super.getEnvelope(gquery);
         }
+    }
 
+    /**
+     * Try to read pre-computed bbox from shapefile header.
+     * @return The envelope written in this dataset header. Never null.
+     * @throws DataStoreException If an error occurs while accessing shapefile resource.
+     */
+    protected Envelope getHeaderEnvelope() throws DataStoreException {
+        try (final ReadableByteChannel shpFile = shpFiles.getReadChannel(SHP)) {
+            final ByteBuffer buffer = ByteBuffer.allocate(100);
+            while (buffer.hasRemaining()) {
+                shpFile.read(buffer);
+            }
+
+            buffer.flip();
+            final ShapefileHeader header = ShapefileHeader.read(buffer, true);
+            final org.locationtech.jts.geom.Envelope env =
+                    new org.locationtech.jts.geom.Envelope(
+                            header.minX(), header.maxX(), header.minY(), header.maxY());
+
+            if (schema != null) {
+                return new JTSEnvelope2D(env, FeatureExt.getCRS(schema));
+            } else {
+                return new JTSEnvelope2D(env, null);
+            }
+        } catch (IOException ioe) {
+            // What now? This seems arbitrarily appropriate !
+            throw new DataStoreException("Cannot read bbox from shapefile headers", ioe);
+        }
+    }
+
+    @Override
+    protected FeatureSet create(GenericName resourceName) throws DataStoreException {
+        return new DefaultFeatureResource(this, resourceName) {
+            @Override
+            public Envelope getEnvelope() throws DataStoreException {
+                return getHeaderEnvelope();
+            }
+        };
     }
 
     /**

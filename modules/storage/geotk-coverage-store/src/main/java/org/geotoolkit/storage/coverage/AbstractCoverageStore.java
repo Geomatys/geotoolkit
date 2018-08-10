@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -41,7 +42,6 @@ import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.data.GenericNameIndex;
@@ -180,15 +180,19 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
         final Set<CoordinateReferenceSystem> crss = new HashSet<>();
         geometries.forEach((name, gg) -> {
-            try {
-                extent.addElements(gg.getEnvelope());
-            } catch (TransformException | IncompleteGridGeometryException ex) {
-                LOGGER.log(Level.WARNING, "Extent cannot be computed for reference " + name, ex);
+            if (gg.isDefined(GeneralGridGeometry.ENVELOPE)) {
+                try {
+                    extent.addElements(gg.getEnvelope());
+                } catch (TransformException | IncompleteGridGeometryException ex) {
+                    LOGGER.log(Level.WARNING, "Extent cannot be computed for reference " + name, ex);
+                }
             }
-            try {
-                crss.add(gg.getCoordinateReferenceSystem());
-            } catch (IncompleteGridGeometryException ex) {
-                LOGGER.log(Level.WARNING, "CRS cannot be computed for reference " + name, ex);
+            if (gg.isDefined(GeneralGridGeometry.CRS)) {
+                try {
+                    crss.add(gg.getCoordinateReferenceSystem());
+                } catch (IncompleteGridGeometryException ex) {
+                    LOGGER.log(Level.WARNING, "CRS cannot be computed for reference " + name, ex);
+                }
             }
         });
 
@@ -200,7 +204,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         ddi.getExtents().add(new DefaultExtent(extent));
         ((Collection)md.getIdentificationInfo()).add(ddi);
 
-        // Ensure we'll have no doublon
+        // Ensure we'll have no duplicate
         crss.removeAll(md.getReferenceSystemInfo());
         md.getReferenceSystemInfo().addAll((Collection)crss);
     }

@@ -28,6 +28,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.Utilities;
 
 import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.finder.CoverageFinder;
@@ -288,7 +289,7 @@ public final class CoverageUtilities {
         Pyramid pyramid = null;
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
         for (Pyramid candidate : container.getPyramidSet().getPyramids()) {
-            if (org.geotoolkit.referencing.CRS.equalsApproximatively(crs, candidate.getCoordinateReferenceSystem())) {
+            if (Utilities.equalsApproximatively(crs, candidate.getCoordinateReferenceSystem())) {
                 pyramid = candidate;
                 break;
             }
