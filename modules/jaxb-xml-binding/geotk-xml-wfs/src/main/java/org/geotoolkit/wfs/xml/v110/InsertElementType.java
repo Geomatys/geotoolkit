@@ -170,7 +170,7 @@ public class InsertElementType implements InsertElement {
      */
     public String getInputFormat() {
         if (inputFormat == null) {
-            return "text/xml; subtype=gml/3.1.1";
+            return "text/xml; subtype=\"gml/3.1.1\"";
         } else {
             return inputFormat;
         }
