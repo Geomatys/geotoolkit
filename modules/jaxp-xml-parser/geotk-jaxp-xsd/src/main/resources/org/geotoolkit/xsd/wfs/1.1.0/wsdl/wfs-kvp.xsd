@@ -69,7 +69,7 @@
          <xsd:element name="typeName" type="wfs-kvp:CommaSeparatedList"
                       minOccurs="0"/>
          <xsd:element name="outputFormat" type="xsd:string"
-                      minOccurs="0" default="text/xml; subtype=gml/3.1.1"/>
+                      minOccurs="0" default="text/xml; subtype=&quot;gml/3.1.1&quot;"/>
       </xsd:sequence>
    </xsd:complexType>
    <!-- GETFEATURE/GETFEATUREWITHLOCK TYPE DEFINITION ===================== -->
@@ -93,7 +93,7 @@
             </xsd:simpleType>
          </xsd:element>
          <xsd:element name="outputFormat" type="xsd:string"
-                      minOccurs="0" default="text/xml; subtype=gml/3.1.1"/>
+                      minOccurs="0" default="text/xml; subtype=&quot;gml/3.1.1&quot;"/>
          <xsd:element name="resulttype" minOccurs="0" default="results">
             <xsd:simpleType>
                <xsd:restriction base="xsd:string">
@@ -149,7 +149,7 @@
             </xsd:simpleType>
          </xsd:element>
          <xsd:element name="outputFormat" type="xsd:string"
-                      minOccurs="0" default="text/xml; subtype=gml/3.1.1"/>
+                      minOccurs="0" default="text/xml; subtype=&quot;gml/3.1.1&quot;"/>
          <xsd:element name="traversexlinkdepth" type="xsd:positiveInteger"
                       minOccurs="0"/>
          <xsd:element name="traversexlinkexpiry" type="xsd:positiveInteger"

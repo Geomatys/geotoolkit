@@ -363,7 +363,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
 
         // verify that distant service is working properly
 
-        URL url = new URL("http://www.ifremer.fr/services/wfs1?SERVICE=WFS&VERSION=1.1.0&REQUEST=DescribeFeatureType&TYPENAME=quadrige&OUTPUTFORMAT=text/xml;%20subtype=gml/3.1.1");
+        URL url = new URL("http://www.ifremer.fr/services/wfs1?SERVICE=WFS&VERSION=1.1.0&REQUEST=DescribeFeatureType&TYPENAME=quadrige&OUTPUTFORMAT=text/xml;%20subtype=%22gml/3.1.1%22");
         final String response = getStringResponse(url.openConnection());
         if (response.contains("<!-- ERROR: Failed opening layer (null) -->")) {
             Logging.getLogger("org.geotoolkit.feature.xml").warning("Skipping embedded test. external service not responding correctly");
