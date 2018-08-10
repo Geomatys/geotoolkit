@@ -114,12 +114,7 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-processing</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverage-geotiff</artifactId>
+            <artifactId>geotk-processing-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 
