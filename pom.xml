@@ -165,6 +165,7 @@
   <properties>
     <geoapi.version>4.0-SNAPSHOT</geoapi.version> <!-- Must be same than the version used by SIS. -->
     <sis.version>dev-1.0-SNAPSHOT</sis.version>
+    <sis.build.helper.version>0.8</sis.build.helper.version>
     <sis.epsg.version>0.8</sis.epsg.version>
     <netcdf.version>4.3.21</netcdf.version>
     <lucene.version>5.4.1</lucene.version>
@@ -979,7 +980,7 @@
           <tagletArtifact>
             <groupId>org.apache.sis.core</groupId>
             <artifactId>sis-build-helper</artifactId>
-            <version>0.7</version>
+            <version>${sis.build.helper.version}</version>
           </tagletArtifact>
 
           <!-- Creates links to existing javadoc-generated documentation of external referenced classes. -->
