@@ -56,6 +56,7 @@ package org.geotoolkit.coverage.io;
  * @todo Needs a background task for disposing the readers or writers after some amount
  *       of inactivity.
  */
+@Deprecated
 public class GridCoverageStorePool {
     /**
      * The grid coverage readers.

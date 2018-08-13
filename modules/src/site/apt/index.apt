@@ -9,9 +9,6 @@ Geotoolkit.org modules
 
    * {{{./utility/index.html}Utilities}}
 
-      * {{{./utility/geotk-setup/index.html}Setup}} -
-        Geotk configuration
-
       * {{{./utility/geotk-utility/index.html}Utility core}} -
         Collections and miscellaneous utilities
 

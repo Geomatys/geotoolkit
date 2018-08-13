@@ -18,12 +18,11 @@ package org.geotoolkit.sos.xml.v100;
 
 import java.util.Objects;
 import org.geotoolkit.gml.xml.v311.ReferenceType;
-import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.Entry;
 
 /**
  *
  * @author legal
- * @module
  */
 public class OfferingProcedureType implements Entry{
 

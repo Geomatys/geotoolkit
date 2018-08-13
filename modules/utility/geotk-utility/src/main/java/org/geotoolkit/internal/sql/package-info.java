@@ -29,9 +29,5 @@
  * {@link org.geotoolkit.internal.sql.DefaultDataSource#LOGGER} constant.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
- *
- * @since 3.00
- * @module
  */
 package org.geotoolkit.internal.sql;

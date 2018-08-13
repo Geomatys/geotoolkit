@@ -82,10 +82,6 @@
             <manifest>
               <mainClass>org.geotoolkit.internal.wizard.frame.Main</mainClass>
             </manifest>
-            <manifestEntries>
-              <SplashScreen-Image>splash.jpg</SplashScreen-Image>
-              <!-- Image imported from geotk-setup -->
-            </manifestEntries>
           </archive>
         </configuration>
       </plugin>
@@ -97,11 +93,6 @@
            Dependencies
        =========================================================== -->
   <dependencies>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-setup</artifactId>
-      <version>${project.version}</version>
-    </dependency>
     <dependency>
       <groupId>org.swinglabs</groupId>
       <artifactId>swingx</artifactId>
@@ -155,7 +146,6 @@
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-coverage-sql</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
 
     <!-- Additional swing componants -->
@@ -213,13 +203,13 @@
         </exclusion>
       </exclusions>
     </dependency>
-    
+
     <dependency>
         <groupId>javax.media</groupId>
         <artifactId>jai_codec</artifactId>
         <scope>test</scope>
     </dependency>
-        
+
   </dependencies>
 
 

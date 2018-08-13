@@ -46,13 +46,9 @@ import static org.apache.sis.referencing.IdentifiedObjects.getIdentifier;
 
 
 /**
- * Tests {@link DirectPostgisFactory}. This test case requires the test configuration
- * described in the {@code geotk-coverage-sql} module, otherwise the test will be skipped.
+ * Tests {@link DirectPostgisFactory}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
- *
- * @since 3.10
  */
 public final strictfp class DirectPostgisFactoryTest extends org.geotoolkit.test.TestBase {
     /**
