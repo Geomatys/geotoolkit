@@ -29,13 +29,9 @@ import org.apache.sis.util.logging.Logging;
  * {@link org.geotoolkit.internal.swing.SwingUtilities} static class, which is defined in the
  * {@code geotk-widgets-swing} module. Here, we have a more minimalist class defined in the
  * {@code geotk-utility} module only because it is used by other modules that do not depend
- * on the Swing widgets module, as for example {@code geotk-setup} and some test suites.
+ * on the Swing widgets module.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
- *
- * @since 2.0
- * @module
  */
 public final class GraphicsUtilities extends Static {
     /**

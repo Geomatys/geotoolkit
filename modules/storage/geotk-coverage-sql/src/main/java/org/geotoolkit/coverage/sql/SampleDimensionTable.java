@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2005-2012, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2007-2012, Geomatys
+ *    (C) 2007-2018, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,6 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.Map;
 import java.util.List;
-import java.util.Locale;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,161 +26,159 @@ import java.sql.Types;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
-import java.text.ParseException;
 import javax.measure.Unit;
+import javax.measure.format.ParserException;
+
 import org.apache.sis.measure.Units;
-import org.apache.sis.measure.UnitFormat;
+import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.resources.Errors;
-
-import org.geotoolkit.internal.sql.table.Table;
-import org.geotoolkit.internal.sql.table.Database;
-import org.geotoolkit.internal.sql.table.QueryType;
-import org.geotoolkit.internal.sql.table.LocalCache;
-import org.geotoolkit.internal.sql.table.CatalogException;
-import org.geotoolkit.internal.sql.table.IllegalRecordException;
-import org.geotoolkit.internal.sql.table.IllegalUpdateException;
 
 
 /**
- * Connection to a table of {@linkplain GridSampleDimension sample dimensions}. This table creates
- * instances of {@link GridSampleDimension} for a given format. Sample dimensions are one of the
- * components needed for creation of {@link GridCoverage2D}.
+ * Connection to a table of grid sample dimensions.
+ * This table creates instances of {@link GridSampleDimension} for a given format.
+ * Sample dimensions are one of the components needed for creation of {@code GridCoverage2D}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.15
- *
- * @since 3.09 (derived from Seagis)
- * @module
  */
 final class SampleDimensionTable extends Table {
     /**
+     * The result of a query on a {@link SampleDimensionTable} object.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     */
+    static final class Entry {
+        /**
+         * The name of the color palette, or {@code null} if none. If more than one color
+         * palettes are found, then the one for the largest range of values is used.
+         *
+         * <p>This is used for initializing the {@link FormatEntry#paletteName} attribute,
+         * which is used by {@link GridCoverageLoader}. We retain only one palette name
+         * because there is typically only one visible band in an index color model, so
+         * {@code GridCoverageLoader} wants only one palette.</p>
+         */
+        final String paletteName;
+
+        /**
+         * The categories for each sample dimensions in a given format.
+         * The keys are band numbers, where the first band is numbered 1.
+         * Values are the categories for that band in arbitrary order.
+         */
+        private final Map<Integer,Category[]> categories;
+
+        /**
+         * The sample dimensions built from the {@link #categories} map. This field is initially
+         * {@code null} and is initialized by {@link SampleDimensionTable#getSampleDimensions(String)}.
+         */
+        GridSampleDimension[] sampleDimensions;
+
+        /**
+         * Reference to an entry in the {@code metadata.SampleDimension} table, or {@code null} if none.
+         * A non-null array may contain {@code null} elements.
+         *
+         * @todo stored but not yet used.
+         */
+        private String[] metadata;
+
+        /**
+         * Creates a new entry.
+         */
+        Entry(final Map<Integer,Category[]> categories, final String paletteName) {
+            this.categories  = categories;
+            this.paletteName = paletteName;
+        }
+    }
+
+    /**
+     * Name of this table in the database.
+     */
+    private static final String TABLE = "SampleDimensions";
+
+    /**
      * The {@linkplain Category categories} table, created only when first needed.
+     *
+     * @see #getCategoryTable()
      */
     private transient CategoryTable categories;
 
     /**
-     * The unit format for parsing and formatting unit symbols.
-     * Created only when first needed.
-     */
-    private transient UnitFormat unitFormat;
-
-    /**
      * Creates a sample dimension table.
-     *
-     * @param database Connection to the database.
      */
-    public SampleDimensionTable(final Database database) {
-        super(new SampleDimensionQuery(database));
-    }
-
-    /**
-     * Creates a new instance having the same configuration than the given table.
-     * This is a copy constructor used for obtaining a new instance to be used
-     * concurrently with the original instance.
-     *
-     * @param table The table to use as a template.
-     */
-    private SampleDimensionTable(final SampleDimensionTable table) {
-        super(table);
-    }
-
-    /**
-     * Returns a copy of this table. This is a copy constructor used for obtaining
-     * a new instance to be used concurrently with the original instance.
-     */
-    @Override
-    protected SampleDimensionTable clone() {
-        return new SampleDimensionTable(this);
+    SampleDimensionTable(final Transaction transaction) {
+        super(transaction);
     }
 
     /**
      * Returns the {@link CategoryTable} instance, creating it if needed.
      */
-    private CategoryTable getCategoryTable() throws CatalogException {
+    private CategoryTable getCategoryTable() {
         CategoryTable table = categories;
         if (table == null) {
-            categories = table = getDatabase().getTable(CategoryTable.class);
+            categories = table = new CategoryTable(transaction);
         }
         return table;
     }
 
     /**
-     * Returns the unit format for parsing and formatting unit symbols.
-     * Uses the France locale because it is the authoritative locale of BIPM.
-     * For most languages, it doesn't make any change in the set of symbols.
-     */
-    private UnitFormat getUnitFormat() {
-        if (unitFormat == null) {
-            unitFormat = new UnitFormat(Locale.FRANCE);
-        }
-        return unitFormat;
-    }
-
-    /**
      * Returns the sample dimensions for the given format. If no sample dimensions are specified,
      * return {@code null} (not an empty list). We are not allowed to return an empty list because
-     * our Image I/O framework interprets that as "no bands", as opposed to "unknown bands".
+     * our raster I/O framework interprets that as "no bands", as opposed to "unknown bands".
      *
-     * @param  format The format name.
-     * @return An entry containing the sample dimensions for the given format, or {@code null} if none.
+     * @param  format  the format name.
+     * @return an entry containing the sample dimensions for the given format, or {@code null} if none.
      * @throws SQLException if an error occurred while reading the database.
      */
-    public CategoryEntry getSampleDimensions(final String format) throws SQLException {
-        final SampleDimensionQuery query = (SampleDimensionQuery) super.query;
+    public Entry query(final String format) throws SQLException, CatalogException {
         String[]  names = new String [8];
         Unit<?>[] units = new Unit<?>[8];
+        boolean[] packs = new boolean[8];
+        String[]  mdDim = new String [8];       // TODO: replace by a data structure.
+        boolean hasMetadata = false;
         int numSampleDimensions = 0;
-        final LocalCache lc = getLocalCache();
-        synchronized (lc) {
-            final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST);
-            final PreparedStatement statement = ce.statement;
-            statement.setString(indexOf(query.byFormat), format);
-            final int bandIndex = indexOf(query.band);
-            final int nameIndex = indexOf(query.name);
-            final int unitIndex = indexOf(query.units);
-            try (ResultSet results = statement.executeQuery()) {
-                while (results.next()) {
-                    final String name = results.getString(nameIndex);
-                    final int    band = results.getInt   (bandIndex); // First band is 1.
-                    String unitSymbol = results.getString(unitIndex);
-                    Unit<?> unit = null;
-                    if (unitSymbol != null) {
-                        unitSymbol = unitSymbol.trim();
-                        if (unitSymbol.isEmpty()) {
-                            unit = Units.UNITY;
-                        } else {
-                            try {
-                                unit = (Unit<?>) getUnitFormat().parseObject(unitSymbol);
-                            } catch (ParseException e) {
-                                // The constructor of this exception will close the ResultSet.
-                                final IllegalRecordException ex = new IllegalRecordException(errors().getString(
-                                        Errors.Keys.UnparsableString_2, "unit(" + unitSymbol + ')',
-                                        unitSymbol.substring(Math.max(0, e.getErrorOffset()))),
-                                        this, results, unitIndex, name);
-                                ex.initCause(e);
-                                throw ex;
-                            }
+        final PreparedStatement statement = prepareStatement("SELECT "
+                + "\"band\", \"identifier\", \"units\", \"isPacked\", \"metadata\""
+                + " FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"format\" = ? ORDER BY \"band\"");
+        statement.setString(1, format);
+        try (ResultSet results = statement.executeQuery()) {
+            while (results.next()) {
+                final int    band = results.getInt    (1);          // First band is 1.
+                final String name = results.getString (2);
+                String unitSymbol = results.getString (3);
+                boolean  isPacked = results.getBoolean(4);
+                String   metadata = results.getString (5);
+                hasMetadata      |= !results.wasNull();
+                Unit<?> unit = null;
+                if (unitSymbol != null) {
+                    unitSymbol = unitSymbol.trim();
+                    if (unitSymbol.isEmpty()) {
+                        unit = Units.UNITY;
+                    } else {
+                        try {
+                            unit = transaction.database.unitFormat.parse(unitSymbol);
+                        } catch (ParserException e) {
+                            throw new IllegalRecordException(e, results, 3, name);
                         }
                     }
-                    if (numSampleDimensions >= names.length) {
-                        names = Arrays.copyOf(names, names.length*2);
-                        units = Arrays.copyOf(units, units.length*2);
-                    }
-                    names[numSampleDimensions] = name;
-                    units[numSampleDimensions] = unit;
-                    if (band != ++numSampleDimensions) {
-                        // The constructor of this exception will close the ResultSet.
-                        throw new IllegalRecordException(errors().getString(
-                                Errors.Keys.NonConsecutiveBands_2, numSampleDimensions, band),
-                                this, results, bandIndex, format);
-                    }
+                }
+                if (numSampleDimensions >= names.length) {
+                    names = Arrays.copyOf(names, names.length*2);
+                    units = Arrays.copyOf(units, units.length*2);
+                    packs = Arrays.copyOf(packs, packs.length*2);
+                    mdDim = Arrays.copyOf(mdDim, mdDim.length*2);
+                }
+                names[numSampleDimensions] = name;
+                units[numSampleDimensions] = unit;
+                packs[numSampleDimensions] = isPacked;
+                mdDim[numSampleDimensions] = metadata;
+                if (band != ++numSampleDimensions) {
+                    throw new IllegalRecordException(errors().getString(
+                            Errors.Keys.NonConsecutiveBands_2, numSampleDimensions, band),
+                            results, 2, format);
                 }
             }
-            release(lc, ce);
         }
         /*
          * At this point, we have successfully read every SampleDimension rows.
@@ -193,74 +190,75 @@ final class SampleDimensionTable extends Table {
         }
         final GridSampleDimension[] sampleDimensions = new GridSampleDimension[numSampleDimensions];
         final CategoryTable categories = getCategoryTable();
-        final CategoryEntry entry = categories.getCategories(format);
+        final Entry entry = categories.query(format);
         final Map<Integer,Category[]> cat = entry.categories;
-        for (int i=0; i<numSampleDimensions; i++) {
-            try {
-                sampleDimensions[i] = new GridSampleDimension(names[i], cat.remove(i+1), units[i]);
-            } catch (IllegalArgumentException exception) {
-                throw new IllegalRecordException(exception, categories, null, 0, format);
+        try {
+            for (int i=0; i<numSampleDimensions; i++) {
+                sampleDimensions[i] = new GridSampleDimension(names[i], cat.remove(i+1), units[i]).geophysics(!packs[i]);
             }
+        } catch (IllegalArgumentException exception) {
+            throw new IllegalRecordException(exception, null, 0, format);
         }
         entry.sampleDimensions = sampleDimensions;
+        if (hasMetadata) {
+            entry.metadata = ArraysExt.resize(mdDim, numSampleDimensions);
+        }
         return entry;
     }
 
     /**
      * Adds the given sample dimensions to the database.
      *
-     * @param  format The newly created format for which to write the sample dimensions.
-     * @param  bands The sample dimensions to add.
+     * @param  format  the newly created format for which to write the sample dimensions.
+     * @param  bands   the sample dimensions to add.
      * @throws SQLException if an error occurred while writing to the database.
-     *
-     * @since 3.13
      */
-    public void addEntries(final String format, final List<GridSampleDimension> bands) throws SQLException {
-        final SampleDimensionQuery query = (SampleDimensionQuery) super.query;
-        final LocalCache lc = getLocalCache();
-        synchronized (lc) {
-            boolean success = false;
-            transactionBegin(lc);
-            try {
-                final LocalCache.Stmt ce = getStatement(lc, QueryType.INSERT);
-                final PreparedStatement statement = ce.statement;
-                statement.setString(indexOf(query.format), format);
-                final int bandIndex = indexOf(query.band);
-                final int nameIndex = indexOf(query.name);
-                final int unitIndex = indexOf(query.units);
-                final List<List<Category>> categories = new ArrayList<>(bands.size());
-                boolean isEmpty = true;
-                int bandNumber = 0;
-                for (GridSampleDimension band : bands) {
-                    band = band.geophysics(false);
-                    statement.setInt(bandIndex, ++bandNumber);
-                    statement.setString(nameIndex, String.valueOf(band.getDescription()));
-                    final Unit<?> unit = band.getUnits();
-                    if (unit != null) {
-                        statement.setString(unitIndex, getUnitFormat().format(unit));
-                    } else {
-                        statement.setNull(unitIndex, Types.VARCHAR);
-                    }
-                    final int count = statement.executeUpdate();
-                    if (count != 1) {
-                        throw new IllegalUpdateException(getLocale(), count);
-                    }
-                    List<Category> bandCategories = band.getCategories();
-                    if (bandCategories == null) {
-                        bandCategories = Collections.emptyList();
-                    } else if (isEmpty) {
-                        isEmpty = bandCategories.isEmpty();
-                    }
-                    categories.add(bandCategories);
-                }
-                release(lc, ce);
-                if (!isEmpty) {
-                    getCategoryTable().addEntries(format, categories);
-                }
-                success = true;
-            } finally {
-                transactionEnd(lc, success);
+    public void insert(final String format, final List<GridSampleDimension> bands) throws SQLException, IllegalUpdateException {
+        final PreparedStatement statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\" ("
+                + "\"format\", \"band\", \"identifier\", \"units\", \"isPacked\")"
+                + " VALUES (?,?,?,?,?,?,?,?,?)");
+        statement.setString(1, format);
+        final List<List<Category>> categories = new ArrayList<>(bands.size());
+        boolean areAllEmpty = true;
+        int bandNumber = 0;
+        for (GridSampleDimension band : bands) {
+            final boolean isPacked = (band == (band = band.geophysics(false)));
+            statement.setInt(2, ++bandNumber);
+            statement.setString(3, String.valueOf(band.getDescription()));
+            final Unit<?> unit = band.getUnits();
+            if (unit != null) {
+                statement.setString(4, transaction.database.unitFormat.format(unit));
+            } else {
+                statement.setNull(4, Types.VARCHAR);
             }
+            statement.setBoolean(5, isPacked);
+            final int count = statement.executeUpdate();
+            if (count != 1) {
+                throw new IllegalUpdateException(transaction.database.locale, count);
+            }
+            List<Category> bandCategories = band.getCategories();
+            if (bandCategories == null) {
+                bandCategories = Collections.emptyList();
+            } else if (areAllEmpty) {
+                areAllEmpty = bandCategories.isEmpty();
+            }
+            categories.add(bandCategories);
+        }
+        if (!areAllEmpty) {
+            getCategoryTable().insert(format, categories);
+        }
+    }
+
+    /**
+     * Closes the prepared statements created by this table.
+     */
+    @Override
+    public void close() throws SQLException {
+        super.close();
+        final CategoryTable t = categories;
+        if (t != null) {
+            categories = null;
+            t.close();
         }
     }
 }

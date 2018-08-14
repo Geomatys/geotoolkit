@@ -18,21 +18,14 @@
 package org.geotoolkit.temporal.reference;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
-import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
-import org.geotoolkit.temporal.object.DefaultClockTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.temporal.Calendar;
 import org.opengis.temporal.Clock;
 import org.opengis.temporal.ClockTime;
@@ -54,10 +47,10 @@ public class DefaultClockTest extends org.geotoolkit.test.TestBase {
     @Before
     public void setUp() {
 
-        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
+        NamedIdentifier name1 = new NamedIdentifier(null, "Gregorian calendar");
         TemporalReferenceSystem frame1 = FACTORY.createTemporalReferenceSystem(name1, new DefaultExtent());
 
-        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Julian calendar");
+        NamedIdentifier name2 = new NamedIdentifier(null, "Julian calendar");
         TemporalReferenceSystem frame2 = FACTORY.createTemporalReferenceSystem(name2, new DefaultExtent());
 
         Number[] clockTime1 = {0, 0, 0};

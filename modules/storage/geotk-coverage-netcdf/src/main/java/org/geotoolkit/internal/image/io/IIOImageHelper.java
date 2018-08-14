@@ -42,7 +42,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.resources.Errors;
 

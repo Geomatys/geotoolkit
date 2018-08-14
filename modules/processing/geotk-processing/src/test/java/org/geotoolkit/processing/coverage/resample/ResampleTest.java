@@ -28,7 +28,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;

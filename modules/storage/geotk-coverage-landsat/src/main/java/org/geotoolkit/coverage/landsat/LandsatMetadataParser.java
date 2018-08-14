@@ -98,7 +98,6 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
 
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.operation.builder.LocalizationGrid;
 import org.geotoolkit.temporal.object.DefaultInstant;
@@ -116,7 +115,13 @@ import org.opengis.util.InternationalString;
  * @author Remi Marechal (Geomatys)
  * @version 1.0
  * @since   1.0
+ *
+ * @deprecated This class has been ported to Apache SIS as {@link org.apache.sis.storage.earthobservation.LandsatReader}.
+ *             This Geotk class has not yet been replaced because SIS uses a different mapping to ISO 19115.
+ *             We need to port also the data store works before to delete this {@code LandsatMetadataParser} version.
+ *             Tests also need to be ported.
  */
+@Deprecated
 public class LandsatMetadataParser {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage");
@@ -274,15 +279,15 @@ public class LandsatMetadataParser {
             ex.setTemporalElements(Arrays.asList(tex));
 
             //-- temporal extent
-            final NamedIdentifier extentName = new NamedIdentifier(Citations.CRS, "Landsat extent");
+            final NamedIdentifier extentName = new NamedIdentifier(null, "Landsat extent");
             final Map<String, Object> propertiesExtent = new HashMap<>();
             propertiesExtent.put(IdentifiedObject.NAME_KEY, extentName);
 
-            final NamedIdentifier extentBeginName = new NamedIdentifier(Citations.CRS, "Landsat extent");
+            final NamedIdentifier extentBeginName = new NamedIdentifier(null, "Landsat extent");
             final Map<String, Object> propertiesBegin = new HashMap<>();
             propertiesBegin.put(IdentifiedObject.NAME_KEY, extentBeginName);
 
-            final NamedIdentifier extentEnd = new NamedIdentifier(Citations.CRS, "Landsat extent");
+            final NamedIdentifier extentEnd = new NamedIdentifier(null, "Landsat extent");
             final Map<String, Object> propertiesEnd = new HashMap<>();
             propertiesEnd.put(IdentifiedObject.NAME_KEY, extentEnd);
             tex.setExtent(new DefaultPeriod(propertiesExtent, new DefaultInstant(propertiesBegin, acquisitionDate), new DefaultInstant(propertiesEnd, acquisitionDate)));

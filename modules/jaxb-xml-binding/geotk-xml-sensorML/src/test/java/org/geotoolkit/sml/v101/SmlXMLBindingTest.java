@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.sml.v101;
 
-import org.geotoolkit.swe.xml.v101.AbstractDataComponentType;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
@@ -44,7 +43,7 @@ import org.geotoolkit.swe.xml.v101.UomPropertyType;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import org.apache.sis.test.XMLComparator;
+import org.apache.sis.test.xml.DocumentComparator;
 
 //Junit dependencies
 import org.geotoolkit.gml.xml.v311.CodeType;
@@ -622,7 +621,7 @@ public class SmlXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         String expResult = out.toString();
 
-        final XMLComparator comparator = new XMLComparator(expResult, result){
+        final DocumentComparator comparator = new DocumentComparator(expResult, result){
             @Override
             protected strictfp void compareAttributeNode(Attr expected, Node actual) {
                 super.compareAttributeNode(expected, actual);
@@ -638,7 +637,7 @@ public class SmlXMLBindingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void DataSourceMarshalingTest() throws Exception {
         final SystemType system = new SystemType();
-        final List<DataComponentPropertyType> fields = new ArrayList<DataComponentPropertyType>();
+        final List<DataComponentPropertyType> fields = new ArrayList<>();
         fields.add(DataComponentPropertyType.LATITUDE_FIELD);
         fields.add(DataComponentPropertyType.LONGITUDE_FIELD);
         fields.add(DataComponentPropertyType.TIME_FIELD);

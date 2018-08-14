@@ -465,17 +465,17 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
      * @param  role The set of attribute where to write the responsible party.
      * @throws IOException If an I/O operation was required and failed.
      */
-    private void write(final ResponsibleParty author, final Responsible role) throws IOException {
+    private void write(final Responsibility author, final Responsible role) throws IOException {
         if (author == null) {
             return;
         }
         if (!isDefined(role.NAME)) {
-            setAttribute(author.getIndividualName());
+//          setAttribute(author.getIndividualName());
         }
         if (!isDefined(role.INSTITUTION)) {
-            setAttribute(author.getOrganisationName());
+//          setAttribute(author.getOrganisationName());
         }
-        final Contact contact = author.getContactInfo();
+        final Contact contact = null;//author.getContactInfo();
         if (contact != null) {
             if (!isDefined(role.URL)) {
                 final OnlineResource resource = contact.getOnlineResource();
@@ -609,18 +609,18 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
             final Collection<? extends Responsibility> authors = nonNull(citation.getCitedResponsibleParties());
             if (!authors.isEmpty()) {
                 boolean foundCreator = false;
-                final List<ResponsibleParty> deferred = new ArrayList<>(authors.size());
+                final List<Responsibility> deferred = new ArrayList<>(authors.size());
                 for (final Responsibility author : authors) {
                     if (author != null) {
                         if (Role.ORIGINATOR.equals(author.getRole())) {
-                            write((ResponsibleParty) author, CREATOR);
+                            write(author, CREATOR);
                             foundCreator = true;
                         } else {
-                            deferred.add((ResponsibleParty) author);
+                            deferred.add(author);
                         }
                     }
                 }
-                for (final ResponsibleParty author : deferred) {
+                for (final Responsibility author : deferred) {
                     write(author, Role.PUBLISHER.equals(author.getRole()) ?
                             PUBLISHER : foundCreator ? CONTRIBUTOR : CREATOR);
                 }

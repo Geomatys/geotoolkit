@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
-import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.Entry;
 import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.observation.Measure;
@@ -32,11 +32,9 @@ import org.opengis.temporal.TemporalObject;
 import org.opengis.util.GenericName;
 
 /**
- *Implémentation d'une entrée représentant une {@linkplain SurveyProcedure SurveyProcedure}.
+ * Implémentation d'une entrée représentant une {@linkplain SurveyProcedure SurveyProcedure}.
  *
- * @version $Id:
  * @author Guilhem Legal
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SurveyProcedure")

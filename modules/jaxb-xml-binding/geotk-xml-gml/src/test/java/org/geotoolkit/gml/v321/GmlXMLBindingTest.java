@@ -25,7 +25,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.apache.sis.xml.MarshallerPool;
-import org.apache.sis.test.XMLComparator;
+import org.apache.sis.test.xml.DocumentComparator;
 import org.w3c.dom.Node;
 
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
@@ -96,7 +96,7 @@ public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
                            "    <gml:lowerCorner>-30.711 134.196</gml:lowerCorner>" + '\n' +
                            "    <gml:upperCorner>-30.702 134.205</gml:upperCorner>" + '\n' +
                            "</gml:Envelope>" + '\n' ;
-        XMLComparator comparator = new XMLComparator(expResult, result) {
+        DocumentComparator comparator = new DocumentComparator(expResult, result) {
             @Override
             protected strictfp void compareNames(Node expected, Node actual) {
                 final String[] exArray = expected.getNodeName().split(":");
@@ -136,7 +136,7 @@ public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
         expResult = "<gml:LineStringSegment xmlns:gml=\"http://www.opengis.net/gml/3.2\">" + '\n' +
                     "    <gml:posList>1.0 1.1 1.2</gml:posList>" + '\n' +
                     "</gml:LineStringSegment>" + '\n' ;
-        comparator = new XMLComparator(expResult, result) {
+        comparator = new DocumentComparator(expResult, result) {
             @Override
             protected strictfp void compareNames(Node expected, Node actual) {
                 final String[] exArray = expected.getNodeName().split(":");
@@ -165,7 +165,7 @@ public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
                     "    <gml:pos>1.1 1.2</gml:pos>" + '\n' +
                     "    <gml:pos>2.3 48.1</gml:pos>" + '\n' +
                     "</gml:LineStringSegment>" + '\n' ;
-        comparator = new XMLComparator(expResult, result) {
+        comparator = new DocumentComparator(expResult, result) {
             @Override
             protected strictfp void compareNames(Node expected, Node actual) {
                 final String[] exArray = expected.getNodeName().split(":");

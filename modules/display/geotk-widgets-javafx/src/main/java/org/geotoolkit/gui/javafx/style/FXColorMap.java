@@ -75,6 +75,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.processing.coverage.statistics.StatisticOp;
 import org.apache.sis.geometry.Envelopes;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.style.StyleConstants;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
@@ -695,9 +696,16 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                     readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
                     readParam.setResolution(res);
 
-                    final GridCoverage coverage = reader.read(covRef.getImageIndex(), readParam);
-                    final int nbBands = coverage.getNumSampleDimensions() - 1;
-
+                    final List<GridSampleDimension> sd = reader.getSampleDimensions(covRef.getImageIndex());
+                    int nbBands = 10;
+                    if (sd != null && !sd.isEmpty()) {
+                        nbBands = sd.size();
+                    } else {
+                        final GridCoverage coverage = reader.read(covRef.getImageIndex(), readParam);
+                        if(coverage != null) {
+                            nbBands = coverage.getNumSampleDimensions() - 1;
+                        }
+                    }
                     uiBand.getSpinner().setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, nbBands, 0, 1));
                 }
                 covRef.recycle(reader);

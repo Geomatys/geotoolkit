@@ -6,22 +6,5 @@
   </HEAD>
   <BODY>
     Overview of <A HREF="http://www.geotoolkit.org">Geotoolkit.org</A> (abridged <cite>Geotk</cite>).
-
-    <H2>Requirements</H2>
-    <P ALIGN="justify">Geotk requires Java 7 Standard Edition. There is no additional
-    requirement for metadata and referencing modules. But the coverage module requires the
-    <A HREF="http://jai.dev.java.net/">Java Advanced Imaging</A> extension (see
-    <A HREF="http://www.geotoolkit.org/run.html">Running Geotk</A> for download information).
-    While not mandatory,
-    users are encouraged to declare <A HREF="http://developers.sun.com/javadb/">JavaDB</A> in
-    their classpath in order to take advantage of the embedded EPSG database. JavaDB is bundled
-    in the Oracle distribution of JDK.</P>
-
-    <H2>System initialization</H2>
-    <P ALIGN="justify">Geotk does not require explicit initialization and shutdown for most cases.
-    However a few services behave better when managed in an <cite>initialization - shutdown</cite>
-    cycle. The {@link org.geotoolkit.lang.Setup} class provides a central place for initialization
-    and shutdown, but developers can also gain more control by invoking themselves the various methods
-    identified by the {@link org.geotoolkit.lang.Configuration} annotation.</P>
   </BODY>
 </HTML>

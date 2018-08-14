@@ -44,7 +44,7 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.io.wkt.Formatter;
 
 import org.geotoolkit.io.wkt.Formattable;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.resources.Errors;
@@ -178,7 +178,7 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
         if (attribute != null) {
             standardName = attribute.getStringValue();
             if (standardName != null) {
-                names.add(new NamedIdentifier(Citations.NETCDF_CF, standardName));
+                names.add(new NamedIdentifier(Citations.NETCDF, standardName));
             }
         }
         attribute = axis.findAttributeIgnoreCase(CDM.LONG_NAME);

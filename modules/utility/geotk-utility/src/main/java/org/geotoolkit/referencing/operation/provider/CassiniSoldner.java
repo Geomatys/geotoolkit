@@ -27,9 +27,8 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.MathTransformFactory;
 
-import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 
 
 /**
@@ -295,8 +294,6 @@ public class CassiniSoldner extends MapProjection {
             new NamedIdentifier(Citations.GEOTIFF, "CT_CassiniSoldner"),
             new IdentifierCode (Citations.GEOTIFF,  18),
             new NamedIdentifier(Citations.PROJ4,   "cass"),
-            new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
-                                Vocabulary.Keys.CassiniSoldnerProjection))
         }, null, new ParameterDescriptor<?>[] {
             sameParameterAs(new Equirectangular().getParameters(), "semi_major"),   // TODO
             sameParameterAs(new Equirectangular().getParameters(), "semi_minor"),

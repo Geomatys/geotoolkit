@@ -42,11 +42,6 @@ public class WritableMemoryRenderedImage implements WritableRenderedImage {
     private static final int DEFAULT_TILE_SIZE = 256;
 
     /**
-     * Minimum required tile size.
-     */
-    private static final int MIN_TILE_SIZE = 64;
-
-    /**
      * Upper left corner of all image tiles.
      */
     private Point[] tileIndices = null;

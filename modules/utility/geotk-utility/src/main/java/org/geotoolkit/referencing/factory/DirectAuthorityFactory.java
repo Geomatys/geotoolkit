@@ -21,6 +21,7 @@
 package org.geotoolkit.referencing.factory;
 
 import java.util.logging.Logger;
+import org.apache.sis.internal.simple.SimpleCitation;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -107,7 +108,7 @@ public abstract class DirectAuthorityFactory extends GeodeticAuthorityFactory {
      */
     @Override
     public Citation getVendor() {
-        return getClass().getName().startsWith("org.geotoolkit.") ? org.geotoolkit.metadata.Citations.GEOTOOLKIT : org.geotoolkit.metadata.Citations.UNKNOWN;
+        return new SimpleCitation(getClass().getName().startsWith("org.geotoolkit.") ? "Geotk" : "Unknown");
     }
 
     /**

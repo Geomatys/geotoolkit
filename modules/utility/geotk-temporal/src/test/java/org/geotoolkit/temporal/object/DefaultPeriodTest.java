@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.metadata.Citations;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +43,7 @@ public class DefaultPeriodTest extends org.geotoolkit.test.TestBase {
 
     @Before
     public void setUp() {
-        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "Period");
+        NamedIdentifier name = new NamedIdentifier(null, "Period");
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, name);
 
@@ -81,7 +80,7 @@ public class DefaultPeriodTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testSetBegining_Instant() {
-        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "Beginning");
+        NamedIdentifier name = new NamedIdentifier(null, "Beginning");
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, name);
 
@@ -105,7 +104,7 @@ public class DefaultPeriodTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testSetEnding_Instant() {
-        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "Ending");
+        NamedIdentifier name = new NamedIdentifier(null, "Ending");
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, name);
 

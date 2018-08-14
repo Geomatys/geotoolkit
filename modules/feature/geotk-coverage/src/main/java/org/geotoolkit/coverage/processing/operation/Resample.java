@@ -40,7 +40,7 @@ import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.processing.Operation2D;
@@ -52,6 +52,7 @@ import org.geotoolkit.image.internal.ImageUtilities;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.coverage.parameter.ImagingParameterDescriptors;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 
@@ -178,7 +179,7 @@ public class Resample extends Operation2D {
         INTERPOLATION_TYPE = builder.addName("InterpolationType").create(Object.class, "NearestNeighbor");
         COORDINATE_REFERENCE_SYSTEM = builder.addName("CoordinateReferenceSystem").create(CoordinateReferenceSystem.class, null);
         GRID_GEOMETRY = builder.addName("GridGeometry").create(GridGeometry.class, null);
-        BACKGROUND = builder.setCodeSpace(Citations.GEOTOOLKIT, null).addName("Background").create(double[].class, null);
+        BACKGROUND = builder.setCodeSpace(ImagingParameterDescriptors.GEOTK, null).addName("Background").create(double[].class, null);
     }
 
     /**

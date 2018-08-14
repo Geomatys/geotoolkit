@@ -311,7 +311,68 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
     }
 
     /**
-     * Derivate a grid geometry from the origina grid geometry and the features
+     * Derivate a grid geometry from the original grid geometry and the features
+     * image parameters.
+     *
+     * @param gridGeom original grid geometry
+     * @param param user param, in grid CRS
+     * @return derivated grid geometry.
+     */
+    public static GeneralGridGeometry getGridGeometry(GeneralGridGeometry gridGeom,
+            GridCoverageReadParam param) throws CoverageStoreException, TransformException {
+
+        final Envelope coverageEnv = param.getEnvelope();
+        final double[] coverageRes = param.getResolution();
+
+        final GeneralEnvelope imgEnv;
+        try {
+            final MathTransform gridToCRS = gridGeom.getGridToCRS(PixelInCell.CELL_CORNER);
+            // convert envelope CS to image CS
+            imgEnv = Envelopes.transform(gridToCRS.inverse(), coverageEnv);
+        } catch (NoninvertibleTransformException ex) {
+            throw new CoverageStoreException(ex.getMessage(), ex);
+        }
+
+        final GridEnvelope extent = gridGeom.getExtent();
+        final int dim = extent.getDimension();
+
+        // prepare image readInGridCRS param
+        final int[] areaLower = new int[dim];
+        final int[] areaUpper = new int[dim];
+
+        final int[] subsampling = new int[dim];
+        Arrays.fill(subsampling, 1);
+        if (coverageRes != null) {
+            final double[] sourceResolution = gridGeom.getResolution();
+            /* If we cannot determine a source resolution, guessing subsampling
+             * will be very complicated, so we simplify workflow to return full
+             * resolution image.
+             * TODO : find an alternative method
+             */
+            if (sourceResolution != null) {
+                for (int i = 0; i < sourceResolution.length; i++) {
+                    if (Double.isFinite(sourceResolution[i]) && sourceResolution[i] != 0) {
+                        final double ratio = coverageRes[i] / sourceResolution[i];
+                        subsampling[i] = Math.max(1, (int) ratio);
+                    }
+                }
+            }
+        }
+
+        // clamp region from data coverage raster boundary
+        int min,max;
+        for(int i=0;i<dim;i++){
+            min = extent.getLow(i);
+            max = extent.getHigh(i)+1;//+1 for upper exclusive
+            areaLower[i] = XMath.clamp((int)Math.floor(imgEnv.getMinimum(i)), min, max);
+            areaUpper[i] = XMath.clamp((int)Math.ceil(imgEnv.getMaximum(i)),  min, max);
+        }
+
+        return getGridGeometry(gridGeom, areaLower, areaUpper, subsampling);
+    }
+
+    /**
+     * Derivate a grid geometry from the original grid geometry and the features
      * image parameters.
      *
      * @param gridGeom original grid geometry
@@ -338,5 +399,4 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
         final GridEnvelope extent = new GeneralGridEnvelope(new int[outExtent.length], outExtent, false);
         return new GeneralGridGeometry(extent, ssToCrs, gridGeom.getCoordinateReferenceSystem());
     }
-
 }

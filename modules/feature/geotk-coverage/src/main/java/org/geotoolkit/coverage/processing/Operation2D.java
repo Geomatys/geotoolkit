@@ -30,13 +30,14 @@ import org.opengis.parameter.InvalidParameterValueException;
 
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.geotoolkit.coverage.parameter.ImagingParameterDescriptors;
 
 
 /**
@@ -112,16 +113,16 @@ public abstract class Operation2D extends AbstractOperation {
     static {
         final Map<String,Object> properties = new HashMap<>(4);
         properties.put(IdentifiedObject.NAME_KEY,  new NamedIdentifier(Citations.OGC, "Source"));
-        properties.put(IdentifiedObject.ALIAS_KEY, new NamedIdentifier(Citations.JAI, "source0"));
+        properties.put(IdentifiedObject.ALIAS_KEY, new NamedIdentifier(ImagingParameterDescriptors.JAI, "source0"));
         SOURCE_0 = new DefaultParameterDescriptor<>(properties, GridCoverage2D.class,
                         null, null, null, null, null, true);
 
         properties.clear();
-        properties.put(IdentifiedObject.NAME_KEY, new NamedIdentifier(Citations.JAI, "source1"));
+        properties.put(IdentifiedObject.NAME_KEY, new NamedIdentifier(ImagingParameterDescriptors.JAI, "source1"));
         SOURCE_1 = new DefaultParameterDescriptor<>(properties, GridCoverage2D.class,
                         null, null, null, null, null, true);
 
-        properties.put(IdentifiedObject.NAME_KEY, new NamedIdentifier(Citations.JAI, "source2"));
+        properties.put(IdentifiedObject.NAME_KEY, new NamedIdentifier(ImagingParameterDescriptors.JAI, "source2"));
         SOURCE_2 = new DefaultParameterDescriptor<>(properties, GridCoverage2D.class,
                         null, null, null, null, null, true);
     }

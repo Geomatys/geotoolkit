@@ -64,12 +64,13 @@ import org.geotoolkit.factory.Factories;
 import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.internal.storage.io.IOUtilities;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
 import org.apache.sis.metadata.iso.citation.DefaultResponsibility;
 
 import static javax.media.jai.registry.RenderedRegistryMode.MODE_NAME;
+import org.apache.sis.internal.simple.SimpleCitation;
 
 
 /**
@@ -86,6 +87,9 @@ import static javax.media.jai.registry.RenderedRegistryMode.MODE_NAME;
  * @module
  */
 public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup {
+    public static final Citation JAI = new SimpleCitation("JAI");
+    public static final Citation GEOTK = new SimpleCitation("Geotk");
+
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -96,8 +100,8 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
      * and the citation for know authorities.
      */
     private static final Object[] AUTHORITIES = {
-            "com.sun.media.jai", Citations.JAI,
-            "org.geotoolkit",    Citations.GEOTOOLKIT
+            "com.sun.media.jai", JAI,
+            "org.geotoolkit",    GEOTK
     };
 
     /**

@@ -17,14 +17,12 @@
 package org.geotoolkit.swe.xml.v101;
 
 import java.util.Objects;
-import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.Entry;
 
 /**
  * Une liste de phénomèmene pour un phenoméne composé.
  *
- * @version $Id:
  * @author Guilhem Legal
- * @module
  */
 public class ComponentType implements Entry{
 

@@ -43,7 +43,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.image.palette.Palette;
 import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.image.io.SpatialImageReadParam;
-import org.geotoolkit.internal.coverage.ColorPalette;
+import org.geotoolkit.coverage.sql.ColorPalette;
 
 
 /**

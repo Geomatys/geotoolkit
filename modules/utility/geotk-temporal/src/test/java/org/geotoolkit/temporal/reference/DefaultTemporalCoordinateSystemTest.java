@@ -23,7 +23,6 @@ import javax.measure.quantity.Time;
 import javax.measure.Unit;
 import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
-import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
 import org.junit.After;
@@ -49,8 +48,8 @@ public class DefaultTemporalCoordinateSystemTest extends org.geotoolkit.test.Tes
 
     @Before
     public void setUp() {
-        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Coordinate1");
-        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Coordinate2");
+        NamedIdentifier name1 = new NamedIdentifier(null, "Coordinate1");
+        NamedIdentifier name2 = new NamedIdentifier(null, "Coordinate2");
         Calendar cal = Calendar.getInstance();
         cal.set(2000, 1, 1);
         temporalCoordinateSystem1 = FACTORY.createTemporalCoordinateSystem(name1, new DefaultExtent(), cal.getTime(), Units.DAY);

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal.referencing.factory;
 
+import java.net.URI;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
@@ -33,8 +34,12 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.metadata.Citations;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
+import org.apache.sis.metadata.iso.citation.Citations;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultContact;
+import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
+import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
@@ -43,6 +48,8 @@ import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.opengis.metadata.citation.PresentationForm;
+import org.opengis.metadata.citation.Role;
 
 
 /**
@@ -55,6 +62,18 @@ import org.apache.sis.referencing.IdentifiedObjects;
  * @module
  */
 public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFactory {
+    private static final Citation AUTHORITY;
+    static {
+        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
+        r.setOrganisationName(new SimpleInternationalString("Institut Géographique National"));
+        r.setContactInfo(new DefaultContact(new DefaultOnlineResource(URI.create("http://www.ign.fr"))));
+        final DefaultCitation c = new DefaultCitation();
+        c.setCitedResponsibleParties(Collections.singleton(r));
+        c.getPresentationForms().add(PresentationForm.TABLE_DIGITAL);
+        c.transition(DefaultCitation.State.FINAL);
+        AUTHORITY = c;
+    }
+
     /**
      * The map of pre-defined CRS. Will be created when first needed. Keys are IGNF codes.
      * Values are initially projection names, to be replaced by the actual CRS when first
@@ -80,7 +99,7 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
      */
     @Override
     public Citation getAuthority() {
-        return Citations.IGNF;
+        return AUTHORITY;
     }
 
     /**
@@ -141,7 +160,7 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
         param.parameter("semi_major").setValue(6378137);
         param.parameter("semi_minor").setValue(6378137);
         final Identifier[] identifiers = {
-            new NamedIdentifier(Citations.IGNF, "MILLER"),
+            new NamedIdentifier(AUTHORITY, "MILLER"),
             new ImmutableIdentifier(Citations.EPSG, "EPSG", "310642901"), // Unofficial
             new ImmutableIdentifier(Citations.EPSG, "EPSG", "54003") // Unofficial
         };

@@ -63,8 +63,6 @@ package org.geotoolkit.lang;
  * <tr><td colspan="2"><hr></td></tr>
  *
  * <tr><th colspan="2" bgcolor="lightblue">Metadata and referencing (except I/O)</th></tr>
- * <tr><td>{@link org.geotoolkit.metadata.Citations}</td>
- *     <td>Get a predefined constant from a name. Test if the identifiers of two citations match.</td></tr>
  * <tr><td>{@link org.geotoolkit.referencing.CRS}</td>
  *     <td>Create {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem Coordinate Reference
  *         Systems} (CRS) from authority codes. Find {@linkplain org.opengis.referencing.operation.MathTransform
@@ -74,8 +72,6 @@ package org.geotoolkit.lang;
  * <tr><td colspan="2"><hr></td></tr>
  *
  * <tr><th colspan="2" bgcolor="lightblue">Images (except I/O)</th></tr>
- * <tr><td>{@link org.geotoolkit.metadata.iso.spatial.PixelTranslation}</td>
- *     <td>The translation to apply for different values of {@link org.opengis.metadata.spatial.PixelOrientation}.</td></tr>
  * <tr><td>{@link org.geotoolkit.image.SampleModels}</td>
  *     <td>Get the <cite>pixel stride</cite> and <cite>scan line stride</cite> of a {@linkplain java.awt.image.SampleModel sample model}.</td></tr>
  * <tr><td>{@link org.geotoolkit.coverage.TypeMap}</td>

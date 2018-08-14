@@ -30,7 +30,6 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
-import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 
@@ -82,7 +81,7 @@ public class EllipsoidToGeoid extends MathTransformProvider {
      */
     public static final ParameterDescriptor<Integer> ORDER;
     static {
-        final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(Citations.GEOTOOLKIT, null);
+        final ParameterBuilder builder = new ParameterBuilder();
         ORDER = builder.addName(Vocabulary.formatInternational(Vocabulary.Keys.Order)).createBounded(2, 180, DEFAULT_ORDER);
         builder.setRequired(true);
         DATUM = builder.addName(Vocabulary.formatInternational(Vocabulary.Keys.Datum))
@@ -126,7 +125,7 @@ public class EllipsoidToGeoid extends MathTransformProvider {
      * </table>
      */
     public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(new NamedIdentifier[] {
-            new NamedIdentifier(Citations.GEOTOOLKIT, "Ellipsoid_To_Geoid")
+            new NamedIdentifier(null, "Ellipsoid_To_Geoid")
         }, null, new ParameterDescriptor<?>[] {
             DATUM, ORDER
         }, 0);

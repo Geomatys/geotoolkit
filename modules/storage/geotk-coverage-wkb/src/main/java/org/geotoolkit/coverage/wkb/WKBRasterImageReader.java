@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.wkb;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -90,6 +91,7 @@ public class WKBRasterImageReader extends ImageReader{
                 stream = (InputStream) input;
             }else{
                 stream = IOUtilities.open(input);
+                stream = new BufferedInputStream(stream);
             }
             final BufferedImage image = reader.read(stream);
             stream.close();

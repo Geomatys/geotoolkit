@@ -21,6 +21,8 @@ import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
@@ -168,9 +170,13 @@ public class WKBRasterWriter {
      * @throws IOException
      */
     public void write(final Raster image, AffineTransform gridToCRS,
-            final int srid, final OutputStream stream, final boolean littleEndian) throws IOException {
+            final int srid, OutputStream stream, final boolean littleEndian) throws IOException {
         if(gridToCRS == null){
             gridToCRS = new AffineTransform();
+        }
+
+        if (!(stream instanceof BufferedOutputStream)) {
+            stream = new BufferedOutputStream(stream);
         }
 
         final DataOutput ds;
@@ -245,7 +251,7 @@ public class WKBRasterWriter {
             }
 
         }
-
+        stream.flush();
     }
 
 }

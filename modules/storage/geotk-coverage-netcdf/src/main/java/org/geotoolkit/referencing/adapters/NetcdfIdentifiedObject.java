@@ -30,7 +30,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.metadata.Identifier;
 
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.io.wkt.UnformattableObjectException;
 
 

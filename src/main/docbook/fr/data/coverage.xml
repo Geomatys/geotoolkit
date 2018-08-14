@@ -46,7 +46,6 @@
         </para>
     </section>
 
-    <xi:include href="coverage/coveragestore.xml"/>
     <xi:include href="coverage/coveragereader.xml"/>
 
 </section>

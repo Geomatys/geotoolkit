@@ -41,7 +41,7 @@ import org.opengis.coverage.grid.GridGeometry;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;

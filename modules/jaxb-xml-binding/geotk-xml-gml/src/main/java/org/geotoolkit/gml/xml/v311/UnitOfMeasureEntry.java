@@ -21,15 +21,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.Entry;
 import org.opengis.observation.BaseUnit;
 
 /**
  * Unité de mesure.
  *
- * @version $Id:
  * @author Guilhem Legal
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BaseUnit")

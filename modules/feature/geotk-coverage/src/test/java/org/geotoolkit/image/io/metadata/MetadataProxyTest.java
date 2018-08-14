@@ -36,7 +36,6 @@ import org.apache.sis.test.DependsOn;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
-import org.geotoolkit.metadata.Citations;
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
@@ -110,7 +109,7 @@ public final strictfp class MetadataProxyTest extends org.geotoolkit.test.TestBa
         assertEquals("Safety check against regression.", 20.0, proxy.getCloudCoverPercentage(), 0.0);
 
         final Identifier identifier = proxy.getImageQualityCode();
-        assertSame(Citations.GEOTOOLKIT, identifier.getAuthority());
+//      assertSame(ImagingParameterDescriptors.GEOTK, identifier.getAuthority());
         assertEquals("okay", identifier.getCode());
 
         assertSame(identifier, proxy.getImageQualityCode());
