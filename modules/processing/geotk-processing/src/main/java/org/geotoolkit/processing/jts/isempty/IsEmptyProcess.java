@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.processing.jts.isempty;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import org.geotoolkit.processing.AbstractProcess;
 

@@ -19,7 +19,6 @@ import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.measure.Units;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -37,6 +36,7 @@ import org.opengis.style.OverlapBehavior;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.ShadedRelief;
 import org.opengis.style.Symbolizer;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Show how to use {@link ElevationModel} to add shadow on image in renderer.
@@ -83,7 +83,7 @@ public class ReliefShadowDemo {
         final double azimuth = 45;
         final double altitude = 2;
         final double scale = 0.4;
-        final ElevationModel elevModel = new ElevationModel((CoverageResource) ref, azimuth, altitude, scale, AxisDirection.UP);
+        final ElevationModel elevModel = new ElevationModel((GridCoverageResource) ref, azimuth, altitude, scale, AxisDirection.UP);
 
         /*
          * Define Elevation Model object to get informations necessary to compute shadow on coverage.

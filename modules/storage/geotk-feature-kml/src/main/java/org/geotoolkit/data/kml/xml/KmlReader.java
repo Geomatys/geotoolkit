@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.data.kml.xml;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
 
 import java.net.URISyntaxException;
 import java.awt.Color;

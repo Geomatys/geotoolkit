@@ -41,7 +41,7 @@ import org.apache.sis.storage.Resource;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.metadata.MetadataUtilities;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -53,7 +53,7 @@ public class ResourceNameColumn extends TreeTableColumn<Resource,String>{
     private static final Image ICON_VECTOR = new Image("/org/geotoolkit/gui/javafx/icon/vector-icon.png");
     private static final Image ICON_SERVICE = new Image("/org/geotoolkit/gui/javafx/icon/service-icon.png");
     private static final Image ICON_SENSOR = new Image("/org/geotoolkit/gui/javafx/icon/sensor-icon.png");
-    private static final Image ICON_FOLDER = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FOLDER_O,16,Color.GRAY),null);
+    private static final Image ICON_FOLDER = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FOLDER,16,Color.GRAY),null);
     private static final Image ICON_STORE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_ARCHIVE,16,Color.GRAY),null);
 
     public ResourceNameColumn() {
@@ -102,7 +102,7 @@ public class ResourceNameColumn extends TreeTableColumn<Resource,String>{
     }
 
     private static Image getTypeIcon(Resource resource){
-        if (resource instanceof CoverageResource) {
+        if (resource instanceof GridCoverageResource) {
             return ICON_RASTER;
         } else if (resource instanceof FeatureSet) {
             return ICON_VECTOR;

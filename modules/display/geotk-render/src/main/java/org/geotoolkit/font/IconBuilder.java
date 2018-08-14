@@ -37,12 +37,12 @@ import org.apache.sis.util.ArgumentChecks;
  */
 public final class IconBuilder {
 
-    public static final URL FONTAWESOME = IconBuilder.class.getResource("/org/geotoolkit/font/fontawesome-webfont.ttf");
+    public static final URL FONTAWESOME = IconBuilder.class.getResource("/org/geotoolkit/font/fa-solid-900.ttf");
     public static Font FONT;
 
     static{
       try {
-        InputStream is = IconBuilder.class.getResourceAsStream("/org/geotoolkit/font/fontawesome-webfont.ttf");
+        InputStream is = IconBuilder.class.getResourceAsStream("/org/geotoolkit/font/fa-solid-900.ttf");
         FONT = Font.createFont(Font.TRUETYPE_FONT, is);
       } catch (Exception ex) {
         ex.printStackTrace();

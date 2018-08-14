@@ -65,7 +65,7 @@ import org.geotoolkit.internal.Loggers;
 public abstract class AbstractPathTextField extends HBox {
 
     public static final Image ICON_FIND = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FOLDER_OPEN, 16, Color.DARK_GRAY), null);
-    public static final Image ICON_FORWARD = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_EXTERNAL_LINK, 16, Color.DARK_GRAY), null);
+    public static final Image ICON_FORWARD = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_EXTERNAL_LINK_ALT, 16, Color.DARK_GRAY), null);
 
     protected final TextField inputText = new TextField();
     private final StringProperty textProperty = inputText.textProperty();

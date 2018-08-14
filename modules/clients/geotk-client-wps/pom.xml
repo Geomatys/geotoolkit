@@ -56,6 +56,12 @@
             <artifactId>geotk-xml-wps</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.sis.core</groupId>
+            <artifactId>sis-metadata</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 

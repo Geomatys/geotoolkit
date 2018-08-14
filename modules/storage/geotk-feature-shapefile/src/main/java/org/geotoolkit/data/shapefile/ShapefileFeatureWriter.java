@@ -38,8 +38,8 @@ import org.geotoolkit.data.shapefile.shp.ShapeHandler;
 import org.geotoolkit.data.shapefile.shp.ShapeType;
 import org.geotoolkit.data.shapefile.shp.ShapefileWriter;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -309,18 +309,18 @@ public class ShapefileFeatureWriter implements FeatureWriter {
 
     private void fireDataChangeEvents(){
         if (!addedIds.isEmpty()) {
-            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.ADD, featureType.getName(), FF.id(addedIds));
-            parent.forwardContentEvent(event);
+            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(parent, FeatureStoreContentEvent.Type.ADD, featureType.getName(), FF.id(addedIds));
+            parent.forwardEvent(event);
         }
 
         if (!updatedIds.isEmpty()) {
-            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), FF.id(updatedIds));
-            parent.forwardContentEvent(event);
+            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(parent, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), FF.id(updatedIds));
+            parent.forwardEvent(event);
         }
 
         if (!deletedIds.isEmpty()) {
-            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), FF.id(deletedIds));
-            parent.forwardContentEvent(event);
+            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(parent, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), FF.id(deletedIds));
+            parent.forwardEvent(event);
         }
     }
 

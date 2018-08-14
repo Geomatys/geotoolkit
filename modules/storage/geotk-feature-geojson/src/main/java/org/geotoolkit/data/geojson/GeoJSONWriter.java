@@ -2,7 +2,7 @@ package org.geotoolkit.data.geojson;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.data.geojson.utils.GeoJSONParser;

@@ -40,7 +40,7 @@ import org.geotoolkit.internal.GeotkFX;
  * @author Johann Sorel (Geomatys)
  */
 public final class FXEditAction extends FXMapAction {
-    public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PENCIL, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
+    public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PENCIL_ALT, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
 
     private Stage dialog;
 

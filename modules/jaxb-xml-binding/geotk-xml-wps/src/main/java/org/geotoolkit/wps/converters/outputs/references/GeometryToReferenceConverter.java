@@ -17,7 +17,7 @@
 package org.geotoolkit.wps.converters.outputs.references;
 
 import com.fasterxml.jackson.core.JsonEncoding;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.io.*;
 import java.net.URI;
 import java.nio.file.Files;

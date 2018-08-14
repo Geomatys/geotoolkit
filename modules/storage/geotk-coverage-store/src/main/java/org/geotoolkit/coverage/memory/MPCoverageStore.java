@@ -27,10 +27,10 @@ import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -55,7 +55,7 @@ public class MPCoverageStore extends AbstractCoverageStore implements WritableAg
     }
 
     @Override
-    public CoverageResource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
+    public GridCoverageResource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
         if (!(resource instanceof DefiningCoverageResource)) {
             throw new DataStoreException("Unsupported resource "+resource);
         }
@@ -70,10 +70,10 @@ public class MPCoverageStore extends AbstractCoverageStore implements WritableAg
 
     @Override
     public void remove(org.apache.sis.storage.Resource resource) throws DataStoreException {
-        if (!(resource instanceof CoverageResource)) {
+        if (!(resource instanceof GridCoverageResource)) {
             throw new DataStoreException("Unknown resource "+resource);
         }
-        final CoverageResource cr = (CoverageResource) resource;
+        final GridCoverageResource cr = (GridCoverageResource) resource;
         final NamedIdentifier name = cr.getIdentifier();
 
         //TODO

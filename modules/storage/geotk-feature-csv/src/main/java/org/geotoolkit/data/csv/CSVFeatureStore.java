@@ -21,7 +21,7 @@ package org.geotoolkit.data.csv;
 
 
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -477,17 +477,17 @@ public class CSVFeatureStore extends AbstractFeatureStore implements ResourceOnF
     void fireDataChangeEvents(Set<Identifier> addedIds,Set<Identifier> updatedIds,Set<Identifier> deletedIds) {
         if (!addedIds.isEmpty()) {
             final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.ADD, featureType.getName(), FF.id(addedIds));
-            forwardContentEvent(event);
+            forwardEvent(event);
         }
 
         if (!updatedIds.isEmpty()) {
             final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), FF.id(updatedIds));
-            forwardContentEvent(event);
+            forwardEvent(event);
         }
 
         if (!deletedIds.isEmpty()) {
             final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), FF.id(deletedIds));
-            forwardContentEvent(event);
+            forwardEvent(event);
         }
     }
 

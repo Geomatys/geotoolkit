@@ -51,7 +51,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -67,7 +67,7 @@ public class CoverageDrillingPresenter extends AbstractInformationPresenter {
         if (graphic instanceof ProjectedCoverage) {
             final ProjectedCoverage projectedCoverage = (ProjectedCoverage) graphic;
             final CoverageMapLayer layer = projectedCoverage.getLayer();
-            final CoverageResource covRef = layer.getCoverageReference();
+            final GridCoverageResource covRef = layer.getCoverageReference();
 
             GridCoverageReader reader = null;
             try {
@@ -105,7 +105,7 @@ public class CoverageDrillingPresenter extends AbstractInformationPresenter {
                 try {
                     allValues = Bridge.extractData(projectedCoverage, context, area);
                     final CoverageMapLayer layer = projectedCoverage.getLayer();
-                    final CoverageResource covRef = layer.getCoverageReference();
+                    final GridCoverageResource covRef = layer.getCoverageReference();
                     final GridCoverageReader reader = covRef.acquireReader();
                     final GeneralGridGeometry gridGeo = reader.getGridGeometry(covRef.getImageIndex());
                     crs = gridGeo.getCoordinateReferenceSystem();

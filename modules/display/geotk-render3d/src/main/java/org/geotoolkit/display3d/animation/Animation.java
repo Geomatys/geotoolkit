@@ -17,7 +17,7 @@
 package org.geotoolkit.display3d.animation;
 
 import com.jogamp.opengl.GL;
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.math.XMath;
 

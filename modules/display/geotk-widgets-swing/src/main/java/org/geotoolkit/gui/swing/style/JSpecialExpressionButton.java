@@ -40,8 +40,8 @@ public class JSpecialExpressionButton extends JPanel{
 
     public static final String EXPRESSION_PROPERTY = "expression";
 
-    private static final Icon ICON_EXP_NO = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL, 16, FontAwesomeIcons.DISABLE_COLOR);
-    private static final Icon ICON_EXP_YES = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final Icon ICON_EXP_NO = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL_ALT, 16, FontAwesomeIcons.DISABLE_COLOR);
+    private static final Icon ICON_EXP_YES = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL_ALT, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final Icon ICON_ERASE = IconBuilder.createIcon(FontAwesomeIcons.ICON_ERASER, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     private Expression exp = null;

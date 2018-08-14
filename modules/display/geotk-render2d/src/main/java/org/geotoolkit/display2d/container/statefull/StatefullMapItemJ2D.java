@@ -39,8 +39,8 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -114,7 +114,7 @@ public class StatefullMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
             g2d = new StatefullFeatureMapLayerJ2D(getCanvas(), (FeatureMapLayer)child);
         }else if (child instanceof CoverageMapLayer){
             final CoverageMapLayer layer = (CoverageMapLayer) child;
-            final CoverageResource ref = layer.getCoverageReference();
+            final GridCoverageResource ref = layer.getCoverageReference();
             if(ref != null && ref instanceof PyramidalCoverageResource){
                 //pyramidal model, we can improve rendering
                 g2d = new StatefullPyramidalCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)child);

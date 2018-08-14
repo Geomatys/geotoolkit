@@ -29,8 +29,8 @@ import org.apache.sis.util.NullArgumentException;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.util.logging.Logging;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Default implementation of the coverage MapLayer.
@@ -46,10 +46,10 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
     private static final ImmutableEnvelope INFINITE = new ImmutableEnvelope(
             new double[] {-180, -90}, new double[] {180, 90}, CommonCRS.WGS84.normalizedGeographic());
 
-    private final CoverageResource ref;
+    private final GridCoverageResource ref;
     private Query query = null;
 
-    protected DefaultCoverageMapLayer(final CoverageResource ref, final MutableStyle style){
+    protected DefaultCoverageMapLayer(final GridCoverageResource ref, final MutableStyle style){
         super(style);
         if(ref == null){
             throw new NullArgumentException("Coverage reference can not be null.");
@@ -61,7 +61,7 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
      * {@inheritDoc }
      */
     @Override
-    public CoverageResource getCoverageReference() {
+    public GridCoverageResource getCoverageReference() {
         return ref;
     }
 
@@ -109,7 +109,7 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
             }
         }
 
-        final CoverageResource ref = getCoverageReference();
+        final GridCoverageResource ref = getCoverageReference();
         try {
             GridCoverageReader reader = ref.acquireReader();
             final GeneralGridGeometry geom = reader.getGridGeometry(getCoverageReference().getImageIndex());

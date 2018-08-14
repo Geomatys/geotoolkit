@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
-import org.geotoolkit.storage.coverage.CoverageStoreListener;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.VisitFilter;
@@ -40,6 +39,9 @@ import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
+import org.geotoolkit.storage.StorageListener;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -49,9 +51,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer> implements CoverageStoreListener{
+public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer> implements ChangeListener<ChangeEvent> {
 
-    protected CoverageStoreListener.Weak weakStoreListener = new CoverageStoreListener.Weak(this);
+    protected StorageListener.Weak weakStoreListener = new StorageListener.Weak(this);
 
     private final ProjectedCoverage projectedCoverage;
     private final boolean ignoreBuilders;
@@ -220,16 +222,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
     }
 
     @Override
-    public void structureChanged(CoverageStoreManagementEvent event) {
-        if(item.isVisible() && getCanvas().isAutoRepaint()){
-            //TODO should call a repaint only on this graphic
-            projectedCoverage.clearObjectiveCache();
-            getCanvas().repaint();
-        }
-    }
-
-    @Override
-    public void contentChanged(CoverageStoreContentEvent event) {
+    public void changeOccured(ChangeEvent event) {
         if(item.isVisible() && getCanvas().isAutoRepaint()){
             //TODO should call a repaint only on this graphic
             projectedCoverage.clearObjectiveCache();

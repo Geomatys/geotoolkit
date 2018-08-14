@@ -17,7 +17,7 @@
 
 package org.geotoolkit.data.wfs.xml;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;

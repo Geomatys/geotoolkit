@@ -35,8 +35,8 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.wms.GetLegendRequest;
 import org.geotoolkit.wms.WMSCoverageResource;
 import org.geotoolkit.wms.WebMapClient;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Render WMS layer in default geotoolkit rendering engine.
@@ -62,7 +62,7 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 
         final CoverageMapLayer cml = (CoverageMapLayer) layer;
 
-        final CoverageResource cr = cml.getCoverageReference();
+        final GridCoverageResource cr = cml.getCoverageReference();
         final GraphicJ2D gra;
         if(cr instanceof PyramidalCoverageResource){
             gra = new StatelessPyramidalCoverageLayerJ2D((J2DCanvas)canvas, cml);
@@ -85,7 +85,7 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         }
 
         final CoverageMapLayer cml = (CoverageMapLayer) layer;
-        final CoverageResource cr = cml.getCoverageReference();
+        final GridCoverageResource cr = cml.getCoverageReference();
 
         if(!(cr instanceof WMSCoverageResource)){
             return null;

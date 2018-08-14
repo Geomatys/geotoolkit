@@ -10,7 +10,6 @@ xmlns = {
 @XmlJavaTypeAdapters({
     // ISO 19115 adapter (metadata module)
 //  @XmlJavaTypeAdapter(ScopedNameAdapter.class), // TODO
-    @XmlJavaTypeAdapter(GO_LocalName.class),
     @XmlJavaTypeAdapter(GO_GenericName.class),
     @XmlJavaTypeAdapter(CI_ResponsibleParty.class),
     @XmlJavaTypeAdapter(CI_Citation.class),
@@ -32,8 +31,6 @@ xmlns = {
     //CodeList handling
     @XmlJavaTypeAdapter(RoleTypeAdapter.class),
     // Primitive type handling
-    @XmlJavaTypeAdapter(MultiplicityAdapter.class),
-    @XmlJavaTypeAdapter(MultiplicityRangeAdapter.class),
     @XmlJavaTypeAdapter(StringAdapter.class),
     @XmlJavaTypeAdapter(GO_DateTime.class),
     @XmlJavaTypeAdapter(GO_Decimal.class),
@@ -61,6 +58,3 @@ import org.apache.sis.internal.jaxb.metadata.*;
 import org.geotoolkit.resources.jaxb.feature.catalog.*;
 import org.geotoolkit.resources.jaxb.feature.catalog.code.*;
 import org.geotoolkit.resources.jaxb.feature.catalog.GO_Decimal32;
-import org.geotoolkit.resources.jaxb.feature.catalog.MultiplicityAdapter;
-import org.geotoolkit.resources.jaxb.feature.catalog.MultiplicityRangeAdapter;
-

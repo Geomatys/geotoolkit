@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.wps.io;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;

@@ -50,7 +50,7 @@ import org.opengis.metadata.content.RangeDimension;
 import org.opengis.metadata.content.SampleDimension;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.MathTransform2D;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -66,7 +66,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
     public void portray(ProjectedCoverage projectedCoverage) throws PortrayalException {
 
         try{
-            final CoverageResource covref = projectedCoverage.getCandidate().getCoverageReference();
+            final GridCoverageResource covref = projectedCoverage.getCandidate().getCoverageReference();
 
             final DynamicRangeSymbolizer symbolizer = symbol.getSource();
 

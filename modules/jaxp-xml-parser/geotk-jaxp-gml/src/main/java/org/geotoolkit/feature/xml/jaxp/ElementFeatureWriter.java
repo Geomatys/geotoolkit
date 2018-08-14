@@ -296,8 +296,8 @@ public class ElementFeatureWriter {
                         }
 
                         final Geometry isoGeometry;
-                        if (valueA instanceof com.vividsolutions.jts.geom.Geometry) {
-                            com.vividsolutions.jts.geom.Geometry geomValue = (com.vividsolutions.jts.geom.Geometry) valueA;
+                        if (valueA instanceof org.locationtech.jts.geom.Geometry) {
+                            org.locationtech.jts.geom.Geometry geomValue = (org.locationtech.jts.geom.Geometry) valueA;
                         CoordinateReferenceSystem crs = null;
                             try {
                                 crs = JTS.findCoordinateReferenceSystem(geomValue);

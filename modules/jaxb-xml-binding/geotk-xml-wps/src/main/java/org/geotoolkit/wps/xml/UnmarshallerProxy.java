@@ -58,6 +58,8 @@ public class UnmarshallerProxy  implements Unmarshaller {
 
     @Override
     public Object unmarshal(Reader reader) throws JAXBException {
+        ///return this.source.unmarshal(reader);
+        //NOTE : why this ????
         final InputSource iSource = new InputSource(reader);
         iSource.setSystemId("geotk-xml-wps");
         return unmarshal(iSource);
@@ -69,7 +71,7 @@ public class UnmarshallerProxy  implements Unmarshaller {
             URLConnection conn = url.openConnection();
             conn.setRequestProperty("Accept-Charset", "UTF-8");
             try (final InputStream stream = url.openStream();
-                    final InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+                final InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
                 return unmarshal(reader);
             }
         } catch (IOException e) {

@@ -54,7 +54,7 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
         env1.setRange(0, 0, +20);
         env1.setRange(1, 0, +20);
         AffineTransform af = new AffineTransform(0.1, 0, 0, -0.1, 0, 20);
-        CoverageResource ref1 = createCoverage("cov1", env1, af, createImage(200, 200, Color.RED));
+        GridCoverageResource ref1 = createCoverage("cov1", env1, af, createImage(200, 200, Color.RED));
 
         final MPCoverageStore mpCovStore = new MPCoverageStore();
         final PyramidCoverageBuilder pcb = new PyramidCoverageBuilder(new Dimension(100, 100), InterpolationCase.NEIGHBOR, 2);
@@ -65,10 +65,14 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
         map.put(env1, scales);
 
         final GenericName name = NamesExt.create("memory_store_test");
-        pcb.create(ref1, mpCovStore, name, map, fillValue, null, null);
+        pcb.setResolutionPerEnvelope(map);
+        pcb.setFillValues(fillValue);
+        pcb.setSourceResource(ref1);
+        pcb.setTargetStore(mpCovStore, name);
+        pcb.execute();
 
         //test reference
-        CoverageResource outRef = (CoverageResource) mpCovStore.findResource(name.toString());
+        GridCoverageResource outRef = (GridCoverageResource) mpCovStore.findResource(name.toString());
         assertNotNull(outRef);
         assertTrue(outRef instanceof AbstractPyramidalCoverageResource);
         AbstractPyramidalCoverageResource outRefPy = (AbstractPyramidalCoverageResource) outRef;
@@ -115,13 +119,13 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
         env1.setRange(0, 0, +20);
         env1.setRange(1, 0, +20);
         AffineTransform af1 = new AffineTransform(0.1, 0, 0, -0.1, 0, 20);
-        CoverageResource ref1 = createCoverage("cov1", env1, af1, createImage(200, 200, Color.RED));
+        GridCoverageResource ref1 = createCoverage("cov1", env1, af1, createImage(200, 200, Color.RED));
 
         GeneralEnvelope env2 = new GeneralEnvelope(EPSG4326);
         env2.setRange(0, +10, +30);
         env2.setRange(1, +10, +30);
         AffineTransform af2 = new AffineTransform(0.1, 0, 0, -0.1, +10, +30);
-        CoverageResource ref2 = createCoverage("cov2", env2, af2, createImage(200, 200, Color.BLUE));
+        GridCoverageResource ref2 = createCoverage("cov2", env2, af2, createImage(200, 200, Color.BLUE));
 
         /*
                  +-------+
@@ -145,13 +149,19 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
         map.put(env, scales);
 
         final GenericName name = NamesExt.create("memory_store_test");
+        pcb.setFillValues(fillValue);
+        pcb.setResolutionPerEnvelope(map);
         //pyramid 1st coverage
-        pcb.create(ref1, mpCovStore, name, map, fillValue, null, null);
+        pcb.setSourceResource(ref1);
+        pcb.setTargetStore(mpCovStore, name);
+        pcb.execute();
         //append 2nd coverage
-        pcb.create(ref2, mpCovStore, name, map, fillValue, null, null);
+        pcb.setSourceResource(ref2);
+        pcb.setTargetStore(mpCovStore, name);
+        pcb.execute();
 
         //test reference
-        CoverageResource outRef = (CoverageResource) mpCovStore.findResource(name.toString());
+        GridCoverageResource outRef = (GridCoverageResource) mpCovStore.findResource(name.toString());
         assertNotNull(outRef);
         assertTrue(outRef instanceof AbstractPyramidalCoverageResource);
         AbstractPyramidalCoverageResource outRefPy = (AbstractPyramidalCoverageResource) outRef;
@@ -254,13 +264,13 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
         env1.setRange(0, 0, +20);
         env1.setRange(1, 0, +20);
         AffineTransform af1 = new AffineTransform(0.1, 0, 0, -0.1, 0, 20);
-        CoverageResource ref1 = createCoverage("cov1", env1, af1, createImage(200, 200, Color.RED));
+        GridCoverageResource ref1 = createCoverage("cov1", env1, af1, createImage(200, 200, Color.RED));
 
         GeneralEnvelope env2 = new GeneralEnvelope(EPSG4326);
         env2.setRange(0, +10, +30);
         env2.setRange(1, +10, +30);
         AffineTransform af2 = new AffineTransform(0.1, 0, 0, -0.1, +10, +30);
-        CoverageResource ref2 = createCoverage("cov2", env2, af2, createImage1Band(200, 200));
+        GridCoverageResource ref2 = createCoverage("cov2", env2, af2, createImage1Band(200, 200));
 
         final MPCoverageStore mpCovStore = new MPCoverageStore();
         final PyramidCoverageBuilder pcb = new PyramidCoverageBuilder(new Dimension(tileSize, tileSize), InterpolationCase.NEIGHBOR, 2, true);
@@ -275,18 +285,24 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
 
         final GenericName name = NamesExt.create("memory_store_test");
         //pyramid 1st coverage
-        pcb.create(ref1, mpCovStore, name, map, fillValue, null, null);
+        pcb.setFillValues(fillValue);
+        pcb.setResolutionPerEnvelope(map);
+        pcb.setSourceResource(ref1);
+        pcb.setTargetStore(mpCovStore, name);
+        pcb.execute();
 
         //append 2nd coverage should fail
         try {
-            pcb.create(ref2, mpCovStore, name, map, fillValue, null, null);
+            pcb.setSourceResource(ref2);
+            pcb.setTargetStore(mpCovStore, name);
+            pcb.execute();
             fail("Append of coverage with different sample dimension should have failed.");
         } catch (DataStoreException e) {
            //test success
         }
 
     }
-    private CoverageResource createCoverage(String name, GeneralEnvelope env, AffineTransform gridToCRS, RenderedImage image) throws DataStoreException {
+    private GridCoverageResource createCoverage(String name, GeneralEnvelope env, AffineTransform gridToCRS, RenderedImage image) throws DataStoreException {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName(name);
         gcb.setEnvelope(env);
@@ -295,7 +311,7 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
         gcb.setRenderedImage(image);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
         final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
-        return (CoverageResource) store.findResource(store.getNames().iterator().next().toString());
+        return (GridCoverageResource) store.findResource(store.getNames().iterator().next().toString());
     }
 
     private static void testImage(RenderedImage img, int width, int height, Color fill){

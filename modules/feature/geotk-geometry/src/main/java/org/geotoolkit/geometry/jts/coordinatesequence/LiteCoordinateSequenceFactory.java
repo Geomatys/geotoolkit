@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.geometry.jts.coordinatesequence;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.CoordinateSequenceFactory;
 
 /**
  * @todo class description
@@ -35,7 +35,7 @@ public class LiteCoordinateSequenceFactory implements CoordinateSequenceFactory 
 
 
     /* (non-Javadoc)
-     * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(com.vividsolutions.jts.geom.Coordinate[])
+     * @see org.locationtech.jts.geom.CoordinateSequenceFactory#create(org.locationtech.jts.geom.Coordinate[])
      */
     @Override
     public CoordinateSequence create(final Coordinate[] coordinates) {
@@ -43,7 +43,7 @@ public class LiteCoordinateSequenceFactory implements CoordinateSequenceFactory 
     }
 
     /* (non-Javadoc)
-     * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(com.vividsolutions.jts.geom.CoordinateSequence)
+     * @see org.locationtech.jts.geom.CoordinateSequenceFactory#create(org.locationtech.jts.geom.CoordinateSequence)
      */
     @Override
     public CoordinateSequence create(final CoordinateSequence coordSeq) {
@@ -51,7 +51,7 @@ public class LiteCoordinateSequenceFactory implements CoordinateSequenceFactory 
     }
 
     /* (non-Javadoc)
-     * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(int, int)
+     * @see org.locationtech.jts.geom.CoordinateSequenceFactory#create(int, int)
      */
     @Override
     public CoordinateSequence create(final int size, final int dimension) {

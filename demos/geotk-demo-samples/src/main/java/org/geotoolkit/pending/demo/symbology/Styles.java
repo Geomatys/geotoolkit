@@ -69,10 +69,10 @@ import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.apache.sis.measure.Units;
-import org.geotoolkit.storage.coverage.CoverageResource;
 
 import static org.geotoolkit.style.StyleConstants.*;
 import org.opengis.style.ExternalMark;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -174,7 +174,7 @@ public class Styles {
         final Fill fill = SF.fill(Color.RED);
         final ExternalMark external = SF.externalMark(
                     SF.onlineResource(IconBuilder.FONTAWESOME.toURI()),
-                    "ttf",FontAwesomeIcons.ICON_DELICIOUS.codePointAt(0));
+                    "ttf",FontAwesomeIcons.ICON_DICE.codePointAt(0));
         final Mark mark = SF.mark(external, fill, stroke);
 
         symbols.add(mark);
@@ -673,7 +673,7 @@ public class Styles {
 
 
         //create your maplayer with your datas
-        final CoverageResource elevationData = null;
+        final GridCoverageResource elevationData = null;
 
         final MapLayer layer = MapBuilder.createCoverageLayer(null, SF.style(shadedSymbolizer));
         final ElevationModel elevationModel = MapBuilder.createElevationModel(elevationData);

@@ -35,8 +35,8 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.io.wkt.Warnings;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.util.StringUtilities;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Display a WKT of the layer coordinate reference system.
@@ -78,7 +78,7 @@ public class JLayerCRSPane extends AbstractPropertyPane {
         if (layer instanceof FeatureMapLayer) {
             crs = FeatureExt.getCRS( ((FeatureCollection)((FeatureMapLayer)layer).getResource()).getType());
         }else if(layer instanceof CoverageMapLayer){
-            final CoverageResource ref = ((CoverageMapLayer)layer).getCoverageReference();
+            final GridCoverageResource ref = ((CoverageMapLayer)layer).getCoverageReference();
             try{
                 final GridCoverageReader reader = ref.acquireReader();
                 final GeneralGridGeometry gg = reader.getGridGeometry(ref.getImageIndex());

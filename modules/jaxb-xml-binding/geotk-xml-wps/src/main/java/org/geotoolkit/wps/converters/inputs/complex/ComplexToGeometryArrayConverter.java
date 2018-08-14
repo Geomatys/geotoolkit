@@ -17,7 +17,7 @@
 package org.geotoolkit.wps.converters.inputs.complex;
 
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;

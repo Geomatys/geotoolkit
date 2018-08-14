@@ -17,7 +17,7 @@
 
 package org.geotoolkit.data.osm.model;
 
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Point;
 import java.util.Collections;
 import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.apache.sis.feature.DefaultAssociationRole;

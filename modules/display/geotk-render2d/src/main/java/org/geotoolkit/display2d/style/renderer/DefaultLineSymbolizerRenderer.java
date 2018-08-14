@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;

@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.data.kml;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Polygon;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -83,7 +83,7 @@ import org.apache.sis.storage.FeatureSet;
 import org.opengis.feature.Feature;
 import org.opengis.feature.PropertyType;
 import org.geotoolkit.data.kml.xml.KmlConstants;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -377,7 +377,7 @@ public class KmzContextInterpreter {
         final Feature groundOverlay = KML_FACTORY.createGroundOverlay();
         final CoordinateReferenceSystem targetCrs = CommonCRS.WGS84.normalizedGeographic();
 
-        final CoverageResource ref = coverageMapLayer.getCoverageReference();
+        final GridCoverageResource ref = coverageMapLayer.getCoverageReference();
         final CoverageReader reader = ref.acquireReader();
         final GridCoverage2D coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), null);
         ref.recycle(reader);

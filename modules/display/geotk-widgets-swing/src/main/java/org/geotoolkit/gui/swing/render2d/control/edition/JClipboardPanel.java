@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKTReader;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;

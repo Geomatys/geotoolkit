@@ -17,7 +17,7 @@
 
 package org.geotoolkit.feature.xml.jaxp;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.io.File;
 import java.net.URL;
 import java.io.IOException;
@@ -154,8 +154,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
     @Override
     public void dispose() {
-        // do nothing
-        if(unmarshaller!=null){
+        if (unmarshaller != null) {
             getPool().recycle(unmarshaller);
             unmarshaller = null;
         }

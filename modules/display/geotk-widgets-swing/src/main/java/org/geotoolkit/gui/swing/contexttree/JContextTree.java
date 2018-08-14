@@ -59,9 +59,10 @@ import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 
 import org.geotoolkit.data.FeatureStoreContentEvent;
-import org.geotoolkit.data.FeatureStoreListener;
 import org.geotoolkit.data.FeatureStoreManagementEvent;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.display.PortrayalException;
@@ -91,13 +92,14 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.swing.style.JStyleTree;
+import org.geotoolkit.storage.StorageListener;
 
 public class JContextTree extends JScrollPane {
 
     private static final DataFlavor ITEM_FLAVOR = new DataFlavor(org.geotoolkit.map.MapItem.class, "geo/item");
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
     private static final ImageIcon ICON_FTS = JStyleTree.ICON_FTS;
-    private static final ImageIcon ICON_GROUP = IconBuilder.createIcon(FontAwesomeIcons.ICON_FOLDER_O,16,FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_GROUP = IconBuilder.createIcon(FontAwesomeIcons.ICON_FOLDER,16,FontAwesomeIcons.DEFAULT_COLOR);
 
     private final List<TreePopupItem> controls = new ArrayList<TreePopupItem>();
     private final JTree tree = new JTree(new DefaultTreeModel(new DefaultMutableTreeNode()));
@@ -666,7 +668,7 @@ public class JContextTree extends JScrollPane {
         }
     }
 
-    private class MapItemTreeNode extends DefaultMutableTreeNode implements ItemListener, FeatureStoreListener{
+    private class MapItemTreeNode extends DefaultMutableTreeNode implements ItemListener, ChangeListener<ChangeEvent>{
 
         private MapItemTreeNode(final MapItem item){
             super(item);
@@ -675,7 +677,7 @@ public class JContextTree extends JScrollPane {
 
             if(item instanceof FeatureMapLayer){
                 final FeatureMapLayer fml = (FeatureMapLayer) item;
-                ((FeatureCollection)fml.getResource()).getSession().addStorageListener(new FeatureStoreListener.Weak(this));
+                ((FeatureCollection)fml.getResource()).getSession().addListener(new StorageListener.Weak(this), ChangeEvent.class);
             }
 
             resetStructure();
@@ -810,15 +812,14 @@ public class JContextTree extends JScrollPane {
         }
 
         @Override
-        public void structureChanged(FeatureStoreManagementEvent event) {
-        }
-
-        @Override
-        public void contentChanged(FeatureStoreContentEvent event) {
-            if(event.getType() == FeatureStoreContentEvent.Type.SESSION){
-                //pending changes, refresh node to add a small * to specify
-                //some changes are made
-                ((DefaultTreeModel)tree.getModel()).nodeChanged(this);
+        public void changeOccured(ChangeEvent event) {
+            if (event instanceof FeatureStoreContentEvent) {
+                final FeatureStoreContentEvent fevent = (FeatureStoreContentEvent) event;
+                if(fevent.getType() == FeatureStoreContentEvent.Type.SESSION){
+                    //pending changes, refresh node to add a small * to specify
+                    //some changes are made
+                    ((DefaultTreeModel)tree.getModel()).nodeChanged(this);
+                }
             }
         }
 

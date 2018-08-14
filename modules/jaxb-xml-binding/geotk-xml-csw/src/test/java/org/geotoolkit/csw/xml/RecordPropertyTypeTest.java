@@ -17,20 +17,24 @@
 package org.geotoolkit.csw.xml;
 
 import java.io.StringReader;
-
-//Junit dependencies
+import java.io.StringWriter;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.dom.DOMSource;
 import org.geotoolkit.csw.xml.v202.RecordPropertyType;
 import org.geotoolkit.csw.xml.v202.TransactionType;
 import org.geotoolkit.csw.xml.v202.UpdateType;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.xml.MarshallerPool;
-import org.junit.*;
-import static org.junit.Assert.*;
 import org.w3c.dom.Node;
-import org.w3c.dom.Text;
+import org.junit.*;
+
+import static org.junit.Assert.*;
+
 
 /**
  *
@@ -62,15 +66,12 @@ public class RecordPropertyTypeTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Test simple Record Marshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void getValueStringTest() throws JAXBException {
-
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:Transaction xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" verboseResponse=\"false\" version=\"2.0.2\" service=\"CSW\" >"             + '\n' +
+        "<csw:Transaction xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" verboseResponse=\"false\" version=\"2.0.2\" service=\"CSW\" >" + '\n' +
         "    <csw:Update>"                                                                           + '\n' +
         "        <csw:RecordProperty>"                                                               + '\n' +
         "            <csw:Name>/csw:Record/dc:contributor</csw:Name>"                                + '\n' +
@@ -99,7 +100,8 @@ public class RecordPropertyTypeTest extends org.geotoolkit.test.TestBase {
 
         xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:Transaction xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" verboseResponse=\"false\" version=\"2.0.2\" service=\"CSW\" >"             + '\n' +
+        "<csw:Transaction xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" verboseResponse=\"false\" version=\"2.0.2\" service=\"CSW\" >" + '\n' +
         "    <csw:Update>"                                                                           + '\n' +
         "        <csw:RecordProperty>"                                                               + '\n' +
         "            <csw:Name>/csw:Record/dc:contributor</csw:Name>"                                + '\n' +
@@ -128,11 +130,11 @@ public class RecordPropertyTypeTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void getValueComplexTypeTest() throws JAXBException {
-
+    public void getValueComplexTypeTest() throws Exception {
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:Transaction xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" xmlns:gco=\"http://www.isotc211.org/2005/gco\" verboseResponse=\"false\" version=\"2.0.2\" service=\"CSW\" >" + '\n' +
+        "<csw:Transaction xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:gmd=\"http://www.isotc211.org/2005/gmd\""
+                + " xmlns:gco=\"http://www.isotc211.org/2005/gco\" verboseResponse=\"false\" version=\"2.0.2\" service=\"CSW\" >" + '\n' +
         "    <csw:Update>"                                                                           + '\n' +
         "        <csw:RecordProperty>"                                                               + '\n' +
         "            <csw:Name>/csw:Record/dc:contributor</csw:Name>"                                + '\n' +
@@ -177,7 +179,9 @@ public class RecordPropertyTypeTest extends org.geotoolkit.test.TestBase {
 
         xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:Transaction xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" xmlns:gco=\"http://www.isotc211.org/2005/gco\" verboseResponse=\"false\" version=\"2.0.2\" service=\"CSW\" >" + '\n' +
+        "<csw:Transaction xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" xmlns:gco=\"http://www.isotc211.org/2005/gco\""
+                + " verboseResponse=\"false\" version=\"2.0.2\" service=\"CSW\" >" + '\n' +
         "    <csw:Update>"                                                                           + '\n' +
         "        <csw:RecordProperty>"                                                               + '\n' +
         "            <csw:Name>/csw:Record/dc:contributor</csw:Name>"                                + '\n' +
@@ -220,12 +224,28 @@ public class RecordPropertyTypeTest extends org.geotoolkit.test.TestBase {
 
         assertTrue(property.getValue() instanceof Node);
 
-        final Object obj = unmarshaller.unmarshal((Node) property.getValue());
+        final Node source = ((Node) property.getValue()).getNextSibling();
+        final Object obj;
+        if (CAN_PARSE_DOM_SOURCE) {
+            obj = unmarshaller.unmarshal(source);
+        } else {
+            Transformer xformer = TransformerFactory.newInstance().newTransformer();
+            StringWriter buffer = new StringWriter();
+            xformer.transform(new DOMSource(source), new StreamResult(buffer));
+            obj = unmarshaller.unmarshal(new StringReader(buffer.toString()));
+        }
         assertTrue("unexpected type:" + property.getValue().getClass(), obj instanceof DefaultGeographicBoundingBox);
 
         DefaultGeographicBoundingBox expResult = new DefaultGeographicBoundingBox(1.1667, 1.1667, 36.6, 36.6);
 
         assertEquals(expResult, obj);
-
     }
+
+    /**
+     * Whether we can create XMLEventReader from DOMSource. Last time we tried with JDK 8, we got:
+     *
+     * java.lang.UnsupportedOperationException: Cannot create XMLStreamReader or XMLEventReader from a javax.xml.transform.dom.DOMSource
+     *   at com.sun.xml.internal.stream.XMLInputFactoryImpl.jaxpSourcetoXMLInputSource(XMLInputFactoryImpl.java:302)
+     */
+    private static final boolean CAN_PARSE_DOM_SOURCE = false;
 }

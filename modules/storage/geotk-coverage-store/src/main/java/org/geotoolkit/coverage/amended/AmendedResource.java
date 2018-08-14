@@ -22,14 +22,17 @@ import org.apache.sis.internal.simple.SimpleIdentifier;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.identification.Identification;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Wrap a DataNode and it's children.
@@ -43,19 +46,19 @@ final class AmendedResource extends DefaultAggregate {
     /**
      * Listen to the real node events and propage them.
      */
-    private final StorageListener subListener = new StorageListener(){
+    private final ChangeListener subListener = new ChangeListener() {
         @Override
-        public void structureChanged(StorageEvent event) {
-            try {
-                rebuildNodes();
-            } catch (DataStoreException ex) {
-                store.getLogger().log(Level.WARNING, ex.getMessage(),ex);
+        public void changeOccured(ChangeEvent event) {
+            if (event instanceof CoverageStoreManagementEvent) {
+                try {
+                    rebuildNodes();
+                } catch (DataStoreException ex) {
+                    store.getLogger().log(Level.WARNING, ex.getMessage(),ex);
+                }
             }
-            sendStructureEvent(event.copy(AmendedResource.this));
-        }
-        @Override
-        public void contentChanged(StorageEvent event) {
-            sendStructureEvent(event.copy(AmendedResource.this));
+            if (event instanceof StorageEvent) {
+                sendEvent(((StorageEvent)event).copy(AmendedResource.this));
+            }
         }
     };
 
@@ -63,9 +66,7 @@ final class AmendedResource extends DefaultAggregate {
         super(getIdentifier(node));
         this.store = store;
         this.base = node;
-        if (node instanceof org.geotoolkit.storage.Resource) {
-            ((org.geotoolkit.storage.Resource)node).addStorageListener(new StorageListener.Weak(store, subListener));
-        }
+        node.addListener(new StorageListener.Weak(store, subListener), ChangeEvent.class);
         rebuildNodes();
     }
 
@@ -97,9 +98,9 @@ final class AmendedResource extends DefaultAggregate {
         for(Resource n : children){
             if(n instanceof PyramidalCoverageResource){
                 //TODO : create an amended reference which declares itself as a pyramid.
-                resources.add(new AmendedCoverageResource((CoverageResource)n, store));
-            }else if(n instanceof CoverageResource){
-                resources.add(new AmendedCoverageResource((CoverageResource)n, store));
+                resources.add(new AmendedCoverageResource((GridCoverageResource)n, store));
+            }else if(n instanceof GridCoverageResource){
+                resources.add(new AmendedCoverageResource((GridCoverageResource)n, store));
             }else if(n instanceof Aggregate){
                 resources.add(new AmendedResource((Aggregate)n, store));
             }

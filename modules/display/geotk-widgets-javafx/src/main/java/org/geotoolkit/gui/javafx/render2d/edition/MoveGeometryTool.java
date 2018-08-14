@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.gui.javafx.render2d.edition;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;

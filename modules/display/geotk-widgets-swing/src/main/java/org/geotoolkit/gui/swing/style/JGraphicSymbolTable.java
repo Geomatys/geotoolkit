@@ -69,10 +69,10 @@ import org.opengis.util.InternationalString;
 public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
 
     private static final Icon ICO_ADD = IconBuilder.createIcon(FontAwesomeIcons.ICON_PLUS, 16, FontAwesomeIcons.DEFAULT_COLOR);
-    private static final Icon ICO_EDIT = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final Icon ICO_EDIT = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL_ALT, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICO_UP = IconBuilder.createIcon(FontAwesomeIcons.ICON_CHEVRON_UP, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICO_DOWN = IconBuilder.createIcon(FontAwesomeIcons.ICON_CHEVRON_DOWN, 16, FontAwesomeIcons.DEFAULT_COLOR);
-    private static final ImageIcon ICO_DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICO_DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     private MapLayer layer = null;
     private final GraphicalModel model = new GraphicalModel(null);

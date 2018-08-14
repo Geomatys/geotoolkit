@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.index.quadtree;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 /**
  * Represent a tyle in the fake quad tree.

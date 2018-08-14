@@ -17,11 +17,11 @@
 
 package org.geotoolkit.display2d.ext.grid;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Polygon;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -111,6 +111,20 @@ public class J2DGridUtilities {
         try{
             //reduce grid bounds to validity area
             Envelope gridBounds = Envelopes.transform(context.getCanvasObjectiveBounds2D(), gridCRS);
+
+            if (new GeneralEnvelope(gridBounds).isEmpty()) {
+                //envelope likely contains NaN values
+                gridBounds = CRS.getDomainOfValidity(gridCRS);
+                if (gridBounds == null){
+                    //try to convert target CRS validity to grid crs
+                    gridBounds = CRS.getDomainOfValidity(objectiveCRS);
+                    if (gridBounds == null){
+                        //nothing we can do
+                        return;
+                    }
+                    gridBounds = Envelopes.transform(gridBounds, gridCRS);
+                }
+            }
 
             if(Math.abs(gridBounds.getSpan(0)) < MIN || Math.abs(gridBounds.getSpan(1)) < MIN ){
                 return;

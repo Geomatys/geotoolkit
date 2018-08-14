@@ -74,17 +74,17 @@ import org.apache.sis.util.Utilities;
  */
 public class PyramidalModelWriter extends GridCoverageWriter {
 
-    private final CoverageResource reference;
+    private final GridCoverageResource reference;
 
     /**
-     * Build a writer on an existing {@link CoverageResource coverage reference}.
+     * Build a writer on an existing {@link GridCoverageResource coverage reference}.
      *
-     * @param reference A valid {@link CoverageResource coverage reference}.
+     * @param reference A valid {@link GridCoverageResource coverage reference}.
      *                  Should not be {@code null} and an instance of {@link PyramidalModel}.
-     * @throws IllegalArgumentException if the given {@link CoverageResource coverage reference}
+     * @throws IllegalArgumentException if the given {@link GridCoverageResource coverage reference}
      *                                  is not an instance of {@link PyramidalModel}.
      */
-    public PyramidalModelWriter(final CoverageResource reference) {
+    public PyramidalModelWriter(final GridCoverageResource reference) {
         if (!(reference instanceof PyramidalCoverageResource)) {
             throw new IllegalArgumentException("Given coverage reference should be an instance of PyramidalModel!");
         }

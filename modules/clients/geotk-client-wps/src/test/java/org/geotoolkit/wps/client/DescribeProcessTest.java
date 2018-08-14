@@ -29,6 +29,7 @@ import org.junit.Test;
 
 import static org.apache.sis.test.Assert.*;
 import org.geotoolkit.wps.xml.v200.DescribeProcess;
+import static org.apache.sis.test.MetadataAssert.*;
 
 
 /**

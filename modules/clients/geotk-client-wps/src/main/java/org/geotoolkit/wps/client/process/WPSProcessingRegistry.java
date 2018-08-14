@@ -83,7 +83,6 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
     public WPSProcessingRegistry(WebProcessingClient client, final boolean dynamicLoading) throws CapabilitiesException {
         this.client = client;
         this.dynamicLoading = dynamicLoading;
-        client.getCapabilities();
     }
 
     public WebProcessingClient getClient() {

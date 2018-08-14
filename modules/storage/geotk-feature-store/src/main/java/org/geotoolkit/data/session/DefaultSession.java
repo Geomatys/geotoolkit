@@ -17,7 +17,7 @@
 
 package org.geotoolkit.data.session;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -33,7 +33,6 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
@@ -42,7 +41,6 @@ import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.version.Version;
-import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.FilterVisitor;

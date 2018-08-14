@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.shapefile.xml;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -50,7 +50,7 @@ import org.geotoolkit.image.io.plugin.WorldFileImageReaderTest;
 import org.geotoolkit.image.SampleModels;
 import org.apache.sis.xml.XML;
 
-import static org.apache.sis.test.Assert.*;
+import static org.apache.sis.test.MetadataAssert.*;
 import static org.apache.sis.test.TestUtilities.getSingleton;
 
 

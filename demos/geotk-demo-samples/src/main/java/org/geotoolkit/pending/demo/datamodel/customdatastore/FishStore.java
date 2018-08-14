@@ -2,7 +2,7 @@
 
 package org.geotoolkit.pending.demo.datamodel.customdatastore;
 
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
@@ -23,6 +23,8 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -115,7 +117,14 @@ public class FishStore extends DataStore implements FeatureSet {
     }
 
     @Override
-    public void close() throws DataStoreException {
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 
+    @Override
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    }
+
+    @Override
+    public void close() throws DataStoreException {
+    }
 }

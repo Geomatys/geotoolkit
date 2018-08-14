@@ -28,6 +28,8 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalFeatureTypeException;
 import org.apache.sis.storage.ReadOnlyStorageException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
@@ -36,7 +38,6 @@ import org.geotoolkit.data.memory.mapping.FeatureMapper;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.storage.StorageListener;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
@@ -130,13 +131,11 @@ public class GenericMappingFeatureCollection extends AbstractCollection<Feature>
     }
 
     @Override
-    public void addStorageListener(final StorageListener listener) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 
     @Override
-    public void removeStorageListener(final StorageListener listener) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 
     @Override

@@ -81,7 +81,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.geometry.Envelopes;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Coverage editor tool.
@@ -90,7 +90,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  */
 public class CoverageEditionDelegate extends AbstractEditionDelegate {
 
-    private static final ImageIcon ICON_COMMIT = IconBuilder.createIcon(FontAwesomeIcons.ICON_FLOPPY_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_COMMIT = IconBuilder.createIcon(FontAwesomeIcons.ICON_SAVE, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_ROLLBACK = IconBuilder.createIcon(FontAwesomeIcons.ICON_UNDO, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_SELECT = IconBuilder.createIcon(FontAwesomeIcons.ICON_LOCATION_ARROW, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
@@ -194,7 +194,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                 if(res == JOptionPane.OK_OPTION){
                     editedPixels.add(mouseGridPosition);
                     //update image
-                    final CoverageResource ref = layer.getCoverageReference();
+                    final GridCoverageResource ref = layer.getCoverageReference();
                     if(ref != null){
                         for(int i=0;i<samples.length;i++){
                             samples[i] = ((Number)spinners.get(i).getValue()).doubleValue();
@@ -238,7 +238,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
             try {
                 gcrp.clear();
                 gcrp.setEnvelope(visibleArea);
-                final CoverageResource ref = layer.getCoverageReference();
+                final GridCoverageResource ref = layer.getCoverageReference();
                 final CoverageReader reader = ref.acquireReader();
                 final GridCoverage2D cov = (GridCoverage2D) reader.read(ref.getImageIndex(), gcrp);
                 ref.recycle(reader);
@@ -382,7 +382,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         if (layer == null || coverage == null) {
             return;
         }
-        final CoverageResource ref = layer.getCoverageReference();
+        final GridCoverageResource ref = layer.getCoverageReference();
         final GridCoverageWriter writer = ref.acquireWriter();
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(img);

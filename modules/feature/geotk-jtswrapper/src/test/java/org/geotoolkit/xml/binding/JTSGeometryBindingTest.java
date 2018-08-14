@@ -17,9 +17,7 @@
 
 package org.geotoolkit.xml.binding;
 
-// JUnit dependencies
 import java.util.logging.Level;
-import org.geotoolkit.util.StringUtilities;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
@@ -59,7 +57,7 @@ import org.junit.*;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import static org.junit.Assert.*;
+import static org.apache.sis.test.MetadataAssert.*;
 
 
 /**
@@ -86,14 +84,10 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         m       = pool.acquireMarshaller();
 
         File xsdDirectory = getDirectoryFromResource("org.geotoolkit.gml.311.base");
-        SchemaFactory sf = SchemaFactory.newInstance(
-        javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        SchemaFactory sf = SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
         Schema schema = sf.newSchema(new File(xsdDirectory, "gml.xsd"));
         un.setSchema(schema);
         //m.setSchema(schema);
-
-
-
     }
 
     @After
@@ -101,7 +95,6 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         if (un != null) {
             pool.recycle(un);
         }
-
         if (m != null) {
             pool.recycle(m);
         }
@@ -117,7 +110,6 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
     public static File getDirectoryFromResource(final String packagee) {
         File result = null;
         final ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-
         try {
             final String fileP = packagee.replace('.', '/');
             final Enumeration<URL> urls = classloader.getResources(fileP);
@@ -133,8 +125,6 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "The resources for the package{0}, could not be obtained", packagee);
         }
-
-
         return result;
     }
 
@@ -145,7 +135,6 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
      * @param filePackageName The package to scan.
      *
      * @return a list of package names.
-     * @throws java.io.IOException
      */
     public static File scanDir(final URI u, final String filePackageName) throws IOException {
         final String scheme = u.getScheme();
@@ -172,10 +161,8 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Test point Marshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void PointMarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.forCode("urn:ogc:def:crs:epsg::4326");
@@ -189,15 +176,15 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSPoint(point), sw);
 
-        String result = StringUtilities.removeXmlns(sw.toString());
+        String result = sw.toString();
         result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
 
         String expResult = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"           + '\n' +
-                           "<gml:Point srsName=\"urn:ogc:def:crs:epsg::4326\" >" + '\n' +
+                           "<gml:Point xmlns:gml=\"http://www.opengis.net/gml\" srsName=\"urn:ogc:def:crs:epsg::4326\" >" + '\n' +
                            "  <gml:pos>2.1 12.6</gml:pos>"   + '\n' +
                            "</gml:Point>" + '\n';
 
-        assertEquals(expResult, result);
+        assertXmlEquals(expResult, result, "xmlns:*");
 
         pool.recycle(m);
     }
@@ -205,10 +192,8 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Test point Marshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void PointUnMarshalingTest() throws Exception {
 
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"    + '\n' +
@@ -229,16 +214,12 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
         assertEquals(expResult.getDirectPosition(), result.getValue().getDirectPosition());
         assertEquals(expResult, result.getValue());
-
-
     }
 
-     /**
+    /**
      * Test curve Marshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void CurveMarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.forCode("urn:ogc:def:crs:epsg::27572");
@@ -278,12 +259,12 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSCurve(curve), sw);
 
-        String result = StringUtilities.removeXmlns(sw.toString());
+        String result = sw.toString();
         result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"            + '\n' +
-        "<gml:Curve srsName=\"urn:ogc:def:crs:epsg::27572\" >"                     + '\n' +
+        "<gml:Curve xmlns:gml=\"http://www.opengis.net/gml\" srsName=\"urn:ogc:def:crs:epsg::27572\" >" + '\n' +
         "  <gml:segments>"                                                         + '\n' +
         "    <gml:LineStringSegment interpolation=\"linear\">"                     + '\n' +
         "      <gml:pos>401500.0 3334500.0</gml:pos>"                              + '\n' +
@@ -298,17 +279,15 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         "</gml:Curve>"                                                             + '\n';
 
 
-        assertEquals(expResult, result);
+        assertXmlEquals(expResult, result, "xmlns:*");
 
         pool.recycle(m);
     }
 
-     /**
+    /**
      * Test curve Marshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void CurveUnmarshalingTest() throws Exception {
 
         String xml =
@@ -369,16 +348,12 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         assertEquals(expResult.getSegments().get(0), result.getSegments().get(0));
         assertEquals(expResult.getSegments(), result.getSegments());
         assertEquals(expResult, result);
-
-
     }
 
     /**
      * Test envelope Marshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void EnvelopeMarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.forCode("urn:ogc:def:crs:epsg::27572");
@@ -393,27 +368,23 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
         JTSEnvelope envelope = new JTSEnvelope(p1, p2);
 
-
-
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSEnvelope(envelope), sw);
-        String result = StringUtilities.removeXmlns(sw.toString());
+        String result = sw.toString();
 
         String expresult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<gml:Envelope >"                                               + '\n' +
+        "<gml:Envelope  xmlns:gml=\"http://www.opengis.net/gml\">"      + '\n' +
         "  <gml:lowerCorner>402320.0 3334850.0</gml:lowerCorner>"       + '\n' +
         "  <gml:upperCorner>402200.0 3335200.0</gml:upperCorner>"       + '\n' +
         "</gml:Envelope>" + '\n';
 
-        assertEquals(expresult, result);
+        assertXmlEquals(expresult, result, "xmlns:*");
         pool.recycle(m);
     }
 
     /**
      * Test envelope Unmarshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Ignore
     public void EnvelopeUnMarshalingTest() throws Exception {
@@ -437,22 +408,15 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         "  <gml:upperCorner>402200.0 3335200.0</gml:upperCorner>"       + '\n' +
         "</gml:Envelope>"                                               + '\n';
 
-
-
-
         JTSEnvelope result = (JTSEnvelope) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
 
         assertEquals(expResult, result);
-
-
     }
 
     /**
      * Test multiPoint Marshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void MultiPointMarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.forCode("urn:ogc:def:crs:epsg::27572");
@@ -475,12 +439,12 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSMultiPoint(multiPoint), sw);
-        String result = StringUtilities.removeXmlns(sw.toString());
+        String result = sw.toString();
         result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                 + '\n' +
-        "<gml:MultiPoint srsName=\"urn:ogc:def:crs:epsg::27572\" >"                     + '\n' +
+        "<gml:MultiPoint xmlns:gml=\"http://www.opengis.net/gml\" srsName=\"urn:ogc:def:crs:epsg::27572\" >" + '\n' +
         "  <gml:pointMember>"                                                           + '\n' +
         "    <gml:Point srsName=\"urn:ogc:def:crs:epsg::27572\">"                       + '\n' +
         "      <gml:pos>402000.0 3334850.0</gml:pos>"                                   + '\n' +
@@ -493,15 +457,13 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         "  </gml:pointMember>"                                                          + '\n' +
         "</gml:MultiPoint>"                                                             + '\n';
 
-        assertEquals(expResult, result);
+        assertXmlEquals(expResult, result, "xmlns:*");
     }
 
     /**
      * Test multiPoint Marshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void MultiPointUnmarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.forCode("urn:ogc:def:crs:epsg::27572");
@@ -521,8 +483,6 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         expResult.getElements().add(pt1);
         expResult.getElements().add(pt2);
 
-
-
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"               + '\n' +
         "<gml:MultiPoint srsName=\"urn:ogc:def:crs:epsg::27572\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
@@ -540,15 +500,11 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
         JTSMultiPoint result = (JTSMultiPoint) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
 
-
-
         assertEquals(expResult, result);
     }
 
     /**
      * Test Composite curve Marshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void CompositeCurveMarshalingTest() throws Exception {
@@ -611,12 +567,12 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSCompositeCurve(compositeCurve), sw);
-        String result = StringUtilities.removeXmlns(sw.toString());
+        String result = sw.toString();
         result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                     + '\n' +
-        "<gml:CompositeCurve srsName=\"urn:ogc:def:crs:epsg::27572\" >"                     + '\n' +
+        "<gml:CompositeCurve xmlns:gml=\"http://www.opengis.net/gml\" srsName=\"urn:ogc:def:crs:epsg::27572\" >" + '\n' +
         "  <gml:curveMember>"                                                               + '\n' +
         "    <gml:Curve srsName=\"urn:ogc:def:crs:epsg::27572\">"                           + '\n' +
         "      <gml:segments>"                                                              + '\n' +
@@ -644,15 +600,13 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         "  </gml:curveMember>"                                                              + '\n' +
         "</gml:CompositeCurve>"                                                             + '\n';
 
-        assertEquals(expResult, result);
+        assertXmlEquals(expResult, result, "xmlns:*");
     }
 
-   /**
+    /**
      * Test Composite curve Marshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void MultiCurveMarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.forCode("urn:ogc:def:crs:epsg::4326");
@@ -700,12 +654,12 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSMultiCurve(multiCurve), sw);
-        String result = StringUtilities.removeXmlns(sw.toString());
+        String result = sw.toString();
         result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                               + '\n' +
-        "<gml:MultiCurve srsName=\"urn:ogc:def:crs:epsg::4326\" >"                                    + '\n' +
+        "<gml:MultiCurve xmlns:gml=\"http://www.opengis.net/gml\" srsName=\"urn:ogc:def:crs:epsg::4326\" >" + '\n' +
         "  <gml:curveMember>"                                                                         + '\n' +
         "    <gml:LineString>"                                                                        + '\n' +
         "      <gml:posList>35.840973 0.14967346 44.11891 3.6755037</gml:posList>"                    + '\n' +
@@ -718,15 +672,13 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         "  </gml:curveMember>"                                                                        + '\n' +
         "</gml:MultiCurve>"                                                                           + '\n';
 
-        assertEquals(expResult, result);
+        assertXmlEquals(expResult, result, "xmlns:*");
     }
 
    /**
      * Test Composite curve Marshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void MultiCurveUnMarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.forCode("urn:ogc:def:crs:epsg::4326");
@@ -803,10 +755,8 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Test Composite curve Marshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void CompositeCurveUnmarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.forCode("urn:ogc:def:crs:epsg::27572");
@@ -906,10 +856,8 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Test PolyHedral surface Marshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void PolyHedralSurfaceMarshalingTest() throws Exception {
         CoordinateReferenceSystem crs = CRS.forCode("urn:ogc:def:crs:epsg::27572");
         assertTrue(crs != null);
@@ -1047,13 +995,13 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSPolyhedralSurface(polyHedralSurface), sw);
-        String result = StringUtilities.removeXmlns(sw.toString());
+        String result = sw.toString();
         result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
 
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                 + '\n'  +
-        "<gml:PolyhedralSurface srsName=\"urn:ogc:def:crs:epsg::27572\" >"                              + '\n'  +
+        "<gml:PolyhedralSurface xmlns:gml=\"http://www.opengis.net/gml\" srsName=\"urn:ogc:def:crs:epsg::27572\" >" + '\n'  +
         "  <gml:polygonPatches>"                                                                        + '\n'  +
         "    <gml:PolygonPatch>"                                                                        + '\n'  +
         "      <gml:exterior>"                                                                          + '\n'  +
@@ -1082,15 +1030,13 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         "  </gml:polygonPatches>"                                                                       + '\n'  +
         "</gml:PolyhedralSurface>"                                                                      + '\n';
 
-        assertEquals(expResult, result);
+        assertXmlEquals(expResult, result, "xmlns:*");
     }
 
     /**
      * Test PolyHedral surface Unmarshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void PolyHedralSurfaceUnmarshalingTest() throws Exception {
         CoordinateReferenceSystem crs = CRS.forCode("urn:ogc:def:crs:epsg::27572");
         assertTrue(crs != null);
@@ -1286,10 +1232,8 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Test Ring Unmarshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void RingMarshalingTest() throws Exception {
         CoordinateReferenceSystem crs = CRS.forCode("urn:ogc:def:crs:epsg::27572");
         assertTrue(crs != null);
@@ -1330,12 +1274,12 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
         StringWriter sw = new StringWriter();
         m.marshal(ring, sw);
-        String result = StringUtilities.removeXmlns(sw.toString());
+        String result = sw.toString();
         result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"               + '\n'  +
-        "<gml:Ring srsName=\"urn:ogc:def:crs:epsg::27572\" >"                         + '\n'  +
+        "<gml:Ring xmlns:gml=\"http://www.opengis.net/gml\" srsName=\"urn:ogc:def:crs:epsg::27572\" >" + '\n'  +
         "  <gml:curveMember>"                                                         + '\n'  +
         "    <gml:Curve srsName=\"urn:ogc:def:crs:epsg::27572\">"                     + '\n'  +
         "      <gml:segments>"                                                        + '\n'  +
@@ -1353,15 +1297,13 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         "  </gml:curveMember>"                                                        + '\n'  +
         "</gml:Ring>"                                                                 + '\n';
 
-        assertEquals(expResult, result);
+        assertXmlEquals(expResult, result, "xmlns:*");
     }
 
     /**
      * Test Ring Unmarshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void RingUnmarshalingTest() throws Exception {
         CoordinateReferenceSystem crs = CRS.forCode("urn:ogc:def:crs:epsg::27572");
         assertTrue(crs != null);
@@ -1429,10 +1371,8 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Test Ring Unmarshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void PolygonMarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.forCode("urn:ogc:def:crs:epsg::27572");
@@ -1503,12 +1443,12 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSPolygon(polygon), sw);
-        String result = StringUtilities.removeXmlns(sw.toString());
+        String result = sw.toString();
         result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                             + '\n'  +
-        "<gml:Polygon srsName=\"urn:ogc:def:crs:epsg::27572\" >"                                    + '\n'  +
+        "<gml:Polygon xmlns:gml=\"http://www.opengis.net/gml\" srsName=\"urn:ogc:def:crs:epsg::27572\" >" + '\n'  +
         "  <gml:exterior>"                                                                          + '\n'  +
         "    <gml:LinearRing>"                                                                      + '\n'  +
         "      <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
@@ -1521,15 +1461,13 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         "  </gml:interior>"                                                                         + '\n'  +
         "</gml:Polygon>"                                                                            + '\n';
 
-        assertEquals(expResult, result);
+        assertXmlEquals(expResult, result, "xmlns:*");
     }
 
     /**
      * Test Ring Unmarshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void PolygonUnmarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.forCode("urn:ogc:def:crs:epsg::27572");
@@ -1642,12 +1580,10 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         assertEquals(expResult, result);
     }
 
-   /**
+    /**
      * Test Ring Unmarshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void MultiPolygonMarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.forCode("urn:ogc:def:crs:epsg::27572");
@@ -1720,12 +1656,12 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSMultiPolygon(multiPolygon), sw);
-        String result = StringUtilities.removeXmlns(sw.toString());
+        String result = sw.toString();
         result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                 + '\n'  +
-        "<gml:MultiPolygon srsName=\"urn:ogc:def:crs:epsg::27572\" >"                                   + '\n'  +
+        "<gml:MultiPolygon xmlns:gml=\"http://www.opengis.net/gml\" srsName=\"urn:ogc:def:crs:epsg::27572\" >" + '\n'  +
         "  <gml:polygonMember>"                                                                         + '\n'  +
         "    <gml:Polygon srsName=\"urn:ogc:def:crs:epsg::27572\">"                                     + '\n'  +
         "      <gml:exterior>"                                                                          + '\n'  +
@@ -1742,15 +1678,13 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         "  </gml:polygonMember>"                                                                        + '\n'  +
         "</gml:MultiPolygon>\n";
 
-        assertEquals(expResult, result);
+        assertXmlEquals(expResult, result, "xmlns:*");
     }
 
     /**
      * Test Ring Unmarshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void MultiPolygonUnmarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.forCode("urn:ogc:def:crs:epsg::27572");
@@ -1853,10 +1787,8 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Test Composite curve Marshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void MultiPrimitiveMarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.forCode("urn:ogc:def:crs:epsg::27572");
@@ -1916,12 +1848,12 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSMultiGeometry(multip), sw);
-        String result = StringUtilities.removeXmlns(sw.toString());
+        String result = sw.toString();
         result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"               + '\n' +
-        "<gml:MultiGeometry >"                                                        + '\n' +
+        "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\" >"               + '\n' +
         "  <gml:geometryMember>"                                                      + '\n' +
         "    <gml:Curve srsName=\"urn:ogc:def:crs:epsg::27572\">"                     + '\n' +
         "      <gml:segments>"                                                        + '\n' +
@@ -1949,7 +1881,7 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         "  </gml:geometryMember>"                                                     + '\n' +
         "</gml:MultiGeometry>"                                                        + '\n';
 
-        assertEquals(expResult, result);
+        assertXmlEquals(expResult, result, "xmlns:*");
 
 
         crs = CRS.forCode("urn:ogc:def:crs:epsg::27593");
@@ -1995,12 +1927,12 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
         sw = new StringWriter();
         m.marshal(factory.createJTSMultiGeometry(multip), sw);
-        result = StringUtilities.removeXmlns(sw.toString());
+        result = sw.toString();
         result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
 
         expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<gml:MultiGeometry >" + '\n' +
+        "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\" >" + '\n' +
         "  <gml:geometryMember>" + '\n' +
         "    <gml:PolyhedralSurface srsName=\"urn:ogc:def:crs:epsg::27593\">" + '\n' +
         "      <gml:polygonPatches>" + '\n' +
@@ -2016,7 +1948,7 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         "  </gml:geometryMember>" + '\n' +
         "</gml:MultiGeometry>" + '\n';
 
-        assertEquals(expResult, result);
+        assertXmlEquals(expResult, result, "xmlns:*");
 
 
         crs = CRS.forCode("urn:ogc:def:crs:epsg::4326");
@@ -2069,12 +2001,12 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
         sw = new StringWriter();
         m.marshal(factory.createJTSMultiGeometry(multip), sw);
-        result = StringUtilities.removeXmlns(sw.toString());
+        result = sw.toString();
         result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
 
         expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                    + '\n' +
-        "<gml:MultiGeometry >"                                                             + '\n' +
+        "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\" >"                    + '\n' +
         "  <gml:geometryMember>"                                                           + '\n' +
         "    <gml:Polygon srsName=\"urn:ogc:def:crs:epsg::4326\">"                         + '\n' +
         "      <gml:exterior>"                                                             + '\n' +
@@ -2086,15 +2018,13 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         "  </gml:geometryMember>"                                                          + '\n' +
         "</gml:MultiGeometry>"                                                             + '\n';
 
-        assertEquals(expResult, result);
+        assertXmlEquals(expResult, result, "xmlns:*");
     }
 
-     /**
+    /**
      * Test Composite curve Marshalling.
-     *
-     * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void MultiPrimitiveUnmarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.forCode("urn:ogc:def:crs:epsg::27572");
@@ -2362,4 +2292,3 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         assertEquals(expResult, result);
     }
 }
-

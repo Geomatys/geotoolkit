@@ -43,18 +43,18 @@ public final class HintsPending extends Hints {
     public static String JTS_GEOMETRY_CRS = "JTSGeometryCRS";
 
     /**
-     * The {@code com.vividsolutions.jts.geom.GeometryFactory} instance to use.
+     * The {@code org.locationtech.jts.geom.GeometryFactory} instance to use.
      *
      */
     public static final ClassKey JTS_GEOMETRY_FACTORY = new ClassKey(
-            "com.vividsolutions.jts.geom.GeometryFactory");
+            "org.locationtech.jts.geom.GeometryFactory");
 
     /**
-     * The {@code com.vividsolutions.jts.geom.CoordinateSequenceFactory} instance to use.
+     * The {@code org.locationtech.jts.geom.CoordinateSequenceFactory} instance to use.
      *
      */
     public static final ClassKey JTS_COORDINATE_SEQUENCE_FACTORY = new ClassKey(
-            "com.vividsolutions.jts.geom.CoordinateSequenceFactory");
+            "org.locationtech.jts.geom.CoordinateSequenceFactory");
 
     ////////////////////////////////////////////////////////////////////////
     ////////                                                        ////////

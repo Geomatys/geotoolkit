@@ -36,6 +36,8 @@ import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
 import org.opengis.metadata.Metadata;
@@ -256,5 +258,13 @@ public class LandsatCoverageStore extends DataStore implements Aggregate, Resour
                 return parser;
         }
         throw new DataStoreException("Invalid metadata file :"+file.toString());
+    }
+
+    @Override
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    }
+
+    @Override
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 }

@@ -25,7 +25,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.wmts.WebMapTileClient;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Map representation of a WMTS layer.
@@ -45,11 +45,11 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
      */
     private final WebMapTileClient server;
 
-    private static CoverageResource getReference(WebMapTileClient server, String mapType){
+    private static GridCoverageResource getReference(WebMapTileClient server, String mapType){
         try {
             for(GenericName n : server.getNames()){
                 if(n.tip().toString().equalsIgnoreCase(mapType)){
-                    return (CoverageResource) server.findResource(n.toString());
+                    return (GridCoverageResource) server.findResource(n.toString());
                 }
             }
             throw new RuntimeException("Not layer for name : " + mapType);

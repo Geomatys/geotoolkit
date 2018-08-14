@@ -16,11 +16,16 @@
  */
 package org.geotoolkit.feature.catalog;
 
+import java.util.Map;
+import java.util.Collections;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import org.apache.sis.internal.jaxb.gco.Multiplicity;
+import org.apache.sis.internal.xml.LegacyNamespaces;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
+import org.apache.sis.xml.XML;
+
 
 /**
  *
@@ -30,6 +35,8 @@ public class FeatureCatalogMarshallerPool {
 
     private static final MarshallerPool INSTANCE;
     static {
+        final Map<String, Object> properties = Collections.singletonMap
+                (XML.METADATA_VERSION, LegacyNamespaces.VERSION_2007);
         try {
             INSTANCE = new MarshallerPool(JAXBContext.newInstance(
                     DefaultMetadata.class,
@@ -37,7 +44,7 @@ public class FeatureCatalogMarshallerPool {
                     ConstraintImpl.class, DefinitionReferenceImpl.class, DefinitionSourceImpl.class,
                     FeatureAssociationImpl.class, FeatureAttributeImpl.class, FeatureCatalogueImpl.class,
                     FeatureOperationImpl.class, FeatureTypeImpl.class, InheritanceRelationImpl.class,
-                    ListedValueImpl.class, PropertyTypeImpl.class, MultiplicityImpl.class), null);
+                    ListedValueImpl.class, PropertyTypeImpl.class, Multiplicity.class), properties);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }

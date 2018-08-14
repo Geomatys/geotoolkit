@@ -47,8 +47,15 @@ public strictfp final class WriterTest extends org.geotoolkit.test.TestBase {
      */
     static final String JSON =
             "{\n" +
+            "    \"metadataIdentifier\": {\n" +
+            "        \"code\": \"An archive\"\n" +
+            "    },\n" +
             "    \"language\": [\"en\"],\n" +
             "    \"characterSet\": [\"UTF-8\"],\n" +
+            "    \"metadataStandard\": [{\n" +
+            "        \"title\": \"ISO19115\",\n" +
+            "        \"edition\": \"2003/Cor.1:2006\"\n" +
+            "    }],\n" +
             "    \"identificationInfo\": [{\n" +
             "        \"citation\": {\n" +
             "            \"title\": \"Data \\\"title\\\"\"\n" +
@@ -73,13 +80,6 @@ public strictfp final class WriterTest extends org.geotoolkit.test.TestBase {
             "                \"role\": \"collaborator\"\n" +
             "            }\n" +
             "        }]\n" +
-            "    }],\n" +
-            "    \"metadataIdentifier\": {\n" +
-            "        \"code\": \"An archive\"\n" +
-            "    },\n" +
-            "    \"metadataStandard\": [{\n" +
-            "        \"title\": \"ISO19115\",\n" +
-            "        \"edition\": \"2003/Cor.1:2006\"\n" +
             "    }]\n" +
             "}";
 

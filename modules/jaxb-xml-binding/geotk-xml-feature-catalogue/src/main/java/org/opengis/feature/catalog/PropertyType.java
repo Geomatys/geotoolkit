@@ -11,9 +11,10 @@
 package org.opengis.feature.catalog;
 
 import java.util.List;
+import org.apache.sis.internal.jaxb.gco.Multiplicity;
 
 import org.opengis.util.LocalName;
-import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
+
 
 /**
  *
@@ -54,7 +55,7 @@ public interface PropertyType {
      * This is an elaboration of the GFM to allow for complete specifications for various programming and data definition language.
      */
     //@UML(identifier="cardinality", obligation=MANDATORY, specification=ISO_19110)
-    MultiplicityImpl getCardinality();
+    Multiplicity getCardinality();
 
     /**
      * Role that links the operations, attributes and associations roles with feature types that contain them.
@@ -78,5 +79,4 @@ public interface PropertyType {
      */
     //@UML(identifier="definitionReference", obligation=OPTIONAL, specification=ISO_19110)
     DefinitionReference getDefinitionReference();
-
 }

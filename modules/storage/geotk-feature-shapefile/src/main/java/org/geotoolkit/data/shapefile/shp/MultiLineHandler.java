@@ -19,10 +19,10 @@ package org.geotoolkit.data.shapefile.shp;
 
 import java.nio.ByteBuffer;
 
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
 import java.nio.DoubleBuffer;
 
 import org.geotoolkit.geometry.jts.JTS;

@@ -47,7 +47,7 @@ import org.opengis.referencing.operation.TransformException;
 public class ZoomToItem extends TreeMenuItem{
 
     private static final Image ICON = SwingFXUtils.toFXImage(
-            IconBuilder.createImage(FontAwesomeIcons.ICON_ARROWS_ALT, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
+            IconBuilder.createImage(FontAwesomeIcons.ICON_EXPAND, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
 
     private final FXMap map;
     private WeakReference<TreeItem> itemRef;

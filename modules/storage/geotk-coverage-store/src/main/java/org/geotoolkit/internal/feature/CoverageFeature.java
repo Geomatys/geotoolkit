@@ -16,11 +16,12 @@
  */
 package org.geotoolkit.internal.feature;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -48,7 +49,6 @@ import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.feature.TypeConventions;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
@@ -72,6 +72,7 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -215,16 +216,14 @@ public final class CoverageFeature {
         //read a single pixel coverage
         final GeneralGridGeometry gridGeom = reader.getGridGeometry(imageIndex);
         final Envelope env = gridGeom.getEnvelope();
-        final GridEnvelope ext = gridGeom.getExtent();
-
-        final double[] res = new double[ext.getDimension()];
-        for(int i=0;i<res.length;i++){
-            res[i] = (env.getSpan(i) / ext.getSpan(i));
-        }
 
         final GridCoverageReadParam param = new GridCoverageReadParam();
-        param.setEnvelope(env);
+        param.setEnvelope(gridGeom.getEnvelope());
+
+        final double[] res = new double[gridGeom.getDimension()];
+        Arrays.fill(res, 1);
         param.setResolution(res);
+
         Coverage coverage = reader.read(imageIndex, param);
 
         //in case of Nd Coverage unstack them.
@@ -244,7 +243,7 @@ public final class CoverageFeature {
 
     }
 
-    public static FeatureAssociation coverageRecords(final CoverageResource res, final FeatureAssociationRole role) {
+    public static FeatureAssociation coverageRecords(final GridCoverageResource res, final FeatureAssociationRole role) {
 
         final Collection<Feature> pixels = new AbstractCollection<Feature>() {
 
@@ -521,7 +520,7 @@ public final class CoverageFeature {
                 //has been converted to an attribute, the envelope will be N dimesion, and the geometry 2D
                 if (envelope.getDimension() > 2) {
                     final GeneralEnvelope env = new GeneralEnvelope(envelope);
-                    final com.vividsolutions.jts.geom.Envelope jtsEnv = geom.getEnvelopeInternal();
+                    final org.locationtech.jts.geom.Envelope jtsEnv = geom.getEnvelopeInternal();
                     env.setRange(0, jtsEnv.getMinX(), jtsEnv.getMaxX());
                     env.setRange(1, jtsEnv.getMinY(), jtsEnv.getMaxY());
                     next.setPropertyValue(AttributeConvention.ENVELOPE_PROPERTY.toString(), env);

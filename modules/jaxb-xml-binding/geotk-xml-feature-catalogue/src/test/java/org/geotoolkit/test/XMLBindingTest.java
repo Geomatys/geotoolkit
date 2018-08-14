@@ -16,17 +16,14 @@
  */
 package org.geotoolkit.test;
 
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
-import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.feature.catalog.AssociationRoleImpl;
 import org.geotoolkit.feature.catalog.BoundFeatureAttributeImpl;
 import org.geotoolkit.feature.catalog.ConstraintImpl;
@@ -45,10 +42,13 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.citation.DefaultContact;
 import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
 import org.apache.sis.metadata.iso.citation.DefaultTelephone;
+import org.apache.sis.internal.jaxb.gco.Multiplicity;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.test.XMLComparator;
 import org.apache.sis.util.iso.DefaultNameFactory;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.feature.catalog.FeatureCatalogMarshallerPool;
 import org.opengis.feature.catalog.DefinitionSource;
 import org.opengis.feature.catalog.FeatureType;
@@ -56,9 +56,6 @@ import org.opengis.metadata.citation.CitationDate;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.citation.Role;
-import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
-import org.geotoolkit.feature.catalog.util.MultiplicityRangeImpl;
-import org.geotoolkit.nio.IOUtilities;
 import org.opengis.feature.catalog.AssociationRole;
 import org.opengis.feature.catalog.Constraint;
 import org.opengis.feature.catalog.DefinitionReference;
@@ -66,37 +63,27 @@ import org.opengis.feature.catalog.ListedValue;
 import org.opengis.feature.catalog.PropertyType;
 import org.opengis.feature.catalog.RoleType;
 import org.opengis.util.InternationalString;
-import org.geotoolkit.util.UnlimitedInteger;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
 public class XMLBindingTest {
-
-    public static final Logger LOGGER = Logger.getLogger("main");
-
     @Test
     public void marshallingTest() throws Exception {
 
         // Unmarshalles the given XML file to objects
 
         MarshallerPool pool = FeatureCatalogMarshallerPool.getInstance();
-
-        Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-        Marshaller marshaller     = pool.acquireMarshaller();
-         try {
+        Marshaller marshaller = pool.acquireMarshaller();
+        try {
             //unmarshaller.setProperty("com.sun.xml.bind.IDResolver", new DocumentIDResolver());
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         } catch (PropertyException e) {
             System.out.println("prefix non trouv");
         }
-
-
-
-
         String name = "Digital Geographic information Exchange Standard (DIGEST) Feature and Attribute Coding Catalogue (FACC)";
         List<String> scopes = new ArrayList<>();
         scopes.add("Hydrography");scopes.add("Ports and Harbours");scopes.add("Transportation Networks");
@@ -171,7 +158,7 @@ public class XMLBindingTest {
         FeatureAttributeImpl attr = new FeatureAttributeImpl("attribute-1",
                                                              factory.createLocalName(null, "Depth"),
                                                              "Distance measured from the highest",
-                                                             new MultiplicityImpl(new MultiplicityRangeImpl(1, new Integer(1))),
+                                                             new Multiplicity(NumberRange.create(1, true, 1, true)),
                                                              null,
                                                              consts,
                                                              code,
@@ -215,7 +202,7 @@ public class XMLBindingTest {
         FeatureAttributeImpl attr2 = new FeatureAttributeImpl("attribute-2",
                                                              factory.createLocalName(null, "Pier/Wharf/Quay classification"),
                                                              "Classification of decked berthing structure, based on configuration and structure",
-                                                             new MultiplicityImpl(new MultiplicityRangeImpl(1, new Integer(1))),
+                                                             new Multiplicity(NumberRange.create(1, true, 1, true)),
                                                              null,
                                                              null,
                                                              code,
@@ -289,7 +276,7 @@ public class XMLBindingTest {
         AssociationRoleImpl role1 = new AssociationRoleImpl("role-1",
                                                         factory.createLocalName(null,"Over"),
                                                         "Bridge whitch the road crosses over ...",
-                                                        new MultiplicityImpl(new MultiplicityRangeImpl(1, Integer.MAX_VALUE)),
+                                                        new Multiplicity(NumberRange.createLeftBounded(1, true)),
                                                         ft2,
                                                         null,
                                                         null,
@@ -304,7 +291,7 @@ public class XMLBindingTest {
         AssociationRoleImpl role2 = new AssociationRoleImpl("role-2",
                                                         factory.createLocalName(null,"Under"),
                                                         "Roads which cross this bridge.",
-                                                       new MultiplicityImpl(new MultiplicityRangeImpl(0, new Integer(1))),
+                                                        new Multiplicity(NumberRange.create(0, true, 1, true)),
                                                         ft3,
                                                         null,
                                                         null,
@@ -372,7 +359,7 @@ public class XMLBindingTest {
         operation.setId("operation-1");
         operation.setMemberName(factory.createLocalName(null,"Raise dam"));
         operation.setDefinition("The action of raising the dam causes changes in the discharge from the dam....");
-        operation.setCardinality(new MultiplicityImpl(new MultiplicityRangeImpl(1, new Integer(1))));
+        operation.setCardinality(new Multiplicity(NumberRange.create(1, true, 1, true)));
         operation.setFeatureType(ft5);
         operation.setSignature("damRaise((Dam) dam, (Real) newHeight) : Dam");
         operation.setFormalDefinition(" damRaise(ConstructDam(d), h) = error " +
@@ -396,6 +383,7 @@ public class XMLBindingTest {
         String expected = IOUtilities.toString(p);
 
         XMLComparator comparator = new XMLComparator(expected, result);
+        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
 
         sw = new StringWriter();
@@ -406,6 +394,7 @@ public class XMLBindingTest {
         expected = IOUtilities.toString(p);
 
         comparator = new XMLComparator(expected, result);
+        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
 
         sw = new StringWriter();
@@ -416,6 +405,7 @@ public class XMLBindingTest {
         expected = IOUtilities.toString(p);
 
         comparator = new XMLComparator(expected, result);
+        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
 
         sw = new StringWriter();
@@ -426,57 +416,7 @@ public class XMLBindingTest {
         expected = IOUtilities.toString(p);
 
         comparator = new XMLComparator(expected, result);
+        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
     }
-
-    @Test
-    public void MultiplicityXmlBindingtest() throws Exception {
-
-
-        Path p = IOUtilities.getResourceAsPath("org/geotoolkit/test/Multiplicity.xml");
-        String expected = IOUtilities.toString(p);
-
-        MarshallerPool pool = FeatureCatalogMarshallerPool.getInstance();
-
-        Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-        Marshaller marshaller     = pool.acquireMarshaller();
-
-        MultiplicityRangeImpl range = new MultiplicityRangeImpl(1, Integer.MAX_VALUE);
-        MultiplicityImpl mul = new MultiplicityImpl(range);
-
-
-        StringWriter sw = new StringWriter();
-        marshaller.marshal(mul, sw);
-        String result = sw.toString();
-
-        XMLComparator comparator = new XMLComparator(expected, result);
-        comparator.compare();
-
-
-        Object obj = unmarshaller.unmarshal(new StringReader(expected));
-
-        assertEquals(mul, obj);
-
-        p = IOUtilities.getResourceAsPath("org/geotoolkit/test/Multiplicity2.xml");
-        expected = IOUtilities.toString(p);
-
-
-        range = new MultiplicityRangeImpl(1, new Integer(15));
-        mul = new MultiplicityImpl(range);
-
-
-        sw = new StringWriter();
-        marshaller.marshal(mul, sw);
-        result = sw.toString();
-
-        comparator = new XMLComparator(expected, result);
-        comparator.compare();
-
-
-        obj = unmarshaller.unmarshal(new StringReader(expected));
-
-        assertEquals(mul, obj);
-
-    }
-
 }

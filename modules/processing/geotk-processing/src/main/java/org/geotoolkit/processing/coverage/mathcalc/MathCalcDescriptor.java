@@ -27,7 +27,7 @@ import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -69,11 +69,11 @@ public class MathCalcDescriptor extends AbstractProcessDescriptor {
      *
      * TODO this must be writable
      */
-    public static final ParameterDescriptor<CoverageResource> IN_RESULT_COVERAGE = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverageResource> IN_RESULT_COVERAGE = new ParameterBuilder()
             .addName("inResultCoverage")
             .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_mathcalc_inResultCoverage))
             .setRequired(true)
-            .create(CoverageResource.class, null);
+            .create(GridCoverageResource.class, null);
 
      /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

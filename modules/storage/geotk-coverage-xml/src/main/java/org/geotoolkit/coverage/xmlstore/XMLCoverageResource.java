@@ -31,7 +31,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
-import javax.swing.ProgressMonitor;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -65,6 +64,8 @@ import org.geotoolkit.image.internal.SampleType;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
+import org.apache.sis.referencing.NamedIdentifier;
+import org.geotoolkit.process.Monitor;
 
 /**
  * XML implementation of {@link PyramidalCoverageReference}.
@@ -81,7 +82,7 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
      * 1.1 - number format used to name folder was using system local,
      *      local is fixed to EN in 1.1.
      */
-    private static final String CURRENT_VERSION = "1.1";
+    static final String CURRENT_VERSION = "1.1";
 
     @XmlTransient
     private static MarshallerPool POOL;
@@ -222,7 +223,7 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
      */
     private ColorModel colorModel;
 
-    private String id;
+    private NamedIdentifier id;
     private Path mainfile;
     //caches
     private List<GridSampleDimension> cacheDimensions = null;
@@ -233,6 +234,7 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
 
     public XMLCoverageResource(XMLCoverageStore store, GenericName name, XMLPyramidSet set) {
         super(store,name,0);
+        id = new NamedIdentifier(name);
         this.set = set;
         this.set.setRef(this);
     }
@@ -242,31 +244,10 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
         return sampleDimensions;
     }
 
-    public void copy(XMLCoverageResource ref){
-        this.version                    = ref.version;
-        this.id                         = ref.id;
-        this.mainfile                   = ref.mainfile;
-        this.set                        = ref.set;
-        this.packMode                   = ref.packMode;
-        this.sampleDimensions           = ref.sampleDimensions;
-        this.preferredFormat            = ref.preferredFormat;
-        this.nbBands                    = ref.nbBands;
-//        this.sampleType                 = ref.sampleType;
-        this.bitPerSample               = ref.bitPerSample;
-//        this.samplePerPixel             = ref.samplePerPixel;
-        this.planarConfiguration        = ref.planarConfiguration;
-        this.sampleFormat               = ref.sampleFormat;
-        this.photometricInterpretation  = ref.photometricInterpretation;
-        this.colorMap                   = ref.colorMap;
-        this.minColorSampleValue        = ref.minColorSampleValue;
-        this.maxColorSampleValue        = ref.maxColorSampleValue;
-        this.set.setRef(this);
-    }
-
     void initialize(Path mainFile) throws DataStoreException {
         this.mainfile = mainFile;
         //calculate id based on file name
-        id = IOUtilities.filenameWithoutExtension(mainFile);
+        id = new NamedIdentifier(null, IOUtilities.filenameWithoutExtension(mainFile));
 
         // In case we created the reference by unmarshalling a file, the pyramid set is not bound to its parent coverage reference.
         final XMLPyramidSet set = getPyramidSet();
@@ -288,6 +269,11 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
     }
 
     public String getId() {
+        return id.getCode();
+    }
+
+    @Override
+    public NamedIdentifier getIdentifier() {
         return id;
     }
 
@@ -803,7 +789,7 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
      */
     @Override
     public void writeTiles(final String pyramidId, final String mosaicId, final RenderedImage image, final Rectangle area,
-                           final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException {
+                           final boolean onlyMissing, final Monitor monitor) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
         final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
         final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);

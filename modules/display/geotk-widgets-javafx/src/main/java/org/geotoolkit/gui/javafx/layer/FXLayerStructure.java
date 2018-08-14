@@ -57,8 +57,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.InternationalString;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.util.StringUtilities;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -128,7 +128,7 @@ public class FXLayerStructure extends FXPropertyPane {
 
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final CoverageResource ref = cml.getCoverageReference();
+            final GridCoverageResource ref = cml.getCoverageReference();
             try {
                 final GridCoverageReader reader = ref.acquireReader();
                 final GeneralGridGeometry gridgeom = reader.getGridGeometry(0);

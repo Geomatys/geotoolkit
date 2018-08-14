@@ -28,7 +28,7 @@ import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.util.*;
 
-import org.junit.*;
+import org.junit.Test;
 import static org.junit.Assert.*;
 
 
@@ -335,22 +335,20 @@ public final strictfp class IOUtilitiesTest {
     public void childrenListTest() throws IOException, URISyntaxException {
 
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        URL resourceURL = classloader.getResource("org/geotoolkit/xml/test-data");
+        URL resourceURL = classloader.getResource("org/geotoolkit/nio/test-data");
         if (resourceURL != null) {
             Path directory = Paths.get(resourceURL.toURI());
 
             List<Path> result = IOUtilities.listChildren(directory);
-            assertEquals(5, result.size());
+            assertEquals(3, result.size());
 
             //result list should be sorted in asc
-            assertEquals("Metadata-ASCAT.xml", result.get(0).getFileName().toString());
-            assertEquals("Metadata-IFREMER.xml", result.get(1).getFileName().toString());
-            assertEquals("Metadata-IGN.xml", result.get(2).getFileName().toString());
-            assertEquals("Metadata.xml", result.get(3).getFileName().toString());
-            assertEquals("NOAA.xml", result.get(4).getFileName().toString());
+            assertEquals("A.txt", result.get(0).getFileName().toString());
+            assertEquals("B.txt", result.get(1).getFileName().toString());
+            assertEquals("C.txt", result.get(2).getFileName().toString());
         }
 
-        resourceURL = classloader.getResource("org/geotoolkit/xml/test-data/Metadata.xml");
+        resourceURL = classloader.getResource("org/geotoolkit/nio/test-data/A.txt");
         if (resourceURL != null) {
             Path directory = Paths.get(resourceURL.toURI());
 
@@ -375,9 +373,9 @@ public final strictfp class IOUtilitiesTest {
         try {
             tmpWorkspace = Files.createTempDirectory("IOUtilitiesTest");
             Files.createDirectories(tmpWorkspace);
-            String resource = "org/geotoolkit/xml/test-data/Metadata.xml";
+            String resource = "org/geotoolkit/nio/test-data/A.txt";
 
-            //Copy resource File with hierarchy
+            // Copy resource File with hierarchy
             try {
                 Path copiedRes = IOUtilities.copyResource(resource, null, tmpWorkspace, true);
                 Path expectedResPath = tmpWorkspace.resolve(resource);
@@ -390,7 +388,7 @@ public final strictfp class IOUtilitiesTest {
             //Copy resource File without hierarchy
             try {
                 Path copiedRes = IOUtilities.copyResource(resource, null, tmpWorkspace, false);
-                Path expectedResPath = tmpWorkspace.resolve("Metadata.xml");
+                Path expectedResPath = tmpWorkspace.resolve("A.txt");
                 testResourceFile(expectedResPath, resource, copiedRes);
 
             } catch (URISyntaxException | IOException e) {
@@ -422,12 +420,11 @@ public final strictfp class IOUtilitiesTest {
         try {
             tmpWorkspace = Files.createTempDirectory("IOUtilitiesTest");
             Files.createDirectories(tmpWorkspace);
-            String resource = "org/geotoolkit/xml/test-data";
+            String resource = "org/geotoolkit/nio/test-data";
 
-            String[] expectedFiles = new String[]{"Metadata.xml", "Metadata-ASCAT.xml", "Metadata-IFREMER.xml",
-            "Metadata-IGN.xml", "NOAA.xml"};
+            String[] expectedFiles = new String[] {"A.txt", "B.txt", "C.txt"};
 
-            //Copy resource Directory with hierarchy
+            // Copy resource Directory with hierarchy
             try {
                 Path copiedRes = IOUtilities.copyResource(resource, null, tmpWorkspace, true);
                 Path expectedResPath = tmpWorkspace.resolve(resource);
@@ -437,8 +434,7 @@ public final strictfp class IOUtilitiesTest {
                 fail("Unable to setup test environment");
             }
 
-
-            //Copy resource Directory without hierarchy
+            // Copy resource Directory without hierarchy
             try {
                 Path copiedRes = IOUtilities.copyResource(resource, null, tmpWorkspace, false);
                 Path expectedResPath = tmpWorkspace.resolve("test-data");
@@ -457,18 +453,17 @@ public final strictfp class IOUtilitiesTest {
     }
 
     private void testResourceDirectory(Path expectedResPath, String[] resource, Path copiedRes) throws IOException {
-        //test exist
+        // test exist
         assertTrue(Files.isDirectory(copiedRes));
 
-        //test path
+        // test path
         assertEquals(expectedResPath.toString(), copiedRes.toString());
 
         for (String file : resource) {
             Path expectedFile = expectedResPath.resolve(file);
             Path copiedFile = copiedRes.resolve(file);
-            testResourceFile(expectedFile, "org/geotoolkit/xml/test-data/"+file, copiedFile);
+            testResourceFile(expectedFile, "org/geotoolkit/nio/test-data/" + file, copiedFile);
         }
-
     }
 
     private void testResourceFile(Path expectedResPath, String resource, Path copiedRes) throws IOException {

@@ -99,16 +99,6 @@ public final strictfp class GeoapiTest extends ParameterizedTransformTest {
     }
 
     /**
-     * Runs the GeoAPI tests and ensure that we used ellipsoidal formulas.
-     */
-    @Test
-    @Override
-    public void testHotineObliqueMercator() throws FactoryException, TransformException {
-        super.testHotineObliqueMercator();
-        // No spherical formulas for this one.
-    }
-
-    /**
      * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
      */
     @Test

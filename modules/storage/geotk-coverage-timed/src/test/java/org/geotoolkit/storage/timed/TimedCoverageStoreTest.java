@@ -38,7 +38,6 @@ import org.geotoolkit.image.io.plugin.TiffImageWriter;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.coverage.grid.GridCoverage;
@@ -52,6 +51,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.junit.Assume;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -217,9 +217,9 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
     private GridCoverageReader acquireReader(final TimedCoverageStore store) throws DataStoreException {
         final Resource root = (Resource) store.components().iterator().next();
         Assert.assertNotNull("Data store resource should exist", root);
-        Assert.assertTrue("Root resource is not a coverage", root instanceof CoverageResource);
+        Assert.assertTrue("Root resource is not a coverage", root instanceof GridCoverageResource);
 
-        final GridCoverageReader reader = ((CoverageResource)root).acquireReader();
+        final GridCoverageReader reader = ((GridCoverageResource)root).acquireReader();
         Assert.assertNotNull("No reader available", reader);
 
         return reader;

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.processing.coverage.compose;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.coverage.grid.GridCoverage2D;

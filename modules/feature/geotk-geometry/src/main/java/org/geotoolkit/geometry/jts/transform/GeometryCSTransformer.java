@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.geometry.jts.transform;
 
-import com.vividsolutions.jts.geom.*;
+import org.locationtech.jts.geom.*;
 import org.geotoolkit.geometry.jts.JTS;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

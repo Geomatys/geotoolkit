@@ -30,8 +30,8 @@ import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.WritableAggregate;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Create a pyramid from a MapContext.
@@ -77,7 +77,7 @@ public class MapTilingDemo {
         }
         final WritableAggregate agg = (WritableAggregate) store;
 
-        final CoverageResource ref = (CoverageResource) agg.add(new DefiningCoverageResource(name, null));
+        final GridCoverageResource ref = (GridCoverageResource) agg.add(new DefiningCoverageResource(name, null));
 
 
         //set the input parameters

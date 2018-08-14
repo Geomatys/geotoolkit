@@ -40,7 +40,7 @@ import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import org.xml.sax.SAXException;
 
-import static org.apache.sis.test.Assert.*;
+import static org.apache.sis.test.MetadataAssert.*;
 
 
 /**
@@ -92,7 +92,7 @@ public class SamplingXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         String result = sw.toString();
         //we remove the first line
-        result = result.substring(result.indexOf("?>") + 3);
+        result = result.substring(result.indexOf("?>") + 2).trim();
 
         String expResult = "<sampling:SamplingPoint gml:id=\"samplingID-007\"" +
                                     " xmlns:sampling=\"http://www.opengis.net/sampling/1.0\"" +
@@ -123,7 +123,7 @@ public class SamplingXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         result = sw.toString();
         //we remove the first line
-        result = result.substring(result.indexOf("?>") + 3);
+        result = result.substring(result.indexOf("?>") + 2).trim();
 
         expResult =        "<gml:FeatureCollection" +
                                     " xmlns:sampling=\"http://www.opengis.net/sampling/1.0\"" +

@@ -17,7 +17,7 @@
 
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Polygon;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.gui.swing.render2d.JMap2D;

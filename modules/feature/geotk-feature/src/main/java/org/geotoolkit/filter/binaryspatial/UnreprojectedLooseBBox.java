@@ -17,7 +17,7 @@
 
 package org.geotoolkit.filter.binaryspatial;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import org.geotoolkit.filter.DefaultLiteral;
 
@@ -48,7 +48,7 @@ public class UnreprojectedLooseBBox extends LooseBBox{
             return false;
         }
 
-        final com.vividsolutions.jts.geom.Envelope candidateEnv = candidate.getEnvelopeInternal();
+        final org.locationtech.jts.geom.Envelope candidateEnv = candidate.getEnvelopeInternal();
         return boundingEnv.intersects(candidateEnv);
     }
 

@@ -16,11 +16,14 @@
  */
 package org.geotoolkit.data;
 
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
+
 /**
  * Test storage listener, count the number of events and store the last event objects.
  * @author Johann Sorel (Puzzle-GIS)
  */
-public final class StorageCountListener implements FeatureStoreListener {
+public final class StorageCountListener implements ChangeListener<ChangeEvent> {
 
     public int numManageEvent = 0;
     public int numContentEvent = 0;
@@ -28,14 +31,13 @@ public final class StorageCountListener implements FeatureStoreListener {
     public FeatureStoreContentEvent lastContentEvent = null;
 
     @Override
-    public void structureChanged(final FeatureStoreManagementEvent event) {
-        numManageEvent++;
-        this.lastManagementEvent = event;
-    }
-
-    @Override
-    public void contentChanged(final FeatureStoreContentEvent event) {
-        numContentEvent++;
-        this.lastContentEvent = event;
+    public void changeOccured(ChangeEvent event) {
+        if (event instanceof FeatureStoreManagementEvent) {
+            numManageEvent++;
+            this.lastManagementEvent = (FeatureStoreManagementEvent) event;
+        } else if (event instanceof FeatureStoreContentEvent) {
+            numContentEvent++;
+            this.lastContentEvent = (FeatureStoreContentEvent) event;
+        }
     }
 }

@@ -17,7 +17,7 @@
 package org.geotoolkit.display2d.primitive;
 
 import com.bric.geom.Clipper;
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 import java.awt.Shape;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -53,17 +53,17 @@ public class ProjectedGeometry  {
     private MathTransform2D dataToDisplay;
 
     //Geometry is data CRS
-    private com.vividsolutions.jts.geom.Geometry    dataGeometryJTS = null;
+    private org.locationtech.jts.geom.Geometry    dataGeometryJTS = null;
     private Geometry                                dataGeometryISO = null;
     private Shape                                   dataShape = null;
 
     //Geometry in objective CRS
-    private com.vividsolutions.jts.geom.Geometry[]    objectiveGeometryJTS = null;
+    private org.locationtech.jts.geom.Geometry[]    objectiveGeometryJTS = null;
     private Geometry[]                                objectiveGeometryISO = null;
     private Shape[]                                   objectiveShape = null;
 
     //Geometry in display CRS
-    private com.vividsolutions.jts.geom.Geometry[]    displayGeometryJTS = null;
+    private org.locationtech.jts.geom.Geometry[]    displayGeometryJTS = null;
     private Geometry[]                                displayGeometryISO = null;
     private Shape[]                                   displayShape = null;
 
@@ -91,7 +91,7 @@ public class ProjectedGeometry  {
         this.geomSet                = copy.geomSet;
     }
 
-    public void setDataGeometry(final com.vividsolutions.jts.geom.Geometry geom, CoordinateReferenceSystem dataCRS){
+    public void setDataGeometry(final org.locationtech.jts.geom.Geometry geom, CoordinateReferenceSystem dataCRS){
         clearDataCache();
         this.dataGeometryJTS = geom;
         this.geomSet = this.dataGeometryJTS != null;
@@ -152,7 +152,7 @@ public class ProjectedGeometry  {
         return dataGeometryISO;
     }
 
-    public com.vividsolutions.jts.geom.Geometry getDataGeometryJTS() {
+    public org.locationtech.jts.geom.Geometry getDataGeometryJTS() {
         return dataGeometryJTS;
     }
 
@@ -170,12 +170,12 @@ public class ProjectedGeometry  {
      * @return JTS Geometry
      * @throws TransformException if geometry could not be reprojected.
      */
-    public com.vividsolutions.jts.geom.Geometry[] getObjectiveGeometryJTS() throws TransformException {
+    public org.locationtech.jts.geom.Geometry[] getObjectiveGeometryJTS() throws TransformException {
         if(objectiveGeometryJTS == null && geomSet){
 
-            objectiveGeometryJTS = new com.vividsolutions.jts.geom.Geometry[1];
+            objectiveGeometryJTS = new org.locationtech.jts.geom.Geometry[1];
 
-            com.vividsolutions.jts.geom.Geometry objBase;
+            org.locationtech.jts.geom.Geometry objBase;
             if(dataToObjective == null){
                 //we assume data and objective are in the same crs
                 objBase = dataGeometryJTS;
@@ -187,7 +187,7 @@ public class ProjectedGeometry  {
 
             if(params.context.wraps != null){
 
-                com.vividsolutions.jts.geom.Envelope objBounds = objBase.getEnvelopeInternal();
+                org.locationtech.jts.geom.Envelope objBounds = objBase.getEnvelopeInternal();
                 final double dx = params.context.wraps.wrapPoints[1].getOrdinate(0) - params.context.wraps.wrapPoints[0].getOrdinate(0);
                 final double dy = params.context.wraps.wrapPoints[1].getOrdinate(1) - params.context.wraps.wrapPoints[0].getOrdinate(1);
 
@@ -210,7 +210,7 @@ public class ProjectedGeometry  {
                 //check if the geometry overlaps the meridian
                 int nbIncRep = params.context.wraps.wrapIncNb;
                 int nbDecRep = params.context.wraps.wrapDecNb;
-                com.vividsolutions.jts.geom.Geometry objBoundsGeom = JTS.toGeometry(objBounds);
+                org.locationtech.jts.geom.Geometry objBoundsGeom = JTS.toGeometry(objBounds);
 
                 // geometry cross the far east meridian, geometry is like :
                 // POLYGON(-179,10,  181,10,  181,-10,  179,-10)
@@ -225,11 +225,11 @@ public class ProjectedGeometry  {
                     nbIncRep++;
                 }
 
-                objectiveGeometryJTS = new com.vividsolutions.jts.geom.Geometry[nbIncRep+nbDecRep+1];
+                objectiveGeometryJTS = new org.locationtech.jts.geom.Geometry[nbIncRep+nbDecRep+1];
                 int n=0;
                 for(int i=0;i<nbIncRep;i++){
                     //check that the futur geometry will intersect the visible area
-                    final com.vividsolutions.jts.geom.Envelope candidate = JTS.transform(objBounds, params.context.wraps.wrapIncObj[i]);
+                    final org.locationtech.jts.geom.Envelope candidate = JTS.transform(objBounds, params.context.wraps.wrapIncObj[i]);
                     if(candidate.intersects(params.objectiveJTSEnvelope)){
                         objectiveGeometryJTS[n++] = JTS.transform(objBase, params.context.wraps.wrapIncObj[i]);
                     }
@@ -239,7 +239,7 @@ public class ProjectedGeometry  {
                 }
                 for(int i=0;i<nbDecRep;i++){
                     //check that the futur geometry will intersect the visible area
-                    final com.vividsolutions.jts.geom.Envelope candidate = JTS.transform(objBounds, params.context.wraps.wrapDecObj[i]);
+                    final org.locationtech.jts.geom.Envelope candidate = JTS.transform(objBounds, params.context.wraps.wrapDecObj[i]);
                     if(candidate.intersects(params.objectiveJTSEnvelope)){
                         objectiveGeometryJTS[n++] = JTS.transform(objBase, params.context.wraps.wrapDecObj[i]);
                     }
@@ -252,7 +252,7 @@ public class ProjectedGeometry  {
 
             }else{
                 //geometry is valid with no modifications or repetition
-                objectiveGeometryJTS = new com.vividsolutions.jts.geom.Geometry[1];
+                objectiveGeometryJTS = new org.locationtech.jts.geom.Geometry[1];
                 objectiveGeometryJTS[0] = objBase;
             }
 
@@ -266,10 +266,10 @@ public class ProjectedGeometry  {
      * @return JTS Geometry
      * @throws TransformException if geometry could not be reprojected.
      */
-    public com.vividsolutions.jts.geom.Geometry[] getDisplayGeometryJTS() throws TransformException{
+    public org.locationtech.jts.geom.Geometry[] getDisplayGeometryJTS() throws TransformException{
         if(displayGeometryJTS == null && geomSet){
             getObjectiveGeometryJTS();
-            displayGeometryJTS = new com.vividsolutions.jts.geom.Geometry[objectiveGeometryJTS.length];
+            displayGeometryJTS = new org.locationtech.jts.geom.Geometry[objectiveGeometryJTS.length];
             for(int i=0;i<displayGeometryJTS.length;i++){
                 displayGeometryJTS[i] = params.objToDisplayTransformer.transform(objectiveGeometryJTS[i]);
             }

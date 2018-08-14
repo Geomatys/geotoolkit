@@ -208,7 +208,11 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
         final Map<Envelope, double[]> map = new HashMap<>();
         map.put(env, scales);
         final GenericName name = NamesExt.create("memory_store_test");
-        pcb.create(reader, mpCovStore, name, map, fillValue);
+        pcb.setFillValues(fillValue);
+        pcb.setResolutionPerEnvelope(map);
+        pcb.setSourceReader(reader);
+        pcb.setTargetStore(mpCovStore, name);
+        pcb.execute();
 
         final GridCoverage2D gridcov = (GridCoverage2D) reader.read(0, null);
 

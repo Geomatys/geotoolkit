@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.processing.vector.buffer;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 
 import org.apache.sis.measure.Units;
 import org.geotoolkit.data.FeatureCollection;

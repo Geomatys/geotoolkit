@@ -17,7 +17,7 @@
 package org.geotoolkit.wps.converters.outputs.complex;
 
 import com.fasterxml.jackson.core.JsonEncoding;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

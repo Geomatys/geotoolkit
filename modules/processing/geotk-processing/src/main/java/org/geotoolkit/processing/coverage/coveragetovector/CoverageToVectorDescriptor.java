@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.processing.coverage.coveragetovector;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.processing.AbstractProcessDescriptor;

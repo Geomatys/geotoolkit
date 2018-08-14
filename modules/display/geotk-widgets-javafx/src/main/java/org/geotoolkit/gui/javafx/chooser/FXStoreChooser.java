@@ -73,9 +73,9 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -259,8 +259,8 @@ public class FXStoreChooser extends BorderPane {
         final List<Resource> selected = resourceChooser.getSelected();
         final List<MapLayer> layers = new ArrayList<>();
         for (Resource selection : selected) {
-            if (selection instanceof CoverageResource) {
-                final CoverageResource ref = (CoverageResource) selection;
+            if (selection instanceof GridCoverageResource) {
+                final GridCoverageResource ref = (GridCoverageResource) selection;
                 final CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref);
                 layer.setName(ref.getIdentifier().tip().toString());
                 layers.add(layer);
@@ -363,11 +363,12 @@ public class FXStoreChooser extends BorderPane {
     private static final Image EMPTY_24 = SwingFXUtils.toFXImage(new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB),null);
     private static final Image ICON_SERVER = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_GLOBE, 24, FontAwesomeIcons.DISABLE_COLOR),null);
     private static final Image ICON_DATABASE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_DATABASE, 24, FontAwesomeIcons.DISABLE_COLOR),null);
-    private static final Image ICON_VECTOR = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PENCIL_SQUARE, 24, FontAwesomeIcons.DISABLE_COLOR),null);
-    private static final Image ICON_COVERAGE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PICTURE_O, 24, FontAwesomeIcons.DISABLE_COLOR),null);
+    private static final Image ICON_VECTOR = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_VECTOR_SQUARE, 24, FontAwesomeIcons.DISABLE_COLOR),null);
+    private static final Image ICON_COVERAGE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_IMAGE, 24, FontAwesomeIcons.DISABLE_COLOR),null);
     private static final Image ICON_FOLDER = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FOLDER, 24, FontAwesomeIcons.DISABLE_COLOR),null);
     private static final Image ICON_FILE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FILE, 24, FontAwesomeIcons.DISABLE_COLOR),null);
-    private static final Image ICON_OTHER = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_ARCHIVE, 24, FontAwesomeIcons.DISABLE_COLOR),null);
+    private static final Image ICON_OTHER = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_ATLAS, 24, FontAwesomeIcons.DISABLE_COLOR),null);
+    private static final Image ICON_PRODUCT = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_ATLAS, 24, FontAwesomeIcons.DISABLE_COLOR),null);
 
     private static Image findIcon(Object candidate){
 

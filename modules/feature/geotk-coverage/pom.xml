@@ -88,6 +88,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.sis.core</groupId>
+      <artifactId>sis-metadata</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.sis.core</groupId>
       <artifactId>sis-referencing</artifactId>
       <type>test-jar</type>
       <scope>test</scope>

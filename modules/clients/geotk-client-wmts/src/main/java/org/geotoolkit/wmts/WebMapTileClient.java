@@ -45,7 +45,7 @@ import org.geotoolkit.wmts.xml.v100.Capabilities;
 import org.geotoolkit.wmts.xml.v100.LayerType;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 
 /**
@@ -270,7 +270,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
             for(LayerType lt : layers){
                 final String name = lt.getIdentifier().getValue();
                 final GenericName nn = NamesExt.create(name);
-                final CoverageResource ref = new WMTSCoverageResource(this,nn,getImageCache());
+                final GridCoverageResource ref = new WMTSCoverageResource(this,nn,getImageCache());
                 resources.add(ref);
             }
 

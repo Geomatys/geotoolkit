@@ -44,8 +44,8 @@ import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Coverage store relying on an xml file.
@@ -143,12 +143,7 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
 
     private void createReference(Path refDescriptor) {
         try {
-            //TODO useless copy here
-            final XMLCoverageResource set = XMLCoverageResource.read(refDescriptor);
-            final GenericName name = NamesExt.create(set.getId());
-            final XMLCoverageResource ref = new XMLCoverageResource(this,name,set.getPyramidSet());
-            ref.copy(set);
-            resources.add(ref);
+            resources.add(XMLCoverageResource.read(refDescriptor));
         } catch (JAXBException ex) {
             getLogger().log(Level.INFO, "file is not a pyramid : {0}", refDescriptor.toString());
         } catch (DataStoreException ex) {
@@ -159,7 +154,7 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
     }
 
     @Override
-    public CoverageResource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
+    public GridCoverageResource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
         if (!(resource instanceof DefiningCoverageResource)) {
             throw new DataStoreException("Unsupported resource "+resource);
         }
@@ -171,10 +166,10 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
 
     @Override
     public void remove(org.apache.sis.storage.Resource resource) throws DataStoreException {
-        if (!(resource instanceof CoverageResource)) {
+        if (!(resource instanceof GridCoverageResource)) {
             throw new DataStoreException("Unknown resource "+resource);
         }
-        final CoverageResource cr = (CoverageResource) resource;
+        final GridCoverageResource cr = (GridCoverageResource) resource;
         final NamedIdentifier name = cr.getIdentifier();
 
         //TODO
@@ -191,7 +186,7 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
      * @return new CoverageResource.
      * @throws DataStoreException
      */
-    public CoverageResource create(GenericName name, ViewType packMode, String preferredFormat) throws DataStoreException {
+    public GridCoverageResource create(GenericName name, ViewType packMode, String preferredFormat) throws DataStoreException {
         if (Files.isRegularFile(root)) {
             throw new DataStoreException("Store root is a file, not a directory, no reference creation allowed.");
         }

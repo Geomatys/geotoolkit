@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.index.quadtree;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 import java.util.logging.Level;
 
 /**

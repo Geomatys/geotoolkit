@@ -44,7 +44,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreContentEvent;
-import org.geotoolkit.data.FeatureStoreListener;
 import org.geotoolkit.data.FeatureStoreManagementEvent;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.Query;
@@ -100,11 +99,14 @@ import org.opengis.style.Symbolizer;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import static org.geotoolkit.display2d.container.stateless.StatelessMapItemJ2D.createBufferedImage;
 import org.geotoolkit.map.CollectionMapLayer;
+import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -120,9 +122,9 @@ import org.opengis.style.TextSymbolizer;
  * @author johann sorel (Geomatys)
  * @module
  */
-public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLayer> implements FeatureStoreListener{
+public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLayer> implements ChangeListener<ChangeEvent> {
 
-    protected FeatureStoreListener.Weak weakSessionListener = new FeatureStoreListener.Weak(this);
+    protected StorageListener.Weak weakSessionListener = new StorageListener.Weak(this);
 
     protected final StatelessContextParams params;
 
@@ -143,15 +145,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
     }
 
     @Override
-    public void structureChanged(FeatureStoreManagementEvent event) {
-        if(item.isVisible() && getCanvas().isAutoRepaint()){
-            //TODO should call a repaint only on this graphic
-            getCanvas().repaint();
-        }
-    }
-
-    @Override
-    public void contentChanged(FeatureStoreContentEvent event) {
+    public void changeOccured(ChangeEvent event) {
         if(item.isVisible() && getCanvas().isAutoRepaint()){
             //TODO should call a repaint only on this graphic
             getCanvas().repaint();
@@ -162,7 +156,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         params.update(context);
         //expand the search area by the maximum symbol size
         if(symbolsMargin>0 && params.objectiveJTSEnvelope!=null){
-            params.objectiveJTSEnvelope = new com.vividsolutions.jts.geom.Envelope(params.objectiveJTSEnvelope);
+            params.objectiveJTSEnvelope = new org.locationtech.jts.geom.Envelope(params.objectiveJTSEnvelope);
             params.objectiveJTSEnvelope.expandBy(symbolsMargin);
         }
         return params;

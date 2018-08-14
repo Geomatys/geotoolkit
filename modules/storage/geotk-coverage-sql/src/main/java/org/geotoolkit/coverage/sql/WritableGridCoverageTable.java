@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.awt.Rectangle;
+import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.sql.Types;
 import java.sql.Timestamp;
@@ -35,7 +35,6 @@ import javax.imageio.ImageReader;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.QueryType;
 import org.geotoolkit.internal.sql.table.LocalCache;
@@ -56,14 +55,6 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
  * @module
  */
 final class WritableGridCoverageTable extends GridCoverageTable {
-    /**
-     * The object to use for writing in the {@code "Tiles"} table. Created only if needed.
-     * This is used for adding tiles (as opposed to ordinary images), and is encapsulated
-     * in this {@code WritableGridCoverageTable} because we will also need to write an entry
-     * in the {@code "GridCoverages"} table for the mosaic as a whole.
-     */
-    private transient WritableGridCoverageTable tilesTable;
-
     /**
      * Constructs a new {@code WritableGridCoverageTable}.
      *
@@ -106,17 +97,10 @@ final class WritableGridCoverageTable extends GridCoverageTable {
      * <ul>
      *   <li>{@link File}, {@link URL}, {@link URI} or {@link String} instances.</li>
      *
-     *   <li>{@link Tile} instances, which will be added in the {@code "GridCoverages"} table
-     *       like any other kind of input processed by this method. For adding tiles in the
-     *       {@code "Tiles"} table, use the {@link #addTiles(Collection)} method instead.</li>
-     *
      *   <li>{@link ImageReader} instances with the {@linkplain ImageReader#getInput() input}
      *       set and {@linkplain ImageReader#getImageMetadata metadata} conform to the Geotk
      *       {@linkplain SpatialMetadata spatial metadata}. The reader input shall be one of
-     *       the above-cited instances. If this is not possible (for example because a
-     *       {@link javax.imageio.stream.ImageInputStream} is required), consider wrapping
-     *       the {@link javax.imageio.spi.ImageReaderSpi} and the input in a {@link Tile}
-     *       instance.</li>
+     *       the above-cited instances.</li>
      * </ul>
      * <p>
      * This method will typically not read the full image, but only the required metadata.
@@ -181,9 +165,6 @@ final class WritableGridCoverageTable extends GridCoverageTable {
         final int byStartTime = indexOf(query.startTime);
         final int byEndTime   = indexOf(query.endTime);
         final int byExtent    = indexOf(query.spatialExtent);
-        final int byDx = (query.dx != null) ? query.dx.indexOf(QueryType.INSERT) : 0;
-        final int byDy = (query.dy != null) ? query.dy.indexOf(QueryType.INSERT) : 0;
-        final boolean explicitTranslate = (byDx != 0 && byDy != 0);
         NewGridCoverageReference mainEntry;
         while ((mainEntry = entries.next()) != null) {
             /*
@@ -201,16 +182,9 @@ final class WritableGridCoverageTable extends GridCoverageTable {
              * back. It defaults to the whole Earth in WGS 84 geographic coordinates, but the
              * user can set an other value using the setEnvelope(...) method.
              */
-            final Rectangle imageBounds = mainEntry.imageBounds;
+            final Dimension imageSize = mainEntry.imageSize;
             final AffineTransform gridToCRS = mainEntry.gridToCRS;
-            if (!explicitTranslate && (imageBounds.x != 0 || imageBounds.y != 0)) {
-                // If the translation can not be recorded explicitly in the database, then we
-                // need to apply it on the affine transform. Note that we really want to update
-                // the NewGridCoverageReference field, in order to notify the listeners with an
-                // accurate AffineTransform after the change.
-                gridToCRS.translate(imageBounds.x, imageBounds.y);
-            }
-            final int extent = gridTable.findOrCreate(imageBounds.getSize(), gridToCRS,
+            final int extent = gridTable.findOrCreate(imageSize, gridToCRS,
                     mainEntry.horizontalSRID, mainEntry.verticalValues, mainEntry.verticalSRID);
             /*
              * If the entry is an aggregation, actually inserts the aggregated elements instead
@@ -235,11 +209,6 @@ final class WritableGridCoverageTable extends GridCoverageTable {
                 statement.setInt   (bySeries,   specificSeries.getIdentifier());
                 statement.setString(byFilename, entry.filename);
                 statement.setInt   (byExtent,   extent);
-                if (explicitTranslate) {
-                    final Rectangle translate = entry.imageBounds;
-                    statement.setInt(byDx, translate.x); // NOSONAR: byDx can not be zero.
-                    statement.setInt(byDy, translate.y); // NOSONAR: byDy can not be zero.
-                }
                 final DateRange[] dateRanges = entry.dateRanges;
                 int imageIndex = entry.imageIndex;
                 if (dateRanges == null) {
@@ -265,30 +234,5 @@ final class WritableGridCoverageTable extends GridCoverageTable {
         formatTable.release();
         gridTable.release();
         return count;
-    }
-
-    /**
-     * Adds the specified tiles in the {@code "Tiles"} table.
-     *
-     * @param  tiles The tiles to insert.
-     * @param  listeners The object which hold the {@link CoverageDatabaseListener}s. While this
-     *         argument is of kind {@link CoverageDatabase}, only the listeners are of interest
-     *         to this method.
-     * @param  controller An optional controller to invoke before the listeners, or {@code null}.
-     * @throws SQLException If an error occurred while querying the database.
-     * @throws IOException If an I/O operation was required and failed.
-     */
-    public void addTiles(final Collection<Tile>           tiles,
-                         final CoverageDatabase           listeners,
-                         final CoverageDatabaseController controller)
-            throws SQLException, IOException, FactoryException, DatabaseVetoException
-    {
-        if (tilesTable == null) {
-            // Uses the special GridCoverageQuery constructor for insertions in "Tiles" table.
-            tilesTable = new WritableGridCoverageTable(new GridCoverageQuery((SpatialDatabase) getDatabase(), true));
-        }
-        tilesTable.setLayer(getLayer());
-        tilesTable.specificSeries = specificSeries;
-        tilesTable.addEntries(tiles, listeners, controller);
     }
 }

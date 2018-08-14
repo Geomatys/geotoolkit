@@ -42,9 +42,9 @@ import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.FeatureType;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Export selected layer.
@@ -94,7 +94,7 @@ public class ExportCoverageItem extends TreeMenuItem {
                     final DirectoryChooser chooser = new DirectoryChooser();
                     chooser.setTitle(GeotkFX.getString(ExportFeatureSetItem.class, "folder"));
                     final File folder = chooser.showDialog(null);
-                    final CoverageResource base = layer.getCoverageReference();
+                    final GridCoverageResource base = layer.getCoverageReference();
 
                     if (folder != null) {
 

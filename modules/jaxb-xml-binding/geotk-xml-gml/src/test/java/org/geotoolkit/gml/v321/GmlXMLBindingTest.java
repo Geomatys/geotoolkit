@@ -24,7 +24,9 @@ import javax.xml.datatype.Duration;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.test.XMLComparator;
+import org.w3c.dom.Node;
 
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.gml.xml.v321.DirectPositionListType;
@@ -34,12 +36,9 @@ import org.geotoolkit.gml.xml.v321.LineStringSegmentType;
 import org.geotoolkit.gml.xml.v321.ObjectFactory;
 import org.geotoolkit.gml.xml.v321.TimePeriodType;
 import org.geotoolkit.gml.xml.v321.TimePositionType;
-import org.apache.sis.xml.MarshallerPool;
 
-//Junit dependencies
 import org.junit.*;
 import static org.junit.Assert.*;
-import org.w3c.dom.Node;
 
 /**
  *
@@ -51,15 +50,11 @@ public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
     private static MarshallerPool pool;
     private Marshaller   marshaller;
     private Unmarshaller unmarshaller;
-    private static ObjectFactory FACTORY = new ObjectFactory();
+    private static final ObjectFactory FACTORY = new ObjectFactory();
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         pool = GMLMarshallerPool.getInstance();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
     }
 
     @Before
@@ -95,13 +90,13 @@ public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         String result = sw.toString();
         //we remove the first line
-        result = result.substring(result.indexOf("?>") + 3);
+        result = result.substring(result.indexOf("?>") + 2).trim();
 
         String expResult = "<gml:Envelope xmlns:gml=\"http://www.opengis.net/gml/3.2\" srsName=\"urn:ogc:def:crs:EPSG:6.8:4283\" >" + '\n' +
                            "    <gml:lowerCorner>-30.711 134.196</gml:lowerCorner>" + '\n' +
                            "    <gml:upperCorner>-30.702 134.205</gml:upperCorner>" + '\n' +
                            "</gml:Envelope>" + '\n' ;
-        XMLComparator comparator = new XMLComparator(expResult, result){
+        XMLComparator comparator = new XMLComparator(expResult, result) {
             @Override
             protected strictfp void compareNames(Node expected, Node actual) {
                 final String[] exArray = expected.getNodeName().split(":");
@@ -136,12 +131,12 @@ public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         result = sw.toString();
         //we remove the first line
-        result = result.substring(result.indexOf("?>") + 3);
+        result = result.substring(result.indexOf("?>") + 2).trim();
 
         expResult = "<gml:LineStringSegment xmlns:gml=\"http://www.opengis.net/gml/3.2\">" + '\n' +
                     "    <gml:posList>1.0 1.1 1.2</gml:posList>" + '\n' +
                     "</gml:LineStringSegment>" + '\n' ;
-        comparator = new XMLComparator(expResult, result){
+        comparator = new XMLComparator(expResult, result) {
             @Override
             protected strictfp void compareNames(Node expected, Node actual) {
                 final String[] exArray = expected.getNodeName().split(":");
@@ -164,13 +159,13 @@ public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         result = sw.toString();
         //we remove the first line
-        result = result.substring(result.indexOf("?>") + 3);
+        result = result.substring(result.indexOf("?>") + 2).trim();
 
         expResult = "<gml:LineStringSegment xmlns:gml=\"http://www.opengis.net/gml/3.2\">" + '\n' +
                     "    <gml:pos>1.1 1.2</gml:pos>" + '\n' +
                     "    <gml:pos>2.3 48.1</gml:pos>" + '\n' +
                     "</gml:LineStringSegment>" + '\n' ;
-        comparator = new XMLComparator(expResult, result){
+        comparator = new XMLComparator(expResult, result) {
             @Override
             protected strictfp void compareNames(Node expected, Node actual) {
                 final String[] exArray = expected.getNodeName().split(":");
@@ -181,7 +176,6 @@ public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
         };
         comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
-
     }
 
     @Test
@@ -256,6 +250,5 @@ public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
             result = ((JAXBElement)result).getValue();
         }
         assertEquals(expResult, result);
-
     }
 }

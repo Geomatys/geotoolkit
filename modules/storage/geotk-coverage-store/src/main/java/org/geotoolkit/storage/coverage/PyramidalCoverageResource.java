@@ -21,11 +21,11 @@ import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.util.List;
-import javax.swing.ProgressMonitor;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.process.Monitor;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -36,7 +36,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface PyramidalCoverageResource extends CoverageResource{
+public interface PyramidalCoverageResource extends GridCoverageResource{
 
     PyramidSet getPyramidSet() throws DataStoreException;
 
@@ -187,7 +187,7 @@ public interface PyramidalCoverageResource extends CoverageResource{
      * @param monitor A progress monitor in order to eventually cancel the process. May be {@code null}.
      * @throws DataStoreException
      */
-    void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing, ProgressMonitor monitor) throws DataStoreException;
+    void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing, Monitor monitor) throws DataStoreException;
 
     /**
      * Write a part of mosaic level from the given rendered image and rectangle area
@@ -202,7 +202,7 @@ public interface PyramidalCoverageResource extends CoverageResource{
      * @throws DataStoreException
      */
     void writeTiles(String pyramidId, String mosaicId, RenderedImage image, Rectangle area, boolean onlyMissing,
-                    ProgressMonitor monitor) throws DataStoreException;
+                    Monitor monitor) throws DataStoreException;
 
 
     /**

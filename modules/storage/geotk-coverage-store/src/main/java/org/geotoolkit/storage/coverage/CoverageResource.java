@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Image;
 import java.util.stream.Stream;
 import org.apache.sis.internal.feature.AttributeConvention;
@@ -25,8 +24,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.CoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.internal.feature.CoverageFeature;
 import org.geotoolkit.internal.feature.TypeConventions;
 import org.opengis.feature.Feature;
@@ -36,6 +35,7 @@ import org.opengis.metadata.content.CoverageDescription;
 import org.geotoolkit.data.FeatureSet;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -78,7 +78,7 @@ public interface CoverageResource extends FeatureSet {
      * @return GridCoverageReader
      * @throws CoverageStoreException
      */
-    GridCoverageReader acquireReader() throws CoverageStoreException;
+    CoverageReader acquireReader() throws CoverageStoreException;
 
     /**
      * Get a writer for this coverage.
@@ -87,7 +87,7 @@ public interface CoverageResource extends FeatureSet {
      * @return GridCoverageWriter
      * @throws CoverageStoreException
      */
-    GridCoverageWriter acquireWriter() throws CoverageStoreException;
+    CoverageWriter acquireWriter() throws CoverageStoreException;
 
     /**
      * Return the used reader, they can be reused later.
@@ -101,7 +101,7 @@ public interface CoverageResource extends FeatureSet {
      *
      * @param writer
      */
-    void recycle(GridCoverageWriter writer);
+    void recycle(CoverageWriter writer);
 
     /**
      * Return the legend of this coverage
@@ -112,18 +112,24 @@ public interface CoverageResource extends FeatureSet {
 
     @Override
     public default FeatureType getType() throws DataStoreException {
-        final GridCoverageReader reader = acquireReader();
-        try {
-            final FeatureType type = CoverageFeature.createCoverageType(reader);
-            recycle(reader);
-            return type;
-        } catch (CoverageStoreException ex) {
+        final CoverageReader reader = acquireReader();
+
+        if (reader instanceof GridCoverageReader) {
+            final GridCoverageReader gcr = (GridCoverageReader) reader;
             try {
-                reader.dispose();
-            } catch (CoverageStoreException ex2) {
-                ex.addSuppressed(ex2);
+                final FeatureType type = CoverageFeature.createCoverageType(gcr);
+                recycle(reader);
+                return type;
+            } catch (CoverageStoreException ex) {
+                try {
+                    reader.dispose();
+                } catch (CoverageStoreException ex2) {
+                    ex.addSuppressed(ex2);
+                }
+                throw ex;
             }
-            throw ex;
+        } else {
+            throw new DataStoreException("Unsupported readed, only GridCoverageReader instances are supported for now.");
         }
     }
 
@@ -133,29 +139,34 @@ public interface CoverageResource extends FeatureSet {
         final FeatureAssociationRole role = (FeatureAssociationRole) type.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
         final Feature feature = type.newInstance();
 
-        final GridCoverageReader reader = acquireReader();
-        try {
-            final GeneralGridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
-            Envelope envelope = gridGeom.getEnvelope();
-            if (envelope != null) {
-                Geometry geom = GeometricUtilities.toJTSGeometry(envelope, GeometricUtilities.WrapResolution.SPLIT);
-                if (geom != null) {
-                    JTS.setCRS(geom, gridGeom.getCoordinateReferenceSystem());
-                    feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
-                }
-            }
-            recycle(reader);
-        } catch (CoverageStoreException ex) {
+        final CoverageReader reader = acquireReader();
+        if (reader instanceof GridCoverageReader) {
+            final GridCoverageReader gcr = (GridCoverageReader) reader;
             try {
-                reader.dispose();
-            } catch (CoverageStoreException ex2) {
-                ex.addSuppressed(ex2);
+                final GeneralGridGeometry gridGeom = gcr.getGridGeometry(getImageIndex());
+                Envelope envelope = gridGeom.getEnvelope();
+                if (envelope != null) {
+                    Geometry geom = GeometricUtilities.toJTSGeometry(envelope, GeometricUtilities.WrapResolution.SPLIT);
+                    if (geom != null) {
+                        JTS.setCRS(geom, gridGeom.getCoordinateReferenceSystem());
+                        feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
+                    }
+                }
+                recycle(reader);
+            } catch (CoverageStoreException ex) {
+                try {
+                    reader.dispose();
+                } catch (CoverageStoreException ex2) {
+                    ex.addSuppressed(ex2);
+                }
+                throw ex;
             }
-            throw ex;
-        }
 
-        feature.setProperty(CoverageFeature.coverageRecords(this,role));
-        return Stream.of(feature);
+            feature.setProperty(CoverageFeature.coverageRecords((GridCoverageResource)this,role));
+            return Stream.of(feature);
+        } else {
+            throw new DataStoreException("Unsupported readed, only GridCoverageReader instances are supported for now.");
+        }
     }
 
 }

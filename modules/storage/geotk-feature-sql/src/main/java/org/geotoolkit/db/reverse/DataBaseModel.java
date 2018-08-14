@@ -19,7 +19,7 @@ package org.geotoolkit.db.reverse;
 
 
 import org.opengis.util.GenericName;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;

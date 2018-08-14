@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.gui.swing.chooser;
 
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -60,9 +60,9 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Panel allowing to choose layer among the available datas of the source.

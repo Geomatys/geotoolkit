@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.processing.coverage.compose;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;

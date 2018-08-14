@@ -29,7 +29,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Create a FeatureCollection of isoline from a GridCoverage2D and an array of intervals.
@@ -46,11 +46,11 @@ public class IsolineDescriptor2 extends AbstractProcessDescriptor {
      * Coverage
      */
     public static final InternationalString IN_COVERAGE_REF_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_inCoverageRef);
-    public static final ParameterDescriptor<CoverageResource> COVERAGE_REF = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverageResource> COVERAGE_REF = new ParameterBuilder()
             .addName("inCoverageRef")
             .setRemarks(IN_COVERAGE_REF_PARAM_REMARKS)
             .setRequired(true)
-            .create(CoverageResource.class, null);
+            .create(GridCoverageResource.class, null);
 
     /*
      * Output FeatureStore

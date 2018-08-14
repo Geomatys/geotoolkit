@@ -28,13 +28,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.sis.internal.jaxb.gco.GO_GenericName;
+import org.apache.sis.internal.jaxb.gco.Multiplicity;
 import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.Constraint;
 import org.opengis.feature.catalog.FeatureAttribute;
 import org.opengis.feature.catalog.FeatureType;
 import org.opengis.feature.catalog.ListedValue;
 import org.opengis.util.LocalName;
-import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
 import org.opengis.util.TypeName;
 
 
@@ -103,7 +103,7 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
     /**
      * Build a new Feature Attribute
      */
-    public FeatureAttributeImpl(final String id, final LocalName memberName, final String definition, final MultiplicityImpl cardinality, final FeatureType featureType,
+    public FeatureAttributeImpl(final String id, final LocalName memberName, final String definition, final Multiplicity cardinality, final FeatureType featureType,
             final List<Constraint> constrainedBy, final String code, final List<ListedValue> listedValue, final TypeName valueType) {
         super(id, memberName, definition, cardinality, featureType, constrainedBy, null);
         this.code        = code;

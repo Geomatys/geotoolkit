@@ -17,7 +17,7 @@ GRANT USAGE ON SCHEMA coverages TO PUBLIC;
 
 COMMENT ON SCHEMA coverages IS 'Metadata for grid coverages';
 
-SET search_path = coverages, metadata, postgis;
+SET search_path = coverages, metadata, public;
 
 
 
@@ -531,123 +531,6 @@ COMMENT ON INDEX "GridCoverages_index" IS
     'Index of all the images within a certain time range.';
 COMMENT ON INDEX "GridCoverages_extent_index" IS
     'Index of all the images in a geographic region.';
-
-
-
-
---------------------------------------------------------------------------------------------------
--- Creates the "Tiles" table.                                                                   --
--- Dependencies: "Series", "GridGeometries", "GridCoverages"                                    --
---------------------------------------------------------------------------------------------------
-
-CREATE TABLE "Tiles" (
-  "dx" INTEGER NOT NULL DEFAULT 0,
-  "dy" INTEGER NOT NULL DEFAULT 0,
-  PRIMARY KEY ("series", "filename", "index"),
-  FOREIGN KEY ("extent") REFERENCES "GridGeometries" ON UPDATE CASCADE ON DELETE RESTRICT,
-  FOREIGN KEY ("series") REFERENCES "Series" ON UPDATE CASCADE ON DELETE CASCADE
-) INHERITS ("GridCoverages");
-
-ALTER TABLE "Tiles" OWNER TO geoadmin;
-GRANT ALL ON TABLE "Tiles" TO geoadmin;
-GRANT SELECT ON TABLE "Tiles" TO PUBLIC;
-
-CREATE INDEX "Tiles_index" ON "Tiles" ("series", "endTime", "startTime");
-
-COMMENT ON TABLE "Tiles" IS
-    'List of all images that are actually tiles in a image mosaic.';
-COMMENT ON COLUMN "Tiles"."dx" IS 'Amount of pixels to translate along the x axis before to apply the affine transform.';
-COMMENT ON COLUMN "Tiles"."dy" IS 'Amount of pixels to translate along the y axis before to apply the affine transform.';
-
-
-
---------------------------------------------------------------------------------------------------
--- Creates the "Tiling" view.                                                                   --
--- Dependencies: "Tiles", "GridGeometries", "Series"                                            --
---------------------------------------------------------------------------------------------------
-
-CREATE VIEW "Tiling" AS
- SELECT "layer",
-        "startTime",
-        "endTime",
-        count("filename") AS "numTiles",
-        (max("dx") - min("dx")) / max("width") + 1 AS "numXTiles",
-        (max("dy") - min("dy")) / max("height") + 1 AS "numYTiles",
-        max("width") = min("width") AND max("height") = min("height") AS "uniformSize",
-        max("width") AS "width",
-        max("height") AS "height",
-        sqrt("scaleX" * "scaleX" + "shearX" * "shearX") AS "scaleX",
-        sqrt("scaleY" * "scaleY" + "shearY" * "shearY") AS "scaleY",
-        CASE WHEN "scaleX" >= 0 THEN min("translateX") ELSE max("translateX") END AS "xOrigin",
-        CASE WHEN "scaleY" >= 0 THEN min("translateY") ELSE max("translateY") END AS "yOrigin",
-        "horizontalSRID"
-   FROM "Tiles"
-   JOIN "GridGeometries" ON "Tiles"."extent" = "GridGeometries".identifier
-   JOIN "Series" ON "Tiles".series = "Series".identifier
-  GROUP BY "layer", "endTime", "startTime", "horizontalSRID", "scaleX", "scaleY", "shearX", "shearY"
-  ORDER BY "layer", "endTime", "scaleX"*"scaleX" + "shearX"*"shearX" + "scaleY"*"scaleY" + "shearY"*"shearY" DESC;
-
-ALTER TABLE "Tiling" OWNER TO geoadmin;
-GRANT ALL ON TABLE "Tiling" TO geoadmin;
-GRANT SELECT ON TABLE "Tiling" TO PUBLIC;
-
-COMMENT ON VIEW "Tiling" IS
-    'Summary of tiling by series inferred from the tiles table content.';
-
-
-
---------------------------------------------------------------------------------------------------
--- Creates the "DomainOfTiles" view.                                                            --
--- Dependencies: "Tiles", "GridGeometries"                                                      --
---------------------------------------------------------------------------------------------------
-
-CREATE VIEW "DomainOfTiles" AS
-    SELECT "series", "extent", "count", "tmin", "tmax",
-           st_xmin("horizontalExtent") AS "xmin",
-           st_xmax("horizontalExtent") AS "xmax",
-           st_ymin("horizontalExtent") AS "ymin",
-           st_ymax("horizontalExtent") AS "ymax",
-           st_xmin("geographic")       AS "west",
-           st_xmax("geographic")       AS "east",
-           st_ymin("geographic")       AS "south",
-           st_ymax("geographic")       AS "north"
-      FROM
-   (SELECT *, st_Transform("horizontalExtent", 4326) AS "geographic"
-      FROM
-   (SELECT "series", "extent", "count", "tmin", "tmax", st_Affine(st_GeometryFromText('POLYGON((' ||
-           "xmin" || ' ' || "ymin" || ',' ||
-           "xmax" || ' ' || "ymin" || ',' ||
-           "xmax" || ' ' || "ymax" || ',' ||
-           "xmin" || ' ' || "ymax" || ',' ||
-           "xmin" || ' ' || "ymin" || '))',
-           "horizontalSRID"), "scaleX", "shearX", "shearY", "scaleY", "translateX", "translateY")
-           AS "horizontalExtent"
-      FROM
-   (SELECT "series", "extent", "count", "tmin", "tmax",
-           "xmin", "xmax" + "width"  AS "xmax",
-           "ymin", "ymax" + "height" AS "ymax",
-           "horizontalSRID", "scaleX", "shearX", "shearY", "scaleY", "translateX", "translateY"
-      FROM
-   (SELECT "series", "extent",
-           count("extent")  AS "count",
-           min("startTime") AS "tmin",
-           max("endTime")   AS "tmax",
-           min("dx")        AS "xmin",
-           max("dx")        AS "xmax",
-           min("dy")        AS "ymin",
-           max("dy")        AS "ymax"
-           FROM "Tiles"
-  GROUP BY "series", "extent") AS "Boxes"
-      JOIN "GridGeometries" ON "Boxes"."extent" = "GridGeometries"."identifier")
-        AS "Extents") AS "Transformed") AS "Projected"
-  ORDER BY "series", "extent";
-
-ALTER TABLE "DomainOfTiles" OWNER TO geoadmin;
-GRANT ALL ON TABLE "DomainOfTiles" TO geoadmin;
-GRANT SELECT ON TABLE "DomainOfTiles" TO PUBLIC;
-
-COMMENT ON VIEW "DomainOfTiles" IS
-    'Geographic bounding boxes of tiles for each extent.';
 
 
 

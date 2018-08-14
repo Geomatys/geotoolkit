@@ -1,6 +1,6 @@
 package org.geotoolkit.gui.swing.render2d.control.information.presenter;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -174,7 +174,7 @@ public class TreeFeaturePresenter extends AbstractInformationPresenter {
         StringSelection selection = null;
 
         public ClipCopy() {
-            button = new JButton(IconBuilder.createIcon(FontAwesomeIcons.ICON_FILES_O, BTN_WIDTH, FontAwesomeIcons.DEFAULT_COLOR));
+            button = new JButton(IconBuilder.createIcon(FontAwesomeIcons.ICON_CLIPBOARD, BTN_WIDTH, FontAwesomeIcons.DEFAULT_COLOR));
             button.setToolTipText("Copy value to clipboard.");
             button.setBorderPainted(false);
             button.setContentAreaFilled(false);

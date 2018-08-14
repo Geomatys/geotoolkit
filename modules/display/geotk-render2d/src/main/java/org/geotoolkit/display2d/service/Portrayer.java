@@ -58,7 +58,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Portrayal data, caches the Java2D canvas for further reuse.
@@ -242,7 +242,7 @@ public final class Portrayer {
         final CoverageMapLayer cml = (CoverageMapLayer) layer;
 
         try{
-            final CoverageResource ref = cml.getCoverageReference();
+            final GridCoverageResource ref = cml.getCoverageReference();
             final CoverageReader reader = ref.acquireReader();
             final String mime = outputDef.getMime();
             final Envelope env = viewDef.getEnvelope();

@@ -65,8 +65,8 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -145,11 +145,11 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
         Collections.reverse(lst);
 
         final List<MapItem> validImageLayers = new ArrayList<>();
-        final List<CoverageResource> validMNTLayers = new ArrayList<>();
+        final List<GridCoverageResource> validMNTLayers = new ArrayList<>();
         for(MapItem l : lst){
             validImageLayers.add(l);
             if(l instanceof CoverageMapLayer){
-                final CoverageResource ref = ((CoverageMapLayer)l).getCoverageReference();
+                final GridCoverageResource ref = ((CoverageMapLayer)l).getCoverageReference();
                 validMNTLayers.add(ref);
             }
         }
@@ -170,7 +170,7 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
 
     }
 
-    private void resetScene(final List<MapItem> contextLayers, final List<CoverageResource> mntList){
+    private void resetScene(final List<MapItem> contextLayers, final List<GridCoverageResource> mntList){
         try{
 
             GeneralEnvelope envelope = null;
@@ -183,7 +183,7 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
             }else if( mntList.size()>1){
                 //multiple elevation
                 final List<ElevationLoader> mnts = new ArrayList<>();
-                for(CoverageResource ref : mntList){
+                for(GridCoverageResource ref : mntList){
                     mnts.add(new DefaultElevationLoader(ref));
                 }
                 elevationLoader = new StackElevationLoader(mnts);
@@ -200,7 +200,7 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
                 final MapItem layer = contextLayers.get(0);
                 if(layer instanceof CoverageMapLayer){
                     //we can use the coverage reference directly
-                    final CoverageResource modelImg = ((CoverageMapLayer)layer).getCoverageReference();
+                    final GridCoverageResource modelImg = ((CoverageMapLayer)layer).getCoverageReference();
                     if(modelImg instanceof PyramidalCoverageResource){
                         final PyramidalCoverageResource pcf = (PyramidalCoverageResource) modelImg;
                         final List<Pyramid> pyramidsImg = (List<Pyramid>) pcf.getPyramidSet().getPyramids();
@@ -359,8 +359,8 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-            if(value instanceof CoverageResource){
-                final CoverageResource ref = (CoverageResource) value;
+            if(value instanceof GridCoverageResource){
+                final GridCoverageResource ref = (GridCoverageResource) value;
                 lbl.setText(ref.getIdentifier().tip().toString());
             }else if(value instanceof MapItem){
                 final MapItem mapitem = (MapItem) value;

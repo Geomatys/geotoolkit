@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.display2d.ext.graduation;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.awt.Font;
 import java.awt.RenderingHints;
 import java.awt.Shape;

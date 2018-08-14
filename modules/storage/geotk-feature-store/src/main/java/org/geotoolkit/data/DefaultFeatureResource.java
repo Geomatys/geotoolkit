@@ -27,6 +27,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalFeatureTypeException;
 import org.apache.sis.storage.ReadOnlyStorageException;
 import org.apache.sis.storage.WritableFeatureSet;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -44,9 +46,9 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class DefaultFeatureResource extends AbstractFeatureSet implements FeatureSet, WritableFeatureSet, FeatureStoreListener {
+public class DefaultFeatureResource extends AbstractFeatureSet implements FeatureSet, WritableFeatureSet, ChangeListener<ChangeEvent> {
 
-    private final FeatureStoreListener.Weak weakListener = new StorageListener.Weak(this);
+    private final StorageListener.Weak weakListener = new StorageListener.Weak(this);
     private final FeatureStore store;
     private final Query query;
 
@@ -135,22 +137,20 @@ public final class DefaultFeatureResource extends AbstractFeatureSet implements 
      * Forward event to listeners by changing source.
      */
     @Override
-    public void structureChanged(FeatureStoreManagementEvent event){
+    public void changeOccured(ChangeEvent event) {
 
-        //forward events only if the collection is typed and match the type name
-        if (NamesExt.match(event.getFeatureTypeName(), query.getTypeName())) {
-            sendStructureEvent(event.copy(this));
-        }
-    }
-
-    /**
-     * Forward event to listeners by changing source.
-     */
-    @Override
-    public void contentChanged(final FeatureStoreContentEvent event){
-        //forward events only if the collection is typed and match the type name
-        if (NamesExt.match(event.getFeatureTypeName(), query.getTypeName())) {
-            sendContentEvent(event.copy(this));
+        if (event instanceof FeatureStoreManagementEvent) {
+            final FeatureStoreManagementEvent fevent = (FeatureStoreManagementEvent) event;
+            //forward events only if the collection is typed and match the type name
+            if (NamesExt.match(fevent.getFeatureTypeName(), query.getTypeName())) {
+                sendEvent(fevent.copy(this));
+            }
+        } else if (event instanceof FeatureStoreContentEvent) {
+            final FeatureStoreContentEvent fevent = (FeatureStoreContentEvent) event;
+            //forward events only if the collection is typed and match the type name
+            if (NamesExt.match(fevent.getFeatureTypeName(), query.getTypeName())) {
+                sendEvent(fevent.copy(this));
+            }
         }
     }
 

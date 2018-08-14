@@ -19,6 +19,8 @@ package org.geotoolkit.storage;
 import org.apache.sis.metadata.MetadataCopier;
 import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.opengis.metadata.Metadata;
 
 /**
@@ -73,4 +75,11 @@ public abstract class DataStore extends org.apache.sis.storage.DataStore {
      */
     protected abstract Metadata createMetadata() throws DataStoreException;
 
+    @Override
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    }
+
+    @Override
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    }
 }

@@ -30,6 +30,7 @@ import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.junit.Test;
 
 import static org.apache.sis.test.Assert.*;
+import static org.apache.sis.test.MetadataAssert.*;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.io.WPSSchema;
 import org.apache.sis.referencing.CommonCRS;

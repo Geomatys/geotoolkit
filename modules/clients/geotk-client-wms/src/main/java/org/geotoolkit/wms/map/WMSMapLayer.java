@@ -32,7 +32,7 @@ import org.geotoolkit.wms.WMSCoverageResource.EPSG4326Politic;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 
 /**
@@ -53,7 +53,7 @@ public class WMSMapLayer extends DefaultCoverageMapLayer {
         graphicBuilders().add(WMSGraphicBuilder.INSTANCE);
     }
 
-    protected WMSMapLayer(final CoverageResource ref){
+    protected WMSMapLayer(final GridCoverageResource ref){
         super(ref,new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
     }
 

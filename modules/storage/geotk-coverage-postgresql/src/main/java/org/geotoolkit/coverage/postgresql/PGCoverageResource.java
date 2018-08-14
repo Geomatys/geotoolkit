@@ -36,7 +36,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import javax.measure.Unit;
-import javax.swing.ProgressMonitor;
 import net.iharder.Base64;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
@@ -71,6 +70,7 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.FactoryException;
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.process.Monitor;
 
 /**
  *
@@ -168,7 +168,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
 
         pyramidSet.mustUpdate();
         final CoverageStoreManagementEvent event = firePyramidAdded(pyramidId);
-        getStore().forwardStructureEvent(event);
+        getStore().forwardEvent(event);
         for(Pyramid p : pyramidSet.getPyramids()){
             if(p.getId().equals(pyramidId)){
                 return p;
@@ -262,7 +262,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
 
         pyramidSet.mustUpdate();
         final CoverageStoreManagementEvent event = fireMosaicAdded(pyramidId, String.valueOf(mosaicId));
-        getStore().forwardStructureEvent(event);
+        getStore().forwardEvent(event);
         for (final Pyramid p : pyramidSet.getPyramids()) {
             if (p.getId().equals(pyramidId)) {
                 for(GridMosaic mosaic : p.getMosaics()){
@@ -308,7 +308,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
      */
     @Override
     public void writeTiles(final String pyramidId, final String mosaicId, final RenderedImage image, final Rectangle area,
-                           final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException {
+                           final boolean onlyMissing, final Monitor monitor) throws DataStoreException {
 
         final int offsetX = image.getMinTileX();
         final int offsetY = image.getMinTileY();
@@ -405,7 +405,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
             insertStmt.executeUpdate(query.toString());
 
             final CoverageStoreContentEvent event = fireTileUpdated(pyramidId, mosaicId, Collections.singletonList(new Point(col,row)));
-            getStore().forwardContentEvent(event);
+            getStore().forwardEvent(event);
         }catch(IOException ex){
             throw new DataStoreException(ex.getMessage(), ex);
         }catch(SQLException ex){

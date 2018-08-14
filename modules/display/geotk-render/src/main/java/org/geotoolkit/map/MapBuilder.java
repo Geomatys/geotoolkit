@@ -35,9 +35,9 @@ import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.opengis.feature.FeatureType;
 import org.opengis.metadata.quality.CoverageResult;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Utility class to create MapLayers, MapContexts and Elevation models from different sources.
@@ -176,7 +176,7 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverage2D grid, final MutableStyle style, final String name){
-        final CoverageResource ref = new DefaultCoverageResource(grid, NamesExt.create(name));
+        final GridCoverageResource ref = new DefaultCoverageResource(grid, NamesExt.create(name));
         return createCoverageLayer(ref, style);
     }
 
@@ -188,9 +188,9 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final Object input){
-        final CoverageResource resource;
-        if (input instanceof CoverageResource) {
-            resource = (CoverageResource)input;
+        final GridCoverageResource resource;
+        if (input instanceof GridCoverageResource) {
+            resource = (GridCoverageResource)input;
         } else {
             resource = new DefaultCoverageResource(input, NamesExt.create("image"));
         }
@@ -204,7 +204,7 @@ public final class MapBuilder {
      * @param ref CoverageResource
      * @return  CoverageMapLayer
      */
-    public static CoverageMapLayer createCoverageLayer(final CoverageResource ref){
+    public static CoverageMapLayer createCoverageLayer(final GridCoverageResource ref){
         return new DefaultCoverageMapLayer(ref, RandomStyleBuilder.createDefaultRasterStyle());
     }
 
@@ -214,7 +214,7 @@ public final class MapBuilder {
      * @param style layer style
      * @return  CoverageMapLayer
      */
-    public static CoverageMapLayer createCoverageLayer(final CoverageResource ref, final MutableStyle style){
+    public static CoverageMapLayer createCoverageLayer(final GridCoverageResource ref, final MutableStyle style){
         return new DefaultCoverageMapLayer(ref, style);
     }
 
@@ -225,9 +225,9 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final Object input, final MutableStyle style){
-        final CoverageResource resource;
-        if (input instanceof CoverageResource) {
-            resource = (CoverageResource)input;
+        final GridCoverageResource resource;
+        if (input instanceof GridCoverageResource) {
+            resource = (GridCoverageResource)input;
         } else {
             resource = new DefaultCoverageResource(input, NamesExt.create("image"));
         }
@@ -239,7 +239,7 @@ public final class MapBuilder {
      * @param grid : Coverage reader holding elevation values
      * @return ElevationModel
      */
-    public static ElevationModel createElevationModel(final CoverageResource ref) throws CoverageStoreException {
+    public static ElevationModel createElevationModel(final GridCoverageResource ref) throws CoverageStoreException {
         return createElevationModel(ref, 130, 2, 55);
     }
 
@@ -251,7 +251,7 @@ public final class MapBuilder {
      * @param scale : a multiplication factor to use on the coverage values
      * @return ElevationModel
      */
-    public static ElevationModel createElevationModel(final CoverageResource ref, final double azimuthAngle, final double altitudeAngle, final double altitudeScale) throws CoverageStoreException {
+    public static ElevationModel createElevationModel(final GridCoverageResource ref, final double azimuthAngle, final double altitudeAngle, final double altitudeScale) throws CoverageStoreException {
         return new ElevationModel(ref, azimuthAngle, altitudeAngle, altitudeScale);
     }
  }

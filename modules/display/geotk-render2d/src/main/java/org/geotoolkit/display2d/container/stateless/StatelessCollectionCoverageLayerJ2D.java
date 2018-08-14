@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
-import org.geotoolkit.storage.coverage.CoverageStoreListener;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.VisitFilter;
@@ -42,27 +41,30 @@ import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.ItemListener;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapItem;
+import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Description;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.CollectionCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer> implements CoverageStoreListener{
+public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer> implements ChangeListener<ChangeEvent>{
 
-    protected CoverageStoreListener.Weak weakStoreListener = new CoverageStoreListener.Weak(this);
+    protected StorageListener.Weak weakStoreListener = new StorageListener.Weak(this);
 
     private final ProjectedCoverage projectedCoverage;
     private final boolean ignoreBuilders;
@@ -133,9 +135,9 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
         }
 
         final CollectionCoverageResource ref = (CollectionCoverageResource) item.getCoverageReference();
-        final Collection<CoverageResource> references = ref.getCoverages(null);
+        final Collection<GridCoverageResource> references = ref.getCoverages(null);
         final LoopLayer layer = new LoopLayer();
-        for (CoverageResource cref : references) {
+        for (GridCoverageResource cref : references) {
             layer.ref = cref;
             paintRaster(layer, rules, renderingContext);
         }
@@ -232,16 +234,7 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
     }
 
     @Override
-    public void structureChanged(CoverageStoreManagementEvent event) {
-        if(item.isVisible() && getCanvas().isAutoRepaint()){
-            //TODO should call a repaint only on this graphic
-            projectedCoverage.clearObjectiveCache();
-            getCanvas().repaint();
-        }
-    }
-
-    @Override
-    public void contentChanged(CoverageStoreContentEvent event) {
+    public void changeOccured(ChangeEvent event) {
         if(item.isVisible() && getCanvas().isAutoRepaint()){
             //TODO should call a repaint only on this graphic
             projectedCoverage.clearObjectiveCache();
@@ -260,10 +253,10 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
      */
     private class LoopLayer implements CoverageMapLayer {
 
-        private CoverageResource ref;
+        private GridCoverageResource ref;
 
         @Override
-        public CoverageResource getCoverageReference() {
+        public GridCoverageResource getCoverageReference() {
             return ref;
         }
 

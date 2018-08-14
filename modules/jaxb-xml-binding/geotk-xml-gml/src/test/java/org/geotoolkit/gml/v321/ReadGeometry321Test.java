@@ -1,9 +1,9 @@
 package org.geotoolkit.gml.v321;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
 import org.geotoolkit.gml.ReadGeometryTest;
 import org.junit.Test;
 

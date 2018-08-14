@@ -34,7 +34,6 @@ import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import org.xml.sax.SAXException;
 
-import static org.apache.sis.test.Assert.*;
 import org.geotoolkit.gml.xml.v321.AssociationRoleType;
 import org.geotoolkit.gml.xml.v321.FileType;
 import org.geotoolkit.gmlcov.geotiff.xml.v100.CompressionType;
@@ -45,6 +44,8 @@ import org.geotoolkit.gmlcov.geotiff.xml.v100.PredictorType;
 import org.geotoolkit.gmlcov.xml.v100.AbstractDiscreteCoverageType;
 import org.geotoolkit.wcs.xml.v200.CoverageDescriptionType;
 import org.geotoolkit.wcs.xml.v200.ExtensionType;
+
+import static org.apache.sis.test.MetadataAssert.*;
 
 
 /**

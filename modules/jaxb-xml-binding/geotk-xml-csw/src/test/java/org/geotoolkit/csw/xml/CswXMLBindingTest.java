@@ -64,22 +64,20 @@ import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.ows.xml.v100.BoundingBoxType;
 import org.geotoolkit.ows.xml.v100.OperationsMetadata;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
-import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.csw.xml.v202.GetRecordsResponseType;
 import org.geotoolkit.csw.xml.v202.InsertResultType;
 import org.geotoolkit.csw.xml.v202.SearchResultsType;
 import org.geotoolkit.csw.xml.v202.TransactionResponseType;
 import org.geotoolkit.csw.xml.v202.TransactionSummaryType;
 
-// SIS dependencies
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
-import org.apache.sis.test.XMLComparator;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-//Junit dependencies
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.apache.sis.test.MetadataAssert.*;
+
 
 /**
  * A Test suite verifying that the Record are correctly marshalled/unmarshalled
@@ -88,16 +86,16 @@ import static org.junit.Assert.*;
  * @module
  */
 public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
-   @BeforeClass
-   public static void setTimeZone() {
-       TimeZone.setDefault(TimeZone.getTimeZone("CET"));
-   }
+    @BeforeClass
+    public static void setTimeZone() {
+        TimeZone.setDefault(TimeZone.getTimeZone("CET"));
+    }
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.csw.xml");
 
     private final MarshallerPool pool = CSWMarshallerPool.getInstance();
 
-     /**
+    /**
      * A JAXB factory to csw object version 2.0.2
      */
     protected final ObjectFactory cswFactory202 = new ObjectFactory();;
@@ -112,28 +110,15 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
      */
     private static final QName _Record_QNAME = new QName("http://www.opengis.net/cat/csw/2.0.2", "Record");
 
-    @Before
-    public void setUp() throws JAXBException {
-
-    }
-
-    @After
-    public void tearDown() {
-
-    }
-
     /**
      * Test simple Record Marshalling.
      */
     @Test
     public void recordMarshalingTest() throws JAXBException {
-
         Marshaller marshaller = pool.acquireMarshaller();
-
         /*
          * Test marshalling csw Record v2.0.2
          */
-
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
@@ -154,11 +139,11 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(record, sw);
-
         String result = sw.toString();
+
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:Record xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "<csw:Record xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
         "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
         "  <dc:title>(JASON-1)</dc:title>\n" +
         "  <dc:type>clearinghouse</dc:type>\n" +
@@ -174,15 +159,7 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         "  </ows:WGS84BoundingBox>\n" +
         "</csw:Record>\n";
 
-        //we remove the 2 first line because the xlmns are not always in the same order.
-        expResult = expResult.substring(expResult.indexOf('\n') + 1);
-        expResult = expResult.substring(expResult.indexOf('\n') + 1);
-
-        result = result.substring(result.indexOf('\n') + 1);
-        result = result.substring(result.indexOf('\n') + 1);
-
-        assertEquals(expResult, result);
-
+        assertXmlEquals(expResult, result, "xmlns:*");
         pool.recycle(marshaller);
     }
 
@@ -191,16 +168,13 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void recordUnmarshalingTest() throws JAXBException {
-
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-
         /*
          * Test Unmarshalling csw Record v2.0.2
          */
-
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:Record xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "<csw:Record xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
         "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
         "  <dc:title>(JASON-1)</dc:title>\n" +
         "  <dc:type>clearinghouse</dc:type>\n" +
@@ -221,7 +195,6 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         "</csw:Record>\n";
 
         StringReader sr = new StringReader(xml);
-
         RecordType result = (RecordType) unmarshaller.unmarshal(sr);
 
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
@@ -251,12 +224,9 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         assertEquals(expResult.getSpatial(), result.getSpatial());
         assertEquals(expResult.getBoundingBox().get(0).getValue(), result.getBoundingBox().get(0).getValue());
         assertEquals(expResult, result);
-
-
         /*
          * Test Unmarshalling csw Record v2.0.0 with http://purl... DC namespace
          */
-
         xml =
         "<csw:Record xmlns:csw=\"http://www.opengis.net/cat/csw\" xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n" +
         "  <dc:identifier>ESIGNGRAVIMÉTRICOPENINSULAYBALEARES200703070000</dc:identifier>\n" +
@@ -285,15 +255,11 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         "</csw:Record>";
 
         sr = new StringReader(xml);
-
         org.geotoolkit.csw.xml.v200.RecordType result2 = (org.geotoolkit.csw.xml.v200.RecordType) unmarshaller.unmarshal(sr);
-
         LOGGER.log(Level.FINER, "result:{0}", result2.toString());
-
-         /*
+        /*
          * Test Unmarshalling csw Record v2.0.0 with http://www.purl... DC namespace
          */
-
         xml =
         "<csw:Record xmlns:csw=\"http://www.opengis.net/cat/csw\" xmlns:dcterms=\"http://www.purl.org/dc/terms/\" xmlns:dc=\"http://www.purl.org/dc/elements/1.1/\">\n" +
         "  <dc:identifier>ESIGNGRAVIMÉTRICOPENINSULAYBALEARES200703070000</dc:identifier>\n" +
@@ -322,12 +288,9 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         "</csw:Record>";
 
         sr = new StringReader(xml);
-
         result2 = (org.geotoolkit.csw.xml.v200.RecordType) unmarshaller.unmarshal(sr);
-
         LOGGER.log(Level.FINER, "result:{0}", result2.toString());
         pool.recycle(unmarshaller);
-
     }
 
     /**
@@ -335,13 +298,10 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void summmaryRecordMarshalingTest() throws JAXBException {
-
         Marshaller marshaller = pool.acquireMarshaller();
-
         /*
          * Test marshalling csw summmary Record v2.0.2
          */
-
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
@@ -365,11 +325,11 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(record, sw);
-
         String result = sw.toString();
+
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:SummaryRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "<csw:SummaryRecord xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
         "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
         "  <dc:title>(JASON-1)</dc:title>\n" +
         "  <dc:type>clearinghouse</dc:type>\n" +
@@ -385,20 +345,10 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         "  </ows:WGS84BoundingBox>\n" +
         "</csw:SummaryRecord>\n";
 
-        //we remove the 2 first line because the xlmns are not always in the same order.
-        expResult = expResult.substring(expResult.indexOf('\n') + 1);
-        expResult = expResult.substring(expResult.indexOf('\n') + 1);
-
-        result = result.substring(result.indexOf('\n') + 1);
-        result = result.substring(result.indexOf('\n') + 1);
-
-        assertEquals(expResult, result);
-
-
+        assertXmlEquals(expResult, result, "xmlns:*");
         /*
          * Test marshalling csw summmary Record v2.0.2
          */
-
         List<SimpleLiteral> ids    = new ArrayList<>();
         ids.add(new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}"));
         ids.add(new SimpleLiteral("urn:ogc-x:df:F7807C8AB645"));
@@ -406,7 +356,7 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         titles.add(new SimpleLiteral("(JASON-1)"));
         titles.add(new SimpleLiteral("(JASON-2)"));
 
-        type       = new SimpleLiteral("clearinghouse");
+        type = new SimpleLiteral("clearinghouse");
 
         subject = new ArrayList<>();
         subject.add(new SimpleLiteral("oceans elevation NASA/JPL/JASON-1"));
@@ -431,11 +381,11 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         sw = new StringWriter();
         marshaller.marshal(record, sw);
-
         result = sw.toString();
+
         expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:SummaryRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "<csw:SummaryRecord xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
         "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
         "  <dc:identifier>urn:ogc-x:df:F7807C8AB645</dc:identifier>\n" +
         "  <dc:title>(JASON-1)</dc:title>\n" +
@@ -459,15 +409,7 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         "  </ows:WGS84BoundingBox>\n" +
         "</csw:SummaryRecord>\n";
 
-        //we remove the 2 first line because the xlmns are not always in the same order.
-        expResult = expResult.substring(expResult.indexOf('\n') + 1);
-        expResult = expResult.substring(expResult.indexOf('\n') + 1);
-
-        result = result.substring(result.indexOf('\n') + 1);
-        result = result.substring(result.indexOf('\n') + 1);
-
-        assertEquals(expResult, result);
-
+        assertXmlEquals(expResult, result, "xmlns:*");
         pool.recycle(marshaller);
     }
 
@@ -476,17 +418,13 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void summmaryRecordUnmarshalingTest() throws JAXBException {
-
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-
-
         /*
          * Test marshalling csw summmary Record v2.0.2
          */
-
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:SummaryRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "<csw:SummaryRecord xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
         "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
         "  <dc:title>(JASON-1)</dc:title>\n" +
         "  <dc:type>clearinghouse</dc:type>\n" +
@@ -525,17 +463,13 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
 
         SummaryRecordType expResult = new SummaryRecordType(id, title, type,  bbox, subject, formats, modified, Abstract);
-
         assertEquals(expResult, result);
-
-
         /*
          * Test marshalling csw summmary Record v2.0.2
          */
-
         xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:SummaryRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "<csw:SummaryRecord xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
         "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
         "  <dc:identifier>urn:ogc-x:df:F7807C8AB645</dc:identifier>\n" +
         "  <dc:title>(JASON-1)</dc:title>\n" +
@@ -562,7 +496,6 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         sr = new StringReader(xml);
         result = (SummaryRecordType) unmarshaller.unmarshal(sr);
 
-
         List<SimpleLiteral> ids    = new ArrayList<>();
         ids.add(new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}"));
         ids.add(new SimpleLiteral("urn:ogc-x:df:F7807C8AB645"));
@@ -570,7 +503,7 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         titles.add(new SimpleLiteral("(JASON-1)"));
         titles.add(new SimpleLiteral("(JASON-2)"));
 
-        type       = new SimpleLiteral("clearinghouse");
+        type = new SimpleLiteral("clearinghouse");
 
         subject = new ArrayList<>();
         subject.add(new SimpleLiteral("oceans elevation NASA/JPL/JASON-1"));
@@ -602,13 +535,10 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void briefRecordMarshalingTest() throws JAXBException {
-
         Marshaller marshaller = pool.acquireMarshaller();
-
         /*
          * Test marshalling BRIEF csw Record v2.0.2
          */
-
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
@@ -620,11 +550,11 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(record, sw);
-
         String result = sw.toString();
+
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:BriefRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "<csw:BriefRecord xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\">\n" +
         "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
         "  <dc:title>(JASON-1)</dc:title>\n" +
         "  <dc:type>clearinghouse</dc:type>\n" +
@@ -634,19 +564,10 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         "  </ows:WGS84BoundingBox>\n" +
         "</csw:BriefRecord>\n";
 
-        //we remove the 2 first line because the xlmns are not always in the same order.
-        expResult = expResult.substring(expResult.indexOf('\n') + 1);
-        expResult = expResult.substring(expResult.indexOf('\n') + 1);
-
-        result = result.substring(result.indexOf('\n') + 1);
-        result = result.substring(result.indexOf('\n') + 1);
-
-        assertEquals(expResult, result);
-
-         /*
+        assertXmlEquals(expResult, result, "xmlns:*");
+        /*
          * Test marshalling csw Record v2.0.2
          */
-
         List<SimpleLiteral> identifiers = new ArrayList<>();
         identifiers.add(new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}"));
         identifiers.add(new SimpleLiteral("urn:ogc:x-def:F7807C8AB645"));
@@ -655,7 +576,7 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         titles.add(new SimpleLiteral("(JASON-1)"));
         titles.add(new SimpleLiteral("(JASON-2)"));
 
-        type       = new SimpleLiteral("clearinghouse");
+        type = new SimpleLiteral("clearinghouse");
 
         bbox = new ArrayList<>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
@@ -665,11 +586,11 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         sw = new StringWriter();
         marshaller.marshal(record, sw);
-
         result = sw.toString();
+
         expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:BriefRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "<csw:BriefRecord xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\">\n" +
         "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
         "  <dc:identifier>urn:ogc:x-def:F7807C8AB645</dc:identifier>\n" +
         "  <dc:title>(JASON-1)</dc:title>\n" +
@@ -685,15 +606,7 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         "  </ows:WGS84BoundingBox>\n" +
         "</csw:BriefRecord>\n";
 
-        //we remove the 2 first line because the xlmns are not always in the same order.
-        expResult = expResult.substring(expResult.indexOf('\n') + 1);
-        expResult = expResult.substring(expResult.indexOf('\n') + 1);
-
-        result = result.substring(result.indexOf('\n') + 1);
-        result = result.substring(result.indexOf('\n') + 1);
-
-        assertEquals(expResult, result);
-
+        assertXmlEquals(expResult, result, "xmlns:*");
         pool.recycle(marshaller);
     }
 
@@ -702,17 +615,13 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void briefRecordUnmarshalingTest() throws JAXBException {
-
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-
-
         /*
          * Test marshalling BRIEF csw Record v2.0.2
          */
-
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:BriefRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "<csw:BriefRecord xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\">\n" +
         "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
         "  <dc:title>(JASON-1)</dc:title>\n" +
         "  <dc:type>clearinghouse</dc:type>\n" +
@@ -733,15 +642,12 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
 
         BriefRecordType expResult = new BriefRecordType(id, title, type, bbox);
-
         assertEquals(expResult, result);
-
-         /*
+        /*
          * Test marshalling csw Record v2.0.2
          */
-
         xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:BriefRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "<csw:BriefRecord xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\">\n" +
         "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
         "  <dc:identifier>urn:ogc:x-def:F7807C8AB645</dc:identifier>\n" +
         "  <dc:title>(JASON-1)</dc:title>\n" +
@@ -768,7 +674,7 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         titles.add(new SimpleLiteral("(JASON-1)"));
         titles.add(new SimpleLiteral("(JASON-2)"));
 
-        type       = new SimpleLiteral("clearinghouse");
+        type = new SimpleLiteral("clearinghouse");
 
         bbox = new ArrayList<>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
@@ -778,7 +684,6 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         assertEquals(expResult, result);
         pool.recycle(unmarshaller);
-
     }
 
     /**
@@ -786,13 +691,10 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void getRecordByIdResponseMarshalingTest() throws JAXBException {
-
         Marshaller marshaller = pool.acquireMarshaller();
-
-         /*
+        /*
          * Test marshalling csw getRecordByIdResponse v2.0.2
          */
-
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
@@ -821,13 +723,11 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(response, sw);
-
         String result = sw.toString();
-
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:GetRecordByIdResponse xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "<csw:GetRecordByIdResponse xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
         "  <csw:Record>\n" +
         "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
         "    <dc:title>(JASON-1)</dc:title>\n" +
@@ -867,17 +767,9 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         "  </csw:SummaryRecord>\n" +
         "</csw:GetRecordByIdResponse>\n";
 
-        //we remove the 2 first line because the xlmns are not always in the same order.
-        expResult = expResult.substring(expResult.indexOf('\n') + 1);
-        expResult = expResult.substring(expResult.indexOf('\n') + 1);
-
-        result = result.substring(result.indexOf('\n') + 1);
-        result = result.substring(result.indexOf('\n') + 1);
-
         LOGGER.log(Level.FINER, "RESULT:\n{0}", result);
         LOGGER.log(Level.FINER, "EXPRESULT:\n{0}", expResult);
-        assertEquals(expResult, result);
-
+        assertXmlEquals(expResult, result, "xmlns:*");
         pool.recycle(marshaller);
     }
 
@@ -886,14 +778,10 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void getRecordByIdResponseUnMarshalingTest() throws JAXBException {
-
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-
-
-         /*
+        /*
          * Test marshalling csw getRecordByIdResponse v2.0.2
          */
-
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
@@ -921,10 +809,9 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         GetRecordByIdResponse expResult = new GetRecordByIdResponseType(records);
 
-
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:GetRecordByIdResponse xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "<csw:GetRecordByIdResponse xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
         "  <csw:Record>\n" +
         "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
         "    <dc:title>(JASON-1)</dc:title>\n" +
@@ -964,9 +851,7 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         "  </csw:SummaryRecord>\n" +
         "</csw:GetRecordByIdResponse>\n";
 
-
         GetRecordByIdResponse result = ((JAXBElement<GetRecordByIdResponse>) unmarshaller.unmarshal(new StringReader(xml))).getValue();
-
         assertTrue(result.getAny()instanceof List);
         List<Object> resultList = result.getAny();
         List<Object> expResultList = expResult.getAny();
@@ -976,7 +861,6 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         assertEquals(resultList, expResultList);
         assertEquals(expResult.getAny(), result.getAny());
         assertEquals(expResult, result);
-
         pool.recycle(unmarshaller);
     }
 
@@ -985,13 +869,10 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void getRecordsResponseMarshalingTest() throws JAXBException {
-
         Marshaller marshaller = pool.acquireMarshaller();
-
-         /*
+        /*
          * Test marshalling csw getRecordByIdResponse v2.0.2
          */
-
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
@@ -1022,13 +903,11 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(response, sw);
-
         String result = sw.toString();
-
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:GetRecordsResponse version=\"1.2\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "<csw:GetRecordsResponse version=\"v1.2\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
         "  <csw:RequestId>rid</csw:RequestId>\n" +
         "  <csw:SearchStatus timestamp=\"1970-01-01T01:01:40.000+01:00\"/>\n" +
         "  <csw:SearchResults resultSetId=\"set\" elementSet=\"brief\" numberOfRecordsMatched=\"1\" numberOfRecordsReturned=\"1\" nextRecord=\"0\">\n" +
@@ -1072,17 +951,9 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         "  </csw:SearchResults>\n" +
         "</csw:GetRecordsResponse>\n";
 
-        //we remove the 2 first line because the xlmns are not always in the same order.
-        expResult = expResult.substring(expResult.indexOf('\n') + 1);
-        expResult = expResult.substring(expResult.indexOf('\n') + 1);
-
-        result = result.substring(result.indexOf('\n') + 1);
-        result = result.substring(result.indexOf('\n') + 1);
-
         LOGGER.log(Level.FINER, "RESULT:\n{0}", result);
         LOGGER.log(Level.FINER, "EXPRESULT:\n{0}", expResult);
-        assertEquals(expResult, result);
-
+        assertXmlEquals(expResult, result, "xmlns:*");
         pool.recycle(marshaller);
     }
 
@@ -1091,14 +962,10 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void getRecordsResponseUnMarshalingTest() throws JAXBException {
-
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-
-
-         /*
+        /*
          * Test marshalling csw getRecordByIdResponse v2.0.2
          */
-
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
@@ -1127,10 +994,9 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         final SearchResultsType sr = new SearchResultsType("set", ElementSetType.BRIEF, 1, records, 1, 0);
         GetRecordsResponse expResult = new GetRecordsResponseType("rid", 100000, "v1.2", sr);
 
-
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:GetRecordsResponse version=\"v1.2\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "<csw:GetRecordsResponse version=\"v1.2\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
         "  <csw:RequestId>rid</csw:RequestId>\n" +
         "  <csw:SearchStatus timestamp=\"1970-01-01T01:01:40.000+01:00\"/>\n" +
         "  <csw:SearchResults resultSetId=\"set\" elementSet=\"brief\" numberOfRecordsMatched=\"1\" numberOfRecordsReturned=\"1\" nextRecord=\"0\">\n" +
@@ -1174,20 +1040,17 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         "  </csw:SearchResults>\n" +
         "</csw:GetRecordsResponse>\n";
 
-
         GetRecordsResponse result = ((JAXBElement<GetRecordsResponse>) unmarshaller.unmarshal(new StringReader(xml))).getValue();
-
         assertTrue(result.getSearchResults().getAny() instanceof List);
         List<Object> resultList = result.getSearchResults().getAny();
         List<Object> expResultList = expResult.getSearchResults().getAny();
-        assertEquals(resultList.get(0), expResultList.get(0));
-        assertEquals(resultList.get(1), expResultList.get(1));
-        assertEquals(resultList.get(2), expResultList.get(2));
-        assertEquals(resultList, expResultList);
+        assertEquals(expResultList.get(0), resultList.get(0));
+        assertEquals(expResultList.get(1), resultList.get(1));
+        assertEquals(expResultList.get(2), resultList.get(2));
+        assertEquals(expResultList, resultList);
         assertEquals(expResult.getSearchResults().getAny(), result.getSearchResults().getAny());
         assertEquals(expResult.getSearchStatus(), result.getSearchStatus());
         assertEquals(expResult, result);
-
         pool.recycle(unmarshaller);
     }
 
@@ -1197,8 +1060,7 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void getRecordsMarshalingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
         Marshaller marshaller = pool.acquireMarshaller();
-
-         /*
+        /*
          * Test marshalling csw getRecordByIdResponse v2.0.2
          */
 
@@ -1217,16 +1079,15 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         GetRecordsType getRecordsRequest = new GetRecordsType("CSW", "2.0.2", ResultType.RESULTS, null, "application/xml", "http://www.opengis.net/cat/csw/2.0.2", 1, 20, query, null);
 
-
         StringWriter sw = new StringWriter();
         marshaller.marshal(getRecordsRequest, sw);
-
         String result = sw.toString();
-
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:GetRecords maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw/2.0.2\" outputFormat=\"application/xml\" resultType=\"results\" version=\"2.0.2\" service=\"CSW\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "<csw:GetRecords xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\""
+                + " maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw/2.0.2\" outputFormat=\"application/xml\""
+                + " resultType=\"results\" version=\"2.0.2\" service=\"CSW\">\n" +
         "  <csw:Query typeNames=\"csw:Record\">\n" +
         "    <csw:ElementSetName>full</csw:ElementSetName>\n" +
         "    <csw:Constraint version=\"1.1.0\">\n" +
@@ -1242,15 +1103,10 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         "  </csw:Query>\n"+
         "</csw:GetRecords>\n";
 
-        XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
-        comparator.compare();
-
-         /*
+        assertXmlEquals(expResult, result, "xmlns:*");
+        /*
          * Test marshalling csw getRecordByIdResponse v2.0.0
          */
-
-
         org.geotoolkit.csw.xml.v200.QueryConstraintType constraint200 = new org.geotoolkit.csw.xml.v200.QueryConstraintType(filter1, "1.1.0");
         typeNames  = new ArrayList<>();
         typeNames.add( org.geotoolkit.csw.xml.v200.ObjectFactory._Record_QNAME);
@@ -1258,16 +1114,15 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         org.geotoolkit.csw.xml.v200.GetRecordsType getRecordsRequest200 = new org.geotoolkit.csw.xml.v200.GetRecordsType("CSW", "2.0.0", ResultType.RESULTS, null, "application/xml", "http://www.opengis.net/cat/csw", 1, 20, query200, null);
 
-
         sw = new StringWriter();
         marshaller.marshal(getRecordsRequest200, sw);
-
         result = sw.toString();
-
 
         expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<cat:GetRecords maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw\" outputFormat=\"application/xml\" resultType=\"results\" version=\"2.0.0\" service=\"CSW\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:cat=\"http://www.opengis.net/cat/csw\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "<cat:GetRecords xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:cat=\"http://www.opengis.net/cat/csw\""
+                + " maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw\" outputFormat=\"application/xml\""
+                + " resultType=\"results\" version=\"2.0.0\" service=\"CSW\">\n" +
         "  <cat:Query typeNames=\"cat:Record\">\n" +
         "    <cat:ElementSetName>full</cat:ElementSetName>\n" +
         "    <cat:Constraint version=\"1.1.0\">\n" +
@@ -1283,10 +1138,7 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         "  </cat:Query>\n"+
         "</cat:GetRecords>\n";
 
-        comparator = new XMLComparator(expResult, result);
-        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
-        comparator.compare();
-
+        assertXmlEquals(expResult, result, "xmlns:*");
         pool.recycle(marshaller);
     }
 
@@ -1295,16 +1147,15 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void getRecordsUnMarshalingTest() throws JAXBException {
-
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-
-         /*
+        /*
          * Test unmarshalling csw getRecordByIdResponse v2.0.2
          */
-
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:GetRecords maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw/2.0.2\" outputFormat=\"application/xml\" resultType=\"results\" version=\"2.0.2\" service=\"CSW\"  xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "<csw:GetRecords xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\""
+                + " maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw/2.0.2\" outputFormat=\"application/xml\""
+                + " resultType=\"results\" version=\"2.0.2\" service=\"CSW\">\n" +
         "  <csw:Query typeNames=\"csw:Record\">\n" +
         "    <csw:ElementSetName>full</csw:ElementSetName>\n" +
         "    <csw:Constraint version=\"1.1.0\">\n" +
@@ -1321,9 +1172,7 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         "</csw:GetRecords>\n";
 
         StringReader sr = new StringReader(xml);
-
         Object result = unmarshaller.unmarshal(sr);
-
         /*
          * we build the first filter : < dublinCore:Title IS LIKE '*' >
          */
@@ -1339,8 +1188,6 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         GetRecordsType expResult = new GetRecordsType("CSW", "2.0.2", ResultType.RESULTS, null, "application/xml", "http://www.opengis.net/cat/csw/2.0.2", 1, 20, query, null);
 
-
-
         LOGGER.log(Level.FINER, "RESULT:\n{0}", result);
         LOGGER.log(Level.FINER, "EXPRESULT:\n{0}", expResult);
         GetRecordsType gres = (GetRecordsType)result;
@@ -1354,7 +1201,9 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         assertEquals(expResult, result);
 
         xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<cat:GetRecords maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw\" outputFormat=\"application/xml\" resultType=\"results\" version=\"2.0.0\" service=\"CSW\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:cat=\"http://www.opengis.net/cat/csw\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "<cat:GetRecords xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:cat=\"http://www.opengis.net/cat/csw\""
+                + " maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw\" outputFormat=\"application/xml\""
+                + " resultType=\"results\" version=\"2.0.0\" service=\"CSW\">\n" +
         "  <cat:Query typeNames=\"cat:Record\">\n" +
         "    <cat:ElementSetName>full</cat:ElementSetName>\n" +
         "    <cat:Constraint version=\"1.1.0\">\n" +
@@ -1378,7 +1227,6 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         org.geotoolkit.csw.xml.v200.GetRecordsType expResult200 = new org.geotoolkit.csw.xml.v200.GetRecordsType("CSW", "2.0.0", ResultType.RESULTS, null, "application/xml", "http://www.opengis.net/cat/csw", 1, 20, query200, null);
 
         sr = new StringReader(xml);
-
         result = unmarshaller.unmarshal(sr);
 
         assertTrue(result instanceof JAXBElement);
@@ -1390,13 +1238,11 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         pool.recycle(unmarshaller);
     }
 
-
     /**
      * Test simple Record Marshalling.
      */
     @Test
     public void updateMarshalingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
-
         Marshaller marshaller = pool.acquireMarshaller();
 
         // <TODO
@@ -1427,7 +1273,7 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         // TODO/>
 
-        /**
+        /*
          * Test 2 : Simple recordProperty (String)
          */
         RecordPropertyType recordProperty = new RecordPropertyType("/csw:Record/dc:contributor", "Jane");
@@ -1435,7 +1281,7 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         update = new UpdateType(Arrays.asList(recordProperty), query);
         request = new TransactionType("CSW", "2.0.2", update);
 
-         String expResult =
+        String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
         "<csw:Transaction verboseResponse=\"false\" version=\"2.0.2\" service=\"CSW\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
         "  <csw:Update>\n" +
@@ -1451,14 +1297,9 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(request, sw);
-
         String result = sw.toString();
-
-        XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
-        comparator.compare();
-
-        /**
+        assertXmlEquals(expResult, result, "xmlns:*");
+        /*
          * Test 3 : Complex recordProperty (GeographicBoundingBox)
          */
         DefaultGeographicBoundingBox geographicElement = new DefaultGeographicBoundingBox(1.1, 1.1, 1.1, 1.1);
@@ -1501,31 +1342,20 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         sw = new StringWriter();
         marshaller.marshal(request, sw);
-
         result = sw.toString();
-
-        comparator = new XMLComparator(expResult, result);
-        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
-        comparator.compare();
-
+        assertXmlEquals(expResult, result, "xmlns:*");
         pool.recycle(marshaller);
     }
 
     /**
      * Test simple Record Marshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void updateUnmarshalingTest() throws JAXBException {
-
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-
-        /**
+        /*
          * Test 1 : Simple recordProperty (String)
          */
-
-
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
         "<csw:Transaction xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" verboseResponse=\"false\" version=\"2.0.2\" service=\"CSW\" >\n" +
@@ -1548,7 +1378,6 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         TransactionType expResult         = new TransactionType("CSW", "2.0.2", update);
 
         assertEquals(expResult, result);
-
 
         xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
@@ -1596,14 +1425,10 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Test capabilities with INSPIRE extendedCapabilities unmarshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void InspireUnmarshalingTest() throws Exception {
-
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-
 
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
@@ -1645,18 +1470,15 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Test capabilities with INSPIRE extendedCapabilities unmarshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void InspireMarshalingTest() throws Exception {
-
         Marshaller marshaller = pool.acquireMarshaller();
-
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:Capabilities version=\"2.0.2\" >\n" +
+        "<csw:Capabilities version=\"2.0.2\" xmlns:ins=\"http://www.inspire.org\" xmlns:ows=\"http://www.opengis.net/ows\""
+                + " xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n" +
         "  <ows:OperationsMetadata>\n" +
         "    <ows:ExtendedCapabilities>\n" +
         "      <ins:MultiLingualCapabilities>\n" +
@@ -1688,25 +1510,20 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(capa, sw);
-
         String result = sw.toString();
 
-        result = StringUtilities.removeXmlns(result);
-
-        assertEquals(expResult, result);
-
+        assertXmlEquals(expResult, result, "xmlns:*");
         pool.recycle(marshaller);
     }
 
 
     @Test
     public void transactionResponseMarshalingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
-
         Marshaller marshaller = pool.acquireMarshaller();
 
-        SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
-        SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
-        SimpleLiteral type       = new SimpleLiteral("clearinghouse");
+        SimpleLiteral id    = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
+        SimpleLiteral title = new SimpleLiteral("(JASON-1)");
+        SimpleLiteral type  = new SimpleLiteral("clearinghouse");
 
         List<BoundingBoxType> bbox = new ArrayList<>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
@@ -1719,8 +1536,7 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         TransactionSummaryType summ = new TransactionSummaryType(2, 0, 1, "rid");
         TransactionResponseType request = new TransactionResponseType(summ, inserteds, "2.0.2");
 
-
-         String expResult =
+        String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
         "<csw:TransactionResponse version=\"2.0.2\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:ows=\"http://www.opengis.net/ows\">\n" +
         "  <csw:TransactionSummary requestId=\"rid\">\n" +
@@ -1743,26 +1559,18 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(request, sw);
-
         String result = sw.toString();
 
-        XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
-        comparator.compare();
-
+        assertXmlEquals(expResult, result, "xmlns:*");
         pool.recycle(marshaller);
     }
 
     /**
      * Test simple Record Marshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void transactionResponseUnmarshalingTest() throws JAXBException {
-
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-
 
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +

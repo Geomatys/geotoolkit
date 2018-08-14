@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.feature;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URL;
@@ -176,7 +176,7 @@ public final class FeatureExt extends Static {
                 final Object val = feature.getPropertyValue(pt.getName().toString());
                 if (val instanceof Geometry) {
                     final Geometry geom = (Geometry) val;
-                    final com.vividsolutions.jts.geom.Envelope env = geom.getEnvelopeInternal();
+                    final org.locationtech.jts.geom.Envelope env = geom.getEnvelopeInternal();
                     if (env != null && !env.isNull()) {
                         // extract geometry enveloppe
                         CoordinateReferenceSystem crs = FeatureExt.getCRS(pt);

@@ -24,7 +24,7 @@ import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapClient;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * WMS-C is a osgeo profile for WMS 1.1.1.
@@ -87,7 +87,7 @@ public class WebMapClientCached extends WebMapClient {
     }
 
     @Override
-    protected CoverageResource createReference(GenericName name) throws DataStoreException{
+    protected GridCoverageResource createReference(GenericName name) throws DataStoreException{
         try {
             return new WMSCCoverageResource(this,name);
         } catch (CapabilitiesException ex) {

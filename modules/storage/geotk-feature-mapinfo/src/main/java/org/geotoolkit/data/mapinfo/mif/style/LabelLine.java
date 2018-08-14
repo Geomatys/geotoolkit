@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.mapinfo.mif.style;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 import java.util.Collections;
 import org.opengis.util.GenericName;
 import org.opengis.style.Description;

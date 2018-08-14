@@ -38,7 +38,6 @@ import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.version.Version;
@@ -47,6 +46,7 @@ import org.geotoolkit.version.VersioningException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * GeotoolKit Coverage Store using PostgreSQL Raster model.
@@ -120,7 +120,7 @@ public class PGCoverageStore extends AbstractCoverageStore implements WritableAg
             rs = stmt.executeQuery(query.toString());
             while (rs.next()){
                 final GenericName n = NamesExt.create(rs.getString(1));
-                final CoverageResource ref = createCoverageReference(n, null);
+                final GridCoverageResource ref = createCoverageReference(n, null);
                 root.add(ref);
             }
         } catch (SQLException ex) {
@@ -161,15 +161,15 @@ public class PGCoverageStore extends AbstractCoverageStore implements WritableAg
         }
 
         fireCoverageAdded(name);
-        return (CoverageResource) findResource(name.tip().toString());
+        return (GridCoverageResource) findResource(name.tip().toString());
     }
 
     @Override
     public void remove(org.apache.sis.storage.Resource resource) throws DataStoreException {
-        if (!(resource instanceof CoverageResource)) {
+        if (!(resource instanceof GridCoverageResource)) {
             throw new DataStoreException("Unknown resource "+resource);
         }
-        final CoverageResource cr = (CoverageResource) resource;
+        final GridCoverageResource cr = (GridCoverageResource) resource;
         final NamedIdentifier name = cr.getIdentifier();
 
         final StringBuilder query = new StringBuilder();
@@ -254,12 +254,12 @@ public class PGCoverageStore extends AbstractCoverageStore implements WritableAg
         }
     }
 
-    public CoverageResource findResource(GenericName name, Version version) throws DataStoreException {
+    public GridCoverageResource findResource(GenericName name, Version version) throws DataStoreException {
         typeCheck(name);
         return createCoverageReference(name, version);
     }
 
-    private CoverageResource createCoverageReference(final GenericName name, Version version) throws DataStoreException {
+    private GridCoverageResource createCoverageReference(final GenericName name, Version version) throws DataStoreException {
         if(version == null){
             try {
                 //grab the latest

@@ -35,7 +35,6 @@ import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifier;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifierDescriptor;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
@@ -47,6 +46,7 @@ import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -68,8 +68,8 @@ public class Categorize extends AbstractProcess {
 
     @Override
     protected void execute() throws ProcessException {
-        final CoverageResource source = getSource();
-        final CoverageResource destination = getDestination();
+        final GridCoverageResource source = getSource();
+        final GridCoverageResource destination = getDestination();
 
         final GridCoverageReader reader;
         try {
@@ -258,11 +258,11 @@ public class Categorize extends AbstractProcess {
         return resample.executeNow();
     }
 
-    public CoverageResource getSource() {
+    public GridCoverageResource getSource() {
         return inputParameters.getMandatoryValue(CategorizeDescriptor.IN_COVERAGE);
     }
 
-    public void setSource(final CoverageResource source) {
+    public void setSource(final GridCoverageResource source) {
         inputParameters.getOrCreate(CategorizeDescriptor.IN_COVERAGE).setValue(source);
     }
 
@@ -278,11 +278,11 @@ public class Categorize extends AbstractProcess {
         SampleClassifier.addInterval(inputParameters, inclusiveMin, exclusiveMax, classValue);
     }
 
-    public CoverageResource getDestination() {
+    public GridCoverageResource getDestination() {
         return inputParameters.getMandatoryValue(CategorizeDescriptor.OUT_COVERAGE);
     }
 
-    public void setDestination(final CoverageResource destination) {
+    public void setDestination(final GridCoverageResource destination) {
         inputParameters.getOrCreate(CategorizeDescriptor.OUT_COVERAGE).setValue(destination);
     }
 

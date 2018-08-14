@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.gx.xml;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 import java.io.IOException;
 import java.util.ArrayList;

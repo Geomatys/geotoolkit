@@ -19,9 +19,9 @@ package org.geotoolkit.display2d.service;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.map.CoverageMapLayer;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 
 import java.awt.Color;
 import java.awt.Dimension;

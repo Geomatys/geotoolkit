@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.kml.model;
 
-import com.vividsolutions.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.CoordinateSequence;
 
 /**
  * <p>This interface maps LinearRing element.</p>

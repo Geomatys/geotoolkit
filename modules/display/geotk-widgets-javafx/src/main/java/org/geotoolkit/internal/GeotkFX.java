@@ -54,20 +54,20 @@ public final class GeotkFX {
     public static final Image ICON_FTS       = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_TAG,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_RULE      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FILTER,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_NEW       = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PLUS,16,FontAwesomeIcons.DEFAULT_COLOR),null);
-    public static final Image ICON_DUPLICATE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FILES_O,16,FontAwesomeIcons.DEFAULT_COLOR),null);
-    public static final Image ICON_DELETE    = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_TRASH_O,16,FontAwesomeIcons.DEFAULT_COLOR),null);
+    public static final Image ICON_DUPLICATE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_COPY,16,FontAwesomeIcons.DEFAULT_COLOR),null);
+    public static final Image ICON_DELETE    = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_TRASH,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_MOVEUP    = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_CHEVRON_UP,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_MOVEDOWN  = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_CHEVRON_DOWN,16,FontAwesomeIcons.DEFAULT_COLOR),null);
-    public static final Image ICON_SLIDERS   = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_SLIDERS,16,FontAwesomeIcons.DEFAULT_COLOR),null);
+    public static final Image ICON_SLIDERS   = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_SLIDERS_H,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_FILTER    = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FILTER,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_CALENDAR  = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_CALENDAR,16,FontAwesomeIcons.DEFAULT_COLOR),null);
-    public static final Image ICON_EDIT      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PENCIL,16,FontAwesomeIcons.DEFAULT_COLOR),null);
+    public static final Image ICON_EDIT      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PENCIL_ALT,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_ADD       = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PLUS,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_OPEN      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FOLDER_OPEN,16,FontAwesomeIcons.DEFAULT_COLOR),null);
-    public static final Image ICON_SAVE      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_SAVE_ALIAS,16,FontAwesomeIcons.DEFAULT_COLOR),null);
-    public static final Image ICON_UNLINK    = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_CHAIN_BROKEN,16,FontAwesomeIcons.DEFAULT_COLOR),null);
+    public static final Image ICON_SAVE      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_SAVE,16,FontAwesomeIcons.DEFAULT_COLOR),null);
+    public static final Image ICON_UNLINK    = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_UNLINK,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_UNDO      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_UNDO,16,FontAwesomeIcons.DEFAULT_COLOR),null);
-    public static final Image ICON_MOVE      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_ARROWS,16,FontAwesomeIcons.DEFAULT_COLOR),null);
+    public static final Image ICON_MOVE      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_HAND_PAPER,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_EMPTY     = new WritableImage(16, 16);
 
     public static final String BUNDLE_PATH = "org/geotoolkit/gui/javafx/internal/Bundle";

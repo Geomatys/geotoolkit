@@ -17,8 +17,8 @@
 
 package org.geotoolkit.data.shapefile.shp;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
 
 /**
  * Coordinates are ordered in an array like [x1,y1, ... xN, yN, z1, ... zN]
@@ -79,4 +79,8 @@ class ShapeCoordinateSequence3D extends ShapeCoordinateSequence2D {
         return new ShapeCoordinateSequence3D(coordinates);
     }
 
+    @Override
+    public CoordinateSequence copy(){
+        return new ShapeCoordinateSequence3D(coordinates);
+    }
 }

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.wps.converters.outputs.complex;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URISyntaxException;

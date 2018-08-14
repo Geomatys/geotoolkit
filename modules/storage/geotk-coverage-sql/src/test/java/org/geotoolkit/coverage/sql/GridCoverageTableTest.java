@@ -113,7 +113,6 @@ public final strictfp class GridCoverageTableTest extends CatalogTestBase {
         table.envelope.clear();
         table.setLayer(LayerTableTest.TEMPERATURE);
         final GridCoverageReference entry = table.getEntry(SAMPLE_NAME);
-        assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
         assertEquals(SAMPLE_NAME + ":1", entry.getName());
         assertSame(entry, table.getEntry(SAMPLE_NAME));
         /*
@@ -154,7 +153,6 @@ public final strictfp class GridCoverageTableTest extends CatalogTestBase {
          */
         table.envelope.setTimeRange(LayerTableTest.SUB_START_TIME, LayerTableTest.SUB_END_TIME);
         final Set<GridCoverageEntry> entries = table.getEntries();
-        assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
         assertEquals(3, entries.size());
         final GridCoverageReference entry = table.getEntry(SAMPLE_NAME);
         assertTrue(entries.contains(entry));
@@ -182,7 +180,6 @@ public final strictfp class GridCoverageTableTest extends CatalogTestBase {
          * Tests a single entry.
          */
         final GridCoverageReference entry = table.getEntry();
-        assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
         assertEquals(1, entry.getSampleDimensions().length);
         /*
          * Tests the envelope, which may be projected.
@@ -216,7 +213,6 @@ public final strictfp class GridCoverageTableTest extends CatalogTestBase {
         table.setLayer(LayerTableTest.NETCDF);
 
         GridCoverageEntry entry = table.getEntry();
-        assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
         assertEquals(1, entry.getIdentifier().imageIndex);
         assertEquals("Should not have a z index when the requested z range is infinite.",
                 0, entry.getIdentifier().zIndex);
@@ -269,14 +265,12 @@ public final strictfp class GridCoverageTableTest extends CatalogTestBase {
         table.envelope.setTimeRange(date("2007-05-22 00:08:00"), date("2007-05-22 00:22:00"));
         assertEquals("The time range should encompass only one entry.", 1, table.getEntries().size());
         GridCoverageEntry entry = table.getEntry();
-        assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
         assertEquals(0, entry.getIdentifier().zIndex);
         assertEquals(2, entry.getIdentifier().imageIndex);
 
         table.envelope.setTimeRange(date("2007-05-22 00:24:00"), date("2007-05-22 00:36:00"));
         assertEquals("The time range should encompass only one entry.", 1, table.getEntries().size());
         entry = table.getEntry();
-        assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
         assertEquals(0, entry.getIdentifier().zIndex);
         assertEquals(3, entry.getIdentifier().imageIndex);
 
@@ -295,7 +289,6 @@ public final strictfp class GridCoverageTableTest extends CatalogTestBase {
         table.setLayer(LayerTableTest.GEOSTROPHIC_CURRENT);
         final GridCoverageReference entry = table.getEntry();
         assertEquals(2, entry.getSampleDimensions().length);
-        assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
         table.release();
     }
 
@@ -312,7 +305,6 @@ public final strictfp class GridCoverageTableTest extends CatalogTestBase {
         table.envelope.clear();
         table.setLayer(LayerTableTest.BLUEMARBLE);
         final GridCoverageEntry entry = table.getEntry();
-        assertEquals(Boolean.TRUE, table.getLayerEntry(true).isTiled);
         final TileManager[] tiles = (TileManager[]) entry.getInput();
         assertEquals("We would had only 1 TileManager if we had tiles for every levels. " +
                 "But since L1 is missing, this is normal that L11 is considered to have " +

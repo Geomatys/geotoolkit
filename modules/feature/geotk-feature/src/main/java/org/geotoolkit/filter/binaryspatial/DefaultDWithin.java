@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.filter.binaryspatial;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import java.util.logging.Level;
 import javax.measure.UnitConverter;

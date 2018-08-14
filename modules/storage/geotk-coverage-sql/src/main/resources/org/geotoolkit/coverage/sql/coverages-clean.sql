@@ -5,7 +5,7 @@
 --------------------------------------------------------------------------------------------------
 
 SET client_encoding = 'UTF8';
-SET search_path = coverages, postgis;
+SET search_path = coverages;
 
 DELETE FROM "GridGeometries" WHERE "identifier" IN
   (SELECT "identifier" FROM "GridGeometries" EXCEPT SELECT "extent" FROM "GridCoverages");

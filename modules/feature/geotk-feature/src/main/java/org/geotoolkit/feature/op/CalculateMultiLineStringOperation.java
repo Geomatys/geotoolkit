@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.feature.op;
 
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

@@ -1,13 +1,13 @@
 
 package org.geotoolkit.pending.demo.symbology;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 import org.opengis.style.Fill;
 import org.opengis.style.Halo;
 import org.opengis.style.LabelPlacement;
 import org.opengis.style.Font;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.Serializable;

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.mapinfo.mif;
 
-import com.vividsolutions.jts.geom.*;
+import org.locationtech.jts.geom.*;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.mif.geometry.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

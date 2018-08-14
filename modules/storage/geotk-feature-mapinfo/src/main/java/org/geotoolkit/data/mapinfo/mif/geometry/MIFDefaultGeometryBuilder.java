@@ -1,6 +1,6 @@
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
-import com.vividsolutions.jts.geom.*;
+import org.locationtech.jts.geom.*;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.geotoolkit.util.NamesExt;

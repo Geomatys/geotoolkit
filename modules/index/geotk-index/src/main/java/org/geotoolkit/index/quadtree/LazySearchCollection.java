@@ -25,8 +25,8 @@ import java.util.logging.Level;
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
 
-import com.vividsolutions.jts.geom.Envelope;
 import java.util.logging.Logger;
+import org.locationtech.jts.geom.Envelope;
 
 /**
  * A collection that will open and close the QuadTree and find the next id in

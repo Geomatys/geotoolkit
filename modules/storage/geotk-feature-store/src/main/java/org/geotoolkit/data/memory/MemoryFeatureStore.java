@@ -18,7 +18,7 @@
 package org.geotoolkit.data.memory;
 
 import org.geotoolkit.data.FeatureStreams;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
