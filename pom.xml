@@ -118,6 +118,26 @@
        =========================================================== -->
   <profiles>
     <profile>
+      <id>JDK9</id>
+      <activation>
+        <jdk>[1.9,)</jdk>
+      </activation>
+      <properties>
+        <sis.build.helper.version>${sis.version}</sis.build.helper.version>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <release>8</release>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
       <id>sign-artifacts</id>
       <build>
         <plugins>
