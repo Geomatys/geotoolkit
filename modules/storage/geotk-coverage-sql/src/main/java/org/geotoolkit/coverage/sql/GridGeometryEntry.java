@@ -157,7 +157,7 @@ final class GridGeometryEntry {
                 maximum[DIMENSIONS + i] = axis.standardMax;
                 components[      1 + i] = axis.crs;
                 MathTransform tr = axis.gridToCRS;
-                tr = database.mtFactory.createPassThroughTransform(DIMENSIONS + i, tr, dim - (i+1));
+                tr = database.mtFactory.createPassThroughTransform(DIMENSIONS + i, tr, 0);
                 gridToCRS = database.mtFactory.createConcatenatedTransform(gridToCRS, tr);
             }
             crs = database.crsFactory.createCompoundCRS(properties(crs, extraDimName), components);

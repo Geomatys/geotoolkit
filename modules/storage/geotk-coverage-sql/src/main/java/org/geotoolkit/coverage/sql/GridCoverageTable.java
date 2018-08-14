@@ -79,6 +79,26 @@ final class GridCoverageTable extends Table {
     }
 
     /**
+     * Returns all grid geometries used by the given product.
+     */
+    public final List<GridGeometryEntry> getGridGeometries(final String product) throws SQLException, CatalogException {
+        final List<GridGeometryEntry> geometries = new ArrayList<>();
+        final PreparedStatement statement = prepareStatement("SELECT DISTINCT \"grid\" FROM " + SCHEMA + ".\"" + TABLE + "\""
+                + " INNER JOIN " + SCHEMA + ".\"" + SeriesTable.TABLE + "\" ON (\"series\" = \"" + SeriesTable.TABLE + "\".\"identifier\")"
+                + " WHERE \"product\" = ?");
+        statement.setString(1, product);
+        try (final ResultSet results = statement.executeQuery()) {
+            while (results.next()) {
+                final int grid = results.getInt(1);
+                if (!results.wasNull()) {
+                    geometries.add(gridGeometries.getEntry(grid));
+                }
+            }
+        }
+        return geometries;
+    }
+
+    /**
      * Returns the two-dimensional coverages that intercept the given envelope.
      *
      * @return areaOfInterest in the current envelope of interest.
@@ -92,7 +112,7 @@ final class GridCoverageTable extends Table {
         final PreparedStatement statement = prepareStatement("SELECT \"series\", \"filename\", \"index\","
                 + " \"startTime\", \"endTime\", \"grid\" FROM " + SCHEMA + ".\"" + TABLE + "\""
                 + " INNER JOIN " + SCHEMA + ".\"" + SeriesTable.TABLE + "\" ON (\"series\" = \"" + SeriesTable.TABLE + "\".\"identifier\"\")"
-                + " INNER JOIN " + SCHEMA + ".\"" + GridGeometryTable.TABLE + "\" ON (\"grid\" = \"" + GridGeometryTable.TABLE + "\".\"identifier\"\")"
+                + " INNER JOIN " + SCHEMA + ".\"" + GridGeometryTable.TABLE + "\" ON (\"grid\" = \"" + GridGeometryTable.TABLE + "\".\"identifier\")"
                 + " WHERE \"product\" = ? AND \"endTime\" > ? AND \"startTime\" <= ? AND ST_Intersects(extent, ?::geometry)");
 
         final Envelope normalized = Envelopes.transform(areaOfInterest, transaction.database.spatioTemporalCRS);

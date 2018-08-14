@@ -29,6 +29,8 @@ import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.operation.TransformException;
 
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.resources.Errors;
@@ -157,6 +159,29 @@ final class Product {
             boundingBox = bbox;
         }
         return boundingBox;
+    }
+
+    public synchronized GeneralGridGeometry getGridGeometry(final Transaction transaction) throws CoverageStoreException {
+        final List<GridGeometryEntry> geometries;
+        try (final GridCoverageTable table = new GridCoverageTable(transaction)) {
+            geometries = table.getGridGeometries(name);
+        } catch (SQLException e) {
+            throw new CatalogException(e);
+        }
+        if (geometries.isEmpty()) {
+            return null;
+        }
+        if (domain == null) {
+            try (DomainOfProductTable table=new DomainOfProductTable(transaction)) {
+                domain = table.query(name);
+            } catch (SQLException e) {
+                throw new CatalogException(e);
+            }
+        }
+        int index = 0;      // TODO: select the "best" geometry.
+        final DateRange dates = domain.timeRange;
+        return geometries.get(index).getGridGeometry((dates != null) ? dates.getMinValue() : null,
+                                                     (dates != null) ? dates.getMaxValue() : null);
     }
 
     /**

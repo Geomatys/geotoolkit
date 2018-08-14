@@ -95,6 +95,7 @@ final class DomainOfProductTable extends Table {
         final PreparedStatement statement = prepareStatement("SELECT \"startTime\", \"endTime\","
                 + " \"west\", \"east\", \"south\", \"north\", \"xResolution\", \"yResolution\""
                 + " FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"product\" = ?");
+        statement.setString(1, product);
         final Calendar calendar = newCalendar();
         try (ResultSet results = statement.executeQuery()) {
             if (results.next()) {
