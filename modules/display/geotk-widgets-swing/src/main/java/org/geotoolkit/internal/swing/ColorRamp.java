@@ -21,7 +21,6 @@ import javax.swing.SwingConstants;
 
 import java.awt.Font;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GradientPaint;
 import java.awt.RenderingHints;
@@ -763,59 +762,6 @@ public class ColorRamp implements Serializable {
         graduation.setMinimum(minimum);
         graduation.setMaximum(maximum);
         return graduation;
-    }
-
-    /**
-     * Paints a color ramp for the given range of values. This convenience method is provided
-     * mostly for {@link org.geotoolkit.coverage.sql.LayerEntry#getColorRamp} implementation,
-     * which invoke this method through reflection (not directly in order to avoid a direct
-     * dependencies of {@code geotk-coverage-sql} toward {@code geotk-display}.
-     * <p>
-     * See {@link org.geotoolkit.coverage.sql.Layer#getColorRamp(int, MeasurementRange, Map)}
-     * for a description of the expected content of the {@code properties} map.
-     *
-     * @param  range The range for the graduation, or {@code null} if no graduation should
-     *         be written.
-     * @param  properties An optional map of properties controlling the rendering.
-     * @param  colors The colors to use in the color ramp.
-     * @param  sampleToGeophysics The <cite>sample to geophysics</cite> transform,
-     *         used in order to determine if the graduation is linear or logarithmic.
-     * @param  locale The locale to use for formatting labels.
-     * @return The color ramp as an image, or {@code null} if none.
-     * @throws IllegalArgumentException If the units of the given range are incompatible
-     *         with the units of measurement found in this layer.
-     * @throws CoverageStoreException If an error occurred while creating the color ramp.
-     *
-     * @see org.geotoolkit.coverage.sql.LayerEntry#getColorRamp(int, MeasurementRange, Map)
-     *
-     * @since 3.16
-     */
-    public static BufferedImage paint(final MeasurementRange<?> range, final Color[] colors,
-            final MathTransform1D sampleToGeophysics, final Locale locale, final Map<String,?> properties)
-    {
-        Dimension  size     = null;
-        Font       font     = null;
-        Color      color    = null;
-        Graphics2D graphics = null;
-        if (properties != null) {
-            size     = (Dimension)  properties.get("size");
-            font     = (Font)       properties.get("font");
-            color    = (Color)      properties.get("foreground");
-            graphics = (Graphics2D) properties.get("graphics");
-        }
-        if (size == null) {
-            size = new Dimension(400, 20);
-        }
-        final ColorRamp cr = new ColorRamp();
-        cr.labelVisibles = (range != null);
-        cr.setLocale(locale);
-        cr.setColors(colors);
-        cr.setGraduation(range, sampleToGeophysics);
-        if (graphics != null) {
-            cr.paint(graphics, new Rectangle(size), font, color);
-            return null;
-        }
-        return cr.toImage(size.width, size.height, font, color);
     }
 
     /**

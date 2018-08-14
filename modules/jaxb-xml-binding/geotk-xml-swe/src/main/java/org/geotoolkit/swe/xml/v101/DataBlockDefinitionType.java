@@ -26,16 +26,14 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.Entry;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.DataBlockDefinition;
 
 /**
  * Resultat d'une observation de type DataBlockDefinition.
  *
- * @version $Id:
  * @author Guilhem Legal
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataBlockDefinition", propOrder = {

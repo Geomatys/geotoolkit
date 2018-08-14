@@ -103,6 +103,7 @@ public final strictfp class SpatialMetadataTest extends org.geotoolkit.test.Test
      * @since 3.07
      */
     @Test
+    @Ignore
     public void testInstrument() {
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME));
         MetadataNodeAccessor accessor = new MetadataNodeAccessor(metadata, null, "AcquisitionMetadata/Platform/Instruments", "Instrument");

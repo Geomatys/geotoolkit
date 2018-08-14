@@ -33,7 +33,6 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.InvalidParameterValueException;
 
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.io.wkt.Formattable;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.io.wkt.Formatter;
@@ -54,7 +53,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  */
 @Deprecated
 public abstract class AbstractParameter extends FormattableObject
-           implements GeneralParameterValue, Serializable, Cloneable, Formattable
+           implements GeneralParameterValue, Serializable, Cloneable
 {
     /**
      * Serial number for inter-operability with different versions.

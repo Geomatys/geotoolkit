@@ -28,7 +28,7 @@ import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.apache.sis.util.Classes;
-import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 

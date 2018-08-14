@@ -144,7 +144,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
             for(int dy = destY; dy < destY + proportionalityCoefficient; dy++) {
                 for(int dx = destX; dx < destX + proportionalityCoefficient; dx++) {
                     destPix.moveTo(dx, dy, b);
-                    assertTrue(Math.abs(srcValue-destPix.getSampleDouble()) <= EPSILON);
+                    assertTrue("At pixel "+dx+","+dy+","+b,Math.abs(srcValue-destPix.getSampleDouble()) <= EPSILON);
                 }
             }
             if (++b == numband) b = 0;
@@ -199,7 +199,10 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
         final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
 
         final MPCoverageStore mpCovStore = new MPCoverageStore();
-        final PyramidCoverageBuilder pcb = new PyramidCoverageBuilder(new Dimension(25, 25), InterpolationCase.NEIGHBOR, 2);
+        final PyramidCoverageBuilder pcb = new PyramidCoverageBuilder();
+        pcb.setTileSize(new Dimension(25, 25));
+        pcb.setInterpolation(InterpolationCase.NEIGHBOR);
+        pcb.setLanczosWindow(2);
         final double[] fillValue = new double[3];
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());

@@ -20,7 +20,6 @@ package org.geotoolkit.image.io.plugin;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.Iterator;
-import java.io.File;
 import java.io.IOException;
 import java.awt.image.RenderedImage;
 import javax.imageio.ImageIO;
@@ -35,7 +34,7 @@ import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.internal.io.TemporaryFile;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.citation.DefaultCitationDate;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -98,7 +97,7 @@ public final strictfp class NetcdfImageWriterTest extends ImageWriterTestCase {
         super.completeImageMetadata(iio, image);
         if (image == null) {
             final DefaultCitation citation = new DefaultCitation(Citations.OGC);
-            citation.getIdentifiers().add(new DefaultIdentifier(Citations.GEOTOOLKIT, "Test"));
+            citation.getIdentifiers().add(new DefaultIdentifier(null, "Test"));
             citation.getDates().add(new DefaultCitationDate(new Date(400000000000L), DateType.CREATION));
             citation.getDates().add(new DefaultCitationDate(new Date(500000000000L), DateType.PUBLICATION));
             final DefaultDataIdentification info = new DefaultDataIdentification();

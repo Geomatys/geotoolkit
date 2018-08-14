@@ -32,7 +32,7 @@ import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Deprecable;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.geotoolkit.test.TestBase;
 
 import org.junit.*;

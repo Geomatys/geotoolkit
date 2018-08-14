@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import org.apache.sis.internal.simple.SimpleCitation;
 import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
@@ -239,7 +240,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
                 }
             }
             switch (authorities.length) {
-                case 0: authority = org.geotoolkit.metadata.Citations.UNKNOWN; break;
+                case 0: authority = new SimpleCitation("Unknown"); break;
                 case 1: authority = authorities[0]; break;
                 default: {
                     final DefaultCitation c = new DefaultCitation(authorities[0]);
@@ -247,7 +248,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
                     for (int i=1; i<authorities.length; i++) {
                         identifiers.addAll(authorities[i].getIdentifiers());
                     }
-                    c.freeze();
+                    c.transition(DefaultCitation.State.FINAL);
                     authority = c;
                     break;
                 }

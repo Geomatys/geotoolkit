@@ -18,19 +18,16 @@
 package org.geotoolkit.temporal.object;
 
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.metadata.Citations;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.opengis.temporal.Instant;
 import static org.junit.Assert.*;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.temporal.Period;
 
 /**
  *
@@ -45,13 +42,13 @@ public class DefaultInstantTest extends org.geotoolkit.test.TestBase {
 
     @Before
     public void setUp() {
-        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "position 1");
+        NamedIdentifier name1 = new NamedIdentifier(null, "position 1");
         final Map<String, Object> properties1 = new HashMap<>();
         properties1.put(IdentifiedObject.NAME_KEY, name1);
         cal.set(2000, 1, 1);
         instant1  = new DefaultInstant(properties1, cal.getTime());
 
-        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "position 2");
+        NamedIdentifier name2 = new NamedIdentifier(null, "position 2");
         final Map<String, Object> properties2 = new HashMap<>();
         properties2.put(IdentifiedObject.NAME_KEY, name2);
         cal.set(1998, 1, 1);

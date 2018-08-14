@@ -25,7 +25,6 @@ import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 import org.apache.sis.internal.system.OS;
-import org.geotoolkit.lang.Workaround;
 import org.apache.sis.util.logging.Logging;
 
 
@@ -105,19 +104,6 @@ public enum Installation {
     private static final Path DEFAULT_ROOT = root();
 
     /**
-     * Whatever we are allowed to check for system preferences. This can be set to {@code false}
-     * for avoiding the "<cite>can not flush system preferences in {@code /etc/.java/}</cite>"
-     * warning on Linux.
-     * <p>
-     * Note that this field applies only to read operations. If any write operations is requested,
-     * then those operations will be performed like usual regardless the value of this field.
-     *
-     * @since 3.10
-     */
-    @Workaround(library="JDK", version="1.6")
-    public static volatile boolean allowSystemPreferences = true;
-
-    /**
      * Creates a new configuration key.
      *
      * @param node The preference node where to store the configuration value.
@@ -133,8 +119,8 @@ public enum Installation {
     /**
      * Returns the preferences node.
      */
-    private Preferences preference(final boolean userSpecific) {
-        return (userSpecific ? Preferences.userRoot() : Preferences.systemRoot()).node(node);
+    private Preferences preference() {
+        return Preferences.userRoot();
     }
 
     /**
@@ -143,19 +129,15 @@ public enum Installation {
      * we assume that it applies to all users including the current one, so the current user
      * preference is removed.
      *
-     * @param userSpecific {@code true} for user preference, or {@code false} for system preference.
      * @param value The preference value, or {@code null} for removing it.
      */
-    public final void set(final boolean userSpecific, final String value) {
+    public final void set(final String value) {
         try {
-            final Preferences prefs = preference(userSpecific);
+            final Preferences prefs = preference();
             if (value != null) {
                 prefs.put(key, value);
             } else {
                 prefs.remove(key);
-            }
-            if (!userSpecific) {
-                preference(true).remove(key);
             }
         } catch (SecurityException e) {
             Logging.recoverableException(Logging.getLogger("org.geotoolkit"), Installation.class, "set", e);
@@ -165,15 +147,12 @@ public enum Installation {
     /**
      * Returns the preference, or {@code null} if none.
      *
-     * @param  userSpecific {@code true} for user preference, or {@code false} for system preference.
      * @return The preference value, or {@code null} if none.
      */
-    public final String get(final boolean userSpecific) {
+    public final String get() {
         try {
             if (key != null) {
-                if (userSpecific || allowSystemPreferences) {
-                    return preference(userSpecific).get(key, null);
-                }
+                return preference().get(key, null);
             }
         } catch (SecurityException e) {
             Logging.recoverableException(Logging.getLogger("org.geotoolkit"), Installation.class, "set", e);
@@ -246,35 +225,16 @@ public enum Installation {
      */
     public Path directory(final boolean usePreferences) {
         if (usePreferences) {
-            boolean user = true;
-            do {
-                final String candidate = get(user);
-                if (candidate != null) {
-                    return Paths.get(candidate);
-                }
-            } while ((user = !user) == false);
+            final String candidate = get();
+            if (candidate != null) {
+                return Paths.get(candidate);
+            }
         }
         if (directory != null) {
             return ROOT_DIRECTORY.directory(true).resolve(directory);
         } else {
             return DEFAULT_ROOT;
         }
-    }
-
-    /**
-     * Same as {@link #directory}, but creates the directory if it doesn't already exist.
-     *
-     * @param  usePreferences Usually {@code true}. If {@code false}, the preferences
-     *         are ignored and only the default directory is returned.
-     * @return The default directory.
-     * @throws IOException If the subdirectory can't be created.
-     */
-    public Path validDirectory(final boolean usePreferences) throws IOException {
-        final Path directory = directory(usePreferences);
-        if (!Files.isDirectory(directory)) {
-            Files.createDirectories(directory);
-        }
-        return directory;
     }
 
     /**

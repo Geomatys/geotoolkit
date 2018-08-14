@@ -265,10 +265,9 @@ final class TreeFormat {
         if (node instanceof TreeTableNode) {
             return true;
         }
-        @SuppressWarnings("unchecked")
-        final Enumeration<TreeNode> e = node.children();
+        final Enumeration<?> e = node.children();
         if (e != null) while (e.hasMoreElements()) {
-            if (hasTreeTableNode(e.nextElement())) {
+            if (hasTreeTableNode((TreeNode) e.nextElement())) {
                 return true;
             }
         }

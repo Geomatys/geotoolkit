@@ -52,7 +52,7 @@ import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;

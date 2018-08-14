@@ -139,6 +139,7 @@ public final strictfp class CRS_Test extends TestBase {
      * @since 3.14
      */
     @Test
+    @Ignore
     public void testIGNF() throws FactoryException {
         final CoordinateReferenceSystem crs = CRS.forCode("IGNF:MILLER");
         assertTrue(crs instanceof ProjectedCRS);

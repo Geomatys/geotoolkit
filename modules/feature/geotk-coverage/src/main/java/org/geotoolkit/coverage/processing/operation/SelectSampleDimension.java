@@ -28,7 +28,8 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.processing.Operation2D;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
+import org.geotoolkit.coverage.parameter.ImagingParameterDescriptors;
 
 
 /**
@@ -110,7 +111,7 @@ public class SelectSampleDimension extends Operation2D {
     static {
         final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(Citations.OGC, null);
         SAMPLE_DIMENSIONS = builder.addName("SampleDimensions").create(int[].class, null);
-        VISIBLE_SAMPLE_DIMENSION = builder.setCodeSpace(Citations.GEOTOOLKIT, null).addName("VisibleSampleDimension")
+        VISIBLE_SAMPLE_DIMENSION = builder.setCodeSpace(ImagingParameterDescriptors.GEOTK, null).addName("VisibleSampleDimension")
                 .createBounded(Integer.class, 0, null, null);
     }
 

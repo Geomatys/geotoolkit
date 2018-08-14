@@ -1085,12 +1085,12 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:GetRecords xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\""
+        "<csw2:GetRecords xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:csw2=\"http://www.opengis.net/cat/csw/2.0.2\""
                 + " maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw/2.0.2\" outputFormat=\"application/xml\""
                 + " resultType=\"results\" version=\"2.0.2\" service=\"CSW\">\n" +
-        "  <csw:Query typeNames=\"csw:Record\">\n" +
-        "    <csw:ElementSetName>full</csw:ElementSetName>\n" +
-        "    <csw:Constraint version=\"1.1.0\">\n" +
+        "  <csw2:Query typeNames=\"csw2:Record\">\n" +
+        "    <csw2:ElementSetName>full</csw2:ElementSetName>\n" +
+        "    <csw2:Constraint version=\"1.1.0\">\n" +
         "      <ogc:Filter>\n" +
         "        <ogc:Not>\n" +
         "          <ogc:PropertyIsLike wildCard=\"*\" singleChar=\"?\" escapeChar=\"\\\">\n" +
@@ -1099,9 +1099,9 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         "          </ogc:PropertyIsLike>\n" +
         "        </ogc:Not>\n" +
         "      </ogc:Filter>\n" +
-        "    </csw:Constraint>\n" +
-        "  </csw:Query>\n"+
-        "</csw:GetRecords>\n";
+        "    </csw2:Constraint>\n" +
+        "  </csw2:Query>\n"+
+        "</csw2:GetRecords>\n";
 
         assertXmlEquals(expResult, result, "xmlns:*");
         /*

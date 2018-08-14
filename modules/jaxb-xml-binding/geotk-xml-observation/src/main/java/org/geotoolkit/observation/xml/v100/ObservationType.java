@@ -39,7 +39,7 @@ import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
 
 // GeotoolKit dependencies
-import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.Entry;
 import org.geotoolkit.sampling.xml.v100.SamplingFeatureType;
 import org.geotoolkit.sampling.xml.v100.SamplingPointType;
 import org.geotoolkit.swe.xml.v101.AnyResultType;
@@ -62,11 +62,9 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
 /**
  * Implémentation d'une entrée représentant une {@linkplain Observation observation}.
  *
- * @version $Id: ObservationType.java 1559 2009-04-23 14:42:42Z glegal $
  * @author Martin Desruisseaux
  * @author Antoine Hnawia
  * @author Guilhem Legal
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Observation", propOrder = {

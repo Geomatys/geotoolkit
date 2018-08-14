@@ -56,7 +56,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.grid.InvalidGridGeometryException;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.geotoolkit.coverage.parameter.ImagingParameters;
 import org.geotoolkit.coverage.parameter.ImagingParameterDescriptors;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
@@ -333,18 +333,18 @@ public class OperationJAI extends Operation2D {
      * @param  lower The first dimension to keep, inclusive.
      * @param  upper The last  dimension to keep, exclusive.
      * @return The sub-coordinate system, or {@code null} if {@code lower} is equals to {@code upper}.
-     * @throws InvalidGridGeometryException if the CRS can't be separated.
+     * @throws IncompleteGridGeometryException if the CRS can't be separated.
      */
     private static CoordinateReferenceSystem getSubCRS(final CoordinateReferenceSystem crs,
                                                        final int lower, final int upper)
-            throws InvalidGridGeometryException
+            throws IncompleteGridGeometryException
     {
         if (lower == upper) {
             return null;
         }
         final CoordinateReferenceSystem candidate = org.apache.sis.referencing.CRS.getComponentAt(crs, lower, upper);
         if (candidate == null) {
-            throw new InvalidGridGeometryException(unsupported(crs));
+            throw new IncompleteGridGeometryException(unsupported(crs));
         }
         return candidate;
     }
@@ -354,12 +354,12 @@ public class OperationJAI extends Operation2D {
      * use by {@link #resampleToCommonGeometry}.
      */
     private static void ensureStableDimensions(final DimensionFilter filter)
-            throws InvalidGridGeometryException
+            throws IncompleteGridGeometryException
     {
         final int[] source = filter.getSourceDimensions(); Arrays.sort(source);
         final int[] target = filter.getTargetDimensions(); Arrays.sort(target);
         if (!Arrays.equals(source, target)) {
-            throw new InvalidGridGeometryException(Errors.format(Errors.Keys.UnsupportedTransform));
+            throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnsupportedTransform));
         }
     }
 
@@ -398,14 +398,14 @@ public class OperationJAI extends Operation2D {
      *                    for a default one.
      * @param hints       The rendering hints, or {@code null} if none.
      *
-     * @throws InvalidGridGeometryException If a source coverage has an unsupported grid geometry.
+     * @throws IncompleteGridGeometryException if a source coverage has an unsupported grid geometry.
      * @throws CannotReprojectException If a grid coverage can't be resampled for some other reason.
      */
     protected void resampleToCommonGeometry(final GridCoverage2D[] sources,
                                             CoordinateReferenceSystem crs2D,
                                             MathTransform2D gridToCrs2D,
                                             final Hints hints)
-            throws InvalidGridGeometryException, CannotReprojectException
+            throws IncompleteGridGeometryException, CannotReprojectException
     {
         if (sources == null || sources.length == 0) {
             return; // Nothing to reproject.
@@ -455,7 +455,7 @@ public class OperationJAI extends Operation2D {
                 final int  upperDim = Math.max(geometry.axisDimensionX, geometry.axisDimensionY)+1;
                 final int sourceDim = sourceCRS.getCoordinateSystem().getDimension();
                 if (upperDim-lowerDim != srcCrs2D.getCoordinateSystem().getDimension()) {
-                    throw new InvalidGridGeometryException(unsupported(sourceCRS));
+                    throw new IncompleteGridGeometryException(unsupported(sourceCRS));
                 }
                 final CoordinateReferenceSystem headCRS = getSubCRS(sourceCRS, 0, lowerDim);
                 final CoordinateReferenceSystem tailCRS = getSubCRS(sourceCRS, upperDim, sourceDim);
@@ -495,7 +495,7 @@ public class OperationJAI extends Operation2D {
                 final int  upperDim = Math.max(geometry.gridDimensionX, geometry.gridDimensionY)+1;
                 final int sourceDim = toSource.getSourceDimensions();
                 if (upperDim-lowerDim != toSource2D.getSourceDimensions()) {
-                    throw new InvalidGridGeometryException(Errors.format(Errors.Keys.UnsupportedTransform));
+                    throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnsupportedTransform));
                 }
                 final MathTransformFactory factory = FactoryFinder.getMathTransformFactory(hints);
                 final DimensionFilter       filter = new DimensionFilter(toSource, factory);

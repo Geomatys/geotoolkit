@@ -18,7 +18,6 @@
 package org.geotoolkit.gui.swing.tree;
 
 import java.util.Locale;
-import java.util.Enumeration;
 import org.opengis.util.InternationalString;
 import org.apache.sis.util.Localized;
 import org.geotoolkit.lang.Workaround;
@@ -77,15 +76,6 @@ public class DefaultMutableTreeNode extends javax.swing.tree.DefaultMutableTreeN
      */
     public DefaultMutableTreeNode(Object userObject, boolean allowsChildren) {
         super(userObject, allowsChildren);
-    }
-
-    /**
-     * Returns the children of this node as an {@code Enumeration}.
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public Enumeration<? extends javax.swing.tree.TreeNode> children() {
-        return super.children();
     }
 
     /**

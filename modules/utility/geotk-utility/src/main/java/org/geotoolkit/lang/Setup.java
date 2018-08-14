@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2010-2012, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2010-2012, Geomatys
+ *    (C) 2010-2018, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,23 +17,21 @@
  */
 package org.geotoolkit.lang;
 
-import java.util.Locale;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Properties;
 import java.util.ServiceLoader;
-
 import javax.imageio.spi.IIORegistry;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.UndeclaredThrowableException;
-
+import javax.sql.DataSource;
+import org.apache.sis.internal.metadata.sql.Initializer;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.logging.MonolineFormatter;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.internal.io.JNDI;
 import org.geotoolkit.internal.SetupService;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.io.Installation;
-import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.sql.AuthenticatedDataSource;
+import org.geotoolkit.internal.sql.DefaultDataSource;
 
 
 /**
@@ -111,10 +109,6 @@ import org.geotoolkit.resources.Errors;
  * package for performing a better work with system preferences.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
- *
- * @since 3.10
- * @module
  */
 public final class Setup extends Static {
     /**
@@ -128,9 +122,45 @@ public final class Setup extends Static {
     private static int state;
 
     /**
+     * Data source for the EPSG database, or {@code null} if none.
+     */
+    private static DataSource EPSG;
+
+    /**
      * Do not allow instantiation of this class.
      */
     private Setup() {
+    }
+
+    /**
+     * Sets the data source for the EPSG database.
+     *
+     * @param source data source for the EPSG database, or {@code null} if none.
+     */
+    public static synchronized void setEPSG(final DataSource source) {
+        EPSG = source;
+    }
+
+    /**
+     * Returns the EPSG data source.
+     */
+    public static synchronized DataSource getEPSG() {
+        if (EPSG == null) try {
+            final Properties properties = Installation.EPSG.getDataSource();
+            if (properties != null) {
+                final String url = properties.getProperty("URL");
+                if (url != null) {
+                    EPSG = new DefaultDataSource(url);
+                    final String user = properties.getProperty("user");
+                    if (user != null) {
+                        EPSG = new AuthenticatedDataSource(EPSG, user, properties.getProperty("password"), true);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        return EPSG;
     }
 
     /**
@@ -193,11 +223,10 @@ public final class Setup extends Static {
         }
         state = 1;
         if ("server".equalsIgnoreCase(get(properties, "platform", "desktop"))) {
-            Installation.allowSystemPreferences = false;
         } else {
             MonolineFormatter.install();
         }
-        JNDI.install();
+        Initializer.setDefault(Setup::getEPSG);
         /*
          * Following are normally not needed, since the factory registry scans automatically
          * the classpath when first needed. However some factories may have been unregistered
@@ -224,7 +253,7 @@ public final class Setup extends Static {
     public static synchronized void shutdown() {
         if (state != 2) {
             state = 2;
-            JNDI.uninstall();
+            Initializer.setDefault(null);
             for (final SetupService service : ServiceLoader.load(SetupService.class)) {
                 service.shutdown();
             }
@@ -234,41 +263,6 @@ public final class Setup extends Static {
              * but a search on Threads.SHUTDOWN_HOOKS and Threads.executeDisposal(Runnable) is helpful.
              */
             Threads.shutdown();
-        }
-    }
-
-    /**
-     * Shows the <cite>Swing</cite> Graphical User Interface for configuring the Geotk library.
-     * This method requires the {@code geotk-setup} module to be present on the classpath.
-     * <p>
-     * Users can also display the same GUI from the command line by running the following
-     * command in the shell (replace {@code SNAPSHOT} by the actual Geotk version number):
-     *
-     * {@preformat shell
-     *     java -jar geotk-setup-SNAPSHOT.jar
-     * }
-     *
-     * @throws UnsupportedOperationException if the {@code geotk-setup} module is not on the classpath.
-     */
-    public static void showControlPanel() throws UnsupportedOperationException {
-        try {
-            Class.forName("org.geotoolkit.internal.setup.ControlPanel")
-                 .getMethod("show", Locale.class).invoke(null, new Object[] {null});
-        } catch (ClassNotFoundException exception) {
-            throw new UnsupportedOperationException(Errors.format(
-                    Errors.Keys.MissingModule_1, "geotk-setup"), exception);
-        } catch (InvocationTargetException exception) {
-            final Throwable cause = exception.getCause();
-            if (cause instanceof RuntimeException) {
-                throw (RuntimeException) cause;
-            }
-            if (cause instanceof Error) {
-                throw (Error) cause;
-            }
-            throw new UndeclaredThrowableException(cause);
-        } catch (Exception exception) {
-            // Should never happen if we didn't broke our ControlPanel class.
-            throw new AssertionError(exception);
         }
     }
 }

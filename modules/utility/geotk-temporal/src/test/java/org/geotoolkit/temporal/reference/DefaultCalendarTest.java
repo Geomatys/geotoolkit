@@ -17,34 +17,21 @@
  */
 package org.geotoolkit.temporal.reference;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
-import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
 import org.geotoolkit.temporal.object.DefaultCalendarDate;
 import org.geotoolkit.temporal.object.DefaultClockTime;
 import org.geotoolkit.temporal.object.DefaultDateAndTime;
-import org.geotoolkit.temporal.object.DefaultInstant;
-import org.geotoolkit.temporal.object.DefaultJulianDate;
-import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.opengis.temporal.Calendar;
 import static org.junit.Assert.*;
-import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.crs.CRSAuthorityFactory;
-import org.opengis.referencing.datum.DatumAuthorityFactory;
-import org.opengis.referencing.datum.DatumFactory;
-import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.CalendarEra;
 import org.opengis.temporal.Clock;
@@ -70,12 +57,12 @@ public class DefaultCalendarTest extends org.geotoolkit.test.TestBase {
     @Before
     public void setUp() {
 
-        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
-        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Julian calendar");
+        NamedIdentifier name1 = new NamedIdentifier(null, "Gregorian calendar");
+        NamedIdentifier name2 = new NamedIdentifier(null, "Julian calendar");
 
         //----------------------- Time Basis ----------------------//
          TemporalReferenceSystem frame1 = FACTORY.createTemporalReferenceSystem(name1, new DefaultExtent());
-        NamedIdentifier clockName1 = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
+        NamedIdentifier clockName1 = new NamedIdentifier(null, "Gregorian calendar");
         Number[] clockTime1 = {0, 0, 0};
         ClockTime clocktime1 = new DefaultClockTime(frame1, null, clockTime1);
         ClockTime utcReference1 = new DefaultClockTime(frame1, null, clockTime1);

@@ -62,11 +62,6 @@
     <developerConnection>scm:git:https://github.com/Geomatys/geotoolkit.git</developerConnection>
   </scm>
 
-  <ciManagement>
-    <system>jenkins</system>
-    <url>http://jenkins.geotoolkit.org/job/Geotoolkit/</url>
-  </ciManagement>
-
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.geotoolkit.org/</url>
@@ -169,7 +164,8 @@
        =========================================================== -->
   <properties>
     <geoapi.version>4.0-M09</geoapi.version> <!-- Must be same than the version used by SIS. -->
-    <sis.version>dev-1.0-M0032</sis.version>
+    <sis.version>dev-1.0-M0035</sis.version>
+    <sis.build.helper.version>0.8</sis.build.helper.version>
     <sis.epsg.version>0.8</sis.epsg.version>
     <netcdf.version>4.3.21</netcdf.version>
     <lucene.version>5.4.1</lucene.version>
@@ -984,7 +980,7 @@
           <tagletArtifact>
             <groupId>org.apache.sis.core</groupId>
             <artifactId>sis-build-helper</artifactId>
-            <version>0.7</version>
+            <version>${sis.build.helper.version}</version>
           </tagletArtifact>
 
           <!-- Creates links to existing javadoc-generated documentation of external referenced classes. -->

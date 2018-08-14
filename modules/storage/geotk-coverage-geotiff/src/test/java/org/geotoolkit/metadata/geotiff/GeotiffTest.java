@@ -46,7 +46,6 @@ import org.geotoolkit.image.io.plugin.TiffImageReader;
 import org.geotoolkit.image.io.plugin.TiffImageWriter;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
-import org.geotoolkit.metadata.Citations;
 
 import org.junit.After;
 import org.junit.Test;
@@ -168,7 +167,7 @@ public class GeotiffTest extends org.geotoolkit.test.TestBase {
         final RenderedImage testedImg    = ImageUtils.createGreyScaledInterleavedImage(2, 2, SampleType.BYTE, 3);
 
         //-- temporal CRS
-        final NamedIdentifier name = new NamedIdentifier(Citations.CRS, "TemporalReferenceSystem");
+        final NamedIdentifier name = new NamedIdentifier(null, "TemporalReferenceSystem");
         final CoordinateReferenceSystem crsSource = new GeodeticObjectBuilder().addName((GenericName) name)
                                                                                .createCompoundCRS(CommonCRS.WGS84.geographic(),
                                                                                                   CommonCRS.Temporal.JAVA.crs());

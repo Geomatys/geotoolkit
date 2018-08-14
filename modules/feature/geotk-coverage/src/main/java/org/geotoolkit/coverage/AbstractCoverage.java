@@ -23,13 +23,18 @@ import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BandedSampleModel;
 import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.renderable.RenderContext;
@@ -85,6 +90,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Debug;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.util.iso.Types;
+import org.geotoolkit.image.color.ScaledColorSpace;
 import org.geotoolkit.image.internal.ImageUtilities;
 
 
@@ -912,8 +918,17 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
             if (sampleDimension == null)
                 throw new IllegalStateException("Sample dimensions are undetermined.");
             final GridSampleDimension band = GridSampleDimension.castOrCopy(sampleDimension);
-            final ColorModel    colorModel = band.getColorModel(VISIBLE_BAND, getNumSampleDimensions());
-            final SampleModel  sampleModel = colorModel.createCompatibleSampleModel(tileSize.width, tileSize.height);
+            final int nbBand = getNumSampleDimensions();
+            ColorModel colorModel = band.getColorModel(VISIBLE_BAND, nbBand);
+            final SampleModel sampleModel;
+            if (colorModel != null) {
+                sampleModel = colorModel.createCompatibleSampleModel(tileSize.width, tileSize.height);
+            } else {
+                sampleModel = new BandedSampleModel(DataBuffer.TYPE_DOUBLE, tileSize.width, tileSize.height, nbBand);
+                final ColorSpace colors = new ScaledColorSpace(nbBand, 0, 0, 1);
+                colorModel = new ComponentColorModel(colors, false, false, Transparency.OPAQUE, DataBuffer.TYPE_DOUBLE);
+            }
+
             /*
              * If the image can be created using the ImageFunction operation, do it.
              * It allow JAI to defer the computation until a tile is really requested.

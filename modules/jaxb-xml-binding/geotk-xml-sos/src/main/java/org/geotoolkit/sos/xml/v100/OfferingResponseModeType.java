@@ -17,13 +17,12 @@
 package org.geotoolkit.sos.xml.v100;
 
 import java.util.Objects;
-import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.Entry;
 import org.geotoolkit.sos.xml.ResponseModeType;
 
 /**
  *
  * @author Guilhem Legal
- * @module
  */
 public class OfferingResponseModeType implements Entry {
 

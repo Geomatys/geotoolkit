@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
@@ -164,14 +163,14 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
         Number coordinateValue = 0;
 
         final Map<String, Object> properties = new HashMap<>();
-        final NamedIdentifier name = new NamedIdentifier(Citations.CRS, new SimpleInternationalString("Julian calendar"));
+        final NamedIdentifier name = new NamedIdentifier(null, new SimpleInternationalString("Julian calendar"));
         final Unit<Time> interval = Units.DAY;
         properties.put(IdentifiedObject.NAME_KEY, name);
 //        properties.put(TemporalCoordinateSystem.INTERVAL_KEY, interval);
         final TemporalCoordinateSystem refSystem = new DefaultTemporalCoordinateSystem(properties, interval, gc.getTime());
 
 //        TemporalCoordinateSystem refSystem = new DefaultTemporalCoordinateSystem(
-//                new NamedIdentifier(Citations.CRS, new SimpleInternationalString("Julian calendar")),
+//                new NamedIdentifier(null, new SimpleInternationalString("Julian calendar")),
 //                null, gc.getTime(), new SimpleInternationalString("day"));
         if (calDate != null) {
             int[] cal = calDate.getCalendarDate();
@@ -246,13 +245,13 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
         final int julianGre = 15 + 31 * (10 + 12 * 1582);
 
         final Map<String, Object> properties = new HashMap<>();
-        final NamedIdentifier name = new NamedIdentifier(Citations.CRS, new SimpleInternationalString("Julian calendar"));
+        final NamedIdentifier name = new NamedIdentifier(null, new SimpleInternationalString("Julian calendar"));
 //        final InternationalString interval = new SimpleInternationalString("day");
         properties.put(IdentifiedObject.NAME_KEY, name);
 //        properties.put(TemporalCoordinateSystem.INTERVAL_KEY, interval);
         final TemporalCoordinateSystem refSystem = new DefaultTemporalCoordinateSystem(properties, Units.DAY, gc.getTime());
 
-//        TemporalCoordinateSystem refSystem = new DefaultTemporalCoordinateSystem(new NamedIdentifier(Citations.CRS, new SimpleInternationalString("Julian calendar")),
+//        TemporalCoordinateSystem refSystem = new DefaultTemporalCoordinateSystem(new NamedIdentifier(null, new SimpleInternationalString("Julian calendar")),
 //                null, gc.getTime(), new SimpleInternationalString("day"));
         Number coordinateValue = 0;
         int year = 0, month = 0, day = 0;

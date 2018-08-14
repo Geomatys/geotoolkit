@@ -57,7 +57,7 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.large.AbstractLargeRenderedImage;
-import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
+import org.apache.sis.coverage.grid.PixelTranslation;
 
 /**
  * Special {@link AbstractLargeRenderedImage} implementation for Landsat 8 image reading.<br>
