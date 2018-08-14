@@ -33,7 +33,6 @@ import org.apache.sis.util.Version;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.factory.FactoryRegistryException;
-import org.geotoolkit.internal.io.JNDI;
 import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.internal.metadata.NameMeaning;
@@ -70,10 +69,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @module
  */
 public final class CRS extends Static {
-    static {
-        JNDI.install();
-    }
-
     /**
      * Do not allow instantiation of this class.
      */

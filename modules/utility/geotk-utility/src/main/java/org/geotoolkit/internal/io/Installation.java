@@ -25,7 +25,6 @@ import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 import org.apache.sis.internal.system.OS;
-import org.geotoolkit.lang.Workaround;
 import org.apache.sis.util.logging.Logging;
 
 
@@ -236,22 +235,6 @@ public enum Installation {
         } else {
             return DEFAULT_ROOT;
         }
-    }
-
-    /**
-     * Same as {@link #directory}, but creates the directory if it doesn't already exist.
-     *
-     * @param  usePreferences Usually {@code true}. If {@code false}, the preferences
-     *         are ignored and only the default directory is returned.
-     * @return The default directory.
-     * @throws IOException If the subdirectory can't be created.
-     */
-    public Path validDirectory(final boolean usePreferences) throws IOException {
-        final Path directory = directory(usePreferences);
-        if (!Files.isDirectory(directory)) {
-            Files.createDirectories(directory);
-        }
-        return directory;
     }
 
     /**

@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2010-2012, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2010-2012, Geomatys
+ *    (C) 2010-2018, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,17 +17,21 @@
  */
 package org.geotoolkit.lang;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Properties;
 import java.util.ServiceLoader;
-
 import javax.imageio.spi.IIORegistry;
-
+import javax.sql.DataSource;
+import org.apache.sis.internal.metadata.sql.Initializer;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.logging.MonolineFormatter;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.internal.io.JNDI;
 import org.geotoolkit.internal.SetupService;
 import org.geotoolkit.internal.Threads;
+import org.geotoolkit.internal.io.Installation;
+import org.geotoolkit.internal.sql.AuthenticatedDataSource;
+import org.geotoolkit.internal.sql.DefaultDataSource;
 
 
 /**
@@ -105,10 +109,6 @@ import org.geotoolkit.internal.Threads;
  * package for performing a better work with system preferences.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
- *
- * @since 3.10
- * @module
  */
 public final class Setup extends Static {
     /**
@@ -122,9 +122,45 @@ public final class Setup extends Static {
     private static int state;
 
     /**
+     * Data source for the EPSG database, or {@code null} if none.
+     */
+    private static DataSource EPSG;
+
+    /**
      * Do not allow instantiation of this class.
      */
     private Setup() {
+    }
+
+    /**
+     * Sets the data source for the EPSG database.
+     *
+     * @param source data source for the EPSG database, or {@code null} if none.
+     */
+    public static synchronized void setEPSG(final DataSource source) {
+        EPSG = source;
+    }
+
+    /**
+     * Returns the EPSG data source.
+     */
+    public static synchronized DataSource getEPSG() {
+        if (EPSG == null) try {
+            final Properties properties = Installation.EPSG.getDataSource();
+            if (properties != null) {
+                final String url = properties.getProperty("URL");
+                if (url != null) {
+                    EPSG = new DefaultDataSource(url);
+                    final String user = properties.getProperty("user");
+                    if (user != null) {
+                        EPSG = new AuthenticatedDataSource(EPSG, user, properties.getProperty("password"), true);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        return EPSG;
     }
 
     /**
@@ -190,7 +226,7 @@ public final class Setup extends Static {
         } else {
             MonolineFormatter.install();
         }
-        JNDI.install();
+        Initializer.setDefault(Setup::getEPSG);
         /*
          * Following are normally not needed, since the factory registry scans automatically
          * the classpath when first needed. However some factories may have been unregistered
@@ -217,7 +253,7 @@ public final class Setup extends Static {
     public static synchronized void shutdown() {
         if (state != 2) {
             state = 2;
-            JNDI.uninstall();
+            Initializer.setDefault(null);
             for (final SetupService service : ServiceLoader.load(SetupService.class)) {
                 service.shutdown();
             }
