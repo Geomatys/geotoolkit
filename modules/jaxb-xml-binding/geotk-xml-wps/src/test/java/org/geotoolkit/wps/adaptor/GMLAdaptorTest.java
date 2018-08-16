@@ -36,23 +36,23 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  */
 public class GMLAdaptorTest {
-    
+
     @Test
     public void featureWPS2() throws FactoryException {
-                
+
         final Format format = new Format("UTF-8", "text/xml", "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd", null);
-        
+
         final ComplexAdaptor adaptor = ComplexAdaptor.getAdaptor(format);
         assertEquals(Feature.class, adaptor.getValueClass());
-        
-        
-        
+
+
+
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Country");
         ftb.addAttribute(String.class).setName("code").addRole(AttributeRole.IDENTIFIER_COMPONENT);
         ftb.addAttribute(Polygon.class).setName("geom").setCRS(CommonCRS.WGS84.geographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
         final FeatureType ft = ftb.build();
-        
+
         final GeometryFactory gf = new GeometryFactory();
         final LinearRing ring = gf.createLinearRing(new Coordinate[]{
                                     new Coordinate(23, 78),
@@ -60,15 +60,12 @@ public class GMLAdaptorTest {
                                     new Coordinate(12, 94),
                                     new Coordinate(23, 78)});
         final Polygon polygon = gf.createPolygon(ring, new LinearRing[0]);
-        
+
         final Feature feature = ft.newInstance();
         feature.setPropertyValue("code", "id-1");
         feature.setPropertyValue("geom", polygon);
-        
+
         DataInput out = adaptor.toWPS2Input(feature);
-        System.out.println(out);
-        
-        
-        
+        // TODO : assert content
     }
 }

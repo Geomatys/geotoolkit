@@ -1,6 +1,5 @@
 package org.geotoolkit.wps.xml.v200;
 
-import java.util.Set;
 import java.util.Objects;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
@@ -14,6 +13,7 @@ import javax.xml.namespace.QName;
 import org.apache.sis.util.resources.Errors;
 
 import static javax.xml.stream.XMLStreamConstants.*;
+import javax.xml.stream.events.Attribute;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 
 final class TransformingWriter extends LegacyTransformer implements XMLEventWriter {
@@ -56,6 +56,9 @@ final class TransformingWriter extends LegacyTransformer implements XMLEventWrit
                 case START_ELEMENT: {
                     event = convert(event.asStartElement());
                     break;
+                }
+                case ATTRIBUTE: {
+                    event = convert((Attribute)event);
                 }
             }
         }
@@ -122,31 +125,17 @@ final class TransformingWriter extends LegacyTransformer implements XMLEventWrit
         return event;
     }
 
-    /**
-     * A sentinel value in the {@link TransformingWriter#deferred} queue meaning that after reaching this point,
-     * we need to reevaluate if the remaining elements should be written immediately of deferred again.
-     * This happen when some elements to move are interleaved. For example in {@code MD_DataIdentification}:
-     *
-     * <ol>
-     *   <li>{@code topicCategory} needs to move before {@code environmentDescription}</li>
-     *   <li>{@code extent} needs to move before {@code supplementalInformation}</li>
-     *   <li>{@code graphicOverviews}</li>
-     *   <li>{@code resourceFormats}</li>
-     *   <li><i>etc.</i>
-     *   <li>{@code environmentDescription}</li>
-     *   <li>{@code supplementalInformation}</li>
-     * </ol>
-     *
-     * This class is for handling the {@code extent} case in such scenario.
-     */
-    private static final class NewDeferred {
-        /** The value to assign to {@link TransformingWriter#deferred} after we reach this point. */
-        final Set<QName> toSkip;
 
-        /** Creates a new sentinel value for a reevaluation point. */
-        NewDeferred(final Set<QName> toSkip) {
-            this.toSkip = toSkip;
+    private Attribute convert(Attribute event) {
+        final QName originName = event.getName();
+        final String ns = originName.getNamespaceURI();
+        final String newNS = exportNS(ns);
+        if (!Objects.equals(newNS, ns)) {
+            final QName name = new QName(newNS, originName.getLocalPart(), originName.getPrefix());
+            eventFactory.setLocation(event.getLocation());
+            event = eventFactory.createAttribute(name, event.getValue());
         }
+        return event;
     }
 
     /**

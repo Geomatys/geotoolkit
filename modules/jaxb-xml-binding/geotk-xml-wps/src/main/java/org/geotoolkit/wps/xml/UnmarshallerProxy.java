@@ -22,6 +22,7 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import org.apache.sis.util.ArgumentChecks;
 import org.w3c.dom.Node;
@@ -58,9 +59,7 @@ public class UnmarshallerProxy  implements Unmarshaller {
 
     @Override
     public Object unmarshal(Reader reader) throws JAXBException {
-        ///return this.source.unmarshal(reader);
-        //NOTE : why this ????
-        final InputSource iSource = new InputSource(reader);
+        final StreamSource iSource = new StreamSource(reader);
         iSource.setSystemId("geotk-xml-wps");
         return unmarshal(iSource);
     }
