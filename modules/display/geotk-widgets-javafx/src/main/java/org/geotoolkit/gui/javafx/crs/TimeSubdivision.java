@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gui.javafx.crs;
 
-import com.sun.javafx.tk.FontMetrics;
 import java.util.*;
 
 import org.geotoolkit.temporal.object.TemporalConstants;
@@ -49,10 +48,11 @@ public interface TimeSubdivision {
     public boolean isIntermediate();
 
     /**
-     * @param fm Font metrics to use for length evaluation
-     * @return maximum size of a text element
+     *
+     * @return maximum number of characters used by a text displaying value for this unit. (Ex: for hours, we can go
+     * only from 0 to 24, thus maximal length is 2 charcter long).
      */
-    public double getTextLength(FontMetrics fm);
+    public int getMaxLength();
 
     /**
      * @param milliseconds time in milliseconds
@@ -87,8 +87,8 @@ public interface TimeSubdivision {
         }
 
         @Override
-        public double getTextLength(FontMetrics fm) {
-            return fm.computeStringWidth("99999");
+        public int getMaxLength() {
+            return 4;
         }
 
         @Override
@@ -143,8 +143,8 @@ public interface TimeSubdivision {
         }
 
         @Override
-        public double getTextLength(FontMetrics fm) {
-            return fm.computeStringWidth("AAAAAA"); //should not be longer
+        public int getMaxLength() {
+            return 3; // Short calendar display uses only first 3 charcaters of the month name.
         }
 
         @Override
@@ -200,8 +200,8 @@ public interface TimeSubdivision {
         }
 
         @Override
-        public double getTextLength(FontMetrics fm) {
-            return fm.computeStringWidth("AA"); //31 day max
+        public int getMaxLength() {
+            return 2; //31 day max
         }
 
         @Override
@@ -256,8 +256,8 @@ public interface TimeSubdivision {
         }
 
         @Override
-        public double getTextLength(FontMetrics fm) {
-            return fm.computeStringWidth("AA"); //24 max
+        public int getMaxLength() {
+            return 2; //24 max
         }
 
         @Override
@@ -311,8 +311,8 @@ public interface TimeSubdivision {
         }
 
         @Override
-        public double getTextLength(FontMetrics fm) {
-            return fm.computeStringWidth("AA"); //60 max
+        public int getMaxLength() {
+            return 2; //60 max
         }
 
         @Override
@@ -366,8 +366,8 @@ public interface TimeSubdivision {
         }
 
         @Override
-        public double getTextLength(FontMetrics fm) {
-            return fm.computeStringWidth("AA"); //60 max
+        public int getMaxLength() {
+            return 2; //60 max
         }
 
         @Override
