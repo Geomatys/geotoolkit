@@ -24,13 +24,14 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.ComplexDataType;
-import org.geotoolkit.wps.xml.WPSXmlFactory;
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.wps.xml.v200.Data;
+import org.geotoolkit.wps.xml.v200.Format;
 
 /**
- * Convert an GridCoverage2D to ComplexDataType using Base64 encoding.
+ * Convert an GridCoverage2D to Data using Base64 encoding.
  *
  * @author Quentin Boileau (Geomatys)
  */
@@ -54,39 +55,38 @@ public class CoverageToComplexConverter extends AbstractComplexOutputConverter<G
     }
 
     @Override
-    public ComplexDataType convert(GridCoverage2D source, Map<String, Object> params) throws UnconvertibleObjectException {
-
+    public Data convert(GridCoverage2D source, Map<String, Object> params) throws UnconvertibleObjectException {
         if (source == null) {
             throw new UnconvertibleObjectException("The output data should be defined.");
+        } else if (params == null) {
+            throw new UnconvertibleObjectException("Not enough information about data format");
         }
-        if (!(source instanceof GridCoverage2D) || !(source instanceof Coverage)) {
-            throw new UnconvertibleObjectException("The requested output data is not an instance of GridCoverage2D.");
+
+        final Object tmpMime = params.get(MIME);
+        final String mime;
+        if (tmpMime instanceof String) {
+            mime = (String) tmpMime;
+        } else {
+            throw new UnconvertibleObjectException("No valid mime type given. We cannot determine output image format");
         }
-        final WPSMimeType wpsMime = WPSMimeType.customValueOf((String) params.get(MIME));
+
+        final WPSMimeType wpsMime = WPSMimeType.customValueOf((String) tmpMime);
         if (!wpsMime.equals(WPSMimeType.IMG_GEOTIFF) && !wpsMime.equals(WPSMimeType.IMG_GEOTIFF_BIS)) {
             throw new UnconvertibleObjectException("Only support GeoTiff Base64 encoding.");
         }
+        final Object tmpEncoding = params.get(ENCODING);
 
-        String wpsVersion  = (String) params.get(WPSVERSION);
-        if (wpsVersion == null) {
-            LOGGER.warning("No WPS version set using default 1.0.0");
-            wpsVersion = "1.0.0";
-        }
-        final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(wpsVersion, "base64", WPSMimeType.IMG_GEOTIFF.val(), null);
-
-        try {
-            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             CoverageIO.write(source, "GEOTIFF", baos);
             baos.flush();
             byte[] bytesOut = baos.toByteArray();
-            complex.getContent().add(Base64.encodeBytes(bytesOut));
-            baos.close();
+            return new Data(new Format((String)((tmpEncoding instanceof String)? tmpEncoding : null), mime, null, null), Base64.encodeBytes(bytesOut));
+
         } catch (CoverageStoreException ex) {
             throw new UnconvertibleObjectException(ex.getMessage(), ex);
         } catch (IOException ex) {
             throw new UnconvertibleObjectException(ex.getMessage(), ex);
         }
-        return complex;
     }
 
 }

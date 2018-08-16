@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wps:ProcessOfferings xmlns:gco="http://www.isotc211.org/2005/gco" 
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                      xmlns:gmx="http://www.isotc211.org/2005/gmx" 
+                      xmlns:gmi="http://www.isotc211.org/2005/gmi" 
+                      xmlns:gmd="http://www.isotc211.org/2005/gmd" 
+                      xmlns:xlink="http://www.w3.org/1999/xlink" 
+                      xmlns:mml="http://www.w3.org/1998/Math/MathML"
+                      xmlns:ows="http://www.opengis.net/ows/2.0" 
+                      xmlns:wps="http://www.opengis.net/wps/2.0"
+                      xsi:schemaLocation="http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd">
+    <wps:ProcessOffering jobControlOptions="sync-execute async-execute dismiss" outputTransmission="value reference">
+        <wps:Process>
+            <ows:Title>Geotoolkit : Math:add</ows:Title>
+            <ows:Abstract>Adds two double.</ows:Abstract>
+            <ows:Identifier>urn:ogc:cstl:wps:geotoolkit:math:add</ows:Identifier>
+            <wps:Input minOccurs="1" maxOccurs="1">
+                <ows:Title>First</ows:Title>
+                <ows:Abstract>First number</ows:Abstract>
+                <ows:Identifier>urn:ogc:cstl:wps:geotoolkit:math:add:input:first</ows:Identifier>
+                <wps:LiteralData>
+                    <wps:Format mimeType="text/plain" default="true"/>
+                    <LiteralDataDomain>
+                        <ows:AnyValue/>
+                        <ows:DataType ows:reference="http://www.w3.org/TR/xmlschema-2/#double">Double</ows:DataType>
+                    </LiteralDataDomain>
+                </wps:LiteralData>
+            </wps:Input>
+            <wps:Input minOccurs="1" maxOccurs="1">
+                <ows:Title>Second</ows:Title>
+                <ows:Abstract>Second number</ows:Abstract>
+                <ows:Identifier>urn:ogc:cstl:wps:geotoolkit:math:add:input:second</ows:Identifier>
+                <wps:LiteralData>
+                    <wps:Format mimeType="text/plain" default="true"/>
+                    <LiteralDataDomain>
+                        <ows:AnyValue/>
+                        <ows:DataType ows:reference="http://www.w3.org/TR/xmlschema-2/#double">Double</ows:DataType>
+                    </LiteralDataDomain>
+                </wps:LiteralData>
+            </wps:Input>
+            <wps:Output>
+                <ows:Title>Result</ows:Title>
+                <ows:Abstract>Addition result</ows:Abstract>
+                <ows:Identifier>urn:ogc:cstl:wps:geotoolkit:math:add:output:result</ows:Identifier>
+                <wps:LiteralData>
+                    <wps:Format mimeType="text/plain" default="true"/>
+                    <LiteralDataDomain>
+                        <ows:AnyValue/>
+                        <ows:DataType ows:reference="http://www.w3.org/TR/xmlschema-2/#double">Double</ows:DataType>
+                    </LiteralDataDomain>
+                </wps:LiteralData>
+            </wps:Output>
+        </wps:Process>
+    </wps:ProcessOffering>
+    <wps:ProcessOffering jobControlOptions="sync-execute async-execute dismiss" outputTransmission="value reference">
+        <wps:Process>
+            <ows:Title>Geotoolkit : Jts:buffer</ows:Title>
+            <ows:Abstract>Apply JTS buffer to a geometry.</ows:Abstract>
+            <ows:Identifier>urn:ogc:cstl:wps:geotoolkit:jts:buffer</ows:Identifier>
+            <wps:Input minOccurs="1" maxOccurs="1">
+                <ows:Title>Geom</ows:Title>
+                <ows:Abstract>Geometry JTS</ows:Abstract>
+                <ows:Identifier>urn:ogc:cstl:wps:geotoolkit:jts:buffer:input:geom</ows:Identifier>
+                <wps:ComplexData>
+                    <wps:Format mimeType="application/geo+json" encoding="utf-8" maximumMegabytes="100" default="true"/>
+                    <wps:Format mimeType="text/xml" encoding="utf-8" schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" maximumMegabytes="100"/>
+                    <wps:Format mimeType="text/gml" encoding="utf-8" schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" maximumMegabytes="100"/>
+                    <wps:Format mimeType="application/gml+xml" encoding="utf-8" schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" maximumMegabytes="100"/>
+                    <wps:Format mimeType="text/xml" encoding="utf-8" schema="http://schemas.opengis.net/gml/3.2.1/gml.xsd" maximumMegabytes="100"/>
+                    <wps:Format mimeType="text/gml" encoding="utf-8" schema="http://schemas.opengis.net/gml/3.2.1/gml.xsd" maximumMegabytes="100"/>
+                    <wps:Format mimeType="application/gml+xml" encoding="utf-8" schema="http://schemas.opengis.net/gml/3.2.1/gml.xsd" maximumMegabytes="100"/>
+                    <wps:Format mimeType="application/geo+json" encoding="utf-8" maximumMegabytes="100" default="true"/>
+                </wps:ComplexData>
+            </wps:Input>
+            <wps:Input minOccurs="1" maxOccurs="1">
+                <ows:Title>Distance</ows:Title>
+                <ows:Abstract>Distance used to make buffer.</ows:Abstract>
+                <ows:Identifier>urn:ogc:cstl:wps:geotoolkit:jts:buffer:input:distance</ows:Identifier>
+                <wps:LiteralData>
+                    <wps:Format mimeType="text/plain" default="true"/>
+                    <LiteralDataDomain>
+                        <ows:AnyValue/>
+                        <ows:DataType ows:reference="http://www.w3.org/TR/xmlschema-2/#double">Double</ows:DataType>
+                    </LiteralDataDomain>
+                </wps:LiteralData>
+            </wps:Input>
+            <wps:Input minOccurs="0" maxOccurs="1">
+                <ows:Title>Segments</ows:Title>
+                <ows:Abstract>Number of segments used to represent a quadrant of a circle.</ows:Abstract>
+                <ows:Identifier>urn:ogc:cstl:wps:geotoolkit:jts:buffer:input:segments</ows:Identifier>
+                <wps:LiteralData>
+                    <wps:Format mimeType="text/plain" default="true"/>
+                    <LiteralDataDomain>
+                        <ows:AnyValue/>
+                        <ows:DataType ows:reference="http://www.w3.org/TR/xmlschema-2/#integer">Integer</ows:DataType>
+                        <ows:DefaultValue>0</ows:DefaultValue>
+                    </LiteralDataDomain>
+                </wps:LiteralData>
+            </wps:Input>
+            <wps:Input minOccurs="0" maxOccurs="1">
+                <ows:Title>Endstyle</ows:Title>
+                <ows:Abstract>The end cap style used. 1 -&gt; Round, 2 -&gt; Flat, 3 -&gt; Square.</ows:Abstract>
+                <ows:Identifier>urn:ogc:cstl:wps:geotoolkit:jts:buffer:input:endstyle</ows:Identifier>
+                <wps:LiteralData>
+                    <wps:Format mimeType="text/plain" default="true"/>
+                    <LiteralDataDomain>
+                        <ows:AnyValue/>
+                        <ows:DataType ows:reference="http://www.w3.org/TR/xmlschema-2/#integer">Integer</ows:DataType>
+                        <ows:DefaultValue>2</ows:DefaultValue>
+                    </LiteralDataDomain>
+                </wps:LiteralData>
+            </wps:Input>
+            <wps:Output>
+                <ows:Title>Result_geom</ows:Title>
+                <ows:Abstract>Buffered geometry result</ows:Abstract>
+                <ows:Identifier>urn:ogc:cstl:wps:geotoolkit:jts:buffer:output:result_geom</ows:Identifier>
+                <wps:ComplexData>
+                    <wps:Format mimeType="application/geo+json" encoding="utf-8" default="true"/>
+                    <wps:Format mimeType="text/xml" encoding="utf-8" schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"/>
+                    <wps:Format mimeType="text/gml" encoding="utf-8" schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"/>
+                    <wps:Format mimeType="application/gml+xml" encoding="utf-8" schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"/>
+                    <wps:Format mimeType="text/xml" encoding="utf-8" schema="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+                    <wps:Format mimeType="text/gml" encoding="utf-8" schema="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+                    <wps:Format mimeType="application/gml+xml" encoding="utf-8" schema="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+                    <wps:Format mimeType="application/geo+json" encoding="utf-8" default="true"/>
+                </wps:ComplexData>
+            </wps:Output>
+        </wps:Process>
+    </wps:ProcessOffering>
+    <wps:ProcessOffering jobControlOptions="sync-execute async-execute dismiss" outputTransmission="value reference">
+        <wps:Process>
+            <ows:Title>Cesium : CesiumHeightMap</ows:Title>
+            <ows:Abstract>Cesium quantized-mesh pyramid process</ows:Abstract>
+            <ows:Identifier>urn:ogc:cstl:wps:cesium:cesiumHeightMap</ows:Identifier>
+            <wps:Input minOccurs="1" maxOccurs="1">
+                <ows:Title>SrcFolder</ows:Title>
+                <ows:Abstract>No description available</ows:Abstract>
+                <ows:Identifier>urn:ogc:cstl:wps:cesium:cesiumHeightMap:input:srcFolder</ows:Identifier>
+                <wps:LiteralData>
+                    <wps:Format mimeType="text/plain" default="true"/>
+                    <LiteralDataDomain>
+                        <ows:AnyValue/>
+                        <ows:DataType ows:reference="http://www.w3.org/TR/xmlschema-2/#string">String</ows:DataType>
+                    </LiteralDataDomain>
+                </wps:LiteralData>
+            </wps:Input>
+            <wps:Input minOccurs="1" maxOccurs="1">
+                <ows:Title>TargetFolder</ows:Title>
+                <ows:Abstract>No description available</ows:Abstract>
+                <ows:Identifier>urn:ogc:cstl:wps:cesium:cesiumHeightMap:input:targetFolder</ows:Identifier>
+                <wps:LiteralData>
+                    <wps:Format mimeType="text/plain" default="true"/>
+                    <LiteralDataDomain>
+                        <ows:AnyValue/>
+                        <ows:DataType ows:reference="http://www.w3.org/TR/xmlschema-2/#string">String</ows:DataType>
+                    </LiteralDataDomain>
+                </wps:LiteralData>
+            </wps:Input>
+            <wps:Input minOccurs="0" maxOccurs="1">
+                <ows:Title>MinLevel</ows:Title>
+                <ows:Abstract>No description available</ows:Abstract>
+                <ows:Identifier>urn:ogc:cstl:wps:cesium:cesiumHeightMap:input:minLevel</ows:Identifier>
+                <wps:LiteralData>
+                    <wps:Format mimeType="text/plain" default="true"/>
+                    <LiteralDataDomain>
+                        <ows:AnyValue/>
+                        <ows:DataType ows:reference="http://www.w3.org/TR/xmlschema-2/#integer">Integer</ows:DataType>
+                        <ows:DefaultValue>21</ows:DefaultValue>
+                    </LiteralDataDomain>
+                </wps:LiteralData>
+            </wps:Input>
+            <wps:Input minOccurs="0" maxOccurs="1">
+                <ows:Title>HeightScaleFactor</ows:Title>
+                <ows:Abstract>Height value scaling factor</ows:Abstract>
+                <ows:Identifier>urn:ogc:cstl:wps:cesium:cesiumHeightMap:input:heightScaleFactor</ows:Identifier>
+                <wps:LiteralData>
+                    <wps:Format mimeType="text/plain" default="true"/>
+                    <LiteralDataDomain>
+                        <ows:AnyValue/>
+                        <ows:DataType ows:reference="http://www.w3.org/TR/xmlschema-2/#double">Double</ows:DataType>
+                        <ows:DefaultValue>1.0</ows:DefaultValue>
+                    </LiteralDataDomain>
+                </wps:LiteralData>
+            </wps:Input>
+            <wps:Input minOccurs="0" maxOccurs="1">
+                <ows:Title>HeightOffset</ows:Title>
+                <ows:Abstract>Height value offset</ows:Abstract>
+                <ows:Identifier>urn:ogc:cstl:wps:cesium:cesiumHeightMap:input:heightOffset</ows:Identifier>
+                <wps:LiteralData>
+                    <wps:Format mimeType="text/plain" default="true"/>
+                    <LiteralDataDomain>
+                        <ows:AnyValue/>
+                        <ows:DataType ows:reference="http://www.w3.org/TR/xmlschema-2/#double">Double</ows:DataType>
+                        <ows:DefaultValue>0.0</ows:DefaultValue>
+                    </LiteralDataDomain>
+                </wps:LiteralData>
+            </wps:Input>
+            <wps:Input minOccurs="0" maxOccurs="1">
+                <ows:Title>CreateWaterMask</ows:Title>
+                <ows:Abstract>Create water mask</ows:Abstract>
+                <ows:Identifier>urn:ogc:cstl:wps:cesium:cesiumHeightMap:input:createWaterMask</ows:Identifier>
+                <wps:LiteralData>
+                    <wps:Format mimeType="text/plain" default="true"/>
+                    <LiteralDataDomain>
+                        <ows:AnyValue/>
+                        <ows:DataType ows:reference="http://www.w3.org/TR/xmlschema-2/#boolean">Boolean</ows:DataType>
+                        <ows:DefaultValue>true</ows:DefaultValue>
+                    </LiteralDataDomain>
+                </wps:LiteralData>
+            </wps:Input>
+            <wps:Input minOccurs="0" maxOccurs="1">
+                <ows:Title>CreateEmptyTiles</ows:Title>
+                <ows:Abstract>No description available</ows:Abstract>
+                <ows:Identifier>urn:ogc:cstl:wps:cesium:cesiumHeightMap:input:createEmptyTiles</ows:Identifier>
+                <wps:LiteralData>
+                    <wps:Format mimeType="text/plain" default="true"/>
+                    <LiteralDataDomain>
+                        <ows:AnyValue/>
+                        <ows:DataType ows:reference="http://www.w3.org/TR/xmlschema-2/#boolean">Boolean</ows:DataType>
+                        <ows:DefaultValue>false</ows:DefaultValue>
+                    </LiteralDataDomain>
+                </wps:LiteralData>
+            </wps:Input>
+            <wps:Input minOccurs="0" maxOccurs="1">
+                <ows:Title>GzipTiles</ows:Title>
+                <ows:Abstract>GZIP tiles</ows:Abstract>
+                <ows:Identifier>urn:ogc:cstl:wps:cesium:cesiumHeightMap:input:gzipTiles</ows:Identifier>
+                <wps:LiteralData>
+                    <wps:Format mimeType="text/plain" default="true"/>
+                    <LiteralDataDomain>
+                        <ows:AnyValue/>
+                        <ows:DataType ows:reference="http://www.w3.org/TR/xmlschema-2/#boolean">Boolean</ows:DataType>
+                        <ows:DefaultValue>false</ows:DefaultValue>
+                    </LiteralDataDomain>
+                </wps:LiteralData>
+            </wps:Input>
+            <!-- added this block for validation -->
+            <wps:Output>
+                <ows:Title>Result_geom</ows:Title>
+                <ows:Abstract>Buffered geometry result</ows:Abstract>
+                <ows:Identifier>urn:ogc:cstl:wps:geotoolkit:jts:buffer:output:result_geom</ows:Identifier>
+                <wps:ComplexData>
+                    <wps:Format mimeType="application/geo+json" encoding="utf-8" default="true"/>
+                </wps:ComplexData>
+            </wps:Output>
+        </wps:Process>
+    </wps:ProcessOffering>
+</wps:ProcessOfferings>

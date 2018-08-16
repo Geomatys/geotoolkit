@@ -24,7 +24,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Setup;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.util.NullProgressListener;
-import org.geotoolkit.wps.WebProcessingClient;
+import org.geotoolkit.wps.client.WebProcessingClient;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -34,8 +34,8 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.wps.WPSProcessingRegistry;
-import org.geotoolkit.wps.WPSVersion;
+import org.geotoolkit.wps.client.process.WPSProcessingRegistry;
+import org.geotoolkit.wps.client.WPSVersion;
 
 /**
  * A simple example of web processing querying.
@@ -47,15 +47,15 @@ public class WPSClientDemo {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.pending.demo.clients.wps");
 
-    private final static String SERVICE_URL = "http://demo.geomatys.com/cstl-trunk/WS/wps/default";
+    private final static String SERVICE_URL = "http://recette.examind.com/examind/WS/wps/littleWPS";
 
     // Identifier of the process we want.
-    private final static String PROCESS_ID = "urn:ogc:cstl:wps:jts:buffer";
+    private final static String PROCESS_ID = "urn:ogc:cstl:wps:geotoolkit:jts:buffer";
 
     //Expected input parameter IDs
     private static enum INPUT {
-        geom("urn:ogc:cstl:wps:jts:buffer:input:geom"),
-        distance("urn:ogc:cstl:wps:jts:buffer:input:distance");
+        geom("urn:ogc:cstl:wps:geotoolkit:jts:buffer:input:geom"),
+        distance("urn:ogc:cstl:wps:geotoolkit:jts:buffer:input:distance");
 
         public final String name;
         private INPUT(String toSet) {
@@ -65,7 +65,7 @@ public class WPSClientDemo {
 
     //Expected output parameter IDs
     private static enum OUTPUT {
-        result_geom("urn:ogc:cstl:wps:jts:buffer:output:result_geom");
+        result_geom("urn:ogc:cstl:wps:geotoolkit:jts:buffer:output:result_geom");
 
         public final String name;
         private OUTPUT(String toSet) {
@@ -90,7 +90,7 @@ public class WPSClientDemo {
                 new WebProcessingClient(wpsURL, WPSVersion.v100.getCode());
 
         // Once initialized, we can ask a description of wanted process, using its id.
-        final WPSProcessingRegistry registry = wpsClient.asRegistry();
+        final WPSProcessingRegistry registry = new WPSProcessingRegistry(wpsClient);
         ProcessDescriptor desc = registry.getDescriptor(PROCESS_ID);
 
         //We can check process input & output.
@@ -121,11 +121,6 @@ public class WPSClientDemo {
         input.parameter(INPUT.geom.name).setValue(geometry);
         input.parameter(INPUT.distance.name).setValue(bufDistance);
 
-        // If queried WPS supports storage, we ask output as reference. It should cause asynchronous processing server-side.
-        if (registry.supportStorage(PROCESS_ID)) {
-            registry.setOutputsAsReference(PROCESS_ID, true);
-        }
-
         // Process execution. It's synchronous here (talking only of client side, WPS can execute asynchronous process).
         // For asynchronous execution, we must execute it in a thread, using a process listener to get process state.
         org.geotoolkit.process.Process toExecute = desc.createProcess(input);
@@ -139,5 +134,4 @@ public class WPSClientDemo {
             LOGGER.log(Level.INFO, String.format("%s parameter value : %s", out.name(), output.parameter(out.name).getValue()));
         }
     }
-
 }

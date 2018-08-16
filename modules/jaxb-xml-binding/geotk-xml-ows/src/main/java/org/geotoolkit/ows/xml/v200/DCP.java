@@ -67,6 +67,18 @@ public class DCP implements AbstractDCP {
         }
     }
 
+    public DCP(final String getURL, String postURL) {
+        RequestMethodType getReq = null;
+        if (getURL != null) {
+            getReq = new RequestMethodType(getURL);
+        }
+        RequestMethodType postReq = null;
+        if (postURL != null) {
+            postReq = new RequestMethodType(postURL);
+        }
+        this.http = new HTTP(getReq, postReq);
+    }
+
     /**
      * Build a new DCP.
      */

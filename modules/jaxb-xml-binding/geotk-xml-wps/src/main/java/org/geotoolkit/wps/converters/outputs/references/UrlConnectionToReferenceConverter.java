@@ -17,15 +17,11 @@
 package org.geotoolkit.wps.converters.outputs.references;
 
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.io.WPSIO;
 
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
-import static org.geotoolkit.wps.converters.WPSObjectConverter.IOTYPE;
-import static org.geotoolkit.wps.converters.WPSObjectConverter.WPSVERSION;
-import org.geotoolkit.wps.xml.Reference;
-import org.geotoolkit.wps.xml.WPSXmlFactory;
+import org.geotoolkit.wps.xml.v200.Reference;;
 
 /**
  * Implementation of ObjectConverter to convert a {@link URL url} into a {@link OutputReferenceType reference}.
@@ -52,16 +48,10 @@ public class UrlConnectionToReferenceConverter extends AbstractReferenceOutputCo
 
     @Override
     public Reference convert(URLConnection source, Map<String, Object> params) throws UnconvertibleObjectException {
-        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
-        String wpsVersion  = (String) params.get(WPSVERSION);
-        if (wpsVersion == null) {
-            LOGGER.warning("No WPS version set using default 1.0.0");
-            wpsVersion = "1.0.0";
-        }
-        Reference reference = WPSXmlFactory.buildInOutReference(wpsVersion, ioType);
-
+        final Reference reference = new Reference();
         reference.setHref(source.getURL().toString());
         mapParameters(reference, params);
+        // TODO: set headers ?
 
         return reference;
     }

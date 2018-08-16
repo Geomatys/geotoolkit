@@ -27,7 +27,7 @@ import javax.imageio.ImageIO;
 import net.iharder.Base64;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
-import org.geotoolkit.wps.xml.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.Data;
 
 /**
  * Convert an base64 encoded coverage into a RenderedImage.
@@ -54,7 +54,7 @@ public class ComplexToRendredImageConverter extends AbstractComplexInputConverte
     }
 
     @Override
-    public RenderedImage convert(ComplexDataType source, Map<String, Object> params) throws UnconvertibleObjectException {
+    public RenderedImage convert(Data source, Map<String, Object> params) throws UnconvertibleObjectException {
 
         try {
             if (params.get(ENCODING).equals(WPSEncoding.BASE64.getValue())) {

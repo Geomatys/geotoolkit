@@ -19,28 +19,28 @@ package org.geotoolkit.wps.converters.outputs.complex;
 import java.util.Map;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSDefaultConverter;
-import org.geotoolkit.wps.xml.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.Data;
 
 /**
  *
  * @author Quentin Boileau (Geometry).
  */
-public abstract class AbstractComplexOutputConverter<S> extends WPSDefaultConverter<S, ComplexDataType> {
+public abstract class AbstractComplexOutputConverter<S> extends WPSDefaultConverter<S, Data> {
 
 
     @Override
     public abstract Class<S> getSourceClass();
 
     @Override
-    public Class<ComplexDataType> getTargetClass() {
-        return ComplexDataType.class;
+    public Class<Data> getTargetClass() {
+        return Data.class;
     }
 
     /**
-     * Convert the data from source Map into {@link ComplexDataType}.
+     * Convert the data from source Map into {@link Data}.
      * The {@code params} Map contain :
      * <ul>
-     *      <li>outData : the object to convert into {@link ComplexDataType}.</li>
+     *      <li>outData : the object to convert into {@link Data}.</li>
      *      <li>outMime : the requested mime type for the output.</li>
      *      <li>outEncoding : the requested encoding for the output</li>
      *      <li>outSchema : the schema of the complex output</li>
@@ -49,10 +49,10 @@ public abstract class AbstractComplexOutputConverter<S> extends WPSDefaultConver
      * </ul>
      * @param source
      * @param params
-     * @return the converted outData into {@link ComplexDataType}.
+     * @return the converted outData into {@link Data}.
      * @throws UnconvertibleObjectException if an error occurs durring the convertion processing.
      */
     @Override
-    public abstract ComplexDataType convert(final S source, final Map<String, Object> params) throws UnconvertibleObjectException;
+    public abstract Data convert(final S source, final Map<String, Object> params) throws UnconvertibleObjectException;
 
 }

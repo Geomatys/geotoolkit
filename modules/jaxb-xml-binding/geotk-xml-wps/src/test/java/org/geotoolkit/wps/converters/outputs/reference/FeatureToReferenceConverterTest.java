@@ -24,7 +24,7 @@ import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.v200.Reference;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
@@ -41,8 +41,7 @@ public class FeatureToReferenceConverterTest extends org.geotoolkit.test.TestBas
         // Get the test resource
         final Object testResource = ConvertersTestUtils.loadTestResource("/inputs/feature.json");
 
-        final Reference reference = ConvertersTestUtils.initAndRunOutputConversion(
-                Feature.class,
+        final Reference reference = ConvertersTestUtils.initAndRunOutputConversion(Feature.class,
                 Reference.class,
                 testResource,
                 WPSMimeType.APP_GEOJSON.val(),

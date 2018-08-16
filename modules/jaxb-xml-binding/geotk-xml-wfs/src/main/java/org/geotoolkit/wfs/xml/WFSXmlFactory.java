@@ -296,7 +296,7 @@ public class WFSXmlFactory {
                 return new org.geotoolkit.wfs.xml.v200.DescribeFeatureTypeType(service, version, handle, typeNames, outputFormat);
             case "1.1.0":
                 if (outputFormat == null) {
-                    outputFormat = "text/xml; subtype=gml/3.1.1";
+                    outputFormat = "text/xml; subtype=\"gml/3.1.1\"";
                 }
                 return new org.geotoolkit.wfs.xml.v110.DescribeFeatureTypeType(service, version, handle, typeNames, outputFormat);
             case "1.0.0":

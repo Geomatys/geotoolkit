@@ -22,7 +22,7 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.v200.Reference;;
 
 /**
  * Implementation of ObjectConverter to convert a reference into a String.
@@ -65,14 +65,14 @@ public final class ReferenceToStringConverter extends AbstractReferenceInputConv
             result = IOUtilities.toString(in);
 
         } catch (IOException ex) {
-            throw new UnconvertibleObjectException("Reference file invalid input : IO", ex);
+            throw new UnconvertibleObjectException("ReferenceType file invalid input : IO", ex);
         } finally {
             try {
                 if (in != null) {
                     in.close();
                 }
             } catch (IOException ex) {
-                throw new UnconvertibleObjectException("Reference file invalid input : IO", ex);
+                throw new UnconvertibleObjectException("ReferenceType file invalid input : IO", ex);
             }
         }
         return result;

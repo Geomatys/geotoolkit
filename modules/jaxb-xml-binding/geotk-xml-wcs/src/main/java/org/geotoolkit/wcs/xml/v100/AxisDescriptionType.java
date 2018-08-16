@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AxisDescriptionType")
 public class AxisDescriptionType extends AbstractDescriptionType {
+
     private ValueEnumBaseType values;
 
     public AxisDescriptionType() {}

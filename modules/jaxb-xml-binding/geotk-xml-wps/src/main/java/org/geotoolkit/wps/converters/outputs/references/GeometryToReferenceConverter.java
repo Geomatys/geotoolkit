@@ -29,12 +29,14 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.geotoolkit.gml.JTStoGeometry;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
-import org.geotoolkit.wps.xml.Reference;
-import org.geotoolkit.wps.xml.WPSXmlFactory;
+import org.geotoolkit.wps.xml.v200.Reference;
+;
 
+import org.opengis.util.FactoryException;
+import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
+import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
@@ -95,13 +97,7 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
             throw new UnconvertibleObjectException("The geometry is not an JTS geometry.");
         }
 
-        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
-        String wpsVersion  = (String) params.get(WPSVERSION);
-        if (wpsVersion == null) {
-            LOGGER.warning("No WPS version set using default 1.0.0");
-            wpsVersion = "1.0.0";
-        }
-        Reference reference = WPSXmlFactory.buildInOutReference(wpsVersion, ioType);
+        Reference reference = new Reference();
 
         reference.setMimeType((String) params.get(MIME));
         reference.setEncoding((String) params.get(ENCODING));

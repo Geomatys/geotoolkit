@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractCodeType;
 
 
 /**
@@ -189,4 +190,7 @@ public abstract class AbstractDescriptionType extends AbstractDescriptionBaseTyp
         this.rest.add(element);
     }
 
+    public AbstractCodeType getIdentifier() {
+        return null;
+    }
 }

@@ -16,36 +16,35 @@
  */
 package org.geotoolkit.wps.converters.inputs.references;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import org.geotoolkit.feature.xml.XmlFeatureReader;
-import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
-import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.wps.converters.WPSDefaultConverter;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
-import org.geotoolkit.wps.xml.v100.InputReferenceType;
-import org.geotoolkit.wps.xml.v100.OutputReferenceType;
-import org.geotoolkit.wps.xml.Reference;
-import org.opengis.feature.FeatureType;
+import org.geotoolkit.wps.xml.v200.Reference;
 
 /**
  * TODO v200 in/out difeeence
  *
  * @author Quentin Boileau (Geomatys).
  */
+
+
 public abstract class AbstractReferenceInputConverter<T> extends WPSDefaultConverter<Reference, T> {
 
     @Override
@@ -57,175 +56,106 @@ public abstract class AbstractReferenceInputConverter<T> extends WPSDefaultConve
     public abstract Class<T> getTargetClass();
 
     /**
-     * Convert a Reference {@link InputReferenceType input} or {@link OutputReferenceType output} into the requested {@code Object}.
-     * @param source ReferenceType
+     * Convert a Reference {@link InputReference input} or
+     * {@link OutputReference output} into the requested {@code Object}.
+     *
+     * @param source Reference
      * @return Object
      * @throws UnconvertibleObjectException
      */
     @Override
     public abstract T convert(final Reference source, Map<String, Object> params) throws UnconvertibleObjectException;
 
-     /**
-     * Get the JAXPStreamFeatureReader to read feature. If there is a schema defined, the JAXPStreamFeatureReader will
-     * use it overwise it will use the embedded.
-     *
-     * @param source
-     * @return
-     * @throws MalformedURLException
-     * @throws JAXBException
-     * @throws IOException
-     */
-    protected XmlFeatureReader getFeatureReader(final Reference source) throws MalformedURLException, JAXBException, IOException {
+    protected static URLConnection connect(final Reference ref) throws UnconvertibleObjectException {
+        final String brutHref;
+        if (ref == null || (brutHref = ref.getHref()) == null) {
+            throw new UnconvertibleObjectException("Null reference given.");
+        }
 
-        JAXPStreamFeatureReader featureReader = new JAXPStreamFeatureReader();
+        final URL href;
         try {
-            final JAXBFeatureTypeReader xsdReader = new JAXBFeatureTypeReader();
-            final String schema = source.getSchema();
-
-            if (schema != null) {
-                final URL schemaURL = new URL(schema);
-                final List<FeatureType> featureTypes = xsdReader.read(schemaURL);
-                if (featureTypes != null) {
-                    featureReader = new JAXPStreamFeatureReader(featureTypes);
-                }
-            } else {
-                featureReader.getProperties().put(JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE, true);
-            }
-        } catch(JAXBException ex) {
-            featureReader.getProperties().put(JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE, true);
-        }
-        return featureReader;
-    }
-
-    protected InputStream getInputStreamFromReference (final Reference source) throws UnconvertibleObjectException {
-
-        ArgumentChecks.ensureNonNull("source", source);
-        String method = null;
-
-        if (source instanceof InputReferenceType) {
-            method = ((InputReferenceType) source).getMethod();
-        } else if (source instanceof OutputReferenceType) {
-            method = "GET";
-
-        // WPS 2.0 TODO
-        } else {
-            method = "GET";
+            final String decoded = URLDecoder.decode(brutHref, "UTF-8");
+            href = new URL(decoded);
+        } catch (UnsupportedEncodingException | MalformedURLException ex) {
+            throw new UnconvertibleObjectException("Invalid reference href: "+brutHref, ex);
         }
 
-        InputStream stream = null;
-
-        if (method.equalsIgnoreCase("GET")) {
-
-            try {
-                String href = source.getHref().replaceAll("&amp;", "&");
-                final URL url = new URL(href);
-                stream = url.openStream();
-
-            } catch (UnsupportedEncodingException ex) {
-                throw new UnconvertibleObjectException("Invalid reference href.", ex);
-            } catch (IOException ex) {
-                throw new UnconvertibleObjectException("Can't reach the reference data.", ex);
-            }
-
-        } else if (method.equalsIgnoreCase("POST")) {
-
-            stream = postReferenceRequest((InputReferenceType)source);
-        }
-        return stream;
-    }
-
-
-    /**
-     * Return an Input {@link InputStream stream} of a reference using POST method.
-     * @param reference
-     * @return
-     * @throws UnconvertibleObjectException
-     */
-    private static InputStream postReferenceRequest(final InputReferenceType reference) throws UnconvertibleObjectException {
-
-        String href = null;
+        final URLConnection connection;
         try {
-            href = URLDecoder.decode(reference.getHref(), "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            throw new UnconvertibleObjectException("Invalid reference href.", ex);
-        }
-
-
-        final List<InputReferenceType.Header> headers = reference.getHeader();
-
-        InputStream stream = null;
-        OutputStream requestOS = null;
-        Marshaller marshaller = null;
-
-        try {
-            final Object body = getReferenceBody(reference);
-            if (body == null) {
-                throw new UnconvertibleObjectException("No reference body found for the POST request.");
-            }
-
-            marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
-
-            // Make request
-            final URLConnection conec = new URL(href).openConnection();
-            conec.setConnectTimeout(60);
-            conec.setDoOutput(true);
-            conec.setRequestProperty("content-type", "text/xml");
-            for (final InputReferenceType.Header header : headers) {
-                conec.addRequestProperty(header.getKey(), header.getValue());
-            }
-
-            // Write request content
-            requestOS = conec.getOutputStream();
-            marshaller.marshal(body, requestOS);
-
-            // Parse the response
-            stream = conec.getInputStream();
-            WPSMarshallerPool.getInstance().recycle(marshaller);
-
-        } catch (JAXBException ex) {
-            throw new UnconvertibleObjectException("The requested body is not supported.", ex);
+            connection = href.openConnection();
         } catch (IOException ex) {
-            throw new UnconvertibleObjectException("Can't reach the reference URL or the reference body URL.", ex);
-        } finally {
-            if (requestOS != null) {
+            throw new UnconvertibleObjectException("Cannot connect to reference url:"+href, ex);
+        }
+
+        for (final Reference.Header header : ref.getHeader()) {
+            connection.addRequestProperty(header.getKey(), header.getValue());
+        }
+
+        addBody(connection, ref.getBody(), ref.getBodyReference());
+
+        return connection;
+    }
+
+    private static void addBody(final URLConnection connection, Object body, final Reference.BodyReference bodyReference) {
+        InputStream bodyStream = null;
+        if (body != null) {
+            if (!(body instanceof String)) {
+                // TODO: Check if it can be something else than xml.
+                connection.setRequestProperty("content-type", "text/xml");
+                final Marshaller marshaller;
                 try {
-                    requestOS.close();
-                } catch (IOException ex) {
-                    throw new UnconvertibleObjectException("Can't close the output stream.", ex);
+                    marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
+                } catch (JAXBException ex) {
+                    throw new UnconvertibleObjectException("Internal server error.", ex);
+                }
+
+                // Write request content
+                final StringWriter writer = new StringWriter();
+                try {
+                    marshaller.marshal(body, writer);
+                } catch (JAXBException ex) {
+                    throw new UnconvertibleObjectException("The requested body is not supported.", ex);
+                }
+
+                body = writer.getBuffer().toString();
+
+                try {
+                    WPSMarshallerPool.getInstance().recycle(marshaller);
+                } catch (Exception e) {
+                    // We don't want to stop communication if the xml writer cannot
+                    // be disposed. The only important fact is that it's already
+                    // done its part.
+                    LOGGER.log(Level.WARNING, "A marshaller cannot be recycled", e);
                 }
             }
+
+            bodyStream = new ByteArrayInputStream(((String)body).getBytes(StandardCharsets.UTF_8));
+
+        } else if (bodyReference != null) {
+            try {
+                bodyStream = new URL(URLDecoder.decode(bodyReference.getHref(), "UTF-8")).openStream();
+            } catch (Exception e) {
+                throw new UnconvertibleObjectException("invalid body reference: "+bodyReference.getHref(), e);
+            }
         }
-        return stream;
+
+        if (bodyStream != null) {
+            connection.setDoOutput(true);
+            try (final InputStream inClose = bodyStream;
+                    final OutputStream outStream = connection.getOutputStream()) {
+                IOUtilities.copy(bodyStream, outStream);
+            } catch (IOException ex) {
+                throw new UnconvertibleObjectException("Cannot post reference body", ex);
+            }
+        }
     }
 
-    /**
-     * Reach and unMarshall the body of a request.
-     *
-     * @param reference
-     * @return
-     * @throws UnsupportedEncodingException
-     * @throws JAXBException
-     * @throws MalformedURLException
-     */
-    private static Object getReferenceBody(final InputReferenceType reference)
-            throws UnsupportedEncodingException, JAXBException, MalformedURLException {
-
-        Object obj = null;
-
-        if ( reference.getBody() != null ) {
-            obj = reference.getBody();
-
-        } else if (reference.getBodyReference() != null) {
-
-            final String href = reference.getBodyReference().getHref();
-
-            final Unmarshaller unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
-            final URL url = new URL(URLDecoder.decode(href, "UTF-8"));
-
-            obj = unmarshaller.unmarshal(url);
-            WPSMarshallerPool.getInstance().recycle(unmarshaller);
+    protected InputStream getInputStreamFromReference(final Reference source) throws UnconvertibleObjectException {
+        ArgumentChecks.ensureNonNull("source", source);
+        try {
+            return connect(source).getInputStream();
+        } catch (IOException ex) {
+            throw new UnconvertibleObjectException("Can't reach the reference data.", ex);
         }
-        return obj;
     }
-
 }

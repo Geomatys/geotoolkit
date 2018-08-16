@@ -19,6 +19,7 @@ package org.geotoolkit.wps.xml;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import org.geotoolkit.wps.xml.v200.Reference;
 
 /**
  * Class used to reflect a WPS reference.

@@ -22,8 +22,7 @@ import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.io.WPSIO;
-import org.geotoolkit.wps.xml.Reference;
-import org.geotoolkit.wps.xml.v100.InputReferenceType;
+import org.geotoolkit.wps.xml.v200.Reference;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -37,9 +36,9 @@ public class ReferenceToUrlConnectionConverterTest extends AbstractWPSConverterT
     public void convert() throws Exception {
         final WPSObjectConverter<Reference, URLConnection> converter = WPSConverterRegistry.getInstance().getConverter(Reference.class, URLConnection.class);
 
-        final InputReferenceType ref = new InputReferenceType();
+        final Reference ref = new Reference();
         ref.setHref("https://my.domain/context");
-        final InputReferenceType.Header header = new InputReferenceType.Header();
+        final Reference.Header header = new Reference.Header();
         header.setKey("myKey");
         header.setValue("myValue");
         ref.getHeader().add(header);

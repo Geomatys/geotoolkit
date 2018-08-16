@@ -17,6 +17,7 @@
 package org.geotoolkit.wcs.xml.v111;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -25,7 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ows.xml.v110.BoundingBoxType;
+import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.ows.xml.v110.DescriptionType;
 import org.geotoolkit.ows.xml.v110.KeywordsType;
 import org.geotoolkit.ows.xml.v110.LanguageStringType;
@@ -119,10 +120,11 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
         this.rest = rest;
     }
 
-    public String getIdentifier() {
+    @Override
+    public CodeType getIdentifier() {
         for (JAXBElement<?> jb : rest) {
             if ("Identifier".equals(jb.getName().getLocalPart())) {
-                return (String) jb.getValue();
+                return new CodeType((String) jb.getValue());
             }
         }
         return null;
@@ -143,10 +145,11 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
         }
     }
 
-    public MetadataType getMetadata() {
+    @Override
+    public List<MetadataType> getMetadata() {
         for (JAXBElement<?> jb : rest) {
             if ("Metadata".equals(jb.getName().getLocalPart())) {
-                return (MetadataType) jb.getValue();
+                return Arrays.asList((MetadataType) jb.getValue());
             }
         }
         return null;

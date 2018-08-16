@@ -29,8 +29,7 @@ import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.converters.inputs.references.AbstractReferenceInputConverter;
 import org.geotoolkit.wps.io.WPSIO;
-import org.geotoolkit.wps.xml.Reference;
-import org.geotoolkit.wps.xml.WPSXmlFactory;
+import org.geotoolkit.wps.xml.v200.Reference;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
@@ -51,7 +50,7 @@ public class ReferenceToRenderedImageConverterTest extends AbstractWPSConverterT
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put(AbstractReferenceInputConverter.IOTYPE, WPSIO.IOType.INPUT);
 
-        final Reference reference = WPSXmlFactory.buildInOutReference("1.0.0", WPSIO.IOType.INPUT);
+        final Reference reference = new Reference();
         reference.setHref(image.toString());
         reference.setMimeType("image/tiff");
         reference.setEncoding(null);
@@ -74,7 +73,7 @@ public class ReferenceToRenderedImageConverterTest extends AbstractWPSConverterT
         parameters.put(AbstractReferenceInputConverter.IOTYPE, WPSIO.IOType.INPUT);
         parameters.put(AbstractReferenceInputConverter.ENCODING, "base64");
 
-        final Reference reference = WPSXmlFactory.buildInOutReference("1.0.0", WPSIO.IOType.INPUT);
+        final Reference reference = new Reference();
         reference.setHref(imageBase64.toString());
         reference.setMimeType("image/tiff");
         reference.setEncoding("base64");

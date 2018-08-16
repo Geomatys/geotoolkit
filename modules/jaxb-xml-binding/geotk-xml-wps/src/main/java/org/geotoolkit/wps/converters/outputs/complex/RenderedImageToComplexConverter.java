@@ -25,13 +25,10 @@ import net.iharder.Base64;
 import org.apache.sis.util.UnconvertibleObjectException;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
-import static org.geotoolkit.wps.converters.WPSObjectConverter.WPSVERSION;
-import org.geotoolkit.wps.io.WPSEncoding;
-import org.geotoolkit.wps.xml.ComplexDataType;
-import org.geotoolkit.wps.xml.WPSXmlFactory;
+import org.geotoolkit.wps.xml.v200.Data;
 
 /**
- * Convert an RenderedImage to ComplexDataType using Base64 encoding.
+ * Convert an RenderedImage to Data using Base64 encoding.
  *
  * @author Quentin Boileau (Geomatys)
  */
@@ -55,32 +52,28 @@ public class RenderedImageToComplexConverter extends AbstractComplexOutputConver
     }
 
     @Override
-    public ComplexDataType convert(RenderedImage source, Map<String, Object> params) throws UnconvertibleObjectException {
-
+    public Data convert(RenderedImage source, Map<String, Object> params) throws UnconvertibleObjectException {
         if (source == null) {
             throw new UnconvertibleObjectException("The output data should be defined.");
-        }
-        if (!(source instanceof RenderedImage)) {
-            throw new UnconvertibleObjectException("The requested output data is not an instance of RenderedImage.");
-        }
-
-        final String mime = (String) params.get(MIME);
-        final String encoding = (String) params.get(ENCODING);
-
-        if (mime == null) {
-            throw new UnconvertibleObjectException("MimeType should be defined to encode image in right format in Base64.");
+        } else if (params == null) {
+            throw new UnconvertibleObjectException("Not enough information about data format");
         }
 
-        if (!encoding.equals(WPSEncoding.BASE64.getValue())) {
-            throw new UnconvertibleObjectException("Encoding should be in Base64 for complex request.");
+        final Object tmpMime = params.get(MIME);
+        final String mime;
+        if (tmpMime instanceof String) {
+            mime = (String) tmpMime;
+        } else {
+            throw new UnconvertibleObjectException("No valid mime type given. We cannot determine output image format");
         }
 
-        String wpsVersion  = (String) params.get(WPSVERSION);
-        if (wpsVersion == null) {
-            LOGGER.warning("No WPS version set using default 1.0.0");
-            wpsVersion = "1.0.0";
+        final Data complex = new Data();
+        complex.setMimeType(mime);
+
+        final Object tmpEncoding = params.get(ENCODING);
+        if (tmpEncoding instanceof String) {
+            complex.setEncoding((String) tmpEncoding);
         }
-        final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(wpsVersion, encoding,mime, null);
 
         final String formatName = mime.substring(mime.indexOf("/")+1).toUpperCase();
         try {

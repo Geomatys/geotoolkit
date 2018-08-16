@@ -499,12 +499,12 @@
             </xsd:sequence>
             <xsd:attribute name="outputFormat"
                            type="xsd:string" use="optional"
-                           default="text/xml; subtype=gml/3.1.1">
+                           default="text/xml; subtype=&quot;gml/3.1.1&quot;">
                <xsd:annotation>
                   <xsd:documentation>
                      The outputFormat attribute is used to specify what schema
                      description language should be used to describe features.
-                     The default value of 'text/xml; subtype=3.1.1' means that
+                     The default value of 'text/xml; subtype="gml/3.1.1"' means that
                      the WFS must generate a GML3 application schema that can
                      be used to validate the GML3 output of a GetFeature
                      request or feature instances specified in Transaction
@@ -583,13 +583,13 @@
             </xsd:attribute>
             <xsd:attribute name="outputFormat"
                            type="xsd:string" use="optional"
-                           default="text/xml; subtype=gml/3.1.1">
+                           default="text/xml; subtype=&quot;gml/3.1.1&quot;">
                <xsd:annotation>
                   <xsd:documentation>
                      The outputFormat attribute is used to specify the output
                      format that the Web Feature Service should generate in
                      response to a GetFeature or GetFeatureWithLock element.
-                     The default value of 'text/xml; subtype=gml/3.1.1'
+                     The default value of 'text/xml; subtype="gml/3.1.1"'
                      indicates that the output is an XML document that
                      conforms to the Geography Markup Language (GML)
                      Implementation Specification V3.1.1.
@@ -1021,7 +1021,7 @@
             </xsd:attribute>
             <xsd:attribute name="outputFormat"
                            type="xsd:string" use="optional"
-                           default="text/xml; subtype=gml/3.1.1">
+                           default="text/xml; subtype=&quot;gml/3.1.1&quot;">
                <xsd:annotation>
                   <xsd:documentation>
                      See definition of wfs:GetFeatureType.
@@ -1401,15 +1401,15 @@
          </xsd:annotation>
       </xsd:attribute>
       <xsd:attribute name="inputFormat" type="xsd:string"
-                     use="optional" default="text/xml; subtype=gml/3.1.1">
+                     use="optional" default="text/xml; subtype=&quot;gml/3.1.1&quot;">
          <xsd:annotation>
             <xsd:documentation>
                This inputFormat attribute is used to indicate 
                the format used to encode a feature instance in
                an Insert element.  The default value of
-               'text/xml; subtype=gml/3.1.1' is used to indicate
+               'text/xml; subtype="gml/3.1.1"' is used to indicate
                that feature encoding is GML3.  Another example
-               might be 'text/xml; subtype=gml/2.1.2' indicating
+               might be 'text/xml; subtype="gml/2.1.2"' indicating
                that the feature us encoded in GML2.  A WFS must
                declare in the capabilities document, using a 
                Parameter element, which version of GML it supports.
@@ -1538,9 +1538,9 @@
                This inputFormat attribute is used to indicate 
                the format used to encode a feature instance in
                an Insert element.  The default value of
-               'text/xml; subtype=gml/3.1.1' is used to indicate
+               'text/xml; subtype="gml/3.1.1"' is used to indicate
                that feature encoding is GML3.  Another example
-               might be 'text/xml; subtype=gml/2.1.2' indicating
+               might be 'text/xml; subtype="gml/2.1.2"' indicating
                that the feature us encoded in GML2.  A WFS must
                declare in the capabilities document, using a 
                Parameter element, which version of GML it supports.

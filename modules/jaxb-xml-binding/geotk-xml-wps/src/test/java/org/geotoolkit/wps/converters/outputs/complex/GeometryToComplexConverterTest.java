@@ -17,8 +17,8 @@
 package org.geotoolkit.wps.converters.outputs.complex;
 
 import org.locationtech.jts.geom.Geometry;
-import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import org.apache.sis.storage.DataStoreException;
@@ -29,8 +29,7 @@ import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
-import org.geotoolkit.wps.xml.v100.ext.GeoJSONType;
+import org.geotoolkit.wps.xml.v200.Data;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.util.FactoryException;
@@ -46,28 +45,26 @@ public class GeometryToComplexConverterTest extends org.geotoolkit.test.TestBase
 
         // Get test resource
         Geometry geometryResource =  (Geometry) ConvertersTestUtils.loadTestResource("/inputs/geometry.json");
+        ConvertersTestUtils.assertGeometryIsValid(geometryResource);
 
-        ComplexDataType complex = ConvertersTestUtils.initAndRunOutputConversion(
-                                                                Geometry.class,
-                                                                ComplexDataType.class,
+        Data complex = ConvertersTestUtils.initAndRunOutputConversion(Geometry.class,
+                                                                Data.class,
                                                                 geometryResource,
                                                                 WPSMimeType.APP_GEOJSON.val(),
                                                                 WPSEncoding.UTF8.getValue());
 
         // Test complex
-        ConvertersTestUtils.assertGeometryIsValid(geometryResource);
-        assertEquals(WPSMimeType.APP_GEOJSON.val(), complex.getMimeType());
-        assertEquals(WPSEncoding.UTF8.getValue(), complex.getEncoding());
-        assertNull(complex.getSchema());
-        assertNotNull(complex.getContent());
-        assertEquals(1, complex.getContent().size());
-        assertTrue(complex.getContent().get(0) instanceof GeoJSONType);
-
-        String geoJsonContent = ((GeoJSONType) complex.getContent().get(0)).getContent();
-        Path tmpFilePath = WPSConvertersUtils.writeTempJsonFile(geoJsonContent);
-        Geometry geometry = getGeometry(tmpFilePath);
-
-        ConvertersTestUtils.assertGeometryIsValid(geometry);
+        ConvertersTestUtils.assertFormatMatch(complex, WPSEncoding.UTF8.getValue(), WPSMimeType.APP_GEOJSON.val(), null);
+        ConvertersTestUtils.useDataContentAsFile(complex, file -> {
+            try {
+                Geometry geometry = getGeometry(file);
+                ConvertersTestUtils.assertGeometryIsValid(geometry);
+            } catch (FactoryException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        });
     }
 
     /**

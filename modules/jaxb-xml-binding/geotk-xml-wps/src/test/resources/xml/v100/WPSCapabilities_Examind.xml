@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wps:Capabilities xmlns:gco="http://www.isotc211.org/2005/gco" 
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                  xmlns:gmx="http://www.isotc211.org/2005/gmx" 
+                  xmlns:gmi="http://www.isotc211.org/2005/gmi" 
+                  xmlns:gmd="http://www.isotc211.org/2005/gmd" 
+                  xmlns:gml="http://www.opengis.net/gml/3.2" 
+                  xmlns:xlink="http://www.w3.org/1999/xlink" 
+                  xmlns:wps="http://www.opengis.net/wps/1.0.0"
+                  xmlns:ows="http://www.opengis.net/ows/1.1" 
+                  xmlns:mml="http://www.w3.org/1998/Math/MathML" 
+                  service="WPS" xml:lang="en-EN" version="1.0.0" updateSequence="1527589424971"
+                  xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd">
+    <ows:ServiceIdentification>
+        <ows:Title>littleWPS</ows:Title>
+        <ows:Abstract>WPS</ows:Abstract>
+        <ows:Keywords>
+            <ows:Keyword>WPS</ows:Keyword>
+        </ows:Keywords>
+        <ows:ServiceType>WPS</ows:ServiceType>
+        <ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+        <ows:ServiceTypeVersion>2.0.0</ows:ServiceTypeVersion>
+    </ows:ServiceIdentification>
+    <ows:ServiceProvider>
+        <ows:ProviderName>Geomatyz</ows:ProviderName>
+        <ows:ServiceContact>
+            <ows:PositionName>eat</ows:PositionName>
+            <ows:ContactInfo>
+                <ows:Phone>
+                    <ows:Voice>8998698436</ows:Voice>
+                    <ows:Facsimile>98983938</ows:Facsimile>
+                </ows:Phone>
+                <ows:Address>
+                    <ows:DeliveryPoint>Agropolus international</ows:DeliveryPoint>
+                    <ows:City>Montpellier</ows:City>
+                    <ows:PostalCode>34090</ows:PostalCode>
+                    <ows:Country>France</ows:Country>
+                    <ows:ElectronicMailAddress>toto.tata@geomatyz.com</ows:ElectronicMailAddress>
+                </ows:Address>
+            </ows:ContactInfo>
+        </ows:ServiceContact>
+    </ows:ServiceProvider>
+    <ows:OperationsMetadata>
+        <ows:Operation name="GetCapabilities">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href="http://recette.examind.com/examind/WS/wps/littleWPS?"/>
+                    <ows:Post xlink:href="http://recette.examind.com/examind/WS/wps/littleWPS?"/>
+                </ows:HTTP>
+            </ows:DCP>
+            <ows:Parameter name="service">
+                <ows:AllowedValues>
+                    <ows:Value>WPS</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="Acceptversions">
+                <ows:AllowedValues>
+                    <ows:Value>1.0.0</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="AcceptFormats">
+                <ows:AllowedValues>
+                    <ows:Value>text/xml</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+        </ows:Operation>
+        <ows:Operation name="DescribeProcess">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href="http://recette.examind.com/examind/WS/wps/littleWPS?"/>
+                    <ows:Post xlink:href="http://recette.examind.com/examind/WS/wps/littleWPS?"/>
+                </ows:HTTP>
+            </ows:DCP>
+            <ows:Parameter name="service">
+                <ows:AllowedValues>
+                    <ows:Value>WPS</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="version">
+                <ows:AllowedValues>
+                    <ows:Value>1.0.0</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+        </ows:Operation>
+        <ows:Operation name="Execute">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Post xlink:href="http://recette.examind.com/examind/WS/wps/littleWPS?"/>
+                </ows:HTTP>
+            </ows:DCP>
+            <ows:Parameter name="service">
+                <ows:AllowedValues>
+                    <ows:Value>WPS</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="version">
+                <ows:AllowedValues>
+                    <ows:Value>1.0.0</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+        </ows:Operation>
+        <ows:Constraint name="PostEncoding">
+            <ows:AllowedValues>
+                <ows:Value>XML</ows:Value>
+            </ows:AllowedValues>
+        </ows:Constraint>
+    </ows:OperationsMetadata>
+    <wps:ProcessOfferings>
+        <wps:Process wps:processVersion="1.0.0">
+            <ows:Identifier>urn:ogc:cstl:wps:cesium:cesiumHeightMap</ows:Identifier>
+            <ows:Title>Cesium : CesiumHeightMap</ows:Title>
+            <ows:Abstract>Cesium quantized-mesh pyramid process</ows:Abstract>
+        </wps:Process>
+        <wps:Process wps:processVersion="1.0.0">
+            <ows:Identifier>urn:ogc:cstl:wps:cesium:cesiumPyramid</ows:Identifier>
+            <ows:Title>Cesium : CesiumPyramid</ows:Title>
+            <ows:Abstract>Cesium quantized-mesh pyramid process</ows:Abstract>
+        </wps:Process>
+        <wps:Process wps:processVersion="1.0.0">
+            <ows:Identifier>urn:ogc:cstl:wps:hadoop:hadoop-feature-intersect</ows:Identifier>
+            <ows:Title>Hadoop : Hadoop-feature-intersect</ows:Title>
+            <ows:Abstract>Launch an remote hadoop process sample : Feature intersect.</ows:Abstract>
+        </wps:Process>
+        <wps:Process wps:processVersion="1.0.0">
+            <ows:Identifier>urn:ogc:cstl:wps:hadoop:ndvi3g-avg</ows:Identifier>
+            <ows:Title>Hadoop : Ndvi3g-avg</ows:Title>
+            <ows:Abstract>Download NDVI3G from an S3 repository, and then compute average NDVI value.</ows:Abstract>
+        </wps:Process>
+        <wps:Process wps:processVersion="1.0.0">
+            <ows:Identifier>urn:ogc:cstl:wps:hadoop:hadoop-word-count</ows:Identifier>
+            <ows:Title>Hadoop : Hadoop-word-count</ows:Title>
+            <ows:Abstract>Launch an remote hadoop process sample : Word count.</ows:Abstract>
+        </wps:Process>
+        <wps:Process wps:processVersion="1.0.0">
+            <ows:Identifier>urn:ogc:cstl:wps:geotoolkit:math:add</ows:Identifier>
+            <ows:Title>Geotoolkit : Math:add</ows:Title>
+            <ows:Abstract>Adds two double.</ows:Abstract>
+        </wps:Process>
+        <wps:Process wps:processVersion="1.0.0">
+            <ows:Identifier>urn:ogc:cstl:wps:geotoolkit:jts:buffer</ows:Identifier>
+            <ows:Title>Geotoolkit : Jts:buffer</ows:Title>
+            <ows:Abstract>Apply JTS buffer to a geometry.</ows:Abstract>
+        </wps:Process>
+    </wps:ProcessOfferings>
+    <wps:Languages>
+        <wps:Default>
+            <ows:Language>en-EN</ows:Language>
+        </wps:Default>
+        <wps:Supported>
+            <ows:Language>en-EN</ows:Language>
+        </wps:Supported>
+    </wps:Languages>
+</wps:Capabilities>

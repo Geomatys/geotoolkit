@@ -32,11 +32,13 @@ import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.Reference;
-import org.geotoolkit.wps.xml.WPSXmlFactory;
+import org.geotoolkit.wps.xml.v200.Reference;
+;
 import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.wps.converters.WPSConvertersUtils;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -88,13 +90,7 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
             throw new UnconvertibleObjectException("The requested output reference data is not an instance of Feature.");
         }
 
-        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
-        String wpsVersion  = (String) params.get(WPSVERSION);
-        if (wpsVersion == null) {
-            LOGGER.warning("No WPS version set using default 1.0.0");
-            wpsVersion = "1.0.0";
-        }
-        Reference reference = WPSXmlFactory.buildInOutReference(wpsVersion, ioType);
+        Reference reference = new Reference();
 
         reference.setMimeType((String) params.get(MIME));
         reference.setEncoding((String) params.get(ENCODING));

@@ -21,7 +21,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.Data;
 import org.junit.Test;
 
 /**
@@ -32,13 +32,12 @@ public class ComplexToFeatureCollectionConverterTest extends org.geotoolkit.test
 
 
     /**
-     * Test that the conversion from a ComplexDataType containing a FeatureCollection
-     * in geoJSON converts to valid FeatureCollection
+     * Test that the conversion from a Data containing a FeatureCollection
+ in geoJSON converts to valid FeatureCollection
      */
     @Test
     public void testJSONConversion() throws IOException {
-        FeatureCollection featureCollection = ConvertersTestUtils.initAndRunInputConversion(
-                                                ComplexDataType.class,
+        FeatureCollection featureCollection = ConvertersTestUtils.initAndRunInputConversion(Data.class,
                                                 FeatureCollection.class,
                                                 "/inputs/featurecollection.json",
                                                 WPSMimeType.APP_GEOJSON.val(),

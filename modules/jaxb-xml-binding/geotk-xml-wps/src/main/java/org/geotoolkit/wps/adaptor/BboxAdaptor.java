@@ -24,13 +24,10 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.geometry.isoonjts.GeometryUtils;
 import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.ows.xml.v200.BoundingBoxType;
-import org.geotoolkit.wps.xml.v100.InputType;
-import org.geotoolkit.wps.xml.v100.OutputDataType;
-import org.geotoolkit.wps.xml.v100.SupportedCRSsType;
 import org.geotoolkit.wps.xml.v200.BoundingBoxData;
 import org.geotoolkit.wps.xml.v200.Data;
-import org.geotoolkit.wps.xml.v200.DataInputType;
-import org.geotoolkit.wps.xml.v200.DataOutputType;
+import org.geotoolkit.wps.xml.v200.DataInput;
+import org.geotoolkit.wps.xml.v200.DataOutput;
 import org.geotoolkit.wps.xml.v200.SupportedCRS;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -57,12 +54,7 @@ public class BboxAdaptor implements DataAdaptor<Envelope> {
     }
 
     @Override
-    public InputType toWPS1Input(Envelope candidate) {
-        return InputType.createBoundingBox("", candidate);
-    }
-
-    @Override
-    public DataInputType toWPS2Input(Envelope candidate) {
+    public DataInput toWPS2Input(Envelope candidate) {
 
         //change envelope crs if not supported
         if (crss.contains(candidate.getCoordinateReferenceSystem())) {
@@ -77,19 +69,14 @@ public class BboxAdaptor implements DataAdaptor<Envelope> {
         final Data data = new Data();
         data.getContent().add(litValue);
 
-        final DataInputType dit = new DataInputType();
+        final DataInput dit = new DataInput();
         dit.setData(data);
 
         return dit;
     }
 
     @Override
-    public Envelope fromWPS1Input(OutputDataType candidate) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Envelope fromWPS2Input(DataOutputType candidate) throws UnconvertibleObjectException {
+    public Envelope fromWPS2Input(DataOutput candidate) throws UnconvertibleObjectException {
         final BoundingBox bbox = candidate.getData().getBoundingBoxData();
 
         final List<Double> lower = bbox.getLowerCorner();
@@ -113,29 +100,6 @@ public class BboxAdaptor implements DataAdaptor<Envelope> {
         return cenv;
     }
 
-    public static BboxAdaptor create(SupportedCRSsType data) {
-
-        final List<CoordinateReferenceSystem> crss = new ArrayList<>();
-        for (String scrs : data.getSupported().getCRS()) {
-            try {
-                crss.add(CRS.forCode(scrs));
-            } catch (FactoryException ex) {
-                //do nothing, skip this crs
-            }
-        }
-
-        final SupportedCRSsType.Default def = data.getDefault();
-        if (def!=null) {
-            try {
-                crss.add(0, CRS.forCode(def.getCRS()));
-            } catch (FactoryException ex) {
-                //do nothing, skip this crs
-            }
-        }
-
-        return new BboxAdaptor(crss);
-    }
-
     public static BboxAdaptor create(BoundingBoxData data) {
 
         final List<CoordinateReferenceSystem> crss = new ArrayList<>();
@@ -154,5 +118,4 @@ public class BboxAdaptor implements DataAdaptor<Envelope> {
 
         return new BboxAdaptor(crss);
     }
-
 }

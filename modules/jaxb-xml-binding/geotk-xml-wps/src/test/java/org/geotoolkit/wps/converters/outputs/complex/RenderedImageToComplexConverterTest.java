@@ -29,7 +29,7 @@ import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.Data;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -42,14 +42,14 @@ public class RenderedImageToComplexConverterTest extends AbstractWPSConverterTes
 
     @Test
     public void testConversion() throws UnconvertibleObjectException, IOException  {
-        final WPSObjectConverter<RenderedImage, ComplexDataType> converter = WPSConverterRegistry.getInstance().getConverter(RenderedImage.class, ComplexDataType.class);
+        final WPSObjectConverter<RenderedImage, Data> converter = WPSConverterRegistry.getInstance().getConverter(RenderedImage.class, Data.class);
 
         final RenderedImage img = ConvertersTestUtils.makeRendredImage();
         final Map<String, Object> param = new HashMap<String, Object>();
         param.put(WPSObjectConverter.MIME, WPSMimeType.IMG_TIFF.val());
         param.put(WPSObjectConverter.ENCODING, "base64");
 
-        final ComplexDataType complex = converter.convert(img, param);
+        final Data complex = converter.convert(img, param);
         final List<Object> content = complex.getContent();
         final String encodedImage = (String) content.get(0);
 

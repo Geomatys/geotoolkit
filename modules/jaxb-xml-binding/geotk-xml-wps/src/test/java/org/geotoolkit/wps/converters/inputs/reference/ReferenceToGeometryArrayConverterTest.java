@@ -21,7 +21,7 @@ import java.io.IOException;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.v200.Reference;
 import org.junit.Test;
 
 /**
@@ -32,8 +32,7 @@ public class ReferenceToGeometryArrayConverterTest extends org.geotoolkit.test.T
 
     @Test
     public void testJSONConversion() throws IOException {
-        final Geometry[] geometryArray = ConvertersTestUtils.initAndRunInputConversion(
-                                                Reference.class,
+        final Geometry[] geometryArray = ConvertersTestUtils.initAndRunInputConversion(Reference.class,
                                                 Geometry[].class,
                                                 "/inputs/geometrycollection.json",
                                                 WPSMimeType.APP_GEOJSON.val(),

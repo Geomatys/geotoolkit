@@ -87,6 +87,7 @@ public class BasicIdentificationType extends DescriptionType {
      *     {@link CodeType }
      *
      */
+    @Override
     public CodeType getIdentifier() {
         return identifier;
     }
@@ -103,6 +104,17 @@ public class BasicIdentificationType extends DescriptionType {
         this.identifier = value;
     }
 
+    @Override
+    public List<MetadataType> getMetadata() {
+        final List<MetadataType> result = new ArrayList<>();
+        if (metadata != null) {
+            for (JAXBElement<? extends MetadataType> meta : metadata) {
+                result.add(meta.getValue());
+            }
+        }
+        return result;
+    }
+
     /**
      * Optional unordered list of additional metadata
      *               about this data(set). A list of optional metadata elements for
@@ -115,9 +127,9 @@ public class BasicIdentificationType extends DescriptionType {
      *
      *
      */
-    public List<JAXBElement<? extends MetadataType>> getMetadata() {
+    public List<JAXBElement<? extends MetadataType>> getJbMetadata() {
         if (metadata == null) {
-            metadata = new ArrayList<JAXBElement<? extends MetadataType>>();
+            metadata = new ArrayList<>();
         }
         return this.metadata;
     }

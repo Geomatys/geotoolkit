@@ -23,8 +23,9 @@ import javax.xml.bind.JAXBException;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.Reference;
-import org.opengis.feature.FeatureType;
+import org.geotoolkit.wps.xml.v200.Reference;
+;
+import org.opengis.feature.FeatureType;import org.opengis.feature.FeatureType;
 
 
 /**
@@ -76,7 +77,7 @@ public final class ReferenceToFeatureTypeConverter extends AbstractReferenceInpu
                 throw new UnconvertibleObjectException("Invalid reference input : can't read reference schema.",ex);
             }
         }else {
-             throw new UnconvertibleObjectException("Reference data mime is not supported");
+             throw new UnconvertibleObjectException("ReferenceType data mime is not supported");
         }
     }
 }

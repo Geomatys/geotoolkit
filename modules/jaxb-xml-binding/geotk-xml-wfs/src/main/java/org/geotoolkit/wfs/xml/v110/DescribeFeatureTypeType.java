@@ -102,7 +102,7 @@ public class DescribeFeatureTypeType extends BaseRequestType implements Describe
      */
     public String getOutputFormat() {
         if (outputFormat == null) {
-            return "text/xml; subtype=gml/3.1.1";
+            return "text/xml; subtype=\"gml/3.1.1\"";
         } else {
             return outputFormat;
         }

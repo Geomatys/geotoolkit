@@ -25,9 +25,13 @@ import java.util.List;
  */
 public interface AbstractDescription {
 
+    AbstractCodeType getIdentifier();
+
     String getFirstTitle();
 
     String getFirstAbstract();
 
     List<? extends AbstractKeywords> getKeywords();
+
+    List<? extends AbstractMetadata> getMetadata();
 }

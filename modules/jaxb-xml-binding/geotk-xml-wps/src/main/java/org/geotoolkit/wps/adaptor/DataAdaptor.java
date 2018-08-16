@@ -17,10 +17,8 @@
 package org.geotoolkit.wps.adaptor;
 
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.xml.v100.InputType;
-import org.geotoolkit.wps.xml.v100.OutputDataType;
-import org.geotoolkit.wps.xml.v200.DataInputType;
-import org.geotoolkit.wps.xml.v200.DataOutputType;
+import org.geotoolkit.wps.xml.v200.DataInput;
+import org.geotoolkit.wps.xml.v200.DataOutput;
 
 /**
  * Define a mapping between WPS complexe data type and java type.
@@ -44,28 +42,12 @@ public interface DataAdaptor<T> {
     Class<T> getValueClass();
 
     /**
-     * Convert java object to WPS-1 input.
-     *
-     * @param candidate
-     * @return
-     */
-    InputType toWPS1Input(T candidate) throws UnconvertibleObjectException;
-
-    /**
      * Convert java object to WPS-2 input.
      *
      * @param candidate
      * @return
      */
-    DataInputType toWPS2Input(T candidate) throws UnconvertibleObjectException;
-
-    /**
-     * Convert WPS-1 data to java.
-     *
-     * @param candidate
-     * @return
-     */
-    T fromWPS1Input(OutputDataType candidate) throws UnconvertibleObjectException;
+    DataInput toWPS2Input(T candidate) throws UnconvertibleObjectException;
 
     /**
      * Convert WPS-2 data to java.
@@ -73,6 +55,6 @@ public interface DataAdaptor<T> {
      * @param candidate
      * @return
      */
-    T fromWPS2Input(DataOutputType candidate) throws UnconvertibleObjectException;
+    T fromWPS2Input(DataOutput candidate) throws UnconvertibleObjectException;
 
 }
