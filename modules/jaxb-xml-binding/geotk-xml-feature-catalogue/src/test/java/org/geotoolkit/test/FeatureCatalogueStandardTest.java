@@ -34,7 +34,7 @@ import org.geotoolkit.feature.catalog.FeatureCatalogueImpl;
 import org.geotoolkit.feature.catalog.FeatureCatalogueStandard;
 import org.geotoolkit.feature.catalog.FeatureTypeImpl;
 import org.geotoolkit.feature.catalog.ListedValueImpl;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.MetadataFactory;
 import org.opengis.feature.catalog.Constraint;
 import org.opengis.feature.catalog.FeatureType;

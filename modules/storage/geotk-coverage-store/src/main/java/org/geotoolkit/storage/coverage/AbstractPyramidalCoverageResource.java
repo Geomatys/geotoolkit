@@ -32,9 +32,11 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.geometry.Envelopes;
@@ -243,26 +245,38 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
         assert endX > startX && endX <= image.getNumXTiles();
         assert endY > startY && endY <= image.getNumYTiles();
 
+        final int base = Runtime.getRuntime().availableProcessors();
         final RejectedExecutionHandler rejectHandler = new ThreadPoolExecutor.CallerRunsPolicy();
-        final BlockingQueue queue = new ArrayBlockingQueue(Runtime.getRuntime().availableProcessors());
-        final ThreadPoolExecutor executor = new ThreadPoolExecutor(
-                0, Runtime.getRuntime().availableProcessors(), 1, TimeUnit.MINUTES, queue, rejectHandler);
+        final BlockingQueue queue = new ArrayBlockingQueue(base);
+
+        final ThreadPoolExecutor executor = new ThreadPoolExecutor(Math.max(base, 4), Math.max(base, 4),
+                1, TimeUnit.MINUTES, queue,
+                new ThreadFactory() {
+                    int i=0;
+                    @Override
+                    public synchronized Thread newThread(Runnable r) {
+                        final Thread t = new Thread(r);
+                        t.setName("Pyramid writer Pool -"+(i++));
+                        return t;
+                    }
+                }, rejectHandler);
 
         for(int y=startY; y<endY;y++){
             for(int x=startX;x<endX;x++){
-                final Raster raster = image.getTile(offsetX+x, offsetY+y);
-                final RenderedImage img = new BufferedImage(image.getColorModel(),
-                        (WritableRaster)raster, image.getColorModel().isAlphaPremultiplied(), null);
-
-                final int tx = offsetX+x;
-                final int ty = offsetY+y;
-
+                final int X = x;
+                final int Y = y;
                 executor.submit(new Runnable() {
                     @Override
                     public void run() {
                         if (monitor != null && monitor.isCanceled()) {
                             return;
                         }
+                        final Raster raster = image.getTile(offsetX+X, offsetY+Y);
+                        final RenderedImage img = new BufferedImage(image.getColorModel(),
+                                (WritableRaster)raster, image.getColorModel().isAlphaPremultiplied(), null);
+
+                        final int tx = offsetX+X;
+                        final int ty = offsetY+Y;
 
                         try {
                             writeTile(pyramidId, mosaicId, tx, ty, img);
@@ -272,6 +286,13 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
                     }
                 });
             }
+        }
+
+        executor.shutdown();
+        try {
+            executor.awaitTermination(10, TimeUnit.DAYS);
+        } catch (InterruptedException ex) {
+            throw new DataStoreException("Pyramid writing took to much time : "+ex.getMessage(), ex);
         }
     }
 

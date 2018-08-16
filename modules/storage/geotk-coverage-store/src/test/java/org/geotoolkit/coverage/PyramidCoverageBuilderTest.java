@@ -57,7 +57,10 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
         GridCoverageResource ref1 = createCoverage("cov1", env1, af, createImage(200, 200, Color.RED));
 
         final MPCoverageStore mpCovStore = new MPCoverageStore();
-        final PyramidCoverageBuilder pcb = new PyramidCoverageBuilder(new Dimension(100, 100), InterpolationCase.NEIGHBOR, 2);
+        final PyramidCoverageBuilder pcb = new PyramidCoverageBuilder();
+        pcb.setTileSize(new Dimension(100, 100));
+        pcb.setInterpolation(InterpolationCase.NEIGHBOR);
+        pcb.setLanczosWindow(2);
         final double[] fillValue = new double[4];
 
         final double[] scales = new double[]{0.1};
@@ -138,7 +141,11 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
          */
 
         final MPCoverageStore mpCovStore = new MPCoverageStore();
-        final PyramidCoverageBuilder pcb = new PyramidCoverageBuilder(new Dimension(tileSize, tileSize), InterpolationCase.NEIGHBOR, 2, true);
+        final PyramidCoverageBuilder pcb = new PyramidCoverageBuilder();
+        pcb.setTileSize(new Dimension(tileSize, tileSize));
+        pcb.setInterpolation(InterpolationCase.NEIGHBOR);
+        pcb.setLanczosWindow(2);
+        pcb.setReuseTiles(true);
 
         final GeneralEnvelope env = new GeneralEnvelope(EPSG4326);
         env.setRange(0, 0, +30);
@@ -273,7 +280,11 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
         GridCoverageResource ref2 = createCoverage("cov2", env2, af2, createImage1Band(200, 200));
 
         final MPCoverageStore mpCovStore = new MPCoverageStore();
-        final PyramidCoverageBuilder pcb = new PyramidCoverageBuilder(new Dimension(tileSize, tileSize), InterpolationCase.NEIGHBOR, 2, true);
+        final PyramidCoverageBuilder pcb = new PyramidCoverageBuilder();
+        pcb.setTileSize(new Dimension(tileSize, tileSize));
+        pcb.setInterpolation(InterpolationCase.NEIGHBOR);
+        pcb.setLanczosWindow(2);
+        pcb.setReuseTiles(true);
 
         final GeneralEnvelope env = new GeneralEnvelope(EPSG4326);
         env.setRange(0, 0, +30);

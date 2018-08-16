@@ -64,7 +64,6 @@ import static org.geotoolkit.util.Utilities.hash;
  */
 @Deprecated
 public abstract class AbstractMathTransform extends org.apache.sis.referencing.operation.transform.AbstractMathTransform
-        implements org.geotoolkit.io.wkt.Formattable
 {
     /**
      * Constructs a math transform.

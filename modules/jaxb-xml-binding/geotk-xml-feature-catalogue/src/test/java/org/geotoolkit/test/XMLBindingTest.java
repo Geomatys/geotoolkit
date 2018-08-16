@@ -44,7 +44,7 @@ import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
 import org.apache.sis.metadata.iso.citation.DefaultTelephone;
 import org.apache.sis.internal.jaxb.gco.Multiplicity;
 import org.apache.sis.measure.NumberRange;
-import org.apache.sis.test.XMLComparator;
+import org.apache.sis.test.xml.DocumentComparator;
 import org.apache.sis.util.iso.DefaultNameFactory;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.xml.MarshallerPool;
@@ -382,7 +382,7 @@ public class XMLBindingTest {
         Path p = IOUtilities.getResourceAsPath("org/geotoolkit/test/FeatureCatalogue.xml");
         String expected = IOUtilities.toString(p);
 
-        XMLComparator comparator = new XMLComparator(expected, result);
+        DocumentComparator comparator = new DocumentComparator(expected, result);
         comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
 
@@ -393,7 +393,7 @@ public class XMLBindingTest {
         p = IOUtilities.getResourceAsPath("org/geotoolkit/test/FeatureAssociation.xml");
         expected = IOUtilities.toString(p);
 
-        comparator = new XMLComparator(expected, result);
+        comparator = new DocumentComparator(expected, result);
         comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
 
@@ -404,7 +404,7 @@ public class XMLBindingTest {
         p = IOUtilities.getResourceAsPath("org/geotoolkit/test/InheritanceRelation.xml");
         expected = IOUtilities.toString(p);
 
-        comparator = new XMLComparator(expected, result);
+        comparator = new DocumentComparator(expected, result);
         comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
 
@@ -415,7 +415,7 @@ public class XMLBindingTest {
         p = IOUtilities.getResourceAsPath("org/geotoolkit/test/FeatureOperation.xml");
         expected = IOUtilities.toString(p);
 
-        comparator = new XMLComparator(expected, result);
+        comparator = new DocumentComparator(expected, result);
         comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
     }

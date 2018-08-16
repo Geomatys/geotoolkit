@@ -152,7 +152,7 @@
       <plugin>
         <groupId>org.apache.sis.core</groupId>
         <artifactId>sis-build-helper</artifactId>
-        <version>${sis.version}</version>
+        <version>${sis.build.helper.version}</version>
         <configuration>
           <oxtName>geotk-${project.version}</oxtName>
           <pack200>true</pack200>

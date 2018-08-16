@@ -35,9 +35,7 @@ import static org.geotoolkit.test.Assert.*;
 
 /**
  * Base class for testing read operations on various NetCDF files.
- * Those tests require large test files. For more information, see:
- * <p>
- * <a href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/modules/coverage/geotk-coverage-sql/src/test/resources/Tests/README.html">About large test files</a>
+ * Those tests require large test files.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20

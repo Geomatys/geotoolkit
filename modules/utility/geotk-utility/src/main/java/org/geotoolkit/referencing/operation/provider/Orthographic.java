@@ -27,9 +27,8 @@ import org.opengis.referencing.operation.PlanarProjection;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.metadata.Identifier;
 
-import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.internal.referencing.provider.Mercator2SP;
 
 
@@ -317,8 +316,6 @@ public class Orthographic extends MapProjection {
             new NamedIdentifier(Citations.S57,     "Orthographic"),
             new NamedIdentifier(Citations.S57,     "ORT"),
             new IdentifierCode (Citations.S57,      10),
-            new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
-                                Vocabulary.Keys.OrthographicProjection))
         }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR,
             LONGITUDE_OF_CENTRE, LATITUDE_OF_CENTRE,

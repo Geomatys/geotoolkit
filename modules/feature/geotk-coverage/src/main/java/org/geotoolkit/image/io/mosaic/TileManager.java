@@ -70,8 +70,7 @@ public abstract class TileManager implements Serializable {
 
     /**
      * The default name of the filename containing a serialized form of a {@code TileManager}
-     * instance. Files of this name can be created and loaded by various Geotk module, for
-     * example {@code geotk-coverage-sql} and {@code geotk-wizards-swing}.
+     * instance.
      *
      * @since 3.18
      */

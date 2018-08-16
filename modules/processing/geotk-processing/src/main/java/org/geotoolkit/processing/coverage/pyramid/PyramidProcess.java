@@ -19,7 +19,6 @@ package org.geotoolkit.processing.coverage.pyramid;
 import java.awt.Dimension;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
-import javax.swing.JLabel;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.util.NamesExt;
@@ -98,7 +97,7 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
 
         ArgumentChecks.ensureNonNull("inputParameters", inputParameters);
 
-        final GridCoverageResource coverageref        = inputParameters.getValue(PyramidDescriptor.IN_COVERAGEREF      );
+        final GridCoverageResource coverageref    = inputParameters.getValue(PyramidDescriptor.IN_COVERAGEREF      );
         final CoverageStore coverageStore         = inputParameters.getValue(PyramidDescriptor.IN_COVERAGESTORE    );
         final InterpolationCase interpolationcase = inputParameters.getValue(PyramidDescriptor.IN_INTERPOLATIONCASE);
         final Map resolution_per_envelope         = inputParameters.getValue(PyramidDescriptor.IN_RES_PER_ENVELOPE );
@@ -119,7 +118,11 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
                 throw new ProcessException("Map store objects must be instance of double[]", this, null);
         }
 
-        final PyramidCoverageBuilder pgcb = new PyramidCoverageBuilder(tilesize, interpolationcase, 2, reuseTiles);
+        final PyramidCoverageBuilder pgcb = new PyramidCoverageBuilder();
+        pgcb.setTileSize(tilesize);
+        pgcb.setInterpolation(interpolationcase);
+        pgcb.setLanczosWindow(2);
+        pgcb.setReuseTiles(reuseTiles);
         if (isCanceled()) {
             throw new CancellationException();
         }

@@ -20,7 +20,6 @@ package org.geotoolkit.temporal.reference;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import org.geotoolkit.metadata.Citations;
 import java.util.Date;
 import java.util.List;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
@@ -61,8 +60,8 @@ public class DefaultOrdinalReferenceSystemTest extends org.geotoolkit.test.TestB
         seq.add(FACTORY.createOrdinalEra(new SimpleInternationalString("old Era"), beginning1, end1, null));
         seq.add(FACTORY.createOrdinalEra(new SimpleInternationalString("new Era"), beginning2, end2, null));
 
-        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Ordinal1");
-        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Ordinal2");
+        NamedIdentifier name1 = new NamedIdentifier(null, "Ordinal1");
+        NamedIdentifier name2 = new NamedIdentifier(null, "Ordinal2");
         ordinalReferenceSystem1 = FACTORY.createOrdinalReferenceSystem(name1, new DefaultExtent(), seq);
         ordinalReferenceSystem2 = FACTORY.createOrdinalReferenceSystem(name2, new DefaultExtent(), seq);
     }

@@ -63,10 +63,8 @@ The Geotoolkit.org library
   The JAI libraries can be obtained from {{{http://www.oracle.com/technetwork/java/current-142188.html}the Oracle website}}
   When installed, the JAI download will place a JAR file and some native code into the Java Runtime Environment.
 
-  The {{{./download.html}download page}} explains in detail how to obtain pre-compiled binaries of
-  Geotk either from the {{{http://maven.geotoolkit.org/}Maven\ 2 repository}} or from the
-  {{{http://jenkins.geotoolkit.org/job/Geotoolkit/}automated build page}}. The
-  Maven\ 2 repository enables projects which use that built tool to declare a dependency on
+  Pre-compiled binaries can be obtained from the {{{http://maven.geotoolkit.org/}Maven\ 2 repository}}.
+  The Maven\ 2 repository enables projects which use that built tool to declare a dependency on
   Geotk and have Maven automatically find and download the required binary archives.
 
   The {{{./use.html}Introduction to Geotoolkit.org}} provides a brief explanation of how to create

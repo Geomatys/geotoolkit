@@ -21,16 +21,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.Entry;
 import org.geotoolkit.observation.xml.Process;
 
 
 /**
  * Implémentation d'une entrée représentant une {@linkplain Procedure procédure}.
  *
- * @version $Id: ProcessType.java 1559 2009-04-23 14:42:42Z glegal $
  * @author Antoine Hnawia
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name="Process")

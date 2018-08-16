@@ -16,7 +16,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.XMLComparator;
+import org.apache.sis.test.xml.DocumentComparator;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
@@ -77,7 +77,7 @@ public class XMLBindingTestBuilder<T> {
         final byte[] outputArray = out.toByteArray();
         LOGGER.info(() -> "Generated Document:" + System.lineSeparator() + new String(outputArray, StandardCharsets.UTF_8));
 
-        final XMLComparator comparator = new XMLComparator(input.get(), new ByteArrayInputStream(outputArray));
+        final DocumentComparator comparator = new DocumentComparator(input.get(), new ByteArrayInputStream(outputArray));
         comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.ignoredAttributes.add("http://www.w3.org/2001/XMLSchema-instance:schemaLocation");
         comparator.ignoreComments = true;

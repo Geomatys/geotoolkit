@@ -53,7 +53,7 @@ import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
 
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.operation.provider.Orthographic;
 import org.apache.sis.internal.referencing.provider.ObliqueMercator;
 import org.geotoolkit.referencing.operation.provider.Stereographic;

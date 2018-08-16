@@ -18,7 +18,6 @@
 package org.geotoolkit.temporal.object;
 
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
-import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
 import org.junit.After;
@@ -43,8 +42,8 @@ public class DefaultTemporalPositionTest extends org.geotoolkit.test.TestBase {
 
     @Before
     public void setUp() {
-        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
-        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Julian calendar");
+        NamedIdentifier name1 = new NamedIdentifier(null, "Gregorian calendar");
+        NamedIdentifier name2 = new NamedIdentifier(null, "Julian calendar");
 
         TemporalReferenceSystem frame1 = FACTORY.createTemporalReferenceSystem(name1, new DefaultExtent());
         TemporalReferenceSystem frame2 = FACTORY.createTemporalReferenceSystem(name2, new DefaultExtent());

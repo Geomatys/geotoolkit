@@ -29,7 +29,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;

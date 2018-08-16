@@ -22,7 +22,6 @@ import org.geotoolkit.georss.xml.v100.WhereType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.w3._2005.atom.*;
 
 import javax.xml.bind.JAXBContext;
@@ -31,7 +30,7 @@ import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.XMLComparator;
+import org.apache.sis.test.xml.DocumentComparator;
 import org.xml.sax.SAXException;
 
 public class OWCTest extends org.geotoolkit.test.TestBase {
@@ -133,7 +132,7 @@ public class OWCTest extends org.geotoolkit.test.TestBase {
         final StringWriter sw = new StringWriter();
         marsh.marshal(feed, sw);
         pool.recycle(marsh);
-        XMLComparator comparator = new XMLComparator(EXP_RESULT, sw.toString());
+        DocumentComparator comparator = new DocumentComparator(EXP_RESULT, sw.toString());
         comparator.compare();
     }
 }

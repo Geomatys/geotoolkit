@@ -27,9 +27,8 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.PlanarProjection;
 
-import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 
 
 /**
@@ -284,8 +283,6 @@ public class Stereographic extends MapProjection {
             new IdentifierCode (Citations.GEOTIFF,  14),
             new NamedIdentifier(Citations.PROJ4,   "stere"),
             new IdentifierCode (Citations.MAP_INFO, 20),
-            new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
-                                Vocabulary.Keys.StereographicProjection))
         }, new Citation[] {
             Citations.EPSG
         },

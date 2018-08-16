@@ -31,7 +31,7 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.Interpolator2D;
 import org.geotoolkit.coverage.processing.Operation2D;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.apache.sis.parameter.ParameterBuilder;

@@ -43,11 +43,6 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
     private static final int DEFAULT_TILE_SIZE = 256;
 
     /**
-     * Minimum required tile size.
-     */
-    private static final int MIN_TILE_SIZE = 64;
-
-    /**
      * Upper left corner of all image tiles.
      */
     private Point[] tileIndices = null;
@@ -120,8 +115,10 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
         if (tileSize == null) {
             this.tileWidth = this.tileHeight = DEFAULT_TILE_SIZE;
         } else {
-            tileWidth  = Math.min(Math.max(MIN_TILE_SIZE, tileSize.width),  DEFAULT_TILE_SIZE);
-            tileHeight = Math.min(Math.max(MIN_TILE_SIZE, tileSize.height), DEFAULT_TILE_SIZE);
+            ArgumentChecks.ensureStrictlyPositive("tile width", tileSize.width);
+            ArgumentChecks.ensureStrictlyPositive("tile height", tileSize.height);
+            tileWidth  = tileSize.width;
+            tileHeight = tileSize.height;
         }
 
         this.tileGridXOffset = tileGridXOffset;

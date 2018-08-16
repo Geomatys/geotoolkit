@@ -14,7 +14,6 @@
     <!--     Menus to appears on the left side of each page   -->
     <!-- ==================================================== -->
     <menu name="GeotoolKit">
-      <item name="Download"     href="http://www.geotoolkit.org/download.html"/>
       <item name="Full Javadoc" href="http://javadoc.geotoolkit.org/"/>
       <item name="Legal review" href="review.html"/>
     </menu>

@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.ReferenceType;
-import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.Entry;
 import org.geotoolkit.swe.xml.AnyResult;
 
 /**
@@ -30,9 +30,7 @@ import org.geotoolkit.swe.xml.AnyResult;
  * (implementation decrivant une classe union) hormis l'identifiant,
  * il ne doit y avoir qu'un attribut differend de {@code null}.
  *
- * @version $Id:
  * @author Guilhem Legal
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Any")

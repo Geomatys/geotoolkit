@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.processing.image.dynamicrange;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -108,8 +109,11 @@ public class DynamicRangeStretchProcess extends AbstractProcess {
             }
         }
 
-        while (readIte.next() && writeIte.next()) {
+        Point position;
+        while (readIte.next()) {
             readIte.getPixel(pixel);
+            position = readIte.getPosition();
+            writeIte.moveTo(position.x, position.y);
 
             //calculate color
             boolean hasNan = false;

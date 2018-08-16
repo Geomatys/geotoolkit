@@ -35,7 +35,7 @@ import javax.sql.DataSource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.tree.TreeElementMapper;
 import org.geotoolkit.internal.sql.DefaultDataSource;
-import org.geotoolkit.util.sql.DerbySqlScriptRunner;
+import org.geotoolkit.internal.sql.DerbySqlScriptRunner;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 

@@ -29,15 +29,6 @@
         <section>
             <title>Récupération de l'archive nécessaire</title>
             <section>
-                <title>Précompilé</title>
-                <para>
-                    Dans le <link xlink:href="http://jenkins.geotoolkit.org">dépôt Jenkins</link>,
-                    aller dans le projet geotoolkit et prendre l'archive
-                    <emphasis>geotk-shell.zip</emphasis>
-                </para>
-            </section>
-
-            <section>
                 <title>Compilation locale</title>
                 <para>
                     Suivre les instructions de la page ressource, puis déplacez-vous dans le dossier
