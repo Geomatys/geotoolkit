@@ -5,7 +5,7 @@ import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.Data;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,7 +15,6 @@ import java.nio.file.Paths;
 import java.util.Map;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
-import org.geotoolkit.wps.xml.WPSXmlFactory;
 
 /**
  * A converter to transform a File into ComplexOutput data for wps ExecuteResponse query.
@@ -42,7 +41,7 @@ public class FileToComplexConverter extends AbstractComplexOutputConverter<File>
     }
 
     /**
-     * Convert a file into ComplexDataType object, according to the specifications given in params parameter.
+     * Convert a file into Data object, according to the specifications given in params parameter.
      *
      * @param source The file to convert.
      * @param params The parameters used for conversion (Mime-Type/encoding). If null, mime is set to application/octet-stream, and encoding to base64
@@ -50,8 +49,7 @@ public class FileToComplexConverter extends AbstractComplexOutputConverter<File>
      * @throws UnconvertibleObjectException
      */
     @Override
-    public ComplexDataType convert(File source, Map<String, Object> params) throws UnconvertibleObjectException {
-
+    public Data convert(File source, Map<String, Object> params) throws UnconvertibleObjectException {
         if (source == null) {
             throw new UnconvertibleObjectException("The output data should be defined.");
         }
@@ -59,27 +57,31 @@ public class FileToComplexConverter extends AbstractComplexOutputConverter<File>
             throw new UnconvertibleObjectException("Mandatory parameters are missing.");
         }
 
-        String wpsVersion  = (String) params.get(WPSVERSION);
-        if (wpsVersion == null) {
-            LOGGER.warning("No WPS version set using default 1.0.0");
-            wpsVersion = "1.0.0";
-        }
+        final Object tmpMime = params.get(MIME);
+        final String mime;
+        final String encoding;
+        if (tmpMime instanceof String) {
+            mime = (String) tmpMime;
 
-        String mime = (String) params.get(MIME);
-        String encoding = (String) params.get(ENCODING);
-
-        if (mime == null) {
+            final Object tmpEncoding = params.get(ENCODING);
+            if (tmpEncoding instanceof String)
+                encoding = (String) tmpEncoding;
+            else
+                encoding = null;
+        } else {
             mime = WPSMimeType.APP_OCTET.val();
             encoding = WPSEncoding.BASE64.getValue();
         }
-        final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(wpsVersion, mime,encoding, null);
+
+        final Data complex = new Data();
+        complex.setMimeType(mime);
+        complex.setEncoding(encoding);
 
         //Plain text
         if (mime.startsWith("text")) {
             //XML is special case, we try to find an associate schema.
             if (mime.contains("xml") || mime.contains("gml")) {
                 String schemaLocation = source.getAbsolutePath();
-                schemaLocation.replace("\\.[a-z]ml", "").concat(".xsd");
                 File ogrSchema = new File(schemaLocation);
                 // If we find a schema, we ensure it's location is public before giving it.
                 if (ogrSchema.exists()) {

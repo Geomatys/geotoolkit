@@ -644,4 +644,14 @@ public class OWSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
+
+    public static ExceptionResponse buildExceptionReport(String version, final String exceptionText, final String exceptionCode, final String locator, final String exVersion) {
+        if ("1.1.0".equals(version)) {
+           return new org.geotoolkit.ows.xml.v110.ExceptionReport(exceptionText, exceptionCode, locator, exVersion);
+        } else if ("2.0.0".equals(version)) {
+           return new org.geotoolkit.ows.xml.v200.ExceptionReport(exceptionText, exceptionCode, locator, exVersion);
+        }
+        throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.1.0 or 2.0.0");
+    }
+
 }

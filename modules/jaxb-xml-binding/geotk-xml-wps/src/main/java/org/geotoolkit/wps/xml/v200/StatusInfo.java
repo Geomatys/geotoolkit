@@ -18,13 +18,15 @@
 package org.geotoolkit.wps.xml.v200;
 
 import java.util.Objects;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.wps.xml.WPSMarshallerPool;
+import org.geotoolkit.wps.xml.WPSResponse;
 
 
 /**
@@ -75,33 +77,23 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "jobID",
     "status",
     "expirationDate",
+    "creationTime",
     "estimatedCompletion",
     "nextPoll",
     "percentCompleted"
+  //  "message"
 })
 @XmlRootElement(name = "StatusInfo")
-public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
-
-    /** The job has finished with no errors. */
-    public static final String STATUS_SUCCEEDED = "Succeeded";
-    /** The job has finished with errors. */
-    public static final String STATUS_FAILED = "Failed";
-    /** The job is queued for execution. */
-    public static final String STATUS_ACCEPTED = "Accepted";
-    /** The job is running. */
-    public static final String STATUS_RUNNING = "Running";
-    /** The job has been dismissed. */
-    public static final String STATUS_DISSMISED = "Dismissed";
+public class StatusInfo extends DocumentBase implements WPSResponse{
 
     @XmlElement(name = "JobID", required = true)
     protected String jobID;
     @XmlElement(name = "Status", required = true)
-    protected String status;
+    protected Status status;
     @XmlElement(name = "ExpirationDate")
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar expirationDate;
@@ -114,16 +106,24 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
     @XmlElement(name = "PercentCompleted")
     protected Integer percentCompleted;
 
+    /**
+     * NON-STANDARD FIELD: added for compatibility with WPS-RESTfull bindings.
+     * Also, it's provide a way to get more detailed information about process
+     * execution.
+     */
+    //@XmlElement(name="message", required = false)
+    protected String message;
+
     public StatusInfo() {
 
     }
 
-    public StatusInfo(String status, String jobId) {
+    public StatusInfo(Status status, String jobId) {
         this.status = status;
         this.jobID = jobId;
     }
 
-    public StatusInfo(String status, Integer percentCompleted, String jobId) {
+    public StatusInfo(Status status, Integer percentCompleted, String jobId) {
         this.status = status;
         this.percentCompleted = percentCompleted;
         this.jobID = jobId;
@@ -161,7 +161,7 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
      *     {@link String }
      *
      */
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
@@ -173,8 +173,16 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
      *     {@link String }
      *
      */
-    public void setStatus(String value) {
+    public void setStatus(Status value) {
         this.status = value;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(final String message) {
+        this.message = message;
     }
 
     /**
@@ -313,6 +321,7 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
                    Objects.equals(this.jobID, that.jobID) &&
                    Objects.equals(this.nextPoll, that.nextPoll) &&
                    Objects.equals(this.percentCompleted, that.percentCompleted) &&
+                   Objects.equals(this.creationTime, that.creationTime) &&
                    Objects.equals(this.status, that.status);
         }
         return false;
@@ -327,6 +336,47 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
         hash = 79 * hash + Objects.hashCode(this.estimatedCompletion);
         hash = 79 * hash + Objects.hashCode(this.nextPoll);
         hash = 79 * hash + Objects.hashCode(this.percentCompleted);
+        hash = 79 * hash + Objects.hashCode(this.creationTime);
         return hash;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // Following section is boilerplate code for WPS v1 retro-compatibility.
+    //
+    ////////////////////////////////////////////////////////////////////////////
+    private XMLGregorianCalendar creationTime;
+
+    @Deprecated
+    public StatusInfo(Status status, XMLGregorianCalendar creationTime, Integer percentCompleted, String msg, String jobId) {
+        this.status = status;
+        this.percentCompleted = percentCompleted;
+        this.jobID = jobId;
+        this.creationTime = creationTime;
+        this.message = msg;
+    }
+
+    @Deprecated
+    public StatusInfo(Status status, XMLGregorianCalendar creationTime, String msg, String jobId) {
+        this.status = status;
+        this.jobID = jobId;
+        this.creationTime = creationTime;
+        this.message = msg;
+    }
+
+    /**
+     *
+     * @deprecated WPS 1 retro-compatibility purpose. Avoid if possible.
+     */
+    @XmlAttribute(name = "creationTime", namespace = WPSMarshallerPool.OWS_2_0_NAMESPACE, required = true)
+    @XmlJavaTypeAdapter(FilterV1.XMLGregorianCalendar.class)
+    @Deprecated
+    public XMLGregorianCalendar getCreationTime() {
+        return creationTime;
+    }
+
+    public void setTitle(XMLGregorianCalendar creationTime) {
+        this.creationTime = creationTime;
+    }
+
 }

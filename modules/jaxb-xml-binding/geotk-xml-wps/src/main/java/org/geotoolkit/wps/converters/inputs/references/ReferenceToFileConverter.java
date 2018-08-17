@@ -24,7 +24,7 @@ import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.v200.Reference;;
 
 /**
  * Implementation of ObjectConverter to convert a reference into a File.
@@ -81,9 +81,9 @@ public final class ReferenceToFileConverter extends AbstractReferenceInputConver
             out.flush();
 
         } catch (MalformedURLException ex) {
-            throw new UnconvertibleObjectException("Reference file invalid input : Malformed url", ex);
+            throw new UnconvertibleObjectException("ReferenceType file invalid input : Malformed url", ex);
         } catch (IOException ex) {
-            throw new UnconvertibleObjectException("Reference file invalid input : IO", ex);
+            throw new UnconvertibleObjectException("ReferenceType file invalid input : IO", ex);
         } finally {
             try {
                 if (in != null) {
@@ -94,7 +94,7 @@ public final class ReferenceToFileConverter extends AbstractReferenceInputConver
                     out.close();
                 }
             } catch (IOException ex) {
-                throw new UnconvertibleObjectException("Reference file invalid input : IO", ex);
+                throw new UnconvertibleObjectException("ReferenceType file invalid input : IO", ex);
             }
         }
         return file;

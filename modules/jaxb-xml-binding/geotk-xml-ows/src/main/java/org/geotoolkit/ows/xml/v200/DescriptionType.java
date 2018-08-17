@@ -24,7 +24,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractCodeType;
 import org.geotoolkit.ows.xml.AbstractDescription;
+import org.geotoolkit.ows.xml.AbstractMetadata;
 
 
 /**
@@ -91,15 +93,15 @@ public class DescriptionType implements AbstractDescription {
     public DescriptionType(final String title,  final String _abstract,
             final List<String> keywords) {
         if (title != null) {
-            this.title = new ArrayList<LanguageStringType>();
+            this.title = new ArrayList<>();
             this.title.add(new LanguageStringType(title));
         }
         if (_abstract != null) {
-            this._abstract = new ArrayList<LanguageStringType>();
+            this._abstract = new ArrayList<>();
             this._abstract.add(new LanguageStringType(_abstract));
         }
         if (keywords != null) {
-            this.keywords = new ArrayList<KeywordsType>();
+            this.keywords = new ArrayList<>();
             this.keywords.add(new KeywordsType(keywords));
         }
     }
@@ -118,11 +120,11 @@ public class DescriptionType implements AbstractDescription {
      * Build a new DescriptionType (full version).
      */
     public DescriptionType(final LanguageStringType title, final LanguageStringType _abstract, final KeywordsType keywords) {
-        this._abstract = new ArrayList<LanguageStringType>();
+        this._abstract = new ArrayList<>();
         this._abstract.add(_abstract);
-        this.keywords  = new ArrayList<KeywordsType>();
+        this.keywords  = new ArrayList<>();
         this.keywords.add(keywords);
-        this.title     = new ArrayList<LanguageStringType>();
+        this.title     = new ArrayList<>();
         this.title.add(title);
     }
 
@@ -132,7 +134,7 @@ public class DescriptionType implements AbstractDescription {
      */
     public List<LanguageStringType> getTitle() {
         if (title == null) {
-            title = new ArrayList<LanguageStringType>();
+            title = new ArrayList<>();
         }
         return this.title;
     }
@@ -151,7 +153,7 @@ public class DescriptionType implements AbstractDescription {
 
     public void setTitle(final LanguageStringType title) {
         if (this.title == null) {
-            this.title = new ArrayList<LanguageStringType>();
+            this.title = new ArrayList<>();
         }
         if (title != null) {
             this.title.add(title);
@@ -160,7 +162,7 @@ public class DescriptionType implements AbstractDescription {
 
     public void setTitle(final String title) {
         if (this.title == null) {
-            this.title = new ArrayList<LanguageStringType>();
+            this.title = new ArrayList<>();
         }
         if (title != null) {
             this.title.add(new LanguageStringType(title));
@@ -173,7 +175,7 @@ public class DescriptionType implements AbstractDescription {
      */
     public List<LanguageStringType> getAbstract() {
         if (_abstract == null) {
-            _abstract = new ArrayList<LanguageStringType>();
+            _abstract = new ArrayList<>();
         }
         return this._abstract;
     }
@@ -192,7 +194,7 @@ public class DescriptionType implements AbstractDescription {
 
     public void setAbstract(final LanguageStringType _abstract) {
         if (this._abstract == null) {
-            this._abstract = new ArrayList<LanguageStringType>();
+            this._abstract = new ArrayList<>();
         }
         if (_abstract != null) {
             this._abstract.add(_abstract);
@@ -201,7 +203,7 @@ public class DescriptionType implements AbstractDescription {
 
     public void setAbstract(final String _abstract) {
         if (this._abstract == null) {
-            this._abstract = new ArrayList<LanguageStringType>();
+            this._abstract = new ArrayList<>();
         }
         if (_abstract != null) {
             this._abstract.add(new LanguageStringType(_abstract));
@@ -215,7 +217,7 @@ public class DescriptionType implements AbstractDescription {
     @Override
     public List<KeywordsType> getKeywords() {
         if (keywords == null) {
-            keywords = new ArrayList<KeywordsType>();
+            keywords = new ArrayList<>();
         }
         return this.keywords;
     }
@@ -229,8 +231,18 @@ public class DescriptionType implements AbstractDescription {
 
     public void setKeywordValues(final List<String> keywords) {
         if (keywords != null) {
-            this.keywords = new ArrayList<KeywordsType>();
+            this.keywords = new ArrayList<>();
             this.keywords.add(new KeywordsType(keywords));
         }
+    }
+
+    @Override
+    public AbstractCodeType getIdentifier() {
+        return null;
+    }
+
+    @Override
+    public List<? extends AbstractMetadata> getMetadata() {
+        return new ArrayList<>();
     }
 }

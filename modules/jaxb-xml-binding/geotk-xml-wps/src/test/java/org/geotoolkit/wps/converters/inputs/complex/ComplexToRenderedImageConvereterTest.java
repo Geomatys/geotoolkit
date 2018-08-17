@@ -28,7 +28,8 @@ import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.Data;
+import org.geotoolkit.wps.xml.v200.Format;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
@@ -40,7 +41,7 @@ public class ComplexToRenderedImageConvereterTest extends AbstractWPSConverterTe
 
     @Test
     public void testConversion() throws UnconvertibleObjectException, IOException  {
-        final WPSObjectConverter<ComplexDataType, RenderedImage> converter = WPSConverterRegistry.getInstance().getConverter(ComplexDataType.class, RenderedImage.class);
+        final WPSObjectConverter<Data, RenderedImage> converter = WPSConverterRegistry.getInstance().getConverter(Data.class, RenderedImage.class);
 
         final InputStream expectedStream = ComplexToRenderedImageConvereterTest.class.getResourceAsStream("/expected/image_base64");
         assertNotNull(expectedStream);
@@ -50,11 +51,8 @@ public class ComplexToRenderedImageConvereterTest extends AbstractWPSConverterTe
         param.put(WPSObjectConverter.MIME, "img/tiff");
         param.put(WPSObjectConverter.ENCODING, "base64");
 
-        final ComplexDataType complex = new ComplexDataType();
-        complex.setEncoding("base64");
-        complex.setMimeType("image/tiff");
-        complex.setSchema(null);
-        complex.getContent().add(encodedImage);
+        final Format format = new Format("base64", "image/tiff", null, null);
+        final Data complex = new Data(format, encodedImage);
 
         final RenderedImage convertedImage = converter.convert(complex, param);
         assertNotNull(convertedImage);

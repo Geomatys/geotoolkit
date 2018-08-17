@@ -23,16 +23,11 @@ import java.util.ServiceLoader;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.xml.Format;
-import org.geotoolkit.wps.xml.Reference;
 import org.geotoolkit.wps.xml.ReferenceProxy;
-import org.geotoolkit.wps.xml.v100.InputReferenceType;
-import org.geotoolkit.wps.xml.v100.InputType;
-import org.geotoolkit.wps.xml.v100.OutputDataType;
-import org.geotoolkit.wps.xml.v100.OutputReferenceType;
-import org.geotoolkit.wps.xml.v200.DataInputType;
-import org.geotoolkit.wps.xml.v200.DataOutputType;
-import org.geotoolkit.wps.xml.v200.ReferenceType;
+import org.geotoolkit.wps.xml.v200.Format;
+import org.geotoolkit.wps.xml.v200.DataInput;
+import org.geotoolkit.wps.xml.v200.DataOutput;
+import org.geotoolkit.wps.xml.v200.Reference;
 
 /**
  * Define a mapping between WPS complex data type and java type.
@@ -74,40 +69,6 @@ public abstract class ComplexAdaptor<T> implements DataAdaptor<T> {
      */
     public abstract String getSchema();
 
-
-    /**
-     * Convert java object to WPS-1 input.
-     *
-     * <p>
-     * Default implementation of this method only support objects of type Reference.
-     * </p>
-     *
-     * @param candidate
-     * @return
-     */
-    public InputType toWPS1Input(T candidate) throws UnconvertibleObjectException {
-        if (candidate instanceof ReferenceProxy) {
-            final Reference reference = ((ReferenceProxy)candidate).getReference();
-
-            final InputReferenceType ref;
-            if (reference instanceof InputReferenceType) {
-                ref = (InputReferenceType) reference;
-            } else {
-                ref = new InputReferenceType();
-                ref.setHref(reference.getHref());
-                ref.setEncoding(reference.getEncoding());
-                ref.setMimeType(reference.getMimeType());
-                ref.setSchema(reference.getSchema());
-                ref.setBody(reference.getBody());
-            }
-
-            final InputType inputType = new InputType();
-            inputType.setReference(ref);
-            return inputType;
-        }
-        throw new UnconvertibleObjectException("Unsupported value.");
-    }
-
     /**
      * Convert java object to WPS-2 input.
      *
@@ -118,15 +79,15 @@ public abstract class ComplexAdaptor<T> implements DataAdaptor<T> {
      * @param candidate
      * @return
      */
-    public DataInputType toWPS2Input(T candidate) throws UnconvertibleObjectException {
+    public DataInput toWPS2Input(T candidate) throws UnconvertibleObjectException {
         if (candidate instanceof ReferenceProxy) {
             final Reference reference = ((ReferenceProxy)candidate).getReference();
 
-            final ReferenceType ref;
-            if (reference instanceof ReferenceType) {
-                ref = (ReferenceType) reference;
+            final Reference ref;
+            if (reference instanceof Reference) {
+                ref = (Reference) reference;
             } else {
-                ref = new ReferenceType();
+                ref = new Reference();
                 ref.setHref(reference.getHref());
                 ref.setEncoding(reference.getEncoding());
                 ref.setMimeType(reference.getMimeType());
@@ -134,7 +95,7 @@ public abstract class ComplexAdaptor<T> implements DataAdaptor<T> {
                 ref.setBody(reference.getBody());
             }
 
-            final DataInputType dit = new DataInputType();
+            final DataInput dit = new DataInput();
             dit.setReference(ref);
             return dit;
         }
@@ -142,23 +103,6 @@ public abstract class ComplexAdaptor<T> implements DataAdaptor<T> {
     }
 
     /**
-     * Convert java object to WPS-1 input.
-     *
-     * <p>
-     * Default implementation of this method only support objects of type Reference.
-     * </p>
-     *
-     * @param candidate
-     * @return
-     */
-    @Override
-    public T fromWPS1Input(OutputDataType candidate) throws UnconvertibleObjectException {
-        final OutputReferenceType ref = candidate.getReference();
-        if (ref != null) return ReferenceProxy.create(ref, getValueClass());
-        throw new UnconvertibleObjectException("Unsupported value.");
-    }
-
-    /**
      * Convert java object to WPS-2 input.
      *
      * <p>
@@ -169,8 +113,8 @@ public abstract class ComplexAdaptor<T> implements DataAdaptor<T> {
      * @return
      */
     @Override
-    public T fromWPS2Input(DataOutputType candidate) throws UnconvertibleObjectException {
-        final ReferenceType ref = candidate.getReference();
+    public T fromWPS2Input(DataOutput candidate) throws UnconvertibleObjectException {
+        final Reference ref = candidate.getReference();
         if (ref != null) return ReferenceProxy.create(ref, getValueClass());
         throw new UnconvertibleObjectException("Unsupported value.");
     }

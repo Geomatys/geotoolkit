@@ -19,6 +19,7 @@ package org.geotoolkit.ows.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -72,7 +73,7 @@ public class KeywordsType implements AbstractKeywords {
      * Build a new list of keywords.
      */
     public KeywordsType(final List<String> keyword){
-        this.keyword = new ArrayList<LanguageStringType>();
+        this.keyword = new ArrayList<>();
         if (keyword != null) {
             for (String k : keyword){
                 this.keyword.add(new LanguageStringType(k));
@@ -93,7 +94,7 @@ public class KeywordsType implements AbstractKeywords {
      * all the element of the list are in the parameters.
      */
     public KeywordsType(final LanguageStringType... keywords){
-        this.keyword = new ArrayList<LanguageStringType>();
+        this.keyword = new ArrayList<>();
         for (LanguageStringType element: keywords){
             keyword.add(element);
         }
@@ -104,7 +105,7 @@ public class KeywordsType implements AbstractKeywords {
      * all the element of the list are in the parameters.
      */
     public KeywordsType(final String... keywords){
-        this.keyword = new ArrayList<LanguageStringType>();
+        this.keyword = new ArrayList<>();
         for (String element: keywords){
             keyword.add(new LanguageStringType(element));
         }
@@ -116,16 +117,16 @@ public class KeywordsType implements AbstractKeywords {
      */
     public List<LanguageStringType> getKeyword() {
         if (keyword == null) {
-            keyword = new ArrayList<LanguageStringType>();
+            keyword = new ArrayList<>();
         }
         return this.keyword;
     }
 
     @Override
     public List<String> getKeywordList() {
-        List<String> keywordList = new ArrayList<String>();
+        List<String> keywordList = new ArrayList<>();
         if (keyword == null) {
-            keyword = new ArrayList<LanguageStringType>();
+            keyword = new ArrayList<>();
         } else {
             for (LanguageStringType ls : keyword) {
                 keywordList.add(ls.getValue());
@@ -159,4 +160,44 @@ public class KeywordsType implements AbstractKeywords {
         this.type = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (type != null) {
+            sb.append("type:").append(type).append('\n');
+        }
+        if (keyword != null) {
+            sb.append("keyword:\n");
+            for (LanguageStringType jb : keyword) {
+                sb.append(jb).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify that this entry is identical to the specified object.
+     *
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof KeywordsType) {
+            final KeywordsType that = (KeywordsType) object;
+            return Objects.equals(this.keyword, that.keyword) &&
+                   Objects.equals(this.type, that.type);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.keyword);
+        hash = 97 * hash + Objects.hashCode(this.type);
+        return hash;
+    }
 }

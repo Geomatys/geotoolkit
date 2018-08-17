@@ -25,7 +25,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractCodeType;
 import org.geotoolkit.ows.xml.AbstractDescription;
+import org.geotoolkit.ows.xml.AbstractMetadata;
 
 
 /**
@@ -94,7 +96,7 @@ public class DescriptionType implements AbstractDescription {
      public DescriptionType(final String title, final String _abstract,  final KeywordsType keywords) {
          this._abstract = _abstract;
          this.title     = title;
-         this.keywords  = new ArrayList<KeywordsType>();
+         this.keywords  = new ArrayList<>();
          this.keywords.add(keywords);
      }
 
@@ -109,6 +111,7 @@ public class DescriptionType implements AbstractDescription {
         this.title = title;
     }
 
+    @Override
     public String getFirstTitle() {
         return title;
     }
@@ -124,6 +127,7 @@ public class DescriptionType implements AbstractDescription {
         this._abstract = _abstract;
     }
 
+    @Override
      public String getFirstAbstract() {
         return _abstract;
     }
@@ -132,11 +136,22 @@ public class DescriptionType implements AbstractDescription {
      * Gets the value of the keywords property.
      * (unmodifiable)
      */
+    @Override
     public List<KeywordsType> getKeywords() {
         if (keywords == null) {
-            keywords = new ArrayList<KeywordsType>();
+            keywords = new ArrayList<>();
         }
         return Collections.unmodifiableList(keywords);
+    }
+
+    @Override
+    public AbstractCodeType getIdentifier() {
+        return null;
+    }
+
+    @Override
+    public List<? extends AbstractMetadata> getMetadata() {
+        return new ArrayList<>();
     }
 
     /**

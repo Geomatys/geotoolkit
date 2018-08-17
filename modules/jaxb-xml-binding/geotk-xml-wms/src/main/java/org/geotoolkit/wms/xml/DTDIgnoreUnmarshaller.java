@@ -70,6 +70,7 @@ public class DTDIgnoreUnmarshaller implements Unmarshaller {
     }
 
     final Unmarshaller source;
+
     public DTDIgnoreUnmarshaller(Unmarshaller toWrap) {
         ArgumentChecks.ensureNonNull("Source unmarshaller", toWrap);
         source = toWrap;
@@ -237,5 +238,4 @@ public class DTDIgnoreUnmarshaller implements Unmarshaller {
     public Listener getListener() {
         return source.getListener();
     }
-
 }

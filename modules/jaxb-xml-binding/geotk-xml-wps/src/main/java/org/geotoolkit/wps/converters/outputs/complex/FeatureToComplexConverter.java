@@ -29,18 +29,17 @@ import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
-import org.geotoolkit.wps.xml.WPSXmlFactory;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
 
 /**
- * Implementation of ObjectConverter to convert a Feature into a {@link ComplexDataType}.
+ * Implementation of ObjectConverter to convert a Feature into a {@link Data}.
  *
  * @author Quentin Boileau (Geoamtys).
  * @author Theo Zozime
@@ -68,21 +67,30 @@ public final class FeatureToComplexConverter extends AbstractComplexOutputConver
      * {@inheritDoc}
      */
     @Override
-    public ComplexDataType convert(Feature source, Map<String, Object> params) throws UnconvertibleObjectException {
+    public Data convert(Feature source, Map<String, Object> params) throws UnconvertibleObjectException {
 
         if (source == null) {
             throw new UnconvertibleObjectException("The output data should be defined.");
-        }
-        if (!(source instanceof Feature)) {
-            throw new UnconvertibleObjectException("The requested output data is not an instance of Feature.");
+        } else if (params == null) {
+            throw new UnconvertibleObjectException("Not enough information about data format");
         }
 
-        String wpsVersion  = (String) params.get(WPSVERSION);
-        if (wpsVersion == null) {
-            LOGGER.warning("No WPS version set using default 1.0.0");
-            wpsVersion = "1.0.0";
+        final Object tmpMime = params.get(MIME);
+        final String mime;
+        if (tmpMime instanceof String) {
+            mime = (String) tmpMime;
+        } else {
+            throw new UnconvertibleObjectException("No valid mime type given. We cannot determine output image format");
         }
-        final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(wpsVersion, (String) params.get(ENCODING),(String) params.get(MIME), null);
+
+
+        final Data complex = new Data();
+        complex.setMimeType(mime);
+
+        final Object tmpEncoding = params.get(ENCODING);
+        if (tmpEncoding instanceof String) {
+            complex.setEncoding((String) tmpEncoding);
+        }
 
         final FeatureType ft = source.getType();
         final String namespace = NamesExt.getNamespace(ft.getName());

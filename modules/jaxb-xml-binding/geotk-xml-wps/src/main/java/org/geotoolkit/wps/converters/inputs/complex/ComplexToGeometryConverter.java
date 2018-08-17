@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
+import javax.xml.bind.JAXBElement;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.data.geojson.binding.GeoJSONFeature;
@@ -29,7 +30,7 @@ import org.geotoolkit.data.geojson.binding.GeoJSONObject;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.Data;
 import org.opengis.util.FactoryException;
 
 
@@ -63,7 +64,7 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
      * @return Geometry.
      */
     @Override
-    public Geometry convert(final ComplexDataType source, final Map<String, Object> params) throws UnconvertibleObjectException {
+    public Geometry convert(final Data source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         String dataMimeTypeIdentifier = null;
         try {
@@ -76,11 +77,15 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
                 WPSMimeType.TEXT_XML.val().equalsIgnoreCase(source.getMimeType()) ||
                 WPSMimeType.TEXT_GML.val().equalsIgnoreCase(source.getMimeType()) ) {
                 dataMimeTypeIdentifier = "GML";
-                AbstractGeometry abstractGeo = (AbstractGeometry) data.get(0);
+                Object value = data.get(0);
+                if (value instanceof JAXBElement) {
+                    value = ((JAXBElement) value).getValue();
+                }
+                AbstractGeometry abstractGeo = (AbstractGeometry) value;
                 return GeometrytoJTS.toJTS(abstractGeo);
             } else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(source.getMimeType())) {
                 dataMimeTypeIdentifier = "GeoJSON";
-                final String content = WPSConvertersUtils.extractGeoJSONContentAsStringFromComplex(source);
+                final String content = WPSConvertersUtils.geojsonContentAsString(source);
                 final GeoJSONObject jsonObject = WPSConvertersUtils.readGeoJSONObjectsFromString(content);
 
                 if (!(jsonObject instanceof GeoJSONFeature))

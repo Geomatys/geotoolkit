@@ -16,19 +16,13 @@
  */
 package org.geotoolkit.wps.converters.inputs.complex;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBException;
-import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.feature.xml.XmlFeatureReader;
+import java.util.stream.Stream;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.converters.WPSConvertersUtils;
-import org.geotoolkit.wps.xml.ComplexDataType;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.wps.xml.v200.Data;
 import org.opengis.feature.Feature;
-import org.opengis.util.FactoryException;
 
 /**
  * Implementation of ObjectConverter to convert a complex input into a Feature array.
@@ -59,41 +53,17 @@ public final class ComplexToFeatureArrayConverter extends AbstractComplexInputCo
      * @return Feature array.
      */
     @Override
-    public Feature[] convert(final ComplexDataType source, final Map<String, Object> params) throws UnconvertibleObjectException {
-
-        final List<Object> data = source.getContent();
-
-        XmlFeatureReader fcollReader = null;
-        try {
-            fcollReader = getFeatureReader(source);
-            if (!data.isEmpty()) {
-
-                final List<Feature> features = new ArrayList<Feature>();
-                for (int i = 0; i < data.size(); i++) {
-                    final Feature f = (Feature) fcollReader.read(data.get(i));
-                    features.add((Feature) WPSConvertersUtils.fixFeature(f));
-                }
-                return features.toArray(new Feature[features.size()]);
-            } else {
-                throw new UnconvertibleObjectException("Invalid data input : Empty Feature list.");
-            }
-
-        } catch (MalformedURLException ex) {
-            throw new UnconvertibleObjectException("Unable to reach the schema url.", ex);
-        } catch (IllegalArgumentException ex) {
-            throw new UnconvertibleObjectException("Unable to read the feature with the specified schema.", ex);
-        } catch (JAXBException ex) {
-            throw new UnconvertibleObjectException("Unable to read the feature schema.", ex);
-        } catch (FactoryException ex) {
-            throw new UnconvertibleObjectException("Unable to spread the CRS in feature.", ex);
-        } catch (IOException ex) {
-            throw new UnconvertibleObjectException("Unable to read feature from nodes.", ex);
-        } catch (XMLStreamException ex) {
-            throw new UnconvertibleObjectException("Unable to read feature from nodes.", ex);
-        } finally {
-            if (fcollReader != null) {
-                fcollReader.dispose();
-            }
+    public Feature[] convert(final Data source, final Map<String, Object> params) throws UnconvertibleObjectException {
+        try (final Stream<FeatureCollection> stream = AbstractComplexInputConverter.readFeatureArrays(source)) {
+            return stream
+                    .flatMap(fc -> {
+                        try {
+                            return fc.features(false);
+                        } catch (DataStoreException ex) {
+                            throw new UnconvertibleObjectException("Cannot read features from source complex data.", ex);
+                        }
+                    })
+                    .toArray(size -> new Feature[size]);
         }
     }
 }

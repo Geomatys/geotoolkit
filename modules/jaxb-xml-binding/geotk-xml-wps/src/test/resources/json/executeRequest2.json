@@ -1,0 +1,25 @@
+{
+    "inputs": [{
+            "id": "urn:ogc:cstl:wps:jts:intersection:input:geom1",
+            "format": {
+                "mimeType": "text/xml",
+                "schema": "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd",
+                "encoding": "UTF8"
+            },
+            "value": "not a lineString"
+        },
+    {
+            "id": "urn:ogc:cstl:wps:jts:intersection:input:geom2",
+            "format": {
+                "mimeType": "text/xml",
+                "schema": "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd",
+                "encoding": "UTF8"
+            },
+            "value": "not a lineString"
+        }],
+    "outputs": [{
+            "id": "urn:ogc:cstl:wps:jts:intersection:output:result_geom",
+            "format": null,
+            "transmissionMode": "VALUE"
+        }]
+}

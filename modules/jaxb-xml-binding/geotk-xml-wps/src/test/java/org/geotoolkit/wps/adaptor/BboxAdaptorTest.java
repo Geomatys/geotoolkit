@@ -21,7 +21,7 @@ import org.apache.sis.referencing.CRS;
 import org.geotoolkit.ows.xml.v200.BoundingBoxType;
 import org.geotoolkit.wps.xml.v200.BoundingBoxData;
 import org.geotoolkit.wps.xml.v200.Data;
-import org.geotoolkit.wps.xml.v200.DataOutputType;
+import org.geotoolkit.wps.xml.v200.DataOutput;
 import org.geotoolkit.wps.xml.v200.SupportedCRS;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class BboxAdaptorTest {
         assertEquals(Envelope.class, adaptor.getValueClass());
         
         final BoundingBoxType litValue = new BoundingBoxType("EPSG:4326",-180,-90,+180,+90);
-        final DataOutputType output = new DataOutputType();
+        final DataOutput output = new DataOutput();
         final Data data = new Data(litValue);
         output.setData(data);
         

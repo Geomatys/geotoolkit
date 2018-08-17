@@ -18,8 +18,8 @@ package org.geotoolkit.wps.adaptor;
 
 import org.geotoolkit.ows.xml.v200.DomainMetadataType;
 import org.geotoolkit.wps.xml.v200.Data;
-import org.geotoolkit.wps.xml.v200.DataOutputType;
-import org.geotoolkit.wps.xml.v200.LiteralDataType;
+import org.geotoolkit.wps.xml.v200.DataOutput;
+import org.geotoolkit.wps.xml.v200.LiteralDataDomain;
 import org.geotoolkit.wps.xml.v200.LiteralValue;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -37,13 +37,13 @@ public class LiteralAdaptorTest {
     public void stringWPS2() {
 
         final DomainMetadataType metaType = new DomainMetadataType("String","http://www.w3.org/TR/xmlschema-2/#string");
-        final LiteralDataType.LiteralDataDomain domain = new LiteralDataType.LiteralDataDomain();
+        final LiteralDataDomain domain = new LiteralDataDomain();
         domain.setDataType(metaType);
 
         final LiteralAdaptor adaptor = LiteralAdaptor.create(domain);
         assertEquals(String.class, adaptor.getValueClass());
 
-        final DataOutputType output = new DataOutputType();
+        final DataOutput output = new DataOutput();
         final LiteralValue lit = new LiteralValue();
         lit.setValue("hello world");
         final Data data = new Data(lit);
@@ -60,13 +60,13 @@ public class LiteralAdaptorTest {
     public void doubleWPS2() {
 
         final DomainMetadataType metaType = new DomainMetadataType(null,"xs:double");
-        final LiteralDataType.LiteralDataDomain domain = new LiteralDataType.LiteralDataDomain();
+        final LiteralDataDomain domain = new LiteralDataDomain();
         domain.setDataType(metaType);
 
         final LiteralAdaptor adaptor = LiteralAdaptor.create(domain);
         assertEquals(Double.class, adaptor.getValueClass());
 
-        final DataOutputType output = new DataOutputType();
+        final DataOutput output = new DataOutput();
         final LiteralValue lit = new LiteralValue();
         lit.setValue("3.14");
         final Data data = new Data(lit);
@@ -83,13 +83,13 @@ public class LiteralAdaptorTest {
     public void booleanWPS2() {
 
         final DomainMetadataType metaType = new DomainMetadataType(null,"xs:boolean");
-        final LiteralDataType.LiteralDataDomain domain = new LiteralDataType.LiteralDataDomain();
+        final LiteralDataDomain domain = new LiteralDataDomain();
         domain.setDataType(metaType);
 
         final LiteralAdaptor adaptor = LiteralAdaptor.create(domain);
         assertEquals(Boolean.class, adaptor.getValueClass());
 
-        final DataOutputType output = new DataOutputType();
+        final DataOutput output = new DataOutput();
         final LiteralValue lit = new LiteralValue();
         lit.setValue("true");
         final Data data = new Data(lit);

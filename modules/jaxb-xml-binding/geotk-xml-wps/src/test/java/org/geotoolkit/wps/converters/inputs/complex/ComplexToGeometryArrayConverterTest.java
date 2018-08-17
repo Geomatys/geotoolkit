@@ -21,7 +21,7 @@ import java.io.IOException;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.Data;
 import org.junit.Test;
 
 /**
@@ -32,8 +32,7 @@ public class ComplexToGeometryArrayConverterTest extends org.geotoolkit.test.Tes
 
     @Test
     public void testJSONConversion() throws IOException {
-        Geometry[] geometryArray = ConvertersTestUtils.initAndRunInputConversion(
-                ComplexDataType.class,
+        Geometry[] geometryArray = ConvertersTestUtils.initAndRunInputConversion(Data.class,
                 Geometry[].class,
                 "/inputs/geometrycollection.json",
                 WPSMimeType.APP_GEOJSON.val(),

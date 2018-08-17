@@ -122,7 +122,7 @@ public class FieldType extends DescriptionType {
         super();
         this.identifier           = identifier;
         this.interpolationMethods = interpolationMethods;
-        this.nullValue            = new ArrayList<CodeType>();
+        this.nullValue            = new ArrayList<>();
         this.nullValue.add(nullValue);
         if (definition != null) {
             this.definition       = definition;
@@ -134,8 +134,9 @@ public class FieldType extends DescriptionType {
     /**
      * Identifier of this Field. These field identifiers shall be unique in one CoverageDescription.
      */
-    public String getIdentifier() {
-        return identifier;
+    @Override
+    public CodeType getIdentifier() {
+        return new CodeType(identifier);
     }
 
     /**

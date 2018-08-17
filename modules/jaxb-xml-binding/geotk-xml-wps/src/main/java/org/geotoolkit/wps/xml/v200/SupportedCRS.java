@@ -17,8 +17,6 @@
 
 package org.geotoolkit.wps.xml.v200;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
@@ -43,7 +41,6 @@ import javax.xml.bind.annotation.XmlValue;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "value"
 })
@@ -54,7 +51,7 @@ public class SupportedCRS {
     @XmlSchemaType(name = "anyURI")
     protected String value;
     @XmlAttribute(name = "default")
-    protected Boolean _default;
+    protected boolean _default = false;
 
     public SupportedCRS() {
 
@@ -101,7 +98,7 @@ public class SupportedCRS {
      *     {@link Boolean }
      *
      */
-    public Boolean isDefault() {
+    public boolean isDefault() {
         return _default;
     }
 
@@ -113,8 +110,7 @@ public class SupportedCRS {
      *     {@link Boolean }
      *
      */
-    public void setDefault(Boolean value) {
+    public void setDefault(boolean value) {
         this._default = value;
     }
-
 }

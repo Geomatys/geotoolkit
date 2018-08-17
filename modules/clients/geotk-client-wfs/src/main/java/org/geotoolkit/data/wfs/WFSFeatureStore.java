@@ -361,7 +361,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
         final TransactionRequest request = server.createTransaction();
         final Insert insert = server.createInsertElement();
-        insert.setInputFormat("text/xml; subtype=gml/3.1.1");
+        insert.setInputFormat("text/xml; subtype=\"gml/3.1.1\"");
 
         final FeatureCollection col;
         if(newFeatures instanceof FeatureCollection){
@@ -421,7 +421,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
         final TransactionRequest request = server.createTransaction();
         final Update update = server.createUpdateElement();
-        update.setInputFormat("text/xml; subtype=gml/3.1.1");
+        update.setInputFormat("text/xml; subtype=\"gml/3.1.1\"");
 
         update.setFilter(filter);
         update.setTypeName(featureType.getName());

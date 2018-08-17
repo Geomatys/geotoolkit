@@ -45,13 +45,12 @@ import org.geotoolkit.ows.xml.Value;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "ValueType", propOrder = {
     "value"
 })
 public class ValueType implements Value {
 
-    @XmlValue
     private String value;
 
     protected ValueType(){
@@ -78,6 +77,7 @@ public class ValueType implements Value {
      *     {@link String }
      *
      */
+    @XmlValue
     public String getValue() {
         return value;
     }

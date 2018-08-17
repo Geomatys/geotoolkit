@@ -17,11 +17,8 @@
 
 package org.geotoolkit.wps.xml.v200;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -35,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
- *     &lt;extension base="{http://www.opengis.net/wps/2.0}RequestBaseType">
+ *     &lt;extension base="{http://www.opengis.net/wps/2.0}RequestBase">
  *       &lt;sequence>
  *         &lt;element ref="{http://www.opengis.net/wps/2.0}JobID"/>
  *       &lt;/sequence>
@@ -46,12 +43,11 @@ import javax.xml.bind.annotation.XmlType;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "jobID"
 })
 @XmlRootElement(name = "GetStatus")
-public class GetStatus extends RequestBaseType implements org.geotoolkit.wps.xml.GetStatus {
+public class GetStatus extends RequestBase {
 
     @XmlElement(name = "JobID", required = true)
     protected String jobID;
@@ -60,8 +56,8 @@ public class GetStatus extends RequestBaseType implements org.geotoolkit.wps.xml
 
     }
 
-    public GetStatus(final String service, final String jobId) {
-        super(service);
+    public GetStatus(final String service, final String version, final String jobId) {
+        super(service, version);
         this.jobID = jobId;
     }
 

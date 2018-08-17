@@ -21,7 +21,10 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.wps.xml.v200.WPSMarshaller;
+import org.geotoolkit.wps.xml.v200.WPSUnmarshaller;
 
 /**
  *
@@ -29,15 +32,20 @@ import org.apache.sis.xml.MarshallerPool;
  */
 public final class WPSMarshallerPool {
 
+    public static final String WPS_1_0_NAMESPACE = "http://www.opengis.net/wps/1.0.0";
+    public static final String WPS_2_0_NAMESPACE = "http://www.opengis.net/wps/2.0";
+
+    public static final String OWS_1_1_NAMESPACE = "http://www.opengis.net/ows/1.1";
+    public static final String OWS_2_0_NAMESPACE = "http://www.opengis.net/ows/2.0";
+
     private static final MarshallerPool instance;
     static {
         try {
             instance = new MarshallerPoolProxy(JAXBContext.newInstance(
-                      "org.geotoolkit.wps.xml.v100.ext:"
-                    + "org.geotoolkit.wps.xml.v100:"
+                      "org.geotoolkit.wps.xml.v100:"
                     + "org.geotoolkit.wps.xml.v200:"
-                    + "org.geotoolkit.gml.xml.v311:"
-                    + "org.geotoolkit.ows.xml.v110:"
+                    + "org.geotoolkit.gml.xml.v321:"
+                    //+ "org.geotoolkit.ows.xml.v110:"
                     + "org.geotoolkit.ows.xml.v200:"
                     + "org.apache.sis.internal.jaxb.geometry:"
                     + "org.geotoolkit.mathml.xml"), null);
@@ -61,9 +69,14 @@ public final class WPSMarshallerPool {
 
         @Override
         protected Marshaller createMarshaller() throws JAXBException {
-            Marshaller marshaller = super.createMarshaller();
+            final Marshaller marshaller = super.createMarshaller();
             marshaller.setProperty(CharacterEscapeHandler.class.getName(), new NoCharacterEscapeHandler());
-            return marshaller;
+            return new WPSMarshaller(marshaller);
+        }
+
+        @Override
+        protected Unmarshaller createUnmarshaller() throws JAXBException {
+            return new WPSUnmarshaller(super.createUnmarshaller());
         }
     }
 

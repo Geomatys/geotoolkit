@@ -28,8 +28,9 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.Reference;
-import org.geotoolkit.wps.xml.WPSMarshallerPool;
+import org.geotoolkit.wps.xml.v200.Reference;
+;
+import org.geotoolkit.wps.xml.WPSMarshallerPool;import org.geotoolkit.wps.xml.WPSMarshallerPool;
 
 /**
  *
@@ -71,10 +72,10 @@ public class ReferenceToAffineTransformConverter extends AbstractReferenceInputC
                 return bindToAffineTransform(value);
 
             } catch (JAXBException ex) {
-                throw new UnconvertibleObjectException("Reference geometry invalid input : Unmarshallable geometry", ex);
+                throw new UnconvertibleObjectException("ReferenceType geometry invalid input : Unmarshallable geometry", ex);
             }
         } else {
-            throw new UnconvertibleObjectException("Reference data mime is not supported");
+            throw new UnconvertibleObjectException("ReferenceType data mime is not supported");
         }
     }
 

@@ -20,7 +20,7 @@ import java.io.IOException;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.Data;
 import org.junit.Test;
 import org.opengis.feature.Feature;
 
@@ -37,8 +37,7 @@ public class ComplexToFeatureConverterTest extends org.geotoolkit.test.TestBase 
      */
     @Test
     public void testJSONConversion() throws IOException {
-        Feature feature = ConvertersTestUtils.initAndRunInputConversion(
-                                                        ComplexDataType.class,
+        Feature feature = ConvertersTestUtils.initAndRunInputConversion(Data.class,
                                                         Feature.class,
                                                         "/inputs/feature.json",
                                                         WPSMimeType.APP_GEOJSON.val(),

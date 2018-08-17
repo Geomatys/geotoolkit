@@ -22,7 +22,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.xml.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.Data;
 import org.opengis.feature.FeatureType;
 import org.w3c.dom.Node;
 
@@ -56,7 +56,7 @@ public final class ComplexToFeatureTypeConverter extends AbstractComplexInputCon
      * @return FeatureType
      */
     @Override
-    public FeatureType convert(final ComplexDataType source, final Map<String, Object> params) throws UnconvertibleObjectException {
+    public FeatureType convert(final Data source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         final List<Object> data = source.getContent();
         if(data.size() > 1){

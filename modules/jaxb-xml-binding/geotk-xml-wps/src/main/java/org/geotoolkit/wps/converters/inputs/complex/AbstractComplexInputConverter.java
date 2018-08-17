@@ -18,71 +18,118 @@ package org.geotoolkit.wps.converters.inputs.complex;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.Map;
-import javax.xml.bind.JAXBException;
-import org.geotoolkit.feature.xml.XmlFeatureReader;
-import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
-import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
-import static org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE;
+import java.util.stream.Stream;
+import javax.xml.stream.XMLStreamException;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.feature.xml.XmlFeatureReader;
+import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.converters.WPSDefaultConverter;
-import org.geotoolkit.wps.xml.ComplexDataType;
-import org.opengis.feature.FeatureType;
+import org.geotoolkit.wps.converters.inputs.references.ReferenceToFeatureCollectionConverter;
+import org.geotoolkit.wps.io.WPSIO;
+import org.geotoolkit.wps.io.WPSMimeType;
+import org.geotoolkit.wps.xml.v200.Data;
+import org.geotoolkit.wps.xml.v200.Data;
 
 /**
  *
  * @author Quentin Boileau (Geomatys).
  */
-public abstract class AbstractComplexInputConverter<T> extends WPSDefaultConverter<ComplexDataType, T> {
+public abstract class AbstractComplexInputConverter<T> extends WPSDefaultConverter<Data, T> {
 
     @Override
-    public Class<ComplexDataType> getSourceClass() {
-        return ComplexDataType.class;
+    public Class<Data> getSourceClass() {
+        return Data.class;
     }
 
     @Override
     public abstract Class<T> getTargetClass();
 
     /**
-     * Convert a {@link ComplexDataType complex} into the requested {@code Object}.
+     * Convert a {@link Data complex} into the requested {@code Object}.
      * @param source ReferenceType
      * @return Object
      * @throws UnconvertibleObjectException
      */
     @Override
-    public abstract T convert(final ComplexDataType source, Map<String, Object> params) throws UnconvertibleObjectException;
+    public abstract T convert(final Data source, Map<String, Object> params) throws UnconvertibleObjectException;
 
     /**
-     * Get the JAXPStreamFeatureReader to read feature. If there is a schema defined, the JAXPStreamFeatureReader will
-     * use it otherwise it will use the embedded.
+     *
+     * @param source The complex value to read as a sequence of distinct feature
+     * collections.
+     * @return A stream of parsed data. Never null, but can be empty. WARNING:
+     * You have to properly close the stream after usage.
+     */
+    static Stream<FeatureCollection> readFeatureArrays(final Data source) {
+        ArgumentChecks.ensureNonNull("Source complex data", source);
+
+        if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(source.getMimeType())) {
+            return fromGeoJSON(source);
+        } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(source.getMimeType())
+                || WPSMimeType.TEXT_XML.val().equalsIgnoreCase(source.getMimeType())
+                || WPSMimeType.TEXT_GML.val().equalsIgnoreCase(source.getMimeType())) {
+            return fromXml(source);
+        }
+
+        throw new UnconvertibleObjectException("Unsupported mime-type: " + source.getMimeType());
+    }
+
+    /**
+     * TODO: change content for a more stable and performant algorithm.
+     * Especially, we create temporary files which are never deleted (because
+     * the resulting feature collection read in them), and it is very bad. We
+     * have to use a geojson streaming reader.
      *
      * @param source
      * @return
-     * @throws MalformedURLException
-     * @throws JAXBException
-     * @throws IOException
      */
-    protected XmlFeatureReader getFeatureReader(final ComplexDataType source) throws MalformedURLException, JAXBException, IOException {
+    private static Stream<FeatureCollection> fromGeoJSON(final Data source) {
+        return source.getContent().stream()
+                .map(WPSConvertersUtils::geojsonContentAsString)
+                .map(text -> {
+                    try {
+                        final Path tmpFile = WPSConvertersUtils.writeTempJsonFile(text);
+                        return tmpFile;
+                    } catch (IOException ex) {
+                        throw new UnconvertibleObjectException("Unable to read complex.", ex);
+                    }
+                })
+                .map(file -> {
+                    try {
+                        return WPSConvertersUtils.readFeatureCollectionFromJson(file.toUri());
+                    } catch (MalformedURLException | DataStoreException ex) {
+                        throw new UnconvertibleObjectException(ex);
+                    } catch (URISyntaxException | IOException ex) {
+                        throw new UnconvertibleObjectException(ex);
+                    }
+                });
+    }
 
-        JAXPStreamFeatureReader featureReader = new JAXPStreamFeatureReader();
+    private static Stream<FeatureCollection> fromXml(final Data source) {
+        final XmlFeatureReader fcollReader;
         try {
-            final JAXBFeatureTypeReader xsdReader = new JAXBFeatureTypeReader();
-            final String schema = source.getSchema();
-
-            if (schema != null) {
-                final URL schemaURL = new URL(schema);
-                final List<FeatureType> featureTypes = xsdReader.read(schemaURL);
-                if (featureTypes != null) {
-                    featureReader = new JAXPStreamFeatureReader(featureTypes);
-                }
-            } else {
-                featureReader.getProperties().put(READ_EMBEDDED_FEATURE_TYPE, true);
-            }
-        } catch(JAXBException ex) {
-            featureReader.getProperties().put(READ_EMBEDDED_FEATURE_TYPE, true);
+            fcollReader = WPSIO.getFeatureReader(source.getSchema());
+        } catch (MalformedURLException ex) {
+            throw new UnconvertibleObjectException("Unable to reach the schema url.", ex);
         }
-        return featureReader;
+
+        final Stream<FeatureCollection> result = source.getContent().stream()
+                .map(in -> {
+                    try {
+                        return fcollReader.read(in);
+                    } catch (XMLStreamException | IOException ex) {
+                        throw new UnconvertibleObjectException("Unable to read feature from nodes.", ex);
+                    }
+                })
+                .map(ReferenceToFeatureCollectionConverter::castOrWrap);
+        result.onClose(() -> fcollReader.dispose());
+
+        return result;
     }
 }

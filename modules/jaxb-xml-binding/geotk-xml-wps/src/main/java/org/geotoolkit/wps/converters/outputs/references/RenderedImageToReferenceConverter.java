@@ -20,7 +20,6 @@ import net.iharder.Base64;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.wps.io.WPSEncoding;
-import org.geotoolkit.wps.io.WPSIO;
 
 
 import javax.imageio.ImageIO;
@@ -38,10 +37,7 @@ import java.util.UUID;
 
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
-import static org.geotoolkit.wps.converters.WPSObjectConverter.IOTYPE;
-import static org.geotoolkit.wps.converters.WPSObjectConverter.WPSVERSION;
-import org.geotoolkit.wps.xml.Reference;
-import org.geotoolkit.wps.xml.WPSXmlFactory;
+import org.geotoolkit.wps.xml.v200.Reference;;
 
 /**
  * Implementation of ObjectConverter to convert a {@link RenderedImage image} into a {@link OutputReferenceType reference}.
@@ -84,14 +80,7 @@ public class RenderedImageToReferenceConverter extends AbstractReferenceOutputCo
             throw new UnconvertibleObjectException("The output data is not an instance of RenderedImage.");
         }
 
-        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
-        String wpsVersion  = (String) params.get(WPSVERSION);
-        if (wpsVersion == null) {
-            LOGGER.warning("No WPS version set using default 1.0.0");
-            wpsVersion = "1.0.0";
-        }
-        Reference reference = WPSXmlFactory.buildInOutReference(wpsVersion, ioType);
-
+        Reference reference = new Reference();
 
         final String encoding = (String) params.get(ENCODING);
 

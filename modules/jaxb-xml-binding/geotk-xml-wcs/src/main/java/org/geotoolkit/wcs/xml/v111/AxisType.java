@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.ows.xml.v110.DescriptionType;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 import org.geotoolkit.ows.xml.v110.KeywordsType;
@@ -148,6 +149,7 @@ public class AxisType extends DescriptionType {
     /**
      * Optional unordered list of other metadata elements about this axis. A list of required and optional other metadata elements for this quantity can be specified in a WCS Application Profile. Gets the value of the metadata property.
      */
+    @Override
     public List<MetadataType> getMetadata() {
         return Collections.unmodifiableList(this.metadata);
     }
@@ -155,7 +157,7 @@ public class AxisType extends DescriptionType {
     /**
      * Gets the value of the identifier property.
      */
-    public String getIdentifier() {
-        return identifier;
+    public CodeType getIdentifier() {
+        return new CodeType(identifier);
     }
 }

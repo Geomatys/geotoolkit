@@ -23,7 +23,7 @@ import org.geotoolkit.mathml.xml.Mtable;
 import org.geotoolkit.mathml.xml.Mtr;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
-import org.geotoolkit.wps.xml.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.Data;
 
 /**
  *
@@ -49,7 +49,7 @@ public class ComplexToAffineTransformConverter  extends AbstractComplexInputConv
     }
 
     @Override
-    public AffineTransform convert(final ComplexDataType source, Map<String, Object> params) throws UnconvertibleObjectException {
+    public AffineTransform convert(final Data source, Map<String, Object> params) throws UnconvertibleObjectException {
 
         final List<Object> datas = source.getContent();
 

@@ -159,7 +159,7 @@ public class GetFeatureWithLockType extends BaseRequestType {
      */
     public String getOutputFormat() {
         if (outputFormat == null) {
-            return "text/xml; subtype=gml/3.1.1";
+            return "text/xml; subtype=\"gml/3.1.1\"";
         } else {
             return outputFormat;
         }

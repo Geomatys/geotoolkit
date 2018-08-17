@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.ows.xml.v110.DescriptionType;
 import org.geotoolkit.ows.xml.v110.KeywordsType;
 import org.geotoolkit.ows.xml.v110.LanguageStringType;
@@ -74,7 +75,7 @@ public class CoverageDescriptionType extends DescriptionType implements Coverage
     @XmlElement(name = "Identifier", required = true)
     private String identifier;
     @XmlElement(name = "Metadata", namespace = "http://www.opengis.net/ows/1.1")
-    private List<MetadataType> metadata = new ArrayList<MetadataType>();
+    private List<MetadataType> metadata = new ArrayList<>();
     @XmlElement(name = "Domain", required = true)
     private CoverageDomainType domain;
     @XmlElement(name = "Range", required = true)
@@ -140,13 +141,15 @@ public class CoverageDescriptionType extends DescriptionType implements Coverage
     /**
      * Unambiguous identifier of this coverage, unique for this WCS server.
      */
-    public String getIdentifier() {
-        return identifier;
+    @Override
+    public CodeType getIdentifier() {
+        return new CodeType(identifier);
     }
 
     /**
      * Optional unordered list of more metadata elements about this coverage. A list of metadata elements for CoverageDescriptions could be specified in a WCS Application Profile. Gets the value of the metadata property.
      */
+    @Override
     public List<MetadataType> getMetadata() {
         return Collections.unmodifiableList(metadata);
     }
@@ -154,7 +157,7 @@ public class CoverageDescriptionType extends DescriptionType implements Coverage
     @Override
     public void setMetadata(final String href) {
         if (href != null) {
-            this.metadata = new ArrayList<MetadataType>();
+            this.metadata = new ArrayList<>();
             this.metadata.add(new MetadataType(href));
         }
     }

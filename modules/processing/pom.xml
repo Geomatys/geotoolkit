@@ -65,6 +65,7 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
+    <module>geotk-processing-core</module>
     <module>geotk-processing</module>
   </modules>
 

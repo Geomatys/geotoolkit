@@ -23,7 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import org.geotoolkit.wps.xml.v200.Data;
-import org.geotoolkit.wps.xml.v200.DataInputType;
+import org.geotoolkit.wps.xml.v200.DataInput;
 import org.geotoolkit.wps.xml.v200.Format;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -46,7 +46,7 @@ public class KMLAdaptorTest {
 
         final URL kmlResource = KMLAdaptorTest.class.getResource(BRUT_KML_LOCATION);
         final Path kmlPath = Paths.get(kmlResource.toURI());
-        final DataInputType out = adaptor.toWPS2Input(kmlPath);
+        final DataInput out = adaptor.toWPS2Input(kmlPath);
 
         assertNotNull("KML adaptor has not returned any result", out);
 

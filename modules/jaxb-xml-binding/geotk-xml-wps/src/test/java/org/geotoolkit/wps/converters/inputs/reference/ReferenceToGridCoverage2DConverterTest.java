@@ -34,8 +34,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.wps.xml.Reference;
-import org.geotoolkit.wps.xml.WPSXmlFactory;
+import org.geotoolkit.wps.xml.v200.Reference;
 
 /**
  *
@@ -56,7 +55,7 @@ public class ReferenceToGridCoverage2DConverterTest extends AbstractWPSConverter
         parameters.put(AbstractReferenceInputConverter.IOTYPE, WPSIO.IOType.INPUT);
         parameters.put(AbstractReferenceInputConverter.MIME, "image/geotiff");
 
-        final Reference reference = WPSXmlFactory.buildInOutReference("1.0.0", WPSIO.IOType.INPUT);
+        final Reference reference = new Reference();
         reference.setHref(coverage.toString());
         reference.setMimeType("image/x-geotiff");
         reference.setEncoding(null);
@@ -89,7 +88,7 @@ public class ReferenceToGridCoverage2DConverterTest extends AbstractWPSConverter
         parameters.put(AbstractReferenceInputConverter.IOTYPE, WPSIO.IOType.INPUT);
         parameters.put(AbstractReferenceInputConverter.ENCODING, "base64");
 
-        final Reference reference = WPSXmlFactory.buildInOutReference("1.0.0", WPSIO.IOType.INPUT);
+        final Reference reference = new Reference();
         reference.setHref(coverageBase64.toString());
         reference.setMimeType("image/x-geotiff");
         reference.setEncoding("base64");

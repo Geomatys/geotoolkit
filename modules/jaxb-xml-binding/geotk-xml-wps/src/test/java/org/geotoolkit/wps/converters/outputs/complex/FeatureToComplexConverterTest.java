@@ -17,18 +17,14 @@
 package org.geotoolkit.wps.converters.outputs.complex;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
-import org.geotoolkit.wps.xml.v100.ext.GeoJSONType;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.geotoolkit.wps.xml.v200.Data;
 import org.junit.Test;
 import org.opengis.feature.Feature;
 import org.opengis.util.FactoryException;
@@ -44,27 +40,22 @@ public class FeatureToComplexConverterTest extends org.geotoolkit.test.TestBase 
         // Get test resource
         final Object testResource = ConvertersTestUtils.loadTestResource("/inputs/feature.json");
 
-        final ComplexDataType complex = ConvertersTestUtils.initAndRunOutputConversion(
-                                                            Feature.class,
-                                                            ComplexDataType.class,
+        final Data complex = ConvertersTestUtils.initAndRunOutputConversion(Feature.class,
+                                                            Data.class,
                                                             testResource,
                                                             WPSMimeType.APP_GEOJSON.val(),
                                                             WPSEncoding.UTF8.getValue());
 
-        // Test complex
-        assertEquals(1, complex.getContent().size());
-        assertEquals(WPSMimeType.APP_GEOJSON.val(), complex.getMimeType());
-        assertEquals(WPSEncoding.UTF8.getValue(), complex.getEncoding());
-        assertEquals(null, complex.getSchema());
-        assertNotNull(complex.getContent());
-        assertTrue(complex.getContent().get(0) instanceof GeoJSONType);
-
-        final String geoJson = ((GeoJSONType) complex.getContent().get(0)).getContent();
-
-        // Write the json in a tmp file in order to be able to read it
-        final Path tmpFilePath = WPSConvertersUtils.writeTempJsonFile(geoJson);
-
-        final Feature readFeature = WPSConvertersUtils.readFeatureFromJson(tmpFilePath.toUri());
-        ConvertersTestUtils.assertFeatureIsValid(readFeature);
+        ConvertersTestUtils.assertFormatMatch(complex, WPSEncoding.UTF8.getValue(), WPSMimeType.APP_GEOJSON.val(), null);
+        ConvertersTestUtils.useDataContentAsFile(complex, file -> {
+            try {
+                final Feature readFeature = WPSConvertersUtils.readFeatureFromJson(file.toUri());
+                ConvertersTestUtils.assertFeatureIsValid(readFeature);
+            } catch (DataStoreException | URISyntaxException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        });
     }
 }

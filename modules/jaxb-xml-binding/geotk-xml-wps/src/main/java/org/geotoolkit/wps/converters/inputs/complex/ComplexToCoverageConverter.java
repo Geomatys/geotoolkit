@@ -31,7 +31,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.image.io.XImageIO;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
-import org.geotoolkit.wps.xml.ComplexDataType;
+import org.geotoolkit.wps.xml.v200.Data;
 
 /**
  * Convert an base64 encoded coverage into a GridCoverage2D.
@@ -58,7 +58,7 @@ public class ComplexToCoverageConverter extends AbstractComplexInputConverter<Gr
     }
 
     @Override
-    public GridCoverage2D convert(ComplexDataType source, Map<String, Object> params) throws UnconvertibleObjectException {
+    public GridCoverage2D convert(Data source, Map<String, Object> params) throws UnconvertibleObjectException {
 
         try {
             if (params.get(ENCODING).equals(WPSEncoding.BASE64.getValue())) {

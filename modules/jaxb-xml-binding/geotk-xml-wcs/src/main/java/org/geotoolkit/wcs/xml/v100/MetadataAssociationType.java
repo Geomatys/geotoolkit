@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.MetaDataPropertyType;
+import org.geotoolkit.ows.xml.AbstractMetadata;
 
 
 /**
@@ -51,7 +52,7 @@ import org.geotoolkit.gml.xml.v311.MetaDataPropertyType;
 @XmlSeeAlso({
     MetadataLinkType.class
 })
-public class MetadataAssociationType extends MetaDataPropertyType {
+public class MetadataAssociationType extends MetaDataPropertyType implements AbstractMetadata{
 
     /**
      * An empty constructor used by JAXB
@@ -65,6 +66,11 @@ public class MetadataAssociationType extends MetaDataPropertyType {
      */
     public MetadataAssociationType(final String href) {
         super(href);
+    }
+
+    @Override
+    public Object getAbstractMetaData() {
+        return super.getMetaData();
     }
 
 }

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011, Geomatys
+ *    (C) 2018, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@ package org.geotoolkit.wps.xml;
 
 /**
  *
- * @author Guilhem Legal (Geomatys)
+ * @author Guilhem Legal
  */
 public interface WPSResponse {
 
