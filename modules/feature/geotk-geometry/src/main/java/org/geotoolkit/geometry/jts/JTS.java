@@ -245,7 +245,9 @@ public final class JTS {
         final CoordinateReferenceSystem geomCrs = findCoordinateReferenceSystem(geom);
         if(geomCrs==null) return geom;
         final MathTransform trs = CRS.findOperation(geomCrs, crs, null).getMathTransform();
-        return transform(geom, trs);
+        final Geometry result = transform(geom, trs);
+        setCRS(result, crs);
+        return result;
     }
 
     /**

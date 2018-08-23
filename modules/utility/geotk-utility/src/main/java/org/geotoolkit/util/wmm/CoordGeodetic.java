@@ -17,6 +17,12 @@
  */
 package org.geotoolkit.util.wmm;
 
+import javax.measure.UnitConverter;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.datum.DefaultEllipsoid;
+import org.opengis.referencing.datum.Ellipsoid;
+
 /**
  * Java port of the NOAA's MAGtype_CoordGeodetic structure
  * @author Hasdenteufel Eric (Geomatys)
@@ -49,12 +55,14 @@ public class CoordGeodetic {
         this.HeightAboveEllipsoid = heightAboveEllipsoid;
     }
 
-
     CoordSpherical toSpherical() {
-        return toSpherical(Ellipsoid.WGS_84);
+        return toSpherical(CommonCRS.WGS84.ellipsoid());
     }
 
-    CoordSpherical toSpherical(Ellipsoid Ellip) {
+    CoordSpherical toSpherical(Ellipsoid ellip) {
+        final DefaultEllipsoid tmpEllip = DefaultEllipsoid.castOrCopy(ellip);
+        UnitConverter toKm = tmpEllip.getAxisUnit().getConverterTo(Units.KILOMETRE);
+        final double squaredEcc = tmpEllip.getEccentricitySquared();
         final CoordSpherical cs = new CoordSpherical();
 
         /*
@@ -66,11 +74,11 @@ public class CoordGeodetic {
         final double SinLat = Math.sin(Math.toRadians(this.phi));
 
         /* compute the local radius of curvature on the WGS-84 reference ellipsoid */
-        final double rc = Ellip.a / Math.sqrt(1.0 - Ellip.epssq * SinLat * SinLat);
+        final double rc = toKm.convert(ellip.getSemiMajorAxis()) / Math.sqrt(1.0 - squaredEcc * SinLat * SinLat);
 
         /* compute ECEF Cartesian coordinates of specified point (for longitude=0) */
         final double xp = (rc + this.HeightAboveEllipsoid) * CosLat;
-        final double zp = (rc * (1.0 - Ellip.epssq) + this.HeightAboveEllipsoid) * SinLat;
+        final double zp = (rc * (1.0 - squaredEcc) + this.HeightAboveEllipsoid) * SinLat;
         /* compute spherical radius and angle lambda and phi of specified point */
         cs.r =  Math.sqrt(xp * xp + zp * zp);
         cs.phig = Math.toDegrees( Math.asin(zp / cs.r)); /* geocentric latitude */

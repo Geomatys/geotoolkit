@@ -67,7 +67,7 @@ public class MagneticModel {
      * @param userDate
      * @return the Magnetic Model adjusted.
      */
-    MagneticModel timelyModify(MagneticDate userDate) {
+    public MagneticModel timelyModify(MagneticDate userDate) {
         MagneticModel timedMagneticModel = new MagneticModel(Main_Field_Coeff_G.length-1);
         timedMagneticModel.EditionDate = this.EditionDate;
         timedMagneticModel.epoch = this.epoch;

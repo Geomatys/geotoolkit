@@ -27,6 +27,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.datum.DefaultEllipsoid;
+import org.opengis.referencing.datum.Ellipsoid;
 
 
 /**
@@ -119,19 +123,18 @@ public final class WorldMagneticModel {
      * @return
      */
     public static GeoMagneticElements computeGeoMagneticElements(MagneticModel TimedMagneticModel, CoordGeodetic coordGeodetic) {
-        return computeGeoMagneticElements(TimedMagneticModel, coordGeodetic, coordGeodetic.toSpherical(), Ellipsoid.WGS_84);
+        return computeGeoMagneticElements(TimedMagneticModel, coordGeodetic, CommonCRS.WGS84.ellipsoid());
     }
 
     /**
      * Calculate the magnetic field elements for a single point
      * @param timedMagneticModel
      * @param coordGeodetic
-     * @param coordSpherical
      * @param ellip
      * @return
      */
-    public static GeoMagneticElements computeGeoMagneticElements(MagneticModel timedMagneticModel, CoordGeodetic coordGeodetic, CoordSpherical coordSpherical, Ellipsoid ellip) {
-
+    public static GeoMagneticElements computeGeoMagneticElements(MagneticModel timedMagneticModel, CoordGeodetic coordGeodetic, Ellipsoid ellip) {
+        final CoordSpherical coordSpherical = coordGeodetic.toSpherical(ellip);
         SphericalHarmonicVariables SphVariables = ComputeSphericalHarmonicVariables(ellip, coordSpherical, timedMagneticModel.nMax);
         LegendreFunction LegendreFunction = computeLegendreFunction(coordSpherical, timedMagneticModel.nMax);
         MagneticResults MagneticResultsSph = summation(LegendreFunction, timedMagneticModel, SphVariables, coordSpherical); /* Accumulate the spherical harmonic coefficients*/
@@ -149,12 +152,16 @@ public final class WorldMagneticModel {
         SphericalHarmonicVariables sphVariables = new SphericalHarmonicVariables(nMax);
         final double cos_lambda = Math.cos(Math.toRadians(coordSpherical.lambda));
         final double sin_lambda = Math.sin(Math.toRadians(coordSpherical.lambda));
+        final DefaultEllipsoid tmpEllip = DefaultEllipsoid.castOrCopy(ellip);
         /* for n = 0 ... model_order, compute (Radius of Earth / Spherical radius r)^(n+2)
         for n  1..nMax-1 (this is much faster than calling pow MAX_N+1 times).      */
-        sphVariables.RelativeRadiusPower[0] = (ellip.re / coordSpherical.r) * (ellip.re / coordSpherical.r);
+        final double meanRadius = tmpEllip.getAxisUnit().getConverterTo(Units.KILOMETRE)
+                .convert(tmpEllip.getAuthalicRadius());
+        final double radiusRatio = meanRadius / coordSpherical.r;
+        sphVariables.RelativeRadiusPower[0] = Math.pow(radiusRatio, 2);
         for(int n = 1; n <= nMax; n++)
         {
-            sphVariables.RelativeRadiusPower[n] = sphVariables.RelativeRadiusPower[n - 1] * (ellip.re / coordSpherical.r);
+            sphVariables.RelativeRadiusPower[n] = sphVariables.RelativeRadiusPower[n - 1] * (radiusRatio);
         }
 
         /*
