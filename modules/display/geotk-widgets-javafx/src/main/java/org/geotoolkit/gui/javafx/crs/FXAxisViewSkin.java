@@ -16,12 +16,11 @@
  */
 package org.geotoolkit.gui.javafx.crs;
 
-import com.sun.javafx.tk.FontMetrics;
-import com.sun.javafx.tk.Toolkit;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -232,8 +231,7 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
             Color lineColor = Color.GRAY;
             Color textColor = Color.GRAY;
 
-            final FontMetrics fm = Toolkit.getToolkit().getFontLoader().getFontMetrics(FONT_TIME);
-            final double compactBandHeight = fm.getAscent() +10;
+            final double compactBandHeight = 0; // fm.getAscent() +10;
             final double height = area.getHeight();
             final double width = area.getWidth();
 
@@ -256,12 +254,17 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
 
             for(int i=0;i<SUBDIVISIONS.size();i++){
                 final TimeSubdivision sub = SUBDIVISIONS.get(i);
-                final double textsize = sub.getTextLength(fm);
                 final double scale = sub.getUnitLength();
                 final double stepWidth = scale * view.scaleProperty().get();
 
                 final boolean showLine = stepWidth > 15 ;
-                final boolean showText = stepWidth > textsize ;
+
+                final boolean showText = Stream.generate(() -> "A")
+                        .limit(sub.getMaxLength())
+                        .reduce(String::concat)
+                        .map(val -> new Text(val).getBoundsInLocal().getWidth())
+                        .filter(length -> length < stepWidth )
+                        .isPresent();
 
                 if(!showLine){
                     //to narrow to show lines, skip this division and all followings
@@ -284,8 +287,8 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
                     line.setFill(lineColor);
                     ticks.add(line);
 
-                    if(showText){
-                        final Text text = new Text((float)x+3, height-compactBandHeight-fm.getMaxDescent(), sub.getText((long)step));
+                    if (showText) {
+                        final Text text = new Text((float) x + 3, height - compactBandHeight /* - fm.getMaxDescent() */, sub.getText((long) step));
                         text.setFill(textColor);
                         ticks.add(text);
                     }
@@ -309,11 +312,11 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
 
                 //draw text
                 final String text = sub.getText(beginInterval)+sub.getUnitText()+" ";
-                final Text textShape = new Text(x, height-fm.getMaxDescent()-3,text);
+                final Text textShape = new Text(x, height /* -fm.getMaxDescent()-3 */, text);
                 textShape.setFill(textColor);
                 ticks.add(textShape);
 
-                x += fm.computeStringWidth(text);
+                x += text.length();
 
                 //last element, we draw possible other lines
                 if(i==compact.size()-1){
@@ -328,7 +331,7 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
                         ticks.add(line);
 
                         if(lx > x){
-                            final Text compactText = new Text((float)lx+3, height-fm.getMaxDescent()-3, lt);
+                            final Text compactText = new Text((float)lx+3, height /* -fm.getMaxDescent()-3 */, lt);
                             compactText.setFill(textColor);
                             ticks.add(compactText);
                         }

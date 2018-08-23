@@ -17,9 +17,13 @@
 
 package org.geotoolkit.ebrim.xml;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.bind.JAXBException;
+import org.apache.sis.internal.xml.LegacyNamespaces;
 import org.geotoolkit.xml.AnchoredMarshallerPool;
 import org.apache.sis.xml.MarshallerPool;
+import org.apache.sis.xml.XML;
 
 import static org.geotoolkit.gml.xml.GMLMarshallerPool.createJAXBContext;
 
@@ -32,7 +36,9 @@ public final class EBRIMMarshallerPool {
     private static final MarshallerPool instance;
     static {
         try {
-            instance = new AnchoredMarshallerPool(createJAXBContext(EBRIMClassesContext.getAllClasses()));
+            final Map<String,Object> properties = new HashMap<>();
+            properties.put(XML.METADATA_VERSION, LegacyNamespaces.VERSION_2007);
+            instance = new AnchoredMarshallerPool(createJAXBContext(EBRIMClassesContext.getAllClasses()), properties);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }

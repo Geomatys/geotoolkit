@@ -51,7 +51,11 @@ final class Reader extends GridCoverageReader {
 
     @Override
     public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException {
-        return null;
+        try (Transaction transaction = entry.transaction()) {
+            return entry.product(transaction).getGridGeometry(transaction);
+        } catch (SQLException e) {
+            throw new CatalogException(e);
+        }
     }
 
     @Override
