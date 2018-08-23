@@ -17,14 +17,16 @@
  */
 package org.geotoolkit.util.wmm;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -37,14 +39,21 @@ public final class WorldMagneticModel {
      * load the model's coefficients from the ressource file WMM.COF
      * @return the magnetic model
      * @throws IOException
-     * @throws URISyntaxException
      */
-    public static MagneticModel readMagModel() throws IOException, URISyntaxException {
-        final URL url = WorldMagneticModel.class.getResource("WMM.COF");
-        if (url == null) {
+    public static MagneticModel readMagModel() throws IOException {
+        final InputStream stream = WorldMagneticModel.class.getResourceAsStream("WMM.COF");
+        if (stream == null) {
             throw new FileNotFoundException("WMM.COF");
         }
-        return readMagModel(Paths.get(url.toURI()));
+
+        final List<String> lines;
+        try (final InputStream in = stream;
+                final InputStreamReader inr = new InputStreamReader(in, StandardCharsets.UTF_8);
+                final BufferedReader reader = new BufferedReader(inr)) {
+            lines = reader.lines().collect(Collectors.toList());
+        }
+
+        return readMagModel(lines);
     }
 
     /**
@@ -54,10 +63,13 @@ public final class WorldMagneticModel {
      * @throws IOException
      */
     public static MagneticModel readMagModel(Path path) throws IOException {
-        List<String> allLines = Files.readAllLines(path);
+        return readMagModel(Files.readAllLines(path));
+    }
+
+    private static MagneticModel readMagModel(List<String> coefficients) throws IOException {
         boolean stop = false;int l=0, nMax=0;
-        while(!stop && l<allLines.size()) {
-            String line =allLines.get(l++);
+        while(!stop && l<coefficients.size()) {
+            String line =coefficients.get(l++);
             if(!(stop = line.startsWith("99999"))) {
                 String field = line.trim().split(" +")[0];
                 try {
@@ -71,13 +83,13 @@ public final class WorldMagneticModel {
         MagneticModel model = new MagneticModel(nMax * ( nMax + 1 ) / 2 + nMax);
         model.nMax = nMax;
         model.nMaxSecVar = nMax;
-        String[] headers = allLines.get(0).trim().split(" +");
+        String[] headers = coefficients.get(0).trim().split(" +");
         model.epoch = Double.parseDouble(headers[0]);
         model.ModelName = headers[1];
         stop = false;l=1;
 
-        while(!stop && l<allLines.size()) {
-            String line =allLines.get(l++);
+        while(!stop && l<coefficients.size()) {
+            String line =coefficients.get(l++);
             if(!(stop = line.startsWith("99999"))) {
                 String[] fields = line.trim().split(" +");
                 int n = Integer.parseInt(fields[0]);
