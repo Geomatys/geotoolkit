@@ -96,7 +96,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.sis.non-free</groupId>
-      <artifactId>sis-epsg</artifactId>
+      <artifactId>sis-embedded-data</artifactId>
       <version>${sis.epsg.version}</version>
       <scope>runtime</scope>
       <exclusions>

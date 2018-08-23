@@ -153,8 +153,15 @@ final class AdditionalAxisTable extends CachedTable<String, AdditionalAxisTable.
         final Object   data      = bounds.getArray();
         final int      length    = getLength(data);
         final double[] values    = new double[length];
-        for (int i=0; i<length; i++) {
-            values[i] = getDouble(data, i);
+        if (data instanceof Number[]) {
+            final Number[] array = (Number[]) data;
+            for (int i=0; i<length; i++) {
+                values[i] = array[i].doubleValue();
+            }
+        } else {
+            for (int i=0; i<length; i++) {
+                values[i] = getDouble(data, i);
+            }
         }
         bounds.free();
         if (values.length < 2) {
