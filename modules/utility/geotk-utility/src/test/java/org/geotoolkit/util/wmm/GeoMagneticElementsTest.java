@@ -185,5 +185,109 @@ public class GeoMagneticElementsTest {
         Assert.assertEquals(0.44, geoMagneticElements.Decldot, 0.01);
 
 
+        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, new CoordGeodetic( 0.0, 120.0, 0.0));
+        Assert.assertNotNull(geoMagneticElements);
+        //Main fields
+        Assert.assertEquals(39571.4, geoMagneticElements.X, 0.1);
+        Assert.assertEquals(222.5, geoMagneticElements.Y, 0.1);
+        Assert.assertEquals(-11030.1, geoMagneticElements.Z, 0.1);
+        Assert.assertEquals(39572.0, geoMagneticElements.H, 0.1);
+        Assert.assertEquals(41080.5, geoMagneticElements.F, 0.1);
+        Assert.assertEquals(-15.57, geoMagneticElements.Incl, 0.01);
+        Assert.assertEquals(0.32, geoMagneticElements.Decl, 0.01);
+        Assert.assertEquals(0.32, geoMagneticElements.GV, 0.01);
+        //Secular fields
+        Assert.assertEquals(21.3, geoMagneticElements.Xdot, 0.1);
+        Assert.assertEquals(-68.2, geoMagneticElements.Ydot, 0.1);
+        Assert.assertEquals(88.9, geoMagneticElements.Zdot, 0.1);
+        Assert.assertEquals(20.9, geoMagneticElements.Hdot, 0.1);
+        Assert.assertEquals(-3.8, geoMagneticElements.Fdot, 0.1);
+        Assert.assertEquals(0.13, geoMagneticElements.Incldot, 0.01);
+        Assert.assertEquals(-0.10, geoMagneticElements.Decldot, 0.01);
+
+
+        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, new CoordGeodetic(-80.0, 240.0, 0.0));
+        Assert.assertNotNull(geoMagneticElements);
+        //Main fields
+        Assert.assertEquals(5873.8, geoMagneticElements.X, 0.1);
+        Assert.assertEquals(15781.4, geoMagneticElements.Y, 0.1);
+        Assert.assertEquals(-52687.9, geoMagneticElements.Z, 0.1);
+        Assert.assertEquals(16839.1, geoMagneticElements.H, 0.1);
+        Assert.assertEquals(55313.4, geoMagneticElements.F, 0.1);
+        Assert.assertEquals(-72.28, geoMagneticElements.Incl, 0.01);
+        Assert.assertEquals(69.58, geoMagneticElements.Decl, 0.01);
+        Assert.assertEquals(309.58, geoMagneticElements.GV, 0.01);
+        //Secular fields
+        Assert.assertEquals(30.6, geoMagneticElements.Xdot, 0.1);
+        Assert.assertEquals(8.1, geoMagneticElements.Ydot, 0.1);
+        Assert.assertEquals(92.4, geoMagneticElements.Zdot, 0.1);
+        Assert.assertEquals(18.3, geoMagneticElements.Hdot, 0.1);
+        Assert.assertEquals(-82.5, geoMagneticElements.Fdot, 0.1);
+        Assert.assertEquals(0.05, geoMagneticElements.Incldot, 0.01);
+        Assert.assertEquals(-0.09, geoMagneticElements.Decldot, 0.01);
+
+
+        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, new CoordGeodetic( 80.0, 0.0, 100.0));
+        Assert.assertNotNull(geoMagneticElements);
+        //Main fields
+        Assert.assertEquals(6290.5, geoMagneticElements.X, 0.1);
+        Assert.assertEquals(-348.5, geoMagneticElements.Y, 0.1);
+        Assert.assertEquals(52292.7, geoMagneticElements.Z, 0.1);
+        Assert.assertEquals(6300.1, geoMagneticElements.H, 0.1);
+        Assert.assertEquals(52670.9, geoMagneticElements.F, 0.1);
+        Assert.assertEquals(83.13, geoMagneticElements.Incl, 0.01);
+        Assert.assertEquals(-3.17, geoMagneticElements.Decl, 0.01);
+        Assert.assertEquals(-3.17, geoMagneticElements.GV, 0.01);
+        //Secular fields
+        Assert.assertEquals(-9.5, geoMagneticElements.Xdot, 0.1);
+        Assert.assertEquals(49.2, geoMagneticElements.Ydot, 0.1);
+        Assert.assertEquals(9.1, geoMagneticElements.Zdot, 0.1);
+        Assert.assertEquals(-12.2, geoMagneticElements.Hdot, 0.1);
+        Assert.assertEquals(7.6, geoMagneticElements.Fdot, 0.1);
+        Assert.assertEquals(0.01, geoMagneticElements.Incldot, 0.01);
+        Assert.assertEquals(0.44, geoMagneticElements.Decldot, 0.01);
+
+
+        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, new CoordGeodetic( 0.0, 120.0, 100.0));
+        Assert.assertNotNull(geoMagneticElements);
+        //Main fields
+        Assert.assertEquals(37585.5, geoMagneticElements.X, 0.1);
+        Assert.assertEquals(209.5, geoMagneticElements.Y, 0.1);
+        Assert.assertEquals(-10564.2, geoMagneticElements.Z, 0.1);
+        Assert.assertEquals(37586.1, geoMagneticElements.H, 0.1);
+        Assert.assertEquals(39042.5, geoMagneticElements.F, 0.1);
+        Assert.assertEquals(-15.70, geoMagneticElements.Incl, 0.01);
+        Assert.assertEquals(0.32, geoMagneticElements.Decl, 0.01);
+        Assert.assertEquals(0.32, geoMagneticElements.GV, 0.01);
+        //Secular fields
+        Assert.assertEquals(20.0, geoMagneticElements.Xdot, 0.1);
+        Assert.assertEquals(-61.9, geoMagneticElements.Ydot, 0.1);
+        Assert.assertEquals(83.7, geoMagneticElements.Zdot, 0.1);
+        Assert.assertEquals(19.6, geoMagneticElements.Hdot, 0.1);
+        Assert.assertEquals(-3.7, geoMagneticElements.Fdot, 0.1);
+        Assert.assertEquals(0.13, geoMagneticElements.Incldot, 0.01);
+        Assert.assertEquals(-0.09, geoMagneticElements.Decldot, 0.01);
+
+
+        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, new CoordGeodetic(-80.0, 240.0, 100.0));
+        Assert.assertNotNull(geoMagneticElements);
+        //Main fields
+        Assert.assertEquals(5683.5, geoMagneticElements.X, 0.1);
+        Assert.assertEquals(14808.8, geoMagneticElements.Y, 0.1);
+        Assert.assertEquals(-50163.0, geoMagneticElements.Z, 0.1);
+        Assert.assertEquals(15862.0, geoMagneticElements.H, 0.1);
+        Assert.assertEquals(52611.1, geoMagneticElements.F, 0.1);
+        Assert.assertEquals(-72.45, geoMagneticElements.Incl, 0.01);
+        Assert.assertEquals(69.00, geoMagneticElements.Decl, 0.01);
+        Assert.assertEquals(309.00, geoMagneticElements.GV, 0.01);
+        //Secular fields
+        Assert.assertEquals(28.2, geoMagneticElements.Xdot, 0.1);
+        Assert.assertEquals(6.9, geoMagneticElements.Ydot, 0.1);
+        Assert.assertEquals(86.2, geoMagneticElements.Zdot, 0.1);
+        Assert.assertEquals(16.6, geoMagneticElements.Hdot, 0.1);
+        Assert.assertEquals(-77.2, geoMagneticElements.Fdot, 0.1);
+        Assert.assertEquals(0.05, geoMagneticElements.Incldot, 0.01);
+        Assert.assertEquals(-0.09, geoMagneticElements.Decldot, 0.01);
+
     }
 }
