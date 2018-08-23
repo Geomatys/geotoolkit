@@ -201,7 +201,7 @@ public final class WorldMagneticModel {
         final double[] schmidtQuasiNorm = new double[NumTerms + 1];
 
 
-        /*	 First,	Compute the Gauss-normalized associated Legendre  functions*/
+        /* First, Compute the Gauss-normalized associated Legendre  functions*/
         for (int n = 1; n <= nMax; n++) {
             for (int m = 0; m <= n; m++) {
                 final int index = (n * (n + 1) / 2 + m);
@@ -383,15 +383,15 @@ public final class WorldMagneticModel {
         for (int n = 1; n <= magneticModel.nMax; n++) {
             for (int m = 0; m <= n; m++) {
                 final int index = (n * (n + 1) / 2 + m);
-                /*		    nMax  	(n+2) 	  n     m            m           m
+                /*          nMax      (n+2)       n     m            m           m
                         Bz =   -SUM (a/r)   (n+1) SUM  [g cos(m p) + h sin(m p)] P (sin(phi))
-                                        n=1      	      m=0   n            n           n  */
+                                        n=1                m=0   n            n           n  */
                 /* Equation 12 in the WMM Technical report.  Derivative with respect to radius.*/
                 magneticResults.Bz -= sphVariables.RelativeRadiusPower[n]
                         * (magneticModel.Main_Field_Coeff_G[index] * sphVariables.cos_mlambda[m]
                         + magneticModel.Main_Field_Coeff_H[index] * sphVariables.sin_mlambda[m])
                         * (double) (n + 1) * legendreFunction.Pcup[index];
-                /*		  1 nMax  (n+2)    n     m            m           m
+                /*        1 nMax  (n+2)    n     m            m           m
                         By =    SUM (a/r) (m)  SUM  [g cos(m p) + h sin(m p)] dP (sin(phi))
                                    n=1             m=0   n            n           n  */
                 /* Equation 11 in the WMM Technical report. Derivative with respect to longitude, divided by radius. */
@@ -399,7 +399,7 @@ public final class WorldMagneticModel {
                         * (magneticModel.Main_Field_Coeff_G[index] * sphVariables.sin_mlambda[m]
                         - magneticModel.Main_Field_Coeff_H[index] * sphVariables.cos_mlambda[m])
                         * (double) (m) * legendreFunction.Pcup[index];
-                /*		   nMax  (n+2) n     m            m           m
+                /*          nMax  (n+2) n     m            m           m
                         Bx = - SUM (a/r)   SUM  [g cos(m p) + h sin(m p)] dP (sin(phi))
                                    n=1         m=0   n            n           n  */
                 /* Equation 10  in the WMM Technical report. Derivative with respect to latitude, divided by radius. */
@@ -454,7 +454,7 @@ public final class WorldMagneticModel {
                 final double k = (double) (((n - 1) * (n - 1)) - 1) / (double) ((2 * n - 1) * (2 * n - 3));
                 PcupS[n] = sin_phi * PcupS[n - 1] - k * PcupS[n - 2];
             }
-            /*		  1 nMax  (n+2)    n     m            m           m
+            /*          1 nMax  (n+2)    n     m            m           m
                 By =    SUM (a/r) (m)  SUM  [g cos(m p) + h sin(m p)] dP (sin(phi))
                            n=1             m=0   n            n           n  */
             /* Equation 11 in the WMM Technical report. Derivative with respect to longitude, divided by radius. */
@@ -482,15 +482,15 @@ public final class WorldMagneticModel {
         for (int n = 1; n <= magneticModel.nMaxSecVar; n++) {
             for (int m = 0; m <= n; m++) {
                 final int index = (n * (n + 1) / 2 + m);
-                /*		    nMax  	(n+2) 	  n     m            m           m
+                /*            nMax      (n+2)       n     m            m           m
                         Bz =   -SUM (a/r)   (n+1) SUM  [g cos(m p) + h sin(m p)] P (sin(phi))
-                                        n=1      	      m=0   n            n           n  */
+                                        n=1                m=0   n            n           n  */
                 /*  Derivative with respect to radius.*/
                 magneticResults.Bz -= sphVariables.RelativeRadiusPower[n]
                         * (magneticModel.Secular_Var_Coeff_G[index] * sphVariables.cos_mlambda[m]
                         + magneticModel.Secular_Var_Coeff_H[index] * sphVariables.sin_mlambda[m])
                         * (double) (n + 1) * legendreFunction.Pcup[index];
-                /*		  1 nMax  (n+2)    n     m            m           m
+                /*          1 nMax  (n+2)    n     m            m           m
                         By =    SUM (a/r) (m)  SUM  [g cos(m p) + h sin(m p)] dP (sin(phi))
                                    n=1             m=0   n            n           n  */
                 /* Derivative with respect to longitude, divided by radius. */
@@ -498,7 +498,7 @@ public final class WorldMagneticModel {
                         * (magneticModel.Secular_Var_Coeff_G[index] * sphVariables.sin_mlambda[m]
                         - magneticModel.Secular_Var_Coeff_H[index] * sphVariables.cos_mlambda[m])
                         * (double) (m) * legendreFunction.Pcup[index];
-                /*		   nMax  (n+2) n     m            m           m
+                /*           nMax  (n+2) n     m            m           m
                         Bx = - SUM (a/r)   SUM  [g cos(m p) + h sin(m p)] dP (sin(phi))
                                    n=1         m=0   n            n           n  */
                 /* Derivative with respect to latitude, divided by radius. */
@@ -544,7 +544,7 @@ public final class WorldMagneticModel {
                final double k = (double) (((n - 1) * (n - 1)) - 1) / (double) ((2 * n - 1) * (2 * n - 3));
                 PcupS[n] = sin_phi * PcupS[n - 1] - k * PcupS[n - 2];
             }
-            /*		  1 nMax  (n+2)    n     m            m           m
+            /*          1 nMax  (n+2)    n     m            m           m
                 By =    SUM (a/r) (m)  SUM  [g cos(m p) + h sin(m p)] dP (sin(phi))
                            n=1             m=0   n            n           n  */
             /* Derivative with respect to longitude, divided by radius. */
