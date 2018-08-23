@@ -27,7 +27,7 @@ import org.apache.sis.referencing.cs.AxesConvention;
  * Requirements:
  * <ul>
  *   <li>{@code sis-referencing} module</li>
- *   <li>{@code sis-epsg} module (only for {@link #geographicToProjected()})</li>
+ *   <li>{@code sis-embedded-data} module (only for {@link #geographicToProjected()})</li>
  *   <li>JavaDB or Derby (only for {@link #geographicToProjected()})</li>
  * </ul>
  */

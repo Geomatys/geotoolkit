@@ -7,10 +7,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel
  */
 public class Demo {
-
     /**
-     * Geotoolkit can store Coordinate Reference system in several ways.
-     * This exemple declare a dependency to sis-epsg and derby.
+     * Geotk can store Coordinate Reference system in several ways.
      * In this case geotoolkit will create a derby/javadb database.
      */
     public static void main(String[] args) throws Exception {
