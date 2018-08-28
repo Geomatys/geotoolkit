@@ -15,6 +15,7 @@ dependency-reduced-pom.xml
 # Netbeans files
 nbactions.xml$
 nbproject/
+nb-configuration.xml
 
 # IntelliJ files
 .idea/
