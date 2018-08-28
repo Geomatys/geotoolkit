@@ -32,9 +32,6 @@ public class StringToNumberRangeConverter extends SimpleConverter<String, Number
 
     private static StringToNumberRangeConverter INSTANCE;
 
-    private StringToNumberRangeConverter(){
-    }
-
     public static StringToNumberRangeConverter getInstance(){
         if(INSTANCE == null){
             INSTANCE = new StringToNumberRangeConverter();

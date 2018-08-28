@@ -33,9 +33,6 @@ public class StringToAffineTransformConverter extends SimpleConverter<String, Af
 
     private static StringToAffineTransformConverter INSTANCE;
 
-    private StringToAffineTransformConverter(){
-    }
-
     public static synchronized StringToAffineTransformConverter getInstance(){
         if(INSTANCE == null){
             INSTANCE = new StringToAffineTransformConverter();

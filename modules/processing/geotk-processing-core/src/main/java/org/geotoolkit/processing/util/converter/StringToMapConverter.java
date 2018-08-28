@@ -34,9 +34,6 @@ public class StringToMapConverter extends SimpleConverter<String, Map> {
 
     private static StringToMapConverter INSTANCE;
 
-    private StringToMapConverter(){
-    }
-
     public static StringToMapConverter getInstance(){
         if(INSTANCE == null){
             INSTANCE = new StringToMapConverter();
