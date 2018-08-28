@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.wps.converters.inputs.literal;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.regex.Pattern;
 import org.geotoolkit.feature.util.converter.SimpleConverter;
 import org.apache.sis.util.UnconvertibleObjectException;
 
@@ -28,7 +27,7 @@ import org.apache.sis.util.UnconvertibleObjectException;
  *
  * @author Quentin Boileau
  */
-public class StringToIntegerArrayConverter extends SimpleConverter<String, int[]> {
+public class StringToLongArrayConverter extends SimpleConverter<String, long[]> {
 
     @Override
     public Class<String> getSourceClass() {
@@ -36,52 +35,26 @@ public class StringToIntegerArrayConverter extends SimpleConverter<String, int[]
     }
 
     @Override
-    public Class<int[]> getTargetClass() {
-        return int[].class;
+    public Class<long[]> getTargetClass() {
+        return long[].class;
     }
 
     @Override
-    public int[] apply(final String source) throws UnconvertibleObjectException {
-
-        if (source != null && !source.trim().isEmpty()) {
-
-            final List<Integer> integerList = new LinkedList<Integer>();
-            if (source.contains(",")) {
-                final String[] sourceSplit = source.split(",");
-
-                for (final String str : sourceSplit) {
-                    try {
-                        final Integer i = Integer.valueOf(str.trim());
-                        if (i != null) {
-                            integerList.add(i);
-                        }
-                    } catch (NumberFormatException ex) {
-                        throw new UnconvertibleObjectException(ex.getMessage(), ex);
-                    }
-                }
-            } else {
-                 try {
-                    final Integer i = Integer.valueOf(source.trim());
-                    if (i != null) {
-                        integerList.add(i);
-                    }
-                } catch (NumberFormatException ex) {
-                    throw new UnconvertibleObjectException(ex.getMessage(), ex);
-                }
-            }
-
-            if (!integerList.isEmpty()) {
-                final int[] outArray = new int[integerList.size()];
-                for (int i = 0; i < integerList.size(); i++) {
-                    outArray[i] = integerList.get(i);
-                }
-                return outArray;
-            } else {
-                throw new UnconvertibleObjectException("Invalid source String : "+source);
-            }
+    public long[] apply(String source) throws UnconvertibleObjectException {
+        if (source == null) return null;
+        source = source.trim();
+        if (source.isEmpty()) {
+            return new long[0];
         }
 
-        return new int[0];
+        try {
+            return Pattern.compile("\\s*,\\s*")
+                    .splitAsStream(source)
+                    .filter(s -> s != null && !s.isEmpty())
+                    .mapToLong(Long::parseLong)
+                    .toArray();
+        } catch (Exception e) {
+            throw new UnconvertibleObjectException("Input string cannot be converted into a long value array", e);
+        }
     }
-
 }

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wps.converters.inputs.literal;
+package org.geotoolkit.wps.converters.outputs.literal;
 
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
@@ -26,32 +26,20 @@ import org.junit.Test;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public class StringToLongArrayConverterTest extends org.geotoolkit.test.TestBase {
+public class LongArrayToStringConverterTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testConversion() throws UnconvertibleObjectException  {
 
-        final WPSObjectConverter<String, long[]> converter = WPSConverterRegistry.getInstance().getConverter(String.class, long[].class);
+        final WPSObjectConverter<long[], String> converter = WPSConverterRegistry.getInstance().getConverter(long[].class, String.class);
 
-        long[] expected = new long[] {10, 5, 90, 6, 7000000000l};
-        long[] output = converter.apply("10, 5, 90, 6, 7000000000");
-        assertArrayEquals(expected, output);
+        long[] input = new long[] { 10, 5, 90, 6, 7000000000l};
+        String output = converter.apply(input);
+        assertEquals("10,5,90,6,7000000000", output);
 
-        output = converter.apply("   ");
-        assertArrayEquals(new long[0], output);
+        output = converter.apply(new long[0]);
+        assertEquals("", output);
 
-        try {
-            output = converter.apply("Some random text");
-            fail("Long parser should not be able to read random text.");
-        } catch (UnconvertibleObjectException ex) {
-            // expected behavior
-        }
-
-        try {
-            output = converter.apply("10.0, 5.6, 90, 6, 70");
-            fail("Long parser should not be able to read float values.");
-        } catch (UnconvertibleObjectException ex) {
-            // expected behavior
-        }
+        assertNull("A null value should be converted to another null value",  converter.apply(null));
     }
 }

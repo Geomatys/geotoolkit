@@ -16,18 +16,22 @@
  */
 package org.geotoolkit.wps.converters.outputs.literal;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import org.apache.sis.util.ObjectConverter;
 import org.geotoolkit.feature.util.converter.SimpleConverter;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.wps.converters.inputs.literal.StringToLongArrayConverter;
 
 /**
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class IntegerArrayToStringConverter extends SimpleConverter<int[], String> {
+public class LongArrayToStringConverter extends SimpleConverter<long[], String> {
 
     @Override
-    public Class<int[]> getSourceClass() {
-        return int[].class;
+    public Class<long[]> getSourceClass() {
+        return long[].class;
     }
 
     @Override
@@ -36,15 +40,16 @@ public class IntegerArrayToStringConverter extends SimpleConverter<int[], String
     }
 
     @Override
-    public String apply(final int[] source) throws UnconvertibleObjectException {
-        final StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < source.length; i++) {
-            sb.append(Integer.valueOf(source[i]).toString());
-            if (i < source.length-1) {
-                sb.append(",");
-            }
-        }
-        return sb.toString();
+    public String apply(final long[] source) throws UnconvertibleObjectException {
+        if (source == null)
+            return null;
+        return Arrays.stream(source)
+                .mapToObj(Long::toString)
+                .collect(Collectors.joining(","));
     }
 
+    @Override
+    public ObjectConverter<String, long[]> inverse() throws UnsupportedOperationException {
+        return new StringToLongArrayConverter();
+    }
 }
