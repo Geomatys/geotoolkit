@@ -27,10 +27,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.datum.DefaultEllipsoid;
-import org.opengis.referencing.datum.Ellipsoid;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.opengis.geometry.DirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.CoordinateOperation;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -39,8 +44,10 @@ import org.opengis.referencing.datum.Ellipsoid;
  */
 public final class WorldMagneticModel {
 
+    private static final double MEAN_RADIUS = 6371.2;
+
     /**
-     * load the model's coefficients from the ressource file WMM.COF
+     * load the model's coefficients from the resource file WMM.COF
      * @return the magnetic model
      * @throws IOException
      */
@@ -61,8 +68,8 @@ public final class WorldMagneticModel {
     }
 
     /**
-     * load the model's coefficients from external resoource
-     * @param path the path thats contain model's coefficients
+     * load the model's coefficients from external resource
+     * @param path the path to the model's coefficients
      * @return the magnetic model
      * @throws IOException
      */
@@ -117,25 +124,16 @@ public final class WorldMagneticModel {
     }
 
     /**
-     * Calculate the magnetic field elements for a single point using WGS-84 ellipsoid.
-     * @param TimedMagneticModel
-     * @param coordGeodetic
-     * @return
-     */
-    public static GeoMagneticElements computeGeoMagneticElements(MagneticModel TimedMagneticModel, CoordGeodetic coordGeodetic) {
-        return computeGeoMagneticElements(TimedMagneticModel, coordGeodetic, CommonCRS.WGS84.ellipsoid());
-    }
-
-    /**
      * Calculate the magnetic field elements for a single point
      * @param timedMagneticModel
      * @param coordGeodetic
      * @param ellip
      * @return
      */
-    public static GeoMagneticElements computeGeoMagneticElements(MagneticModel timedMagneticModel, CoordGeodetic coordGeodetic, Ellipsoid ellip) {
-        final CoordSpherical coordSpherical = coordGeodetic.toSpherical(ellip);
-        SphericalHarmonicVariables SphVariables = ComputeSphericalHarmonicVariables(ellip, coordSpherical, timedMagneticModel.nMax);
+    public static GeoMagneticElements computeGeoMagneticElements(MagneticModel timedMagneticModel, DirectPosition positionOfInterest) throws FactoryException, TransformException {
+        DirectPosition coordGeodetic = to4326(positionOfInterest);
+        final DirectPosition coordSpherical = toSpherical(coordGeodetic);
+        SphericalHarmonicVariables SphVariables = ComputeSphericalHarmonicVariables(coordSpherical, timedMagneticModel.nMax);
         LegendreFunction LegendreFunction = computeLegendreFunction(coordSpherical, timedMagneticModel.nMax);
         MagneticResults MagneticResultsSph = summation(LegendreFunction, timedMagneticModel, SphVariables, coordSpherical); /* Accumulate the spherical harmonic coefficients*/
         MagneticResults MagneticResultsSphVar = secVarSummation(LegendreFunction, timedMagneticModel, SphVariables, coordSpherical); /*Sum the Secular Variation Coefficients  */
@@ -147,17 +145,31 @@ public final class WorldMagneticModel {
         return GeoMagneticElements;
     }
 
+    private static DirectPosition to4326(final DirectPosition source) throws FactoryException, TransformException {
+        final CoordinateReferenceSystem sourceCrs = source.getCoordinateReferenceSystem();
+        if (sourceCrs == null) {
+            throw new IllegalArgumentException("Cannot identify coordinate system of given point. Please set the point CRS.");
+        }
 
-    private static SphericalHarmonicVariables ComputeSphericalHarmonicVariables(Ellipsoid ellip, CoordSpherical coordSpherical, int nMax) {
+        final CoordinateOperation op = CRS.findOperation(sourceCrs, CommonCRS.WGS84.geographic3D(), null);
+        final DirectPosition geo = new GeneralDirectPosition(CommonCRS.WGS84.geographic3D());
+        return op.getMathTransform().transform(source, geo);
+    }
+
+    private static DirectPosition toSpherical(final DirectPosition source) throws FactoryException, TransformException {
+        final CoordinateOperation toGeoCentric = CRS.findOperation(source.getCoordinateReferenceSystem(), CommonCRS.WGS84.geocentric(), null);
+        final CoordinateOperation toSpheric = CRS.findOperation(CommonCRS.WGS84.geocentric(), CommonCRS.WGS84.spherical(), null);
+        final DirectPosition spheric = new GeneralDirectPosition(CommonCRS.WGS84.spherical());
+        return MathTransforms.concatenate(toGeoCentric.getMathTransform(), toSpheric.getMathTransform()).transform(source, spheric);
+    }
+
+    private static SphericalHarmonicVariables ComputeSphericalHarmonicVariables(DirectPosition coordSpherical, int nMax) {
         SphericalHarmonicVariables sphVariables = new SphericalHarmonicVariables(nMax);
-        final double cos_lambda = Math.cos(Math.toRadians(coordSpherical.lambda));
-        final double sin_lambda = Math.sin(Math.toRadians(coordSpherical.lambda));
-        final DefaultEllipsoid tmpEllip = DefaultEllipsoid.castOrCopy(ellip);
+        final double cos_lambda = Math.cos(Math.toRadians(coordSpherical.getOrdinate(1)));
+        final double sin_lambda = Math.sin(Math.toRadians(coordSpherical.getOrdinate(1)));
         /* for n = 0 ... model_order, compute (Radius of Earth / Spherical radius r)^(n+2)
         for n  1..nMax-1 (this is much faster than calling pow MAX_N+1 times).      */
-        final double meanRadius = tmpEllip.getAxisUnit().getConverterTo(Units.KILOMETRE)
-                .convert(tmpEllip.getAuthalicRadius());
-        final double radiusRatio = meanRadius / coordSpherical.r;
+        final double radiusRatio = MEAN_RADIUS / (coordSpherical.getOrdinate(2) / 1000);
         sphVariables.RelativeRadiusPower[0] = Math.pow(radiusRatio, 2);
         for(int n = 1; n <= nMax; n++)
         {
@@ -191,8 +203,8 @@ public final class WorldMagneticModel {
      * @param nMax Maxumum degree of spherical harmonic secular model
      * @return Calculated Legendre variables in the data structure
      */
-    private static LegendreFunction computeLegendreFunction(CoordSpherical coordSpherical, int nMax) {
-        final double sin_phi = Math.sin(Math.toRadians(coordSpherical.phig)); /* sin  (geocentric latitude) */
+    private static LegendreFunction computeLegendreFunction(DirectPosition coordSpherical, int nMax) {
+        final double sin_phi = Math.sin(Math.toRadians(coordSpherical.getOrdinate(0))); /* sin  (geocentric latitude) */
         return (nMax <= 16 || (1.0 - Math.abs(sin_phi)) < 1.0e-10)? computePcupLow(sin_phi,nMax) : computePcupHigh(sin_phi,nMax);
     }
 
@@ -396,7 +408,7 @@ public final class WorldMagneticModel {
      * @param coordSpherical
      * @return
      */
-    private static MagneticResults summation(LegendreFunction legendreFunction, MagneticModel magneticModel, SphericalHarmonicVariables sphVariables, CoordSpherical coordSpherical) {
+    private static MagneticResults summation(LegendreFunction legendreFunction, MagneticModel magneticModel, SphericalHarmonicVariables sphVariables, DirectPosition coordSpherical) {
         MagneticResults magneticResults = new MagneticResults();
 
         for (int n = 1; n <= magneticModel.nMax; n++) {
@@ -430,7 +442,7 @@ public final class WorldMagneticModel {
             }
         }
 
-        final double cos_phi = Math.cos(Math.toRadians(coordSpherical.phig));
+        final double cos_phi = Math.cos(Math.toRadians(coordSpherical.getOrdinate(0)));
         if (Math.abs(cos_phi) > 1.0e-10) {
             magneticResults.By = magneticResults.By / cos_phi;
         } else /* Special calculation for component - By - at Geographic poles.
@@ -449,14 +461,14 @@ public final class WorldMagneticModel {
      * @param coordSpherical
      * @param magneticResults
      */
-    private static void summationSpecial(MagneticModel magneticModel, SphericalHarmonicVariables sphVariables, CoordSpherical coordSpherical, MagneticResults magneticResults) {
+    private static void summationSpecial(MagneticModel magneticModel, SphericalHarmonicVariables sphVariables, DirectPosition coordSpherical, MagneticResults magneticResults) {
 
         double[] PcupS = new double[magneticModel.nMax + 1];
 
         PcupS[0] = 1;
         double schmidtQuasiNorm1 = 1.0;
         magneticResults.By = 0.0;
-        final double sin_phi = Math.sin(Math.toRadians(coordSpherical.phig));
+        final double sin_phi = Math.sin(Math.toRadians(coordSpherical.getOrdinate(0)));
 
         for (int n = 1; n <= magneticModel.nMax; n++) {
 
@@ -494,7 +506,7 @@ public final class WorldMagneticModel {
      * @param coordSpherical
      * @return
      */
-    private static MagneticResults secVarSummation(LegendreFunction legendreFunction, MagneticModel magneticModel, SphericalHarmonicVariables sphVariables, CoordSpherical coordSpherical) {
+    private static MagneticResults secVarSummation(LegendreFunction legendreFunction, MagneticModel magneticModel, SphericalHarmonicVariables sphVariables, DirectPosition coordSpherical) {
         magneticModel.SecularVariationUsed = true;
         MagneticResults magneticResults = new MagneticResults();
 
@@ -527,7 +539,7 @@ public final class WorldMagneticModel {
                         * legendreFunction.dPcup[index];
             }
         }
-        final double cos_phi = Math.cos(Math.toRadians(coordSpherical.phig));
+        final double cos_phi = Math.cos(Math.toRadians(coordSpherical.getOrdinate(0)));
         if (Math.abs(cos_phi) > 1.0e-10) {
             magneticResults.By = magneticResults.By / cos_phi;
         } else /* Special calculation for component By at Geographic poles */ {
@@ -543,14 +555,14 @@ public final class WorldMagneticModel {
      * @param coordSpherical
      * @param magneticResults
      */
-    private static void secVarSummationSpecial(MagneticModel magneticModel, SphericalHarmonicVariables sphVariables, CoordSpherical coordSpherical, MagneticResults magneticResults) {
+    private static void secVarSummationSpecial(MagneticModel magneticModel, SphericalHarmonicVariables sphVariables, DirectPosition coordSpherical, MagneticResults magneticResults) {
 
         double[] PcupS = new double[magneticModel.nMaxSecVar + 1];
 
         PcupS[0] = 1.0;
         double schmidtQuasiNorm1 = 1.0;
         magneticResults.By = 0.0;
-        final double sin_phi = Math.sin(Math.toRadians(coordSpherical.phig));
+        final double sin_phi = Math.sin(Math.toRadians(coordSpherical.getOrdinate(0)));
 
         for (int n = 1; n <= magneticModel.nMaxSecVar; n++) {
             final int index = (n * (n + 1) / 2 + 1);
@@ -582,12 +594,12 @@ public final class WorldMagneticModel {
      * @param magneticResultsSph
      * @return
      */
-    private static MagneticResults rotateMagneticVector(CoordSpherical coordSpherical, CoordGeodetic coordGeodetic, MagneticResults magneticResultsSph) {
+    private static MagneticResults rotateMagneticVector(DirectPosition coordSpherical, DirectPosition coordGeodetic, MagneticResults magneticResultsSph) {
 
         MagneticResults MagneticResultsGeo = new MagneticResults();
 
         /* Difference between the spherical and Geodetic latitudes */
-        final double Psi = (Math.PI / 180.0) * (coordSpherical.phig - coordGeodetic.phi);
+        final double Psi = Math.toRadians(coordSpherical.getOrdinate(0) - coordGeodetic.getOrdinate(0));
 
         /* Rotate spherical field components to the Geodetic system */
         MagneticResultsGeo.Bz = magneticResultsSph.Bx * Math.sin(Psi) + magneticResultsSph.Bz * Math.cos(Psi);
@@ -656,15 +668,15 @@ public final class WorldMagneticModel {
      * @param location
      * @param elements
      */
-    private static void calculateGridVariation(CoordGeodetic location, GeoMagneticElements elements) {
+    private static void calculateGridVariation(DirectPosition location, GeoMagneticElements elements) {
 
-        if(location.phi >= MAG_PS_MAX_LAT_DEGREE)
+        if(location.getOrdinate(0) >= MAG_PS_MAX_LAT_DEGREE)
         {
-            elements.GV = elements.Decl - location.lambda;
+            elements.GV = elements.Decl - location.getOrdinate(1);
 
-        } else if(location.phi <= MAG_PS_MIN_LAT_DEGREE)
+        } else if(location.getOrdinate(0) <= MAG_PS_MIN_LAT_DEGREE)
         {
-            elements.GV = elements.Decl + location.lambda;
+            elements.GV = elements.Decl + location.getOrdinate(1);
 
         } else
         {
@@ -675,13 +687,13 @@ public final class WorldMagneticModel {
 
     /**
      * Gets the UTM Parameters for a given Latitude and Longitude
-     * @param CoordGeodetic
+     * @param DirectPosition
      * @return
      */
-    private static UTMParameters getTransverseMercator(CoordGeodetic CoordGeodetic) {
+    private static UTMParameters getTransverseMercator(DirectPosition DirectPosition) {
 
-        final double Lambda = Math.toRadians(CoordGeodetic.lambda);
-        final double Phi = Math.toRadians(CoordGeodetic.phi);
+        final double Lambda = Math.toRadians(DirectPosition.getOrdinate(1));
+        final double Phi = Math.toRadians(DirectPosition.getOrdinate(0));
 
         UTMParameters utmParameters = getUTMParameters(Phi, Lambda);
         final double K0 = 0.9996;

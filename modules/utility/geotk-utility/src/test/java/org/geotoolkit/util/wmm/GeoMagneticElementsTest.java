@@ -17,11 +17,12 @@
  */
 package org.geotoolkit.util.wmm;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
+
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.opengis.geometry.DirectPosition;
 
 /**
  *
@@ -29,16 +30,8 @@ import org.junit.Test;
  */
 public class GeoMagneticElementsTest {
 
-    /**
-     * This test is ignored because test values given by NOAA are generated with a mean radius of 6371.2, which is
-     * imprecise. IUGG defines it as 6371.0088, which represents a difference of a hundred meter.
-     *
-     * @throws IOException
-     * @throws URISyntaxException
-     */
-    @Ignore
     @Test
-    public void testMagneticFieldAtPoints() throws IOException, URISyntaxException {
+    public void testMagneticFieldAtPoints() throws Exception {
 
         MagneticModel magneticModel = WorldMagneticModel.readMagModel();
         Assert.assertNotNull(magneticModel);
@@ -47,7 +40,7 @@ public class GeoMagneticElementsTest {
         Assert.assertNotNull(timedMagneticModel);
 
 
-        GeoMagneticElements geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, new CoordGeodetic( 80.0, 0.0, 0.0));
+        GeoMagneticElements geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, buildPoint( 80.0, 0.0, 0.0));
         Assert.assertNotNull(geoMagneticElements);
         //Main fields
         Assert.assertEquals(6627.1, geoMagneticElements.X, 0.1);
@@ -68,7 +61,7 @@ public class GeoMagneticElementsTest {
         Assert.assertEquals(0.44, geoMagneticElements.Decldot, 0.01);
 
 
-        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, new CoordGeodetic( 0.0, 120.0, 0.0));
+        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, buildPoint( 0.0, 120.0, 0.0));
         Assert.assertNotNull(geoMagneticElements);
         //Main fields
         Assert.assertEquals(39518.2, geoMagneticElements.X, 0.1);
@@ -89,7 +82,7 @@ public class GeoMagneticElementsTest {
         Assert.assertEquals(-0.10, geoMagneticElements.Decldot, 0.01);
 
 
-        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, new CoordGeodetic(-80.0, 240.0, 0.0));
+        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, buildPoint(-80.0, 240.0, 0.0));
         Assert.assertNotNull(geoMagneticElements);
         //Main fields
         Assert.assertEquals(5797.3, geoMagneticElements.X, 0.1);
@@ -109,7 +102,7 @@ public class GeoMagneticElementsTest {
         Assert.assertEquals(0.05, geoMagneticElements.Incldot, 0.01);
         Assert.assertEquals(-0.09, geoMagneticElements.Decldot, 0.01);
 
-        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, new CoordGeodetic( 80.0, 0.0, 100.0));
+        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, buildPoint( 80.0, 0.0, 100000.0));
         Assert.assertNotNull(geoMagneticElements);
         //Main fields
         Assert.assertEquals(6314.3, geoMagneticElements.X, 0.1);
@@ -129,7 +122,7 @@ public class GeoMagneticElementsTest {
         Assert.assertEquals(0.02, geoMagneticElements.Incldot, 0.01);
         Assert.assertEquals(0.44, geoMagneticElements.Decldot, 0.01);
 
-        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, new CoordGeodetic( 0.0, 120.0, 100.0));
+        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, buildPoint( 0.0, 120.0, 100000.0));
         Assert.assertNotNull(geoMagneticElements);
         //Main fields
         Assert.assertEquals(37535.6, geoMagneticElements.X, 0.1);
@@ -150,7 +143,7 @@ public class GeoMagneticElementsTest {
         Assert.assertEquals(-0.09, geoMagneticElements.Decldot, 0.01);
 
 
-        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, new CoordGeodetic(-80.0, 240.0, 100.0));
+        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, buildPoint(-80.0, 240.0, 100000.0));
         Assert.assertNotNull(geoMagneticElements);
         //Main fields
         Assert.assertEquals(5613.1, geoMagneticElements.X, 0.1);
@@ -173,7 +166,7 @@ public class GeoMagneticElementsTest {
         timedMagneticModel = magneticModel.timelyModify(new MagneticDate(2017.5));
         Assert.assertNotNull(timedMagneticModel);
 
-        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, new CoordGeodetic( 80.0, 0.0, 0.0));
+        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, buildPoint( 80.0, 0.0, 0.0));
         Assert.assertNotNull(geoMagneticElements);
         //Main fields
         Assert.assertEquals(6599.4, geoMagneticElements.X, 0.1);
@@ -194,7 +187,7 @@ public class GeoMagneticElementsTest {
         Assert.assertEquals(0.44, geoMagneticElements.Decldot, 0.01);
 
 
-        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, new CoordGeodetic( 0.0, 120.0, 0.0));
+        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, buildPoint( 0.0, 120.0, 0.0));
         Assert.assertNotNull(geoMagneticElements);
         //Main fields
         Assert.assertEquals(39571.4, geoMagneticElements.X, 0.1);
@@ -215,7 +208,7 @@ public class GeoMagneticElementsTest {
         Assert.assertEquals(-0.10, geoMagneticElements.Decldot, 0.01);
 
 
-        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, new CoordGeodetic(-80.0, 240.0, 0.0));
+        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, buildPoint(-80.0, 240.0, 0.0));
         Assert.assertNotNull(geoMagneticElements);
         //Main fields
         Assert.assertEquals(5873.8, geoMagneticElements.X, 0.1);
@@ -236,7 +229,7 @@ public class GeoMagneticElementsTest {
         Assert.assertEquals(-0.09, geoMagneticElements.Decldot, 0.01);
 
 
-        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, new CoordGeodetic( 80.0, 0.0, 100.0));
+        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, buildPoint( 80.0, 0.0, 100000.0));
         Assert.assertNotNull(geoMagneticElements);
         //Main fields
         Assert.assertEquals(6290.5, geoMagneticElements.X, 0.1);
@@ -257,7 +250,7 @@ public class GeoMagneticElementsTest {
         Assert.assertEquals(0.44, geoMagneticElements.Decldot, 0.01);
 
 
-        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, new CoordGeodetic( 0.0, 120.0, 100.0));
+        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, buildPoint( 0.0, 120.0, 100000.0));
         Assert.assertNotNull(geoMagneticElements);
         //Main fields
         Assert.assertEquals(37585.5, geoMagneticElements.X, 0.1);
@@ -278,7 +271,7 @@ public class GeoMagneticElementsTest {
         Assert.assertEquals(-0.09, geoMagneticElements.Decldot, 0.01);
 
 
-        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, new CoordGeodetic(-80.0, 240.0, 100.0));
+        geoMagneticElements = WorldMagneticModel.computeGeoMagneticElements(timedMagneticModel, buildPoint(-80.0, 240.0, 100000.0));
         Assert.assertNotNull(geoMagneticElements);
         //Main fields
         Assert.assertEquals(5683.5, geoMagneticElements.X, 0.1);
@@ -297,6 +290,11 @@ public class GeoMagneticElementsTest {
         Assert.assertEquals(-77.2, geoMagneticElements.Fdot, 0.1);
         Assert.assertEquals(0.05, geoMagneticElements.Incldot, 0.01);
         Assert.assertEquals(-0.09, geoMagneticElements.Decldot, 0.01);
+    }
 
+    private static DirectPosition buildPoint(double lat, double lon, double ellipsHeight) {
+        GeneralDirectPosition point = new GeneralDirectPosition(new double[]{lat, lon, ellipsHeight});
+        point.setCoordinateReferenceSystem(CommonCRS.WGS84.geographic3D());
+        return point;
     }
 }
