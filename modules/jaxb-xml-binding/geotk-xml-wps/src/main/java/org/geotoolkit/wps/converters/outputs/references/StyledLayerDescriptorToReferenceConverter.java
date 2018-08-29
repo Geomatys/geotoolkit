@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.wps.converters.outputs.references;
 
-import java.io.*;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.UUID;
 import javax.xml.bind.JAXBException;
@@ -26,8 +26,7 @@ import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.wps.xml.v200.Reference;
-;
-import org.opengis.sld.StyledLayerDescriptor;import org.opengis.sld.StyledLayerDescriptor;
+import org.opengis.sld.StyledLayerDescriptor;
 
 /**
  * Implementation of ObjectConverter to convert a {@link StyledLayerDescriptor sld} into a {@link OutputReferenceType reference}.
@@ -77,7 +76,7 @@ public class StyledLayerDescriptorToReferenceConverter extends AbstractReference
             //create file
             final String randomFileName = UUID.randomUUID().toString();
             final String dataFileName = randomFileName+".sld";
-            final File dataFile = new File((String) params.get(TMP_DIR_PATH), dataFileName);
+            final Path dataFile = buildPath(params, dataFileName);
             try {
                 StyleXmlIO xmlio = new StyleXmlIO();
                 xmlio.writeSLD(dataFile, source, Specification.StyledLayerDescriptor.V_1_1_0);

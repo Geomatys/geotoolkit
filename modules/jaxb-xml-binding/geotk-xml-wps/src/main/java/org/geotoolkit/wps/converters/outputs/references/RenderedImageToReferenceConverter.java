@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.UUID;
@@ -94,7 +93,7 @@ public class RenderedImageToReferenceConverter extends AbstractReferenceOutputCo
         final String randomFileName = UUID.randomUUID().toString();
         try {
 
-            final Path imageFile = Paths.get((String) params.get(TMP_DIR_PATH), randomFileName);
+            final Path imageFile = buildPath(params, randomFileName);
 
             if (encoding != null && encoding.equals(WPSEncoding.BASE64.getValue())) {
                 try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {

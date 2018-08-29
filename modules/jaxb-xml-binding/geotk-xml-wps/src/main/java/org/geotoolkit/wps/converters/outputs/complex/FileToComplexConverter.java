@@ -10,6 +10,7 @@ import org.geotoolkit.wps.xml.v200.Data;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -85,7 +86,15 @@ public class FileToComplexConverter extends AbstractComplexOutputConverter<File>
                 File ogrSchema = new File(schemaLocation);
                 // If we find a schema, we ensure it's location is public before giving it.
                 if (ogrSchema.exists()) {
-                    String tmpDir = (String) params.get(TMP_DIR_PATH);
+                    Object tmpDirValue = params.get(TMP_DIR_PATH);
+                    String tmpDir;
+                    if (tmpDirValue instanceof URI) {
+                        tmpDir = ((URI) params.get(TMP_DIR_PATH)).toString();
+                    } else if (tmpDirValue instanceof String) {
+                        tmpDir = (String) params.get(TMP_DIR_PATH);
+                    } else {
+                        throw new UnconvertibleObjectException("Unexpected type for " + TMP_DIR_PATH + " parameter.");
+                    }
                     String tmpURL = (String) params.get(TMP_DIR_URL);
                     if (tmpDir == null || tmpURL == null) {
                         throw new UnconvertibleObjectException("Mandatory parameters are missing.");
