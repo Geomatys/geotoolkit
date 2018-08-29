@@ -20,11 +20,11 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.GeometryFactory;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.sis.util.UnconvertibleObjectException;
@@ -68,16 +68,16 @@ public class GeometryArrayToReferenceConverter extends AbstractReferenceOutputCo
         reference.setSchema((String)params.get(SCHEMA));
 
         final String randomFilename = UUID.randomUUID().toString() + ".json";
-        final File geometryArrayFile = new File((String)params.get(TMP_DIR_PATH), randomFilename);
+        final Path geometryArrayFile = buildPath(params, randomFilename);
         try {
 
             if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(reference.getMimeType())) {
-                try (OutputStream geometryStream = new FileOutputStream(geometryArrayFile)) {
+                try (OutputStream geometryStream = Files.newOutputStream(geometryArrayFile)) {
                     GeometryFactory geometryFactory = new GeometryFactory();
                     Geometry toWrite = new GeometryCollection(source, geometryFactory);
                     GeoJSONStreamWriter.writeSingleGeometry(geometryStream, toWrite, JsonEncoding.UTF8, WPSConvertersUtils.FRACTION_DIGITS, true);
                 }
-                reference.setHref(geometryArrayFile.toURI().toURL().toString());
+                reference.setHref(geometryArrayFile.toUri().toURL().toString());
                 return reference;
             }
             else

@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.wps.converters.outputs.references;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.wps.xml.v200.Reference;;
 
 /**
@@ -70,25 +70,14 @@ public class BooleanToReferenceConverter extends AbstractReferenceOutputConverte
         reference.setSchema(null);
 
         final String randomFileName = UUID.randomUUID().toString();
-        FileWriter writer = null;
         try {
             //create file
-            final File literalFile = new File((String) params.get(TMP_DIR_PATH), randomFileName);
-            writer = new FileWriter(literalFile);
-            writer.write(String.valueOf(source));
-            writer.flush();
+            final Path literalFile = buildPath(params, randomFileName);
+            IOUtilities.writeString(String.valueOf(source), literalFile);
             reference.setHref((String) params.get(TMP_DIR_URL) + "/" + randomFileName);
 
         } catch (IOException ex) {
             throw new UnconvertibleObjectException("Error occure during image writing.", ex);
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException ex) {
-                    throw new UnconvertibleObjectException("Can't close the writer.", ex);
-                }
-            }
         }
         return reference;
     }

@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.wps.converters.outputs.references;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -34,11 +34,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Reference;
-;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.wps.converters.WPSConvertersUtils;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -96,17 +92,17 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
         reference.setEncoding((String) params.get(ENCODING));
 
         final String namespace = NamesExt.getNamespace(ft.getName());
-        final Map <String, String> schemaLocation = new HashMap<String, String>();
+        final Map <String, String> schemaLocation = new HashMap<>();
 
         final String randomFileName = UUID.randomUUID().toString();
 
         if(WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(reference.getMimeType())) {
             //create file
             final String dataFileName = randomFileName+".json";
-            final File dataFile = new File((String) params.get(TMP_DIR_PATH), dataFileName);
+            final Path dataFile = buildPath(params, dataFileName);
             try {
-                FileOutputStream fos = new FileOutputStream(dataFile);
-                try (GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, WPSConvertersUtils.FRACTION_DIGITS)) {
+                 try (OutputStream fos = Files.newOutputStream(dataFile);
+                      GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, WPSConvertersUtils.FRACTION_DIGITS)) {
                     Feature next = writer.next();
                     FeatureExt.copy(source, next, true);
                     writer.write();
@@ -140,7 +136,7 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
             final String dataFileName = randomFileName+".xml";
 
             //create file
-            final Path dataFile = Paths.get((String) params.get(TMP_DIR_PATH), dataFileName);
+            final Path dataFile = buildPath(params, dataFileName);
             try (final OutputStream dataStream = Files.newOutputStream(dataFile);
                     final AutoCloseable xmlCloser = () -> featureWriter.dispose()) {
                 //Write feature in file

@@ -19,17 +19,10 @@ package org.geotoolkit.wps.converters.outputs.references;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.wps.xml.v200.Reference;
-;
-
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Map;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -71,11 +64,20 @@ public class FileToReferenceConverter extends AbstractReferenceOutputConverter<F
         reference.setMimeType((String) params.get(MIME));
         reference.setEncoding((String) params.get(ENCODING));
         reference.setSchema((String) params.get(SCHEMA));
-        final Path targetDirectory = Paths.get((String) params.get(TMP_DIR_PATH));
+        final Path targetDirectory = buildPath(params, null);
+        Object tmpDirValue = params.get(TMP_DIR_PATH);
+        String tmpDir;
+        if (tmpDirValue instanceof URI) {
+            tmpDir = ((URI) params.get(TMP_DIR_PATH)).toString();
+        } else if (tmpDirValue instanceof String) {
+            tmpDir = (String) params.get(TMP_DIR_PATH);
+        } else {
+            throw new UnconvertibleObjectException("Unexpected type for " + TMP_DIR_PATH + " parameter.");
+        }
         try {
             final Path target = targetDirectory.resolve(source.getName());
-            if(source.getAbsolutePath().startsWith((String) params.get(TMP_DIR_PATH))) {
-                reference.setHref(source.getAbsolutePath().replace((String) params.get(TMP_DIR_PATH), (String) params.get(TMP_DIR_URL)));
+            if(source.getAbsolutePath().startsWith(tmpDir)) {
+                reference.setHref(source.getAbsolutePath().replace(tmpDir, (String) params.get(TMP_DIR_URL)));
             } else {
                 IOUtilities.copy(source.toPath(),target);
                 reference.setHref((String) params.get(TMP_DIR_URL) + "/" +source.getName());
