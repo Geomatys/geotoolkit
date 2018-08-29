@@ -24,12 +24,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.xml.bind.JAXBElement;
 import org.geotoolkit.gml.GeometrytoJTS;
-import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONGeometryCollection;
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
+import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Data;
@@ -77,8 +78,17 @@ public final class ComplexToGeometryArrayConverter extends AbstractComplexInputC
                     WPSMimeType.TEXT_GML.val().equalsIgnoreCase(source.getMimeType())) {
                     dataMimeTypeIdentifier = "GML";
                     final List<Geometry> geoms = new ArrayList<>();
-                    for(int i = 0; i<data.size(); i++){
-                        geoms.add(GeometrytoJTS.toJTS((AbstractGeometryType) data.get(i)));
+                    for(int i = 0; i<data.size(); i++) {
+                        Object val = data.get(i);
+                        if (val instanceof JAXBElement) {
+                            val = ((JAXBElement)val).getValue();
+                        }
+
+                        if (val instanceof AbstractGeometry) {
+                            geoms.add(GeometrytoJTS.toJTS((AbstractGeometry) val));
+                        } else {
+                            throw new UnconvertibleObjectException("Unknown geometry type at index: "+i);
+                        }
                     }
                     return geoms.toArray(new Geometry[geoms.size()]);
                 }
@@ -117,12 +127,10 @@ public final class ComplexToGeometryArrayConverter extends AbstractComplexInputC
             }else{
                 throw new UnconvertibleObjectException("Invalid data input : Empty geometry list.");
             }
-        }catch(ClassCastException ex){
-            throw new UnconvertibleObjectException("Invalid data input : empty " + dataMimeTypeIdentifier + " geometry.",ex);
-        }catch (FactoryException ex) {
+        } catch (FactoryException ex) {
             throw new UnconvertibleObjectException("Invalid data input : Cannot convert " + dataMimeTypeIdentifier + " geometry.",ex);
         } catch (MalformedURLException ex) {
-            throw new UnconvertibleObjectException("Unknown CRS code or unable to read the CRS from a geometry");
+            throw new UnconvertibleObjectException("Unknown CRS code or unable to read the CRS from a geometry", ex);
         } catch (IOException ex) {
             throw new UnconvertibleObjectException(ex);
         }
