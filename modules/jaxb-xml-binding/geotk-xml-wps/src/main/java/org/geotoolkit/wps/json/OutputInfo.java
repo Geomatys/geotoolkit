@@ -25,7 +25,24 @@ public class OutputInfo {
 
   private String id = null;
 
-  private String value = null;
+  private String data;
+
+  private String href = null;
+
+  private String mimeType = null;
+
+  private String schema = null;
+
+  private String encoding = null;
+
+  public OutputInfo() {
+
+  }
+
+  public OutputInfo(String id, String data) {
+      this.id = id;
+      this.data = data;
+  }
 
   public OutputInfo id(String id) {
     this.id = id;
@@ -44,8 +61,8 @@ public class OutputInfo {
     this.id = id;
   }
 
-  public OutputInfo value(String value) {
-    this.value = value;
+  public OutputInfo data(String value) {
+    this.data = value;
     return this;
   }
 
@@ -54,11 +71,11 @@ public class OutputInfo {
   * Get value
   * @return value
   **/
-  public String getValue() {
-    return value;
+  public String getData() {
+    return data;
   }
-  public void setValue(String value) {
-    this.value = value;
+  public void setData(String data) {
+    this.data = data;
   }
 
   @Override
@@ -71,12 +88,12 @@ public class OutputInfo {
     }
     OutputInfo outputInfo = (OutputInfo) o;
     return Objects.equals(this.id, outputInfo.id) &&
-        Objects.equals(this.value, outputInfo.value);
+        Objects.equals(this.data, outputInfo.data);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, value);
+    return Objects.hash(id, data);
   }
 
   @Override
@@ -85,7 +102,7 @@ public class OutputInfo {
     sb.append("class OutputInfo {\n");
 
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    value: ").append(toIndentedString(value)).append("\n");
+    sb.append("    value: ").append(toIndentedString(data)).append("\n");
     sb.append("}");
     return sb.toString();
   }
@@ -100,6 +117,62 @@ public class OutputInfo {
     }
     return o.toString().replace("\n", "\n    ");
   }
+
+    /**
+     * @return the href
+     */
+    public String getHref() {
+        return href;
+    }
+
+    /**
+     * @param href the href to set
+     */
+    public void setHref(String href) {
+        this.href = href;
+    }
+
+    /**
+     * @return the mimeType
+     */
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    /**
+     * @param mimeType the mimeType to set
+     */
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    /**
+     * @return the schema
+     */
+    public String getSchema() {
+        return schema;
+    }
+
+    /**
+     * @param schema the schema to set
+     */
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
+
+    /**
+     * @return the encoding
+     */
+    public String getEncoding() {
+        return encoding;
+    }
+
+    /**
+     * @param encoding the encoding to set
+     */
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
 
 
 }

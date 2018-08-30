@@ -86,6 +86,17 @@ public class ProcessOffering implements ProcessProperties {
         }
     }
 
+    public ProcessOffering(org.geotoolkit.wps.json.ProcessOffering pr) {
+        if (pr != null) {
+            if (pr.getProcess() != null) {
+                this.process = new ProcessDescription(pr.getProcess());
+            }
+            this.processVersion = pr.getProcessVersion();
+            this.jobControlOptions = pr.getJobControlOptions();
+            this.outputTransmission = pr.getOutputTransmission();
+        }
+    }
+
     /**
      * Gets the value of the process property.
      *

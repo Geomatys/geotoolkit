@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.wps.json.FormatDescription;
 
 
 /**
@@ -94,12 +95,22 @@ public class Format {
         this.maximumMegabytes = maximumMegabytes;
     }
 
-    public Format(final String encoding, final String mimeType, final String schema, final Integer maximumMegabytes, final boolean _default) {
+    public Format(final String encoding, final String mimeType, final String schema, final Integer maximumMegabytes, final Boolean _default) {
         this.encoding = encoding;
         this.mimeType = mimeType;
         this.schema   = schema;
         this.maximumMegabytes = maximumMegabytes;
         this._default = _default;
+    }
+
+    public Format(FormatDescription format) {
+        if (format != null) {
+            this._default = format.isDefault();
+            this.encoding = format.getEncoding();
+            this.maximumMegabytes = format.getMaximumMegabytes();
+            this.mimeType = format.getMimeType();
+            this.schema = format.getSchema();
+        }
     }
 
     /**

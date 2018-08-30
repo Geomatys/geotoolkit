@@ -16,19 +16,21 @@
  */
 package org.geotoolkit.wps.json;
 
-import java.util.Objects;
-import org.geotoolkit.wps.xml.v200.InputDescription;
-
 /**
- * ComplexInputType
+ * ComplexInputType unused anymore
  */
-public class ComplexInputType extends DataDescriptionType {
-
-    private Integer minOccurs = null;
-
-    private Integer maxOccurs = null;
+public class ComplexInputType {
 
     public ComplexInputType() {
+
+    }
+
+    /*public ComplexInputType(String id, String title, String _abstract, List<String> keywords,
+            List<Metadata> metadata, List<AdditionalParameters> additionalParameters,
+            List<FormatDescription> formats, Integer minOccurs, Object maxOccurs) {
+        super(id, title, _abstract, keywords, metadata, additionalParameters, formats);
+        this.minOccurs = minOccurs;
+        this.maxOccurs = maxOccurs;
 
     }
 
@@ -38,46 +40,7 @@ public class ComplexInputType extends DataDescriptionType {
             this.minOccurs = in.getMinOccurs();
             this.maxOccurs = in.getMaxOccurs();
         }
-    }
-
-    public ComplexInputType minOccurs(Integer minOccurs) {
-        this.minOccurs = minOccurs;
-        return this;
-    }
-
-    /**
-     * Get minOccurs
-     *
-     * @return minOccurs
-  *
-     */
-    public Integer getMinOccurs() {
-        return minOccurs;
-    }
-
-    public void setMinOccurs(Integer minOccurs) {
-        this.minOccurs = minOccurs;
-    }
-
-    public ComplexInputType maxOccurs(Integer maxOccurs) {
-        this.maxOccurs = maxOccurs;
-        return this;
-    }
-
-    /**
-     * Get maxOccurs
-     *
-     * @return maxOccurs
-     *
-     */
-    public Integer getMaxOccurs() {
-        return maxOccurs;
-    }
-
-    public void setMaxOccurs(Integer maxOccurs) {
-        this.maxOccurs = maxOccurs;
-    }
-
+    }*/
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -86,24 +49,19 @@ public class ComplexInputType extends DataDescriptionType {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ComplexInputType complexInputType = (ComplexInputType) o;
-        return Objects.equals(this.minOccurs, complexInputType.minOccurs)
-                && Objects.equals(this.maxOccurs, complexInputType.maxOccurs)
-                && super.equals(o);
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(minOccurs, maxOccurs, super.hashCode());
+        return java.util.Objects.hash();
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class ComplexInputType {\n");
-        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-        sb.append("    minOccurs: ").append(toIndentedString(minOccurs)).append("\n");
-        sb.append("    maxOccurs: ").append(toIndentedString(maxOccurs)).append("\n");
+
         sb.append("}");
         return sb.toString();
     }
@@ -117,6 +75,6 @@ public class ComplexInputType extends DataDescriptionType {
             return "null";
         }
         return o.toString().replace("\n", "\n    ");
-    }
 
+    }
 }

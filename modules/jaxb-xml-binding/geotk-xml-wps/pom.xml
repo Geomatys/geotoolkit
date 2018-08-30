@@ -75,6 +75,11 @@
     <dependencies>
         <dependency>
             <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-xml-kml</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-xml-ogc</artifactId>
             <version>${project.version}</version>
         </dependency>

@@ -39,6 +39,10 @@ public class ProcessCollection implements WPSJSONResponse {
               .collect(Collectors.toList());
   }
 
+  public ProcessCollection(List<ProcessSummary> processes) {
+      this.processes = processes;
+  }
+
   public ProcessCollection processes(List<ProcessSummary> processes) {
     this.processes = processes;
     return this;

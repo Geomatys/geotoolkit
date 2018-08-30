@@ -94,6 +94,14 @@ public class LiteralData extends DataDescription {
         literalDataDomain.add(new LiteralDataDomain(dataType, uom, anyValue));
     }
 
+    public LiteralData(List<Format> formats, LiteralDataDomain lit) {
+        super(formats);
+        if (lit != null) {
+            literalDataDomain = new ArrayList<>();
+            literalDataDomain.add(lit);
+        }
+    }
+
     /**
      * Gets the value of the literalDataDomain property.
      *

@@ -29,14 +29,38 @@ public class Metadata {
 
   private String href = null;
 
+  private String value = null;
+
+  private String rel = null;
+
+  private String type = null;
+
+  private String hreflang = null;
+
+  private String title = null;
+
   public Metadata() {
 
+  }
+
+  public Metadata(Metadata that) {
+      if (that != null) {
+          this.href = that.href;
+          this.role = that.role;
+          this.hreflang = that.hreflang;
+          this.rel = that.rel;
+          this.title = that.title;
+          this.type = that.type;
+          this.value = that.value;
+      }
   }
 
   public Metadata(AbstractMetadata that) {
       if (that != null) {
           this.href = that.getHref();
           this.role = that.getRole();
+          this.title = that.getTitle();
+          this.type  = that.getType();
       }
   }
 
@@ -60,6 +84,76 @@ public class Metadata {
     this.href = href;
     return this;
   }
+
+  /**
+     * @return the value
+     */
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * @param value the value to set
+     */
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    /**
+     * @return the rel
+     */
+    public String getRel() {
+        return rel;
+    }
+
+    /**
+     * @param rel the rel to set
+     */
+    public void setRel(String rel) {
+        this.rel = rel;
+    }
+
+    /**
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     * @return the hreflang
+     */
+    public String getHreflang() {
+        return hreflang;
+    }
+
+    /**
+     * @param hreflang the hreflang to set
+     */
+    public void setHreflang(String hreflang) {
+        this.hreflang = hreflang;
+    }
+
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
 
   /**
@@ -112,8 +206,6 @@ public class Metadata {
     }
     return o.toString().replace("\n", "\n    ");
   }
-
-
 }
 
 

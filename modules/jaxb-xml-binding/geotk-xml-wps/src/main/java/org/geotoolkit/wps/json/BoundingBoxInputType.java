@@ -16,65 +16,40 @@
  */
 package org.geotoolkit.wps.json;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
  * BoundingBoxInputType
  */
-public class BoundingBoxInputType extends DataDescriptionType {
+public class BoundingBoxInputType {
 
-    private Integer minOccurs = null;
+    private List<SupportedCrs> supportedCRS = new ArrayList<>();
 
-    private Integer maxOccurs = null;
-
-    public BoundingBoxInputType() {
-
+    public BoundingBoxInputType supportedCRS(List<SupportedCrs> supportedCRS) {
+        this.supportedCRS = supportedCRS;
+        return this;
     }
 
-    public BoundingBoxInputType(org.geotoolkit.wps.xml.v200.InputDescription in) {
-        super(in);
-        if (in != null) {
-            this.minOccurs = in.getMinOccurs();
-            this.maxOccurs = in.getMaxOccurs();
-        }
-    }
+    public BoundingBoxInputType addSupportedCRSItem(SupportedCrs supportedCRSItem) {
 
-    public BoundingBoxInputType minOccurs(Integer minOccurs) {
-        this.minOccurs = minOccurs;
+        this.supportedCRS.add(supportedCRSItem);
         return this;
     }
 
     /**
-     * Get minOccurs
+     * Get supportedCRS
      *
-     * @return minOccurs
+     * @return supportedCRS
   *
      */
-    public Integer getMinOccurs() {
-        return minOccurs;
+    public List<SupportedCrs> getSupportedCRS() {
+        return supportedCRS;
     }
 
-    public void setMinOccurs(Integer minOccurs) {
-        this.minOccurs = minOccurs;
-    }
-
-    public BoundingBoxInputType maxOccurs(Integer maxOccurs) {
-        this.maxOccurs = maxOccurs;
-        return this;
-    }
-
-    /**
-     * Get maxOccurs
-     *
-     * @return maxOccurs
-  *
-     */
-    public Integer getMaxOccurs() {
-        return maxOccurs;
-    }
-
-    public void setMaxOccurs(Integer maxOccurs) {
-        this.maxOccurs = maxOccurs;
+    public void setSupportedCRS(List<SupportedCrs> supportedCRS) {
+        this.supportedCRS = supportedCRS;
     }
 
     @Override
@@ -86,23 +61,20 @@ public class BoundingBoxInputType extends DataDescriptionType {
             return false;
         }
         BoundingBoxInputType boundingBoxInputType = (BoundingBoxInputType) o;
-        return Objects.equals(this.minOccurs, boundingBoxInputType.minOccurs)
-                && Objects.equals(this.maxOccurs, boundingBoxInputType.maxOccurs)
-                && super.equals(o);
+        return Objects.equals(this.supportedCRS, boundingBoxInputType.supportedCRS);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(minOccurs, maxOccurs, super.hashCode());
+        return java.util.Objects.hash(supportedCRS);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class BoundingBoxInputType {\n");
-        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-        sb.append("    minOccurs: ").append(toIndentedString(minOccurs)).append("\n");
-        sb.append("    maxOccurs: ").append(toIndentedString(maxOccurs)).append("\n");
+
+        sb.append("    supportedCRS: ").append(toIndentedString(supportedCRS)).append("\n");
         sb.append("}");
         return sb.toString();
     }

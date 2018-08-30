@@ -6,7 +6,7 @@
                 "schema": "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd",
                 "encoding": "UTF8"
             },
-            "value": "not a polygin"
+            "data" : "not a polygin"
         },
     {
             "id": "urn:ogc:cstl:wps:jts:intersection:input:geom2",
@@ -15,11 +15,10 @@
                 "schema": "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd",
                 "encoding": "UTF8"
             },
-            "value": "not a polygin"
+            "data" : "not a polygin"
         }],
     "outputs": [{
             "id": "urn:ogc:cstl:wps:jts:intersection:output:result_geom",
-            "format": null,
-            "transmissionMode": "VALUE"
+            "transmissionMode": "value"
         }]
 }

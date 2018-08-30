@@ -24,9 +24,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractAdditionalParameters;
 import org.geotoolkit.ows.xml.AbstractCodeType;
 import org.geotoolkit.ows.xml.AbstractDescription;
 import org.geotoolkit.ows.xml.AbstractMetadata;
+import org.geotoolkit.ows.xml.AbstractOwsContextDescription;
 
 
 /**
@@ -235,6 +237,21 @@ public class DescriptionType implements AbstractDescription {
     @Override
     public List<? extends AbstractMetadata> getMetadata() {
         return new ArrayList<>();
+    }
+
+    @Override
+    public List<? extends AbstractAdditionalParameters> getAdditionalParameters() {
+        return new ArrayList<>();
+    }
+
+    /**
+     * not implemented
+     *
+     * @return
+     */
+    @Override
+    public AbstractOwsContextDescription getOwsContext() {
+        return null;
     }
 
     /**

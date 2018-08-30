@@ -63,7 +63,7 @@ public class DomainMetadataType implements DomainMetadata {
     @XmlSchemaType(name = "anyURI")
     private String reference;
 
-    DomainMetadataType(){
+    public DomainMetadataType(){
 
     }
 

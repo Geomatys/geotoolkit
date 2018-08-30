@@ -17,6 +17,7 @@
 
 package org.geotoolkit.wps.xml.v200;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Arrays;
 import java.util.Optional;
 import javax.xml.bind.annotation.XmlEnum;
@@ -53,6 +54,7 @@ public enum DataTransmissionMode {
         value = v;
     }
 
+    @JsonValue
     public String value() {
         return value;
     }

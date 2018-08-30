@@ -26,9 +26,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.v200.AdditionalParametersType;
+import org.geotoolkit.ows.xml.v200.AllowedValues;
 import org.geotoolkit.ows.xml.v200.CodeType;
+import org.geotoolkit.ows.xml.v200.DomainMetadataType;
 import org.geotoolkit.ows.xml.v200.KeywordsType;
 import org.geotoolkit.ows.xml.v200.LanguageStringType;
+import org.geotoolkit.ows.xml.v200.ValueType;
+import org.geotoolkit.ows.xml.v200.ValuesReference;
+import org.geotoolkit.wps.json.FormatDescription;
 
 
 /**
@@ -93,6 +99,61 @@ public class InputDescription extends Description {
         this.minOccurs = minOccur;
         this.maxOccurs = maxOccur;
         this.dataDescription = dataDescription;
+    }
+
+    public InputDescription(CodeType identifier, LanguageStringType title, LanguageStringType _abstract,
+            KeywordsType keywords, List<AdditionalParametersType> additionalParams, Integer minOccur, String maxOccur, DataDescription dataDescription) {
+        super(identifier, title, _abstract, keywords, additionalParams);
+        this.minOccurs = minOccur;
+        this.maxOccurs = maxOccur;
+        this.dataDescription = dataDescription;
+    }
+
+    public InputDescription(org.geotoolkit.wps.json.InputType input) {
+        super(input);
+
+        final List<Format> formats = new ArrayList<>();
+        for (FormatDescription f : input.getFormats()) {
+            formats.add(new Format(f.getEncoding(), f.getMimeType(), f.getSchema(), f.getMaximumMegabytes(), f.isDefault()));
+        }
+
+        if (input.getMinOccurs() != null) {
+            this.minOccurs = Integer.parseInt(input.getMinOccurs());
+        }
+        if (input.getMaxOccurs() != null) {
+            this.maxOccurs = input.getMaxOccurs();
+        }
+
+        if (input.getLiteralDataDomain() != null) {
+
+            LiteralDataDomain lit = new LiteralDataDomain();
+            if (input.getLiteralDataDomain().getDataType() != null) {
+                String value = input.getLiteralDataDomain().getDataType().getName();
+                String reference = input.getLiteralDataDomain().getDataType().getReference();
+                lit.setDataType(new DomainMetadataType(value, reference));
+            }
+            if (input.getLiteralDataDomain().getAllowedValues()!= null) {
+                lit.setAllowedValues(new AllowedValues(input.getLiteralDataDomain().getAllowedValues().getAllowedValues()));
+            }
+            if (input.getLiteralDataDomain().getAllowedRanges()!= null) {
+                lit.setAllowedRanges(new AllowedValues(input.getLiteralDataDomain().getAllowedRanges().getAllowedRanges()));
+            }
+            if (input.getLiteralDataDomain().getDefaultValue()!= null) {
+                lit.setDefaultValue(new ValueType(input.getLiteralDataDomain().getDefaultValue()));
+            }
+            if (input.getLiteralDataDomain().getValuesReference()!= null) {
+                lit.setValuesReference(new ValuesReference(input.getLiteralDataDomain().getValuesReference(), null));
+            }
+            this.dataDescription = new LiteralData(formats, lit);
+        } else if (input.getSupportedCRS() != null) {
+            List<SupportedCRS> suportedCrs = new ArrayList<>();
+            for (String crs : input.getSupportedCRS()) {
+                suportedCrs.add(new SupportedCRS(crs));
+            }
+            this.dataDescription = new BoundingBoxData(formats, suportedCrs);
+        } else {
+            this.dataDescription = new ComplexData(formats);
+        }
     }
 
     public DataDescription getDataDescription() {

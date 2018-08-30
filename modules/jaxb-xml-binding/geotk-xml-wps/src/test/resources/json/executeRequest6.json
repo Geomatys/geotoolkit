@@ -1,0 +1,17 @@
+{
+    "inputs": [{
+            "id": "input1",
+            "format": {
+                "mimeType": "text/xml",
+                "schema": "http://kk.com",
+                "encoding": "UTF8"
+            },
+            "data": "not a point"
+        }],
+    "outputs": [{
+            "id": "out-1",
+            "transmissionMode": "reference"
+        }],
+    "mode": "async",
+    "response": "document"
+}

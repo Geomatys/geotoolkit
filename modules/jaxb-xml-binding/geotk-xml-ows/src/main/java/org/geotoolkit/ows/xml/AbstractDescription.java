@@ -34,4 +34,8 @@ public interface AbstractDescription {
     List<? extends AbstractKeywords> getKeywords();
 
     List<? extends AbstractMetadata> getMetadata();
+
+    List<? extends AbstractAdditionalParameters> getAdditionalParameters();
+
+    AbstractOwsContextDescription getOwsContext();
 }

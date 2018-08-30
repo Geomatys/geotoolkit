@@ -1,0 +1,70 @@
+{
+    "immediateDeployment": true,
+    "processDescription": {
+        "process": {
+            "id": "urn:process:1",
+            "title": "title p1",
+            "keywords": ["kw1", "kw2"],
+            "inputs": [{
+                    "id": "ID1",
+                    "title": "in put 1 title",
+                    "keywords": ["in1"],
+                    "formats": [{
+                            "mimeType": "text/xml",
+                            "schema": "http://kk.com",
+                            "encoding": "UTF8",
+                            "default": true
+                        }],
+                    "minOccurs": "0",
+                    "maxOccurs": "unbounded",
+                    "additionalParameters": [{
+                            "parameters": [{
+                                    "name": "EOImage",
+                                    "values": ["true"]
+                                }]
+                        }],
+                    "abstract": "some input 1",
+                    "LiteralDataDomain": {
+                        "dataType": {
+                            "name": "String",
+                            "reference": "http://www.w3.org/TR/xmlschema-2/#String"
+                        }
+                    }
+                }, {
+                    "id": "ID2",
+                    "title": "in put 2 title",
+                    "keywords": ["in2"],
+                    "formats": [{
+                            "mimeType": "text/xml",
+                            "schema": "http://kk.com",
+                            "encoding": "UTF8",
+                            "default": true
+                        }],
+                    "minOccurs": "0",
+                    "maxOccurs": "1",
+                    "abstract": "some input 2"
+                }],
+            "outputs": [{
+                    "id": "out-1",
+                    "title": "out title",
+                    "keywords": ["kw-out"],
+                    "formats": [{
+                            "mimeType": "text/xml",
+                            "schema": "http://kk.com",
+                            "encoding": "UTF8",
+                            "default": true
+                        }],
+                    "abstract": "some output"
+                }],
+            "executeEndpoint": "http://process/1",
+            "abstract": "some process 1"
+        },
+        "processVersion": "1.0",
+        "jobControlOptions": ["sync-execute"],
+        "outputTransmission": ["reference"]
+    },
+    "executionUnit": [{
+            "href": "http://test.cwl"
+        }],
+    "deploymentProfileName": "deploy 1"
+}

@@ -33,6 +33,21 @@ public class FormatDescription extends Format {
 
     }
 
+    public FormatDescription(FormatDescription that) {
+        super(that);
+        if (that != null) {
+            this._default = that.isDefault();
+            this.maximumMegabytes = that.getMaximumMegabytes();
+        }
+    }
+
+    public FormatDescription(String mimeType, String schema, String encoding, Boolean _default, Integer maximumMegabytes) {
+        super(mimeType, schema, encoding);
+        this._default = _default;
+        this.maximumMegabytes = maximumMegabytes;
+
+    }
+
     public FormatDescription(org.geotoolkit.wps.xml.v200.Format format) {
         super(format);
         if (format != null) {

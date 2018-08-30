@@ -76,6 +76,14 @@ public class AbstractReferenceBaseType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public AbstractReferenceBaseType() {
+
+    }
+
+    public AbstractReferenceBaseType(String href) {
+        this.href = href;
+    }
+
     /**
      * Gets the value of the type property.
      *
