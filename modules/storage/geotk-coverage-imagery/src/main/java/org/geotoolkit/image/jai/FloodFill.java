@@ -30,6 +30,7 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.WritableRenderedImage;
+import java.util.function.Predicate;
 
 import javax.media.jai.OpImage;
 import javax.media.jai.ImageLayout;
@@ -160,6 +161,23 @@ public abstract class FloodFill extends OpImage {
         if (oldSamples.isEmpty()) {
             return;
         }
+        fill(image, oldSamples::contains, newSamples, points);
+    }
+
+    /**
+     * Colors an area of connected pixels with the same set of color.
+     * The fill is performed in place in the given image.
+     * The operation is performed immediately; it is not deferred like usual JAI operations.
+     *
+     * @param image     The image in which to colors an area.
+     * @param oldSamples The colors to replace (usually only 1 color, but more are allowed).
+     * @param newSamples The new colors replacing the old ones.
+     * @param points    The coordinate of the starting point. There is usually only one
+     *                  such point, but more are allowed.
+     */
+    public static void fill(final WritableRenderedImage image, final Predicate<SampleValues> oldSamples,
+            final SampleValues newSamples, final Point... points)
+    {
         /*
          * Copies the points coordinates in an IntegerList. The content of that list will be
          * (x,y) tupples translated in such a way that the upper left pixel is located at (0,0)
@@ -234,11 +252,11 @@ public abstract class FloodFill extends OpImage {
      */
     private static void fill(final WritableRaster raster, final Raster rasterTop,
             final Raster rasterBottom, final Rectangle imageBounds, int x, int y,
-            final Set<SampleValues> oldValues, final SampleValues newValues,
+            final Predicate<SampleValues> oldValues, final SampleValues newValues,
             final IntegerList globalStack)
     {
         final SampleValues buffer = newValues.instance();
-        if (!oldValues.contains(buffer.getPixel(raster, x, y))) {
+        if (!oldValues.test(buffer.getPixel(raster, x, y))) {
             return;
         }
         final int width  = raster.getWidth();
@@ -272,7 +290,7 @@ public abstract class FloodFill extends OpImage {
                     }
                 }
                 break;
-            } while (oldValues.contains(buffer.getPixel(raster, x, y)));
+            } while (oldValues.test(buffer.getPixel(raster, x, y)));
             x++;
             /*
              * The loop below scans toward the right as long as there is pixels to replace.
@@ -298,7 +316,7 @@ public abstract class FloodFill extends OpImage {
                      * of the current (x,y) location. For every sequences of consecutive pixels to
                      * replace, push in the stack the location of the first pixel in that sequence.
                      */
-                    if (border != null && oldValues.contains(buffer.getPixel(border, x, checkAt)) != omitCheck) {
+                    if (border != null && oldValues.test(buffer.getPixel(border, x, checkAt)) != omitCheck) {
                         if ((omitCheck = !omitCheck) == true) {
                             if (border == raster) {
                                 // Found a point which need further examination in this tile.
@@ -348,7 +366,7 @@ public abstract class FloodFill extends OpImage {
                     }
                     break;
                 }
-            } while (oldValues.contains(buffer.getPixel(raster, x, y)));
+            } while (oldValues.test(buffer.getPixel(raster, x, y)));
             /*
              * The above loop may have pushed additional points to process on the stack.
              * If this is the case, extract the point on the top of the stack an continue.

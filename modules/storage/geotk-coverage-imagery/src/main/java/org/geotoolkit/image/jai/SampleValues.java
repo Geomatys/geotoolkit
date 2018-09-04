@@ -34,7 +34,7 @@ import org.apache.sis.internal.util.Numerics;
  * @since 3.01
  * @module
  */
-abstract class SampleValues {
+public abstract class SampleValues {
     /**
      * Creates a {@code SampleValues}.
      */
@@ -64,6 +64,14 @@ abstract class SampleValues {
             default:                     return new Integer(values);
         }
     }
+
+    /**
+     * Get band sample value.
+     *
+     * @param band band index
+     * @return band value at index
+     */
+    public abstract double getSample(int band);
 
     /**
      * Returns a new instance of the same type than this {@code SampleValues} object.
@@ -105,6 +113,11 @@ abstract class SampleValues {
         /** Creates a new instance initialized to the given value. */
         Double(final double[] samples) {
             this.samples = samples.clone();
+        }
+
+        @Override
+        public double getSample(int band) {
+            return samples[band];
         }
 
         /** {@inheritDoc} */
@@ -156,6 +169,11 @@ abstract class SampleValues {
             this.samples = Numerics.copyAsFloats(samples);
         }
 
+        @Override
+        public double getSample(int band) {
+            return samples[band];
+        }
+
         /** {@inheritDoc} */
         @Override public SampleValues instance() {
             return new Float(samples.length);
@@ -205,6 +223,11 @@ abstract class SampleValues {
             this.samples = Numerics.copyAsInts(samples);
         }
 
+        @Override
+        public double getSample(int band) {
+            return samples[band];
+        }
+        
         /** {@inheritDoc} */
         @Override public SampleValues instance() {
             return new Integer(samples.length);
