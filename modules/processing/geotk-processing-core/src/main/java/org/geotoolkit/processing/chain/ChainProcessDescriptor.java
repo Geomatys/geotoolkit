@@ -137,11 +137,7 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
             final ParameterDescriptor desc;
             if (realType) {
                 final Class type = param.getType().getRealClass();
-                desc = new ParameterBuilder()
-                        .addName(param.getCode())
-                        .setRemarks(param.getRemarks())
-                        .setRequired(param.getMinOccurs()!=0)
-                        .create(type, convertDefaultValueInClass(param.getDefaultValue(), type));
+                desc = new ExtendedParameterDescriptor(param.getCode(), null, param.getRemarks(), param.getMinOccurs(), param.getMaxOccurs(), type, convertDefaultValueInClass(param.getDefaultValue(), type), null, null);
             } else {
                 final Map<String, Object> ext = new HashMap<>();
                 ext.put(KEY_DISTANT_CLASS, param.getType());
@@ -153,8 +149,8 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
                     clazz = Object.class;
                 }
 
-                desc = new ExtendedParameterDescriptor(param.getCode(), param.getRemarks(), clazz,
-                        convertDefaultValueInClass(param.getDefaultValue(), clazz), param.getMinOccurs()!=0, ext);
+                desc = new ExtendedParameterDescriptor(param.getCode(), null, param.getRemarks(),  param.getMinOccurs(), param.getMaxOccurs(), clazz,
+                        convertDefaultValueInClass(param.getDefaultValue(), clazz), null, ext);
 
             }
 
@@ -167,11 +163,7 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
     public static ParameterDescriptor convertParameterDtoToParameterDescriptor(final Parameter param, final boolean realType) {
         if (realType) {
             final Class type = param.getType().getRealClass();
-            return new ParameterBuilder()
-                    .addName(param.getCode())
-                    .setRemarks(param.getRemarks())
-                    .setRequired(param.getMinOccurs()!=0)
-                    .create(type, convertDefaultValueInClass(param.getDefaultValue(), type));
+            return new ExtendedParameterDescriptor(param.getCode(), null, param.getRemarks(), param.getMinOccurs(), param.getMaxOccurs(), type, convertDefaultValueInClass(param.getDefaultValue(), type), null, null);
         }
 
         final Map<String, Object> ext = new HashMap<>();
@@ -183,9 +175,7 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
         } catch (ClassNotFoundException ex) {
             clazz = Object.class;
         }
-
-        return new ExtendedParameterDescriptor(param.getCode(), param.getRemarks(), clazz,
-                convertDefaultValueInClass(param.getDefaultValue(), clazz), param.getMinOccurs()!=0, ext);
+        return new ExtendedParameterDescriptor(param.getCode(), null, param.getRemarks(), param.getMinOccurs(), param.getMaxOccurs(), clazz, convertDefaultValueInClass(param.getDefaultValue(), clazz), null, ext);
     }
 
     /**

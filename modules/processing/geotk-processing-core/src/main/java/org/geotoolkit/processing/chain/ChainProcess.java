@@ -16,12 +16,14 @@
  */
 package org.geotoolkit.processing.chain;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.function.groovy.GroovyFunctionFactory;
@@ -46,6 +48,7 @@ import org.geotoolkit.processing.ForwardProcessListener;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
+import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
@@ -91,7 +94,7 @@ public class ChainProcess extends AbstractProcess {
         List<List<FlowNode>> ranked = Flow.sortByRank(nodes);
 
         //prepare all parameters for each process step
-        final Map<Integer, ParameterValueGroup> configs = new HashMap<Integer, ParameterValueGroup>();
+        final Map<Integer, ParameterValueGroup> configs = new HashMap<>();
 
         for (FlowNode node : nodes) {
             final Object obj = node.getObject();
@@ -142,8 +145,19 @@ public class ChainProcess extends AbstractProcess {
                 if (obj == ElementProcess.BEGIN) {
                     //copy input params in children nodes
                     for(DataLink link : model.getInputLinks(Integer.MIN_VALUE)){
-                        final Object value = inputParameters.parameter(link.getSourceCode()).getValue();
-                        setValue(value, configs.get(link.getTargetId()).parameter(link.getTargetCode()));
+                        List<ParameterValue> values = getValues(inputParameters, link.getSourceCode());
+                        boolean first = true;
+                        for (ParameterValue paramValue : values) {
+                            if (first) {
+                                final Object value = paramValue.getValue();
+                                setValue(value, configs.get(link.getTargetId()).parameter(link.getTargetCode()));
+                                first = false;
+                            } else {
+                                final Object value = paramValue.getValue();
+                                setValue(value, paramValue);
+                                configs.get(link.getTargetId()).values().add(paramValue);
+                            }
+                        }
                     }
                 } else if (obj == ElementProcess.END) {
                     // do nothing
@@ -198,9 +212,20 @@ public class ChainProcess extends AbstractProcess {
                     i++;
 
                     //set result in children
-                    for(DataLink link : model.getInputLinks(element.getId())){
-                        final Object value = result.parameter(link.getSourceCode()).getValue();
-                        setValue(value, configs.get(link.getTargetId()).parameter(link.getTargetCode()));
+                    for (DataLink link : model.getInputLinks(element.getId())) {
+                        final List<ParameterValue> values = getValues(result, link.getSourceCode());
+                        boolean first = true;
+                        for (ParameterValue paramValue : values) {
+                            if (first) {
+                                final Object value = paramValue.getValue();
+                                setValue(value, configs.get(link.getTargetId()).parameter(link.getTargetCode()));
+                                first = false;
+                            } else {
+                                final Object value = paramValue.getValue();
+                                setValue(value, paramValue);
+                                configs.get(link.getTargetId()).values().add(paramValue);
+                            }
+                        }
                     }
                 } else if (obj instanceof ElementCondition) {
                     final ElementCondition condition = (ElementCondition) obj;
@@ -311,5 +336,15 @@ public class ChainProcess extends AbstractProcess {
             }
         }
         return sb.toString();
+    }
+
+    private static List<ParameterValue> getValues(final ParameterValueGroup param, final String descCode) {
+        List<ParameterValue> results = new ArrayList<>();
+        for (GeneralParameterValue value : param.values()) {
+            if (value.getDescriptor().getName().getCode().equals(descCode)) {
+                results.add((ParameterValue) value);
+            }
+        }
+        return results;
     }
 }
