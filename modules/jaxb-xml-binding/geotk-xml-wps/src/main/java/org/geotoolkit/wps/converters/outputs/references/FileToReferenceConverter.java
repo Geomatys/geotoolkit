@@ -65,22 +65,19 @@ public class FileToReferenceConverter extends AbstractReferenceOutputConverter<F
         reference.setEncoding((String) params.get(ENCODING));
         reference.setSchema((String) params.get(SCHEMA));
         final Path targetDirectory = buildPath(params, null);
-        Object tmpDirValue = params.get(TMP_DIR_PATH);
-        String tmpDir;
-        if (tmpDirValue instanceof URI) {
-            tmpDir = ((URI) params.get(TMP_DIR_PATH)).toString();
-        } else if (tmpDirValue instanceof String) {
-            tmpDir = (String) params.get(TMP_DIR_PATH);
-        } else {
-            throw new UnconvertibleObjectException("Unexpected type for " + TMP_DIR_PATH + " parameter.");
-        }
+        final String tmpDir = getTemproraryDirectoryPath(params);
+        final String tmpDirUrl = (String) params.get(TMP_DIR_URL);
         try {
-            final Path target = targetDirectory.resolve(source.getName());
-            if(source.getAbsolutePath().startsWith(tmpDir)) {
-                reference.setHref(source.getAbsolutePath().replace(tmpDir, (String) params.get(TMP_DIR_URL)));
+            // if the source is already in the temp folder
+            if (source.getAbsolutePath().startsWith(tmpDir)) {
+                reference.setHref(source.getAbsolutePath().replace(tmpDir, tmpDirUrl));
+
+            // else we copy the soruce file in temp dir
             } else {
+                final Path target = targetDirectory.resolve(source.getName());
                 IOUtilities.copy(source.toPath(),target);
-                reference.setHref((String) params.get(TMP_DIR_URL) + "/" +source.getName());
+                String suffix = getRelativeLocation(target, tmpDir);
+                reference.setHref(tmpDirUrl + "/" + suffix);
             }
         } catch (IOException ex) {
             throw new UnconvertibleObjectException("Error during moving file to output directory.", ex);

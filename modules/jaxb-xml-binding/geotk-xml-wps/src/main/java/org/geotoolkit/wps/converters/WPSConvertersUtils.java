@@ -125,6 +125,7 @@ public class WPSConvertersUtils {
     public static final String WMS_INSTANCE_NAME    = "WMS_INSTANCE_NAME";  //WMS instance name
     public static final String WMS_INSTANCE_URL     = "WMS_INSTANCE_URL";   //WMS instance url
     public static final String WMS_LAYER_NAME       = "WMS_LAYER_NAME";   //WMS instance url
+    public static final String CURRENT_JOB_ID       = "CURRENT_JOB_ID";   //current WPS job ID
     public static final int    FRACTION_DIGITS      = 12;                 // Number of fractions digits to write for floating point numbers
 
     /**
@@ -274,6 +275,7 @@ public class WPSConvertersUtils {
         parameters.put(WPSObjectConverter.TMP_DIR_PATH, params.get(OUT_STORAGE_DIR));
         parameters.put(WPSObjectConverter.TMP_DIR_URL, params.get(OUT_STORAGE_URL));
         parameters.put(WPSObjectConverter.ENCODING, encoding);
+        parameters.put(WPSObjectConverter.JOB_ID, params.get(CURRENT_JOB_ID));
         parameters.put(WPSObjectConverter.MIME, mime);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
         parameters.put(WPSObjectConverter.WPSVERSION, wpsVersion);
@@ -305,6 +307,7 @@ public class WPSConvertersUtils {
         parameters.put(WPSObjectConverter.SCHEMA, schema);
         parameters.put(WPSObjectConverter.WPSVERSION, wpsVersion);
         parameters.put(WPSObjectConverter.GMLVERSION, GML_VERSION.get(wpsVersion));
+        parameters.put(WPSObjectConverter.JOB_ID, params.get(CURRENT_JOB_ID));
 
         final ComplexData complex = new ComplexData(Collections.singletonList(new Format(encoding, mimeType, schema, null)));
 
@@ -440,6 +443,7 @@ public class WPSConvertersUtils {
         parameters.put(WPSObjectConverter.WPSVERSION, version);
         parameters.put(WPSObjectConverter.GMLVERSION, GML_VERSION.get(version));
         parameters.put(WPSObjectConverter.IOTYPE, iotype.toString());
+        parameters.put(WPSObjectConverter.JOB_ID, params.get(CURRENT_JOB_ID));
 
         ensureParametersDefined(object.getClass(), iotype, params);
 

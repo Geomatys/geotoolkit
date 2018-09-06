@@ -31,6 +31,7 @@ public interface WPSObjectConverter<S, T> extends ObjectConverter<S, T> {
     public static final String MIME         = "mime";
     public static final String SCHEMA       = "schema";
     public static final String ENCODING     = "encoding";
+    public static final String JOB_ID       = "jobId";
     public static final String TMP_DIR_PATH = "tempDirectoryPath";
     public static final String TMP_DIR_URL  = "tempDirectoryUrl";
     public static final String IOTYPE       = "ioType";

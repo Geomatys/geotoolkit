@@ -112,7 +112,8 @@ public class CoverageToReferenceConverter extends AbstractReferenceOutputConvert
                 CoverageIO.write(source, formatName, imageFile);
             }
 
-            reference.setHref((String) params.get(TMP_DIR_URL) + "/" +randomFileName);
+            final String relLoc = getRelativeLocation(imageFile, params);
+            reference.setHref((String) params.get(TMP_DIR_URL) + "/" +relLoc);
 
         } catch (IOException | CoverageStoreException ex) {
             throw new UnconvertibleObjectException("Error during writing the coverage in the output file.",ex);

@@ -95,11 +95,11 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
         final Map <String, String> schemaLocation = new HashMap<>();
 
         final String randomFileName = UUID.randomUUID().toString();
+        final String tmpDirUrl = (String) params.get(TMP_DIR_URL);
 
         if(WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(reference.getMimeType())) {
             //create file
-            final String dataFileName = randomFileName+".json";
-            final Path dataFile = buildPath(params, dataFileName);
+            final Path dataFile = buildPath(params, randomFileName + ".json");
             try {
                  try (OutputStream fos = Files.newOutputStream(dataFile);
                       GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, WPSConvertersUtils.FRACTION_DIGITS)) {
@@ -114,7 +114,8 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
                 throw new UnconvertibleObjectException(e);
             }
 
-            reference.setHref(params.get(TMP_DIR_URL) + "/" +dataFileName);
+            final String relLoc = getRelativeLocation(dataFile, params);
+            reference.setHref(tmpDirUrl + "/" + relLoc);
             reference.setSchema(null);
 
         } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(reference.getMimeType())||
@@ -133,15 +134,16 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
 
             //Write Feature
             final XmlFeatureWriter featureWriter = new JAXPStreamFeatureWriter(schemaLocation);
-            final String dataFileName = randomFileName+".xml";
 
             //create file
-            final Path dataFile = buildPath(params, dataFileName);
+            final Path dataFile = buildPath(params, randomFileName + ".xml");
             try (final OutputStream dataStream = Files.newOutputStream(dataFile);
-                    final AutoCloseable xmlCloser = () -> featureWriter.dispose()) {
+                 final AutoCloseable xmlCloser = () -> featureWriter.dispose()) {
+
                 //Write feature in file
                 featureWriter.write(source, dataStream);
-                reference.setHref(params.get(TMP_DIR_URL) + "/" +dataFileName);
+                final String relLoc = getRelativeLocation(dataFile, params);
+                reference.setHref(tmpDirUrl + "/" + relLoc);
 
             } catch (XMLStreamException ex) {
                 throw new UnconvertibleObjectException("Stax exception while writing the feature collection", ex);
