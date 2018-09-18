@@ -22,6 +22,7 @@ import org.geotoolkit.wps.xml.v200.Reference;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -72,10 +73,11 @@ public class FileToReferenceConverter extends AbstractReferenceOutputConverter<F
             if (source.getAbsolutePath().startsWith(tmpDir)) {
                 reference.setHref(source.getAbsolutePath().replace(tmpDir, tmpDirUrl));
 
-            // else we copy the soruce file in temp dir
+            // else we create a link from the source file in temp dir
             } else {
                 final Path target = targetDirectory.resolve(source.getName());
-                IOUtilities.copy(source.toPath(),target);
+                Files.createSymbolicLink(target, source.toPath());
+                //IOUtilities.copy(source.toPath(),target);
                 String suffix = getRelativeLocation(target, tmpDir);
                 reference.setHref(tmpDirUrl + "/" + suffix);
             }
