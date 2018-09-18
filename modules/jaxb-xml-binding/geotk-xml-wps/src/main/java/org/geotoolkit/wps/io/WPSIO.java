@@ -22,6 +22,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -42,7 +44,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
@@ -51,6 +52,8 @@ import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.converters.WPSObjectConverterAdapter;
 import org.geotoolkit.wps.converters.inputs.references.ReferenceToUrlConnectionConverter;
+import org.geotoolkit.wps.converters.outputs.complex.JAXBToComplexConverter;
+import org.geotoolkit.wps.xml.TypeRegistration;
 import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.Reference;
 import org.opengis.coverage.Coverage;
@@ -322,6 +325,11 @@ public final class WPSIO {
         }
         if (!WPSConverterRegistry.getInstance().getOutputConvertersForSourceClass(clazz).isEmpty()) {
             hasOutputConverter = true;
+        }
+
+        //check if object is known by the JAXB Context
+        if (JAXBToComplexConverter.INSTANCE.canConvert(clazz, Data.class)) {
+            return IOType.BOTH;
         }
 
         if (hasInputConverter && hasOutputConverter) {

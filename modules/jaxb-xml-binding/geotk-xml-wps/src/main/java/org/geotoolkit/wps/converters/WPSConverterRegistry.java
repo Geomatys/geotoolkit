@@ -136,6 +136,9 @@ public class WPSConverterRegistry {
         register(new WPSObjectConverterAdapter(new FloatWArrayToStringConverter()));
         register(new WPSObjectConverterAdapter(new MapToStringConverter()));
 
+        // JAXB Object -> Data converter
+        register(JAXBToComplexConverter.INSTANCE);
+
     }
 
     public static synchronized WPSConverterRegistry getInstance(){
@@ -165,7 +168,7 @@ public class WPSConverterRegistry {
         ArgumentChecks.ensureNonNull("target", target);
 
         for (final WPSObjectConverter converter : converters) {
-            if (converter.getSourceClass().isAssignableFrom(source) && converter.getTargetClass().isAssignableFrom(target)) {
+            if (converter.canConvert(source, target)) {
                 return converter;
             }
         }
