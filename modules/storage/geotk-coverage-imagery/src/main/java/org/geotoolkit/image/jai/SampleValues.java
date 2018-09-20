@@ -227,7 +227,7 @@ public abstract class SampleValues {
         public double getSample(int band) {
             return samples[band];
         }
-        
+
         /** {@inheritDoc} */
         @Override public SampleValues instance() {
             return new Integer(samples.length);
