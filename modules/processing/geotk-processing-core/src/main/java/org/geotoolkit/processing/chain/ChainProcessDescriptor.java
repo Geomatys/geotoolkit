@@ -36,6 +36,7 @@ import org.geotoolkit.process.ProcessingRegistry;
 import org.geotoolkit.processing.chain.model.Chain;
 import org.geotoolkit.processing.chain.model.Parameter;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.chain.model.ParameterFormat;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -164,6 +165,17 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
         if (realType) {
             final Class type = param.getType().getRealClass();
             return new ExtendedParameterDescriptor(param.getCode(), null, param.getRemarks(), param.getMinOccurs(), param.getMaxOccurs(), type, convertDefaultValueInClass(param.getDefaultValue(), type), null, null);
+        }
+        if (param.getFormats()!= null && !param.getFormats().isEmpty()) {
+            List<Map> formats = new ArrayList<>();
+            for (ParameterFormat format : param.getFormats()) {
+                Map m = new HashMap<>();
+                if (format.getEncoding() != null) m.put("encoding", format.getEncoding());
+                if (format.getMimeType()!= null)  m.put("mimetype", format.getMimeType());
+                if (format.getSchema()!= null)    m.put("schema",   format.getSchema());
+                formats.add(m);
+            }
+            ext.put("formats", formats);
         }
 
         final Map<String, Object> ext = new HashMap<>();
