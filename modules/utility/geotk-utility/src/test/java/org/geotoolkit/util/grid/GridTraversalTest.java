@@ -110,7 +110,7 @@ public class GridTraversalTest {
     }
 
     private void test(final double[] inPolyline, final int dimension, final boolean parallel) {
-        final List<double[]> points = GridTraversal.stream(inPolyline, dimension, parallel)
+        final List<double[]> points = GridTraversal.stream(inPolyline, dimension, true, parallel)
                 .collect(Collectors.toList());
 
         // First two points should be the first segment of the polyline, as we do not cross any pixel.

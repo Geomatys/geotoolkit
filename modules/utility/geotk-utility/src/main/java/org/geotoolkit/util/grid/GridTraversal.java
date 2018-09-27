@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.util.grid;
 
+import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Spliterator;
@@ -29,7 +30,8 @@ import org.apache.sis.util.ArgumentChecks;
  * Find all intersections between a regular grid (whose cells are aligned with 0 origin, and size is 1 on each of their
  * axes) and a polyline. It returns all points of the polyline, adding intersection points on the fly.
  *
- * To acquire a stream of all points in the populated line string, use {@link #stream(double[], int, boolean) }.
+ * To acquire a stream of all points in the populated line string, use {@link #stream(double[], int, boolean) } or the
+ * {@link Builder} class.
  *
  * @implNote
  * This algorithm complexity is roughly O(d*n), with d the number of dimensions of the polyline, and n is the total
@@ -61,12 +63,8 @@ public class GridTraversal implements Spliterator<double[]> {
      * a 3 dimension polyline composed of points a and b, we expect the array to be: [a0, a1, a2, b0, b1, b2].
      * @param dimension Number of dimension of the polyline.
      */
-    private GridTraversal(double[] trajectory, int dimension) {
-        ArgumentChecks.ensureNonNull("Trajetory over the grid", trajectory);
-        ArgumentChecks.ensureStrictlyPositive("Number of points in given trajectory", trajectory.length);
-        ArgumentChecks.ensureStrictlyPositive("dimension", dimension);
-
-        this.trajectory = new ContiguousArrayPoint(trajectory, dimension);
+    private GridTraversal(PointList trajectory) {
+        this.trajectory = trajectory;
         startPoint = 0;
         endPoint = this.trajectory.size() - 1;
 
@@ -206,6 +204,12 @@ public class GridTraversal implements Spliterator<double[]> {
         int size();
         boolean isEmpty();
         double[] getPoint(int index);
+
+        /**
+         *
+         * @return Number of ordinates in a single point (length of a point vector).
+         */
+        int getDimension();
     }
 
     private static class ContiguousArrayPoint implements PointList {
@@ -216,6 +220,7 @@ public class GridTraversal implements Spliterator<double[]> {
         final int size;
 
         public ContiguousArrayPoint(double[] ordinates, int dimension) {
+            ArgumentChecks.ensureStrictlyPositive("dimension", dimension);
             if (ordinates.length % dimension != 0) {
                 throw new IllegalArgumentException(String.format(
                         "Given array size (%d) is not a multiple the number of dimensions (%d) specified",
@@ -242,6 +247,41 @@ public class GridTraversal implements Spliterator<double[]> {
             index *= dimension;
             return Arrays.copyOfRange(ordinates, index, index + dimension);
         }
+
+        @Override
+        public int getDimension() {
+            return dimension;
+        }
+    }
+
+    private static class Point2DList implements PointList {
+
+        final List<Point2D> source;
+
+        Point2DList(final List<Point2D> source) {
+            this.source = source;
+        }
+
+        @Override
+        public int size() {
+            return source.size();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return source.isEmpty();
+        }
+
+        @Override
+        public double[] getPoint(int index) {
+            final Point2D pt2d = source.get(index);
+            return new double[]{pt2d.getX(), pt2d.getY()};
+        }
+
+        @Override
+        public int getDimension() {
+            return 2;
+        }
     }
 
     /**
@@ -251,20 +291,90 @@ public class GridTraversal implements Spliterator<double[]> {
      * @param trajectory The polyline ordinates. We expect ordinates of each points are given in order. Example: for
      * a 3 dimension polyline composed of points a and b, we expect the array to be: [a0, a1, a2, b0, b1, b2].
      * @param dimension Number of dimension of the polyline.
+     * @param includeStart True if we want result stream to give back start point of given trajectory on first move.
+     * False if we want it to omit the first point of input polyline.
      * @param parallel True if we want returned stream to use multi-threading, false otherwise.
      * @return A stream giving back in order points composing given polyline, adding points intersecting virual grid in
      * the same time.
      */
-    public static Stream<double[]> stream(final double[] trajectory, final int dimension, final boolean parallel) {
-        if (trajectory.length < dimension) {
-            return Stream.empty();
-        } else if (trajectory.length == dimension) {
-            return Stream.of(trajectory);
-        } else {
-            // Spliterator omit the very first point, so we must add it manually.
-            double[] firstPoint = Arrays.copyOf(trajectory, dimension);
-            final Stream<double[]> startPoint = Stream.of(firstPoint);
-            return Stream.concat(startPoint, StreamSupport.stream(new GridTraversal(trajectory, dimension), parallel));
+    public static Stream<double[]> stream(final double[] trajectory, final int dimension, final boolean includeStart, final boolean parallel) {
+        return new GridTraversal.Builder()
+                .setPolyline(trajectory, dimension)
+                .setIncludeStart(includeStart)
+                .setParallel(parallel)
+                .stream();
+
+    }
+
+    /**
+     * Prepare a grid traversal tool. You have to specify at least the polyline to study using one of the
+     * setPolyline methods (see {@link #setPolyline(double[], int)}, {@link #setPolyline(java.awt.geom.Point2D...) } or
+     * {@link #setPolyline(java.util.List) }.
+     *
+     * You can optionally specify if you want returned point stream to be evaluated with multi-threading using
+     * {@link #setParallel(boolean) } method.
+     *
+     * IMPORTANT: There's a method allowwing to configure resulting point stream to omit the polyline first point. That
+     * can be useful for ray analysis. By default, result stream return the given polyline start point as first element.
+     * Configure this behavior with {@link #setIncludeStart(boolean) }.
+     */
+    public static class Builder {
+        PointList polyline;
+        boolean includeStart = true;
+        boolean parallel = false;
+
+        public Builder setPolyline(Point2D... coordinates) {
+            if (coordinates == null || coordinates.length == 0) {
+                polyline = null;
+            }
+
+            return setPolyline(Arrays.asList(coordinates));
+        }
+
+        public Builder setPolyline(final List<Point2D> coordinates) {
+            polyline = coordinates == null? null : new Point2DList(coordinates);
+            return this;
+        }
+
+        public Builder setPolyline(final double[] coordinates, final int dimension) {
+            polyline = coordinates == null? null : new ContiguousArrayPoint(coordinates, dimension);
+            return this;
+        }
+
+        /**
+         *
+         * @param includeStart True if you want the first point of result stream to be input polyline start point. False
+         * to omit it.
+         *
+         * @return this builder for further configuration.
+         */
+        public Builder setIncludeStart(boolean includeStart) {
+            this.includeStart = includeStart;
+            return this;
+        }
+
+        public Builder setParallel(boolean parallel) {
+            this.parallel = parallel;
+            return this;
+        }
+
+        public Stream<double[]> stream() {
+            ArgumentChecks.ensureNonNull("Polyline", polyline);
+            if (polyline.isEmpty()) {
+                return Stream.empty();
+            } else if (polyline.size() == 1) {
+                return includeStart ? Stream.of(polyline.getPoint(0)) : Stream.empty();
+            } else {
+                Stream<double[]> pointStream = StreamSupport.stream(new GridTraversal(polyline), parallel);
+                if (includeStart) {
+                    // Spliterator omit the very first point, so we must add it manually.
+                    double[] firstPoint = polyline.getPoint(0);
+                    final Stream<double[]> startPoint = Stream.of(firstPoint);
+                    return Stream.concat(startPoint, pointStream);
+                } else {
+                    return pointStream;
+                }
+            }
         }
     }
 }
