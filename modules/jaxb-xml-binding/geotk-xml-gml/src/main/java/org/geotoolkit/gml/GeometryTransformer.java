@@ -536,10 +536,24 @@ public class GeometryTransformer implements Supplier<Geometry> {
     }
 
     protected Optional<String> getSrsName() {
-        return familyTree()
+        final Optional<String> baseCrs = familyTree()
                 .map(gt -> gt.source.getSrsName())
                 .filter(Objects::nonNull)
                 .findFirst();
+
+        if (baseCrs.isPresent()) {
+            return baseCrs;
+        } else if (source instanceof org.geotoolkit.gml.xml.LinearRing) {
+            // HAck : In GML 3.2.1, we can encounter linear rings whose srs is not set on the ring itself, but on the
+            // position list contained in it. Note that it's really weird, cause linear ring could be defined with only
+            // coordinate array, which has no srs. In this later case, it's beyond hope...
+            final DirectPositionList posList = ((org.geotoolkit.gml.xml.LinearRing)source).getPosList();
+            if (posList == null || posList.getSrsName() == null) {
+                return Optional.empty();
+            } else return Optional.of(posList.getSrsName());
+        }
+
+        return Optional.empty();
     }
 
     public boolean isLongitudeFirst() {

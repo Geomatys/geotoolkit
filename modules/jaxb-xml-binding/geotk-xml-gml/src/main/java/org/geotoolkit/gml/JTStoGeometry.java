@@ -97,14 +97,14 @@ public final class JTStoGeometry {
         if (jts instanceof Point) {
             return toGML(gmlVersion, (Point) jts, crs);
 
-        } else if (jts instanceof LineString) {
-            return toGML(gmlVersion,(LineString) jts, crs);
-
         } else if (jts instanceof Polygon) {
             return toGML(gmlVersion,(Polygon) jts, crs);
 
         } else if (jts instanceof LinearRing) {
             return toGML(gmlVersion,(LinearRing) jts, crs);
+
+        } else if (jts instanceof LineString) {
+            return toGML(gmlVersion,(LineString) jts, crs);
 
         } else if (jts instanceof MultiPoint) {
             return toGML(gmlVersion,(MultiPoint) jts, crs);
