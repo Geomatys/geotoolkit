@@ -19,10 +19,8 @@ package org.geotoolkit.wps.converters.outputs.references;
 import com.fasterxml.jackson.core.JsonEncoding;
 import org.locationtech.jts.geom.Geometry;
 import java.io.*;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.UUID;
 import javax.xml.bind.JAXBException;
@@ -34,9 +32,6 @@ import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v200.Reference;
 ;
 
-import org.opengis.util.FactoryException;
-import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
-import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
@@ -109,15 +104,7 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
         }
 
         final String randomPathName = UUID.randomUUID().toString() + getFileExtension(reference.getMimeType());
-        final Object pathCdt = params.get(TMP_DIR_PATH);
-        final Path geometryPath;
-        if (pathCdt instanceof String) {
-            geometryPath = Paths.get((String)params.get(TMP_DIR_PATH)).resolve(randomPathName);
-        } else if(pathCdt instanceof URI) {
-            geometryPath = Paths.get((URI)params.get(TMP_DIR_PATH)).resolve(randomPathName);
-        } else {
-            throw new UnconvertibleObjectException("Unexpected path type "+pathCdt);
-        }
+        final Path geometryPath = buildPath(params, randomPathName);
 
         OutputStream geometryStream = null;
         try {

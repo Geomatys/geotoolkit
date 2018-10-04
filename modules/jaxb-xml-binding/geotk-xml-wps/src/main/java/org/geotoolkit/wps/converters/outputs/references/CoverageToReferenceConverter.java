@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.UUID;
@@ -37,8 +36,6 @@ import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Reference;
 ;
 
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-import static java.nio.file.StandardOpenOption.WRITE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 
@@ -97,7 +94,7 @@ public class CoverageToReferenceConverter extends AbstractReferenceOutputConvert
 
         try {
 
-            final Path imageFile = Paths.get((String) params.get(TMP_DIR_PATH), randomFileName);
+            final Path imageFile = buildPath(params, randomFileName);
 
             if (encodingStr != null && encodingStr.equals(WPSEncoding.BASE64.getValue())) {
                 try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -108,9 +105,11 @@ public class CoverageToReferenceConverter extends AbstractReferenceOutputConvert
                 }
 
             } else {
-                try (OutputStream out = Files.newOutputStream(imageFile, StandardOpenOption.CREATE, WRITE, TRUNCATE_EXISTING)) {
-                    CoverageIO.write(source, formatName, out);
-                }
+                //Note : do not do OutputStream out = Files.newOutputStream(imageFile, StandardOpenOption.CREATE, WRITE, TRUNCATE_EXISTING)
+                //Most coverage writer do not support stream writing properly, it is better to work with a file.
+                //This also avoid keeping large files in memory if byte buffer seeking is needed by the writer.
+                Files.deleteIfExists(imageFile);
+                CoverageIO.write(source, formatName, imageFile);
             }
 
             reference.setHref((String) params.get(TMP_DIR_URL) + "/" +randomFileName);

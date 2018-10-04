@@ -37,6 +37,9 @@ public interface WPSObjectConverter<S, T> extends ObjectConverter<S, T> {
     public static final String WPSVERSION   = "wpsVersion";
     public static final String GMLVERSION   = "gmlVersion";
 
+    default boolean canConvert(Class source, Class target) {
+        return getSourceClass().isAssignableFrom(source) && getTargetClass().isAssignableFrom(target);
+    }
 
     /**
      * Converts an object of the {@linkplain #getSourceClass() source type}

@@ -1,0 +1,7 @@
+org.geotoolkit.processing.util.converter.StringToCRSConverter
+org.geotoolkit.processing.util.converter.StringToFilterConverter
+org.geotoolkit.processing.util.converter.FileToArrayConverter
+org.geotoolkit.processing.util.converter.StringToAffineTransformConverter
+org.geotoolkit.processing.util.converter.StringToNumberRangeConverter
+org.geotoolkit.processing.util.converter.StringToSortByConverter
+org.geotoolkit.processing.util.converter.StringToMapConverter

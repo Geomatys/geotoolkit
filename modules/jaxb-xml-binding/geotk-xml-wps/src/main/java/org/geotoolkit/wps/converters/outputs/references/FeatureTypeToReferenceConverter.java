@@ -17,14 +17,15 @@
 package org.geotoolkit.wps.converters.outputs.references;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.UUID;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.v200.Reference;
-;
-import org.opengis.feature.FeatureType;import org.opengis.feature.FeatureType;
+import org.opengis.feature.FeatureType;
 
 /**
  * Implementation of ObjectConverter to convert a {@link FeatureType feature type} into a {@link Reference reference}.
@@ -81,8 +82,8 @@ public class FeatureTypeToReferenceConverter extends AbstractReferenceOutputConv
             final String schemaFileName = randomFileName + "_schema" + ".xsd";
 
             //create file
-            final File schemaFile = new File((String) params.get(TMP_DIR_PATH), schemaFileName);
-            final OutputStream schemaStream = new FileOutputStream(schemaFile);
+            final Path schemaFile = buildPath(params, schemaFileName);
+            final OutputStream schemaStream = Files.newOutputStream(schemaFile);
 
             //write featureType xsd on file
             final JAXBFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();

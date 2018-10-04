@@ -17,14 +17,12 @@
 package org.geotoolkit.wps.converters.outputs.references;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.wps.xml.v200.Reference;;
+import org.geotoolkit.wps.xml.v200.Reference;
 
 
 /**
@@ -54,8 +52,8 @@ public class StringToReferenceConverter extends AbstractReferenceOutputConverter
     @Override
     public Reference convert(final String source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
-        if (!(params.get(TMP_DIR_PATH) instanceof URI)) {
-            throw new UnconvertibleObjectException("The output directory should be defined by an URI.");
+        if (params.get(TMP_DIR_PATH) == null) {
+            throw new UnconvertibleObjectException("The output directory should be defined.");
         }
 
         if (source == null) {
@@ -74,7 +72,7 @@ public class StringToReferenceConverter extends AbstractReferenceOutputConverter
         final String randomFileName = UUID.randomUUID().toString();
         try {
             //create file
-            final Path literalFile = Paths.get((URI) params.get(TMP_DIR_PATH)).resolve(randomFileName);
+            final Path literalFile = buildPath(params, randomFileName);
             IOUtilities.writeString(source, literalFile);
             reference.setHref((String) params.get(TMP_DIR_URL) + "/" + randomFileName);
 

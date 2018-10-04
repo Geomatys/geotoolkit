@@ -16,6 +16,17 @@
  */
 package org.geotoolkit.gml;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.apache.sis.geometry.DirectPosition2D;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.gml.xml.AbstractGeometricAggregate;
+import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.geotoolkit.gml.xml.AbstractRing;
+import static org.geotoolkit.gml.xml.GMLXmlFactory.*;
+import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
@@ -27,18 +38,6 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.sis.geometry.DirectPosition2D;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.gml.xml.AbstractGeometricAggregate;
-import org.geotoolkit.gml.xml.AbstractGeometry;
-import org.geotoolkit.gml.xml.AbstractRing;
-import org.apache.sis.referencing.IdentifiedObjects;
-import static org.geotoolkit.gml.xml.GMLXmlFactory.*;
-
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -90,22 +89,22 @@ public final class JTStoGeometry {
      * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be extracted from JTS
      * geometry or can't be injected into the {@link AbstractGeometry}.
      */
-     public static AbstractGeometry toGML(final String gmlVersion, final Geometry jts, CoordinateReferenceSystem crs) throws NoSuchAuthorityCodeException, FactoryException {
+    public static AbstractGeometry toGML(final String gmlVersion, final Geometry jts, CoordinateReferenceSystem crs) throws NoSuchAuthorityCodeException, FactoryException {
 
-         if (crs == null) {
-             crs = JTS.findCoordinateReferenceSystem(jts);
-         }
+        if (crs == null) {
+            crs = JTS.findCoordinateReferenceSystem(jts);
+        }
         if (jts instanceof Point) {
             return toGML(gmlVersion, (Point) jts, crs);
-
-        } else if (jts instanceof LineString) {
-            return toGML(gmlVersion,(LineString) jts, crs);
 
         } else if (jts instanceof Polygon) {
             return toGML(gmlVersion,(Polygon) jts, crs);
 
         } else if (jts instanceof LinearRing) {
             return toGML(gmlVersion,(LinearRing) jts, crs);
+
+        } else if (jts instanceof LineString) {
+            return toGML(gmlVersion,(LineString) jts, crs);
 
         } else if (jts instanceof MultiPoint) {
             return toGML(gmlVersion,(MultiPoint) jts, crs);
@@ -316,7 +315,7 @@ public final class JTStoGeometry {
         final List<DirectPosition> dpList = new ArrayList<>();
 
         for (Coordinate c : jtsCoord) {
-            dpList.add(coordinateToDirectPosition(c, crs));
+            dpList.add(coordinateToDirectPosition(gmlVersion, c, crs));
         }
         final String srsName = getSRS(crs);
         final org.geotoolkit.gml.xml.LineString gmlString = buildLineString(gmlVersion, null, srsName, dpList);
@@ -370,25 +369,33 @@ public final class JTStoGeometry {
         //Test if it's a 2D Geometry from CRS
         isValideGeometry(crs);
 
-        final org.geotoolkit.gml.xml.Point gmlPoint = buildPoint(gmlVersion, null, coordinateToDirectPosition(jtsPoint.getCoordinate(), crs));
+        final org.geotoolkit.gml.xml.Point gmlPoint = buildPoint(gmlVersion, null, coordinateToDirectPosition(gmlVersion, jtsPoint.getCoordinate(), crs));
 
         gmlPoint.setSrsName(getSRS(crs));
         return gmlPoint;
     }
 
     /**
-     * Convert Coordinate to DirectPosition only in 2D
+     * Convert Coordinate to DirectPosition.
      * @param coord
      * @param crs
      * @return DirectPostion with x and y
      * @throws IllegalArgumentException if isn't a 2D Geometry
      */
-    private static DirectPosition coordinateToDirectPosition(final Coordinate coord, final CoordinateReferenceSystem crs) {
-        if (coord.z != Double.NaN) {
-            //throw new IllegalArgumentException("This service support only 2D coordinate.");
+    private static DirectPosition coordinateToDirectPosition(final String version, final Coordinate coord, final CoordinateReferenceSystem crs) throws FactoryException {
+        if (Double.isNaN(coord.z)) {
+            return new DirectPosition2D(crs, coord.x, coord.y);
         }
 
-        return new DirectPosition2D(crs, coord.x, coord.y);
+        //preserve Z value
+        final String srs = getSRS(crs);
+        if ("3.2.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v321.DirectPositionType(srs, 3, Arrays.asList(coord.x, coord.y, coord.z));
+        } else if ("3.1.1".equals(version)) {
+            return new DirectPositionType(srs, 3, Arrays.asList(coord.x, coord.y, coord.z));
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
     }
 
     /**

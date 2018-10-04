@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.wps.converters.outputs.references;
 
+import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSDefaultConverter;
@@ -66,5 +69,21 @@ public abstract class AbstractReferenceOutputConverter<S> extends WPSDefaultConv
         value = params.get(ENCODING);
         if (value != null)
             reference.setEncoding(value.toString());
+    }
+
+    protected Path buildPath(Map<String, Object> params, final String randomFileName) {
+        final Path dir;
+        final Object tmpDirValue = params.get(TMP_DIR_PATH);
+        if (tmpDirValue instanceof String) {
+            dir =  Paths.get((String) params.get(TMP_DIR_PATH));
+        } else if (tmpDirValue instanceof URI) {
+            dir =  Paths.get((URI) params.get(TMP_DIR_PATH));
+        } else {
+            throw new UnconvertibleObjectException("Unexpected type for " + TMP_DIR_PATH + " parameter.");
+        }
+        if (randomFileName == null) {
+            return dir;
+        }
+        return dir.resolve(randomFileName);
     }
 }

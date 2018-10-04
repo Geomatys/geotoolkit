@@ -17,7 +17,6 @@
 
 package org.geotoolkit.gml.xml;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -119,8 +118,11 @@ public class GMLXmlFactory {
     public static LinearRing buildLinearRing(final String version,  final List<Double> coordList, final String srsName) {
         if ("3.2.1".equals(version)) {
             final org.geotoolkit.gml.xml.v321.DirectPositionListType dpList = new org.geotoolkit.gml.xml.v321.DirectPositionListType(coordList);
-            //no srsName on linear ring in this version
-            return new org.geotoolkit.gml.xml.v321.LinearRingType(null, dpList);
+            dpList.setSrsName(srsName);
+            // Replaced previous version that omitted srs name, because there's been a corrigendum in GML 3.2.2.
+            // The problem in 3.2.1 was that LinearRing extended AbstractRing, which did not extend AbstractCurve. That
+            // was an error, and a correction has been added in corrigendum 3.2.2.
+            return new org.geotoolkit.gml.xml.v321.LinearRingType(srsName, dpList);
         } else if ("3.1.1".equals(version)) {
             final org.geotoolkit.gml.xml.v311.DirectPositionListType dpList = new org.geotoolkit.gml.xml.v311.DirectPositionListType(coordList);
             return new org.geotoolkit.gml.xml.v311.LinearRingType(srsName, dpList);

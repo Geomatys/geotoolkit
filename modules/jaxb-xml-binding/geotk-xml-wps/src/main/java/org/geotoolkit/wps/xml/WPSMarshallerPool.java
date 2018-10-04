@@ -41,14 +41,7 @@ public final class WPSMarshallerPool {
     private static final MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPoolProxy(JAXBContext.newInstance(
-                      "org.geotoolkit.wps.xml.v100:"
-                    + "org.geotoolkit.wps.xml.v200:"
-                    + "org.geotoolkit.gml.xml.v321:"
-                    //+ "org.geotoolkit.ows.xml.v110:"
-                    + "org.geotoolkit.ows.xml.v200:"
-                    + "org.apache.sis.internal.jaxb.geometry:"
-                    + "org.geotoolkit.mathml.xml"), null);
+            instance = new MarshallerPoolProxy(TypeRegistration.getSharedContext(), null);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
