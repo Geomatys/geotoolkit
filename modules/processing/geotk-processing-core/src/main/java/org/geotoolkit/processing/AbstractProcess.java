@@ -43,6 +43,11 @@ public abstract class AbstractProcess implements org.geotoolkit.process.Process 
     protected final Parameters outputParameters;
     protected Parameters inputParameters;
 
+    /**
+     * Allow to assign a jobId to the process
+     */
+    protected String jobId = null;
+
     volatile boolean isCanceled = false;
 
     volatile boolean isPaused = false;
@@ -391,5 +396,22 @@ public abstract class AbstractProcess implements org.geotoolkit.process.Process 
         for (ProcessListener listener : listeners.getListeners(ProcessListener.class)) {
             listener.completed(event);
         }
+    }
+
+    /**
+     * Return the job identifier for this process if t has been setted.
+     * @return the jobId
+     */
+    public String getJobId() {
+        return jobId;
+    }
+
+    /**
+     * Set the job identifier for this process.
+     *
+     * @param jobId the jobId to set
+     */
+    public void setJobId(String jobId) {
+        this.jobId = jobId;
     }
 }

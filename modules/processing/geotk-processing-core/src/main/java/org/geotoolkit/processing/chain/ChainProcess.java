@@ -177,6 +177,9 @@ public class ChainProcess extends AbstractProcess {
                     }
                     currentProcess = pdesc.createProcess(config);
                     currentProcess.addListener(new ForwardProcessListener(this, currentProgress, workLoadPart));
+                    if (currentProcess instanceof AbstractProcess) {
+                        ((AbstractProcess)currentProcess).setJobId(jobId);
+                    }
 
                     final String processId = pdesc.getIdentifier().getCode();
                     // Fill process version with values coming from the current process.
