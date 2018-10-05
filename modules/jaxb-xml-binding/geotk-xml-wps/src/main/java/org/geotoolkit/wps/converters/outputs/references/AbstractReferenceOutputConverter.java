@@ -18,6 +18,7 @@ package org.geotoolkit.wps.converters.outputs.references;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -79,7 +80,11 @@ public abstract class AbstractReferenceOutputConverter<S> extends WPSDefaultConv
         Path dir;
         final Object tmpDirValue = params.get(TMP_DIR_PATH);
         if (tmpDirValue instanceof String) {
-            dir =  Paths.get((String) params.get(TMP_DIR_PATH));
+            try {
+                dir =  Paths.get(new URI((String) params.get(TMP_DIR_PATH)));
+            } catch (URISyntaxException ex) {
+                throw new UnconvertibleObjectException("unable to create URI from TMP dir path:" +(String) params.get(TMP_DIR_PATH));
+            }
         } else if (tmpDirValue instanceof URI) {
             dir =  Paths.get((URI) params.get(TMP_DIR_PATH));
         } else {

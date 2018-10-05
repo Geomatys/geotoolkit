@@ -31,6 +31,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -101,7 +104,7 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
             //create file
             final Path dataFile = buildPath(params, randomFileName + ".json");
 
-            try (OutputStream fos = Files.newOutputStream(dataFile);
+            try (OutputStream fos = Files.newOutputStream(dataFile, CREATE,  TRUNCATE_EXISTING, WRITE);
                  GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, WPSConvertersUtils.FRACTION_DIGITS)){
                  FeatureStoreUtilities.write(writer, source);
             } catch (DataStoreException e) {
