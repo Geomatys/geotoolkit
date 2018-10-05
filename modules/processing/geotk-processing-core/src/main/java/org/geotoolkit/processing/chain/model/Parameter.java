@@ -38,6 +38,7 @@ public class Parameter {
     private String code;
     @XmlElement(name = "type")
     private ClassFull type;
+    private String title;
     private String remarks;
     private Object defaultValue;
     private int minOccurs;
@@ -52,6 +53,7 @@ public class Parameter {
         if (toCopy != null) {
             this.code = toCopy.code;
             this.type = toCopy.type;
+            this.title = toCopy.title;
             this.remarks = toCopy.remarks;
             this.defaultValue = toCopy.defaultValue;
             this.minOccurs = toCopy.minOccurs;
@@ -59,12 +61,13 @@ public class Parameter {
         }
     }
 
-    public Parameter(final String code, final Class type, final String remarks, final int minOccurs, final int maxOccurs) {
-        this(code, type, remarks, minOccurs, maxOccurs, null);
+    public Parameter(final String code, final Class type, final String title, final String remarks, final int minOccurs, final int maxOccurs) {
+        this(code, type, title, remarks, minOccurs, maxOccurs, null);
     }
 
-    public Parameter(final String code, final Class type, final String remarks, final int minOccurs, final int maxOccurs, final Object defaultValue) {
+    public Parameter(final String code, final Class type, final String title, final String remarks, final int minOccurs, final int maxOccurs, final Object defaultValue) {
         this.code = code;
+        this.title = title;
         this.type = new ClassFull(type);
         this.maxOccurs = maxOccurs;
         this.minOccurs = minOccurs;
@@ -172,6 +175,20 @@ public class Parameter {
         this.formats = formats;
     }
 
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -201,6 +218,9 @@ public class Parameter {
     public String toString() {
         final StringBuilder sb = new StringBuilder("[ParameterDto]");
         sb.append("code:").append(code).append('\n');
+        if (title != null) {
+            sb.append("title:").append(title).append('\n');
+        }
         if (type != null) {
             sb.append("type:").append(type).append('\n');
         }

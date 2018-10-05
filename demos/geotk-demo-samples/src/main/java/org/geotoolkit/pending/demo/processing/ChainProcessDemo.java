@@ -23,9 +23,9 @@ public class ChainProcessDemo {
         final Chain chain = new Chain("myChain");
 
         //input/out/constants parameters
-        final Parameter a = chain.addInputParameter("a", Double.class, "desc",1,1,null);
-        final Parameter b = chain.addInputParameter("b", Double.class, "desc",1,1,null);
-        final Parameter r = chain.addOutputParameter("r", Double.class, "desc",1,1,null);
+        final Parameter a = chain.addInputParameter("a", Double.class, "title", "desc",1,1,null);
+        final Parameter b = chain.addInputParameter("b", Double.class, "title","desc",1,1,null);
+        final Parameter r = chain.addOutputParameter("r", Double.class, "title","desc",1,1,null);
         final Constant c = chain.addConstant(1, Double.class, 10d);
 
         //chain blocks

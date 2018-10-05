@@ -135,26 +135,8 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
 
         int index = 0;
         for (Parameter param : inputs) {
-            final ParameterDescriptor desc;
-            if (realType) {
-                final Class type = param.getType().getRealClass();
-                desc = new ExtendedParameterDescriptor(param.getCode(), null, param.getRemarks(), param.getMinOccurs(), param.getMaxOccurs(), type, convertDefaultValueInClass(param.getDefaultValue(), type), null, null);
-            } else {
-                final Map<String, Object> ext = new HashMap<>();
-                ext.put(KEY_DISTANT_CLASS, param.getType());
 
-                Class clazz = Object.class;
-                try {
-                    clazz = Class.forName(param.getType().getName());
-                } catch (ClassNotFoundException ex) {
-                    clazz = Object.class;
-                }
-
-                desc = new ExtendedParameterDescriptor(param.getCode(), null, param.getRemarks(),  param.getMinOccurs(), param.getMaxOccurs(), clazz,
-                        convertDefaultValueInClass(param.getDefaultValue(), clazz), null, ext);
-
-            }
-
+            final ParameterDescriptor desc = convertParameterDtoToParameterDescriptor(param, realType);
             paramDescs[index] = desc;
             index++;
         }
@@ -162,9 +144,17 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
     }
 
     public static ParameterDescriptor convertParameterDtoToParameterDescriptor(final Parameter param, final boolean realType) {
+        final Map<String, Object> ext = new HashMap<>();
+        Class type;
         if (realType) {
-            final Class type = param.getType().getRealClass();
-            return new ExtendedParameterDescriptor(param.getCode(), null, param.getRemarks(), param.getMinOccurs(), param.getMaxOccurs(), type, convertDefaultValueInClass(param.getDefaultValue(), type), null, null);
+            type = param.getType().getRealClass();
+        } else {
+            ext.put(KEY_DISTANT_CLASS, param.getType());
+            try {
+                type = Class.forName(param.getType().getName());
+            } catch (ClassNotFoundException ex) {
+                type = Object.class;
+            }
         }
         if (param.getFormats()!= null && !param.getFormats().isEmpty()) {
             List<Map> formats = new ArrayList<>();
@@ -177,17 +167,13 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
             }
             ext.put("formats", formats);
         }
-
-        final Map<String, Object> ext = new HashMap<>();
-        ext.put(KEY_DISTANT_CLASS, param.getType());
-
-        Class clazz;
-        try {
-            clazz = Class.forName(param.getType().getName());
-        } catch (ClassNotFoundException ex) {
-            clazz = Object.class;
+        if (param.getTitle() != null) {
+            ext.put("Title", param.getTitle());
         }
-        return new ExtendedParameterDescriptor(param.getCode(), null, param.getRemarks(), param.getMinOccurs(), param.getMaxOccurs(), clazz, convertDefaultValueInClass(param.getDefaultValue(), clazz), null, ext);
+        if (param.getUserMap() != null) {
+            ext.putAll(param.getUserMap());
+        }
+        return new ExtendedParameterDescriptor(param.getCode(), null, param.getRemarks(), param.getMinOccurs(), param.getMaxOccurs(), type, convertDefaultValueInClass(param.getDefaultValue(), type), null, ext);
     }
 
     /**
