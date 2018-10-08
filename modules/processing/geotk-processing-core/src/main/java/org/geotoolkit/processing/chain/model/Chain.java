@@ -130,15 +130,15 @@ public class Chain implements Comparable<Chain>,Parameterized {
     }
 
     public Parameter addInputParameter(final String code, final Class type,
-            final String remarks, final int minOccurs, final int maxOccurs, final Object defaultValue){
-        final Parameter param = new Parameter(code, type, remarks, minOccurs, maxOccurs, defaultValue);
+            final String title, final String remarks, final int minOccurs, final int maxOccurs, final Object defaultValue){
+        final Parameter param = new Parameter(code, type, title, remarks, minOccurs, maxOccurs, defaultValue);
         getInputs().add(param);
         return param;
     }
 
     public Parameter addOutputParameter(final String code, final Class type,
-            final String remarks, final int minOccurs, final int maxOccurs, final Object defaultValue){
-        final Parameter param = new Parameter(code, type, remarks, minOccurs, maxOccurs, defaultValue);
+            final String title, final String remarks, final int minOccurs, final int maxOccurs, final Object defaultValue){
+        final Parameter param = new Parameter(code, type, title, remarks, minOccurs, maxOccurs, defaultValue);
         getOutputs().add(param);
         return param;
     }

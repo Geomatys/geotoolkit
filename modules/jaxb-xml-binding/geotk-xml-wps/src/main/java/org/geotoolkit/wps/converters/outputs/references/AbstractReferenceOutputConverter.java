@@ -16,10 +16,15 @@
  */
 package org.geotoolkit.wps.converters.outputs.references;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSDefaultConverter;
 import org.geotoolkit.wps.xml.v200.Reference;
@@ -72,18 +77,53 @@ public abstract class AbstractReferenceOutputConverter<S> extends WPSDefaultConv
     }
 
     protected Path buildPath(Map<String, Object> params, final String randomFileName) {
-        final Path dir;
+        Path dir;
         final Object tmpDirValue = params.get(TMP_DIR_PATH);
         if (tmpDirValue instanceof String) {
-            dir =  Paths.get((String) params.get(TMP_DIR_PATH));
+            try {
+                dir =  Paths.get(new URI((String) params.get(TMP_DIR_PATH)));
+            } catch (URISyntaxException ex) {
+                throw new UnconvertibleObjectException("unable to create URI from TMP dir path:" +(String) params.get(TMP_DIR_PATH));
+            }
         } else if (tmpDirValue instanceof URI) {
             dir =  Paths.get((URI) params.get(TMP_DIR_PATH));
         } else {
             throw new UnconvertibleObjectException("Unexpected type for " + TMP_DIR_PATH + " parameter.");
         }
+        if (params.get(JOB_ID) != null) {
+            dir = dir.resolve((String) params.get(JOB_ID) + "-results");
+            if (!Files.isDirectory(dir)) {
+                try {
+                    Files.createDirectory(dir);
+                } catch (IOException ex) {
+                    throw new UnconvertibleObjectException("unable to create sub-directory:" + dir.toString());
+                }
+            }
+        }
         if (randomFileName == null) {
             return dir;
         }
         return dir.resolve(randomFileName);
+    }
+
+    protected String getTemproraryDirectoryPath(Map<String, Object> params) {
+        Object tmpDirValue = params.get(TMP_DIR_PATH);
+        String tmpDir;
+        if (tmpDirValue instanceof URI) {
+            tmpDir = ((URI) params.get(TMP_DIR_PATH)).toString();
+        } else if (tmpDirValue instanceof String) {
+            tmpDir = (String) params.get(TMP_DIR_PATH);
+        } else {
+            throw new UnconvertibleObjectException("Unexpected type for " + TMP_DIR_PATH + " parameter.");
+        }
+        return tmpDir;
+    }
+
+    protected String getRelativeLocation(Path target, Map<String, Object> params) {
+        final String tmpDir = getTemproraryDirectoryPath(params);
+        return getRelativeLocation(target, tmpDir);
+    }
+    protected String getRelativeLocation(final Path target, final String tmpDir) {
+        return target.toUri().toString().replace(tmpDir, "");
     }
 }

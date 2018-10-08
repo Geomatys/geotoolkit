@@ -47,9 +47,9 @@ public class ChainProcessTest extends org.geotoolkit.test.TestBase {
         int id = 1;
 
         //input/out/constants parameters
-        final Parameter a = chain.addInputParameter("a", Double.class, "desc",1,1,null);
-        final Parameter b = chain.addInputParameter("b", Double.class, "desc",1,1,null);
-        final Parameter r = chain.addOutputParameter("r", Double.class, "desc",1,1,null);
+        final Parameter a = chain.addInputParameter("a", Double.class, "title", "desc",1,1,null);
+        final Parameter b = chain.addInputParameter("b", Double.class, "title", "desc",1,1,null);
+        final Parameter r = chain.addOutputParameter("r", Double.class, "title", "desc",1,1,null);
         final Constant c = chain.addConstant(id++, Double.class, 10d);
 
         //chain blocks
@@ -77,8 +77,8 @@ public class ChainProcessTest extends org.geotoolkit.test.TestBase {
         int id = 1;
 
         //input/out/constants parameters
-        final Parameter a = chain.addInputParameter("a", Double.class, "desc",1,1,null);
-        final Parameter r = chain.addOutputParameter("r", Double.class, "desc",1,1,null);
+        final Parameter a = chain.addInputParameter("a", Double.class, "title", "desc",1,1,null);
+        final Parameter r = chain.addOutputParameter("r", Double.class, "title", "desc",1,1,null);
         final Constant c10 = chain.addConstant(id++, Double.class, 10d);
 
         //chain blocks
@@ -86,7 +86,7 @@ public class ChainProcessTest extends org.geotoolkit.test.TestBase {
         final ElementProcess multi = chain.addProcessElement(id++, "demo", "multiply");
         final ElementProcess divide = chain.addProcessElement(id++, "demo", "divide");
         final ElementCondition condition = chain.addConditionElement(id++);
-        condition.getInputs().add(new Parameter("value", Double.class, "", 1, 1));
+        condition.getInputs().add(new Parameter("value", Double.class, "", "", 1, 1));
         condition.setSyntax("CQL");
         condition.setExpression("value > 20");
 

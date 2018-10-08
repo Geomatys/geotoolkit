@@ -265,7 +265,7 @@ public final class ConvertersTestUtils {
             parametersMap = ConvertersTestUtils.createParameters(mimeType, encoding);
         else if (targetClass.equals(Reference.class)) {
             tmpDirPath = Files.createTempDirectory(UUID.randomUUID().toString());
-            parametersMap = ConvertersTestUtils.createParameters(mimeType, encoding, tmpDirPath.toString(), WPSIO.IOType.OUTPUT.toString());
+            parametersMap = ConvertersTestUtils.createParameters(mimeType, encoding, tmpDirPath.toUri().toString(), WPSIO.IOType.OUTPUT.toString());
         }
         else
             fail();
@@ -297,7 +297,7 @@ public final class ConvertersTestUtils {
     public static final Map<String, Object> createParameters(final String mimeType, final String encoding, final String tmpDirPath, final String ioType) {
         final Map<String, Object> map = createParameters(mimeType, encoding);
         map.put(TMP_DIR_PATH, tmpDirPath);
-        map.put(TMP_DIR_URL, "File:" + tmpDirPath);
+        map.put(TMP_DIR_URL, tmpDirPath);
         map.put(WPSObjectConverter.IOTYPE, ioType);
         return map;
     }
@@ -606,7 +606,7 @@ public final class ConvertersTestUtils {
         if (geoJson.startsWith(WPSUtilities.CDATA_START_TAG)) {
             geoJson = geoJson.substring(WPSUtilities.CDATA_START_TAG.length(), geoJson.length() - WPSUtilities.CDATA_END_TAG.length());
         }
-        
+
         // Write the json in a tmp file in order to be able to read it
         Path tmpFilePath = WPSConvertersUtils.writeTempJsonFile(geoJson);
         try {

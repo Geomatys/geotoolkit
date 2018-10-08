@@ -74,7 +74,8 @@ public class StringToReferenceConverter extends AbstractReferenceOutputConverter
             //create file
             final Path literalFile = buildPath(params, randomFileName);
             IOUtilities.writeString(source, literalFile);
-            reference.setHref((String) params.get(TMP_DIR_URL) + "/" + randomFileName);
+            final String relLoc = getRelativeLocation(literalFile, params);
+            reference.setHref((String) params.get(TMP_DIR_URL) + "/" + relLoc);
 
         } catch (IOException ex) {
             throw new UnconvertibleObjectException("Error occurs during image writing.", ex);

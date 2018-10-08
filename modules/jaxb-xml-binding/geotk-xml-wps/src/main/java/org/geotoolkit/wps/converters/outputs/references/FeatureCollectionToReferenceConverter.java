@@ -31,6 +31,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -99,10 +102,9 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
 
         if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(reference.getMimeType())) {
             //create file
-            final String dataFileName = randomFileName + ".json";
-            final Path dataFile = buildPath(params, dataFileName);
+            final Path dataFile = buildPath(params, randomFileName + ".json");
 
-            try (OutputStream fos = Files.newOutputStream(dataFile);
+            try (OutputStream fos = Files.newOutputStream(dataFile, CREATE,  TRUNCATE_EXISTING, WRITE);
                  GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, WPSConvertersUtils.FRACTION_DIGITS)){
                  FeatureStoreUtilities.write(writer, source);
             } catch (DataStoreException e) {
@@ -111,8 +113,10 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
                 throw new UnconvertibleObjectException(e);
             }
 
-            reference.setHref(params.get(TMP_DIR_URL) + "/" + dataFileName);
+            final String relLoc = getRelativeLocation(dataFile, params);
+            reference.setHref(params.get(TMP_DIR_URL) + "/" + relLoc);
             reference.setSchema(null);
+
         } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(reference.getMimeType())||
                    WPSMimeType.TEXT_XML.val().equalsIgnoreCase(reference.getMimeType()) ||
                    WPSMimeType.TEXT_GML.val().equalsIgnoreCase(reference.getMimeType())) {
@@ -126,17 +130,18 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
                 throw new UnconvertibleObjectException("Can't create xsd schema file.", ex);
             }
 
-                        //Write Feature
+            //Write Feature
             final JAXPStreamFeatureWriter featureWriter = new JAXPStreamFeatureWriter(schemaLocation);
-            final String dataFileName = randomFileName+".xml";
 
             //create file
-            final Path dataFile = buildPath(params, dataFileName);
+            final Path dataFile = buildPath(params, randomFileName+".xml");
             try (final OutputStream dataStream = Files.newOutputStream(dataFile);
-                    final AutoCloseable xmlCloser = () -> featureWriter.dispose()) {
+                 final AutoCloseable xmlCloser = () -> featureWriter.dispose()) {
+
                 //Write feature in file
                 featureWriter.write(source, dataStream);
-                reference.setHref(params.get(TMP_DIR_URL) + "/" +dataFileName);
+                final String relLoc = getRelativeLocation(dataFile, params);
+                reference.setHref(params.get(TMP_DIR_URL) + "/" + relLoc);
 
             } catch (XMLStreamException ex) {
                 throw new UnconvertibleObjectException("Stax exception while writing the feature collection", ex);
@@ -147,9 +152,9 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
             } catch (Exception ex) {
                 throw new UnconvertibleObjectException(ex);
             }
-        }
-        else
+        } else {
             throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + reference.getMimeType());
+        }
         return reference;
 
     }

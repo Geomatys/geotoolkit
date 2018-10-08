@@ -110,10 +110,10 @@ public class JChainParametersPanel extends JPanel{
                 public void actionPerformed(ActionEvent e) {
                     if(in){
                         process.getInputs().add(new Parameter(nextInCode(),
-                                ChainDataTypes.VALID_TYPES.get(0), "", 1, 1));
+                                ChainDataTypes.VALID_TYPES.get(0), "", "", 1, 1));
                     }else{
                         process.getOutputs().add(new Parameter(nextOutCode(),
-                                ChainDataTypes.VALID_TYPES.get(0), "", 1, 1));
+                                ChainDataTypes.VALID_TYPES.get(0), "", "", 1, 1));
                     }
                     model.fireTableDataChanged();
                 }

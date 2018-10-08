@@ -109,7 +109,8 @@ public class RenderedImageToReferenceConverter extends AbstractReferenceOutputCo
                 }
             }
 
-            reference.setHref((String) params.get(TMP_DIR_URL) + "/" + randomFileName);
+            final String relLoc = getRelativeLocation(imageFile, params);
+            reference.setHref((String) params.get(TMP_DIR_URL) + "/" + relLoc);
 
         } catch (IOException ex) {
             throw new UnconvertibleObjectException("Error occured during image writing.", ex);
