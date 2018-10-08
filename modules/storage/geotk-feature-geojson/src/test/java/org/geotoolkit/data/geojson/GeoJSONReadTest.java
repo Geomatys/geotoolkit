@@ -1,20 +1,5 @@
 package org.geotoolkit.data.geojson;
 
-import org.geotoolkit.data.geojson.binding.GeoJSONFeatureCollection;
-import org.geotoolkit.data.geojson.binding.GeoJSONObject;
-import org.geotoolkit.data.geojson.utils.GeoJSONParser;
-import org.geotoolkit.util.NamesExt;
-import org.opengis.util.GenericName;
-import org.locationtech.jts.geom.*;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.*;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
-import org.geotoolkit.storage.DataStores;
-import org.apache.sis.referencing.CommonCRS;
-import org.junit.Test;
-import org.opengis.parameter.ParameterValueGroup;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -23,13 +8,26 @@ import java.nio.file.Paths;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
-
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.*;
 import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.*;
+import org.geotoolkit.data.geojson.binding.GeoJSONFeatureCollection;
+import org.geotoolkit.data.geojson.binding.GeoJSONObject;
+import org.geotoolkit.data.geojson.utils.GeoJSONParser;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.session.Session;
+import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
+import org.junit.Test;
+import org.locationtech.jts.geom.*;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -288,6 +286,27 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
         Session session = store.createSession(false);
         FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
         assertEquals(15, fcoll.size());
+    }
+
+    /**
+     * This test ensure integer types over Integer.MAX_VALUE are converted to Long.
+     * @throws DataStoreException
+     */
+    @Test
+    public void readLongTest() throws DataStoreException, URISyntaxException {
+        URL jsonFile = GeoJSONReadTest.class.getResource("/org/geotoolkit/geojson/longValue.json");
+
+        ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
+        param.parameter(PATH.getName().getCode()).setValue(jsonFile.toURI());
+        FeatureStore store = (FeatureStore) DataStores.open(param);
+        assertNotNull(store);
+
+        assertEquals(1, store.getNames().size());
+        GenericName name = store.getNames().iterator().next();
+
+        FeatureSet featureSet = (FeatureSet) store.findResource(name.toString());
+        Feature feature = featureSet.features(false).findFirst().get();
+        assertEquals(853555090789l, feature.getPropertyValue("size"));
     }
 
     /**
