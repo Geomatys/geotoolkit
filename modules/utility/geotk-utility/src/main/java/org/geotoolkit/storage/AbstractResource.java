@@ -83,7 +83,7 @@ public abstract class AbstractResource implements Resource {
         final DefaultMetadata metadata = new DefaultMetadata();
         final DefaultDataIdentification idf = new DefaultDataIdentification();
         final DefaultCitation citation = new DefaultCitation();
-        citation.getIdentifiers().add(identifier);
+        if (identifier != null) citation.getIdentifiers().add(identifier);
         idf.setCitation(citation);
         metadata.setIdentificationInfo(Arrays.asList(idf));
         return metadata;

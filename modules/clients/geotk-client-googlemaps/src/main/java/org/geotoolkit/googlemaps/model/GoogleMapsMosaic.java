@@ -21,10 +21,11 @@ import java.awt.Point;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-import org.geotoolkit.storage.coverage.AbstractGridMosaic;
-import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.TileReference;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.data.multires.AbstractMosaic;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.storage.coverage.ImageTile;
 import org.opengis.geometry.DirectPosition;
 
 /**
@@ -32,14 +33,16 @@ import org.opengis.geometry.DirectPosition;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class GoogleMapsMosaic extends AbstractGridMosaic{
+public class GoogleMapsMosaic extends AbstractMosaic{
 
+    private final GoogleMapsPyramidSet set;
     private final int scaleLevel;
 
-    public GoogleMapsMosaic(Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize,
+    public GoogleMapsMosaic(GoogleMapsPyramidSet set, Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize,
             Dimension tileSize, double scale, int scaleLevel) {
         super(pyramid,upperLeft,gridSize,tileSize,scale);
         this.scaleLevel = scaleLevel;
+        this.set = set;
     }
 
     public int getScaleLevel() {
@@ -47,13 +50,18 @@ public class GoogleMapsMosaic extends AbstractGridMosaic{
     }
 
     @Override
-    public TileReference getTile(int col, int row, Map hints) throws DataStoreException {
-        return ((GoogleMapsPyramidSet)getPyramid().getPyramidSet()).getTile(this, col, row, hints);
+    protected boolean isWritable() throws CoverageStoreException {
+        return false;
+    }
+
+    @Override
+    public ImageTile getTile(int col, int row, Map hints) throws DataStoreException {
+        return set.getTile(getPyramid(), this, col, row, hints);
     }
 
     @Override
     public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
-        return ((GoogleMapsPyramidSet)getPyramid().getPyramidSet()).getTiles(this, positions, hints);
+        return set.getTiles(getPyramid(), this, positions, hints);
     }
 
 }

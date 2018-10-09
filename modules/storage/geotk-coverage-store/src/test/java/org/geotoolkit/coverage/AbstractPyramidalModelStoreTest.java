@@ -28,30 +28,32 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
+import java.util.stream.Stream;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.WritableAggregate;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.util.NamesExt;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.storage.WritableAggregate;
+import org.geotoolkit.data.multires.DefiningMosaic;
+import org.geotoolkit.data.multires.DefiningPyramid;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.image.BufferedImages;
-
-import static org.junit.Assert.*;
-
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.storage.coverage.DefaultImageTile;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.util.NamesExt;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
-import org.apache.sis.util.Utilities;
-import org.geotoolkit.storage.coverage.DefiningCoverageResource;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  * Pyramid store features and write tests.
@@ -101,36 +103,32 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
         corner.setOrdinate(0, 100);
         corner.setOrdinate(1, 20);
 
-        final Pyramid rgbaPyramid = rgbaCoverageRef.createPyramid(crs);
-        final GridMosaic rgbaMosaic1 = rgbaCoverageRef.createMosaic(rgbaPyramid.getId(),
-                new Dimension(2, 2),
-                new Dimension(10, 10) ,
-                corner,
-                1);
-        final GridMosaic rgbaMosaic2 = rgbaCoverageRef.createMosaic(rgbaPyramid.getId(),
-                new Dimension(4, 3),
-                new Dimension(10, 10) ,
-                corner,
-                0.5);
+        final Pyramid rgbaPyramid = (Pyramid) rgbaCoverageRef.createModel(new DefiningPyramid(crs));
+        final Mosaic rgbaMosaic1 = rgbaPyramid.createMosaic(new DefiningMosaic(null, corner, 1, new Dimension(10, 10), new Dimension(2, 2)));
+        final Mosaic rgbaMosaic2 = rgbaPyramid.createMosaic(new DefiningMosaic(null, corner, 0.5, new Dimension(10, 10), new Dimension(4, 3)));
 
         //insert tiles
-        rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic1.getId(), 0, 0, createRGBA(Color.RED));
-        rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic1.getId(), 1, 0, createRGBA(Color.GREEN));
-        rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic1.getId(), 0, 1, createRGBA(Color.BLUE));
-        rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic1.getId(), 1, 1, createRGBA(Color.BLACK));
+        rgbaMosaic1.writeTiles(Stream.of(
+                new DefaultImageTile(createRGBA(Color.RED  ), 0, 0),
+                new DefaultImageTile(createRGBA(Color.GREEN), 1, 0),
+                new DefaultImageTile(createRGBA(Color.BLUE ), 0, 1),
+                new DefaultImageTile(createRGBA(Color.BLACK), 1, 1)
+            ), null);
 
-        rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic2.getId(), 0, 0, createRGBA(Color.RED));
-        rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic2.getId(), 1, 0, createRGBA(Color.GREEN));
-        rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic2.getId(), 2, 0, createRGBA(Color.BLUE));
-        rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic2.getId(), 3, 0, createRGBA(Color.BLACK));
-        rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic2.getId(), 0, 1, createRGBA(Color.CYAN));
-        rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic2.getId(), 1, 1, createRGBA(Color.MAGENTA));
-        rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic2.getId(), 2, 1, createRGBA(Color.YELLOW));
-        rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic2.getId(), 3, 1, createRGBA(Color.PINK));
-        rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic2.getId(), 0, 2, createRGBA(Color.DARK_GRAY));
-        rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic2.getId(), 1, 2, createRGBA(Color.LIGHT_GRAY));
-        rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic2.getId(), 2, 2, createRGBA(Color.WHITE));
-        rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic2.getId(), 3, 2, createRGBA(Color.BLACK));
+        rgbaMosaic2.writeTiles(Stream.of(
+                new DefaultImageTile(createRGBA(Color.RED       ), 0, 0),
+                new DefaultImageTile(createRGBA(Color.GREEN     ), 1, 0),
+                new DefaultImageTile(createRGBA(Color.BLUE      ), 2, 0),
+                new DefaultImageTile(createRGBA(Color.BLACK     ), 3, 0),
+                new DefaultImageTile(createRGBA(Color.CYAN      ), 0, 1),
+                new DefaultImageTile(createRGBA(Color.MAGENTA   ), 1, 1),
+                new DefaultImageTile(createRGBA(Color.YELLOW    ), 2, 1),
+                new DefaultImageTile(createRGBA(Color.PINK      ), 3, 1),
+                new DefaultImageTile(createRGBA(Color.DARK_GRAY ), 0, 2),
+                new DefaultImageTile(createRGBA(Color.LIGHT_GRAY), 1, 2),
+                new DefaultImageTile(createRGBA(Color.WHITE     ), 2, 2),
+                new DefaultImageTile(createRGBA(Color.BLACK     ), 3, 2)
+            ), null);
 
         ////////////////////////////////////////////////////////////////////////
         //create a small Float 1 band pyramid //////////////////////////////////
@@ -147,37 +145,32 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
         corner.setOrdinate(0, 100);
         corner.setOrdinate(1, 20);
 
-        final Pyramid float1bPyramid = float1bCoverageRef.createPyramid(crs);
-        final GridMosaic float1bMosaic1 = float1bCoverageRef.createMosaic(float1bPyramid.getId(),
-                new Dimension(2, 2),
-                new Dimension(10, 10) ,
-                corner,
-                1);
-        final GridMosaic float1bMosaic2 = float1bCoverageRef.createMosaic(float1bPyramid.getId(),
-                new Dimension(4, 3),
-                new Dimension(10, 10) ,
-                corner,
-                0.5);
+        final Pyramid float1bPyramid = (Pyramid) float1bCoverageRef.createModel(new DefiningPyramid(crs));
+        final Mosaic float1bMosaic1 = float1bPyramid.createMosaic(new DefiningMosaic(null, corner, 1, new Dimension(10, 10), new Dimension(2, 2)));
+        final Mosaic float1bMosaic2 = float1bPyramid.createMosaic(new DefiningMosaic(null, corner, 0.5, new Dimension(10, 10), new Dimension(4, 3)));
 
         //insert tiles
-        float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic1.getId(), 0, 0, createFloat(1.1f));
-        float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic1.getId(), 1, 0, createFloat(2.2f));
-        float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic1.getId(), 0, 1, createFloat(3.3f));
-        float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic1.getId(), 1, 1, createFloat(4.4f));
+        float1bMosaic1.writeTiles(Stream.of(
+                new DefaultImageTile(createFloat(1.1f), 0, 0),
+                new DefaultImageTile(createFloat(2.2f), 1, 0),
+                new DefaultImageTile(createFloat(3.3f), 0, 1),
+                new DefaultImageTile(createFloat(4.4f), 1, 1)
+            ), null);
 
-        float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic2.getId(), 0, 0, createFloat(-1.1f));
-        float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic2.getId(), 1, 0, createFloat(-2.2f));
-        float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic2.getId(), 2, 0, createFloat(-3.3f));
-        float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic2.getId(), 3, 0, createFloat(-4.4f));
-        float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic2.getId(), 0, 1, createFloat(-5.5f));
-        float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic2.getId(), 1, 1, createFloat(-6.6f));
-        float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic2.getId(), 2, 1, createFloat(-7.7f));
-        float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic2.getId(), 3, 1, createFloat(-8.8f));
-        float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic2.getId(), 0, 2, createFloat(-9.9f));
-        float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic2.getId(), 1, 2, createFloat(-10.10f));
-        float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic2.getId(), 2, 2, createFloat(-11.11f));
-        float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic2.getId(), 3, 2, createFloat(-12.12f));
-
+        float1bMosaic2.writeTiles(Stream.of(
+                new DefaultImageTile(createFloat(-1.1f  ), 0, 0),
+                new DefaultImageTile(createFloat(-2.2f  ), 1, 0),
+                new DefaultImageTile(createFloat(-3.3f  ), 2, 0),
+                new DefaultImageTile(createFloat(-4.4f  ), 3, 0),
+                new DefaultImageTile(createFloat(-5.5f  ), 0, 1),
+                new DefaultImageTile(createFloat(-6.6f  ), 1, 1),
+                new DefaultImageTile(createFloat(-7.7f  ), 2, 1),
+                new DefaultImageTile(createFloat(-8.8f  ), 3, 1),
+                new DefaultImageTile(createFloat(-9.9f  ), 0, 2),
+                new DefaultImageTile(createFloat(-10.10f), 1, 2),
+                new DefaultImageTile(createFloat(-11.11f), 2, 2),
+                new DefaultImageTile(createFloat(-12.12f), 3, 2)
+            ), null);
 
         return store;
     }

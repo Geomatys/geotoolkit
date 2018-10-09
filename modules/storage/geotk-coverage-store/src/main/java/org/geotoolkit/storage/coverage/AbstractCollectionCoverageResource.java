@@ -17,7 +17,9 @@
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,11 +32,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
-import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -49,11 +53,13 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.MathTransform;
@@ -134,17 +140,33 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
                 final GeneralGridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
                 ref.recycle(reader);
 
-                Envelope envelope = gg.getEnvelope();
-                if (env==null) {
-                    //we use the first coverage crs as default
-                    env = new GeneralEnvelope(envelope);
-                    resolution = gg.getResolution().clone();
+                if (gg instanceof GridGeometry2D) {
+                    final GridGeometry2D gg2d = (GridGeometry2D) gg;
+                    Envelope envelope = gg2d.getEnvelope2D();
+                    if (env == null) {
+                        //we use the first coverage crs as default
+                        env = new GeneralEnvelope(envelope);
+                        resolution = gg.getResolution().clone();
+                    } else {
+                        env.add(Envelopes.transform(envelope, env.getCoordinateReferenceSystem()));
+                        //convert resolution to global crs
+                        double[] res = ReferencingUtilities.convertResolution(envelope, gg.getResolution(), env.getCoordinateReferenceSystem(), new double[2]);
+                        if(res[0]<resolution[0]) resolution[0] = res[0];
+                        if(res[1]<resolution[1]) resolution[1] = res[1];
+                    }
                 } else {
-                    env.add(Envelopes.transform(envelope, env.getCoordinateReferenceSystem()));
-                    //convert resolution to global crs
-                    double[] res = ReferencingUtilities.convertResolution(envelope, gg.getResolution(), env.getCoordinateReferenceSystem(), new double[2]);
-                    if(res[0]<resolution[0]) resolution[0] = res[0];
-                    if(res[1]<resolution[1]) resolution[1] = res[1];
+                    Envelope envelope = gg.getEnvelope();
+                    if (env==null) {
+                        //we use the first coverage crs as default
+                        env = new GeneralEnvelope(envelope);
+                        resolution = gg.getResolution().clone();
+                    } else {
+                        env.add(Envelopes.transform(envelope, env.getCoordinateReferenceSystem()));
+                        //convert resolution to global crs
+                        double[] res = ReferencingUtilities.convertResolution(envelope, gg.getResolution(), env.getCoordinateReferenceSystem(), new double[2]);
+                        if(res[0]<resolution[0]) resolution[0] = res[0];
+                        if(res[1]<resolution[1]) resolution[1] = res[1];
+                    }
                 }
             }
 
@@ -200,14 +222,19 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
         }
 
         @Override
-        protected GridCoverage readInNativeCRS(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
+        protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, GridCoverageReadParam param) throws CoverageStoreException, TransformException, CancellationException {
 
             final Collection<GridCoverageResource> references = getCoverages(param);
             final List<GridCoverage2D> coverages = new ArrayList<>();
             for (GridCoverageResource ref : references) {
                 final GridCoverageReader reader = ref.acquireReader();
                 try {
-                    coverages.add((GridCoverage2D) reader.read(ref.getImageIndex(), param));
+                    GridCoverageReadParam subParam = new GridCoverageReadParam();
+                    subParam.setDeferred(true);
+                    subParam.setEnvelope(param.getEnvelope());
+                    coverages.add((GridCoverage2D) reader.read(ref.getImageIndex(), subParam));
+                } catch(DisjointCoverageDomainException ex) {
+                    //continue, no log, normal it can happen
                 } catch(CoverageStoreException ex) {
                     LOGGER.log(Level.FINE, ex.getMessage(), ex);
                 }
@@ -218,37 +245,34 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
                 throw new DisjointCoverageDomainException("No coverage match parameters");
             }
 
+            final GeneralGridGeometry globalGridGeom = getGridGeometry(0);
+            final GeneralGridGeometry gridGeom = GeoReferencedGridCoverageReader.getGridGeometry(globalGridGeom, areaLower, areaUpper, subsampling);
+            final GridEnvelope extent = gridGeom.getExtent();
+            final int sizeX = extent.getSpan(0);
+            final int sizeY = extent.getSpan(1);
+
             try {
-                //concatenate envelopes
-                final GeneralEnvelope env = new GeneralEnvelope(coverages.get(0).getEnvelope());
-                double resolution = coverages.get(0).getGridGeometry().getResolution()[0];
-                for (int i=0,n=coverages.size();i<n;i++) {
-                    Envelope cenv = coverages.get(i).getEnvelope();
-                    env.add(Envelopes.transform(cenv, env.getCoordinateReferenceSystem()));
-                }
-
-                //compute final grid geometry
-                //calculate the output grid geometry and image size
-                final int sizeX = (int)(env.getSpan(0) / resolution);
-                final int sizeY = (int) (env.getSpan(1) / resolution);
-
-                if (sizeX <= 0 || sizeY <= 0) {
-                    throw new DisjointCoverageDomainException("No coverage match parameters");
-                }
-
-                final GridGeometry2D gridGeom = new GridGeometry2D(new GridEnvelope2D(0, 0, sizeX, sizeY), env);
-
                 final BufferedImage targetImage = BufferedImages.createImage(sizeX, sizeY, coverages.get(0).getRenderedImage());
 
+                //intermediate image for float and double images
+                BufferedImage tempImage = null;
+                final int dataType = targetImage.getRaster().getDataBuffer().getDataType();
+                final boolean isNanable = (DataBuffer.TYPE_FLOAT == dataType || DataBuffer.TYPE_DOUBLE == dataType)
+                                       && (targetImage.getRaster().getNumBands() == 1);
+                if (isNanable) {
+                    ImageUtilities.fill(targetImage, Double.NaN);
+                    tempImage = BufferedImages.createImage(sizeX, sizeY, coverages.get(0).getRenderedImage());
+                }
+
                 final MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
-                final MathTransform targetGridToCrs = gridGeom.getGridToCRS(PixelOrientation.CENTER);
+                final MathTransform targetGridToCrs = gridGeom.getGridToCRS();
 
                 //resample all coverages in target image
                 for (GridCoverage2D coverage : coverages) {
                     final MathTransform targetCrsToSourceCrs = CRS.findOperation(
                             gridGeom.getCoordinateReferenceSystem(),
-                            coverage.getCoordinateReferenceSystem(), null).getMathTransform();
-                    final MathTransform sourceGridToCrs = coverage.getGridGeometry().getGridToCRS(PixelOrientation.CENTER).inverse();
+                            coverage.getCoordinateReferenceSystem2D(), null).getMathTransform();
+                    final MathTransform sourceGridToCrs = coverage.getGridGeometry().getGridToCRS2D(PixelOrientation.CENTER).inverse();
 
                     final MathTransform targetToSource = mtFactory.createConcatenatedTransform(
                                mtFactory.createConcatenatedTransform(targetGridToCrs, targetCrsToSourceCrs), sourceGridToCrs);
@@ -257,9 +281,32 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
                     final double[] fillValues = new double[sourceImage.getSampleModel().getNumBands()];
                     Arrays.fill(fillValues, Double.NaN);
 
-                    final Resample resample = new Resample(targetToSource, targetImage, sourceImage,
+                    //NOTE : do not use BILINEAR, BICUBIC,BICUBIC2, errors in resampling
+
+                    //fill image with NaN
+                    if (isNanable) {
+                        ImageUtilities.fill(tempImage, Double.NaN);
+                        final Resample resample = new Resample(targetToSource, tempImage, sourceImage,
                             InterpolationCase.NEIGHBOR, ResampleBorderComportement.FILL_VALUE, null);
-                    resample.fillImage();
+                        resample.fillImage();
+
+                        //merge not NaN values in target
+                        final PixelIterator reader = PixelIterator.create(tempImage);
+                        final WritablePixelIterator writer = WritablePixelIterator.create(targetImage);
+                        double[] pixel = new double[1];
+                        while (reader.next()) {
+                            reader.getPixel(pixel);
+                            if (!Double.isNaN(pixel[0])) {
+                                Point pt = reader.getPosition();
+                                writer.moveTo(pt.x, pt.y);
+                                writer.setPixel(pixel);
+                            }
+                        }
+                    } else {
+                        final Resample resample = new Resample(targetToSource, targetImage, sourceImage,
+                            InterpolationCase.NEIGHBOR, ResampleBorderComportement.FILL_VALUE, null);
+                        resample.fillImage();
+                    }
                 }
 
                 final GridCoverageBuilder builder = new GridCoverageBuilder();
@@ -268,9 +315,12 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
                 builder.setGridGeometry(gridGeom);
                 builder.setSampleDimensions(coverages.get(0).getSampleDimensions());
                 return builder.build();
-            } catch (TransformException | FactoryException | DataStoreException ex) {
+            } catch (TransformException | FactoryException ex) {
                 throw new CoverageStoreException(ex.getMessage(), ex);
             }
+
         }
+
     }
+
 }

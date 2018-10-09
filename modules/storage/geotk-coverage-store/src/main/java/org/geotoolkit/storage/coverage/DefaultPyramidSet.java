@@ -19,9 +19,8 @@ package org.geotoolkit.storage.coverage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
-
 import org.apache.sis.util.Classes;
+import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.util.StringUtilities;
 
 /**
@@ -30,30 +29,16 @@ import org.geotoolkit.util.StringUtilities;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultPyramidSet extends AbstractPyramidSet{
+public class DefaultPyramidSet {
 
-    private final String id = UUID.randomUUID().toString();
     private final List<Pyramid> pyramids = new ArrayList<Pyramid>();
-    private final List<String> formats = new ArrayList<String>();
 
-    @Override
     public Collection<Pyramid> getPyramids() {
         return pyramids;
     }
 
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public List<String> getFormats() {
-        return formats;
-    }
-
-    @Override
     public String toString(){
-        return StringUtilities.toStringTree(Classes.getShortClassName(this)+" "+getId(), getPyramids());
+        return StringUtilities.toStringTree(Classes.getShortClassName(this), getPyramids());
     }
 
 }

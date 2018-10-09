@@ -16,7 +16,9 @@
  */
 package org.geotoolkit.coverage.xmlstore;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
@@ -32,12 +34,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.BitSet;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
@@ -52,20 +63,21 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Tile;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.process.Monitor;
-import org.geotoolkit.storage.coverage.AbstractGridMosaic;
-import org.geotoolkit.storage.coverage.DefaultTileReference;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.TileReference;
+import org.geotoolkit.storage.coverage.DefaultImageTile;
+import org.geotoolkit.storage.coverage.ImageTile;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -77,7 +89,7 @@ import org.opengis.geometry.Envelope;
  * @module
  */
 @XmlAccessorType(XmlAccessType.NONE)
-public class XMLMosaic implements GridMosaic {
+public class XMLMosaic implements Mosaic {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.xmlstore");
     private static final NumberFormat DECIMAL_FORMAT = NumberFormat.getInstance(Locale.ENGLISH);
@@ -306,7 +318,7 @@ public class XMLMosaic implements GridMosaic {
      * Id equals scale string value
      */
     @Override
-    public String getId() {
+    public String getIdentifier() {
         final StringBuilder sb = new StringBuilder();
         sb.append(scale);
 
@@ -333,8 +345,8 @@ public class XMLMosaic implements GridMosaic {
 
     public Path getFolder() {
         if (folder == null) {
-            final Path pyramidDirectory = getPyramid().getFolder();
-            folder = pyramidDirectory.resolve(getId());
+            final Path pyramidDirectory = pyramid.getFolder();
+            folder = pyramidDirectory.resolve(getIdentifier());
             // For retro-compatibility purpose.
             if (!Files.isDirectory(folder)) {
                 final Path tmpFolder = pyramidDirectory.resolve(String.valueOf(scale));
@@ -347,14 +359,13 @@ public class XMLMosaic implements GridMosaic {
         return folder;
     }
 
-    @Override
     public XMLPyramid getPyramid() {
         return pyramid;
     }
 
     @Override
     public DirectPosition getUpperLeftCorner() {
-        final GeneralDirectPosition ul = new GeneralDirectPosition(getPyramid().getCoordinateReferenceSystem());
+        final GeneralDirectPosition ul = new GeneralDirectPosition(pyramid.getCoordinateReferenceSystem());
         for(int i=0;i<upperLeft.length;i++) ul.setOrdinate(i, upperLeft[i]);
         return ul;
     }
@@ -372,23 +383,6 @@ public class XMLMosaic implements GridMosaic {
     @Override
     public Dimension getTileSize() {
         return new Dimension(tileWidth, tileHeight);
-    }
-
-    @Override
-    public Envelope getEnvelope(final int col, final int row) {
-        final GeneralDirectPosition ul = new GeneralDirectPosition(getUpperLeftCorner());
-        final int xAxis = CRSUtilities.firstHorizontalAxis(ul.getCoordinateReferenceSystem());
-        final int yAxis = xAxis + 1;
-        final double minX = ul.getOrdinate(xAxis);
-        final double maxY = ul.getOrdinate(yAxis);
-        final double spanX = tileWidth * scale;
-        final double spanY = tileHeight * scale;
-
-        final GeneralEnvelope envelope = new GeneralEnvelope(ul,ul);
-        envelope.setRange(xAxis, minX + col*spanX, minX + (col+1)*spanX);
-        envelope.setRange(yAxis, maxY - (row+1)*spanY, maxY - row*spanY);
-
-        return envelope;
     }
 
     @Override
@@ -459,18 +453,18 @@ public class XMLMosaic implements GridMosaic {
     }
 
     @Override
-    public TileReference getTile(int col, int row, Map hints) throws DataStoreException {
+    public ImageTile getTile(int col, int row, Map hints) throws DataStoreException {
 
-        final TileReference tile;
+        final ImageTile tile;
         if (isEmpty(col, row)) {
             try {
-                tile = new DefaultTileReference(getPyramid().getPyramidSet().getReaderSpi(),
+                tile = new DefaultImageTile(pyramid.getPyramidSet().getReaderSpi(),
                         ImageIO.createImageInputStream(new ByteArrayInputStream(createEmptyTile())), 0, new Point(col, row));
             } catch (IOException ex) {
                 throw new DataStoreException(ex);
             }
         } else {
-            tile = new DefaultTileReference(getPyramid().getPyramidSet().getReaderSpi(),
+            tile = new DefaultImageTile(pyramid.getPyramidSet().getReaderSpi(),
                     getTileFile(col, row), 0, new Point(col, row));
         }
 
@@ -582,7 +576,7 @@ public class XMLMosaic implements GridMosaic {
      * @throws DataStoreException if problem during get suffix.
      */
     private Path[] getTileFiles(int col, int row) throws DataStoreException {
-        final String[] suffixx = getPyramid().getPyramidSet().getReaderSpi().getFileSuffixes();
+        final String[] suffixx = pyramid.getPyramidSet().getReaderSpi().getFileSuffixes();
         final Path[] fils = new Path[suffixx.length];
         for (int i=0;i<suffixx.length;i++) {
             fils[i] = getFolder().resolve(row+"_"+col+"."+suffixx[i]);
@@ -591,7 +585,45 @@ public class XMLMosaic implements GridMosaic {
     }
 
     ImageWriter acquireImageWriter() throws IOException {
-        return XImageIO.getWriterByFormatName(getPyramid().getPyramidSet().getFormatName(), null, null);
+        return XImageIO.getWriterByFormatName(pyramid.getPyramidSet().getFormatName(), null, null);
+    }
+
+    @Override
+    public void writeTiles(Stream<Tile> tiles, Monitor monitor) throws DataStoreException {
+        try {
+            tiles.parallel().forEach((Tile tile) -> {
+                if (tile instanceof ImageTile) {
+                    final ImageTile imgTile = (ImageTile) tile;
+                    try {
+                        writeTile(imgTile.getPosition(), imgTile.getImage());
+                    } catch (IOException ex) {
+                        throw new BackingStoreException(new DataStoreException(ex.getMessage(), ex));
+                    } catch (DataStoreException ex) {
+                        throw new BackingStoreException(ex);
+                    }
+                } else {
+                    throw new BackingStoreException(new DataStoreException("Only ImageTile are supported."));
+                }
+            });
+        } catch (BackingStoreException ex) {
+            throw (DataStoreException) ex.getCause();
+        }
+    }
+
+    private void writeTile(Point pt, RenderedImage image) throws DataStoreException {
+        int col = pt.x;
+        int row = pt.y;
+        //-- check conformity between internal data and currentImage.
+        //-- if no sm and cm automatical set from image (use for the first insertion)
+        final XMLCoverageResource ref = pyramid.getPyramidSet().getRef();
+        synchronized (ref) {
+            ref.checkOrSetSampleColor(image);
+        }
+
+        createTile(col,row,image);
+        if (!cacheTileState && tileExist != null) {
+            ref.save();
+        }
     }
 
     void createTile(int col, int row, RenderedImage image) throws DataStoreException {
@@ -674,62 +706,12 @@ public class XMLMosaic implements GridMosaic {
         }
     }
 
-     void writeTiles(final RenderedImage image, final Rectangle area, final boolean onlyMissing, final Monitor monitor) throws DataStoreException{
-
-         try {
-             checkMosaicFolderExist();
-         } catch (IOException e) {
-             throw new DataStoreException("Unable to create mosaic folder "+e.getLocalizedMessage(), e);
-         }
-
-        final int offsetX = image.getMinTileX();
-        final int offsetY = image.getMinTileY();
-
-        final int startX = (int)area.getMinX();
-        final int startY = (int)area.getMinY();
-        final int endX = (int)area.getMaxX();
-        final int endY = (int)area.getMaxY();
-
-        assert startX >= 0;
-        assert startY >= 0;
-        assert endX > startX && endX <= image.getNumXTiles();
-        assert endY > startY && endY <= image.getNumYTiles();
-
-        final List<Future> futurs = new ArrayList<>();
-        for(int y=startY; y < endY; y++){
-            for(int x=startX; x < endX; x++){
-                if (monitor != null && monitor.isCanceled()) {
-                    // Stops submitting new thread
-                    return;
-                }
-
-                final int tx = offsetX+x;
-                final int ty = offsetY+y;
-
-                if(onlyMissing && !isMissing(tx, ty)){
-                    continue;
-                }
-
-                final int tileIndex = getTileIndex(tx, ty);
-                checkPosition(tx, ty);
-
-                Path tilePath = getTileFile(tx, ty);
-                if (tilePath == null) tilePath = getDefaultTileFile(tx, ty);
-
-                Future fut = TILEWRITEREXECUTOR.submit(new TileWriter(tilePath, image, tx, ty, tileIndex, image.getColorModel(), getPyramid().getPyramidSet().getFormatName(), monitor));
-                futurs.add(fut);
-            }
-        }
-
-        //wait for all writing tobe done
-        for (Future f : futurs) {
-            try {
-                f.get();
-            } catch (InterruptedException | ExecutionException ex) {
-                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-            }
-        }
-
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void deleteTile(int col, int row) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
     }
 
     private void checkPosition(int col, int row) throws PointOutsideCoverageException {
@@ -830,11 +812,6 @@ public class XMLMosaic implements GridMosaic {
             }
         }
         return true;
-    }
-
-    @Override
-    public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException{
-        return AbstractGridMosaic.getTiles(this, positions, hints);
     }
 
     private class TileWriter implements Runnable{

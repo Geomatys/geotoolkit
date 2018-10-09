@@ -16,10 +16,12 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import java.awt.Point;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
+import org.geotoolkit.data.multires.Tile;
+import org.geotoolkit.image.io.XImageIO;
 
 /**
  * Expose informations on how to access a tile.
@@ -29,7 +31,31 @@ import javax.imageio.spi.ImageReaderSpi;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface TileReference {
+public interface ImageTile extends Tile {
+
+    /**
+     * Default implementation check if input is an image.
+     * If not a reader is used to read the image.
+     *
+     * @return RenderedImage
+     * @throws java.io.IOException
+     */
+    default RenderedImage getImage() throws IOException {
+        final Object input = getInput();
+        RenderedImage tileImage = null;
+        if (input instanceof RenderedImage) {
+            tileImage = (RenderedImage) input;
+        } else {
+            ImageReader reader = null;
+            try {
+                reader    = getImageReader();
+                tileImage = reader.read(getImageIndex());
+            } finally {
+                XImageIO.disposeSilently(reader);
+            }
+        }
+        return tileImage;
+    }
 
     /**
      * Returns a new reader created by the {@linkplain #getImageReaderSpi provider} and setup for
@@ -71,13 +97,5 @@ public interface TileReference {
      * @see ImageReader#read(int)
      */
     int getImageIndex();
-
-    /**
-     * Returns the position of the tile in the grid. x/y coordinate are columns and
-     * rows.
-     *
-     * @return position of the tile in the grid mosaic.
-     */
-    Point getPosition();
 
 }

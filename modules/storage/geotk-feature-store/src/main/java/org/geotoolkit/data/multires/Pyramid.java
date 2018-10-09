@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011-2012, Geomatys
+ *    (C) 2018, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,43 +14,38 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.storage.coverage;
+package org.geotoolkit.data.multires;
 
 import java.util.Collection;
-import java.util.List;
+import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * A Pyramid is a collection of mosaic in the same CRS but at different
  * scale levels.
+ * <p>
+ * Note : if the {@linkplain CoordinateReferenceSystem } of the pyramid has more
+ * then two dimensions, it is possible to find multiple mosaics at the same scale.
+ * Each mosaic been located on a different slice in one of the {@linkplain CoordinateReferenceSystem }
+ * axis.
+ * </p>
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
-public interface Pyramid {
+public interface Pyramid extends MultiResolutionModel {
 
     /**
-     * @return unique id.
-     */
-    String getId();
-
-    /**
-     * @return the pyramid set in which this pyramid is contained.
-     */
-    PyramidSet getPyramidSet();
-
-    /**
-     * @return the crs used for all mosaic.
+     * @return the crs used for all mosaics in the pyramid.
      */
     CoordinateReferenceSystem getCoordinateReferenceSystem();
 
     /**
-     * @return unmodifiable list of all mosaics.
+     * @return unmodifiable collection of all mosaics.
      * Waring : in multidimensional pyramids, multiple mosaic at the same scale
      * may exist.
      */
-    List<GridMosaic> getMosaics();
+    Collection<? extends Mosaic> getMosaics();
 
     /**
      * @return the different scales available in the pyramid.
@@ -64,7 +59,7 @@ public interface Pyramid {
      * Waring : in multidimensional pyramids, multiple mosaic at the same scale
      * may exist.
      */
-    Collection<GridMosaic> getMosaics(int index);
+    Collection<? extends Mosaic> getMosaics(int index);
 
     /**
      * Get pyramid envelope.
@@ -73,5 +68,22 @@ public interface Pyramid {
      * @return Envelope
      */
     Envelope getEnvelope();
+
+    /**
+     * Create new mosaic copied properties from template.
+     *
+     * @param template mosaic model
+     * @return created mosaic
+     * @throws DataStoreException
+     */
+    Mosaic createMosaic(Mosaic template) throws DataStoreException;
+
+    /**
+     * Delete given mosaic.
+     *
+     * @param mosaicId
+     * @throws DataStoreException
+     */
+    void deleteMosaic(String mosaicId) throws DataStoreException;
 
 }

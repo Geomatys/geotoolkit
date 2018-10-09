@@ -24,8 +24,10 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.util.stream.Stream;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -33,20 +35,22 @@ import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
+import org.geotoolkit.data.multires.DefiningMosaic;
+import org.geotoolkit.data.multires.DefiningPyramid;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.storage.coverage.DefaultImageTile;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.ImageTile;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.util.NamesExt;
-import org.opengis.util.GenericName;
 import static org.junit.Assert.*;
-
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.Pyramid;
 import org.junit.Test;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.util.FactoryException;
-import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.storage.coverage.DefiningCoverageResource;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.opengis.util.GenericName;
 
 /**
  * Test pyramid coverage writer.
@@ -77,9 +81,9 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
     public void testSingleGridOverride() throws DataStoreException{
         final MPCoverageStore store = new MPCoverageStore();
         final PyramidalCoverageResource ref = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(NAME));
-        final Pyramid pyramid = ref.createPyramid(CRS84);
-        final GridMosaic mosaic = ref.createMosaic(pyramid.getId(), new Dimension(1, 1), new Dimension(360, 180), UL84, 1);
-        ref.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, createImage(360, 180, Color.BLACK));
+        final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
+        final Mosaic mosaic = pyramid.createMosaic(new DefiningMosaic(null, UL84, 1, new Dimension(360, 180), new Dimension(1, 1)));
+        mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(360, 180, Color.BLACK), 0, 0)), null);
 
         //sanity check
         CoverageReader reader = ref.acquireReader();
@@ -116,11 +120,12 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
     public void testQuadGridOverride() throws DataStoreException{
         final MPCoverageStore store = new MPCoverageStore();
         final PyramidalCoverageResource ref = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(NAME));
-        final Pyramid pyramid = ref.createPyramid(CRS84);
-        final GridMosaic mosaic = ref.createMosaic(pyramid.getId(), new Dimension(4, 2), new Dimension(9, 9), UL84, 10);
+        final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
+        final Mosaic mosaic = pyramid.createMosaic(
+                new DefiningMosaic(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
         for(int y=0;y<2;y++){
             for(int x=0;x<4;x++){
-                ref.writeTile(pyramid.getId(), mosaic.getId(), x, y, createImage(9, 9, Color.BLACK));
+                mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)), null);
             }
         }
 
@@ -159,11 +164,12 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
     public void testPartialQuadGridOverride() throws DataStoreException{
         final MPCoverageStore store = new MPCoverageStore();
         final PyramidalCoverageResource ref = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(NAME));
-        final Pyramid pyramid = ref.createPyramid(CRS84);
-        final GridMosaic mosaic = ref.createMosaic(pyramid.getId(), new Dimension(4, 2), new Dimension(9, 9), UL84, 10);
+        final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
+        final Mosaic mosaic = pyramid.createMosaic(
+                new DefiningMosaic(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
         for(int y=0;y<2;y++){
             for(int x=0;x<4;x++){
-                ref.writeTile(pyramid.getId(), mosaic.getId(), x, y, createImage(9, 9, Color.BLACK));
+                mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)), null);
             }
         }
 
@@ -217,17 +223,19 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
     public void testPartialQuadGridOverride2() throws DataStoreException, IOException{
         final MPCoverageStore store = new MPCoverageStore();
         final PyramidalCoverageResource ref = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(NAME));
-        final Pyramid pyramid = ref.createPyramid(CRS84);
-        final GridMosaic mosaic1 = ref.createMosaic(pyramid.getId(), new Dimension(4, 2), new Dimension(9, 9), UL84, 10);
+        final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
+        final Mosaic mosaic1 = pyramid.createMosaic(
+                new DefiningMosaic(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
         for(int y=0;y<2;y++){
             for(int x=0;x<4;x++){
-                ref.writeTile(pyramid.getId(), mosaic1.getId(), x, y, createImage(9, 9, Color.BLACK));
+                mosaic1.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)), null);
             }
         }
-        final GridMosaic mosaic2 = ref.createMosaic(pyramid.getId(), new Dimension(2, 1), new Dimension(9, 9), UL84, 20);
+        final Mosaic mosaic2 = pyramid.createMosaic(
+                new DefiningMosaic(null, UL84, 20, new Dimension(9, 9), new Dimension(2, 1)));
         for(int y=0;y<1;y++){
             for(int x=0;x<2;x++){
-                ref.writeTile(pyramid.getId(), mosaic2.getId(), x, y, createImage(9, 9, Color.BLACK));
+                mosaic2.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)), null);
             }
         }
 
@@ -273,8 +281,8 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
         }
 
         //the higher tiles------------------------------------------------------
-        final BufferedImage top1 = mosaic2.getTile(0, 0, null).getImageReader().read(0);
-        final BufferedImage top2 = mosaic2.getTile(1, 0, null).getImageReader().read(0);
+        final RenderedImage top1 = ((ImageTile) mosaic2.getTile(0, 0)).getImage();
+        final RenderedImage top2 = ((ImageTile) mosaic2.getTile(1, 0)).getImage();
 
         data = top1.getData();
         for(int y=0;y<9;y++){
@@ -311,17 +319,19 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
     public void testPartialQuadGridOverrideFlip() throws DataStoreException, IOException, NoSuchAuthorityCodeException, FactoryException{
         final MPCoverageStore store = new MPCoverageStore();
         final PyramidalCoverageResource ref = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(NAME));
-        final Pyramid pyramid = ref.createPyramid(EPSG4326);
-        final GridMosaic mosaic1 = ref.createMosaic(pyramid.getId(), new Dimension(2, 4), new Dimension(9, 9), UL4326, 10);
+        final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(EPSG4326));
+        final Mosaic mosaic1 = pyramid.createMosaic(
+                new DefiningMosaic(null, UL4326, 10, new Dimension(9, 9), new Dimension(2, 4)));
         for(int y=0;y<4;y++){
             for(int x=0;x<2;x++){
-                ref.writeTile(pyramid.getId(), mosaic1.getId(), x, y, createImage(9, 9, Color.BLACK));
+                mosaic1.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)), null);
             }
         }
-        final GridMosaic mosaic2 = ref.createMosaic(pyramid.getId(), new Dimension(1, 2), new Dimension(9, 9), UL4326, 20);
+        final Mosaic mosaic2 = pyramid.createMosaic(
+                new DefiningMosaic(null, UL4326, 20, new Dimension(9, 9), new Dimension(1, 2)));
         for(int y=0;y<2;y++){
             for(int x=0;x<1;x++){
-                ref.writeTile(pyramid.getId(), mosaic2.getId(), x, y, createImage(9, 9, Color.BLACK));
+                mosaic2.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)), null);
             }
         }
 
@@ -367,8 +377,8 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
         }
 
         //the higher tiles------------------------------------------------------
-        final BufferedImage top1 = mosaic2.getTile(0, 0, null).getImageReader().read(0);
-        final BufferedImage top2 = mosaic2.getTile(0, 1, null).getImageReader().read(0);
+        final RenderedImage top1 = ((ImageTile) mosaic2.getTile(0, 0)).getImage();
+        final RenderedImage top2 = ((ImageTile) mosaic2.getTile(0, 1)).getImage();
 
         data = top1.getData();
         for(int y=0;y<9;y++){
@@ -405,17 +415,19 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
     public void testPartialQuadGridOverrideFlip2() throws DataStoreException, IOException, NoSuchAuthorityCodeException, FactoryException{
         final MPCoverageStore store = new MPCoverageStore();
         final PyramidalCoverageResource ref = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(NAME));
-        final Pyramid pyramid = ref.createPyramid(CRS84);
-        final GridMosaic mosaic1 = ref.createMosaic(pyramid.getId(), new Dimension(4, 2), new Dimension(9, 9), UL84, 10);
+        final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
+        final Mosaic mosaic1 = pyramid.createMosaic(
+                new DefiningMosaic(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
         for(int y=0;y<2;y++){
             for(int x=0;x<4;x++){
-                ref.writeTile(pyramid.getId(), mosaic1.getId(), x, y, createImage(9, 9, Color.BLACK));
+                mosaic1.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)), null);
             }
         }
-        final GridMosaic mosaic2 = ref.createMosaic(pyramid.getId(), new Dimension(2, 1), new Dimension(9, 9), UL84, 20);
+        final Mosaic mosaic2 = pyramid.createMosaic(
+                new DefiningMosaic(null, UL84, 20, new Dimension(9, 9), new Dimension(2, 1)));
         for(int y=0;y<1;y++){
             for(int x=0;x<2;x++){
-                ref.writeTile(pyramid.getId(), mosaic2.getId(), x, y, createImage(9, 9, Color.BLACK));
+                mosaic2.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)), null);
             }
         }
 
@@ -461,8 +473,8 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
         }
 
         //the higher tiles------------------------------------------------------
-        final BufferedImage top1 = mosaic2.getTile(0, 0, null).getImageReader().read(0);
-        final BufferedImage top2 = mosaic2.getTile(1, 0, null).getImageReader().read(0);
+        final RenderedImage top1 = ((ImageTile) mosaic2.getTile(0, 0)).getImage();
+        final RenderedImage top2 = ((ImageTile) mosaic2.getTile(1, 0)).getImage();
 
         data = top1.getData();
         for(int y=0;y<9;y++){

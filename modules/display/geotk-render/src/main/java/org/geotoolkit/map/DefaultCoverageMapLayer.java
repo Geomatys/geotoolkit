@@ -17,19 +17,20 @@
 package org.geotoolkit.map;
 
 import java.util.logging.Level;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.data.query.Query;
 import org.apache.sis.geometry.ImmutableEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.style.MutableStyle;
-import org.apache.sis.util.NullArgumentException;
-import org.opengis.geometry.Envelope;
-import org.apache.sis.util.logging.Logging;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.apache.sis.util.NullArgumentException;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.data.multires.Pyramids;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.style.MutableStyle;
+import org.opengis.geometry.Envelope;
 
 /**
  * Default implementation of the coverage MapLayer.
@@ -102,7 +103,7 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
     public Envelope getBounds() {
         if(ref != null && ref instanceof PyramidalCoverageResource){
             try {
-                return ((PyramidalCoverageResource)ref).getPyramidSet().getEnvelope();
+                return Pyramids.getEnvelope((PyramidalCoverageResource) ref);
             } catch (DataStoreException ex) {
                 Logging.getLogger("org.geotoolkit.map").log(Level.SEVERE, null, ex);
             }

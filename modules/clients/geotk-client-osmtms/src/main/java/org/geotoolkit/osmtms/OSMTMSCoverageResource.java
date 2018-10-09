@@ -16,10 +16,13 @@
  */
 package org.geotoolkit.osmtms;
 
+import java.util.Collection;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.data.multires.MultiResolutionModel;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.osmtms.model.OSMTMSPyramidSet;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
-import org.geotoolkit.storage.coverage.PyramidSet;
 import org.opengis.util.GenericName;
 
 /**
@@ -34,9 +37,13 @@ public class OSMTMSCoverageResource extends AbstractPyramidalCoverageResource {
         super(server,name,0);
     }
 
-    @Override
-    public PyramidSet getPyramidSet() throws DataStoreException {
+    public OSMTMSPyramidSet getPyramidSet() {
         return ((OSMTileMapClient)store).getPyramidSet();
+    }
+
+    @Override
+    public Collection<Pyramid> getModels() throws DataStoreException {
+        return ((OSMTileMapClient)store).getPyramidSet().getPyramids();
     }
 
     /**
@@ -50,4 +57,15 @@ public class OSMTMSCoverageResource extends AbstractPyramidalCoverageResource {
     public ViewType getPackMode() throws DataStoreException {
         return ViewType.PHOTOGRAPHIC;
     }
+
+    @Override
+    public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
+        throw new DataStoreException("Not supported.");
+    }
+
+    @Override
+    public void removeModel(String identifier) throws DataStoreException {
+        throw new DataStoreException("Not supported.");
+    }
+
 }

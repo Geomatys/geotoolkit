@@ -22,13 +22,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.TileReference;
+import java.util.stream.Stream;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.storage.coverage.PyramidSet;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramids;
+import org.geotoolkit.data.multires.Tile;
+import org.geotoolkit.process.Monitor;
+import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.wmts.WMTSUtilities;
 import org.geotoolkit.wmts.xml.v100.TileMatrix;
 import org.geotoolkit.wmts.xml.v100.TileMatrixLimits;
@@ -41,7 +44,7 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMTSMosaic implements GridMosaic{
+public class WMTSMosaic implements Mosaic{
 
     private final String id = UUID.randomUUID().toString();
     private final WMTSPyramid pyramid;
@@ -61,18 +64,17 @@ public class WMTSMosaic implements GridMosaic{
     }
 
     @Override
-    public String getId() {
+    public String getIdentifier() {
         return id;
     }
 
-    @Override
     public WMTSPyramid getPyramid() {
         return pyramid;
     }
 
     @Override
     public DirectPosition getUpperLeftCorner() {
-        final GeneralDirectPosition ul = new GeneralDirectPosition(getPyramid().getCoordinateReferenceSystem());
+        final GeneralDirectPosition ul = new GeneralDirectPosition(pyramid.getCoordinateReferenceSystem());
         ul.setOrdinate(0, matrix.getTopLeftCorner().get(0));
         ul.setOrdinate(1, matrix.getTopLeftCorner().get(1));
         return ul;
@@ -98,24 +100,6 @@ public class WMTSMosaic implements GridMosaic{
     }
 
     @Override
-    public Envelope getEnvelope(int row, int col) {
-        final DirectPosition ul = getUpperLeftCorner();
-        final double minX = ul.getOrdinate(0);
-        final double maxY = ul.getOrdinate(1);
-        final Dimension tileSize = getTileSize();
-        final double scale = getScale();
-        final double spanX = tileSize.width * scale;
-        final double spanY = tileSize.height * scale;
-
-        final GeneralEnvelope envelope = new GeneralEnvelope(
-                getPyramid().getCoordinateReferenceSystem());
-        envelope.setRange(0, minX + col*spanX, minX + (col+1)*spanX);
-        envelope.setRange(1, maxY - (row+1)*spanY, maxY - row*spanY);
-
-        return envelope;
-    }
-
-    @Override
     public Envelope getEnvelope() {
         final DirectPosition ul = getUpperLeftCorner();
         final double minX = ul.getOrdinate(0);
@@ -124,7 +108,7 @@ public class WMTSMosaic implements GridMosaic{
         final double spanY = getTileSize().height* getGridSize().height* getScale();
 
         final GeneralEnvelope envelope = new GeneralEnvelope(
-                getPyramid().getCoordinateReferenceSystem());
+                pyramid.getCoordinateReferenceSystem());
         envelope.setRange(0, minX, minX + spanX);
         envelope.setRange(1, maxY - spanY, maxY );
 
@@ -146,11 +130,11 @@ public class WMTSMosaic implements GridMosaic{
     }
 
     @Override
-    public TileReference getTile(int col, int row, Map hints) throws DataStoreException {
+    public ImageTile getTile(int col, int row, Map hints) throws DataStoreException {
         if(hints==null) hints = new HashMap();
-        if(!hints.containsKey(PyramidSet.HINT_FORMAT)) hints.put(PyramidSet.HINT_FORMAT,"image/png");
+        if(!hints.containsKey(Pyramids.HINT_FORMAT)) hints.put(Pyramids.HINT_FORMAT,"image/png");
 
-        return ((WMTSPyramidSet)getPyramid().getPyramidSet()).getTile(this, col, row, hints);
+        return pyramid.getPyramidSet().getTile(pyramid, this, col, row, hints);
     }
 
     @Override
@@ -166,16 +150,26 @@ public class WMTSMosaic implements GridMosaic{
     @Override
     public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
         if(hints==null) hints = new HashMap();
-        if(!hints.containsKey(PyramidSet.HINT_FORMAT)){
+        if(!hints.containsKey(Pyramids.HINT_FORMAT)){
             hints = new HashMap(hints);
-            hints.put(PyramidSet.HINT_FORMAT,"image/png");
+            hints.put(Pyramids.HINT_FORMAT,"image/png");
         }
-        return ((WMTSPyramidSet)getPyramid().getPyramidSet()).getTiles(this, positions, hints);
+        return pyramid.getPyramidSet().getTiles(pyramid, this, positions, hints);
     }
 
     @Override
     public Rectangle getDataExtent() {
         Dimension tileSize = getTileSize();
         return new Rectangle(0,0, getGridSize().width * tileSize.width, getGridSize().height * tileSize.height);
+    }
+
+    @Override
+    public void writeTiles(Stream<Tile> tiles, Monitor monitor) throws DataStoreException {
+        throw new DataStoreException("WMTS is not writable");
+    }
+
+    @Override
+    public void deleteTile(int tileX, int tileY) throws DataStoreException {
+        throw new DataStoreException("WMTS is not writable");
     }
 }

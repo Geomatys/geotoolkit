@@ -7,31 +7,31 @@ import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
-
+import java.util.stream.Stream;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.memory.MPCoverageStore;
+import org.geotoolkit.data.multires.DefiningMosaic;
+import org.geotoolkit.data.multires.DefiningPyramid;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.storage.coverage.DefaultImageTile;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.util.NamesExt;
+import org.junit.Assert;
+import org.junit.Test;
 import org.opengis.coverage.grid.GridCoordinates;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
-
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
-import org.apache.sis.measure.NumberRange;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.storage.DataStoreException;
-
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.memory.MPCoverageStore;
-import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.storage.coverage.DefiningCoverageResource;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.Pyramid;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 
 /**
@@ -171,7 +171,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
     private static void create4DPyramid(PyramidalCoverageResource ref, CoordinateReferenceSystem crs,
             int width, int height, double[][] geovalues) throws DataStoreException{
 
-        final Pyramid pyramid = ref.createPyramid(crs);
+        final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(crs));
 
         final Dimension gridSize = new Dimension(4, 3);
         final Dimension tilePixelSize = new Dimension(width, height);
@@ -179,13 +179,13 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         for(double[] slice : geovalues){
             final GeneralDirectPosition upperLeft = new GeneralDirectPosition(crs);
             upperLeft.setCoordinate(-50,60,slice[0],slice[1]);
-            final GridMosaic mosaic = ref.createMosaic(pyramid.getId(), gridSize, tilePixelSize, upperLeft, 1);
+            final Mosaic mosaic = pyramid.createMosaic(new DefiningMosaic(null, upperLeft, 1, tilePixelSize, gridSize));
 
             final float sample = (float)slice[2];
             for(int x=0;x<gridSize.width;x++){
                 for(int y=0;y<gridSize.height;y++){
-                    ref.writeTile(pyramid.getId(), mosaic.getId(), x, y, createRenderedImage(
-                            tilePixelSize.width, tilePixelSize.height, sample, sample));
+                    BufferedImage image = createRenderedImage(tilePixelSize.width, tilePixelSize.height, sample, sample);
+                    mosaic.writeTiles(Stream.of(new DefaultImageTile(image, x, y)), null);
                 }
             }
         }

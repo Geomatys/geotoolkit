@@ -22,22 +22,23 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
-
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidSet;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.Utilities;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.MultiResolutionResource;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.data.multires.Pyramids;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.util.Utilities;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * Define {@link Pyramid} and {@link GridMosaic} search rules.
@@ -67,7 +68,7 @@ public abstract class CoverageFinder {
      *                      result will be null. Parameter can be null.
      * @return GridMosaic that match or null.
      */
-    public abstract GridMosaic findMosaic(final Pyramid pyramid, final double scale,
+    public abstract Mosaic findMosaic(final Pyramid pyramid, final double scale,
             final double tolerance, final Envelope env, Integer maxTileNumber) throws FactoryException;
 
     /**
@@ -81,12 +82,12 @@ public abstract class CoverageFinder {
      * @throws IllegalArgumentException if no mosaic found when requested with bad resolution.
      * @throws DisjointCoverageDomainException if no mosaic intersect requested envelope
      */
-    public List<GridMosaic> findMosaics(final Pyramid pyramid, final double resolution,
+    public List<Mosaic> findMosaics(final Pyramid pyramid, final double resolution,
             final double tolerance, final Envelope env) throws DisjointCoverageDomainException {
-        final List<GridMosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
+        final List<Mosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
         Collections.sort(mosaics, SCALE_COMPARATOR);
         Collections.reverse(mosaics);
-        final List<GridMosaic> result = new ArrayList<>();
+        final List<Mosaic> result = new ArrayList<>();
 
         //find the most accurate resolution
         final double[] scales = pyramid.getScales();
@@ -104,7 +105,7 @@ public abstract class CoverageFinder {
 
         int notIntersected = 0;
         //-- search mosaics
-        for (GridMosaic candidate : mosaics) {
+        for (Mosaic candidate : mosaics) {
             //-- check the mosaic intersect the searched envelope
             final GeneralEnvelope clip = new GeneralEnvelope(candidate.getEnvelope());
             if (!clip.intersects(env, true)) {
@@ -136,17 +137,18 @@ public abstract class CoverageFinder {
      * @param crs searched crs
      * @return Pyramid, never null except if the pyramid set is empty
      */
-    public final Pyramid findPyramid(final PyramidSet set, final CoordinateReferenceSystem crs) throws FactoryException {
+    public final Pyramid findPyramid(final MultiResolutionResource set, final CoordinateReferenceSystem crs) throws FactoryException, DataStoreException {
         final CoordinateReferenceSystem crs2D = CRS.getHorizontalComponent(crs);
         final Envelope crsBound1 = CRS.getDomainOfValidity(crs2D);
         double ratio = Double.NEGATIVE_INFINITY;
         // envelope with crs geographic.
         final GeneralEnvelope intersection = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
+        final List<Pyramid> pyramids = Pyramids.getPyramids(set);
         final List<Pyramid> results = new ArrayList<>();
         if (crsBound1 != null) {
             final GeneralEnvelope crsBound = new GeneralEnvelope(crsBound1);
             noValidityDomainFound :
-            for(Pyramid pyramid : set.getPyramids()) {
+            for(Pyramid pyramid : pyramids) {
                 double ratioTemp = 0;
                 Envelope pyramidBound = CRS.getDomainOfValidity(
                         CRS.getHorizontalComponent(pyramid.getCoordinateReferenceSystem()));
@@ -180,16 +182,16 @@ public abstract class CoverageFinder {
                 }
             }
         } else {
-            results.addAll(set.getPyramids());
+            results.addAll(pyramids);
         }
 
         //paranoiac test
         if (results.isEmpty()){
             //could not find any proper candidates
-            if(set.getPyramids().isEmpty()){
+            if(pyramids.isEmpty()){
                 return null;
             }else{
-                return set.getPyramids().iterator().next();
+                return pyramids.iterator().next();
             }
         }
         if (results.size() == 1) return results.get(0);
@@ -209,9 +211,9 @@ public abstract class CoverageFinder {
     /**
      * Sort Grid Mosaic according to there scale, then on additional dimensions.
      */
-    public static final Comparator<GridMosaic> SCALE_COMPARATOR = new Comparator<GridMosaic>() {
+    public static final Comparator<Mosaic> SCALE_COMPARATOR = new Comparator<Mosaic>() {
         @Override
-        public int compare(final GridMosaic m1, final GridMosaic m2) {
+        public int compare(final Mosaic m1, final Mosaic m2) {
             final double res = m1.getScale() - m2.getScale();
             if(res == 0){
                 //same scale check additional axes

@@ -22,6 +22,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramids;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -41,10 +43,10 @@ public final class GridMosaicCoverage2D {
      * @param mosaic
      * @return
      */
-    public static GridCoverage2D create(PyramidalCoverageResource ref, GridMosaic mosaic) throws DataStoreException{
+    public static GridCoverage2D create(PyramidalCoverageResource ref, Mosaic mosaic) throws DataStoreException{
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setCoordinateReferenceSystem(mosaic.getPyramid().getCoordinateReferenceSystem());
-        gcb.setGridToCRS((MathTransform)AbstractGridMosaic.getTileGridToCRS(mosaic, new Point(0, 0)));
+        gcb.setCoordinateReferenceSystem(mosaic.getUpperLeftCorner().getCoordinateReferenceSystem());
+        gcb.setGridToCRS((MathTransform)Pyramids.getTileGridToCRS(mosaic, new Point(0, 0)));
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(new GridMosaicRenderedImage(mosaic));
         final List<GridSampleDimension> dims = ref.getSampleDimensions();

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.coverage.xmlstore;
 
-import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
@@ -25,7 +24,11 @@ import java.awt.image.SampleModel;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -38,34 +41,28 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
-import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.data.multires.MultiResolutionModel;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.data.multires.Pyramids;
+import org.geotoolkit.image.color.ScaledColorSpace;
+import org.geotoolkit.image.internal.ImageUtils;
+import org.geotoolkit.image.internal.PlanarConfiguration;
+import org.geotoolkit.image.internal.SampleType;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.util.GenericName;
-import org.geotoolkit.image.color.ScaledColorSpace;
-import org.geotoolkit.image.internal.ImageUtils;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.image.internal.PlanarConfiguration;
-import org.geotoolkit.image.internal.SampleType;
-
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-import static java.nio.file.StandardOpenOption.WRITE;
-import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.process.Monitor;
 
 /**
  * XML implementation of {@link PyramidalCoverageReference}.
@@ -291,9 +288,14 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
         return mainfile.getParent().resolve(getId());
     }
 
-    @Override
     public XMLPyramidSet getPyramidSet() {
         return set;
+    }
+
+
+    @Override
+    public Collection<Pyramid> getModels() throws DataStoreException {
+        return set.getPyramids();
     }
 
     private void checkColorModel(){
@@ -475,7 +477,7 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
                     assert !(colorModel.getColorSpace() instanceof ScaledColorSpace) : "with min and max NULL sample value color space should not be instance of ScaledColorSpace.";
                 } else {
                     assert maxColorSampleValue != null;
-                    assert (colorModel.getColorSpace() instanceof ScaledColorSpace) : "with NOT NULL min and max sample value color space must be instance of ScaledColorSpace.";
+                    //assert (colorModel.getColorSpace() instanceof ScaledColorSpace) : "with NOT NULL min and max sample value color space must be instance of ScaledColorSpace.";
                     assert Double.isFinite(minColorSampleValue) : "To write minColorSampleValue into XML Pyramid File, it should be finite. Found : "+minColorSampleValue;
                     assert Double.isFinite(maxColorSampleValue) : "To write maxColorSampleValue into XML Pyramid File, it should be finite. Found : "+maxColorSampleValue;
                 }
@@ -610,7 +612,7 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
      *
      * @param image {@link RenderedImage} which contain samplemodel color model informations.
      */
-    private void checkOrSetSampleColor(final RenderedImage image) throws DataStoreException {
+    void checkOrSetSampleColor(final RenderedImage image) throws DataStoreException {
         final SampleModel imgSm = image.getSampleModel();
         final SampleModel sm = getSampleModel();
         if (sm != null) {
@@ -707,56 +709,22 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
         return true;
     }
 
-    /**
-     * {@inheritDoc }.
-     */
     @Override
-    public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
-        final XMLPyramidSet set = getPyramidSet();
-        final Pyramid pyramid = set.createPyramid(getIdentifier().tip().toString(),crs);
-        save();
-        return pyramid;
+    public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
+        if (template instanceof Pyramid) {
+            final Pyramid base = (Pyramid) template;
+            final XMLPyramidSet set = getPyramidSet();
+            final Pyramid pyramid = set.createPyramid(getIdentifier().tip().toString(), base.getCoordinateReferenceSystem());
+            save();
+            Pyramids.copyStructure(base, pyramid);
+            return pyramid;
+        } else {
+            throw new DataStoreException("Unsupported template : "+template);
+        }
     }
 
-    /**
-     * {@inheritDoc }.
-     */
     @Override
-    public void deletePyramid(String pyramidId) throws DataStoreException {
-        throw new DataStoreException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public GridMosaic createMosaic(String pyramidId, Dimension gridSize,
-    Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
-        final XMLPyramidSet set = getPyramidSet();
-        final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
-        final XMLMosaic mosaic = pyramid.createMosaic(gridSize, tilePixelSize, upperleft, pixelscale);
-        save();
-        return mosaic;
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize,
-            Dimension dataPixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
-        final XMLPyramidSet set = getPyramidSet();
-        final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
-        final XMLMosaic mosaic = pyramid.createMosaic(gridSize, tilePixelSize, dataPixelSize, upperleft, pixelscale);
-        save();
-        return mosaic;
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
+    public void removeModel(String identifier) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
 
@@ -764,51 +732,4 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
         return new XMLTileWriter(tilesToWrite, this);
     }
 
-    /**
-     * {@inheritDoc }.
-     * @throws java.lang.IllegalArgumentException if mismatch in image DataType or image band number.
-     */
-    @Override
-    public void writeTile(String pyramidId, String mosaicId, int col, int row, RenderedImage image) throws DataStoreException {
-        final XMLPyramidSet set = getPyramidSet();
-        final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
-        final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
-
-        //-- check conformity between internal data and currentImage.
-        //-- if no sm and cm automatical set from image (use for the first insertion)
-        checkOrSetSampleColor(image);
-
-        mosaic.createTile(col,row,image);
-        if (!mosaic.cacheTileState && mosaic.tileExist != null) {
-            save();
-        }
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void writeTiles(final String pyramidId, final String mosaicId, final RenderedImage image, final Rectangle area,
-                           final boolean onlyMissing, final Monitor monitor) throws DataStoreException {
-        final XMLPyramidSet set = getPyramidSet();
-        final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
-        final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
-
-        //-- check conformity between internal data and currentImage.
-        //-- if no sm and cm automatical set from image (use for the first insertion)
-        checkOrSetSampleColor(image);
-
-        mosaic.writeTiles(image, area, onlyMissing, monitor);
-        if (!mosaic.cacheTileState && mosaic.tileExist != null) {
-            save();
-        }
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException {
-        throw new DataStoreException("Not supported yet.");
-    }
 }

@@ -16,16 +16,16 @@
  */
 package org.geotoolkit.wmts.map;
 
-import org.geotoolkit.storage.coverage.PyramidSet;
-import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.data.multires.Pyramids;
+import org.geotoolkit.map.DefaultCoverageMapLayer;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.wmts.WebMapTileClient;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Map representation of a WMTS layer.
@@ -62,7 +62,7 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
     public WMTSMapLayer(final WebMapTileClient server, String layerName) {
         super(getReference(server, layerName),
               new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
-        setUserProperty(PyramidSet.HINT_FORMAT, DEFAULT_FORMAT);
+        setUserProperty(Pyramids.HINT_FORMAT, DEFAULT_FORMAT);
         this.server = server;
     }
 
@@ -72,7 +72,7 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
      */
     public void setFormat(final String format) {
         ArgumentChecks.ensureNonNull("format", format);
-        setUserProperty(PyramidSet.HINT_FORMAT, format);
+        setUserProperty(Pyramids.HINT_FORMAT, format);
     }
 
     /**
@@ -80,7 +80,7 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
      * @return
      */
     public String getFormat() {
-        Object val = getUserProperty(PyramidSet.HINT_FORMAT);
+        Object val = getUserProperty(Pyramids.HINT_FORMAT);
         if(val != null){
             return val.toString();
         }

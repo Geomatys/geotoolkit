@@ -27,15 +27,12 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.coverage.RecyclingCoverageResource;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
-import org.geotoolkit.image.io.FileImageReader;
-import org.geotoolkit.image.io.StreamImageReader;
+import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.opengis.util.GenericName;
 
 /**
@@ -44,7 +41,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class FileCoverageResource extends RecyclingCoverageResource{
+public class FileCoverageResource extends AbstractCoverageResource {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.filestore");
 
@@ -78,7 +75,7 @@ public class FileCoverageResource extends RecyclingCoverageResource{
     }
 
     @Override
-    protected GridCoverageReader createReader() throws CoverageStoreException {
+    public GridCoverageReader acquireReader() throws CoverageStoreException {
         final ImageCoverageReader reader = new ImageCoverageReader();
         try {
             final ImageReader ioreader = ((FileCoverageStore)store).createReader(file, spi);
@@ -91,27 +88,6 @@ public class FileCoverageResource extends RecyclingCoverageResource{
             throw new CoverageStoreException(ex.getMessage(),ex);
         }
         return reader;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void checkReader(CoverageReader reader) throws CoverageStoreException {
-        final ImageCoverageReader coverageReader = (ImageCoverageReader) reader;
-        final ImageReader imageReader = (ImageReader) coverageReader.getInput();
-
-        if (imageReader == null || imageReader.getInput() == null) {
-            throw new CoverageStoreException("CoverageReader or ImageReader input is null.");
-        }
-
-        if (imageReader instanceof StreamImageReader && !(imageReader instanceof FileImageReader)) {
-            //stream readers can not be reused
-            //example : AsciiGridReader line 634 : minIndex = index+1
-            throw new CoverageStoreException("ImageReader is not reusable.");
-        }
-
-        super.checkReader(reader);
     }
 
     @Override
