@@ -16,26 +16,28 @@
  */
 package org.geotoolkit.wps.converters.outputs.references;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import javax.xml.bind.JAXBException;
+import javax.xml.stream.XMLStreamException;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v200.Reference;
-
-import java.io.*;
-import javax.xml.bind.JAXBException;
-import javax.xml.stream.XMLStreamException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
+import org.geotoolkit.wps.io.WPSMimeType;
+import org.geotoolkit.wps.xml.v200.Reference;
 import org.opengis.feature.FeatureType;
 
 /**
@@ -99,10 +101,9 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
 
         if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(reference.getMimeType())) {
             //create file
-            final String dataFileName = randomFileName + ".json";
-            final Path dataFile = buildPath(params, dataFileName);
+            final Path dataFile = buildPath(params, randomFileName + ".json");
 
-            try (OutputStream fos = Files.newOutputStream(dataFile);
+            try (OutputStream fos = Files.newOutputStream(dataFile, CREATE,  TRUNCATE_EXISTING, WRITE);
                  GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, WPSConvertersUtils.FRACTION_DIGITS)){
                  FeatureStoreUtilities.write(writer, source);
             } catch (DataStoreException e) {
@@ -111,8 +112,10 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
                 throw new UnconvertibleObjectException(e);
             }
 
-            reference.setHref(params.get(TMP_DIR_URL) + "/" + dataFileName);
+            final String relLoc = getRelativeLocation(dataFile, params);
+            reference.setHref(params.get(TMP_DIR_URL) + "/" + relLoc);
             reference.setSchema(null);
+
         } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(reference.getMimeType())||
                    WPSMimeType.TEXT_XML.val().equalsIgnoreCase(reference.getMimeType()) ||
                    WPSMimeType.TEXT_GML.val().equalsIgnoreCase(reference.getMimeType())) {
@@ -126,17 +129,18 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
                 throw new UnconvertibleObjectException("Can't create xsd schema file.", ex);
             }
 
-                        //Write Feature
+            //Write Feature
             final JAXPStreamFeatureWriter featureWriter = new JAXPStreamFeatureWriter(schemaLocation);
-            final String dataFileName = randomFileName+".xml";
 
             //create file
-            final Path dataFile = buildPath(params, dataFileName);
+            final Path dataFile = buildPath(params, randomFileName+".xml");
             try (final OutputStream dataStream = Files.newOutputStream(dataFile);
-                    final AutoCloseable xmlCloser = () -> featureWriter.dispose()) {
+                 final AutoCloseable xmlCloser = () -> featureWriter.dispose()) {
+
                 //Write feature in file
                 featureWriter.write(source, dataStream);
-                reference.setHref(params.get(TMP_DIR_URL) + "/" +dataFileName);
+                final String relLoc = getRelativeLocation(dataFile, params);
+                reference.setHref(params.get(TMP_DIR_URL) + "/" + relLoc);
 
             } catch (XMLStreamException ex) {
                 throw new UnconvertibleObjectException("Stax exception while writing the feature collection", ex);
@@ -147,9 +151,9 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
             } catch (Exception ex) {
                 throw new UnconvertibleObjectException(ex);
             }
-        }
-        else
+        } else {
             throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + reference.getMimeType());
+        }
         return reference;
 
     }

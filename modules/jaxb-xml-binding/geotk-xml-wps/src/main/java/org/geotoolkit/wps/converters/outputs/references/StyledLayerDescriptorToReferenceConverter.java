@@ -21,10 +21,9 @@ import java.util.Map;
 import java.util.UUID;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.io.WPSMimeType;
-
 import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.StyleXmlIO;
+import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Reference;
 import org.opengis.sld.StyledLayerDescriptor;
 
@@ -74,9 +73,7 @@ public class StyledLayerDescriptorToReferenceConverter extends AbstractReference
 
         if(WPSMimeType.APP_SLD.val().equalsIgnoreCase(reference.getMimeType())) {
             //create file
-            final String randomFileName = UUID.randomUUID().toString();
-            final String dataFileName = randomFileName+".sld";
-            final Path dataFile = buildPath(params, dataFileName);
+            final Path dataFile = buildPath(params, UUID.randomUUID().toString() + ".sld");
             try {
                 StyleXmlIO xmlio = new StyleXmlIO();
                 xmlio.writeSLD(dataFile, source, Specification.StyledLayerDescriptor.V_1_1_0);
@@ -84,7 +81,8 @@ public class StyledLayerDescriptorToReferenceConverter extends AbstractReference
                 throw new UnconvertibleObjectException(e.getMessage(), e);
             }
 
-            reference.setHref(params.get(TMP_DIR_URL) + "/" +dataFileName);
+            final String relLoc = getRelativeLocation(dataFile, params);
+            reference.setHref(params.get(TMP_DIR_URL) + "/" + relLoc);
 
         } else {
             throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + reference.getMimeType());

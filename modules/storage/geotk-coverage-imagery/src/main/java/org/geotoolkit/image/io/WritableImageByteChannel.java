@@ -80,6 +80,16 @@ public class WritableImageByteChannel implements SeekableByteChannel{
         return open;
     }
 
+    public void flushAll() throws IOException {
+        long length = stream.length();
+        if (length != -1) {
+            stream.seek(length);
+            stream.flush();
+        } else {
+            stream.flush();
+        }
+    }
+
     @Override
     public void close() throws IOException {
         open = false;

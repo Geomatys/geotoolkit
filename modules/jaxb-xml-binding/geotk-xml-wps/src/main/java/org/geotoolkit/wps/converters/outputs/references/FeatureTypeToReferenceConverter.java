@@ -89,7 +89,8 @@ public class FeatureTypeToReferenceConverter extends AbstractReferenceOutputConv
             final JAXBFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
             xmlFTWriter.write(source, schemaStream);
 
-            reference.setHref((String) params.get(TMP_DIR_URL) + "/" +schemaFileName);
+            final String relLoc = getRelativeLocation(schemaFile, params);
+            reference.setHref((String) params.get(TMP_DIR_URL) + "/" +relLoc);
 
         } catch (JAXBException ex) {
             throw new UnconvertibleObjectException("Can't write FeatureType into xsd schema.",ex);

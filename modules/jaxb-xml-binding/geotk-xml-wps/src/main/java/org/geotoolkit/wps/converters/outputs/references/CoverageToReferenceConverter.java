@@ -105,12 +105,15 @@ public class CoverageToReferenceConverter extends AbstractReferenceOutputConvert
                 }
 
             } else {
-                try (OutputStream out = Files.newOutputStream(imageFile, StandardOpenOption.CREATE, WRITE, TRUNCATE_EXISTING)) {
-                    CoverageIO.write(source, formatName, out);
-                }
+                //Note : do not do OutputStream out = Files.newOutputStream(imageFile, StandardOpenOption.CREATE, WRITE, TRUNCATE_EXISTING)
+                //Most coverage writer do not support stream writing properly, it is better to work with a file.
+                //This also avoid keeping large files in memory if byte buffer seeking is needed by the writer.
+                Files.deleteIfExists(imageFile);
+                CoverageIO.write(source, formatName, imageFile);
             }
 
-            reference.setHref((String) params.get(TMP_DIR_URL) + "/" +randomFileName);
+            final String relLoc = getRelativeLocation(imageFile, params);
+            reference.setHref((String) params.get(TMP_DIR_URL) + "/" +relLoc);
 
         } catch (IOException | CoverageStoreException ex) {
             throw new UnconvertibleObjectException("Error during writing the coverage in the output file.",ex);

@@ -22,26 +22,40 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.internal.metadata.AxisDirections;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.metadata.iso.extent.Extents;
-import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.apache.sis.referencing.operation.transform.PassThroughTransform;
-
-import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.apache.sis.referencing.CRS;
+import static org.apache.sis.referencing.CRS.getHorizontalComponent;
+import static org.apache.sis.referencing.CRS.getSingleComponents;
+import static org.apache.sis.referencing.CRS.getTemporalComponent;
+import static org.apache.sis.referencing.CRS.getVerticalComponent;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.projection.Mercator;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.PassThroughTransform;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.NullArgumentException;
+import org.apache.sis.util.Utilities;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
-
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -57,26 +71,9 @@ import org.opengis.referencing.cs.EllipsoidalCS;
 import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-
-import org.apache.sis.referencing.CRS;
-import static org.apache.sis.referencing.CRS.getHorizontalComponent;
-import static org.apache.sis.referencing.CRS.getVerticalComponent;
-import static org.apache.sis.referencing.CRS.getTemporalComponent;
-import static org.apache.sis.referencing.CRS.getSingleComponents;
-import org.apache.sis.util.NullArgumentException;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.apache.sis.referencing.crs.AbstractCRS;
-import org.apache.sis.referencing.cs.AxesConvention;
-import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
-import org.apache.sis.referencing.operation.matrix.MatrixSIS;
-import org.apache.sis.referencing.operation.projection.ProjectionException;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.Resource;
-import org.apache.sis.util.Utilities;
-import org.opengis.metadata.extent.GeographicBoundingBox;
-import org.opengis.referencing.operation.Matrix;
 
 
 /**
@@ -216,7 +213,10 @@ public final class ReferencingUtilities {
             try {
                 final MathTransform trs = CRS.findOperation(srcCRS2D, targetCRS2D, null).getMathTransform();
                 final Matrix derivative = trs.derivative(center);
-                newResolution = MatrixSIS.castOrCopy(derivative).multiply(oldResolution);
+                double[] res2d = MatrixSIS.castOrCopy(derivative).multiply(oldResolution);
+                //array sizes may differ, copy only the 2D resolution.
+                newResolution[0] = res2d[0];
+                newResolution[1] = res2d[1];
 
             } catch (FactoryException | ProjectionException ex) {
                 //uncorrect fallback solution, better then nothing

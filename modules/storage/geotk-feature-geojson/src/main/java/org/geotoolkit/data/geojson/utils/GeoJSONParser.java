@@ -19,9 +19,6 @@ package org.geotoolkit.data.geojson.utils;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.geojson.binding.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,10 +28,17 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.data.geojson.binding.*;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONGeometryCollection;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONLineString;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONMultiLineString;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONMultiPoint;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONMultiPolygon;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONPoint;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONPolygon;
 import static org.geotoolkit.data.geojson.utils.GeoJSONMembres.*;
 import static org.geotoolkit.data.geojson.utils.GeoJSONTypes.*;
-import static org.geotoolkit.data.geojson.binding.GeoJSONGeometry.*;
 
 /**
  * Efficient GeoJSONParsing using jackson {@link JsonParser}
@@ -323,7 +327,11 @@ public final class GeoJSONParser {
         if (token == JsonToken.VALUE_STRING) {
             return p.getValueAsString();
         } else if (token == JsonToken.VALUE_NUMBER_INT) {
-            return p.getValueAsInt();
+            final long value = p.getValueAsLong();
+            if(value <= Integer.MAX_VALUE && value >= Integer.MIN_VALUE) {
+                return (int) value;
+            }
+            return value;
         } else if (token == JsonToken.VALUE_NUMBER_FLOAT) {
             return p.getValueAsDouble();
         } else if (token == JsonToken.VALUE_TRUE || token == JsonToken.VALUE_FALSE) {

@@ -120,6 +120,7 @@ public class WPSConverterRegistry {
         register(new WPSObjectConverterAdapter(new StringToDoubleArrayConverter()));
         register(new WPSObjectConverterAdapter(new StringToFloatArrayConverter()));
         register(new WPSObjectConverterAdapter(new StringToIntegerArrayConverter()));
+        register(new WPSObjectConverterAdapter(new StringToLongArrayConverter()));
         register(new WPSObjectConverterAdapter(new StringToDoubleWArrayConverter()));
         register(new WPSObjectConverterAdapter(new StringToFloatWArrayConverter()));
         register(new WPSObjectConverterAdapter(new StringToIntegerWArrayConverter()));
@@ -129,10 +130,14 @@ public class WPSConverterRegistry {
         register(new WPSObjectConverterAdapter(new DoubleArrayToStringConverter()));
         register(new WPSObjectConverterAdapter(new IntegerArrayToStringConverter()));
         register(new WPSObjectConverterAdapter(new FloatArrayToStringConverter()));
+        register(new WPSObjectConverterAdapter(new LongArrayToStringConverter()));
         register(new WPSObjectConverterAdapter(new DoubleWArrayToStringConverter()));
         register(new WPSObjectConverterAdapter(new IntegerWArrayToStringConverter()));
         register(new WPSObjectConverterAdapter(new FloatWArrayToStringConverter()));
         register(new WPSObjectConverterAdapter(new MapToStringConverter()));
+
+        // JAXB Object -> Data converter
+        register(JAXBToComplexConverter.INSTANCE);
 
     }
 
@@ -163,7 +168,7 @@ public class WPSConverterRegistry {
         ArgumentChecks.ensureNonNull("target", target);
 
         for (final WPSObjectConverter converter : converters) {
-            if (converter.getSourceClass().isAssignableFrom(source) && converter.getTargetClass().isAssignableFrom(target)) {
+            if (converter.canConvert(source, target)) {
                 return converter;
             }
         }

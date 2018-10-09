@@ -74,7 +74,8 @@ public class BooleanToReferenceConverter extends AbstractReferenceOutputConverte
             //create file
             final Path literalFile = buildPath(params, randomFileName);
             IOUtilities.writeString(String.valueOf(source), literalFile);
-            reference.setHref((String) params.get(TMP_DIR_URL) + "/" + randomFileName);
+            final String relLoc = getRelativeLocation(literalFile, params);
+            reference.setHref((String) params.get(TMP_DIR_URL) + "/" + relLoc);
 
         } catch (IOException ex) {
             throw new UnconvertibleObjectException("Error occure during image writing.", ex);

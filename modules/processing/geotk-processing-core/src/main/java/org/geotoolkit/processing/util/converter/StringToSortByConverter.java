@@ -37,9 +37,6 @@ public class StringToSortByConverter extends SimpleConverter<String, SortBy[]> {
 
     private static StringToSortByConverter INSTANCE;
 
-    private StringToSortByConverter(){
-    }
-
     public static StringToSortByConverter getInstance(){
         if(INSTANCE == null){
             INSTANCE = new StringToSortByConverter();

@@ -30,12 +30,6 @@ import org.opengis.filter.Filter;
  */
 public class StringToFilterConverter extends SimpleConverter<String, Filter> {
 
-    /*
-     * Public constructor in order to regiser converter in Geotk ConverterRegisry by ServiceLoader system.
-     */
-    public StringToFilterConverter(){
-    }
-
     @Override
     public Class<String> getSourceClass() {
         return String.class;

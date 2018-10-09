@@ -3689,17 +3689,7 @@ public class TiffImageWriter extends SpatialImageWriter {
     @Override
     public void dispose() {
         super.dispose();
-        try {
-            if (channel != null) {
-                channel.flush();
-                if (IOUtilities.canProcessAsPath(output)) {
-                    channel.close();
-                }
-            }
-        } catch (IOException ex) {
-            Logging.getLogger("org.geotoolkit.image.io.plugin").log(Level.SEVERE, null, ex);
-        }
-        channel = null;
+        closeChannel();
     }
 
     /**
@@ -3715,16 +3705,29 @@ public class TiffImageWriter extends SpatialImageWriter {
         rowByte32773Pos = 0;
         metaHeads = new Map[4];
         metaIndex = 0;
+        closeChannel();
+        super.setOutput(out);
+    }
+
+    /**
+     * Flush all remaining buffer and close channel (if it's a Path) then set
+     * channel to null.
+     */
+    private void closeChannel() {
         try {
             if (channel != null) {
                 channel.flush();
-                if (IOUtilities.canProcessAsPath(this.output)) channel.close();
+                if (channel.channel instanceof WritableImageByteChannel) {
+                    ((WritableImageByteChannel) channel.channel).flushAll();
+                }
+                if (IOUtilities.canProcessAsPath(output)) {
+                    channel.close();
+                }
             }
         } catch (IOException ex) {
             Logging.getLogger("org.geotoolkit.image.io.plugin").log(Level.SEVERE, null, ex);
         }
         channel = null;
-        super.setOutput(out);
     }
 
    /**

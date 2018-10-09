@@ -25,17 +25,17 @@ import java.util.Map;
 import java.util.UUID;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
-import org.geotoolkit.feature.xml.XmlFeatureWriter;
-import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v200.Reference;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.feature.xml.XmlFeatureWriter;
+import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
+import org.geotoolkit.wps.io.WPSMimeType;
+import org.geotoolkit.wps.xml.v200.Reference;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -95,11 +95,11 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
         final Map <String, String> schemaLocation = new HashMap<>();
 
         final String randomFileName = UUID.randomUUID().toString();
+        final String tmpDirUrl = (String) params.get(TMP_DIR_URL);
 
         if(WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(reference.getMimeType())) {
             //create file
-            final String dataFileName = randomFileName+".json";
-            final Path dataFile = buildPath(params, dataFileName);
+            final Path dataFile = buildPath(params, randomFileName + ".json");
             try {
                  try (OutputStream fos = Files.newOutputStream(dataFile);
                       GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, WPSConvertersUtils.FRACTION_DIGITS)) {
@@ -114,7 +114,8 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
                 throw new UnconvertibleObjectException(e);
             }
 
-            reference.setHref(params.get(TMP_DIR_URL) + "/" +dataFileName);
+            final String relLoc = getRelativeLocation(dataFile, params);
+            reference.setHref(tmpDirUrl + "/" + relLoc);
             reference.setSchema(null);
 
         } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(reference.getMimeType())||
@@ -133,15 +134,16 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
 
             //Write Feature
             final XmlFeatureWriter featureWriter = new JAXPStreamFeatureWriter(schemaLocation);
-            final String dataFileName = randomFileName+".xml";
 
             //create file
-            final Path dataFile = buildPath(params, dataFileName);
+            final Path dataFile = buildPath(params, randomFileName + ".xml");
             try (final OutputStream dataStream = Files.newOutputStream(dataFile);
-                    final AutoCloseable xmlCloser = () -> featureWriter.dispose()) {
+                 final AutoCloseable xmlCloser = () -> featureWriter.dispose()) {
+
                 //Write feature in file
                 featureWriter.write(source, dataStream);
-                reference.setHref(params.get(TMP_DIR_URL) + "/" +dataFileName);
+                final String relLoc = getRelativeLocation(dataFile, params);
+                reference.setHref(tmpDirUrl + "/" + relLoc);
 
             } catch (XMLStreamException ex) {
                 throw new UnconvertibleObjectException("Stax exception while writing the feature collection", ex);

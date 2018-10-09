@@ -16,82 +16,74 @@
  */
 package org.geotoolkit.image.io.plugin;
 
-import java.io.*;
-import java.nio.channels.Channels;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Locale;
-
-import java.nio.ByteOrder;
-import java.nio.ByteBuffer;
-
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
-import java.awt.image.SampleModel;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferDouble;
+import java.awt.image.DataBufferFloat;
+import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferShort;
 import java.awt.image.DataBufferUShort;
-import java.awt.image.DataBufferInt;
-import java.awt.image.DataBufferFloat;
-import java.awt.image.DataBufferDouble;
 import java.awt.image.IndexColorModel;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
+import java.io.*;
 import java.lang.reflect.Array;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SeekableByteChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
-
 import javax.imageio.IIOException;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
-
-import org.opengis.coverage.grid.RectifiedGrid;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
-
 import org.apache.sis.internal.storage.io.ChannelImageInputStream;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
-
 import org.geotoolkit.image.SampleModels;
+import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.io.InputStreamAdapter;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.internal.ImageUtils;
-import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
-import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.lang.SystemOverride;
-import org.geotoolkit.metadata.geotiff.GeoTiffExtension;
 import org.geotoolkit.metadata.geotiff.GeoTiffConstants;
-import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader;
-import org.geotoolkit.resources.Errors;
-
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
+import org.geotoolkit.metadata.geotiff.GeoTiffExtension;
+import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader;
 import org.geotoolkit.metadata.geotiff.ThirdPartyMetaDataReader;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.resources.Errors;
+import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  * An image reader for uncompressed TIFF files or RGB images. This image reader duplicates the works
@@ -468,69 +460,6 @@ public class TiffImageReader extends SpatialImageReader {
     }
 
     /**
-     * Invokes {@link #createInput(String)} and verifies if the returned file exists.
-     * If it does not exist, then returns {@code null}.
-     */
-    private Object getVerifiedInput(final String part) throws IOException {
-        /*
-         * Replaces the input by a Path object if possible,
-         * for allowing us to check if the file exists.
-         */
-        if (IOUtilities.canProcessAsPath(input)) {
-            final Path newCRSInput = IOUtilities.toPath(input);
-            final Object in = createInput(newCRSInput, part);
-
-            if (in != null && Files.isRegularFile(IOUtilities.toPath(in))) {
-                return in;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Creates the input to be given to the reader identified by the given argument. If the
-     * {@code readerID} argument is {@code "main"} (ignoring case), then this method delegates
-     * to the {@linkplain ImageReaderAdapter#createInput(String) super-class method}. Otherwise
-     * this method returns an input which is typically a {@link File} or {@link java.net.URL}
-     * having the same name than the {@linkplain #input input} of this reader, but a different
-     * extension. The new extension is determined from the {@code readerID} argument, which can
-     * be:
-     *
-     * <ul>
-     *   <li><p>{@code "tfw"} for the <cite>World File</cite>. The extension of the returned
-     *       input may be {@code "tfw"} (most common), {@code "jgw"}, {@code "pgw"} or other
-     *       suffix depending on the extension of this reader {@linkplain #input input}, and
-     *       depending which file has been determined to exist. See the
-     *       <a href="#skip-navbar_top">class javadoc</a> for more details.</p></li>
-     *
-     *   <li><p>{@code "prj"} for <cite>Map Projection</cite> file. The extension
-     *       of the returned input is {@code "prj"}.</p></li>
-     * </ul>
-     *
-     * Subclasses can override this method for specifying a different main ({@code "main"}),
-     * <cite>World File</cite> ({@code "tfw"}) or <cite>Map Projection</cite> ({@code "prj"})
-     * input. They can also invoke this method with other identifiers than the three above-cited
-     * ones, in which case this method uses the given identifier as the extension of the returned
-     * input. However the default {@code WorldFileImageReader} implementation uses only
-     * {@code "main"}, {@code "tfw"} and {@code "prj"}.
-     *
-     * @param  readerID {@code "main"} for the {@linkplain #main main} input,
-     *         {@code "tfw"} for the <cite>World File</cite> input, or
-     *         {@code "prj"} for the <cite>Map Projection</cite> input. Other
-     *         identifiers are allowed but subclass-specific.
-     * @return The given kind of input typically as a {@link File} or {@link java.net.URL}
-     *         object, or {@code null} if there is no input for the given identifier.
-     * @throws IOException If an error occurred while creating the input.
-     *
-     * @see WorldFileImageWriter#createOutput(String)
-     */
-    private Object createInput(Object currentInput, final String readerID) throws IOException {
-        if ("main".equalsIgnoreCase(readerID)) return null;
-
-        return IOUtilities.changeExtension(currentInput, readerID);
-    }
-
-    /**
      * {@inheritDoc }
      */
     @Override
@@ -818,16 +747,6 @@ public class TiffImageReader extends SpatialImageReader {
             sourceDataBufferType = rawImageType.getSampleModel().getDataType();
         }
         return rawImageType;
-    }
-
-    /**
-     * Returns appropriate {@link SpatialImageReadParam} to {@link TiffImageReader}.
-     *
-     * @return ImageReadParam for TiffImageReader.
-     */
-    @Override
-    public SpatialImageReadParam getDefaultReadParam() {
-        return new TiffReaderParam(this);
     }
 
     /**
@@ -1859,9 +1778,38 @@ public class TiffImageReader extends SpatialImageReader {
         final Rectangle dstRegion = new Rectangle();
         final BufferedImage image = getDestination(param, getImageTypes(layerIndex), imageWidth, imageHeight);
 
-        if (image.getRaster().getDataBuffer().getDataType() != sourceDataBufferType) {
+        final WritableRaster raster = image.getRaster();
+        if (raster.getDataBuffer().getDataType() != sourceDataBufferType) {
             throw new IllegalArgumentException("The destination image datatype doesn't match with read source image datatype. "
                     + "Expected Datatype : "+sourceDataBufferType+" found : "+image.getRaster().getDataBuffer().getDataType());
+        }
+
+        if (param != null) {
+            //{@link TiffimageReader} does not support param reader with setted source and destination band parameters.
+            final int[] sourceBands = param.getSourceBands();
+            final int[] destinationBands = param.getDestinationBands();
+            final int nbBand = raster.getNumBands();
+            if (nbBand != samplesPerPixel
+                    || (sourceBands!=null && sourceBands.length!=samplesPerPixel)
+                    || (destinationBands!=null && destinationBands.length!=samplesPerPixel)) {
+                throw new IOException("Source and destination band selection not supported");
+            }
+            if (sourceBands != null) {
+                //check same size and order as image
+                for (int i=0;i<samplesPerPixel;i++) {
+                    if (sourceBands[i] != i) {
+                        throw new IOException("Source and destination band selection not supported");
+                    }
+                }
+            }
+            if (destinationBands != null) {
+                //check same size and order as image
+                for (int i=0;i<samplesPerPixel;i++) {
+                    if (destinationBands[i] != i) {
+                        throw new IOException("Source and destination band selection not supported");
+                    }
+                }
+            }
         }
 
         /*
@@ -1870,28 +1818,28 @@ public class TiffImageReader extends SpatialImageReader {
         computeRegions(param, imageWidth, imageHeight, image, srcRegion, dstRegion);// calculer une region de l'image sur le fichier que l'on doit lire
         if (compression == 32773) {
             assert stripOffsets != null : "with compression 32773 (packbits) : image should be writen in strip offset use case.";
-            readFromStrip32773(image.getRaster(), param, srcRegion, dstRegion);
+            readFromStrip32773(raster, param, srcRegion, dstRegion);
         } else if (compression == 5) {
             if (stripOffsets != null) {
-                readFromStripLZW(image.getRaster(), param, srcRegion, dstRegion);
+                readFromStripLZW(raster, param, srcRegion, dstRegion);
             } else {
                 assert tileOffsets != null;
-                readFromTilesLZW(image.getRaster(), param, srcRegion, dstRegion);
+                readFromTilesLZW(raster, param, srcRegion, dstRegion);
             }
         } else if (compression == 8) {
             if (stripOffsets != null) {
-                readFromStripDeflate(image.getRaster(), param, srcRegion, dstRegion);
+                readFromStripDeflate(raster, param, srcRegion, dstRegion);
             } else {
                 assert tileOffsets != null;
-                readFromTilesDeflate(image.getRaster(), param, srcRegion, dstRegion);
+                readFromTilesDeflate(raster, param, srcRegion, dstRegion);
             }
         } else {
             //-- by strips
             if (stripOffsets != null) {
-                readFromStrip(image.getRaster(), param, srcRegion, dstRegion);
+                readFromStrip(raster, param, srcRegion, dstRegion);
             } else {
                 //-- by tiles
-                readFromTiles(image.getRaster(), param, srcRegion, dstRegion);
+                readFromTiles(raster, param, srcRegion, dstRegion);
             }
         }
 
@@ -3840,26 +3788,4 @@ public class TiffImageReader extends SpatialImageReader {
         }
     }
 
-    /**
-     * {@link TiffimageReader} does not support param reader with setted source and destination band parameters.
-     * To avoid reading action problem, override param method to throw exception.
-     *
-     * When source and destination bands will be managed, delete this class and use parent SpatialImageParam.
-     */
-    private class TiffReaderParam extends SpatialImageReadParam {
-
-        public TiffReaderParam(ImageReader reader) {
-            super(reader);
-        }
-
-        @Override
-        public void setSourceBands(int[] sourceBands) {
-            throw new UnsupportedOperationException("Set Source Band not implemented yet Into TiffImageReader.");
-        }
-
-        @Override
-        public void setDestinationBands(int[] destinationBands) {
-            throw new UnsupportedOperationException("Set Destination Band not implemented yet Into TiffImageReader.");
-        }
-    }
 }
