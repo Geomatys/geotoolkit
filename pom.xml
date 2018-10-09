@@ -190,8 +190,8 @@
            Global properties.
        =========================================================== -->
   <properties>
-    <geoapi.version>4.0-M09</geoapi.version> <!-- Must be same than the version used by SIS. -->
-    <sis.version>dev-1.0-M0035</sis.version>
+    <geoapi.version>4.0-SNAPSHOT</geoapi.version> <!-- Must be same than the version used by SIS. -->
+    <sis.version>dev-1.0-SNAPSHOT</sis.version>
     <sis.build.helper.version>0.8</sis.build.helper.version>
     <sis.epsg.version>1.0-M1</sis.epsg.version>
     <netcdf.version>4.3.21</netcdf.version>
@@ -1061,14 +1061,14 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-    <repository>
+    <!--repository>
       <id>unidata</id>
       <name>unidata</name>
       <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
-    </repository>
+    </repository-->
   </repositories>
 
   <pluginRepositories>
