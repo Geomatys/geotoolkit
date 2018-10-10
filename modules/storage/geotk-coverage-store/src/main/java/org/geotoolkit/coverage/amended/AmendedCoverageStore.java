@@ -22,8 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
-import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.storage.DataStoreFactory;
@@ -31,9 +31,10 @@ import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.opengis.util.GenericName;
 
 /**
  * Decorates a coverage store adding possibility to override properties of each coverage reference.
@@ -73,6 +74,11 @@ public class AmendedCoverageStore extends AbstractCoverageStore implements Aggre
             }
         }, ChangeEvent.class);
 
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return store.getIdentifier();
     }
 
     /**

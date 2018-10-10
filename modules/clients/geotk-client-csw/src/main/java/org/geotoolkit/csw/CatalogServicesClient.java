@@ -18,15 +18,10 @@ package org.geotoolkit.csw;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.apache.sis.metadata.iso.DefaultMetadata;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
-import org.apache.sis.referencing.NamedIdentifier;
-import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.csw.v202.DescribeRecord202;
 import org.geotoolkit.csw.v202.GetCapabilities202;
@@ -39,11 +34,9 @@ import org.geotoolkit.csw.xml.AbstractCapabilities;
 import org.geotoolkit.csw.xml.CSWBindingUtilities;
 import org.geotoolkit.csw.xml.CSWVersion;
 import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.opengis.metadata.Metadata;
+import org.opengis.util.GenericName;
 
 
 /**
@@ -110,6 +103,11 @@ public class CatalogServicesClient extends AbstractClient {
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(CSWClientFactory.NAME);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     private static CSWVersion toVersion(final String version){

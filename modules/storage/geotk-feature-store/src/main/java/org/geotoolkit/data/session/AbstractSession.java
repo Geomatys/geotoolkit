@@ -21,15 +21,15 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.storage.AbstractStorage;
-import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
-import org.opengis.util.GenericName;
 import org.opengis.filter.Id;
 import org.opengis.metadata.Metadata;
+import org.opengis.util.GenericName;
 
 /**
  *  Abstract session which handle listeners and add convenient fire event methods.
@@ -46,6 +46,11 @@ public abstract class AbstractSession extends AbstractStorage implements Resourc
         ensureNonNull("feature store", store);
         this.store = store;
         weakListener.registerSource(store);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     @Override

@@ -31,15 +31,17 @@ import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStreams;
-import org.geotoolkit.internal.data.GenericNameIndex;
+import org.geotoolkit.data.om.OMFeatureTypes;
+import static org.geotoolkit.data.om.xml.XmlObservationStoreFactory.FILE_PATH;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.gml.GMLUtilities;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.AbstractRing;
@@ -47,15 +49,13 @@ import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.LineString;
 import org.geotoolkit.gml.xml.Point;
 import org.geotoolkit.gml.xml.Polygon;
+import org.geotoolkit.internal.data.GenericNameIndex;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.ObservationFilter;
 import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.ObservationStore;
 import org.geotoolkit.observation.ObservationWriter;
-import org.geotoolkit.data.om.OMFeatureTypes;
-import static org.geotoolkit.data.om.xml.XmlObservationStoreFactory.FILE_PATH;
-
 import org.geotoolkit.observation.xml.*;
-import org.geotoolkit.observation.xml.Process;
 import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
@@ -64,8 +64,8 @@ import org.geotoolkit.sos.xml.SOSMarshallerPool;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.FeatureType;
-import org.opengis.util.GenericName;
 import org.opengis.geometry.Geometry;
 import org.opengis.observation.AnyFeature;
 import org.opengis.observation.Observation;
@@ -76,9 +76,7 @@ import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.temporal.TemporalObject;
-import org.apache.sis.internal.storage.ResourceOnFileSystem;
-import org.apache.sis.storage.Query;
-import org.apache.sis.storage.UnsupportedQueryException;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -105,6 +103,11 @@ public class XmlObservationStore extends AbstractFeatureStore implements Resourc
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(XmlObservationStoreFactory.NAME);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -176,13 +179,13 @@ public class XmlObservationStore extends AbstractFeatureStore implements Resourc
         if (obj instanceof ObservationCollection) {
             final ObservationCollection collection = (ObservationCollection)obj;
             for (Observation obs : collection.getMember()) {
-                final org.geotoolkit.observation.xml.Process process = (Process)obs.getProcedure();
+                final org.geotoolkit.observation.xml.Process process = (org.geotoolkit.observation.xml.Process) obs.getProcedure();
                 names.add(NamesExt.create(process.getHref()));
             }
 
         } else if (obj instanceof Observation) {
             final Observation obs = (Observation)obj;
-            final Process process = (Process)obs.getProcedure();
+            final org.geotoolkit.observation.xml.Process process = (org.geotoolkit.observation.xml.Process) obs.getProcedure();
             names.add(NamesExt.create(process.getHref()));
         }
         return names;

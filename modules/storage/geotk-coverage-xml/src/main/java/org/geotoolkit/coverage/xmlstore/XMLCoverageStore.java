@@ -34,18 +34,18 @@ import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.util.NamesExt;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableAggregate;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
-import org.opengis.util.GenericName;
-import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.util.NamesExt;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  * Coverage store relying on an xml file.
@@ -100,6 +100,11 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
         params.getOrCreate(XMLCoverageStoreFactory.PATH).setValue(rootPath);
         params.getOrCreate(XMLCoverageStoreFactory.CACHE_TILE_STATE).setValue(cacheState);
         return params;
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     @Override

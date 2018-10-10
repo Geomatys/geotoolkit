@@ -31,6 +31,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
+import org.opengis.util.GenericName;
 
 /**
  * Java in memory implementation of a queried subset of a FeatureSet.
@@ -48,6 +49,11 @@ public final class QueryFeatureSet implements FeatureSet {
     private QueryFeatureSet(FeatureSet base, Query query) {
         this.base = base;
         this.query = query;
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return base.getIdentifier();
     }
 
     @Override

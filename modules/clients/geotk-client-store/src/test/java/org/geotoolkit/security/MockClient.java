@@ -20,12 +20,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.DataStoreFactory;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -48,6 +49,11 @@ public class MockClient extends AbstractClient{
 
     public MockClient(final ClientSecurity security) throws MalformedURLException {
         super(appendSecurity(security));
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     public MockRequest createRequest(){

@@ -16,12 +16,6 @@
  */
 package org.geotoolkit.data.kml2;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.CoordinateSequence;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
@@ -76,12 +70,19 @@ import org.geotoolkit.kml.xml.v220.PlacemarkType;
 import org.geotoolkit.kml.xml.v220.PointType;
 import org.geotoolkit.kml.xml.v220.PolygonType;
 import org.geotoolkit.storage.DataStores;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -117,6 +118,11 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
         final Parameters params = Parameters.castOrWrap(KMLProvider.provider().getOpenParameters().createValue());
         params.getOrCreate(KMLProvider.LOCATION_PARAM).setValue(f);
         return params;
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     @Override

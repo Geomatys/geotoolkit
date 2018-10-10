@@ -28,9 +28,9 @@ import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -47,6 +47,11 @@ public class MPCoverageStore extends AbstractCoverageStore implements WritableAg
 
     public MPCoverageStore(){
         super(DESC.createValue());
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     @Override

@@ -17,38 +17,36 @@
 package org.geotoolkit.coverage.sql;
 
 import java.awt.Image;
-import java.util.List;
-import java.util.Collection;
 import java.nio.file.Path;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.List;
 import javax.sql.DataSource;
-
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.StorageConnector;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
+import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
-
-import org.apache.sis.storage.Resource;
-import org.apache.sis.storage.Aggregate;
-import org.apache.sis.storage.DataStore;
-import org.apache.sis.storage.DataStoreProvider;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.ProbeResult;
-import org.apache.sis.storage.StorageConnector;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
-import org.apache.sis.parameter.ParameterBuilder;
-import org.apache.sis.parameter.Parameters;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.apache.sis.referencing.NamedIdentifier;
-
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.coverage.AbstractCoverageResource;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.opengis.util.GenericName;
 
 
 /**
@@ -143,6 +141,11 @@ public final class DatabaseStore extends DataStore implements Aggregate {
             throw new CatalogException(e);
         }
         this.parameters = Parameters.unmodifiable(parameters);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     @Override

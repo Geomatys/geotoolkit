@@ -46,7 +46,6 @@ import org.geotoolkit.data.wfs.v200.GetFeature200;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -124,6 +123,11 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
     @Override
     public WFSFeatureStoreFactory getProvider() {
         return (WFSFeatureStoreFactory)DataStores.getFactoryById(WFSFeatureStoreFactory.NAME);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     public WFSVersion getVersion(){

@@ -17,11 +17,6 @@
 
 package org.geotoolkit.data.csv;
 
-
-
-
-
-import org.locationtech.jts.geom.Geometry;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.*;
+import static java.nio.file.StandardOpenOption.*;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -57,6 +53,7 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -69,7 +66,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
-import static java.nio.file.StandardOpenOption.*;
 
 /**
  * CSV DataStore, holds a single feature type which name match the file name.
@@ -160,6 +156,11 @@ public class CSVFeatureStore extends AbstractFeatureStore implements ResourceOnF
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(CSVFeatureStoreFactory.NAME);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     Path getFile() {

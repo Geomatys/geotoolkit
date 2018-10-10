@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.data.nmea;
 
-import org.locationtech.jts.geom.Point;
-
 import java.io.*;
 import java.net.URI;
 import java.nio.file.Files;
@@ -27,20 +25,21 @@ import java.util.Collections;
 import java.util.Set;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.util.NamesExt;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.storage.Query;
-import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.opengis.util.GenericName;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.util.NamesExt;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  * A feature store for GPS measures of NMEA standard.
@@ -79,6 +78,11 @@ public class NMEAFeatureStore extends AbstractFeatureStore {
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(NMEAFeatureStoreFactory.NAME);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     @Override

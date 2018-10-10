@@ -38,12 +38,14 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
+import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
+import org.geotoolkit.coverage.landsat.LandsatConstants.CoverageGroup;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
-import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
+import org.opengis.util.GenericName;
 
 /**
  * Store adapted to Landsat 8 files structure.
@@ -158,6 +160,11 @@ public class LandsatCoverageStore extends DataStore implements Aggregate, Resour
     @Override
     public DataStoreProvider getProvider() {
         return DataStores.getProviderById(LandsatProvider.NAME);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     /**

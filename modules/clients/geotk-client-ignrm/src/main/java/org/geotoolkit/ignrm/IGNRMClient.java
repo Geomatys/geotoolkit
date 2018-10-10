@@ -21,12 +21,13 @@ import java.io.InputStream;
 import java.net.URL;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.client.AbstractClient;
-import org.geotoolkit.ignrm.parser.TokenParser;
 import org.geotoolkit.ignrm.parser.TokenInformationParser;
+import org.geotoolkit.ignrm.parser.TokenParser;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  * IGN right management server
@@ -51,6 +52,11 @@ public class IGNRMClient extends AbstractClient {
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(IGNRMClientFactory.NAME);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     public GetTokenRequest createGetToken(){

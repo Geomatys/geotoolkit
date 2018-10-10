@@ -23,19 +23,24 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.logging.Level;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.*;
 import static org.geotoolkit.data.AbstractFolderFeatureStoreFactory.*;
-import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
-import org.opengis.util.GenericName;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -44,12 +49,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.apache.sis.internal.storage.ResourceOnFileSystem;
-import org.apache.sis.storage.Query;
-import org.apache.sis.storage.UnsupportedQueryException;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
-import org.geotoolkit.storage.StorageEvent;
+import org.opengis.util.GenericName;
 
 /**
  * Handle a folder of single file FeatureStore.
@@ -104,6 +104,11 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
     @Override
     public AbstractFolderFeatureStoreFactory getProvider() {
         return folderFactory;
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     /**

@@ -113,6 +113,11 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements Resou
         return DataStores.getFactoryById(DbaseFeatureStoreFactory.NAME);
     }
 
+    @Override
+    public GenericName getIdentifier() {
+        return null;
+    }
+
     private synchronized void checkExist() throws DataStoreException{
         if(featureType != null) return;
 
