@@ -715,11 +715,6 @@
           <version>1.7</version>
         </plugin>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>build-helper-maven-plugin</artifactId>
-          <version>1.8</version>
-        </plugin>
-        <plugin>
           <groupId>com.agilejava.docbkx</groupId>
           <artifactId>docbkx-maven-plugin</artifactId>
           <version>2.0.14</version>
@@ -816,6 +811,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.0.0</version>
         <executions>
           <execution>
             <id>remove-old-artifacts</id>
@@ -823,7 +819,7 @@
               <goal>remove-project-artifact</goal>
             </goals>
             <configuration>
-              <removeAll>false</removeAll> <!-- Remove only snapshots of this project version. -->
+              <removeAll>false</removeAll>      <!-- Remove only snapshots of this project version. -->
             </configuration>
           </execution>
         </executions>
