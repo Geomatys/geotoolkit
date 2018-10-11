@@ -238,24 +238,24 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         writer.flush();
     }
 
-    private static String getId(Feature att, String fallback){
+    private static String getId(Feature att, String fallback) {
         final Identifier attId;
         try {
             attId = FeatureExt.getId(att);
-        } catch(PropertyNotFoundException ex) {
+        } catch (PropertyNotFoundException ex) {
             return fallback;
         }
-        if(attId==null) return fallback;
+        if (attId == null) return fallback;
         final Object id = attId.getID();
-        if(id==null) return fallback;
+        if (id == null) return fallback;
 
-        if(id instanceof String){
-            if(((String)id).isEmpty()){
+        if (id instanceof String) {
+            if (((String) id).isEmpty()) {
                 return fallback;
-            }else{
-                return ((String)id).replace(':', '_');
+            } else {
+                return ((String) id).replace(':', '_');
             }
-        }else{
+        } else {
             return String.valueOf(id).replace(':', '_');
         }
     }
@@ -274,7 +274,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         boolean nil = false;
 
         //write properties in the type order
-        for(final PropertyType desc : type.getProperties(true)){
+        for (final PropertyType desc : type.getProperties(true)) {
             if (AttributeConvention.contains(desc.getName())) continue;
             if (!isAttributeProperty(desc.getName())) continue;
 
@@ -315,19 +315,19 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      *         Boolean.TRUE if the object is nill without reason
      *         String if the object is nill with a reason
      */
-    private static Object isNill(Feature feature){
+    private static Object isNill(Feature feature) {
         try {
-            if(Boolean.TRUE.equals(feature.getPropertyValue("@nil"))){
+            if (Boolean.TRUE.equals(feature.getPropertyValue("@nil"))) {
                 try {
                     Object reason = feature.getPropertyValue("@nilReason");
-                    if (reason!=null) {
+                    if (reason != null) {
                        return Utils.getStringValue(reason);
                     }
-                }catch(PropertyNotFoundException ex){
+                } catch (PropertyNotFoundException ex) {
                 }
                 return true;
             }
-        } catch(PropertyNotFoundException ex) {
+        } catch (PropertyNotFoundException ex) {
             return null;
         }
         return null;
@@ -336,23 +336,23 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     private void writeComplexProperties(final Feature feature, String id) throws XMLStreamException {
 
         final boolean isNil = writeAttributeProperties(feature);
-        if(isNil) return;
+        if (isNil) return;
 
         //write properties in the type order
         for(PropertyType pt : feature.getType().getProperties(true)){
             final Object value = feature.getPropertyValue(pt.getName().toString());
-            final Collection<Object> values;
-            if(value instanceof Collection){
-                values = (Collection<Object>) value;
-            }else{
+            final Collection<?> values;
+            if (value instanceof Collection) {
+                values = (Collection<?>) value;
+            } else {
                 values = Collections.singleton(value);
             }
 
-            if(!values.isEmpty()){
+            if (!values.isEmpty()) {
                 for (Object a : values) {
                     writeProperty(feature,pt,a,id);
                 }
-            }else if(Utils.isNillable(pt)){
+            } else if (Utils.isNillable(pt)) {
                 //we must have at least one tag with nil=1
                 final GenericName nameA = pt.getName();
                 final String namespaceProperty = getNamespace(nameA);
@@ -375,12 +375,12 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             final GenericName name = chara.getName();
             final String namespace = getNamespace(name);
             String localPart = name.tip().toString();
-            if(localPart.startsWith("@")){
+            if (localPart.startsWith("@")) {
                 //remove the @
                 localPart = localPart.substring(1);
             }
             Object value = chara.getValue();
-            if(value instanceof Boolean) {
+            if (value instanceof Boolean) {
                 value = (Boolean)value ? "1" : "0";
             }
             if (value!=null) {
@@ -389,7 +389,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         }
     }
 
-    private void writeProperty(Feature parent, PropertyType typeA, Object valueA, String id) throws XMLStreamException{
+    private void writeProperty(Feature parent, PropertyType typeA, Object valueA, String id) throws XMLStreamException {
         final GenericName nameA = typeA.getName();
         if (AttributeConvention.contains(nameA) || isAttributeProperty(nameA)) return;
 
@@ -460,7 +460,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 //close encapsulation
                 writer.writeEndElement();
             } else {
-
                 writeComplexProperties(ca, getId(ca, id));
             }
             writer.writeEndElement();
@@ -479,13 +478,13 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         } else if (valueA != null && valueA.getClass().isArray() && !(AttributeConvention.isGeometryAttribute(typeA))) {
             final int length = Array.getLength(valueA);
-            for (int i = 0; i < length; i++){
+            for (int i = 0; i < length; i++) {
                 if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
                     writer.writeStartElement(namespaceProperty, nameProperty);
                 } else {
                     writer.writeStartElement(nameProperty);
                 }
-                if(hasChars) writeCharacteristics((Attribute) parent.getProperty(nameA.toString()));
+                if (hasChars) writeCharacteristics((Attribute) parent.getProperty(nameA.toString()));
                 final Object value = Array.get(valueA, i);
                 final String textValue;
                 if (value != null && value.getClass().isArray()) { // matrix
@@ -512,7 +511,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 } else {
                     writer.writeStartElement(nameProperty);
                 }
-                if(hasChars) writeCharacteristics((Attribute) parent.getProperty(nameA.toString()));
+                if (hasChars) writeCharacteristics((Attribute) parent.getProperty(nameA.toString()));
                 final Object key = entry.getKey();
                 if (key != null) {
                     writer.writeAttribute("name", (String)key);
@@ -523,12 +522,11 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         } else if (!(AttributeConvention.isGeometryAttribute(typeA))) {
 
-            if(valueA instanceof Document){
+            if (valueA instanceof Document) {
                 //special case for xml documents
                 final Document doc = (Document) valueA;
                 StaxUtils.writeElement(doc.getDocumentElement(), writer, false);
-
-            }else{
+            } else {
                 //simple type
                 String value = (valueA instanceof Property) ? null : Utils.getStringValue(valueA);
 
@@ -543,9 +541,9 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                     } else {
                         writer.writeStartElement(nameProperty);
                     }
-                    if(hasChars) writeCharacteristics((Attribute) parent.getProperty(nameA.toString()));
+                    if (hasChars) writeCharacteristics((Attribute) parent.getProperty(nameA.toString()));
 
-                    if(valueA instanceof Feature){
+                    if (valueA instanceof Feature) {
                         //some types, like Observation & Measurement have Object types which can be
                         //properties again, we ensure to write then as proper xml tags
                         final Feature prop = (Feature) valueA;
@@ -559,11 +557,11 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                         }
                         writeComplexProperties(prop, getId(prop, id));
                         writer.writeEndElement();
-                    }else if (value != null) {
+                    } else if (value != null) {
                         writer.writeCharacters(value);
                     }
                     writer.writeEndElement();
-                }else if(value==null && Utils.isNillable(typeA)){
+                } else if(value==null && Utils.isNillable(typeA)) {
                     if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
                         writer.writeStartElement(namespaceProperty, nameProperty);
                     } else {
@@ -579,7 +577,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             if (valueA != null) {
                 final boolean descIsType = Utils.isGeometricType(typeA.getName()) && Utils.isGeometricType(nameA);
 
-                if(!descIsType){
+                if (!descIsType) {
                     if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
                         writer.writeStartElement(namespaceProperty, nameProperty);
                     } else {
@@ -617,12 +615,12 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                     marshaller = POOL.acquireMarshaller();
                     marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
                     marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
-                    marshaller.marshal(element, writer);
+                    marshal(marshaller, element);
                     POOL.recycle(marshaller);
                 } catch (JAXBException ex) {
                     LOGGER.log(Level.WARNING, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
                 }
-                if(!descIsType)writer.writeEndElement();
+                if (!descIsType) writer.writeEndElement();
             }
         }
     }
@@ -632,43 +630,43 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      * @param inc auto increment value, ids must be unique
      */
     private void setId(AbstractGeometry gmlGeometry, String id){
-        if(gmlGeometry.getId()==null || gmlGeometry.getId().isEmpty()){
+        if (gmlGeometry.getId()==null || gmlGeometry.getId().isEmpty()) {
             //do not override ids if they exist
             gmlGeometry.setId(id+(gidInc));
             gidInc++;
         }
-        if(gmlGeometry instanceof MultiCurve){
-            for(CurveProperty po : ((MultiCurve)gmlGeometry).getCurveMember()){
+        if (gmlGeometry instanceof MultiCurve) {
+            for (CurveProperty po : ((MultiCurve)gmlGeometry).getCurveMember()) {
                 final AbstractCurve child = po.getAbstractCurve();
-                if(child instanceof AbstractGeometry){
+                if (child instanceof AbstractGeometry){
                     setId((AbstractGeometry) child, id);
                 }
             }
-        }else if(gmlGeometry instanceof MultiSurface){
-            for(SurfaceProperty po : ((MultiSurface)gmlGeometry).getSurfaceMember()){
+        } else if (gmlGeometry instanceof MultiSurface) {
+            for (SurfaceProperty po : ((MultiSurface)gmlGeometry).getSurfaceMember()) {
                 final AbstractSurface child = po.getAbstractSurface();
-                if(child instanceof AbstractGeometry){
+                if (child instanceof AbstractGeometry){
                     setId((AbstractGeometry) child, id);
                 }
             }
-        }else if(gmlGeometry instanceof MultiGeometryType){
-            for(GeometryPropertyType po : ((MultiGeometryType)gmlGeometry).getGeometryMember()){
+        } else if (gmlGeometry instanceof MultiGeometryType) {
+            for (GeometryPropertyType po : ((MultiGeometryType)gmlGeometry).getGeometryMember()) {
                 final AbstractGeometryType child = po.getAbstractGeometry();
-                if(child instanceof AbstractGeometry){
+                if (child instanceof AbstractGeometry){
                     setId((AbstractGeometry) child, id);
                 }
             }
-        }else if(gmlGeometry instanceof MultiSolidType){
-            for(SolidPropertyType po : ((MultiSolidType)gmlGeometry).getSolidMember()){
+        } else if (gmlGeometry instanceof MultiSolidType) {
+            for (SolidPropertyType po : ((MultiSolidType)gmlGeometry).getSolidMember()) {
                 final AbstractSolidType child = po.getAbstractSolid().getValue();
-                if(child instanceof AbstractGeometry){
+                if (child instanceof AbstractGeometry){
                     setId((AbstractGeometry) child, id);
                 }
             }
-        }else if(gmlGeometry instanceof MultiPointType){
-            for(PointPropertyType po : ((MultiPointType)gmlGeometry).getPointMember()){
+        } else if (gmlGeometry instanceof MultiPointType) {
+            for (PointPropertyType po : ((MultiPointType)gmlGeometry).getPointMember()) {
                 final PointType child = po.getPoint();
-                if(child instanceof AbstractGeometry){
+                if (child instanceof AbstractGeometry){
                     setId((AbstractGeometry) child, id);
                 }
             }
@@ -683,7 +681,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                                                             throws DataStoreException, XMLStreamException
     {
         // the XML header
-        if(!fragment){
+        if (!fragment) {
             writer.writeStartDocument("UTF-8", "1.0");
         }
 
@@ -757,13 +755,13 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         writer.writeEndElement();
 
-        if(!fragment){
+        if (!fragment) {
             writer.writeEndDocument();
         }
 
         writer.flush();
 
-        if(!fragment){
+        if (!fragment) {
             writer.close();
         }
     }
@@ -827,7 +825,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      *
      * @return true if property is an atribute, starts by a @
      */
-    private static boolean isAttributeProperty(GenericName name){
+    private static boolean isAttributeProperty(GenericName name) {
         final String localPart = name.tip().toString();
         return !localPart.isEmpty() && localPart.charAt(0) == '@';
     }
