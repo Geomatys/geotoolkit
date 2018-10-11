@@ -23,14 +23,21 @@ import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBElement;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.data.geojson.binding.GeoJSONFeature;
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
+import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Data;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Polygon;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 
@@ -43,6 +50,8 @@ import org.opengis.util.FactoryException;
 public final class ComplexToGeometryConverter extends AbstractComplexInputConverter<Geometry> {
 
     private static ComplexToGeometryConverter INSTANCE;
+
+    private static final GeometryFactory GF = new GeometryFactory();
 
     private ComplexToGeometryConverter(){
     }
@@ -88,10 +97,24 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
                 final String content = WPSConvertersUtils.geojsonContentAsString(source);
                 final GeoJSONObject jsonObject = WPSConvertersUtils.readGeoJSONObjectsFromString(content);
 
-                if (!(jsonObject instanceof GeoJSONFeature))
+                if (!(jsonObject instanceof GeoJSONFeature)) {
                     throw new UnconvertibleObjectException("Expected a GeoJSONGeometry and found a " + jsonObject.getClass().getName());
+                }
+                Geometry geom = WPSConvertersUtils.convertGeoJSONGeometryToGeometry(((GeoJSONFeature) jsonObject).getGeometry());
+                Class expectedClass = (Class) params.get(WPSObjectConverter.TARGET_CLASS);
 
-                return WPSConvertersUtils.convertGeoJSONGeometryToGeometry(((GeoJSONFeature) jsonObject).getGeometry());
+                /*
+                 * Linear ring does not exist in GeoJson spec, so we transform polygon geometry during conversion
+                 */
+                if (geom instanceof Polygon && LinearRing.class.equals(expectedClass)) {
+                    CoordinateReferenceSystem crs = JTS.findCoordinateReferenceSystem(geom);
+                    Polygon poly = (Polygon) geom;
+                    LinearRing lr = GF.createLinearRing(poly.getExteriorRing().getCoordinateSequence());
+                    JTS.setCRS(lr, crs);
+                    return lr;
+                }
+
+                return geom;
             } else {
                 throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + source.getMimeType());
             }
