@@ -173,6 +173,17 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
         if (param.getUserMap() != null) {
             ext.putAll(param.getUserMap());
         }
+        if (param.getFormats()!= null && !param.getFormats().isEmpty()) {
+            List<Map> formats = new ArrayList<>();
+            for (ParameterFormat format : param.getFormats()) {
+                Map m = new HashMap<>();
+                if (format.getEncoding() != null) m.put("encoding", format.getEncoding());
+                if (format.getMimeType()!= null)  m.put("mimetype", format.getMimeType());
+                if (format.getSchema()!= null)    m.put("schema",   format.getSchema());
+                formats.add(m);
+            }
+            ext.put("formats", formats);
+        }
         return new ExtendedParameterDescriptor(param.getCode(), null, param.getRemarks(), param.getMinOccurs(), param.getMaxOccurs(), type, convertDefaultValueInClass(param.getDefaultValue(), type), null, ext);
     }
 
