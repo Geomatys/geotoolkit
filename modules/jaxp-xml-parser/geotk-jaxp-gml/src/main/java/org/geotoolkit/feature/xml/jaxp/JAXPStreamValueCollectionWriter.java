@@ -178,7 +178,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
                 marshaller = GML_32_POOL.acquireMarshaller();
                 marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
-                marshaller.marshal(element, writer);
+                marshal(marshaller, element);
                 GML_32_POOL.recycle(marshaller);
             } catch (JAXBException ex) {
                 LOGGER.log(Level.WARNING, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);

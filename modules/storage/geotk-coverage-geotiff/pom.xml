@@ -71,6 +71,12 @@
             <artifactId>geotk-jtswrapper</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.sis.non-free</groupId>
+            <artifactId>sis-epsg</artifactId>
+            <version>${sis.epsg.version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>javax.media</groupId>

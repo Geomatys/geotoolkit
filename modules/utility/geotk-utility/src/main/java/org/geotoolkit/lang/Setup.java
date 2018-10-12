@@ -153,7 +153,7 @@ public final class Setup extends Static {
                     EPSG = new DefaultDataSource(url);
                     final String user = properties.getProperty("user");
                     if (user != null) {
-                        EPSG = new AuthenticatedDataSource(EPSG, user, properties.getProperty("password"), true);
+                        EPSG = new AuthenticatedDataSource(EPSG, user, properties.getProperty("password"), false);
                     }
                 }
             }
