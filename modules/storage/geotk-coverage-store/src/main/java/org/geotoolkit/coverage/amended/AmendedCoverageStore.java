@@ -77,7 +77,7 @@ public class AmendedCoverageStore extends AbstractCoverageStore implements Aggre
     }
 
     @Override
-    public GenericName getIdentifier() {
+    public GenericName getIdentifier() throws DataStoreException {
         return store.getIdentifier();
     }
 

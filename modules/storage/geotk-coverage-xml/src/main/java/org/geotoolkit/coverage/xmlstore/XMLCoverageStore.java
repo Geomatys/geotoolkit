@@ -39,7 +39,7 @@ import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.Resource;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.GridCoverageResource;

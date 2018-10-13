@@ -34,7 +34,7 @@ import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.Resource;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wmts.v100.GetCapabilities100;

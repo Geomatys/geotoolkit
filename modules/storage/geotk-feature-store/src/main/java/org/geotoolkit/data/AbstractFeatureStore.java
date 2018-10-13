@@ -50,7 +50,7 @@ import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.storage.DataStore;
-import org.geotoolkit.storage.Resource;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.version.Version;
@@ -65,10 +65,7 @@ import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
-import org.opengis.metadata.citation.Citation;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
@@ -114,7 +111,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     }
 
     @Override
-    public GenericName getIdentifier() {
+    public GenericName getIdentifier() throws DataStoreException {
         return null;
     }
 
@@ -180,39 +177,12 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         return names;
     }
 
-    private static void listNames(org.apache.sis.storage.Resource resource, Set<GenericName> names) throws DataStoreException {
-        if (resource instanceof Resource) {
-            final Identifier identifier = ((Resource) resource).getIdentifier();
-            if (identifier instanceof GenericName) {
-                names.add((GenericName) identifier);
-            } else {
-                names.add(NamesExt.create(identifier.getCode()));
-            }
-        } else {
-            search:
-            for (Identification id : resource.getMetadata().getIdentificationInfo()) {
-                final Citation citation = id.getCitation();
-                if (citation != null) {
-                    for (Identifier identifier : citation.getIdentifiers()) {
-                        if (identifier instanceof GenericName) {
-                            names.add((GenericName) identifier);
-                        } else {
-                            names.add(NamesExt.create(identifier.getCode()));
-                        }
-                       break search;
-                    }
-                    if (citation.getTitle() != null) {
-                        names.add(NamesExt.create(citation.getTitle().toString()));
-                        break search;
-                    }
-                }
-            }
-        }
-
+    private static void listNames(Resource resource, Set<GenericName> names) throws DataStoreException {
+        names.add(resource.getIdentifier());
         if (resource instanceof Aggregate) {
             final Aggregate ds = (Aggregate) resource;
-            for (org.apache.sis.storage.Resource rs : ds.components()) {
-                listNames(rs,names);
+            for (Resource rs : ds.components()) {
+                listNames(rs, names);
             }
         }
     }

@@ -87,7 +87,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
     }
 
     @Override
-    public GenericName getIdentifier() {
+    public GenericName getIdentifier() throws DataStoreException {
         return null;
     }
 

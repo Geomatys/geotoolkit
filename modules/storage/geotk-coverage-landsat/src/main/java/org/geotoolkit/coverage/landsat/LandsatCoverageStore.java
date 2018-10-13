@@ -41,7 +41,7 @@ import org.apache.sis.storage.event.ChangeListener;
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
 import org.geotoolkit.coverage.landsat.LandsatConstants.CoverageGroup;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.Resource;
+import org.apache.sis.storage.Resource;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;

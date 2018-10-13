@@ -25,7 +25,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.storage.AbstractResource;
-import org.geotoolkit.storage.Resource;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.wms.xml.AbstractLayer;
 
 /**

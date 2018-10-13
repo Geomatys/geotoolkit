@@ -52,7 +52,7 @@ public final class QueryFeatureSet implements FeatureSet {
     }
 
     @Override
-    public GenericName getIdentifier() {
+    public GenericName getIdentifier() throws DataStoreException {
         return base.getIdentifier();
     }
 

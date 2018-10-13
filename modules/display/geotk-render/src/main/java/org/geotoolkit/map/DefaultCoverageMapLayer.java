@@ -18,7 +18,6 @@ package org.geotoolkit.map;
 
 import java.util.logging.Level;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.query.Query;
 import org.apache.sis.geometry.ImmutableEnvelope;
@@ -114,13 +113,13 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
             GridCoverageReader reader = ref.acquireReader();
             final GeneralGridGeometry geom = reader.getGridGeometry(getCoverageReference().getImageIndex());
             ref.recycle(reader);
-            if(geom == null){
+            if (geom == null) {
                 LOGGER.log(Level.WARNING, "Could not access envelope of layer {0}", getCoverageReference().getIdentifier());
                 return INFINITE;
-            }else{
+            } else {
                 return geom.getEnvelope();
             }
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             LOGGER.log(Level.WARNING, null, ex);
             return INFINITE;
         }

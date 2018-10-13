@@ -58,7 +58,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public final class ExtendedFeatureStore extends AbstractFeatureStore{
+public final class ExtendedFeatureStore extends AbstractFeatureStore {
 
     private final GenericNameIndex<Query> queries = new GenericNameIndex<>();
 
@@ -78,7 +78,7 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public GenericName getIdentifier() {
+    public GenericName getIdentifier() throws DataStoreException {
         return wrapped.getIdentifier();
     }
 
