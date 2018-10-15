@@ -22,11 +22,11 @@ import java.awt.RenderingHints;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.net.URI;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ServiceLoader;
 import java.util.logging.Logger;
-
-import org.geotoolkit.factory.DynamicFactoryRegistry;
 import org.geotoolkit.factory.FactoryRegistry;
 
 /**
@@ -50,6 +50,13 @@ public final class DynamicSymbolFactoryFinder {
     /** The logger for the filter module. */
     protected static final Logger LOGGER = org.apache.sis.util.logging.Logging
             .getLogger("org.geotoolkit.renderer.style");
+
+    private static final List<MarkFactory> MARK_FACTORIES = new ArrayList<>();
+    private static final List<ExternalGraphicFactory> EXT_FACTORIES = new ArrayList<>();
+    static {
+        ServiceLoader.load(MarkFactory.class).iterator().forEachRemaining(MARK_FACTORIES::add);
+        ServiceLoader.load(ExternalGraphicFactory.class).iterator().forEachRemaining(EXT_FACTORIES::add);
+    }
 
     /**
      * The service registry for this manager. Will be initialized only when
@@ -97,7 +104,7 @@ public final class DynamicSymbolFactoryFinder {
      *         factories, and whose available method returns true.
      */
     public static synchronized Iterator<MarkFactory> getMarkFactories() {
-        return getServiceRegistry().getServiceProviders(MarkFactory.class, null, null, null);
+        return MARK_FACTORIES.iterator();
     }
 
     /**
@@ -108,33 +115,7 @@ public final class DynamicSymbolFactoryFinder {
      *         factories, and whose available method returns true.
      */
     public static synchronized Iterator<ExternalGraphicFactory> getExternalGraphicFactories() {
-        return getServiceRegistry().getServiceProviders(ExternalGraphicFactory.class, null, null, null);
+        return EXT_FACTORIES.iterator();
     }
 
-    /**
-     * Returns the service registry. The registry will be created the first time
-     * this method is invoked.
-     */
-    private static FactoryRegistry getServiceRegistry() {
-        assert Thread.holdsLock(DynamicSymbolFactoryFinder.class);
-        if (registry == null) {
-            registry = new DynamicFactoryRegistry(Arrays.asList(new Class<?>[] { MarkFactory.class,
-                    ExternalGraphicFactory.class }));
-        }
-        return registry;
-    }
-
-    /**
-     * Scans for factory plug-ins on the application class path. This method is
-     * needed because the application class path can theoretically change, or
-     * additional plug-ins may become available. Rather than re-scanning the
-     * classpath on every invocation of the API, the class path is scanned
-     * automatically only on the first invocation. Clients can call this method
-     * to prompt a re-scan. Thus this method need only be invoked by
-     * sophisticated applications which dynamically make new plug-ins available
-     * at runtime.
-     */
-    public static synchronized void scanForPlugins() {
-        getServiceRegistry().scanForPlugins();
-    }
 }

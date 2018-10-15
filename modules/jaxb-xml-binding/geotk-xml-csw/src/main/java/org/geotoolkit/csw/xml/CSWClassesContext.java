@@ -20,13 +20,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.spi.ServiceRegistry;
-
-import org.geotoolkit.ows.xml.v100.ExceptionReport;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.ows.xml.v100.ExceptionReport;
 
 
 /**
@@ -114,7 +113,7 @@ public class CSWClassesContext {
 
 
         final List<String> extraClasses = new ArrayList<>();
-        final Iterator<CSWClassesFactory> ite = ServiceRegistry.lookupProviders(CSWClassesFactory.class);
+        final Iterator<CSWClassesFactory> ite = ServiceLoader.load(CSWClassesFactory.class).iterator();
         while (ite.hasNext()) {
             final CSWClassesFactory currentFactory = ite.next();
             extraClasses.addAll(currentFactory.getExtraClasses());
