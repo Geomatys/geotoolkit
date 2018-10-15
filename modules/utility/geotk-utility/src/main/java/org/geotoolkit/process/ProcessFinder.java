@@ -19,7 +19,7 @@ package org.geotoolkit.process;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.imageio.spi.ServiceRegistry;
+import java.util.ServiceLoader;
 import org.opengis.metadata.Identifier;
 import org.opengis.util.NoSuchIdentifierException;
 
@@ -63,7 +63,7 @@ public final class ProcessFinder {
      */
     public static synchronized Iterator<ProcessingRegistry> getProcessFactories() {
         if (REGISTRIES == null) {
-            final Iterator<ProcessingRegistry> ite = ServiceRegistry.lookupProviders(ProcessingRegistry.class);
+            final Iterator<ProcessingRegistry> ite = ServiceLoader.load(ProcessingRegistry.class).iterator();
             REGISTRIES = new ArrayList<ProcessingRegistry>();
             while (ite.hasNext()) {
                 REGISTRIES.add(ite.next());

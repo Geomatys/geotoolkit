@@ -21,10 +21,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import javax.imageio.spi.ServiceRegistry;
+import java.util.ServiceLoader;
 import javax.swing.JComponent;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 
@@ -40,9 +39,9 @@ public class DefaultInformationPresenter extends AbstractInformationPresenter{
     private static final List<InformationPresenter> PRESENTERS;
 
     static {
-        final Iterator<InformationPresenter> ite = ServiceRegistry.lookupProviders(InformationPresenter.class);
+        final Iterator<InformationPresenter> ite = ServiceLoader.load(InformationPresenter.class).iterator();
 
-        final List<InformationPresenter> presenters = new ArrayList<InformationPresenter>();
+        final List<InformationPresenter> presenters = new ArrayList<>();
         while(ite.hasNext()){
             presenters.add(ite.next());
         }
@@ -59,7 +58,7 @@ public class DefaultInformationPresenter extends AbstractInformationPresenter{
 
     /**
      * Create a user interface component to display the given object.
-     * @param candidate , object to display
+     * @param graphic , object to display
      * @return JComponent or null if no component appropriate.
      */
     @Override

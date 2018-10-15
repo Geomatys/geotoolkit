@@ -22,8 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import javax.imageio.spi.ServiceRegistry;
-import org.geotoolkit.factory.FactoryRegistry;
+import java.util.ServiceLoader;
 import org.geotoolkit.lang.Static;
 
 /**
@@ -33,17 +32,17 @@ import org.geotoolkit.lang.Static;
  */
 public final class EditionTools extends Static {
 
-    private static final FactoryRegistry REGISTRY;
+    private static final ServiceLoader<EditionTool> REGISTRY;
 
     static {
-        REGISTRY = new FactoryRegistry(EditionTool.class);
+        REGISTRY = ServiceLoader.load(EditionTool.class);
     }
 
     private EditionTools() {}
 
     public static List<EditionTool> getTools(){
-        final Iterator<EditionTool> ite = REGISTRY.getServiceProviders(EditionTool.class, null,null,null);
-        final List<EditionTool> cache = new ArrayList<EditionTool>();
+        final Iterator<EditionTool> ite = REGISTRY.iterator();
+        final List<EditionTool> cache = new ArrayList<>();
         while(ite.hasNext()){
             cache.add(ite.next());
         }
@@ -57,7 +56,7 @@ public final class EditionTools extends Static {
         return Collections.unmodifiableList(cache);
     }
 
-    public static ServiceRegistry getRegistry() {
+    public static ServiceLoader getRegistry() {
         return REGISTRY;
     }
 
