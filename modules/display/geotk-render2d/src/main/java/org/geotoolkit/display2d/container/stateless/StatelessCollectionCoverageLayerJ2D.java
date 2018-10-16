@@ -22,8 +22,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
-import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
@@ -179,9 +177,9 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
     @Override
     public List<Graphic> getGraphicAt(final RenderingContext context, final SearchArea mask, final VisitFilter filter, List<Graphic> graphics) {
 
-        if(!(context instanceof RenderingContext2D) ) return graphics;
-        if(!item.isSelectable())                     return graphics;
-        if(!item.isVisible())                        return graphics;
+        if (!(context instanceof RenderingContext2D)) return graphics;
+        if (!item.isSelectable())                     return graphics;
+        if (!item.isVisible())                        return graphics;
 
         final RenderingContext2D renderingContext = (RenderingContext2D) context;
 
@@ -195,14 +193,12 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
             return graphics;
         }
 
-        if(graphics == null) graphics = new ArrayList<>();
-        if(mask instanceof SearchAreaJ2D){
+        if (graphics == null) graphics = new ArrayList<>();
+        if (mask instanceof SearchAreaJ2D) {
             graphics = searchAt(item,rules,renderingContext,(SearchAreaJ2D)mask,filter,graphics);
-        }else{
+        } else {
             graphics = searchAt(item,rules,renderingContext,new DefaultSearchAreaJ2D(mask),filter,graphics);
         }
-
-
         return graphics;
     }
 

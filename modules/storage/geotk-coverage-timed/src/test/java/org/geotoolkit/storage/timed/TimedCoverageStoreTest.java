@@ -37,7 +37,7 @@ import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.image.io.plugin.TiffImageWriter;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.Resource;
+import org.apache.sis.storage.Resource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.coverage.grid.GridCoverage;

@@ -40,8 +40,6 @@ public class CoordinateReferenceSystemAdapter  extends XmlAdapter<String, Coordi
                     srsName = org.apache.sis.referencing.IdentifiedObjects.lookupURN(crs, null);
                     if (srsName == null) {
                         srsName = IdentifiedObjects.getIdentifierOrName(crs);
-                    } else {
-                        srsName = srsName.toLowerCase();
                     }
                     CoordinateReferenceSystemAdapter.cachedIdentifier.put(crs, srsName);
 

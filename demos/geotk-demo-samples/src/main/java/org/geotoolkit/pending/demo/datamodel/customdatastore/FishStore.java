@@ -2,7 +2,6 @@
 
 package org.geotoolkit.pending.demo.datamodel.customdatastore;
 
-import org.locationtech.jts.geom.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
@@ -26,11 +25,13 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.storage.DataStores;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 public class FishStore extends DataStore implements FeatureSet {
 
@@ -63,6 +64,11 @@ public class FishStore extends DataStore implements FeatureSet {
         final Parameters params = Parameters.castOrWrap(FishProvider.PARAMETERS_DESCRIPTOR.createValue());
         params.parameter(FishProvider.LOCATION).setValue(uri);
         return params;
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     @Override

@@ -16,19 +16,7 @@
  */
 package org.geotoolkit.wps.converters.outputs.references;
 
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
-import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v200.Reference;
-
 import java.io.*;
-import javax.xml.bind.JAXBException;
-import javax.xml.stream.XMLStreamException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import static java.nio.file.StandardOpenOption.CREATE;
@@ -37,8 +25,19 @@ import static java.nio.file.StandardOpenOption.WRITE;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import javax.xml.bind.JAXBException;
+import javax.xml.stream.XMLStreamException;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
+import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
+import org.geotoolkit.wps.io.WPSMimeType;
+import org.geotoolkit.wps.xml.v200.Reference;
 import org.opengis.feature.FeatureType;
 
 /**

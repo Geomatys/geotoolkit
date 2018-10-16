@@ -99,6 +99,11 @@ public class DefiningCoverageResource implements Resource {
         this.metadata = metadata;
     }
 
+    @Override
+    public GenericName getIdentifier() {
+        return name;
+    }
+
     /**
      * New resource wanted name.
      *

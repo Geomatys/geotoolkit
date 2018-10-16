@@ -21,10 +21,9 @@ import java.util.Map;
 import java.util.UUID;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.io.WPSMimeType;
-
 import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.StyleXmlIO;
+import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Reference;
 import org.opengis.sld.StyledLayerDescriptor;
 

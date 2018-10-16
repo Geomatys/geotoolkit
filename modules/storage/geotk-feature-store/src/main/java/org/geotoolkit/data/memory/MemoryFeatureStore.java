@@ -17,8 +17,6 @@
 
 package org.geotoolkit.data.memory;
 
-import org.geotoolkit.data.FeatureStreams;
-import org.locationtech.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,24 +29,33 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
-import org.geotoolkit.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.IllegalNameException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
+import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.data.AbstractFeatureStore;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.jts.JTS;
-import org.apache.sis.util.Utilities;
+import org.geotoolkit.internal.data.GenericNameIndex;
+import org.geotoolkit.storage.DataStoreFactory;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
@@ -56,15 +63,7 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.storage.IllegalNameException;
-import org.apache.sis.storage.Query;
-import org.apache.sis.storage.UnsupportedQueryException;
-
-import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.internal.data.GenericNameIndex;
-import org.geotoolkit.storage.DataStoreFactory;
-import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.util.GenericName;
 
 
 /**
@@ -207,6 +206,11 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
             //wont happen
             getLogger().log(Level.WARNING, ex.getMessage(), ex);
         }
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     /**

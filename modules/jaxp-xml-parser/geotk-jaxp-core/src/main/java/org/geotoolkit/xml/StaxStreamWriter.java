@@ -29,10 +29,14 @@ import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
+import javax.xml.transform.stax.StAXResult;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.Namespaces;
 
@@ -76,6 +80,21 @@ public abstract class StaxStreamWriter extends AbstractConfigurable {
      */
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.xml");
 
+    /**
+     * The factory built-in the JDK. This is different than {@link XMLOutputFactory#newFactory()},
+     * which may be the Jackson factory. We want the standard factory when creating an {@link XMLEventWriter}
+     * writing to {@link XMLStreamWriter} because Jackson seems to not support this configuration.
+     */
+    private static final XMLOutputFactory STANDARD_FACTORY;
+    static {
+        try {
+            // TODO: try using XMLOutputFactory.newDefaultFactory() with JDK9 instead.
+            STANDARD_FACTORY = (XMLOutputFactory) Class.forName("com.sun.xml.internal.stream.XMLOutputFactoryImpl").newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
     protected XMLStreamWriter writer;
 
     /**
@@ -86,9 +105,9 @@ public abstract class StaxStreamWriter extends AbstractConfigurable {
 
     private int lastUnknowPrefix = 0;
 
-    private final Map<String, String> unknowNamespaces = new HashMap<String, String>();
+    private final Map<String,String> unknowNamespaces = new HashMap<>();
 
-    public StaxStreamWriter(){
+    protected StaxStreamWriter(){
     }
 
     /**
@@ -107,12 +126,12 @@ public abstract class StaxStreamWriter extends AbstractConfigurable {
      * This way the writer can be reused for a different output later.
      * The underlying stax writer will be closed.
      */
-    public void reset() throws IOException, XMLStreamException{
-        if(writer != null){
+    public void reset() throws IOException, XMLStreamException {
+        if (writer != null) {
             writer.close();
             writer = null;
         }
-        if(targetStream != null){
+        if (targetStream != null) {
             targetStream.close();
             targetStream = null;
         }
@@ -123,7 +142,7 @@ public abstract class StaxStreamWriter extends AbstractConfigurable {
      * Must be called when the writer is not needed anymore.
      * It should not be used after this method has been called.
      */
-    public void dispose() throws IOException, XMLStreamException{
+    public void dispose() throws IOException, XMLStreamException {
         reset();
     }
 
@@ -135,25 +154,21 @@ public abstract class StaxStreamWriter extends AbstractConfigurable {
      * - java.io.OutputStream<br/>
      * - javax.xml.stream.XMLStreamWriter<br/>
      * - javax.xml.transform.Result<br/>
-     *
-     * @param output
-     * @throws IOException
-     * @throws XMLStreamException
      */
-    public void setOutput(Object output) throws IOException, XMLStreamException{
+    public void setOutput(Object output) throws IOException, XMLStreamException {
         reset();
 
-        if(output instanceof XMLStreamWriter){
+        if (output instanceof XMLStreamWriter) {
             writer = (XMLStreamWriter) output;
             return;
         }
 
-        if(output instanceof File){
+        if (output instanceof File) {
             targetStream = new FileOutputStream((File)output);
             final BufferedOutputStream bout = new BufferedOutputStream(targetStream);
             output = bout;
         }
-        if(output instanceof Path){
+        if (output instanceof Path) {
             targetStream = Files.newOutputStream((Path) output, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
             final BufferedOutputStream bout = new BufferedOutputStream(targetStream);
             output = bout;
@@ -166,13 +181,13 @@ public abstract class StaxStreamWriter extends AbstractConfigurable {
     /**
      * Write a new tag with the text corresponding to the given value.
      * The tag won't be written if the value is null.
-     * @param namespace : namespace of the wanted tag
-     * @param localName : local name of the wanted tag
-     * @param value : text value to write
-     * @throws XMLStreamException
+     *
+     * @param namespace  namespace of the wanted tag
+     * @param localName  local name of the wanted tag
+     * @param value      text value to write
      */
-    protected void writeSimpleTag(final String namespace, final String localName, final Object value) throws XMLStreamException{
-        if(value != null){
+    protected void writeSimpleTag(final String namespace, final String localName, final Object value) throws XMLStreamException {
+        if (value != null) {
             writer.writeStartElement(namespace, localName);
             writer.writeCharacters(value.toString());
             writer.writeEndElement();
@@ -180,23 +195,54 @@ public abstract class StaxStreamWriter extends AbstractConfigurable {
     }
 
     /**
+     * Marshals the given object to the given marshaller, with a workaround for Jackson unsupported operation.
+     * This workaround avoid the following exception:
+     *
+     * <blockquote><pre>java.lang.IllegalArgumentException: Can not instantiate a writer for XML result type class javax.xml.transform.stax.StAXResult (unrecognized type)
+     *     at com.ctc.wstx.stax.WstxOutputFactory.createSW(WstxOutputFactory.java:348)
+     *     at com.ctc.wstx.stax.WstxOutputFactory.createXMLEventWriter(WstxOutputFactory.java:110)
+     *     at org.apache.sis.xml.OutputFactory.createXMLEventWriter(OutputFactory.java:140)
+     *     at org.apache.sis.xml.PooledMarshaller.marshal(PooledMarshaller.java:317)</pre></blockquote>
+     */
+    protected void marshal(final Marshaller marshaller, final Object element) throws JAXBException {
+        if (!marshaller.getClass().getName().startsWith("org.apache.sis.xml.")) {
+            marshaller.marshal(element, writer);
+        } else try {
+            /*
+             * Apache SIS needs an XMLEventWriter, not a XMLStreamWriter. SIS normally wraps the stream
+             * writer automatically, but this operation fails when Jackson is on the classpath (because
+             * Jackson substitutes itself to the standard factory and does not support this operation).
+             * So we have to explicitly use the standard factory.
+             */
+            marshaller.marshal(element, STANDARD_FACTORY.createXMLEventWriter(new StAXResult(writer)));
+            /*
+             * Do not close the XMLStreamWriter because user may continue writing to it.
+             * Do not flush neither; the default XMLStreamWriterImpl does nothing more
+             * than forwarding to java.io.Writer.flush() and flushing an output stream
+             * have a performance impact. If the user really wants to flush, (s)he can
+             * invoke XMLStreamWriter.flush() himself.
+             */
+        } catch (XMLStreamException e) {
+            throw new JAXBException(e);
+        }
+    }
+
+    /**
      * Creates a new XMLStreamWriter.
-     * @param output
-     * @return XMLStreamWriter
+     *
      * @throws XMLStreamException if the output is not handled
      */
-    private static XMLStreamWriter toWriter(final Object output)
-            throws XMLStreamException{
+    private static XMLStreamWriter toWriter(final Object output) throws XMLStreamException {
         final XMLOutputFactory XMLfactory = XMLOutputFactory.newInstance();
         XMLfactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
 
-        if(output instanceof OutputStream){
-            return XMLfactory.createXMLStreamWriter((OutputStream)output,"UTF-8");
-        }else if(output instanceof Result){
-            return XMLfactory.createXMLStreamWriter((Result)output);
-        }else if(output instanceof Writer){
-            return XMLfactory.createXMLStreamWriter((Writer)output);
-        }else{
+        if (output instanceof OutputStream) {
+            return XMLfactory.createXMLStreamWriter((OutputStream) output, "UTF-8");
+        } else if(output instanceof Result) {
+            return XMLfactory.createXMLStreamWriter((Result) output);
+        } else if(output instanceof Writer) {
+            return XMLfactory.createXMLStreamWriter((Writer) output);
+        } else {
             throw new XMLStreamException("Output type is not supported : "+ output);
         }
     }

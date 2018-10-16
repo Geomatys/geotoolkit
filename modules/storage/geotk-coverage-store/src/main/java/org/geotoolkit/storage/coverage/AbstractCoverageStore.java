@@ -48,12 +48,12 @@ import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.StorageEvent;
-import org.opengis.util.GenericName;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.GenericName;
 
 /**
  * Abstract implementation of a coverage store.
@@ -84,6 +84,11 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
             @Override
             public void close() throws SecurityException {}
         });
+    }
+
+    @Override
+    public GenericName getIdentifier() throws DataStoreException {
+        return null;
     }
 
     /**

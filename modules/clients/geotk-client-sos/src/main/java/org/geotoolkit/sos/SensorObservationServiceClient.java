@@ -24,6 +24,7 @@ import org.geotoolkit.sos.xml.SOSVersion;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  * SOS server.
@@ -61,6 +62,11 @@ public class SensorObservationServiceClient extends AbstractClient {
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(SOSClientFactory.NAME);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     /**

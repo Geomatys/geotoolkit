@@ -27,25 +27,24 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
-
-import org.geotoolkit.client.AbstractCoverageClient;
-import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.Client;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.Resource;
+import org.apache.sis.storage.Resource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wmts.v100.GetCapabilities100;
 import org.geotoolkit.wmts.v100.GetTile100;
 import org.geotoolkit.wmts.xml.WMTSBindingUtilities;
 import org.geotoolkit.wmts.xml.WMTSVersion;
 import org.geotoolkit.wmts.xml.v100.Capabilities;
 import org.geotoolkit.wmts.xml.v100.LayerType;
-import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.opengis.util.GenericName;
 
 
 /**
@@ -152,6 +151,11 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
     @Override
     public WMTSClientFactory getProvider() {
         return (WMTSClientFactory)DataStores.getFactoryById(WMTSClientFactory.NAME);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     /**

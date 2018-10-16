@@ -25,22 +25,23 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.CapabilitiesException;
-import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.ows.xml.ExceptionResponse;
-import org.geotoolkit.wps.xml.WPSMarshallerPool;
-import org.geotoolkit.storage.DataStores;
-import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.ows.xml.v200.AcceptVersionsType;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v200.Capabilities;
 import org.geotoolkit.wps.xml.v200.DescribeProcess;
 import org.geotoolkit.wps.xml.v200.Execute;
 import org.geotoolkit.wps.xml.v200.GetCapabilities;
 import org.geotoolkit.wps.xml.v200.GetStatus;
 import org.geotoolkit.wps.xml.v200.ProcessOfferings;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  * WPS server, used to acquire capabilities and requests process.
@@ -196,6 +197,11 @@ public class WebProcessingClient extends AbstractClient {
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(WPSClientFactory.NAME);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     /**

@@ -37,16 +37,16 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.Resource;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.DefaultCoverageResource;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Simple implementation to provide a {@link MemoryCoverageStore} for a {@link GridCoverage2D}.
@@ -92,6 +92,11 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
      */
     @Override
     public DataStoreFactory getProvider() {
+        return null;
+    }
+
+    @Override
+    public GenericName getIdentifier() {
         return null;
     }
 

@@ -17,7 +17,6 @@
 
 package org.geotoolkit.data.wfs;
 
-import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -39,57 +38,56 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.feature.AbstractOperation;
-import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
-
-import org.geotoolkit.data.AbstractFeatureStore;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.FeatureReader;
+import org.apache.sis.storage.IllegalNameException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
+import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
-import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
+import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.ows.xml.BoundingBox;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wfs.xml.FeatureTypeList;
 import org.geotoolkit.wfs.xml.TransactionResponse;
 import org.geotoolkit.wfs.xml.WFSCapabilities;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
-
-import org.opengis.util.GenericName;
-import org.geotoolkit.storage.DataStores;
-import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.geometry.Envelope;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.referencing.crs.AbstractCRS;
-import org.apache.sis.referencing.cs.AxesConvention;
-import org.apache.sis.storage.IllegalNameException;
-import org.apache.sis.storage.Query;
-import org.apache.sis.storage.UnsupportedQueryException;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.internal.data.GenericNameIndex;
-import org.geotoolkit.data.FeatureStreams;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
-import org.geotoolkit.storage.DataStoreFactory;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyType;
+import org.opengis.filter.Filter;
 import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.identity.FeatureId;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 
 /**
  * WFS Datastore, This implementation is read only.
@@ -119,6 +117,11 @@ public class WFSFeatureStore extends AbstractFeatureStore{
             getLogger().log(Level.WARNING, ex.getMessage(), ex);
             throw new FeatureStoreRuntimeException(ex);
         }
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     private void checkTypeExist() throws WebFeatureException, IllegalNameException {

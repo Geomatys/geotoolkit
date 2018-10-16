@@ -24,7 +24,7 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.storage.Resource;
+import org.apache.sis.storage.Resource;
 import org.opengis.metadata.Metadata;
 
 /**
@@ -38,7 +38,7 @@ public interface FeatureSet extends Resource, org.apache.sis.storage.FeatureSet 
     default Metadata getMetadata() throws DataStoreException {
         final DefaultMetadata metadata = new DefaultMetadata();
         final DefaultDataIdentification identification = new DefaultDataIdentification();
-        final NamedIdentifier identifier = getIdentifier();
+        final NamedIdentifier identifier = NamedIdentifier.castOrCopy(getIdentifier());
         final DefaultCitation citation = new DefaultCitation(identifier.toString());
         citation.setIdentifiers(Collections.singleton(identifier));
         identification.setCitation(citation);

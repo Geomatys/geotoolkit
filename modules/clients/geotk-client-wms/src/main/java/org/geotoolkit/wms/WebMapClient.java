@@ -16,27 +16,6 @@
  */
 package org.geotoolkit.wms;
 
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.client.AbstractCoverageClient;
-import org.geotoolkit.client.CapabilitiesException;
-import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.wms.auto.GetCapabilitiesAuto;
-import org.geotoolkit.wms.v110.GetCapabilities110;
-import org.geotoolkit.wms.v110.GetFeatureInfo110;
-import org.geotoolkit.wms.v110.GetLegend110;
-import org.geotoolkit.wms.v110.GetMap110;
-import org.geotoolkit.wms.v130.GetCapabilities130;
-import org.geotoolkit.wms.v130.GetFeatureInfo130;
-import org.geotoolkit.wms.v130.GetLegend130;
-import org.geotoolkit.wms.v130.GetMap130;
-import org.geotoolkit.wms.xml.AbstractLayer;
-import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
-import org.geotoolkit.wms.xml.WMSBindingUtilities;
-import org.geotoolkit.wms.xml.WMSVersion;
-import org.opengis.util.GenericName;
-import org.opengis.parameter.ParameterValueGroup;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -48,18 +27,38 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.client.AbstractCoverageClient;
+import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.Resource;
+import org.apache.sis.storage.Resource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.wms.auto.GetCapabilitiesAuto;
 import org.geotoolkit.wms.v100.GetCapabilities100;
 import org.geotoolkit.wms.v100.GetFeatureInfo100;
 import org.geotoolkit.wms.v100.GetMap100;
+import org.geotoolkit.wms.v110.GetCapabilities110;
+import org.geotoolkit.wms.v110.GetFeatureInfo110;
+import org.geotoolkit.wms.v110.GetLegend110;
+import org.geotoolkit.wms.v110.GetMap110;
 import org.geotoolkit.wms.v111.GetCapabilities111;
 import org.geotoolkit.wms.v111.GetFeatureInfo111;
 import org.geotoolkit.wms.v111.GetLegend111;
 import org.geotoolkit.wms.v111.GetMap111;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.wms.v130.GetCapabilities130;
+import org.geotoolkit.wms.v130.GetFeatureInfo130;
+import org.geotoolkit.wms.v130.GetLegend130;
+import org.geotoolkit.wms.v130.GetMap130;
+import org.geotoolkit.wms.xml.AbstractLayer;
+import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
+import org.geotoolkit.wms.xml.WMSBindingUtilities;
+import org.geotoolkit.wms.xml.WMSVersion;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 
 /**
@@ -195,6 +194,11 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
     @Override
     public WMSClientFactory getProvider() {
         return (WMSClientFactory)DataStores.getFactoryById(WMSClientFactory.NAME);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     /**

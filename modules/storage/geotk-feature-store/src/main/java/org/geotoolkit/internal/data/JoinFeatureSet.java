@@ -101,6 +101,15 @@ public class JoinFeatureSet implements FeatureSet {
         this.condition = condition;
     }
 
+    @Override
+    public GenericName getIdentifier() {
+        try {
+            return getType().getName();
+        } catch (DataStoreException ex) {
+            throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
+        }
+    }
+
     /**
      * Gets the join condition.
      *

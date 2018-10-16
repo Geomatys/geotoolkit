@@ -18,6 +18,7 @@ package org.geotoolkit.storage;
 
 import java.util.logging.Level;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 

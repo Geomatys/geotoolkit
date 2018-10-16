@@ -30,6 +30,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
+import org.opengis.util.GenericName;
 
 /**
  * FeatureSet implementation stored in memory.
@@ -60,6 +61,11 @@ public class ArrayFeatureSet implements FeatureSet {
         this.type = type;
         this.features = features;
 
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return type.getName();
     }
 
     @Override

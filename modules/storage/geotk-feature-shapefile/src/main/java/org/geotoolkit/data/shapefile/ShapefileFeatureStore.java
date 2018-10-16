@@ -18,7 +18,6 @@
 
 package org.geotoolkit.data.shapefile;
 
-import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -67,6 +66,7 @@ import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.shapefile.cpg.CpgFiles;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.shp.ShapeType;
@@ -80,6 +80,7 @@ import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -91,7 +92,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
-import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 
 /**
  *
@@ -183,6 +183,11 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
             params.getOrCreate(ShapefileFeatureStoreFactory.DBFCHARSET).setValue(dbfCharset);
         }
         return params;
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     @Override

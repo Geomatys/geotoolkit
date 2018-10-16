@@ -191,7 +191,7 @@
        =========================================================== -->
   <properties>
     <geoapi.version>4.0-M09</geoapi.version> <!-- Must be same than the version used by SIS. -->
-    <sis.version>dev-1.0-M0035</sis.version>
+    <sis.version>dev-1.0-M0036</sis.version>
     <sis.build.helper.version>0.8</sis.build.helper.version>
     <sis.epsg.version>1.0-M1</sis.epsg.version>
     <netcdf.version>4.3.21</netcdf.version>
@@ -715,11 +715,6 @@
           <version>1.7</version>
         </plugin>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>build-helper-maven-plugin</artifactId>
-          <version>1.8</version>
-        </plugin>
-        <plugin>
           <groupId>com.agilejava.docbkx</groupId>
           <artifactId>docbkx-maven-plugin</artifactId>
           <version>2.0.14</version>
@@ -816,6 +811,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.0.0</version>
         <executions>
           <execution>
             <id>remove-old-artifacts</id>
@@ -823,7 +819,7 @@
               <goal>remove-project-artifact</goal>
             </goals>
             <configuration>
-              <removeAll>false</removeAll> <!-- Remove only snapshots of this project version. -->
+              <removeAll>false</removeAll>      <!-- Remove only snapshots of this project version. -->
             </configuration>
           </execution>
         </executions>
@@ -1061,14 +1057,14 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-    <repository>
+    <!--repository>
       <id>unidata</id>
       <name>unidata</name>
       <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
-    </repository>
+    </repository-->
   </repositories>
 
   <pluginRepositories>

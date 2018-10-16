@@ -30,7 +30,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
@@ -269,12 +268,9 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
                 builder.setGridGeometry(gridGeom);
                 builder.setSampleDimensions(coverages.get(0).getSampleDimensions());
                 return builder.build();
-            } catch (TransformException | FactoryException ex) {
+            } catch (TransformException | FactoryException | DataStoreException ex) {
                 throw new CoverageStoreException(ex.getMessage(), ex);
             }
-
         }
-
     }
-
 }

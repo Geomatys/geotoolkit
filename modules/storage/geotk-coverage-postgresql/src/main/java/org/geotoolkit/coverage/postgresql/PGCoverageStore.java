@@ -36,9 +36,10 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.Resource;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -46,7 +47,6 @@ import org.geotoolkit.version.VersioningException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * GeotoolKit Coverage Store using PostgreSQL Raster model.
@@ -65,6 +65,11 @@ public class PGCoverageStore extends AbstractCoverageStore implements WritableAg
         ArgumentChecks.ensureNonNull("source", source);
         this.source = source;
 
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     public int getFetchSize() {

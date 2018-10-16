@@ -44,9 +44,17 @@ public class JAXBToComplexConverter extends AbstractComplexOutputConverter<Objec
 
     @Override
     public boolean canConvert(Class source, Class target) {
+        Class candidate;
         //check if object is known by the JAXB Context
+        if (source.equals(Data.class)) {
+            candidate = target;
+        } else if (target.equals(Data.class)) {
+            candidate = source;
+        } else {
+            return false;
+        }
         try {
-            Constructor constructor = source.getDeclaredConstructor();
+            Constructor constructor = candidate.getDeclaredConstructor();
             constructor.setAccessible(true);
             if (TypeRegistration.getSharedContext().createJAXBIntrospector().isElement(constructor.newInstance())) {
                 return true;

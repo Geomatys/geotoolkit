@@ -17,11 +17,9 @@
 package org.geotoolkit.wps.converters.outputs.references;
 
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.wps.xml.v200.Reference;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;

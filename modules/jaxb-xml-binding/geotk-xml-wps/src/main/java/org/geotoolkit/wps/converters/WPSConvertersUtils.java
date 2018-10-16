@@ -235,6 +235,7 @@ public class WPSConvertersUtils {
         parameters.put(WPSObjectConverter.MIME, mime);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
         parameters.put(WPSObjectConverter.WPSVERSION, wpsVersion);
+        parameters.put(WPSObjectConverter.TARGET_CLASS, expectedClass);
 
         ensureParametersDefined(expectedClass, WPSIO.IOType.INPUT, parameters);
 
@@ -899,7 +900,7 @@ public class WPSConvertersUtils {
         if (jsonGeometry.getCrs() != null)
             crs = jsonGeometry.getCrs().getCRS();
         else
-            crs = CommonCRS.WGS84.geographic();
+            crs = CommonCRS.WGS84.normalizedGeographic();
 
         return GeometryUtils.toJTS(jsonGeometry, crs);
     }

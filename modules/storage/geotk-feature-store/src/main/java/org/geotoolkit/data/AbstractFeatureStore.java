@@ -27,25 +27,35 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.ReprojectMapper;
-import org.geotoolkit.feature.ViewMapper;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.storage.MetadataBuilder;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.collection.BackingStoreException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.memory.GenericFeatureWriter;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.DefaultSession;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.util.NamesExt;
-import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureTypeExt;
+import org.geotoolkit.feature.ReprojectMapper;
+import org.geotoolkit.feature.ViewMapper;
+import org.geotoolkit.storage.DataStore;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.StorageEvent;
-import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
-import org.opengis.util.GenericName;
-import org.geotoolkit.storage.DataStore;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
@@ -57,22 +67,8 @@ import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.storage.MetadataBuilder;
-import org.apache.sis.parameter.Parameters;
-import org.apache.sis.storage.Aggregate;
-import org.apache.sis.storage.Query;
-import org.apache.sis.storage.UnsupportedQueryException;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.storage.Resource;
-import org.opengis.metadata.Identifier;
-import org.opengis.metadata.citation.Citation;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
 import org.opengis.util.ScopedName;
 
 
@@ -112,6 +108,11 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
 
     protected Logger getLogger(){
         return logger;
+    }
+
+    @Override
+    public GenericName getIdentifier() throws DataStoreException {
+        return null;
     }
 
     @Override
@@ -176,39 +177,12 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         return names;
     }
 
-    private static void listNames(org.apache.sis.storage.Resource resource, Set<GenericName> names) throws DataStoreException {
-        if (resource instanceof Resource) {
-            final Identifier identifier = ((Resource) resource).getIdentifier();
-            if (identifier instanceof GenericName) {
-                names.add((GenericName) identifier);
-            } else {
-                names.add(NamesExt.create(identifier.getCode()));
-            }
-        } else {
-            search:
-            for (Identification id : resource.getMetadata().getIdentificationInfo()) {
-                final Citation citation = id.getCitation();
-                if (citation != null) {
-                    for (Identifier identifier : citation.getIdentifiers()) {
-                        if (identifier instanceof GenericName) {
-                            names.add((GenericName) identifier);
-                        } else {
-                            names.add(NamesExt.create(identifier.getCode()));
-                        }
-                       break search;
-                    }
-                    if (citation.getTitle() != null) {
-                        names.add(NamesExt.create(citation.getTitle().toString()));
-                        break search;
-                    }
-                }
-            }
-        }
-
+    private static void listNames(Resource resource, Set<GenericName> names) throws DataStoreException {
+        names.add(resource.getIdentifier());
         if (resource instanceof Aggregate) {
             final Aggregate ds = (Aggregate) resource;
-            for (org.apache.sis.storage.Resource rs : ds.components()) {
-                listNames(rs,names);
+            for (Resource rs : ds.components()) {
+                listNames(rs, names);
             }
         }
     }

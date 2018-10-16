@@ -44,7 +44,7 @@ final class SubsetFeatureResource extends AbstractFeatureSet implements FeatureS
     private final Query query;
     private FeatureType type;
 
-    public SubsetFeatureResource(FeatureSet parent, Query query) {
+    public SubsetFeatureResource(FeatureSet parent, Query query) throws DataStoreException {
         super(parent.getIdentifier());
         this.parent = parent;
         this.query = query;

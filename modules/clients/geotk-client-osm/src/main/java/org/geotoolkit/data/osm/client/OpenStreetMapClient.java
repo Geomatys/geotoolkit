@@ -23,11 +23,13 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.Request;
+import org.geotoolkit.data.osm.client.v060.ChangeElement060;
 import org.geotoolkit.data.osm.client.v060.CloseChangeSet060;
 import org.geotoolkit.data.osm.client.v060.CreateChangeSet060;
-import org.geotoolkit.data.osm.client.v060.ChangeElement060;
 import org.geotoolkit.data.osm.client.v060.DownloadChangeSet060;
 import org.geotoolkit.data.osm.client.v060.DownloadGPSTraceData060;
 import org.geotoolkit.data.osm.client.v060.DownloadGPSTraceDetails060;
@@ -48,11 +50,10 @@ import org.geotoolkit.data.osm.client.v060.Upload060;
 import org.geotoolkit.data.osm.model.Api;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
 import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  * Represent an open street map server.
@@ -87,6 +88,11 @@ public class OpenStreetMapClient extends AbstractClient {
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(OSMClientFactory.NAME);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     public OSMVersion getVersion(){

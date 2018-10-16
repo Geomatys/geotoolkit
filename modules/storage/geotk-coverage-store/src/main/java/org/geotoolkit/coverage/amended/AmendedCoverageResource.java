@@ -33,7 +33,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.CoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.storage.Resource;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.opengis.coverage.grid.GridEnvelope;

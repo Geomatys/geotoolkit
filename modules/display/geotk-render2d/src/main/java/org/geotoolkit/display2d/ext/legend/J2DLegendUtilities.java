@@ -516,21 +516,18 @@ public class J2DLegendUtilities {
                 BufferedImage image;
                 try {
                     image = (BufferedImage) covRef.getLegend();
+                    if (image != null) {
+                        toSet.height += image.getHeight();
+                        if (toSet.width < image.getWidth()) {
+                            toSet.width = image.getWidth();
+                        }
+                        if (images != null) {
+                            images.put(covLayer.getCoverageReference().getIdentifier(), image);
+                        }
+                        continue;
+                    }
                 } catch (DataStoreException ex) {
                     LOGGER.log(Level.FINE, ex.getLocalizedMessage(), ex);
-                    continue;
-                }
-
-                if (image != null) {
-                    toSet.height += image.getHeight();
-                    if (toSet.width < image.getWidth()) {
-                        toSet.width = image.getWidth();
-                    }
-
-                    if(images != null){
-                        images.put(covLayer.getCoverageReference().getIdentifier(), image);
-                    }
-
                     continue;
                 }
             }

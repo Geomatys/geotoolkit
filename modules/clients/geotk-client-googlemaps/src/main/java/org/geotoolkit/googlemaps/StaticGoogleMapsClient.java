@@ -23,16 +23,16 @@ import java.util.Collection;
 import java.util.List;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
-
-import org.geotoolkit.client.AbstractCoverageClient;
-import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
+import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.Client;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  * Client for google static maps.
@@ -99,6 +99,11 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Cl
     @Override
     public StaticGoogleClientFactory getProvider() {
         return (StaticGoogleClientFactory) DataStores.getFactoryById(StaticGoogleClientFactory.NAME);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     @Override

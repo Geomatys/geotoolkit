@@ -17,7 +17,6 @@
 
 package org.geotoolkit.data.geojson;
 
-import org.locationtech.jts.geom.*;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.FileSystemNotFoundException;
@@ -39,7 +38,16 @@ import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.*;
+import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.PATH;
+import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.*;
 import org.geotoolkit.data.geojson.binding.*;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONGeometryCollection;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONLineString;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONMultiLineString;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONMultiPoint;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONMultiPolygon;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONPoint;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONPolygon;
 import org.geotoolkit.data.geojson.utils.FeatureTypeUtils;
 import org.geotoolkit.data.geojson.utils.GeoJSONParser;
 import org.geotoolkit.data.geojson.utils.GeoJSONUtils;
@@ -51,6 +59,7 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
+import org.locationtech.jts.geom.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -59,8 +68,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
-import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.*;
-import static org.geotoolkit.data.geojson.binding.GeoJSONGeometry.*;
 
 /**
  *
@@ -124,6 +131,11 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore implements Resourc
         params.getOrCreate(GeoJSONFeatureStoreFactory.PATH).setValue(uri);
         params.getOrCreate(GeoJSONFeatureStoreFactory.COORDINATE_ACCURACY).setValue(coordAccuracy);
         return params;
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     @Override

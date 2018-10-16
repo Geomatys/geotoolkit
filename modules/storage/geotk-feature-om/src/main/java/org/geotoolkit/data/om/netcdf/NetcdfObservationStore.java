@@ -17,27 +17,29 @@
 
 package org.geotoolkit.data.om.netcdf;
 
-import org.geotoolkit.data.om.OMFeatureTypes;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStreams;
-import org.geotoolkit.internal.data.GenericNameIndex;
+import org.geotoolkit.data.om.OMFeatureTypes;
+import static org.geotoolkit.data.om.netcdf.NetcdfObservationStoreFactory.FILE_PATH;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.ObservationFilter;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.ObservationStore;
 import org.geotoolkit.observation.ObservationWriter;
-import static org.geotoolkit.data.om.netcdf.NetcdfObservationStoreFactory.FILE_PATH;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.Field;
 import org.geotoolkit.sos.netcdf.NCFieldAnalyze;
@@ -45,13 +47,11 @@ import org.geotoolkit.sos.netcdf.NetCDFExtractor;
 import org.geotoolkit.sos.netcdf.NetCDFParsingException;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.FeatureType;
-import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.temporal.TemporalGeometricPrimitive;
-import org.apache.sis.internal.storage.ResourceOnFileSystem;
-import org.apache.sis.storage.Query;
-import org.apache.sis.storage.UnsupportedQueryException;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -81,6 +81,11 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Reso
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(NetcdfObservationStoreFactory.NAME);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     /**

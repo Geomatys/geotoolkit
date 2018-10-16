@@ -30,6 +30,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.opengis.feature.FeatureType;
 import org.opengis.metadata.Metadata;
+import org.opengis.util.GenericName;
 
 /**
  * Define the structure and properties of a FeatureSet to be created.
@@ -82,6 +83,11 @@ public class DefiningFeatureSet implements Resource {
             metadata = md;
         }
         this.metadata = metadata;
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return type.getName();
     }
 
     /**

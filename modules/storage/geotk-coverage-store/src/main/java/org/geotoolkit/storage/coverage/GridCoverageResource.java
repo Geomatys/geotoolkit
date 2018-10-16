@@ -18,6 +18,7 @@ package org.geotoolkit.storage.coverage;
 
 import java.util.stream.Stream;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -40,6 +41,13 @@ import org.opengis.geometry.Envelope;
  * @module
  */
 public interface GridCoverageResource extends CoverageResource {
+    /**
+     * Same as {@link org.apache.sis.storage.Resource} without exception.
+     *
+     * @todo restore the exception.
+     */
+    @Override
+    NamedIdentifier getIdentifier();
 
     /**
      * Get a reader for this coverage.

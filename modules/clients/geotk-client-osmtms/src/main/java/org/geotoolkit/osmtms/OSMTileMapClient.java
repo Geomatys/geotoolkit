@@ -21,16 +21,16 @@ import java.util.Collection;
 import java.util.Collections;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractCoverageClient;
-import org.geotoolkit.storage.coverage.PyramidSet;
-import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.client.Client;
 import org.geotoolkit.osmtms.model.OSMTMSPyramidSet;
 import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.client.Client;
 import org.geotoolkit.storage.DataStores;
-import org.opengis.util.GenericName;
+import org.geotoolkit.storage.coverage.PyramidSet;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  * Represent a Tile Map Server instance.
@@ -98,6 +98,11 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client, 
     @Override
     public OSMTMSClientFactory getProvider() {
         return (OSMTMSClientFactory)DataStores.getFactoryById(OSMTMSClientFactory.NAME);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     @Override

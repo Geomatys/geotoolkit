@@ -54,6 +54,7 @@ import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -62,7 +63,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ImageCRS;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Coverage Store which rely on standard java readers and writers.
@@ -132,6 +132,11 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(FileCoverageProvider.NAME);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     @Override

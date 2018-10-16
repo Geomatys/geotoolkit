@@ -37,7 +37,6 @@ import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.data.*;
-import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -100,6 +99,11 @@ public class MIFFeatureStore extends AbstractFeatureStore implements ResourceOnF
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(MIFFeatureStoreFactory.NAME);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     /**

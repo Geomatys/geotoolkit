@@ -23,8 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSDefaultConverter;
 import org.geotoolkit.wps.xml.v200.Reference;

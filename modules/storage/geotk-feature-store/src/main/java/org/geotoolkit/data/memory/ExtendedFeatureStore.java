@@ -31,18 +31,17 @@ import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
-import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.opengis.util.GenericName;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -50,6 +49,7 @@ import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
+import org.opengis.util.GenericName;
 
 /**
  * Wraps a feature store and store additional queries which will be made available
@@ -58,7 +58,7 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public final class ExtendedFeatureStore extends AbstractFeatureStore{
+public final class ExtendedFeatureStore extends AbstractFeatureStore {
 
     private final GenericNameIndex<Query> queries = new GenericNameIndex<>();
 
@@ -75,6 +75,11 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
     @Override
     public Parameters getOpenParameters() {
         return Parameters.castOrWrap(wrapped.getOpenParameters());
+    }
+
+    @Override
+    public GenericName getIdentifier() throws DataStoreException {
+        return wrapped.getIdentifier();
     }
 
     @Override

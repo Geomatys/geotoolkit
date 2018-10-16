@@ -28,6 +28,7 @@ import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
+import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryCapabilities;
@@ -37,7 +38,6 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
-import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
 
 /**
  * OSM DataStore, holds 3 feature types.
@@ -86,6 +86,11 @@ public class OSMMemoryFeatureStore extends AbstractFeatureStore{
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(OSMMemoryFeatureStoreFactory.NAME);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     @Override

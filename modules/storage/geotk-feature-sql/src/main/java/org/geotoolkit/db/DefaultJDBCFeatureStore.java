@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.db;
 
-import org.locationtech.jts.geom.GeometryFactory;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -30,18 +29,21 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import javax.sql.DataSource;
-import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.ReprojectMapper;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.IllegalNameException;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.Version;
 import org.geotoolkit.data.*;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.data.query.SQLQuery;
 import org.geotoolkit.data.session.Session;
 import static org.geotoolkit.db.JDBCFeatureStore.JDBC_PROPERTY_RELATION;
 import org.geotoolkit.db.dialect.SQLDialect;
@@ -50,18 +52,25 @@ import org.geotoolkit.db.reverse.*;
 import org.geotoolkit.db.session.JDBCSession;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureTypeExt;
+import org.geotoolkit.feature.ReprojectMapper;
+import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.filter.visitor.CRSAdaptorVisitor;
 import org.geotoolkit.filter.visitor.FIDFixVisitor;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.jdbc.ManageableDataSource;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.IllegalNameException;
-import org.apache.sis.storage.Query;
-import org.apache.sis.storage.UnsupportedQueryException;
-import org.opengis.util.GenericName;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.util.NamesExt;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureAssociationRole;
+import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
@@ -69,17 +78,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.util.Utilities;
-import org.geotoolkit.data.FeatureStreams;
-import org.geotoolkit.data.query.SQLQuery;
-import org.geotoolkit.feature.ViewMapper;
-import org.geotoolkit.storage.DataStoreFactory;
-import org.opengis.feature.AttributeType;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureAssociationRole;
-import org.opengis.feature.FeatureType;
-import org.opengis.feature.Operation;
-import org.opengis.feature.PropertyType;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -146,6 +145,11 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(factoryId);
+    }
+
+    @Override
+    public GenericName getIdentifier() {
+        return null;
     }
 
     /**
