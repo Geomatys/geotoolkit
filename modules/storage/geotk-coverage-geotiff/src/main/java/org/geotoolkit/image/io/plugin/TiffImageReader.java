@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -80,10 +81,15 @@ import org.geotoolkit.metadata.geotiff.GeoTiffExtension;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader;
 import org.geotoolkit.metadata.geotiff.ThirdPartyMetaDataReader;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * An image reader for uncompressed TIFF files or RGB images. This image reader duplicates the works
@@ -1774,9 +1780,30 @@ public class TiffImageReader extends SpatialImageReader {
      */
     private BufferedImage readLayer(final int layerIndex, final ImageReadParam param) throws IOException {
         selectLayer(layerIndex);
-        final Rectangle srcRegion = new Rectangle();
-        final Rectangle dstRegion = new Rectangle();
-        final BufferedImage image = getDestination(param, getImageTypes(layerIndex), imageWidth, imageHeight);
+
+        //Modify read param exclude source and destination bands, not supported yet
+        //source and destination are processed after reading
+        ImageReadParam sparam = param;
+        if (param != null && (param.getSourceBands() != null || param.getDestinationBands() != null)) {
+            sparam = new ImageReadParam();
+            sparam.setController(param.getController());
+            sparam.setDestinationOffset(param.getDestinationOffset());
+            sparam.setDestinationType(param.getDestinationType());
+            sparam.setSourceRegion(param.getSourceRegion());
+            Dimension rs = param.getSourceRenderSize();
+            if(rs != null) sparam.setSourceRenderSize(rs);
+            sparam.setSourceSubsampling(
+                    param.getSourceXSubsampling(),
+                    param.getSourceYSubsampling(),
+                    param.getSubsamplingXOffset(),
+                    param.getSubsamplingYOffset());
+
+            if (param.getDestination() != null) {
+                throw new IOException("Destination image with source and destination band selection not supported");
+            }
+        }
+
+        BufferedImage image = getDestination(sparam, getImageTypes(layerIndex), imageWidth, imageHeight);
 
         final WritableRaster raster = image.getRaster();
         if (raster.getDataBuffer().getDataType() != sourceDataBufferType) {
@@ -1784,62 +1811,98 @@ public class TiffImageReader extends SpatialImageReader {
                     + "Expected Datatype : "+sourceDataBufferType+" found : "+image.getRaster().getDataBuffer().getDataType());
         }
 
-        if (param != null) {
-            //{@link TiffimageReader} does not support param reader with setted source and destination band parameters.
-            final int[] sourceBands = param.getSourceBands();
-            final int[] destinationBands = param.getDestinationBands();
-            final int nbBand = raster.getNumBands();
-            if (nbBand != samplesPerPixel
-                    || (sourceBands!=null && sourceBands.length!=samplesPerPixel)
-                    || (destinationBands!=null && destinationBands.length!=samplesPerPixel)) {
-                throw new IOException("Source and destination band selection not supported");
-            }
-            if (sourceBands != null) {
-                //check same size and order as image
-                for (int i=0;i<samplesPerPixel;i++) {
-                    if (sourceBands[i] != i) {
-                        throw new IOException("Source and destination band selection not supported");
-                    }
-                }
-            }
-            if (destinationBands != null) {
-                //check same size and order as image
-                for (int i=0;i<samplesPerPixel;i++) {
-                    if (destinationBands[i] != i) {
-                        throw new IOException("Source and destination band selection not supported");
-                    }
-                }
-            }
-        }
-
         /*
          * compute region : ajust les 2 rectangles src region et dest region en fonction des coeff subsampling present dans Imagereadparam.
          */
-        computeRegions(param, imageWidth, imageHeight, image, srcRegion, dstRegion);// calculer une region de l'image sur le fichier que l'on doit lire
+        final Rectangle srcRegion = new Rectangle();
+        final Rectangle dstRegion = new Rectangle();
+        computeRegions(sparam, imageWidth, imageHeight, image, srcRegion, dstRegion);// calculer une region de l'image sur le fichier que l'on doit lire
         if (compression == 32773) {
             assert stripOffsets != null : "with compression 32773 (packbits) : image should be writen in strip offset use case.";
-            readFromStrip32773(raster, param, srcRegion, dstRegion);
+            readFromStrip32773(raster, sparam, srcRegion, dstRegion);
         } else if (compression == 5) {
             if (stripOffsets != null) {
-                readFromStripLZW(raster, param, srcRegion, dstRegion);
+                readFromStripLZW(raster, sparam, srcRegion, dstRegion);
             } else {
                 assert tileOffsets != null;
-                readFromTilesLZW(raster, param, srcRegion, dstRegion);
+                readFromTilesLZW(raster, sparam, srcRegion, dstRegion);
             }
         } else if (compression == 8) {
             if (stripOffsets != null) {
-                readFromStripDeflate(raster, param, srcRegion, dstRegion);
+                readFromStripDeflate(raster, sparam, srcRegion, dstRegion);
             } else {
                 assert tileOffsets != null;
-                readFromTilesDeflate(raster, param, srcRegion, dstRegion);
+                readFromTilesDeflate(raster, sparam, srcRegion, dstRegion);
             }
         } else {
             //-- by strips
             if (stripOffsets != null) {
-                readFromStrip(raster, param, srcRegion, dstRegion);
+                readFromStrip(raster, sparam, srcRegion, dstRegion);
             } else {
                 //-- by tiles
-                readFromTiles(raster, param, srcRegion, dstRegion);
+                readFromTiles(raster, sparam, srcRegion, dstRegion);
+            }
+        }
+
+        //apply source band selection
+        if (param != null) {
+            //{@link TiffimageReader} does not support param reader with setted source and destination band parameters.
+            //we apply it afterward
+            int[] sourceBands = param.getSourceBands();
+            int[] destinationBands = param.getDestinationBands();
+
+            if (sourceBands != null || destinationBands != null) {
+                final int nbBand = raster.getNumBands();
+
+                //set defaults if one parameter is null
+                if (sourceBands == null) {
+                    sourceBands = new int[nbBand];
+                    for (int i=0;i<sourceBands.length;i++) sourceBands[i] = i;
+                }
+                if (destinationBands == null) {
+                    destinationBands = new int[sourceBands.length];
+                    for (int i=0;i<destinationBands.length;i++) destinationBands[i] = i;
+                }
+
+                //check if given source and destination bands actually changes from
+                //original image model
+                boolean changed =  nbBand != samplesPerPixel
+                                || sourceBands.length != samplesPerPixel
+                                || destinationBands.length != samplesPerPixel;
+                for (int i=0;i<sourceBands.length;i++) {
+                    if (sourceBands[i] != i) {
+                        changed = true;
+                    }
+                }
+                for (int i=0;i<destinationBands.length;i++) {
+                    if (destinationBands[i] != i) {
+                        changed = true;
+                    }
+                }
+
+                if (changed) {
+                    //prepare image band select process parameters
+                    //find output size : max destination band index
+                    int outSize = 0;
+                    for (int i : destinationBands) outSize = Math.max(outSize, destinationBands[i]);
+
+                    final int[] indexes = new int[outSize];
+                    Arrays.fill(indexes, -1);
+                    for (int i=0;i<destinationBands.length;i++) {
+                        indexes[destinationBands[i]] = sourceBands[i];
+                    }
+
+                    try {
+                        final ProcessDescriptor descriptor = ProcessFinder.getProcessDescriptor("geotoolkit", "image:bandselect");
+                        final ParameterValueGroup inputs = descriptor.getInputDescriptor().createValue();
+                        inputs.parameter("image").setValue(image);
+                        inputs.parameter("bands").setValue(indexes);
+                        ParameterValueGroup result = descriptor.createProcess(inputs).call();
+                        image = (BufferedImage) result.parameter("result").getValue();
+                    } catch (NoSuchIdentifierException | ProcessException ex) {
+                        throw new IOException(ex.getMessage(), ex);
+                    }
+                }
             }
         }
 
