@@ -27,6 +27,8 @@ import org.opengis.coverage.Coverage;
 
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.Resource;
 
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -65,7 +67,10 @@ final class Reader extends GridCoverageReader {
 
     @Override
     public GridCoverage read(final int index, final GridCoverageReadParam param) throws CoverageStoreException {
-        final Envelope envelope = param.getEnvelope();
+        Envelope envelope = null;
+        if (param != null) {
+            envelope = param.getEnvelope();
+        }
         if (envelope == null) {
             throw new CoverageStoreException("Must specify an envelope.");
         }
@@ -78,8 +83,9 @@ final class Reader extends GridCoverageReader {
         }
         for (final GridCoverageReference c : coverages) {
             try (DataStore store = IO.store(c.getFormat(), c.getPath())) {
-                if (store instanceof CoverageResource) {
-                    CoverageReader reader = ((CoverageResource) store).acquireReader();
+                final CoverageResource r = resource(store);
+                if (r != null) {
+                    CoverageReader reader = r.acquireReader();
                     final Coverage coverage = reader.read(c.imageIndex, param);
                     reader.dispose();
                     if (coverage instanceof GridCoverage) {
@@ -91,6 +97,18 @@ final class Reader extends GridCoverageReader {
             } catch (DataStoreException e) {
                 throw new CatalogException(e);
             }
+        }
+        return null;
+    }
+
+    private static CoverageResource resource(final Resource resource) throws DataStoreException {
+        if (resource instanceof Aggregate) {
+            for (final Resource child : ((Aggregate) resource).components()) {
+                CoverageResource r = resource(child);
+                if (r != null) return r;
+            }
+        } else if (resource instanceof CoverageResource) {
+            return (CoverageResource) resource;
         }
         return null;
     }

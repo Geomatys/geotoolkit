@@ -154,11 +154,15 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                 statement = prepareStatement("SELECT \"identifier\" FROM " + SCHEMA + ".\"" + TABLE + '"'
                         + " WHERE \"width\" = ? AND \"height\" = ? AND \"scaleX\" = ? AND \"shearY\" = ? AND \"shearX\" = ?"
                         + " AND \"scaleY\" = ? AND \"translateX\" = ? AND \"translateY\" = ? AND \"srid\" = ?"
-                        + " AND \"additionalAxes\" = ?");
+                        + " AND \"additionalAxes\" IS NOT DISTINCT FROM ?");
+                /*
+                 * Use "IS NOT DISTINCT FROM" instead of "=" for the field where '?' may be NULL.
+                 * This is needed because expression like "A = NULL" always evaluate to 'false'.
+                 */
             } else {
                 statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\"("
-                        + "\"width\", \"height\", \"scaleX\", \"shearY\", \"shearX\", \"scaleY\""
-                        + "\"translateX\", \"translateY\", \"srid\", \"additionalAxes\""
+                        + "\"width\", \"height\", \"scaleX\", \"shearY\", \"shearX\", \"scaleY\", "
+                        + "\"translateX\", \"translateY\", \"srid\", \"additionalAxes\")"
                         + " VALUES (?,?,?,?,?,?,?,?,?,?)", "identifier");
             }
             final int trc = gridToCRS.getNumCol() - 1;

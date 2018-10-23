@@ -20,18 +20,28 @@ package org.geotoolkit.coverage.sql;
 import java.util.List;
 import java.sql.SQLException;
 import java.nio.file.Path;
-import org.apache.sis.coverage.grid.GridGeometry;
+import java.util.ArrayList;
 
 import org.opengis.util.FactoryException;
-import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.metadata.Metadata;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.operation.TransformException;
 
-import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStores;
+import org.apache.sis.storage.Resource;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.storage.MetadataBuilder;
+import org.apache.sis.metadata.iso.DefaultMetadata;
 
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.storage.coverage.CoverageUtilities;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.resources.Errors;
 
@@ -41,11 +51,11 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  */
-final class Product {
+public final class Product {
     /**
      * The name of this product.
      */
-    final String name;
+    private final String name;
 
     /**
      * Typical resolution in metres, or {@link Double#NaN} if unknown.
@@ -71,15 +81,8 @@ final class Product {
     /**
      * The domain for this product, or {@code null} if not yet computed.
      * Will be computed only when first needed.
-     *
-     * @see #getDomain()
      */
     private DomainOfProductTable.Entry domain;
-
-    /**
-     * The geographic bounding box. Will be computed when first needed.
-     */
-    private GeographicBoundingBox boundingBox;
 
     /**
      * The database that produced this entry.
@@ -110,74 +113,54 @@ final class Product {
     }
 
     /**
-     * Returns the domain of this product, or {@code null} if none.
+     * Creates metadata (potentially costly operation). Contains:
+     *
+     * <ul>
+     *   <li>A time range encompassing all coverages in this product.</li>
+     *   <li>The geographic bounding box. If the CRS used by the database is not geographic
+     *       (for example if it is a projected CRS), then this method will transform the product
+     *       envelope from the product CRS to a geographic CRS.
+     * </ul>
+     */
+    synchronized final DefaultMetadata createMetadata(final Transaction transaction) throws SQLException, TransformException {
+        ensureDomainIsKnown(transaction);
+        final MetadataBuilder md = new MetadataBuilder();
+        md.addIdentifier(null, name, MetadataBuilder.Scope.RESOURCE);
+        if (domain != null) {
+            md.addExtent(domain.bbox);
+            final DateRange dates = domain.timeRange;
+            if (dates != null) {
+                md.addTemporalExtent(dates.getMinValue(), dates.getMaxValue());
+            }
+        }
+        md.addResolution(spatialResolution);
+        md.addTemporalResolution(temporalResolution);
+        return md.build(true);
+    }
+
+    /**
+     * Ensures that the domain of this product is initialized.
      *
      * @throws SQLException if an error occurred while fetching the domain.
      */
-    private DomainOfProductTable.Entry getDomain() throws SQLException {
+    private void ensureDomainIsKnown(final Transaction transaction) throws SQLException {
         assert Thread.holdsLock(this);
         if (domain == null) {
-            try (Transaction t=database.transaction(); DomainOfProductTable d=new DomainOfProductTable(t)) {
+            try (DomainOfProductTable d = new DomainOfProductTable(transaction)) {
                 domain = d.query(name);
             }
         }
-        return domain;
     }
 
-    /**
-     * Returns a time range encompassing all coverages in this product, or {@code null} if none.
-     *
-     * @return the time range encompassing all coverages, or {@code null}.
-     * @throws CatalogException if an error occurred while fetching the time range.
-     */
-    public synchronized DateRange getTimeRange() throws CatalogException {
-        try {
-            return getDomain().timeRange;
-        } catch (SQLException e) {
-            throw new CatalogException(e);
-        }
-    }
-
-    /**
-     * Returns the geographic bounding box, or {@code null} if unknown. If the CRS used by
-     * the database is not geographic (for example if it is a projected CRS), then this method
-     * will transform the product envelope from the product CRS to a geographic CRS.
-     *
-     * @return the product geographic bounding box, or {@code null} if none.
-     * @throws CatalogException if an error occurred while querying the database
-     *         or while projecting the product envelope.
-     */
-    public synchronized GeographicBoundingBox getGeographicBoundingBox() throws CatalogException {
-        if (boundingBox == null) {
-            final DefaultGeographicBoundingBox bbox = new DefaultGeographicBoundingBox();
-            try {
-                bbox.setBounds(getDomain().bbox);
-            } catch (SQLException | TransformException e) {
-                throw new CatalogException(e);
-            }
-            bbox.transition(DefaultGeographicBoundingBox.State.FINAL);
-            boundingBox = bbox;
-        }
-        return boundingBox;
-    }
-
-    public synchronized GeneralGridGeometry getGridGeometry(final Transaction transaction) throws CoverageStoreException {
+    synchronized GeneralGridGeometry getGridGeometry(final Transaction transaction) throws SQLException, CatalogException {
         final List<GridGeometryEntry> geometries;
         try (final GridCoverageTable table = new GridCoverageTable(transaction)) {
             geometries = table.getGridGeometries(name);
-        } catch (SQLException e) {
-            throw new CatalogException(e);
         }
         if (geometries.isEmpty()) {
             return null;
         }
-        if (domain == null) {
-            try (DomainOfProductTable table=new DomainOfProductTable(transaction)) {
-                domain = table.query(name);
-            } catch (SQLException e) {
-                throw new CatalogException(e);
-            }
-        }
+        ensureDomainIsKnown(transaction);
         int index = 0;      // TODO: select the "best" geometry.
         final DateRange dates = domain.timeRange;
         return geometries.get(index).getGridGeometry((dates != null) ? dates.getMinValue() : null,
@@ -209,10 +192,10 @@ final class Product {
     /**
      * Adds new coverage references in the database.
      */
-    public void addCoverageReference(final Transaction transaction, final NewRaster... rasters) throws CatalogException {
+    void addCoverageReference(final Transaction transaction, final List<NewRaster> rasters) throws CatalogException {
         try (final GridCoverageTable table = new GridCoverageTable(transaction)) {
             for (final NewRaster r : rasters) {
-                table.add(name, name, r.path, r.geometry, r.imageIndex);
+                table.add(name, r.path, r.geometry, r.bands, r.metadata, r.imageIndex + 1);
             }
         } catch (SQLException | FactoryException | TransformException exception) {
             throw new CatalogException(exception);
@@ -220,8 +203,72 @@ final class Product {
     }
 
     static final class NewRaster {
-        Path path;
+        /**
+         * Path to the new file to add.
+         */
+        final Path path;
+
+        /**
+         * 0-based index of the image in the file.
+         */
+        final int imageIndex;
+
+        /**
+         * Grid geometry of the file to add.
+         */
         GridGeometry geometry;
-        int imageIndex;
+
+        /**
+         * Description of bands.
+         */
+        List<GridSampleDimension> bands;
+
+        /**
+         * Metadata, or {@code null} if none.
+         */
+        Metadata metadata;
+
+        /**
+         * Creates information about a new raster to be added to the catalog.
+         */
+        NewRaster(final Path file, final int index) {
+            this.path  = file;
+            imageIndex = index;
+        }
+
+        static List<NewRaster> list(final Path... files) throws DataStoreException {
+            final List<NewRaster> rasters = new ArrayList<>(files.length);
+            for (final Path file : files) {
+                try (final DataStore ds = DataStores.open(file)) {
+                    collect(file, ds, rasters, 0);
+                } catch (TransformException e) {
+                    throw new CatalogException(e);
+                }
+            }
+            return rasters;
+        }
+
+        private static void collect(final Path file, final Resource resource, final List<NewRaster> rasters, int index)
+                throws DataStoreException, TransformException
+        {
+            if (resource instanceof Aggregate) {
+                for (final Resource child : ((Aggregate) resource).components()) {
+                    collect(file, child, rasters, index++);
+                }
+            } else if (resource instanceof org.apache.sis.storage.GridCoverageResource) {
+                final NewRaster r = new NewRaster(file, index);
+                r.geometry = ((org.apache.sis.storage.GridCoverageResource) resource).getGridGeometry();
+                r.metadata = ((org.apache.sis.storage.GridCoverageResource) resource).getMetadata();
+                rasters.add(r);
+            } else if (resource instanceof GridCoverageResource) {
+                final NewRaster r = new NewRaster(file, index);
+                GridCoverageReader reader = ((GridCoverageResource) resource).acquireReader();
+                r.geometry = CoverageUtilities.toSIS(reader.getGridGeometry(r.imageIndex));
+                r.metadata = reader.getMetadata();
+                r.bands = reader.getSampleDimensions(r.imageIndex);
+                reader.dispose();
+                rasters.add(r);
+            }
+        }
     }
 }

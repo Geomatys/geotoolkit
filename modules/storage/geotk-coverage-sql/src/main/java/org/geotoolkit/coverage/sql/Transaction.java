@@ -37,18 +37,45 @@ final class Transaction implements AutoCloseable {
     final Connection connection;
 
     /**
+     * {@code true} if the transaction is adding or updating data.
+     */
+    private boolean writing;
+
+    /**
      * Creates a new instance.
      */
-    Transaction(final Database database, final Connection connection) {
+    Transaction(final Database database, final Connection connection){
         this.database   = database;
         this.connection = connection;
     }
 
     /**
-     * Closes the connection.
+     * Notifies that a writing process is about to begin.
+     */
+    final void writeStart() throws SQLException  {
+        connection.setAutoCommit(false);
+        writing = true;
+    }
+
+    /**
+     * Notifies that a writing process completed successfully.
+     */
+    final void writeEnd() throws SQLException  {
+        connection.commit();
+        connection.setAutoCommit(true);
+        writing = false;
+    }
+
+    /**
+     * Closes the connection. If a writing process {@linkplain #writeStart() started} but did not
+     * {@linkplain #writeEnd() ended}, then a rollback is done before to close the connection.
      */
     @Override
     public void close() throws SQLException {
+        if (writing) {
+            connection.rollback();
+            writing = false;
+        }
         connection.close();
     }
 }

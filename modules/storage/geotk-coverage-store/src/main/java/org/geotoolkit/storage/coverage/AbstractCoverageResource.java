@@ -23,7 +23,6 @@ import java.util.logging.Level;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.opengis.util.GenericName;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.metadata.iso.DefaultMetadata;
@@ -103,7 +102,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
 
     @Override
     public synchronized CoverageDescription getCoverageDescription() {
-        if(desc!=null) return desc;
+        if (desc!=null) return desc;
 
         //calculate image statistics
         try {
@@ -180,8 +179,6 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
     /**
      * Default recycle implementation.
      * Dispose the reader.
-     *
-     * @param reader
      */
     @Override
     public void recycle(CoverageReader reader) {
@@ -191,8 +188,6 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
     /**
      * Default recycle implementation.
      * Dispose the writer.
-     *
-     * @param writer
      */
     @Override
     public void recycle(CoverageWriter writer) {

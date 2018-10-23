@@ -45,7 +45,6 @@ import org.opengis.geometry.Envelope;
  * @module
  */
 public interface CoverageResource extends FeatureSet {
-
     /**
      * @return int image index in reader/writer.
      */
@@ -60,7 +59,6 @@ public interface CoverageResource extends FeatureSet {
 
     /**
      * @return true if coverage is writable
-     * @throws org.apache.sis.storage.DataStoreException
      */
     boolean isWritable() throws DataStoreException;
 
@@ -74,39 +72,27 @@ public interface CoverageResource extends FeatureSet {
     /**
      * Get a reader for this coverage.
      * When you have finished using it, return it using the recycle method.
-     *
-     * @return GridCoverageReader
-     * @throws CoverageStoreException
      */
     CoverageReader acquireReader() throws CoverageStoreException;
 
     /**
      * Get a writer for this coverage.
      * When you have finished using it, return it using the recycle method.
-     *
-     * @return GridCoverageWriter
-     * @throws CoverageStoreException
      */
     CoverageWriter acquireWriter() throws CoverageStoreException;
 
     /**
      * Return the used reader, they can be reused later.
-     *
-     * @param reader
      */
     void recycle(CoverageReader reader);
 
     /**
      * Return the used writer, they can be reused later.
-     *
-     * @param writer
      */
     void recycle(CoverageWriter writer);
 
     /**
      * Return the legend of this coverage
-     * @return
-     * @throws DataStoreException
      */
     Image getLegend() throws DataStoreException;
 
@@ -168,5 +154,4 @@ public interface CoverageResource extends FeatureSet {
             throw new DataStoreException("Unsupported readed, only GridCoverageReader instances are supported for now.");
         }
     }
-
 }

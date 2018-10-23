@@ -188,7 +188,7 @@ final class CategoryTable extends Table {
     public void insert(final String format, final List<List<Category>> categories) throws SQLException, IllegalUpdateException {
         final PreparedStatement statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\" ("
                 + "\"format\", \"band\", \"name\", \"lower\", \"upper\", \"scale\", \"offset\", \"function\", \"colors\")"
-                + " VALUES (?,?,?,?,?,?,?,?,?)");
+                + " VALUES (?,?,?,?,?,?,?,CAST(? AS metadata.\"TransferFunctionTypeCode\"),?)");
         statement.setString(1, format);
         int bandNumber = 0;
         for (final List<Category> list : categories) {
@@ -212,8 +212,8 @@ final class CategoryTable extends Table {
                         statement.setNull(8, Types.VARCHAR);
                     }
                 } else {
+                    statement.setNull(6, Types.DOUBLE);
                     statement.setNull(7, Types.DOUBLE);
-                    statement.setNull(8, Types.DOUBLE);
                     statement.setNull(8, Types.VARCHAR);
                 }
                 final String paletteName = getPaletteName(category.getColors());

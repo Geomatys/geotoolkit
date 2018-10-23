@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.sql.DataSource;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.NamedIdentifier;
@@ -45,6 +46,7 @@ import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
@@ -153,6 +155,26 @@ public final class DatabaseStore extends DataStore implements Aggregate {
         return parameters;
     }
 
+    public synchronized void addRaster(final String product, final AddOption option, final Path... files) throws DataStoreException {
+        final List<Product.NewRaster> rasters = Product.NewRaster.list(files);
+        try (Transaction transaction = database.transaction()) {
+            transaction.writeStart();
+            try (ProductTable table = new ProductTable(transaction)) {
+                if (option != AddOption.NO_CREATE) {
+                    if (!table.createIfAbsent(product) && option == AddOption.CREATE_NEW_PRODUCT) {
+                        throw new CatalogException("Product \"" + product + "\" already exists.");
+                    }
+                }
+                Product p = table.getEntry(product);
+                p.addCoverageReference(transaction, rasters);
+            }
+            transaction.writeEnd();
+        } catch (SQLException e) {
+            throw new CatalogException(e);
+        }
+        components = null;
+    }
+
     @Override
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public synchronized Collection<Resource> components() throws DataStoreException {
@@ -196,6 +218,15 @@ public final class DatabaseStore extends DataStore implements Aggregate {
 
         Raster(final DatabaseStore store, final String product) {
             super(store, new NamedIdentifier(null, product));
+        }
+
+        @Override
+        protected DefaultMetadata createMetadata() throws DataStoreException {
+            try (Transaction tr = transaction()) {
+                return product(tr).createMetadata(tr);
+            } catch (SQLException | TransformException e) {
+                throw new CatalogException(e);
+            }
         }
 
         @Override

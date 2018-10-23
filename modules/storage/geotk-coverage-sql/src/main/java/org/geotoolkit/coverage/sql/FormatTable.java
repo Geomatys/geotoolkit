@@ -42,6 +42,12 @@ final class FormatTable extends CachedTable<String,Format> {
     private static final String TABLE = "Formats";
 
     /**
+     * Maximum number of formats for the same name. Current algorithm is very inefficient
+     * for a large number of name collisions, so we are better to keep this limit small.
+     */
+    private static final int MAX_FORMATS = 100;
+
+    /**
      * The sample dimensions table.
      */
     private final SampleDimensionTable sampleDimensions;
@@ -72,8 +78,8 @@ final class FormatTable extends CachedTable<String,Format> {
      */
     @Override
     Format createEntry(final ResultSet results, final String identifier) throws SQLException, CatalogException {
-        final String  format     = results.getString (1);
-        final String  metadata   = results.getString (3);
+        final String  format   = results.getString(1);
+        final String  metadata = results.getString(2);
         SampleDimensionTable.Entry categories = sampleDimensions.query(identifier);
         final GridSampleDimension[] sampleDimensions;
         final String paletteName;
@@ -131,60 +137,63 @@ final class FormatTable extends CachedTable<String,Format> {
      */
     private String search(final String driver, final List<GridSampleDimension> bands) throws SQLException, CatalogException {
         final int numBands = size(bands);
-        final PreparedStatement statement = prepareStatement("SELECT \"name\" FROM " + SCHEMA + ".\"" + TABLE + " WHERE \"driver\" = ?");
-        statement.setString(1, driver);
-        try (final ResultSet results = statement.executeQuery()) {
-next:       while (results.next()) {
-                final String name = results.getString(1);
-                final Format candidate = getEntry(name);                               // May use the cache.
-                final List<GridSampleDimension> current = candidate.sampleDimensions;
-                if (size(current) != numBands) {
-                    // Number of band don't match: look for an other format.
-                    continue;
-                }
-                for (int i=0; i<numBands; i++) {
-                    final GridSampleDimension band1 = bands.get(i);
-                    final GridSampleDimension band2 = current.get(i);
-                    if (!Objects.equals(band1.getUnits(), band2.getUnits())) {
-                        // Units don't match for at least one band: look for an other format.
-                        continue next;
+        try (PreparedStatement statement = transaction.connection.prepareStatement(
+                "SELECT \"name\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"driver\" = ?"))
+        {
+            statement.setString(1, driver);
+            try (final ResultSet results = statement.executeQuery()) {
+next:           while (results.next()) {
+                    final String name = results.getString(1);
+                    final Format candidate = getEntry(name);                               // May use the cache.
+                    final List<GridSampleDimension> current = candidate.sampleDimensions;
+                    if (size(current) != numBands) {
+                        // Number of band don't match: look for an other format.
+                        continue;
                     }
-                    final List<Category> categories1 = band1.getCategories();
-                    final List<Category> categories2 = band2.getCategories();
-                    final int numCategories = size(categories1);
-                    if (size(categories2) != numCategories) {
-                        // Number of category don't match in at least one band: look for an other format.
-                        continue next;
-                    }
-                    for (int j=0; j<numCategories; j++) {
-                        Category category1 = categories1.get(j);
-                        Category category2 = categories2.get(j);
-                        /*
-                         * Converts the two categories to non-geophysics categories.
-                         * If we detect in this process that one category is geophysics
-                         * while the other is not, consider that we don't have a match.
-                         */
-                        if ((category1 == (category1 = category1.geophysics(false))) !=
-                            (category2 == (category2 = category2.geophysics(false))))
-                        {
+                    for (int i=0; i<numBands; i++) {
+                        final GridSampleDimension band1 = bands.get(i);
+                        final GridSampleDimension band2 = current.get(i);
+                        if (!Objects.equals(band1.getUnits(), band2.getUnits())) {
+                            // Units don't match for at least one band: look for an other format.
                             continue next;
                         }
-                        /*
-                         * Compares the sample value range (not the geophysics one) because
-                         * the former is definitive in the database. However do not convert
-                         * to geophysics categories when comparing the transforms,  because
-                         * we want to differentiate "geophysics" views from the packed ones
-                         * (the former have identity transforms).
-                         */
-                        if (!Objects.equals(getRange(category1), getRange(category2)) ||
-                            !Objects.equals(category1.getSampleToGeophysics(),
-                                            category2.getSampleToGeophysics()))
-                        {
+                        final List<Category> categories1 = band1.getCategories();
+                        final List<Category> categories2 = band2.getCategories();
+                        final int numCategories = size(categories1);
+                        if (size(categories2) != numCategories) {
+                            // Number of category don't match in at least one band: look for an other format.
                             continue next;
                         }
+                        for (int j=0; j<numCategories; j++) {
+                            Category category1 = categories1.get(j);
+                            Category category2 = categories2.get(j);
+                            /*
+                             * Converts the two categories to non-geophysics categories.
+                             * If we detect in this process that one category is geophysics
+                             * while the other is not, consider that we don't have a match.
+                             */
+                            if ((category1 == (category1 = category1.geophysics(false))) !=
+                                (category2 == (category2 = category2.geophysics(false))))
+                            {
+                                continue next;
+                            }
+                            /*
+                             * Compares the sample value range (not the geophysics one) because
+                             * the former is definitive in the database. However do not convert
+                             * to geophysics categories when comparing the transforms,  because
+                             * we want to differentiate "geophysics" views from the packed ones
+                             * (the former have identity transforms).
+                             */
+                            if (!Objects.equals(getRange(category1), getRange(category2)) ||
+                                !Objects.equals(category1.getSampleToGeophysics(),
+                                                category2.getSampleToGeophysics()))
+                            {
+                                continue next;
+                            }
+                        }
                     }
+                    return name;
                 }
-                return name;
             }
         }
         return null;
@@ -201,7 +210,7 @@ next:       while (results.next()) {
      * @return the format name.
      * @throws SQLException if an error occurred while writing to the database.
      */
-    public String findOrCreate(final String name, final String driver, final List<GridSampleDimension> bands)
+    public String findOrCreate(String name, final String driver, final List<GridSampleDimension> bands)
             throws SQLException, CatalogException
     {
         String existing = search(driver, bands);
@@ -209,18 +218,32 @@ next:       while (results.next()) {
             return existing;
         }
         /*
-         * TODO:
-         *   - infer a name automatically if 'name' is null.
-         *   - verify if there is a name collision.
+         * Attempt to insert a new record may cause a name collision.
+         * Following algorithm is inefficient, but should be okay if
+         * there is few formats for the same product.
          */
-        final PreparedStatement statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\" ("
-                + "\"name\", \"driver\") VALUES (?,?)");
-        statement.setString(1, name);
+        final PreparedStatement statement = prepareStatement("INSERT INTO " +
+                SCHEMA + ".\"" + TABLE + "\" (\"name\",\"driver\") VALUES (?,?) ON CONFLICT (\"name\") DO NOTHING");
         statement.setString(2, driver);
-        if (statement.executeUpdate() != 0 && !bands.isEmpty()) {
-            sampleDimensions.insert(name, bands);
+        StringBuilder buffer = null;
+        for (int n=2; ; n++) {
+            statement.setString(1, name);
+            if (statement.executeUpdate() != 0) {
+                if (!bands.isEmpty()) {
+                    sampleDimensions.insert(name, bands);
+                }
+                return name;
+            }
+            if (n >= MAX_FORMATS) {
+                throw new CatalogException("Rows already exist for all names up to \"" + name + "\".");
+            }
+            if (buffer == null) {
+                buffer = new StringBuilder(name).append('-');
+            }
+            final int s = buffer.length();
+            name = buffer.append(n).toString();
+            buffer.setLength(s);
         }
-        return name;
     }
 
     /**

@@ -54,7 +54,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  */
 public final class DataStores extends Static {
-
     /**
      * Do not allow instantiation of this class.
      */
@@ -67,7 +66,6 @@ public final class DataStores extends Static {
      * @param root Root resource to explore
      * @param includeRoot include the root in the stream
      * @return Collection of all resources
-     * @throws DataStoreException
      */
     public static Collection<? extends Resource> flatten(Resource root, boolean includeRoot) throws DataStoreException {
         return flatten(root, includeRoot, null);
@@ -76,12 +74,10 @@ public final class DataStores extends Static {
     /**
      * List all resources in given resource.
      *
-     * @param <T>
      * @param root Root resource to explore
      * @param includeRoot include the root in the stream
      * @param resourceClass class of searched resources
      * @return Collection of all resources
-     * @throws DataStoreException
      */
     public static <T extends Resource> Collection<T> flatten(Resource root, boolean includeRoot, Class<T> resourceClass) throws DataStoreException {
         if (resourceClass == null) {
@@ -113,7 +109,6 @@ public final class DataStores extends Static {
     /**
      * Extract the {@link ResourceType} supported by the {@link DataStoreProvider}.
      *
-     * @param provider
      * @return supported resource types, never null, can be empty
      */
     public static ResourceType[] getResourceTypes(DataStoreProvider provider) {
@@ -293,9 +288,6 @@ public final class DataStores extends Static {
     }
 
     /**
-     * @param params
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
      * @see DataStoreFactory#create(org.opengis.parameter.ParameterValueGroup)
      */
     public static DataStore create(DataStoreFactory factory, Map<String, ? extends Serializable> params) throws DataStoreException {
@@ -336,10 +328,10 @@ public final class DataStores extends Static {
         try{
             final String expectedId = ((ParameterDescriptor<String>)factory.getOpenParameters()
                 .descriptor(DataStoreFactory.IDENTIFIER.getName().getCode())).getDefaultValue();
-            if(!expectedId.equals(id)){
+            if (!expectedId.equals(id)) {
                 return false;
             }
-        }catch(ParameterNotFoundException ex){
+        } catch(ParameterNotFoundException ex) {
             //this feature store factory does not declare a identifier id
         }
 
@@ -368,5 +360,4 @@ public final class DataStores extends Static {
         }
         return params;
     }
-
 }

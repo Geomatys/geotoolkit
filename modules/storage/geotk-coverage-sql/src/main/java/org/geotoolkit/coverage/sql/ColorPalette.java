@@ -36,7 +36,6 @@ import org.geotoolkit.image.palette.PaletteFactory;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
-
 /**
  * The name of a color palette, as an item to be provided in a {@link javax.swing.JComboBox}.
  * The ARGB colors are loaded when first needed and cached for future reuse.

@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Point;
@@ -29,6 +28,7 @@ import java.util.logging.Logger;
 
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.math.XMath;
+
 
 /**
  *
@@ -134,15 +134,10 @@ public abstract class AbstractRenderedImage implements RenderedImage {
     /**
      * Get the tile column and row position for a pixel.
      * Return value can be out of the gridSize
-     *
-     * @param x
-     * @param y
-     * @return
      */
     protected Point getPositionOf(int x, int y){
         final int posX = (int)(Math.floor(x/this.getTileWidth()));
         final int posY = (int)(Math.floor(y/this.getTileHeight()));
         return new Point(posX, posY);
     }
-
 }

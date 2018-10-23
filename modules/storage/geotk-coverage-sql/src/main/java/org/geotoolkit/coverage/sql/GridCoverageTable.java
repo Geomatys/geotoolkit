@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.Types;
 import java.nio.file.Path;
+import java.util.Date;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
@@ -36,6 +37,21 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.measure.Range;
+import org.apache.sis.metadata.iso.citation.Citations;
+import org.apache.sis.metadata.iso.extent.Extents;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
+import org.apache.sis.util.ComparisonMode;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.Metadata;
+import org.opengis.metadata.extent.Extent;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.util.FactoryException;
 
@@ -111,9 +127,9 @@ final class GridCoverageTable extends Table {
     {
         final PreparedStatement statement = prepareStatement("SELECT \"series\", \"filename\", \"index\","
                 + " \"startTime\", \"endTime\", \"grid\" FROM " + SCHEMA + ".\"" + TABLE + "\""
-                + " INNER JOIN " + SCHEMA + ".\"" + SeriesTable.TABLE + "\" ON (\"series\" = \"" + SeriesTable.TABLE + "\".\"identifier\"\")"
+                + " INNER JOIN " + SCHEMA + ".\"" + SeriesTable.TABLE + "\" ON (\"series\" = \"" + SeriesTable.TABLE + "\".\"identifier\")"
                 + " INNER JOIN " + SCHEMA + ".\"" + GridGeometryTable.TABLE + "\" ON (\"grid\" = \"" + GridGeometryTable.TABLE + "\".\"identifier\")"
-                + " WHERE \"product\" = ? AND \"endTime\" > ? AND \"startTime\" <= ? AND ST_Intersects(extent, ?::geometry)");
+                + " WHERE \"product\" = ? AND \"startTime\" <= ? AND \"endTime\" > ? AND ST_Intersects(extent, ST_GeomFromText(?,4326))");
 
         final Envelope normalized = Envelopes.transform(areaOfInterest, transaction.database.spatioTemporalCRS);
         final DefaultTemporalCRS temporalCRS = transaction.database.temporalCRS;
@@ -155,28 +171,30 @@ final class GridCoverageTable extends Table {
      * @param  directory  the path relative to the root directory, or the base URL.
      * @param  filename   the raster filename without its extension.
      * @param  extension  the file extension, or {@code null} or empty if none.
+     * @param  imageIndex 1-based index of the image.
      * @return the identifier of a matching entry (never {@code null}).
      * @throws SQLException if an error occurred while reading from or writing to the database.
      *
      * @todo missing {@code "additionalAxes"}.
      */
     private void add(final String product, final String format, String directory, final String filename, final String extension,
-            final int imageIndex, final long width, final long height, final Matrix gridToCRS,
+            final int imageIndex, final long width, final long height, final Matrix gridToCRS, final int srid,
             final Timestamp startTime, final Timestamp endTime) throws SQLException, IllegalUpdateException
     {
         if (directory == null) {
             directory = ".";
         }
         final int series = seriesTable.findOrCreate(product, directory, extension, format);
-        final int grid = gridGeometries.findOrCreate(width, height, gridToCRS, series, null);
+        final int grid = gridGeometries.findOrCreate(width, height, gridToCRS, srid, null);
         final PreparedStatement statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\"("
-                    + "\"series\", \"filename\", \"index\", \"startTime\", \"endTime\", \"grid\" VALUES (?,?,?,?,?,?)");
+                    + "\"series\", \"filename\", \"index\", \"startTime\", \"endTime\", \"grid\") VALUES (?,?,?,?,?,?)");
 
+        final Calendar calendar = newCalendar();
         statement.setInt   (1, series);
         statement.setString(2, filename);
         statement.setInt   (3, imageIndex);
-        if (startTime != null) statement.setTimestamp(4, startTime); else statement.setNull(4, Types.TIMESTAMP);
-        if (endTime   != null) statement.setTimestamp(5, endTime);   else statement.setNull(5, Types.TIMESTAMP);
+        if (startTime != null) statement.setTimestamp(4, startTime, calendar); else statement.setNull(4, Types.TIMESTAMP);
+        if (endTime   != null) statement.setTimestamp(5, endTime,   calendar); else statement.setNull(5, Types.TIMESTAMP);
         statement.setInt(6, grid);
         if (statement.executeUpdate() != 1) {
             throw new IllegalUpdateException("Can not add the coverage.");      // Should never happen (paranoiac check).
@@ -185,9 +203,12 @@ final class GridCoverageTable extends Table {
 
     /**
      * Adds a coverage having the specified grid geometry.
+     *
+     * @param  imageIndex 1-based index of the image.
      */
-    public void add(final String product, final String format, Path path, final GridGeometry geometry, final int imageIndex)
-            throws SQLException, FactoryException, TransformException, IllegalUpdateException
+    final void add(final String product, Path path, final GridGeometry geometry,
+            final List<GridSampleDimension> bands, final Metadata metadata, final int imageIndex)
+            throws SQLException, FactoryException, TransformException, IllegalUpdateException, CatalogException
     {
         if (path.isAbsolute()) {
             path = transaction.database.root.relativize(path);
@@ -202,14 +223,67 @@ final class GridCoverageTable extends Table {
         }
         final GridExtent extent = geometry.getExtent();
         final DefaultTemporalCRS temporalCRS = transaction.database.temporalCRS;
-        final Envelope time = Envelopes.transform(geometry.getEnvelope(), temporalCRS);
-        final long tMin = temporalCRS.toDate(time.getMinimum(0)).getTime();
-        final long tMax = temporalCRS.toDate(time.getMaximum(0)).getTime();
+        long tMin = Long.MIN_VALUE, tMax = Long.MIN_VALUE;
+        CoordinateReferenceSystem crs = geometry.getCoordinateReferenceSystem();
+        if (CRS.getTemporalComponent(crs) != null) {
+            final Envelope time = Envelopes.transform(geometry.getEnvelope(), temporalCRS);
+            if (time != null) {
+                Date t;
+                if ((t = temporalCRS.toDate(time.getMinimum(0))) != null) tMin = t.getTime();
+                if ((t = temporalCRS.toDate(time.getMaximum(0))) != null) tMax = t.getTime();
+            }
+        }
+        if (tMax == Long.MIN_VALUE && metadata != null) {
+search:     for (Identification info : metadata.getIdentificationInfo()) {
+                for (Extent ex : info.getExtents()) {
+                    Range<Date> tr = Extents.getTimeRange(ex);
+                    if (tr != null) {
+                        Date start = tr.getMinValue();
+                        Date end   = tr.getMaxValue();
+                        if (start != null && end != null) {
+                            tMin = start.getTime();
+                            tMax = end  .getTime();
+                            break search;
+                        }
+                    }
+                }
+            }
+        }
+        if (tMax == Long.MIN_VALUE) {
+            throw new IllegalUpdateException("Date not found.");
+        }
         final TransformSeparator sep = new TransformSeparator(geometry.getGridToCRS(PixelInCell.CELL_CORNER));
         sep.addSourceDimensionRange(0, 2);
         final Matrix gridToCRS = MathTransforms.getMatrix(sep.separate());
+        /*
+         * TODO: replace following code by something looking in spatialref table.
+         */
+        crs = CRS.getHorizontalComponent(crs);
+        final IdentifiedObjectFinder finder = IdentifiedObjects.newFinder("EPSG");
+        finder.setIgnoringAxes(true);
+        final AbstractCRS c = AbstractCRS.castOrCopy((CoordinateReferenceSystem) finder.findSingleton(crs));
+        Integer srid = null;
+        if (c != null && c.forConvention(AxesConvention.NORMALIZED).equals(crs, ComparisonMode.APPROXIMATIVE)) {
+            Identifier id = IdentifiedObjects.getIdentifier(c, Citations.EPSG);
+            if (id != null) try {
+                srid = Integer.valueOf(id.getCode());
+            } catch (NumberFormatException e) {
+                throw new IllegalUpdateException("Illegal SRID.");
+            }
+        }
+        if (srid == null) {
+            /*
+             * Temporary hack for Coriolis data (to be removed in a future version).
+             */
+            if (IdentifiedObjects.isHeuristicMatchForName(crs, "Mercator_1SP (Unspecified datum based upon the GRS 1980 Authalic Sphere)")) {
+                srid = 3395;
+            } else {
+                throw new IllegalUpdateException("SRID not found.");
+            }
+        }
+        final String format = seriesTable.formats.findOrCreate(product, "NetCDF", bands);
         add(product, format, (path != null) ? path.toString() : ".", filename, extension, imageIndex,
-            extent.getSize(0), extent.getSize(1), gridToCRS, new Timestamp(tMin), new Timestamp(tMax));
+            extent.getSize(0), extent.getSize(1), gridToCRS, srid, new Timestamp(tMin), new Timestamp(tMax));
     }
 
     /**

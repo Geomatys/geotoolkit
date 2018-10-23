@@ -114,7 +114,7 @@ final class SeriesTable extends CachedTable<Integer, SeriesTable.Entry> {
     /**
      * The table to use for fetching information about formats.
      */
-    private final FormatTable formats;
+    final FormatTable formats;
 
     /**
      * Creates a series table.
@@ -173,10 +173,10 @@ final class SeriesTable extends CachedTable<Integer, SeriesTable.Entry> {
             final PreparedStatement statement;
             if (!insert) {
                 statement = prepareStatement("SELECT \"identifier\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE "
-                        + "\"product\"=? AND \"directory\"=? AND \"extension\"=? AND \"format\"=?");
+                        + "\"product\"=? AND \"directory\"=? AND \"extension\" IS NOT DISTINCT FROM ? AND \"format\"=?");
             } else {
                 statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\"("
-                        + "\"product\", \"directory\", \"extension\", \"format\" VALUES (?,?,?,?)", "identifier");
+                        + "\"product\", \"directory\", \"extension\", \"format\") VALUES (?,?,?,?)", "identifier");
             }
             statement.setString(1, product);
             statement.setString(2, directory);

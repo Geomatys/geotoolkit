@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.coverage;
 
 import java.io.IOException;
@@ -32,18 +31,16 @@ import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
-import org.opengis.coverage.grid.GridNotEditableException;
 import org.opengis.coverage.grid.GridPacking;
 import org.opengis.coverage.grid.GridRange;
-import org.opengis.coverage.grid.InvalidRangeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
 
+
 /**
  * Subclass of CoverageStack for regular grid ND coverage.
- *
  *
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
@@ -53,31 +50,34 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
     private GridGeometry gridGeometry = null;
 
     public GridCoverageStack(CharSequence name, final Collection<? extends GridCoverage> coverages)
-            throws IOException, TransformException, FactoryException {
+            throws IOException, TransformException, FactoryException
+    {
         super(name, coverages);
         buildGridGeometry();
     }
 
     public GridCoverageStack(CharSequence name, final Collection<? extends GridCoverage> coverages, Integer zDimension)
-            throws IOException, TransformException, FactoryException {
+            throws IOException, TransformException, FactoryException
+    {
         super(name, coverages, zDimension);
         buildGridGeometry();
     }
 
     public GridCoverageStack(CharSequence name, final CoordinateReferenceSystem crs, final Collection<? extends Element> elements)
-            throws IOException, TransformException, FactoryException {
+            throws IOException, TransformException, FactoryException
+    {
         super(name, crs, elements);
         buildGridGeometry();
     }
 
     public GridCoverageStack(CharSequence name, final CoordinateReferenceSystem crs, final Collection<? extends Element> elements, Integer zDimension)
-            throws IOException, TransformException, FactoryException {
+            throws IOException, TransformException, FactoryException
+    {
         super(name, crs, elements, zDimension);
         buildGridGeometry();
     }
 
-    private void buildGridGeometry() throws IOException, TransformException, FactoryException{
-
+    private void buildGridGeometry() throws IOException, TransformException, FactoryException {
         final Element[] elements = getElements();
         final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
         final int nbDim = crs.getCoordinateSystem().getDimension();
@@ -209,82 +209,82 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
     }
 
     @Override
-    public GridGeometry getOverviewGridGeometry(int index) throws IndexOutOfBoundsException {
+    public GridGeometry getOverviewGridGeometry(int index) {
         throw new IndexOutOfBoundsException("No overviews available");
     }
 
     @Override
-    public GridCoverage getOverview(int index) throws IndexOutOfBoundsException {
+    public GridCoverage getOverview(int index) {
         throw new IndexOutOfBoundsException("No overviews available");
     }
 
     @Override
     public List<GridCoverage> getSources() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
-    public boolean[] getDataBlock(GridRange range, boolean[] destination) throws InvalidRangeException, ArrayIndexOutOfBoundsException {
+    public boolean[] getDataBlock(GridRange range, boolean[] destination) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    public byte[] getDataBlock(GridRange range, byte[] destination) throws InvalidRangeException, ArrayIndexOutOfBoundsException {
+    public byte[] getDataBlock(GridRange range, byte[] destination) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    public short[] getDataBlock(GridRange range, short[] destination) throws InvalidRangeException, ArrayIndexOutOfBoundsException {
+    public short[] getDataBlock(GridRange range, short[] destination) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    public int[] getDataBlock(GridRange range, int[] destination) throws InvalidRangeException, ArrayIndexOutOfBoundsException {
+    public int[] getDataBlock(GridRange range, int[] destination) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    public float[] getDataBlock(GridRange range, float[] destination) throws InvalidRangeException, ArrayIndexOutOfBoundsException {
+    public float[] getDataBlock(GridRange range, float[] destination) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    public double[] getDataBlock(GridRange range, double[] destination) throws InvalidRangeException, ArrayIndexOutOfBoundsException {
+    public double[] getDataBlock(GridRange range, double[] destination) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    public byte[] getPackedDataBlock(GridRange range) throws InvalidRangeException {
+    public byte[] getPackedDataBlock(GridRange range) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    public void setDataBlock(GridRange range, boolean[] values) throws InvalidRangeException, GridNotEditableException, ArrayIndexOutOfBoundsException {
+    public void setDataBlock(GridRange range, boolean[] values) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    public void setDataBlock(GridRange range, byte[] values) throws InvalidRangeException, GridNotEditableException, ArrayIndexOutOfBoundsException {
+    public void setDataBlock(GridRange range, byte[] values) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    public void setDataBlock(GridRange range, short[] values) throws InvalidRangeException, GridNotEditableException, ArrayIndexOutOfBoundsException {
+    public void setDataBlock(GridRange range, short[] values) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    public void setDataBlock(GridRange range, int[] values) throws InvalidRangeException, GridNotEditableException, ArrayIndexOutOfBoundsException {
+    public void setDataBlock(GridRange range, int[] values) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    public void setDataBlock(GridRange range, float[] values) throws InvalidRangeException, GridNotEditableException, ArrayIndexOutOfBoundsException {
+    public void setDataBlock(GridRange range, float[] values) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    public void setDataBlock(GridRange range, double[] values) throws InvalidRangeException, GridNotEditableException, ArrayIndexOutOfBoundsException {
+    public void setDataBlock(GridRange range, double[] values) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

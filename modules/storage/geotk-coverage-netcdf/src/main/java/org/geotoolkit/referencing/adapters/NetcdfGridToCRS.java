@@ -305,10 +305,13 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
                 break;
             }
             final CoordinateAxis1D netcdfAxis = (CoordinateAxis1D) axis.axis;
-            final double scale = netcdfAxis.getIncrement();
+            double scale = netcdfAxis.getIncrement();
             if (Double.isNaN(scale) || scale == 0) {
-                matrix = null;
-                break;
+                if (netcdfAxis.getSize() != 1) {
+                    matrix = null;
+                    break;
+                }
+                scale = 1;
             }
             if (matrix == null) {
                 matrix = Matrices.createZero(targetDim+1, sourceDim+1);
@@ -321,7 +324,7 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
                     break; // 'domain' is not expected to contain duplicated values.
                 }
             }
-            final double translate = netcdfAxis.getStart();
+            final double translate = netcdfAxis.getCoordValue(0);
             matrix.setElement(j, sourceDim, nice(translate));
         }
         if (matrix != null) {

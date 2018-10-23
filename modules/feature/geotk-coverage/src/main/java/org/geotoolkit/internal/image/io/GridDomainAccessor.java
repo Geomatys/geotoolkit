@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal.image.io;
 
+import java.util.Date;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
@@ -29,14 +30,21 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.datum.PixelInCell;
 
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
+import org.apache.sis.coverage.grid.PixelTranslation;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
-import org.apache.sis.coverage.grid.PixelTranslation;
+import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.resources.Errors;
 
@@ -60,7 +68,6 @@ import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingErro
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
  *
  * @since 3.06
  * @module
@@ -150,6 +157,33 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
                 try {
                     gridToCRS.transform(center, 0, center, 0, 1);
                     center = fixRoundingError(ArraysExt.resize(center, crsDimension));
+                    for (int i=0; i<center.length; i++) {
+                        if (Double.isNaN(center[i])) {
+                            CoordinateReferenceSystem crs;
+                            if (geometry instanceof GeneralGridGeometry) {
+                                crs = ((GeneralGridGeometry) geometry).getCoordinateReferenceSystem();
+                            } else if (geometry instanceof CoordinateReferenceSystem) {
+                                crs = (CoordinateReferenceSystem) geometry;
+                            } else {
+                                continue;
+                            }
+                            CoordinateSystemAxis axis = crs.getCoordinateSystem().getAxis(i);
+                            if (axis instanceof DiscreteCoordinateSystemAxis<?>) {
+                                final int c = (lower[i] + upper[i]) / 2;            // TODO: may not be the right index.
+                                if (c >= 0 && c < ((DiscreteCoordinateSystemAxis<?>) axis).length()) {
+                                    Comparable<?> value = ((DiscreteCoordinateSystemAxis<?>) axis).getOrdinateAt(c);
+                                    if (value instanceof Number) {
+                                        center[i] = ((Number) value).doubleValue();
+                                    } else if (value instanceof Date) {
+                                        crs = CRS.getComponentAt(crs, i, i+1);
+                                        if (crs instanceof TemporalCRS) {
+                                            center[i] = DefaultTemporalCRS.castOrCopy((TemporalCRS) crs).toValue((Date) value);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     setSpatialRepresentation(center, cellGeometry, PixelTranslation.getPixelOrientation(pixelInCell));
                 } catch (TransformException e) {
                     // Should not happen. If it happen anyway, this is not a fatal error.

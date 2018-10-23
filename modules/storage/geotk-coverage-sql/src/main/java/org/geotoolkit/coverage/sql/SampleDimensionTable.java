@@ -215,8 +215,7 @@ final class SampleDimensionTable extends Table {
      */
     public void insert(final String format, final List<GridSampleDimension> bands) throws SQLException, IllegalUpdateException {
         final PreparedStatement statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\" ("
-                + "\"format\", \"band\", \"identifier\", \"units\", \"isPacked\")"
-                + " VALUES (?,?,?,?,?,?,?,?,?)");
+                + "\"format\", \"band\", \"identifier\", \"units\", \"isPacked\") VALUES (?,?,?,?,?)");
         statement.setString(1, format);
         final List<List<Category>> categories = new ArrayList<>(bands.size());
         boolean areAllEmpty = true;

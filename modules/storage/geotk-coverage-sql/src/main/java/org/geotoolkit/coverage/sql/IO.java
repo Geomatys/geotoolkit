@@ -36,22 +36,13 @@ final class IO {
     private IO() {
     }
 
-    /**
-     * Lists all providers.
-     */
-    public static void main(String[] args) {
-        for (DataStoreProvider provider : DataStores.providers()) {
-            System.out.println(provider.getShortName());
-        }
-    }
-
     static DataStore store(final String format, final Path path) throws DataStoreException {
         for (DataStoreProvider provider : DataStores.providers()) {
-            if (format.equals(provider.getShortName())) {
+            if (format.equalsIgnoreCase(provider.getShortName())) {
                 provider.open(new StorageConnector(path));
             }
         }
-        throw new CatalogException("Unsupported format: " + format);
+        return DataStores.open(path);
     }
 
     static GridCoverage2D read(final String format, final Path path) throws DataStoreException {

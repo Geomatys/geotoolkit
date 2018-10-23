@@ -88,7 +88,7 @@ final class DomainOfProductTable extends Table {
     }
 
     /**
-     * Returns the domain of the given product.
+     * Returns the domain of the given product, or {@code null} if none.
      */
     public Entry query(final String product) throws SQLException {
         Entry entry = null;
