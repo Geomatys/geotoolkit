@@ -23,18 +23,18 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.util.Hashtable;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.image.reformat.ReformatProcess;
-import org.opengis.parameter.ParameterValueGroup;
-import static org.geotoolkit.processing.image.bandselect.BandSelectDescriptor.*;
-
 import org.apache.sis.util.ArgumentChecks;
+import static org.geotoolkit.image.BufferedImages.createGrayScaleColorModel;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PhotometricInterpretation;
 import org.geotoolkit.image.internal.SampleType;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.AbstractProcess;
+import static org.geotoolkit.processing.image.bandselect.BandSelectDescriptor.*;
+import org.geotoolkit.processing.image.reformat.ReformatProcess;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
@@ -78,10 +78,18 @@ public class BandSelectProcess extends AbstractProcess {
         }
 
         //-- study Color Model
-        final SampleType st                = SampleType.valueOf(inputImage.getSampleModel().getDataType());
+        final int dataType = inputImage.getSampleModel().getDataType();
+        final SampleType st     = SampleType.valueOf(inputImage.getSampleModel().getDataType());
         //-- if we choose only one band grayScale else RGB
         final PhotometricInterpretation pI = (bands.length == 1) ? PhotometricInterpretation.GRAYSCALE : PhotometricInterpretation.RGB;
-        final ColorModel outCm             = ImageUtils.createColorModel(st, bands.length, pI, false, false, null);
+        ColorModel outCm = null;
+        try {
+            outCm = ImageUtils.createColorModel(st, bands.length, pI, false, false, null);
+        } catch (Exception ex) {
+            //various exceptions may happen here, RGB color model compatibility is obscur
+            //fallback on grayscale
+            outCm = createGrayScaleColorModel(dataType,nbBand,0,0,1);
+        }
 
         final BufferedImage resultImage    = new BufferedImage(outCm, raster, false, new Hashtable<>());
 
@@ -104,10 +112,12 @@ public class BandSelectProcess extends AbstractProcess {
             }
 
             //write target pixels
-            writeIte.setSampleDouble(pixel[bands[trgBandIdx]]);
+            int tidx = bands[trgBandIdx];
+            if (tidx != -1) writeIte.setSampleDouble(pixel[tidx]);
             while (++trgBandIdx != bands.length) {
                 writeIte.next();
-                writeIte.setSampleDouble(pixel[bands[trgBandIdx]]);
+                tidx = bands[trgBandIdx];
+                if (tidx != -1) writeIte.setSampleDouble(pixel[tidx]);
             }
         }
 

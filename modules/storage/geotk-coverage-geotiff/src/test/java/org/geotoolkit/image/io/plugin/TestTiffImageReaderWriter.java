@@ -32,7 +32,6 @@ import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Random;
-
 import javax.imageio.IIOParam;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -42,22 +41,19 @@ import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-
 import org.apache.sis.test.TestUtilities;
-
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PhotometricInterpretation;
 import org.geotoolkit.image.internal.PlanarConfiguration;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
+import static org.geotoolkit.image.io.plugin.ImageOrientation.*;
 import org.geotoolkit.image.iterator.*;
 import org.geotoolkit.nio.IOUtilities;
 import org.junit.After;
-import org.junit.Test;
-
 import static org.junit.Assert.*;
-import static org.geotoolkit.image.io.plugin.ImageOrientation.*;
+import org.junit.Test;
 
 /**
  * Primary test class to test {@link TiffImageWriter} and {@link TiffImageReader}. <br/><br/>
@@ -545,6 +541,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
                 final String messageType = messageSize + "\n Writer output : "+type.getCanonicalName()
                         + "\n Reader input : "+fileTest.getClass().getCanonicalName()+"."
                         + "\n Cause : "+e.getMessage();
+                e.printStackTrace();
                 fail(messageType);
             }
         }
