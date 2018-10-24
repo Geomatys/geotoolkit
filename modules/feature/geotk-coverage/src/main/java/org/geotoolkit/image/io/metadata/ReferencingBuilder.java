@@ -181,7 +181,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      */
     private ReferencingFactoryContainer factories() {
         if (factories == null) {
-            factories = ReferencingFactoryContainer.instance(null);
+            factories = ReferencingFactoryContainer.instance();
         }
         return factories;
     }

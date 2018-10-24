@@ -37,8 +37,6 @@ import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.FactoryRegistry;
-import org.geotoolkit.factory.DynamicFactoryRegistry;
 import org.geotoolkit.internal.referencing.Identifier3D;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.internal.metadata.VerticalDatumTypes;
@@ -89,10 +87,7 @@ import static org.geotoolkit.internal.FactoryUtilities.addImplementationHints;
 public class ReferencingFactoryContainer extends org.geotoolkit.factory.Factory implements Factory {
     // "ReferencingFactoryContainer" name is LGPL.
 
-    /**
-     * A factory registry used as a cache for factory groups created up to date.
-     */
-    private static FactoryRegistry cache;
+    private static ReferencingFactoryContainer cache;
 
     /**
      * The {@linkplain Datum datum} factory.
@@ -125,32 +120,11 @@ public class ReferencingFactoryContainer extends org.geotoolkit.factory.Factory 
     // implementation of CoordinateOperationFactory has complex dependencies to all of those,
     // and even with authority factories.
 
-    /**
-     * Creates an instance from the specified hints. This method recognizes the
-     * {@link Hints#CRS_FACTORY CRS}, {@link Hints#CS_FACTORY CS}, {@link Hints#DATUM_FACTORY
-     * DATUM} and {@link Hints#MATH_TRANSFORM_FACTORY MATH_TRANSFORM} {@code FACTORY} hints.
-     *
-     * @param  hints The hints, or {@code null} for the system-wide default.
-     * @return A factory group created from the specified set of hints.
-     */
-    public static ReferencingFactoryContainer instance(Hints hints) {
-        if (hints == null) {
-            hints = new Hints(); // Get the system-wide default hints.
+    public synchronized static ReferencingFactoryContainer instance() {
+        if (cache == null) {
+            cache = new ReferencingFactoryContainer(null);
         }
-        /*
-         * Use the same synchronization lock than FactoryFinder (instead of this class) in order
-         * to reduce the risk of dead lock. This is because ReferencingFactoryContainer creation
-         * may queries FactoryFinder, and some implementations managed by FactoryFinder may ask
-         * for a ReferencingFactoryContainer in turn.
-         */
-        synchronized (FactoryFinder.class) {
-            if (cache == null) {
-                cache = new DynamicFactoryRegistry(ReferencingFactoryContainer.class);
-                cache.registerServiceProvider(new ReferencingFactoryContainer(null),
-                                                  ReferencingFactoryContainer.class);
-            }
-            return cache.getServiceProvider(ReferencingFactoryContainer.class, null, hints, null);
-        }
+        return cache;
     }
 
     /**

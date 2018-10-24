@@ -732,7 +732,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
             return crs;
         }
         if (FACTORIES == null) {
-            FACTORIES = ReferencingFactoryContainer.instance(null);
+            FACTORIES = ReferencingFactoryContainer.instance();
             // No need to synchronize: this is not a big deal if
             // two ReferencingFactoryContainer instances are created.
         }

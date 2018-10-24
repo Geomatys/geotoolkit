@@ -65,7 +65,7 @@ public final strictfp class PropertyAuthorityFactoryTest extends org.geotoolkit.
     public void testDefaultHints() throws IOException, FactoryException {
         final URL resources = PropertyEpsgFactory.class.getResource(FILENAME_XY);
         assertNotNull(FILENAME_XY, resources);
-        PropertyAuthorityFactory factory = new PropertyAuthorityFactory(null, resources, Citations.EPSG);
+        PropertyAuthorityFactory factory = new PropertyAuthorityFactory(resources, Citations.EPSG);
         /*
          * Tests the factory when we didn't asked for any hint.
          */
@@ -74,22 +74,6 @@ public final strictfp class PropertyAuthorityFactoryTest extends org.geotoolkit.
         CoordinateSystem cs = crs.getCoordinateSystem();
         assertEquals(AxisDirection.EAST,  cs.getAxis(0).getDirection());
         assertEquals(AxisDirection.NORTH, cs.getAxis(1).getDirection());
-        /*
-         * Tests again when we asked for FORCE_LONGITUDE_FIRST_AXIS_ORDER while the factory doesn't
-         * really care. Note that we should obtain the same CRS instance (not just a CRS equlals to
-         * it) because of caching done in ReferencingObjectFactory.
-         */
-        Hints userHints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
-        factory = new PropertyAuthorityFactory(userHints, resources, Citations.EPSG);
-        assertEquals(1, factory.getAuthorityCodes(null).size());
-//      assertSame(crs, factory.createCoordinateReferenceSystem("42101"));
-        /*
-         * Tests a CRS sample.
-         */
-        crs = factory.createCoordinateReferenceSystem("42101");
-        assertEquals("WGS 84 / LCC Canada", crs.getName().getCode());
-        assertEquals("EPSG:42101", IdentifiedObjects.getIdentifierOrName(crs));
-//      assertMultilinesEquals(WKT.PROJCS_LAMBERT_CONIC, crs.toWKT());
         factory.dispose(false);
     }
 
@@ -108,7 +92,7 @@ public final strictfp class PropertyAuthorityFactoryTest extends org.geotoolkit.
         assertNotNull(FILENAME_XY, r1);
         assertNotNull(FILENAME,    r2);
         final List<URL> resources = Arrays.asList(new URL[] {r1, r2});
-        PropertyAuthorityFactory factory = new PropertyAuthorityFactory(null, resources, Citations.EPSG);
+        PropertyAuthorityFactory factory = new PropertyAuthorityFactory(resources, Citations.EPSG);
         /*
          * Tests the factory when we didn't asked for any hint.
          */
@@ -130,36 +114,6 @@ public final strictfp class PropertyAuthorityFactoryTest extends org.geotoolkit.
         assertEquals(AxisDirection.EAST,  cs.getAxis(1).getDirection());
         assertEquals("Expected grade units", 1,
                 cs.getAxis(0).getUnit().getConverterToAny(Units.GRAD).convert(1), 1E-8);
-        /*
-         * Tests again when we asked for FORCE_LONGITUDE_FIRST_AXIS_ORDER. Now (at the opposite
-         * of previous testDefaultHint()) the factory should care about the hints because the
-         * WKT contains AXIS declarations.
-         */
-        Hints userHints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
-        factory = new PropertyAuthorityFactory(userHints, resources, Citations.EPSG);
-        assertEquals(3, factory.getAuthorityCodes(null).size());
-        crs = factory.createCoordinateReferenceSystem("3035");
-        assertEquals("ETRS89 / ETRS-LAEA", crs.getName().getCode());
-        assertEquals("EPSG:3035", IdentifiedObjects.getIdentifierOrName(crs));
-        cs = crs.getCoordinateSystem();
-//      assertEquals(AxisDirection.EAST,  cs.getAxis(0).getDirection());
-//      assertEquals(AxisDirection.NORTH, cs.getAxis(1).getDirection());
-        /*
-         * ... then tests the inner GeographicCRS axis...
-         */
-        crs = factory.createCoordinateReferenceSystem("27572");
-        assertEquals("NTF (Paris) / Lambert zone II", crs.getName().getCode());
-        assertEquals("EPSG:27572", IdentifiedObjects.getIdentifierOrName(crs));
-        cs = ((ProjectedCRS) crs).getBaseCRS().getCoordinateSystem();
-//      assertEquals(AxisDirection.EAST,  cs.getAxis(0).getDirection());
-//      assertEquals(AxisDirection.NORTH, cs.getAxis(1).getDirection());
-        assertEquals("Expected grade units because units are declared outside AXIS elements.", 1,
-                cs.getAxis(0).getUnit().getConverterToAny(Units.GRAD).convert(1), 1E-8);
-        /*
-         * Tests a CRS sample.
-         */
-        crs = factory.createCoordinateReferenceSystem("42101");
-//      assertMultilinesEquals(WKT.PROJCS_LAMBERT_CONIC, crs.toWKT());
         factory.dispose(false);
     }
 }

@@ -81,7 +81,7 @@ public final strictfp class DirectPostgisFactoryTest extends org.geotoolkit.test
     @Ignore
     public void testUsingCoverageSQL() throws FactoryException, IOException, SQLException {
         final Connection connection = getCoverageDataSource().getConnection();
-        final DirectPostgisFactory factory = new DirectPostgisFactory(null, connection);
+        final DirectPostgisFactory factory = new DirectPostgisFactory(connection);
         try {
             /*
              * Test general information.

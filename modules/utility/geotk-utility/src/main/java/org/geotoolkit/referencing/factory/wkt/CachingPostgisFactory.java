@@ -82,7 +82,7 @@ final class CachingPostgisFactory extends ConcurrentAuthorityFactory<DirectPostg
             throw new FactoryException(e);
         }
         try {
-            return new DirectPostgisFactory(null, connection);
+            return new DirectPostgisFactory(connection);
         } catch (SQLException e) {
             try {
                 connection.close();

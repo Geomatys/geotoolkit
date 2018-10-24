@@ -155,7 +155,7 @@ final class GeoTiffCRSReader {
         // factory = new ThreadedEpsgFactory(hints);
         datumObjFactory = FactoryFinder.getDatumFactory(null);
         crsFactory = FactoryFinder.getCRSFactory(null);
-        factories = ReferencingFactoryContainer.instance(null);
+        factories = ReferencingFactoryContainer.instance();
     }
 
     /**
