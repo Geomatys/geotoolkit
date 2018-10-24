@@ -63,10 +63,6 @@
        =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>org.apache.sis.storage</groupId>
-      <artifactId>sis-netcdf</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-coverage</artifactId>
       <version>${project.version}</version>

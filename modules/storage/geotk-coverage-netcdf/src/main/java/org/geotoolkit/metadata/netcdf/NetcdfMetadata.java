@@ -20,7 +20,6 @@ package org.geotoolkit.metadata.netcdf;
 import java.util.Locale;
 import java.util.logging.LogRecord;
 import org.geotoolkit.image.io.WarningProducer;
-import org.apache.sis.storage.netcdf.AttributeNames;
 
 
 /**
