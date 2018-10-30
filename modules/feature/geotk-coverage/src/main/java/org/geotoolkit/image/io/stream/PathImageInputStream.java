@@ -36,12 +36,6 @@ import static java.nio.file.StandardOpenOption.*;
  * @see org.apache.sis.internal.storage.io.ChannelImageInputStream
  */
 public class PathImageInputStream extends ChannelImageInputStream {
-
-    /**
-     * Default ByteBuffer
-     */
-    public static final ByteBuffer DEFAULT_BYTE_BUFFER = ByteBuffer.allocate(4096);
-
     /**
      * The file given to the constructor.
      */
@@ -56,7 +50,7 @@ public class PathImageInputStream extends ChannelImageInputStream {
     public PathImageInputStream(final Path path) throws IOException {
         super(path.getFileName().toString(),
                 FileChannel.open(path, READ),
-                DEFAULT_BYTE_BUFFER,
+                ByteBuffer.allocate(4096),
                 false);
         this.path = path;
     }

@@ -18,10 +18,10 @@ package org.geotoolkit.processing.image.bandselect;
 
 import java.awt.image.RenderedImage;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.processing.AbstractProcessDescriptor;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.Process;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
 import org.opengis.parameter.ParameterDescriptor;
@@ -47,6 +47,7 @@ public class BandSelectDescriptor extends AbstractProcessDescriptor {
             .create(RenderedImage.class, null);
     /**
      * Mandatory - bands to select.
+     * index -1 can be used to generate a band without assigning a value.
      */
     public static final ParameterDescriptor<int[]> IN_BANDS = new ParameterBuilder()
             .addName("bands")
