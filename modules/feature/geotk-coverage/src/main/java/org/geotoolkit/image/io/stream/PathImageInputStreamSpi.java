@@ -16,17 +16,17 @@
  */
 package org.geotoolkit.image.io.stream;
 
-import org.apache.sis.util.logging.Logging;
-
-import javax.imageio.spi.ImageInputStreamSpi;
-import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.MemoryCacheImageInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Locale;
+import javax.imageio.spi.ImageInputStreamSpi;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.MemoryCacheImageInputStream;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -55,10 +55,25 @@ public class PathImageInputStreamSpi extends ImageInputStreamSpi {
         }
 
         if (useCache) {
-            return new MemoryCacheImageInputStream(Files.newInputStream(path, StandardOpenOption.READ));
+            return new ClosingCachedImageStream(Files.newInputStream(path, StandardOpenOption.READ));
         }
         return new PathImageInputStream(path);
     }
 
+    private static class ClosingCachedImageStream extends MemoryCacheImageInputStream {
 
+        private final InputStream in;
+
+        public ClosingCachedImageStream(InputStream in) {
+            super(in);
+            this.in = in;
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            in.close();
+        }
+
+    }
 }
