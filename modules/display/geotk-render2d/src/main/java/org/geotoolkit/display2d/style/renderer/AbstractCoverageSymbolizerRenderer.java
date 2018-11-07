@@ -16,25 +16,14 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import java.awt.geom.Area;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.geom.Area;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
 import java.util.Map;
-
-import org.opengis.coverage.Coverage;
-import org.opengis.feature.PropertyNotFoundException;
-import org.opengis.geometry.Envelope;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.style.Symbolizer;
-import org.opengis.util.FactoryException;
-
+import java.util.logging.Level;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
@@ -46,7 +35,6 @@ import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Utilities;
-
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -57,9 +45,8 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-
-import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
@@ -71,22 +58,27 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import static org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer.LOGGER;
 import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.extractQuery;
 import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.fixEnvelopeWithQuery;
-
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
-
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
-
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.opengis.referencing.crs.SingleCRS;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.opengis.coverage.Coverage;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.style.Symbolizer;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -397,6 +389,9 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         if (containNAN(paramEnvelope) && !containNANInto2DGeographicPart(paramEnvelope)) {
             throw new DisjointCoverageDomainException("Rendering envelope extra dimensions does not intersect data envelope : " +
                     "has some NAN values on other dimension than geographic part."+paramEnvelope);
+        } else if(containNAN(intersectionIntoRender2D)) {
+            throw new DisjointCoverageDomainException("Rendering envelope does not intersect data envelope : " +
+                    "has some NAN values on geographic part."+paramEnvelope);
         }
 
         //-- We know we don't have NAN values on other dimension than geographic

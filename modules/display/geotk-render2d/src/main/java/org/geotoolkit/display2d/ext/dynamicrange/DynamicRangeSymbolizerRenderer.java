@@ -28,11 +28,11 @@ import java.util.Objects;
 import java.util.logging.Level;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -42,6 +42,7 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.math.Histogram;
 import org.geotoolkit.metadata.DefaultSampleDimensionExt;
 import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.metadata.content.AttributeGroup;
@@ -50,7 +51,6 @@ import org.opengis.metadata.content.RangeDimension;
 import org.opengis.metadata.content.SampleDimension;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.MathTransform2D;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -158,12 +158,17 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                     mapping[i] = index;
                 }
             }
-            GridCoverage2D dataCoverage = getObjectiveCoverage(projectedCoverage,
-                    renderingContext.getCanvasObjectiveBounds(),
-                    renderingContext.getResolution(),
-                    renderingContext.getObjectiveToDisplay(),
-                    false,toRead);
-            if(dataCoverage == null){
+            GridCoverage2D dataCoverage;
+            try {
+                dataCoverage = getObjectiveCoverage(projectedCoverage,
+                        renderingContext.getCanvasObjectiveBounds(),
+                        renderingContext.getResolution(),
+                        renderingContext.getObjectiveToDisplay(),
+                        false,toRead);
+            } catch (DisjointCoverageDomainException ex) {
+                return;
+            }
+            if (dataCoverage == null) {
                 return;
             }
 
