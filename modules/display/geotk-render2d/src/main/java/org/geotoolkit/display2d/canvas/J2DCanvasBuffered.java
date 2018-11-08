@@ -219,11 +219,13 @@ public class J2DCanvasBuffered extends J2DCanvas{
                         return createBufferedImage(dim,colors);
                     }else{
                         //we can't use a index color model, use an RGB palette
-                        return new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
+                        // Bug OpenJDK : issue with TYPE_INT_RGB, replace by TYPE_3BYTE_BGR
+                        return new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_3BYTE_BGR);
                     }
                 }else{
                     //we can't determinate the background colors, use an RGB palette
-                    return new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
+                        // Bug OpenJDK : issue with TYPE_INT_RGB, replace by TYPE_3BYTE_BGR
+                    return new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_3BYTE_BGR);
                 }
             }else{
                 //we can't determinate the background colors, use an ARGB palette

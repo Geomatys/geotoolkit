@@ -30,6 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import javax.media.jai.RasterFactory;
 import javax.swing.event.EventListenerList;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
@@ -37,11 +39,10 @@ import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
-import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.factory.Hints;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * On the fly calculated image. multi-threaded.
@@ -91,7 +92,13 @@ public class ProgressiveImage implements RenderedImage{
         this.gridSize = gridSize;
         this.tileSize = tileSize;
         this.scale = scale;
-        this.colorModel = ColorModel.getRGBdefault();
+
+        ColorModel cm = ColorModel.getRGBdefault();
+        if (sceneDef.getHints() != null) {
+            cm = (ColorModel) sceneDef.getHints().get(GO2Hints.KEY_COLOR_MODEL);
+        }
+        if (cm == null) cm = ColorModel.getRGBdefault();
+        this.colorModel = cm;
         this.sampleModel = colorModel.createCompatibleSampleModel(1, 1);
 
 
@@ -451,8 +458,10 @@ public class ProgressiveImage implements RenderedImage{
                 nbtileonwidth*tileSize.width,
                 nbtileonheight*tileSize.height);
 
-        final J2DCanvasBuffered canvas = new J2DCanvasBuffered(vdef.getEnvelope().getCoordinateReferenceSystem(), canvasSize);
-        canvas.setRenderingHint(GO2Hints.KEY_COLOR_MODEL, colorModel);
+        final Hints hints = new Hints();
+        hints.put(GO2Hints.KEY_COLOR_MODEL, colorModel);
+
+        final J2DCanvasBuffered canvas = new J2DCanvasBuffered(vdef.getEnvelope().getCoordinateReferenceSystem(), canvasSize, hints);
         try {
             DefaultPortrayalService.prepareCanvas(canvas, cdef, sdef, vdef);
         } catch (PortrayalException ex) {
