@@ -53,6 +53,7 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.EllipsoidalCS;
 import org.opengis.referencing.cs.SphericalCS;
 import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -385,10 +386,25 @@ public final class CoverageUtilities {
      * Converts a GeoAPI grid geometry (to be deprecated later) into an Apache SIS grid geometry.
      */
     public static org.apache.sis.coverage.grid.GridGeometry toSIS(final GridGeometry g) throws TransformException {
-        CoordinateReferenceSystem crs = null;
+        if (g == null) return null;
+        GridEnvelope              extent    = null;
+        Envelope                  envelope  = null;
+        MathTransform             gridToCRS = null;
+        CoordinateReferenceSystem crs       = null;
         if (g instanceof GeneralGridGeometry) {
-            crs = ((GeneralGridGeometry) g).getCoordinateReferenceSystem();
+            final GeneralGridGeometry gg = (GeneralGridGeometry) g;
+            if (gg.isDefined(GeneralGridGeometry.EXTENT))      extent    = gg.getExtent();
+            if (gg.isDefined(GeneralGridGeometry.ENVELOPE))    envelope  = gg.getEnvelope();
+            if (gg.isDefined(GeneralGridGeometry.GRID_TO_CRS)) gridToCRS = gg.getGridToCRS();
+            if (gg.isDefined(GeneralGridGeometry.CRS))         crs       = gg.getCoordinateReferenceSystem();
+        } else {
+            extent    = g.getExtent();
+            gridToCRS = g.getGridToCRS();
         }
-        return new org.apache.sis.coverage.grid.GridGeometry(toSIS(g.getExtent()), PixelInCell.CELL_CENTER, g.getGridToCRS(), crs);
+        if (envelope != null && extent == null) {
+            return new org.apache.sis.coverage.grid.GridGeometry(PixelInCell.CELL_CENTER, gridToCRS, envelope);
+        } else {
+            return new org.apache.sis.coverage.grid.GridGeometry(toSIS(extent), PixelInCell.CELL_CENTER, gridToCRS, crs);
+        }
     }
 }
