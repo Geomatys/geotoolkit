@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -94,12 +93,9 @@ public class LiteralData extends DataDescription {
         literalDataDomain.add(new LiteralDataDomain(dataType, uom, anyValue));
     }
 
-    public LiteralData(List<Format> formats, LiteralDataDomain lit) {
+    public LiteralData(List<Format> formats, List<LiteralDataDomain> lits) {
         super(formats);
-        if (lit != null) {
-            literalDataDomain = new ArrayList<>();
-            literalDataDomain.add(lit);
-        }
+        literalDataDomain = lits;
     }
 
     /**

@@ -25,7 +25,7 @@ import java.util.Objects;
  */
 public class LiteralInputType {
 
-    @JsonProperty("LiteralDataDomain")
+    @JsonProperty("literalDataDomains")
     private List<LiteralDataDomain> literalDataDomains = null;
 
     public LiteralInputType() {

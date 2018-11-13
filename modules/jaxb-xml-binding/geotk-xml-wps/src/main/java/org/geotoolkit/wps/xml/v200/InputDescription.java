@@ -124,27 +124,30 @@ public class InputDescription extends Description {
             this.maxOccurs = input.getMaxOccurs();
         }
 
-        if (input.getLiteralDataDomain() != null) {
-
-            LiteralDataDomain lit = new LiteralDataDomain();
-            if (input.getLiteralDataDomain().getDataType() != null) {
-                String value = input.getLiteralDataDomain().getDataType().getName();
-                String reference = input.getLiteralDataDomain().getDataType().getReference();
-                lit.setDataType(new DomainMetadataType(value, reference));
+        if (input.getLiteralDataDomain() != null && !input.getLiteralDataDomain().isEmpty()) {
+            final List<LiteralDataDomain> lits = new ArrayList<>();
+            for (org.geotoolkit.wps.json.LiteralDataDomain jsonLit : input.getLiteralDataDomain()) {
+                LiteralDataDomain lit = new LiteralDataDomain();
+                if (jsonLit.getDataType() != null) {
+                    String value = jsonLit.getDataType().getName();
+                    String reference = jsonLit.getDataType().getReference();
+                    lit.setDataType(new DomainMetadataType(value, reference));
+                }
+                if (jsonLit.getAllowedValues()!= null) {
+                    lit.setAllowedValues(new AllowedValues(jsonLit.getAllowedValues().getAllowedValues()));
+                }
+                if (jsonLit.getAllowedRanges()!= null) {
+                    lit.setAllowedRanges(new AllowedValues(jsonLit.getAllowedRanges().getAllowedRanges()));
+                }
+                if (jsonLit.getDefaultValue()!= null) {
+                    lit.setDefaultValue(new ValueType(jsonLit.getDefaultValue()));
+                }
+                if (jsonLit.getValuesReference()!= null) {
+                    lit.setValuesReference(new ValuesReference(jsonLit.getValuesReference(), null));
+                }
+                lits.add(lit);
             }
-            if (input.getLiteralDataDomain().getAllowedValues()!= null) {
-                lit.setAllowedValues(new AllowedValues(input.getLiteralDataDomain().getAllowedValues().getAllowedValues()));
-            }
-            if (input.getLiteralDataDomain().getAllowedRanges()!= null) {
-                lit.setAllowedRanges(new AllowedValues(input.getLiteralDataDomain().getAllowedRanges().getAllowedRanges()));
-            }
-            if (input.getLiteralDataDomain().getDefaultValue()!= null) {
-                lit.setDefaultValue(new ValueType(input.getLiteralDataDomain().getDefaultValue()));
-            }
-            if (input.getLiteralDataDomain().getValuesReference()!= null) {
-                lit.setValuesReference(new ValuesReference(input.getLiteralDataDomain().getValuesReference(), null));
-            }
-            this.dataDescription = new LiteralData(formats, lit);
+            this.dataDescription = new LiteralData(formats, lits);
         } else if (input.getSupportedCRS() != null) {
             List<SupportedCRS> suportedCrs = new ArrayList<>();
             for (String crs : input.getSupportedCRS()) {

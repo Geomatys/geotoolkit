@@ -284,7 +284,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         input1.setAbstract("some input 1");
         input1.setFormats(Arrays.asList(format));
         input1.setKeywords(Arrays.asList("in1"));
-        input1.setLiteralDataDomain(new LiteralDataDomain(new LiteralDataDomainTypeDataType("String", null)));
+        input1.setLiteralDataDomain(Arrays.asList(new LiteralDataDomain(new LiteralDataDomainTypeDataType("String", null))));
         input1.setMinOccurs("0");
         input1.setMaxOccurs("unbounded");
         input1.setTitle("in put 1 title");
@@ -369,7 +369,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         input1.setAbstract("some input 1");
         input1.setFormats(Arrays.asList(format));
         input1.setKeywords(Arrays.asList("in1"));
-        input1.setLiteralDataDomain(new LiteralDataDomain(new LiteralDataDomainTypeDataType("String", "http://www.w3.org/TR/xmlschema-2/#String")));
+        input1.setLiteralDataDomain(Arrays.asList(new LiteralDataDomain(new LiteralDataDomainTypeDataType("String", "http://www.w3.org/TR/xmlschema-2/#String"))));
         input1.setMinOccurs("0");
         input1.setMaxOccurs("unbounded");
         input1.setTitle("in put 1 title");

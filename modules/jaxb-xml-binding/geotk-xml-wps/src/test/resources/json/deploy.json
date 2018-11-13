@@ -24,12 +24,12 @@
                                 }]
                         }],
                     "abstract": "some input 1",
-                    "LiteralDataDomain": {
+                    "literalDataDomains": [{
                         "dataType": {
                             "name": "String",
                             "reference": "http://www.w3.org/TR/xmlschema-2/#String"
                         }
-                    }
+                    }]
                 }, {
                     "id": "ID2",
                     "title": "in put 2 title",

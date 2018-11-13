@@ -19,6 +19,7 @@ package org.geotoolkit.wps.json;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -26,8 +27,8 @@ import java.util.List;
  */
 public class InputTypeChoice {
 
-    @JsonProperty("LiteralDataDomain")
-    private LiteralDataDomain literalDataDomain = null;
+    @JsonProperty("literalDataDomains")
+    private List<LiteralDataDomain> literalDataDomain = null;
 
     private List<String> supportedCRS = null;
 
@@ -40,15 +41,20 @@ public class InputTypeChoice {
             if (that.supportedCRS != null && !that.supportedCRS.isEmpty()) {
                 this.supportedCRS = new ArrayList<>(that.supportedCRS);
             }
-            if (that.literalDataDomain != null) {
-                this.literalDataDomain = new LiteralDataDomain(that.literalDataDomain);
+            if (that.literalDataDomain != null && !that.literalDataDomain.isEmpty()) {
+                this.literalDataDomain = new ArrayList<>();
+                for (LiteralDataDomain litDomain : that.literalDataDomain) {
+                    this.literalDataDomain.add(new LiteralDataDomain(litDomain));
+                }
             }
         }
 
     }
 
     public InputTypeChoice(LiteralDataDomain literalDataDomain) {
-        this.literalDataDomain = literalDataDomain;
+        if (literalDataDomain != null) {
+            this.literalDataDomain = Arrays.asList(literalDataDomain);
+        }
     }
 
     public InputTypeChoice(List<String> supportedCRS) {
@@ -56,22 +62,17 @@ public class InputTypeChoice {
     }
 
 
-    public InputTypeChoice literalDataDomain(LiteralDataDomain literalDataDomain) {
-        this.literalDataDomain = literalDataDomain;
-        return this;
-    }
-
     /**
      * Get literalDataDomain
      *
      * @return literalDataDomain
   *
      */
-    public LiteralDataDomain getLiteralDataDomain() {
+    public List<LiteralDataDomain> getLiteralDataDomain() {
         return literalDataDomain;
     }
 
-    public void setLiteralDataDomain(LiteralDataDomain literalDataDomain) {
+    public void setLiteralDataDomain(List<LiteralDataDomain> literalDataDomain) {
         this.literalDataDomain = literalDataDomain;
     }
 

@@ -163,7 +163,11 @@ public class InputType extends InputTypeChoice {
             if (desc.getDataDescription() instanceof LiteralData) {
                 LiteralData lit = (LiteralData) desc.getDataDescription();
                 if (lit.getLiteralDataDomain() != null && !lit.getLiteralDataDomain().isEmpty()) {
-                    super.setLiteralDataDomain(new LiteralDataDomain(lit.getLiteralDataDomain().get(0)));
+                    List<LiteralDataDomain> jsonLits = new ArrayList<>();
+                    for (org.geotoolkit.wps.xml.v200.LiteralDataDomain litDom : lit.getLiteralDataDomain()) {
+                        jsonLits.add(new LiteralDataDomain(litDom));
+                    }
+                    super.setLiteralDataDomain(jsonLits);
                 }
             } else if (desc.getDataDescription() instanceof ComplexData) {
                 // do nothing
