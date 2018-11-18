@@ -390,8 +390,6 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                  */
                 case "meter2 second-1": return Units.METRE.multiply(Units.METRES_PER_SECOND);
                 case "meter second-1":  // Fall through
-                case "m s**-1":         return Units.METRES_PER_SECOND;
-                case "kg m**-2":        return Units.KILOGRAM.multiply(Units.METRE.pow(-2));
                 case "m of water":      return Units.METRE;
             }
             try {

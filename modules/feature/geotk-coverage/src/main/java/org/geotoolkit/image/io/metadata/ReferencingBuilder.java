@@ -38,7 +38,7 @@ import org.opengis.util.FactoryException;
 
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
-import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
+import org.apache.sis.internal.referencing.ReferencingFactoryContainer;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -181,7 +181,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      */
     private ReferencingFactoryContainer factories() {
         if (factories == null) {
-            factories = ReferencingFactoryContainer.instance();
+            factories = new ReferencingFactoryContainer();
         }
         return factories;
     }

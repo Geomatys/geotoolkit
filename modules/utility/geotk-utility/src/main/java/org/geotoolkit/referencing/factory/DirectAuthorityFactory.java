@@ -30,11 +30,11 @@ import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 import org.opengis.util.NameFactory;
 import org.opengis.util.ScopedName;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
+import org.apache.sis.internal.referencing.ReferencingFactoryContainer;
 import org.apache.sis.util.logging.Logging;
 
 
@@ -69,7 +69,7 @@ public abstract class DirectAuthorityFactory extends GeodeticAuthorityFactory {
     protected final ReferencingFactoryContainer factories;
 
     protected DirectAuthorityFactory() {
-        this(ReferencingFactoryContainer.instance());
+        this(new ReferencingFactoryContainer());
     }
 
     /**

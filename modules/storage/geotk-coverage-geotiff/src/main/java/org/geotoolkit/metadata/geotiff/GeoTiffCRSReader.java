@@ -91,7 +91,7 @@ import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
 import org.apache.sis.util.logging.Logging;
 
-import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
+import org.apache.sis.internal.referencing.ReferencingFactoryContainer;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -155,7 +155,7 @@ final class GeoTiffCRSReader {
         // factory = new ThreadedEpsgFactory(hints);
         datumObjFactory = FactoryFinder.getDatumFactory(null);
         crsFactory = FactoryFinder.getCRSFactory(null);
-        factories = ReferencingFactoryContainer.instance();
+        factories = new ReferencingFactoryContainer();
     }
 
     /**

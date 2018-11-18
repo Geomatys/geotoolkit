@@ -82,6 +82,8 @@ import static org.geotoolkit.internal.FactoryUtilities.addImplementationHints;
  * @since 2.1
  * @level advanced
  * @module
+ *
+ * @deprecated Replaced by {@link org.apache.sis.internal.referencing.ReferencingFactoryContainer}.
  */
 @Deprecated
 public class ReferencingFactoryContainer extends org.geotoolkit.factory.Factory implements Factory {
