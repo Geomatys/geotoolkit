@@ -50,8 +50,9 @@ public abstract class GraphicJ2D extends SpatialNode {
      *
      * @param context : a rendering context 2d that provides a Graphics2D object
      * and all necessary parameters.
+     * @return true if some datas were rendered
      */
-    public abstract void paint(final RenderingContext2D context);
+    public abstract boolean paint(final RenderingContext2D context);
 
     public abstract Object getUserObject();
 

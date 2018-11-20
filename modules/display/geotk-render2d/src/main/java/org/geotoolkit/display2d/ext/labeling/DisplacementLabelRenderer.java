@@ -81,7 +81,7 @@ public class DisplacementLabelRenderer extends DefaultLabelRenderer{
      * {@inheritDoc }
      */
     @Override
-    public void portrayLabels(){
+    public boolean portrayLabels(){
         final Graphics2D g2 = context.getGraphics();
         //enable antialiasing for labels
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -126,6 +126,7 @@ public class DisplacementLabelRenderer extends DefaultLabelRenderer{
         }
 
         layers.clear();
+        return !candidates.isEmpty();
     }
 
     private List<Candidate> optimize(List<Candidate> candidates){

@@ -89,7 +89,7 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
      * {@inheritDoc }
      */
     @Override
-    public void repaint(final Shape area) {
+    public boolean repaint(final Shape area) {
         monitor.renderingStarted();
         fireRenderingStateChanged(RENDERING);
 
@@ -103,9 +103,10 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
             painter.paint(context2D);
         }
 
+        boolean dataPainted = false;
         final GraphicContainer container = getContainer();
         if(container != null){
-            render(context, container.flatten(true));
+            dataPainted |= render(context, container.flatten(true));
         }
 
         /**
@@ -114,6 +115,7 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
         output.dispose();
         fireRenderingStateChanged(ON_HOLD);
         monitor.renderingFinished();
+        return dataPainted;
     }
 
     /**

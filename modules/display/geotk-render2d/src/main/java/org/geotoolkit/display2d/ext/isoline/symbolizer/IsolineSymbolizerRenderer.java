@@ -74,7 +74,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
     }
 
     @Override
-    public void portray(ProjectedCoverage graphic) throws PortrayalException {
+    public boolean portray(ProjectedCoverage graphic) throws PortrayalException {
 
         IsolineSymbolizer isolineSymbolizer = symbol.getSource();
 
@@ -185,15 +185,17 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                     FeatureMapLayer fml = MapBuilder.createFeatureLayer(isolines, featureStyle);
 
                     StatelessFeatureLayerJ2D statelessFeatureLayerJ2D = new StatelessFeatureLayerJ2D(renderingContext.getCanvas(), fml);
-                    statelessFeatureLayerJ2D.paintLayer(renderingContext);
+                    return statelessFeatureLayerJ2D.paintLayer(renderingContext);
+                } else {
+                    return false;
                 }
             }
-
         } catch (DataStoreException ex) {
             throw new PortrayalException(ex.getMessage(), ex);
         } catch (ProcessException e) {
             throw new PortrayalException(e.getMessage(), e);
         }
+        return false;
     }
 
     private boolean isJenksFunction(CachedRasterSymbolizer cachedRasterSymbolizer) {

@@ -99,7 +99,7 @@ public interface SymbolizerRendererService<S extends Symbolizer, C extends Cache
      * @param context : rendering context contains the java2d rendering parameters
      * @throws PortrayalException
      */
-    void portray(ProjectedObject graphic, C symbol,
+    boolean portray(ProjectedObject graphic, C symbol,
             RenderingContext2D context) throws PortrayalException;
 
     /**
@@ -110,7 +110,7 @@ public interface SymbolizerRendererService<S extends Symbolizer, C extends Cache
      * @param context : rendering context contains the java2d rendering parameters
      * @throws PortrayalException
      */
-    void portray(Iterator<? extends ProjectedObject> graphics, C symbol,
+    boolean portray(Iterator<? extends ProjectedObject> graphics, C symbol,
             RenderingContext2D context) throws PortrayalException;
 
     /**
@@ -121,7 +121,7 @@ public interface SymbolizerRendererService<S extends Symbolizer, C extends Cache
      * @param context : rendering context contains the java2d rendering parameters
      * @throws PortrayalException
      */
-    void portray(ProjectedCoverage graphic, C symbol,
+    boolean portray(ProjectedCoverage graphic, C symbol,
             RenderingContext2D context) throws PortrayalException;
 
     /**

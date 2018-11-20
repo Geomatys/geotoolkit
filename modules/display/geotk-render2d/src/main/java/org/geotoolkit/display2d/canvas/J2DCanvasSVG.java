@@ -83,7 +83,7 @@ public class J2DCanvasSVG extends J2DCanvas{
     }
 
     @Override
-    public void repaint(Shape area) {
+    public boolean repaint(Shape area) {
         //finish any previous painting
         getMonitor().stopRendering();
 
@@ -118,9 +118,10 @@ public class J2DCanvasSVG extends J2DCanvas{
             painter.paint(context2D);
         }
 
+        boolean dataPainted = false;
         final GraphicContainer container = getContainer();
         if(container != null){
-            render(context, container.flatten(true));
+            dataPainted |= render(context, container.flatten(true));
         }
 
         /**
@@ -129,6 +130,7 @@ public class J2DCanvasSVG extends J2DCanvas{
         g2D.dispose();
         fireRenderingStateChanged(ON_HOLD);
         monitor.renderingFinished();
+        return dataPainted;
     }
 
     @Override

@@ -42,7 +42,7 @@ public class LinksGraphic extends GraphicJ2D{
     }
 
     @Override
-    public void paint(RenderingContext2D renderingContext) {
+    public boolean paint(RenderingContext2D renderingContext) {
         final CanvasMonitor monitor = renderingContext.getMonitor();
         final Graphics2D g2d = renderingContext.getGraphics();
 
@@ -53,7 +53,7 @@ public class LinksGraphic extends GraphicJ2D{
                     collection.getType().getName().toString(), renderingContext.getObjectiveCRS2D()));
         } catch (DataStoreException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
-            return;
+            return false;
         }
 
         g2d.setStroke(new BasicStroke(3));
@@ -65,6 +65,7 @@ public class LinksGraphic extends GraphicJ2D{
 
         final Color firstColor = Color.RED;
 
+        boolean dataRendered = false;
         final FeatureIterator mainIte = collection.iterator();
         try{
             while(mainIte.hasNext()){
@@ -107,6 +108,8 @@ public class LinksGraphic extends GraphicJ2D{
                         g2d.setStroke(new BasicStroke( (float)Math.random()*4f));
                         g2d.setPaint(firstColor);
                         g2d.draw(line);
+
+                        dataRendered = true;
                     }
                 }finally{
                     ite.close();
@@ -117,6 +120,7 @@ public class LinksGraphic extends GraphicJ2D{
             mainIte.close();
         }
 
+        return dataRendered;
     }
 
     @Override

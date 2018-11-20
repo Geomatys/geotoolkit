@@ -132,20 +132,22 @@ public class StatefullMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
     }
 
     @Override
-    public void paint(final RenderingContext2D renderingContext) {
+    public boolean paint(final RenderingContext2D renderingContext) {
 
         //we abort painting if the item is not visible.
-        if (!item.isVisible()) return;
+        if (!item.isVisible()) return false;
 
+        boolean dataRendered = false;
         for(final MapItem child : item.items()){
             if(renderingContext.getMonitor().stopRequested()) break;
             final GraphicJ2D gra = itemGraphics.get(child);
             if(gra != null){
-                gra.paint(renderingContext);
+                dataRendered |= gra.paint(renderingContext);
             }else{
                 getLogger().log(Level.WARNING, "GraphicContextJ2D, paint method : strange, no graphic object affected to layer :{0}", child.getName());
             }
         }
+        return dataRendered;
     }
 
     /**

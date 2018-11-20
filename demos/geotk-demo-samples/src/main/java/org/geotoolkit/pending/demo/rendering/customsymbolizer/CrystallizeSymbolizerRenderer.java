@@ -38,12 +38,13 @@ public class CrystallizeSymbolizerRenderer extends AbstractSymbolizerRenderer<Cr
     }
 
     @Override
-    public void portray(ProjectedObject graphic) throws PortrayalException {
+    public boolean portray(ProjectedObject graphic) throws PortrayalException {
         //works only with coverage data, do nothing
+        return false;
     }
 
     @Override
-    public void portray(ProjectedCoverage graphic) throws PortrayalException {
+    public boolean portray(ProjectedCoverage graphic) throws PortrayalException {
 
         //read the coverage
         //this is a fast way to do it, don't use it in real code
@@ -52,7 +53,7 @@ public class CrystallizeSymbolizerRenderer extends AbstractSymbolizerRenderer<Cr
             dataCoverage = graphic.getCoverage(new GridCoverageReadParam());
         } catch (CoverageStoreException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
-            return;
+            return false;
         }
 
         //reproject coverage
@@ -64,11 +65,9 @@ public class CrystallizeSymbolizerRenderer extends AbstractSymbolizerRenderer<Cr
                 dataCoverage = dataCoverage.view(ViewType.RENDERED);
             } catch (CoverageProcessingException ex) {
                 monitor.exceptionOccured(ex, Level.WARNING);
-                return;
+                return false;
             }
         }
-
-
 
 
         final RenderedImage img = dataCoverage.getRenderedImage();
@@ -90,7 +89,7 @@ public class CrystallizeSymbolizerRenderer extends AbstractSymbolizerRenderer<Cr
         if(trs2D instanceof AffineTransform){
             g2d.drawImage(buffer, (AffineTransform)trs2D, null);
         }
-
+        return true;
     }
 
     @Override

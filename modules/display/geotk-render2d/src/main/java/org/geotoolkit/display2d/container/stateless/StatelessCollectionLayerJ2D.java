@@ -86,14 +86,13 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
      * {@inheritDoc }
      */
     @Override
-    public void paintLayer(final RenderingContext2D renderingContext) {
+    public boolean paintLayer(final RenderingContext2D renderingContext) {
 
         //search for a special graphic renderer
         final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) item.getGraphicBuilder(GraphicJ2D.class);
         if(builder != null){
             //let the parent class handle it
-            super.paintLayer(renderingContext);
-            return;
+            return super.paintLayer(renderingContext);
         }
 
         //first extract the valid rules at this scale
@@ -102,7 +101,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
         if(validRules.isEmpty()){
-            return;
+            return false;
         }
 
         final CachedRule[] rules = toCachedRules(validRules, null);
@@ -114,10 +113,10 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
         } catch (Exception ex) {
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             //can not continue this layer with this error
-            return;
+            return false;
         }
 
-        paintVectorLayer(rules, candidates,renderingContext);
+        return paintVectorLayer(rules, candidates,renderingContext);
     }
 
     /**
@@ -262,7 +261,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
         return item.getCollection();
     }
 
-    protected void paintVectorLayer(final CachedRule[] rules, final Collection<?> candidates, final RenderingContext2D context) {
+    protected boolean paintVectorLayer(final CachedRule[] rules, final Collection<?> candidates, final RenderingContext2D context) {
 
         final CanvasMonitor monitor = context.getMonitor();
 
@@ -271,7 +270,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
 
         //prepare the rendering parameters
         final StatelessContextParams params = getStatefullParameters(context);
-        if(monitor.stopRequested()) return;
+        if(monitor.stopRequested()) return false;
 
         //check if we have group symbolizers, if it's the case we must render by symbol order.
         boolean symbolOrder = false;
@@ -284,21 +283,23 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
             }
         }
 
+        boolean dataRendered = false;
         symbolOrder = symbolOrder || Boolean.TRUE.equals(canvas.getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER));
         if(symbolOrder){
             try{
-                renderBySymbolOrder(candidates, context, rules, params);
+                dataRendered |= renderBySymbolOrder(candidates, context, rules, params);
             }catch(PortrayalException ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
         }else{
             try{
-                renderByObjectOrder(candidates, context, rules, params);
+                dataRendered |= renderByObjectOrder(candidates, context, rules, params);
             }catch(PortrayalException ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
         }
 
+        return dataRendered;
     }
 
     /**
@@ -309,14 +310,14 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
      * @param params
      * @throws PortrayalException
      */
-    protected final void renderByObjectOrder(final Collection<?> candidates,
+    protected final boolean renderByObjectOrder(final Collection<?> candidates,
             final RenderingContext2D context, final CachedRule[] rules,
             final StatelessContextParams params) throws PortrayalException{
         final RenderingIterator statefullIterator = getIterator(candidates, context, params);
-        renderByObjectOrder(statefullIterator, context, rules);
+        return renderByObjectOrder(statefullIterator, context, rules);
     }
 
-    protected final void renderByObjectOrder(final RenderingIterator statefullIterator,
+    protected final boolean renderByObjectOrder(final RenderingIterator statefullIterator,
             final RenderingContext2D context, final CachedRule[] rules) throws PortrayalException{
         final CanvasMonitor monitor = context.getMonitor();
 
@@ -328,12 +329,12 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
             if(renderers.rules.length == 1
                && (renderers.rules[0].getFilter() == null || renderers.rules[0].getFilter() == Filter.INCLUDE)
                && renderers.rules[0].symbolizers().length == 1){
-                renderers.renderers[0][0].portray(statefullIterator);
-                return;
+                return renderers.renderers[0][0].portray(statefullIterator);
             }
 
+            boolean dataRendered = false;
             while(statefullIterator.hasNext()){
-                if(monitor.stopRequested()) return;
+                if(monitor.stopRequested()) return dataRendered;
                 final ProjectedObject projectedCandidate = statefullIterator.next();
 
                 boolean painted = false;
@@ -344,7 +345,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
                     if (ruleFilter == null || ruleFilter.evaluate(projectedCandidate.getCandidate())) {
                         painted = true;
                         for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
-                            renderer.portray(projectedCandidate);
+                            dataRendered |= renderer.portray(projectedCandidate);
                         }
                     }
                 }
@@ -357,12 +358,13 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
                         //test if the rule is valid for this feature
                         if (ruleFilter == null || ruleFilter.evaluate(projectedCandidate.getCandidate())) {
                             for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
-                                renderer.portray(projectedCandidate);
+                                dataRendered |= renderer.portray(projectedCandidate);
                             }
                         }
                     }
                 }
             }
+            return dataRendered;
         }finally{
             try {
                 statefullIterator.close();
@@ -377,7 +379,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
     /**
      * render by symbol order.
      */
-    protected final void renderBySymbolOrder(final Collection<?> candidates,
+    protected final boolean renderBySymbolOrder(final Collection<?> candidates,
             final RenderingContext2D context, final CachedRule[] rules, final StatelessContextParams params)
             throws PortrayalException {
 
@@ -388,34 +390,34 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
             final RenderingIterator statefullIterator = getIterator(candidates, context, params);
             final CachedSymbolizer s = rules[0].symbolizers()[0];
             final SymbolizerRenderer renderer = s.getRenderer().createRenderer(s, context);
-            renderer.portray(statefullIterator);
+            boolean dataRendered = renderer.portray(statefullIterator);
             try {
                 statefullIterator.close();
             } catch (IOException ex) {
                 getLogger().log(Level.WARNING, null, ex);
             }
-            return;
+            return dataRendered;
         }
 
-        renderBySymbolIndexInRule(candidates,context,rules,params);
+        return renderBySymbolIndexInRule(candidates,context,rules,params);
     }
 
     /**
      * Render by symbol index order in a single pass, this results in creating a buffered image
      * for each symbolizer depth, the maximum number of buffer is the maximum number of symbolizer a rule contain.
      */
-    private void renderBySymbolIndexInRule(final Collection<?> candidates,
+    private boolean renderBySymbolIndexInRule(final Collection<?> candidates,
             final RenderingContext2D context, final CachedRule[] rules, final StatelessContextParams params)
             throws PortrayalException {
         final RenderingIterator statefullIterator = getIterator(candidates, context, params);
-        renderBySymbolIndexInRule(candidates,statefullIterator, context, rules);
+        return renderBySymbolIndexInRule(candidates,statefullIterator, context, rules);
     }
 
     /**
      * Render by symbol index order in a single pass, this results in creating a buffered image
      * for each symbolizer depth, the maximum number of buffer is the maximum number of symbolizer a rule contain.
      */
-    private  void renderBySymbolIndexInRule(final Collection<?> candidates,final RenderingIterator statefullIterator,
+    private boolean renderBySymbolIndexInRule(final Collection<?> candidates,final RenderingIterator statefullIterator,
             final RenderingContext2D context, final CachedRule[] rules)
             throws PortrayalException {
 
@@ -469,9 +471,10 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
             }
         }
 
+        boolean dataRendered = false;
         try{
             while(statefullIterator.hasNext()){
-                if(monitor.stopRequested()) return;
+                if(monitor.stopRequested()) return dataRendered;
                 final ProjectedObject projectedCandidate = statefullIterator.next();
 
                 boolean painted = false;
@@ -483,7 +486,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
                         painted = true;
                         final CachedSymbolizer[] css = rule.symbolizers();
                         for(int k=0; k<css.length; k++){
-                            renderers[i][k].portray(projectedCandidate);
+                            dataRendered |= renderers[i][k].portray(projectedCandidate);
                         }
                     }
                 }
@@ -497,7 +500,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
                         if (ruleFilter == null || ruleFilter.evaluate(projectedCandidate.getCandidate())) {
                             final CachedSymbolizer[] css = rule.symbolizers();
                             for(int k=0; k<css.length; k++){
-                                renderers[i][k].portray(projectedCandidate);
+                                dataRendered |= renderers[i][k].portray(projectedCandidate);
                             }
                         }
                     }
@@ -512,7 +515,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
                 for(int k=0; k<css.length; k++){
                     if(renderers[i][k].getService().isGroupSymbolizer()){
                         final RenderingIterator ite = getIterator(candidates, context, params);
-                        renderers[i][k].portray(ite);
+                        dataRendered |= renderers[i][k].portray(ite);
                     }
 
                 }
@@ -535,6 +538,8 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
             g.drawImage(img, 0, 0, null);
             recycleBufferedImage((BufferedImage)img);
         }
+
+        return dataRendered;
     }
 
     protected boolean contain(final Set<FeatureId> ids, final Object candidate){

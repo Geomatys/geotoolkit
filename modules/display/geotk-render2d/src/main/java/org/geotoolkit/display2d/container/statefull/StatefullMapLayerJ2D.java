@@ -55,10 +55,10 @@ public class StatefullMapLayerJ2D<T extends MapLayer> extends StatefullMapItemJ2
     }
 
     @Override
-    public void paint(RenderingContext2D renderingContext) {
-        super.paint(renderingContext);
+    public boolean paint(RenderingContext2D renderingContext) {
+        boolean dataRendered = super.paint(renderingContext);
 
-        if(!item.isVisible()) return;
+        if(!item.isVisible()) return dataRendered;
 
         final Envelope env = renderingContext.getCanvasObjectiveBounds();
         final Envelope env2d = renderingContext.getCanvasObjectiveBounds2D();
@@ -66,15 +66,16 @@ public class StatefullMapLayerJ2D<T extends MapLayer> extends StatefullMapItemJ2
         updateRequest(env, env2d, rect);
 
         GridCoverage2D coverage = this.buffer;
-        if(coverage == null) return;
+        if(coverage == null) return dataRendered;
 
         final Graphics2D g = renderingContext.getGraphics();
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)item.getOpacity()));
         try {
-            GO2Utilities.portray(renderingContext, coverage);
+            dataRendered |= GO2Utilities.portray(renderingContext, coverage);
         } catch (PortrayalException ex) {
             Logging.getLogger("org.geotoolkit.display2d.container.statefull").log(Level.SEVERE, null, ex);
         }
+        return dataRendered;
     }
 
     @Override

@@ -55,11 +55,12 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
     }
 
     @Override
-    public void portray(ProjectedObject graphic) throws PortrayalException {
+    public boolean portray(ProjectedObject graphic) throws PortrayalException {
+        return false;
     }
 
     @Override
-    public void portray(Iterator<? extends ProjectedObject> ite) throws PortrayalException {
+    public boolean portray(Iterator<? extends ProjectedObject> ite) throws PortrayalException {
 
         final Expression size = symbol.getSource().getSize();
         final Expression group = symbol.getSource().getGroup();
@@ -68,7 +69,7 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
         final List<PieSymbolizer.ColorQuarter> colorQuarters = symbol.getSource().getColorQuarters();
 
         if (group == null || quarter == null || value == null) {
-            return;
+            return false;
         }
 
         final Map<Object,PropsPie> vals = new HashMap<>();
@@ -179,11 +180,12 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
                 }
             }
         }
+        return true;
     }
 
     @Override
-    public void portray(ProjectedCoverage graphic) throws PortrayalException {
-
+    public boolean portray(ProjectedCoverage graphic) throws PortrayalException {
+        return false;
     }
 
     @Override

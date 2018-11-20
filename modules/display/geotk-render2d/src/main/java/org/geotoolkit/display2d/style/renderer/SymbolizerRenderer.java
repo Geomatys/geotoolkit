@@ -51,17 +51,19 @@ public interface SymbolizerRenderer {
      * Paint the graphic object using the cached symbolizer and the rendering parameters.
      *
      * @param graphic : cached graphic representation of a feature
+     * @return true if any data has been rendered
      * @throws PortrayalException
      */
-    void portray(ProjectedObject graphic) throws PortrayalException;
+    boolean portray(ProjectedObject graphic) throws PortrayalException;
 
     /**
      * Paint in one iteration a complete set of features.
      *
      * @param graphics : iterator over all graphics to render
+     * @return true if any data has been rendered
      * @throws PortrayalException
      */
-    void portray(Iterator<? extends ProjectedObject> graphics) throws PortrayalException;
+    boolean portray(Iterator<? extends ProjectedObject> graphics) throws PortrayalException;
 
     /**
      * Test if the graphic object hit the given search area.
@@ -77,9 +79,10 @@ public interface SymbolizerRenderer {
      * Paint the graphic object using the cached symbolizer and the rendering parameters.
      *
      * @param graphic : cached graphic representation of a coverage
+     * @return true if any data has been rendered
      * @throws PortrayalException
      */
-    void portray(ProjectedCoverage graphic) throws PortrayalException;
+    boolean portray(ProjectedCoverage graphic) throws PortrayalException;
 
     /**
      * Test if the graphic object hit the given search area.

@@ -166,20 +166,18 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
      * {@inheritDoc }
      */
     @Override
-    public void paintLayer(final RenderingContext2D renderingContext) {
+    public boolean paintLayer(final RenderingContext2D renderingContext) {
 
         //search for a special graphic renderer
         final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) item.getGraphicBuilder(GraphicJ2D.class);
         if(builder != null){
             //let the parent class handle it
-            super.paintLayer(renderingContext);
-            return;
+            return super.paintLayer(renderingContext);
         }
 
         if(Boolean.TRUE.equals(item.getUserProperty(MapLayer.USERKEY_STYLED_FEATURE))){
             //feature have self defined styles.
-            renderStyledFeature(renderingContext);
-            return;
+            return renderStyledFeature(renderingContext);
         }
 
         //first extract the valid rules at this scale
@@ -188,13 +186,13 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             validRules = getValidRules(renderingContext,item,item.getResource().getType());
         } catch (DataStoreException ex) {
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
-            return;
+            return false;
         }
 
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
         if(validRules.isEmpty()){
-            return;
+            return false;
         }
 
         //extract the used names
@@ -231,13 +229,13 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             expected = candidates.getType();
         } catch (Exception ex) {
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
-            return;
+            return false;
         }
 
         //calculate optimized rules and included filter + expressions
         final CachedRule[] rules = toCachedRules(validRules, expected);
 
-        paintVectorLayer(rules, candidates, renderingContext);
+        return paintVectorLayer(rules, candidates, renderingContext);
     }
 
     /**
@@ -245,7 +243,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
      *
      * @param context
      */
-    private void renderStyledFeature(final RenderingContext2D context){
+    private boolean renderStyledFeature(final RenderingContext2D context){
 
         final CanvasMonitor monitor = context.getMonitor();
         final GraphicIterator statefullIterator;
@@ -254,15 +252,16 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             statefullIterator = getIterator(candidates, context, getStatefullParameters(context));
         } catch (Exception ex) {
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
-            return;
+            return false;
         }
 
         //prepare the rendering parameters
-        if(monitor.stopRequested()) return;
+        if(monitor.stopRequested()) return false;
 
+        boolean dataRendered = false;
         try{
             while(statefullIterator.hasNext()){
-                if(monitor.stopRequested()) return;
+                if(monitor.stopRequested()) return dataRendered;
                 final ProjectedObject projectedCandidate = statefullIterator.next();
                 final Feature feature = (Feature) projectedCandidate.getCandidate();
 
@@ -291,7 +290,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                 getLogger().log(Level.WARNING, null, ex);
             }
         }
-
+        return dataRendered;
     }
 
     protected FeatureSet optimizeCollection(final RenderingContext2D context,
@@ -1103,7 +1102,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         return rules;
     }
 
-    protected void paintVectorLayer(final CachedRule[] rules, final FeatureSet candidates, final RenderingContext2D context) {
+    protected boolean paintVectorLayer(final CachedRule[] rules, final FeatureSet candidates, final RenderingContext2D context) {
 
         final CanvasMonitor monitor = context.getMonitor();
 
@@ -1112,7 +1111,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
         //prepare the rendering parameters
         final StatelessContextParams params = getStatefullParameters(context);
-        if(monitor.stopRequested()) return;
+        if(monitor.stopRequested()) return false;
 
         //check if we have group symbolizers, if it's the case we must render by symbol order.
         boolean symbolOrder = false;
@@ -1128,18 +1127,18 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         symbolOrder = symbolOrder || Boolean.TRUE.equals(canvas.getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER));
         if(symbolOrder){
             try{
-                renderBySymbolOrder(candidates, context, rules, params);
+                return renderBySymbolOrder(candidates, context, rules, params);
             }catch(PortrayalException ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
         }else{
             try{
-                renderByObjectOrder(candidates, context, rules, params);
+                return renderByObjectOrder(candidates, context, rules, params);
             }catch(PortrayalException ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
         }
-
+        return false;
     }
 
     /**
@@ -1150,7 +1149,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
      * @param params
      * @throws PortrayalException
      */
-    protected final void renderByObjectOrder(final FeatureSet candidates,
+    protected final boolean renderByObjectOrder(final FeatureSet candidates,
             final RenderingContext2D context, final CachedRule[] rules,
             final StatelessContextParams params) throws PortrayalException{
         final GraphicIterator statefullIterator;
@@ -1159,10 +1158,10 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         } catch (DataStoreException ex) {
             throw new PortrayalException(ex.getMessage(), ex);
         }
-        renderByObjectOrder(statefullIterator, context, rules);
+        return renderByObjectOrder(statefullIterator, context, rules);
     }
 
-    protected final void renderByObjectOrder(final GraphicIterator statefullIterator,
+    protected final boolean renderByObjectOrder(final GraphicIterator statefullIterator,
             final RenderingContext2D context, final CachedRule[] rules) throws PortrayalException{
         final CanvasMonitor monitor = context.getMonitor();
 
@@ -1174,12 +1173,12 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             if(renderers.rules.length == 1
                && (renderers.rules[0].getFilter() == null || renderers.rules[0].getFilter() == Filter.INCLUDE)
                && renderers.rules[0].symbolizers().length == 1){
-                renderers.renderers[0][0].portray(statefullIterator);
-                return;
+                return renderers.renderers[0][0].portray(statefullIterator);
             }
 
+            boolean dataRendered = false;
             while(statefullIterator.hasNext()){
-                if(monitor.stopRequested()) return;
+                if(monitor.stopRequested()) return dataRendered;
                 final ProjectedObject projectedCandidate = statefullIterator.next();
 
                 boolean painted = false;
@@ -1190,7 +1189,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                     if (ruleFilter == null || ruleFilter.evaluate(projectedCandidate.getCandidate())) {
                         painted = true;
                         for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
-                            renderer.portray(projectedCandidate);
+                            dataRendered |= renderer.portray(projectedCandidate);
                         }
                     }
                 }
@@ -1203,12 +1202,14 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                         //test if the rule is valid for this feature
                         if (ruleFilter == null || ruleFilter.evaluate(projectedCandidate.getCandidate())) {
                             for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
-                                renderer.portray(projectedCandidate);
+                                dataRendered |= renderer.portray(projectedCandidate);
                             }
                         }
                     }
                 }
             }
+
+            return dataRendered;
         }finally{
             try {
                 statefullIterator.close();
@@ -1226,7 +1227,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
      * @param params
      * @throws org.geotoolkit.display.PortrayalException
      */
-    protected final void renderBySymbolOrder(final FeatureSet candidates,
+    protected final boolean renderBySymbolOrder(final FeatureSet candidates,
             final RenderingContext2D context, final CachedRule[] rules, final StatelessContextParams params)
             throws PortrayalException {
 
@@ -1242,23 +1243,23 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             }
             final CachedSymbolizer s = rules[0].symbolizers()[0];
             final SymbolizerRenderer renderer = s.getRenderer().createRenderer(s, context);
-            renderer.portray(statefullIterator);
+            boolean dataRendered = renderer.portray(statefullIterator);
             try {
                 statefullIterator.close();
             } catch (IOException ex) {
                 getLogger().log(Level.WARNING, null, ex);
             }
-            return;
+            return dataRendered;
         }
 
-        renderBySymbolIndexInRule(candidates,context,rules,params);
+        return renderBySymbolIndexInRule(candidates,context,rules,params);
     }
 
     /**
      * Render by symbol index order in a single pass, this results in creating a buffered image
      * for each symbolizer depth, the maximum number of buffer is the maximum number of symbolizer a rule contain.
      */
-    private void renderBySymbolIndexInRule(final FeatureSet candidates,
+    private boolean renderBySymbolIndexInRule(final FeatureSet candidates,
             final RenderingContext2D context, final CachedRule[] rules, final StatelessContextParams params)
             throws PortrayalException {
         final GraphicIterator statefullIterator;
@@ -1267,14 +1268,14 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         } catch (DataStoreException ex) {
             throw new PortrayalException(ex.getMessage(), ex);
         }
-        renderBySymbolIndexInRule(candidates,statefullIterator, context, rules);
+        return renderBySymbolIndexInRule(candidates,statefullIterator, context, rules);
     }
 
     /**
      * Render by symbol index order in a single pass, this results in creating a buffered image
      * for each symbolizer depth, the maximum number of buffer is the maximum number of symbolizer a rule contain.
      */
-    private  void renderBySymbolIndexInRule(final FeatureSet candidates,final GraphicIterator statefullIterator,
+    private boolean renderBySymbolIndexInRule(final FeatureSet candidates,final GraphicIterator statefullIterator,
             final RenderingContext2D context, final CachedRule[] rules)
             throws PortrayalException {
 
@@ -1328,9 +1329,10 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             }
         }
 
+        boolean dataRendered = false;
         try{
             while(statefullIterator.hasNext()){
-                if(monitor.stopRequested()) return;
+                if(monitor.stopRequested()) return dataRendered;
                 final ProjectedObject projectedCandidate = statefullIterator.next();
 
                 boolean painted = false;
@@ -1342,7 +1344,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                         painted = true;
                         final CachedSymbolizer[] css = rule.symbolizers();
                         for(int k=0; k<css.length; k++){
-                            renderers[i][k].portray(projectedCandidate);
+                            dataRendered |= renderers[i][k].portray(projectedCandidate);
                         }
                     }
                 }
@@ -1356,7 +1358,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                         if (ruleFilter == null || ruleFilter.evaluate(projectedCandidate.getCandidate())) {
                             final CachedSymbolizer[] css = rule.symbolizers();
                             for(int k=0; k<css.length; k++){
-                                renderers[i][k].portray(projectedCandidate);
+                                dataRendered |= renderers[i][k].portray(projectedCandidate);
                             }
                         }
                     }
@@ -1376,7 +1378,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                         } catch (DataStoreException ex) {
                             throw new PortrayalException(ex.getMessage(), ex);
                         }
-                        renderers[i][k].portray(ite);
+                        dataRendered |= renderers[i][k].portray(ite);
                     }
 
                 }
@@ -1399,6 +1401,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             g.drawImage(img, 0, 0, null);
             recycleBufferedImage((BufferedImage)img);
         }
+        return dataRendered;
     }
 
     protected boolean contain(final Set<FeatureId> ids, final Object candidate){

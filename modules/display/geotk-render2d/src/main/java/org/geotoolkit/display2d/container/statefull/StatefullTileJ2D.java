@@ -103,13 +103,13 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
     }
 
     @Override
-    public void paint(RenderingContext2D renderingContext) {
+    public boolean paint(RenderingContext2D renderingContext) {
 
         GridCoverage2D coverage = this.buffer;
         if(coverage == null){
             final Envelope env2d = renderingContext.getCanvasObjectiveBounds2D();
             updateRequest(env2d);
-            return;
+            return false;
         }
 
         //we must switch to objectiveCRS for grid coverage
@@ -121,6 +121,7 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
 
         final Graphics2D g = renderingContext.getGraphics();
         g.drawRenderedImage(img, comp);
+        return true;
     }
 
     private void updateRequest(Envelope env2d){

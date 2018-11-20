@@ -66,13 +66,14 @@ public abstract class PositionedGraphic2D extends GraphicJ2D{
     }
 
     @Override
-    public void paint(final RenderingContext2D context) {
+    public boolean paint(final RenderingContext2D context) {
         Rectangle rect = context.getCanvasDisplayBounds();
 
         //dont paint the graphic if the canvas is to small
         if(rect.width > minimumCanvasSize.width && rect.height > minimumCanvasSize.height){
             paint(context,position,offset);
         }
+        return false;
     }
 
     protected abstract void paint(RenderingContext2D context, int position, int[] offset);

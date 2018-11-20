@@ -411,11 +411,25 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         firePropertyChange(ENVELOPE_KEY, old, nw);
     }
 
-    public final void repaint(){
-        repaint(displayBounds);
+    /**
+     * Returns true if any data has been painteed.
+     * Background, decorations or legends are not considered datas.
+     * Datas include features and coverages.
+     *
+     * @return true if a data has been painted
+     */
+    public final boolean repaint(){
+        return repaint(displayBounds);
     }
 
-    public abstract void repaint(Shape area);
+    /**
+     * Returns true if any data has been painteed.
+     * Background, decorations or legends are not considered datas.
+     * Datas include features and coverages.
+     *
+     * @return true if a data has been painted
+     */
+    public abstract boolean repaint(Shape area);
 
     private void repaintIfAuto(){
         if(autoRepaint){
