@@ -120,11 +120,11 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
     }
 
     @Override
-    public void paintLayer(final RenderingContext2D context) {
+    public boolean paintLayer(final RenderingContext2D context) {
 
         //we abort painting if the layer is not visible.
         if (!item.isVisible()) {
-            return;
+            return false;
         }
 
         final CanvasMonitor monitor = context.getMonitor();
@@ -140,10 +140,10 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             collection = collection.subset(item.getQuery());
         } catch (DataStoreException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
-            return;
+            return false;
         }
 
-
+        boolean isRendered = false;
         double minx = Double.NaN;
         double miny = Double.NaN;
         double maxx = Double.NaN;
@@ -165,12 +165,12 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                 }
             }catch(Exception ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
-                return;
+                return false;
             }
 
             if(coordinates.isEmpty()){
                 //nothing to render
-                return;
+                return false;
             }
 
             final CoordinateReferenceSystem crs = FeatureExt.getCRS(collection.getType());
@@ -183,7 +183,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
 
             if(objenv.getSpan(0) <= res[0]*8 || objenv.getSpan(1) <= res[1]*8){
                 //envelope is too small, do not paint
-                return;
+                return false;
             }
 
 
@@ -220,7 +220,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                 output = Parameters.castOrWrap(p.call());
             } catch (ProcessException ex) {
                 getLogger().log(Level.WARNING, null, ex);
-                return;
+                return false;
             }
             final GridCoverage2D coverage = output.getValue(KrigingDescriptor.OUT_COVERAGE);
             final FeatureCollection isolines = output.getValue(KrigingDescriptor.OUT_LINES);
@@ -229,25 +229,24 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                 if(interpolateCoverageColor){
                     //paint with the black and white palette
                     try {
-                        GO2Utilities.portray(context, coverage);
+                        isRendered = GO2Utilities.portray(context, coverage);
                     } catch (PortrayalException ex) {
                         context.getMonitor().exceptionOccured(ex, Level.WARNING);
-                        return;
+                        return false;
                     }
                 }else if(coverageStyle != null){
                     //paint with the style
                     final CoverageMapLayer covlayer = MapBuilder.createCoverageLayer(coverage, coverageStyle, "test");
                     final StatelessCoverageLayerJ2D graphic = new StatelessCoverageLayerJ2D(getCanvas(), covlayer);
-                    graphic.paint(context);
+                    isRendered = graphic.paint(context);
                 }
             }
 
             if(isolines != null && isoLineStyle != null){
                 final FeatureMapLayer flayer = MapBuilder.createFeatureLayer(isolines, isoLineStyle);
                 final StatelessFeatureLayerJ2D graphic = new StatelessFeatureLayerJ2D(getCanvas(), flayer);
-                graphic.paint(context);
+                isRendered |= graphic.paint(context);
             }
-
         } catch (TransformException ex) {
             getLogger().log(Level.WARNING, null, ex);
         } catch (FeatureStoreRuntimeException ex) {
@@ -255,7 +254,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
         } catch (DataStoreException ex) {
             getLogger().log(Level.WARNING, null, ex);
         }
-
+        return isRendered;
     }
 
 }

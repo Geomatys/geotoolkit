@@ -97,7 +97,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     }
 
     @Override
-    public void portray(final ProjectedObject graphic) throws PortrayalException {
+    public boolean portray(final ProjectedObject graphic) throws PortrayalException {
         if(graphic instanceof ProjectedFeature){
             final ProjectedFeature pf = (ProjectedFeature) graphic;
             final String geomName = symbol.getSource().getGeometryPropertyName();
@@ -119,21 +119,22 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
-                portray(pc);
+                return portray(pc);
             }else  if(obj instanceof GridCoverageResource){
                 final CoverageMapLayer ml = MapBuilder.createCoverageLayer((GridCoverageResource)obj);
                 final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
-                portray(pc);
+                return portray(pc);
             }else  if(obj instanceof GridCoverageReader){
                 final CoverageMapLayer ml = MapBuilder.createCoverageLayer((GridCoverageReader)obj);
                 final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
-                portray(pc);
+                return portray(pc);
             }
         }
+        return false;
     }
 
     @Override

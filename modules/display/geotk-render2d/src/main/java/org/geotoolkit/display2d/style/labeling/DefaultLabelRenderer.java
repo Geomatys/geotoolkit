@@ -84,22 +84,26 @@ public class DefaultLabelRenderer implements LabelRenderer{
      * {@inheritDoc }
      */
     @Override
-    public void portrayLabels(){
+    public boolean portrayLabels(){
         final Graphics2D g2 = context.getGraphics();
         //enable antialiasing for labels
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+        boolean dataRendered = false;
         for(final LabelLayer layer : layers){
 
             for(LabelDescriptor label : layer.labels()){
                 if(label instanceof PointLabelDescriptor){
                     portray(g2, (PointLabelDescriptor)label);
+                    dataRendered = true;
                 }else if(label instanceof LinearLabelDescriptor){
                     portray(g2, (LinearLabelDescriptor)label);
+                    dataRendered = true;
                 }
             }
         }
         this.layers.clear();
+        return dataRendered;
     }
 
     private void portray(final Graphics2D g2, final PointLabelDescriptor label){

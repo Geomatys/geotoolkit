@@ -66,35 +66,36 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
+    public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
         //portray the border of the coverage
         final ProjectedGeometry projectedGeometry = projectedCoverage.getEnvelopeGeometry();
 
         //could not find the border geometry
-        if(projectedGeometry == null) return;
+        if(projectedGeometry == null) return false;
 
-        portray(projectedGeometry, null, projectedCoverage);
+        return portray(projectedGeometry, null, projectedCoverage);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedObject projectedFeature) throws PortrayalException{
+    public boolean portray(final ProjectedObject projectedFeature) throws PortrayalException{
 
         final Object candidate = projectedFeature.getCandidate();
 
         //test if the symbol is visible on this feature
         if(symbol.isVisible(candidate)){
             ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
-            portray(projectedGeometry, candidate, projectedFeature);
+            return portray(projectedGeometry, candidate, projectedFeature);
         }
+        return false;
     }
 
-    public void portray(ProjectedGeometry projectedGeometry, Object candidate, final ProjectedObject projectedFeature) throws PortrayalException{
+    public boolean portray(ProjectedGeometry projectedGeometry, Object candidate, final ProjectedObject projectedFeature) throws PortrayalException{
 
         //test if the symbol is visible on this feature
-        if(!symbol.isVisible(candidate)) return;
+        if(!symbol.isVisible(candidate)) return false;
 
         //we adjust coefficient for rendering ------------------------------
         float coeff = 1;
@@ -112,9 +113,9 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
         //start to extract label parameters---------------------------------
         String label = symbol.getLabel(candidate);
-        if(label == null) return; //nothing to paint
+        if(label == null) return false; //nothing to paint
         label = label.trim();
-        if(label.isEmpty()) return; //nothing to paint
+        if(label.isEmpty()) return false; //nothing to paint
         final CachedHalo halo = symbol.getHalo();
         final CachedLabelPlacement placement = symbol.getPlacement();
 
@@ -134,7 +135,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         final Font j2dFont = symbol.getJ2dFont(candidate, coeff);
 
         //symbolizer doesnt match the featuretype, no geometry found with this name.
-        if(projectedGeometry == null) return;
+        if(projectedGeometry == null) return false;
 
         projectedGeometry = new ProjectedGeometry(projectedGeometry);
 
@@ -157,7 +158,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
                 rotation, renderingContext.getDisplayCRS(),
                 projectedGeometry);
             labelLayer.labels().add(descriptor);
-
+            return true;
         }else if(placement instanceof CachedLinePlacement){
             final CachedLinePlacement lp = (CachedLinePlacement) placement;
 
@@ -175,7 +176,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
                     lp.isGeneralizeLine(),
                     projectedGeometry);
             labelLayer.labels().add(descriptor);
-
+            return true;
         }else{
             throw new PortrayalException("Text symbolizer has no label placement, this should not be possible.");
         }

@@ -23,7 +23,7 @@ public class SquaresGraphic extends GraphicJ2D{
     }
 
     @Override
-    public void paint(RenderingContext2D context) {
+    public boolean paint(RenderingContext2D context) {
         final Graphics2D g = context.getGraphics();
 
         //our squares will always be in pixel units and display system
@@ -37,6 +37,7 @@ public class SquaresGraphic extends GraphicJ2D{
 
         g.setColor(Color.BLUE);
         g.fillRect(230, 10, 50, 50);
+        return false;
     }
 
     @Override

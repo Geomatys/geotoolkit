@@ -93,7 +93,7 @@ final class WCSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         }
 
         @Override
-        public void paint(final RenderingContext2D context2D) {
+        public boolean paint(final RenderingContext2D context2D) {
             final CanvasMonitor monitor = context2D.getMonitor();
 
 
@@ -106,7 +106,7 @@ final class WCSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
                 url = layer.query(env, dim);
             } catch (Exception ex) {
                 monitor.exceptionOccured(ex, Level.WARNING);
-                return;
+                return false;
             }
 
             getLogger().log(Level.WARNING, "[WCSMapLayer] : GETCOVERAGE request : {0}", url);
@@ -116,12 +116,12 @@ final class WCSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
                 image = ImageIO.read(url);
             } catch (IOException io) {
                 monitor.exceptionOccured(new PortrayalException(io), Level.WARNING);
-                return;
+                return false;
             }
 
             if (image == null) {
                 monitor.exceptionOccured(new PortrayalException("WCS server did not return an image."), Level.WARNING);
-                return;
+                return false;
             }
 
             final GridCoverageBuilder gc = new GridCoverageBuilder();
@@ -129,10 +129,10 @@ final class WCSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
             gc.setRenderedImage(image);
             final GridCoverage2D coverage = gc.getGridCoverage2D();
             try {
-                GO2Utilities.portray(context2D, coverage);
+                return GO2Utilities.portray(context2D, coverage);
             } catch (PortrayalException ex) {
                 monitor.exceptionOccured(ex, Level.WARNING);
-                return;
+                return false;
             }
         }
 

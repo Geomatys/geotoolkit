@@ -72,7 +72,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
+    public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
 
         double[] resolution = renderingContext.getResolution();
         final Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
@@ -134,6 +134,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
         GeometryTransformer trs = new GeometryCSTransformer(cstrs);
 
         final ProjectedFeature projectedFeature = new ProjectedFeature(params);
+        boolean dataRendered = false;
         try {
             for(final Map.Entry<Feature,List<CachedSymbolizer>> entry : features.entrySet()){
                 Feature f = entry.getKey();
@@ -142,7 +143,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
                 projectedFeature.setCandidate(entry.getKey());
 
                 for(final CachedSymbolizer cached : entry.getValue()){
-                    GO2Utilities.portray(projectedFeature, cached, renderingContext);
+                    dataRendered |= GO2Utilities.portray(projectedFeature, cached, renderingContext);
                 }
             }
         } catch (TransformException ex) {
@@ -150,5 +151,6 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
         }
 
         renderingContext.switchToDisplayCRS();
+        return dataRendered;
     }
 }

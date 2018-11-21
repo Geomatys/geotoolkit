@@ -46,8 +46,9 @@ public class GraphicGridJ2D extends GraphicJ2D{
     }
 
     @Override
-    public void paint(final RenderingContext2D context) {
+    public boolean paint(final RenderingContext2D context) {
         J2DGridUtilities.paint(context, template);
+        return false;
     }
 
     @Override

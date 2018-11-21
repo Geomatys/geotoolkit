@@ -149,7 +149,7 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
         return context;
     }
 
-    protected void render(final RenderingContext2D context2D, final List<SceneNode> graphics){
+    protected boolean render(final RenderingContext2D context2D, final List<SceneNode> graphics){
 
         //TODO update multithreading rendering for scene tree model
 //        final Boolean mt = (Boolean) context2D.getRenderingHints().get(GO2Hints.KEY_MULTI_THREAD);
@@ -169,6 +169,7 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
 //            }
 //        }
 
+        boolean dataPainted = false;
         /*
          * Draw all graphics, starting with the one with the lowest <var>z</var> value. Before
          * to start the actual drawing,  we will notify all graphics that they are about to be
@@ -176,28 +177,29 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
          */
         for(final Graphic graphic : graphics){
             if(monitor.stopRequested()){
-                return;
+                return dataPainted;
             }
 
             if(graphic instanceof GraphicJ2D){
-                ((GraphicJ2D) graphic).paint(context2D);
+                dataPainted |= ((GraphicJ2D) graphic).paint(context2D);
             }
         }
 
         if(monitor.stopRequested()){
-            return;
+            return dataPainted;
         }
 
         //draw the labels
         final LabelRenderer labelRenderer = context2D.getLabelRenderer(false);
         if(labelRenderer != null){
             try {
-                labelRenderer.portrayLabels();
+                dataPainted |= labelRenderer.portrayLabels();
             } catch (TransformException ex) {
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
         }
 
+        return dataPainted;
     }
 
     /**

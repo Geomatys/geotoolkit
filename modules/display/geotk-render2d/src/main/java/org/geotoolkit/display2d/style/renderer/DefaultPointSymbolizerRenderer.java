@@ -54,14 +54,14 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
+    public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
         //portray the border of the coverage
         final ProjectedGeometry projectedGeometry = projectedCoverage.getEnvelopeGeometry();
 
         //could not find the border geometry
-        if(projectedGeometry == null) return;
+        if(projectedGeometry == null) return false;
 
-        portray(projectedGeometry, null);
+        return portray(projectedGeometry, null);
 
     }
 
@@ -69,23 +69,22 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedObject projectedFeature) throws PortrayalException{
+    public boolean portray(final ProjectedObject projectedFeature) throws PortrayalException{
 
         final Object candidate = projectedFeature.getCandidate();
 
         //test if the symbol is visible on this feature
-        if(!symbol.isVisible(candidate)) return;
+        if(!symbol.isVisible(candidate)) return false;
 
         final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
 
-        portray(projectedGeometry, candidate);
-
+        return portray(projectedGeometry, candidate);
     }
 
-    private void portray(final ProjectedGeometry projectedGeometry, Object candidate) throws PortrayalException{
+    private boolean portray(final ProjectedGeometry projectedGeometry, Object candidate) throws PortrayalException{
 
         //symbolizer doesnt match the featuretype, no geometry found with this name.
-        if(projectedGeometry == null) return;
+        if(projectedGeometry == null) return false;
 
         g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
@@ -111,7 +110,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
 
         if(img == null){
             //may be correct, image can be too small for rendering
-            return;
+            return false;
         }
 
         final float imgRot = symbol.getRotation(candidate);
@@ -131,7 +130,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
 
         if(geoms == null){
             //no geometry
-            return;
+            return false;
         }
 
         double rot = renderingContext.getRotation();
@@ -139,6 +138,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
 
         final int postx = (int) (-img.getWidth()*anchor[0] + disps[0]);
         final int posty = (int) (-img.getHeight()*anchor[1] - disps[1]);
+        boolean dataRendered = false;
         for(Geometry geom : geoms){
             if(rot==0.0 && imgRot==0f){
                 if(geom instanceof Point || geom instanceof MultiPoint){
@@ -150,6 +150,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                         //we use Math.floor and not a cast, for negative values this ensure
                         //a regular displacement and avoid tile border artifacts
                         g2d.drawImage(img, (int)Math.floor(coord.x)+postx, (int)Math.floor(coord.y)+posty, null);
+                        dataRendered = true;
                     }
 
                 }else{
@@ -157,7 +158,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                     final Point pt2d = GO2Utilities.getBestPoint(geom);
                     if(pt2d == null || pt2d.isEmpty()){
                         //no geometry
-                        return;
+                        return dataRendered;
                     }
 
                     Coordinate pcoord = pt2d.getCoordinate();
@@ -166,6 +167,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                     }
 
                     g2d.drawImage(img, (int)Math.floor(pcoord.x)+postx, (int)Math.floor(pcoord.y)+posty, null);
+                    dataRendered = true;
                 }
             }else{
                 final AffineTransform postConcat = new AffineTransform(1, 0, 0, 1, postx, posty);
@@ -185,13 +187,14 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                         ptrs.concatenate(postConcat);
 
                         g2d.drawImage(img, ptrs, null);
+                        dataRendered = true;
                     }
                 }else{
                     //get most appropriate point
                     final Point pt2d = GO2Utilities.getBestPoint(geom);
                     if(pt2d == null || pt2d.isEmpty()){
                         //no geometry
-                        return;
+                        return dataRendered;
                     }
 
                     Coordinate pcoord = pt2d.getCoordinate();
@@ -205,14 +208,15 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                     ptrs.concatenate(postConcat);
 
                     g2d.drawImage(img, ptrs, null);
+                    dataRendered = true;
                 }
             }
         }
-
+        return dataRendered;
     }
 
     @Override
-    public void portray(final Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
+    public boolean portray(final Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
 
         g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
@@ -243,8 +247,9 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
         final AffineTransform mapRotationTrs = new AffineTransform();
         mapRotationTrs.rotate(-rot);
 
+        boolean dataRendered = false;
         while(graphics.hasNext()){
-            if(monitor.stopRequested()) return;
+            if(monitor.stopRequested()) return dataRendered;
 
             projectedobj = graphics.next();
             candidate = projectedobj.getCandidate();
@@ -288,6 +293,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                                     -img.getWidth()*anchor[0] + coord.x + disps[0],
                                     -img.getHeight()*anchor[1] + coord.y - disps[1]);
                             g2d.drawRenderedImage(img, imgTrs);
+                            dataRendered = true;
                         }else{
                             final int postx = (int) (-img.getWidth()*anchor[0] + disps[0]);
                             final int posty = (int) (-img.getHeight()*anchor[1] - disps[1]);
@@ -295,6 +301,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                             ptrs.preConcatenate(new AffineTransform(1, 0, 0, 1, coord.x, coord.y));
                             ptrs.concatenate(new AffineTransform(1, 0, 0, 1, postx, posty));
                             g2d.drawImage(img, ptrs, null);
+                            dataRendered = true;
                         }
                     }
 
@@ -304,7 +311,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                     final Point pt2d = GO2Utilities.getBestPoint(geom);
                     if(pt2d == null || pt2d.isEmpty()){
                         //no geometry
-                        return;
+                        return dataRendered;
                     }
                     Coordinate pcoord = pt2d.getCoordinate();
                     if(Double.isNaN(pcoord.x)){
@@ -315,6 +322,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                                     -img.getWidth()*anchor[0] + pcoord.x + disps[0],
                                     -img.getHeight()*anchor[1] + pcoord.y - disps[1]);
                         g2d.drawRenderedImage(img, imgTrs);
+                        dataRendered = true;
                     }else{
                         final int postx = (int) (-img.getWidth()*anchor[0] + disps[0]);
                         final int posty = (int) (-img.getHeight()*anchor[1] - disps[1]);
@@ -322,10 +330,12 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                         ptrs.preConcatenate(new AffineTransform(1, 0, 0, 1, pcoord.x, pcoord.y));
                         ptrs.concatenate(new AffineTransform(1, 0, 0, 1, postx, posty));
                         g2d.drawImage(img, ptrs, null);
+                        dataRendered = true;
                     }
                 }
             }
         }
+        return dataRendered;
     }
 
     /**

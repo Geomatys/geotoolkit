@@ -99,7 +99,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
     }
 
     @Override
-    public void repaint(final Shape displayArea) {
+    public boolean repaint(final Shape displayArea) {
         //finish any previous painting
         getMonitor().stopRendering();
 
@@ -144,9 +144,10 @@ public class J2DCanvasBuffered extends J2DCanvas{
             painter.paint(context2D);
         }
 
+        boolean dataPainted = false;
         final GraphicContainer container = getContainer();
         if(container != null){
-            render(context, container.flatten(true));
+            dataPainted |= render(context, container.flatten(true));
         }
 
         /**
@@ -155,6 +156,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
         output.dispose();
         fireRenderingStateChanged(ON_HOLD);
         monitor.renderingFinished();
+        return dataPainted;
     }
 
     /**

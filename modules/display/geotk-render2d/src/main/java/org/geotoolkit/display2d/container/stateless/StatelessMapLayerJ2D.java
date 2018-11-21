@@ -94,20 +94,20 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
     }
 
     @Override
-    public void paint(final RenderingContext2D context) {
+    public boolean paint(final RenderingContext2D context) {
 
         //we abort painting if the layer is not visible.
-        if (!item.isVisible()) return;
+        if (!item.isVisible()) return false;
 
         //we abort if opacity is to low
         final double opacity = item.getOpacity();
-        if(opacity < 1e-6) return;
+        if (opacity < 1e-6) return false;
 
 
-        if(1-opacity < 1e-6){
+        if (1-opacity < 1e-6) {
             //we are very close to opacity one, no need to create a intermediate image
-            paintLayer(context);
-        }else{
+            return paintLayer(context);
+        } else {
             //create an intermediate layer which will be painted on the main context
             //after with the given opacity
             final Rectangle rect = context.getCanvasDisplayBounds();
@@ -115,7 +115,7 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
                     ColorModel.getRGBdefault().createCompatibleSampleModel(rect.width, rect.height));
             final Graphics2D g2d = inter.createGraphics();
             final RenderingContext2D interContext = context.create(g2d);
-            paintLayer(interContext);
+            boolean dataRendered = paintLayer(interContext);
 
             //paint intermediate image
             context.switchToDisplayCRS();
@@ -123,6 +123,8 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)opacity));
             g.drawImage(inter, 0, 0, null);
             recycleBufferedImage(inter);
+
+            return dataRendered;
         }
 
     }
@@ -131,17 +133,18 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
      * Render layer, will only be painted if an appropriate graphic builder is attached
      * to it.
      */
-    protected void paintLayer(final RenderingContext2D context){
+    protected boolean paintLayer(final RenderingContext2D context){
 
+        boolean dataRendered = false;
         //get graphics from the cache first
         if(weakGraphic != null){
             final Collection<? extends GraphicJ2D> graphics = weakGraphic.get();
             if(graphics != null){
                 for(GraphicJ2D g : graphics){
-                    g.paint(context);
+                    dataRendered |= g.paint(context);
                 }
             }
-            return;
+            return dataRendered;
         }
 
         final GraphicBuilder<? extends GraphicJ2D> builder = item.getGraphicBuilder(GraphicJ2D.class);
@@ -149,9 +152,10 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
             final Collection<? extends GraphicJ2D> graphics = builder.createGraphics(item, canvas);
             weakGraphic = new SoftReference<Collection<? extends GraphicJ2D>>(graphics);
             for(GraphicJ2D g : graphics){
-                g.paint(context);
+                dataRendered |= g.paint(context);
             }
         }
+        return dataRendered;
     }
 
     /**

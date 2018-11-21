@@ -240,23 +240,34 @@ public final class GO2Utilities {
 
     private GO2Utilities() {}
 
-    public static void portray(final ProjectedFeature feature, final CachedSymbolizer symbol,
+    /**
+     * @return true if some datas has been rendered
+     */
+    public static boolean portray(final ProjectedFeature feature, final CachedSymbolizer symbol,
             final RenderingContext2D context) throws PortrayalException{
         final SymbolizerRendererService renderer = findRenderer(symbol);
         if(renderer != null){
-            renderer.portray(feature, symbol, context);
+            return renderer.portray(feature, symbol, context);
         }
+        return false;
     }
 
-    public static void portray(final ProjectedCoverage graphic, final CachedSymbolizer symbol,
+    /**
+     * @return true if some datas has been rendered
+     */
+    public static boolean portray(final ProjectedCoverage graphic, final CachedSymbolizer symbol,
             final RenderingContext2D context) throws PortrayalException {
         final SymbolizerRendererService renderer = findRenderer(symbol);
         if(renderer != null){
-            renderer.portray(graphic, symbol, context);
+            return renderer.portray(graphic, symbol, context);
         }
+        return false;
     }
 
-    public static void portray(final RenderingContext2D renderingContext, GridCoverage2D dataCoverage) throws PortrayalException{
+    /**
+     * @return true if some datas has been rendered
+     */
+    public static boolean portray(final RenderingContext2D renderingContext, GridCoverage2D dataCoverage) throws PortrayalException{
         final CanvasMonitor monitor = renderingContext.getMonitor();
         final Graphics2D g2d = renderingContext.getGraphics();
 
@@ -274,7 +285,7 @@ public final class GO2Utilities {
             }
         } catch (CoverageProcessingException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
-            return;
+            return false;
         } catch(Exception ex){
             //several kind of errors can happen here, we catch anything to avoid blocking the map component.
             monitor.exceptionOccured(
@@ -283,12 +294,12 @@ public final class GO2Utilities {
                 " was expecting : \n" +
                 renderingContext.getObjectiveCRS() +
                 "\nOriginal Cause:"+ ex.getMessage(), ex), Level.WARNING);
-            return;
+            return false;
         }
 
         if(dataCoverage == null){
             monitor.exceptionOccured(new NullArgumentException("GO2Utilities : Reprojected coverage is null."),Level.WARNING);
-            return;
+            return false;
         }
 
         //we must switch to objectiveCRS for grid coverage
@@ -324,6 +335,7 @@ public final class GO2Utilities {
         if(trs2D instanceof AffineTransform){
             g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
             g2d.drawRenderedImage(img, (AffineTransform)trs2D);
+            return true;
         }else if (trs2D instanceof LinearTransform) {
             final LinearTransform lt = (LinearTransform) trs2D;
             final int col = lt.getMatrix().getNumCol();

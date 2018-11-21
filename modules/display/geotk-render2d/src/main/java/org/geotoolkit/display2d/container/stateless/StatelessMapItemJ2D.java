@@ -167,8 +167,9 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
     }
 
     @Override
-    public void paint(final RenderingContext2D renderingContext) {
+    public boolean paint(final RenderingContext2D renderingContext) {
         //do not render children
+        return false;
     }
 
     /**

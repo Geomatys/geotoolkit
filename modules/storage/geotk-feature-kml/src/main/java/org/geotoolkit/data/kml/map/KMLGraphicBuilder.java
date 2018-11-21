@@ -504,7 +504,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         }
 
         @Override
-        public void paint(RenderingContext2D context2D) {
+        public boolean paint(RenderingContext2D context2D) {
             this.context2d = context2D;
             cache.styles.clear();
             cache.styleMaps.clear();
@@ -516,6 +516,8 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             }
             cache.styles.clear();
             cache.styleMaps.clear();
+            //TODO deeper test if data are rendered
+            return true;
         }
 
         @Override

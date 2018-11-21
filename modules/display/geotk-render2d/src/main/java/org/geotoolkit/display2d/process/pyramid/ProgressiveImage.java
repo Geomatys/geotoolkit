@@ -27,6 +27,7 @@ import java.util.EventListener;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import javax.media.jai.RasterFactory;
 import javax.swing.event.EventListenerList;
@@ -68,10 +69,17 @@ public class ProgressiveImage implements RenderedImage{
     private final Point2D upperleft;
     private final int nbtileonwidth;
     private final int nbtileonheight;
+    /**
+     * hold information of the last generated image batch.
+     * if true, the images do not contain any datas.
+     */
+    private boolean batchIsEmpty = false;
 
     private final CanvasDef cdef;
     private final SceneDef sdef;
     private final ViewDef vdef;
+
+    private J2DCanvasBuffered canvas;
 
     /** listener support */
     private final EventListenerList listeners = new EventListenerList();
@@ -322,6 +330,10 @@ public class ProgressiveImage implements RenderedImage{
         return sampleModel;
     }
 
+    public boolean isBatchEmpty() {
+        return batchIsEmpty;
+    }
+
     @Override
     public Raster getTile(int col, int row) {
         final Raster raster = tiles.remove(getTileIndex(col, row));
@@ -453,15 +465,18 @@ public class ProgressiveImage implements RenderedImage{
 
     }
 
-    private void renderTiles(int col, int row) {
-        final Dimension canvasSize = new Dimension(
-                nbtileonwidth*tileSize.width,
-                nbtileonheight*tileSize.height);
+    private synchronized void renderTiles(int col, int row) {
 
-        final Hints hints = new Hints();
-        hints.put(GO2Hints.KEY_COLOR_MODEL, colorModel);
+        if (canvas == null) {
+            final Dimension canvasSize = new Dimension(
+                    nbtileonwidth*tileSize.width,
+                    nbtileonheight*tileSize.height);
 
-        final J2DCanvasBuffered canvas = new J2DCanvasBuffered(vdef.getEnvelope().getCoordinateReferenceSystem(), canvasSize, hints);
+            final Hints hints = new Hints();
+            hints.put(GO2Hints.KEY_COLOR_MODEL, colorModel);
+            canvas = new J2DCanvasBuffered(vdef.getEnvelope().getCoordinateReferenceSystem(), canvasSize, hints);
+        }
+
         try {
             DefaultPortrayalService.prepareCanvas(canvas, cdef, sdef, vdef);
         } catch (PortrayalException ex) {
@@ -486,7 +501,7 @@ public class ProgressiveImage implements RenderedImage{
         }
 
         //cut the canvas buffer in pieces
-        canvas.repaint();
+        batchIsEmpty = !canvas.repaint();
 
         final BufferedImage canvasBuffer = canvas.getSnapShot();
         for(int x=0; x<nbtileonwidth && col+x<gridSize.width; x++){

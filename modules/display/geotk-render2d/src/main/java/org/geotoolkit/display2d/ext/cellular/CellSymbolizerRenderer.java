@@ -89,9 +89,9 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
      * @throws PortrayalException
      */
     @Override
-    public void portray(Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
+    public boolean portray(Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
         if(symbol.getCachedRule() == null){
-            return;
+            return false;
         }
         //calculate the cells
         final int cellSize = symbol.getSource().getCellSize();
@@ -205,7 +205,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
         if(numericProperties==null){
             //nothing in the iterator
-            return;
+            return false;
         }
 
         //render the cell features
@@ -248,14 +248,14 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                 pf.setCandidate(null);
             }
         }
-
+        return true;
     }
 
     @Override
-    public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
+    public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
 
         if(symbol.getCachedRule() == null){
-            return;
+            return false;
         }
 
         //adjust envelope, we need cells to start at crs 0,0 to avoid artifacts
@@ -282,7 +282,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         }
         if(coverage == null){
             LOGGER.log(Level.WARNING, "Reprojected coverage is null.");
-            return;
+            return false;
         }
 
 
@@ -373,7 +373,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         //restore image interpolation
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,oldValue);
         renderingContext.getRenderingHints().put(RenderingHints.KEY_INTERPOLATION,oldValue);
-
+        return true;
     }
 
     private void renderCellFeature(Feature feature, final ProjectedFeature pf, DefaultCachedRule renderers) throws PortrayalException{

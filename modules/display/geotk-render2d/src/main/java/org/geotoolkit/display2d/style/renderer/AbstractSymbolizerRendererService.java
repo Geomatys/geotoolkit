@@ -51,24 +51,24 @@ public abstract class AbstractSymbolizerRendererService<S extends Symbolizer, C 
     }
 
     @Override
-    public void portray(final ProjectedObject graphic, final C symbol,
+    public boolean portray(final ProjectedObject graphic, final C symbol,
             final RenderingContext2D context) throws PortrayalException {
         final SymbolizerRenderer renderer = createRenderer(symbol, context);
-        renderer.portray(graphic);
+        return renderer.portray(graphic);
     }
 
     @Override
-    public void portray(final Iterator<? extends ProjectedObject> graphics,
+    public boolean portray(final Iterator<? extends ProjectedObject> graphics,
             final C symbol, final RenderingContext2D context) throws PortrayalException {
         final SymbolizerRenderer renderer = createRenderer(symbol, context);
-        renderer.portray(graphics);
+        return renderer.portray(graphics);
     }
 
     @Override
-    public void portray(final ProjectedCoverage graphic, final C symbol,
+    public boolean portray(final ProjectedCoverage graphic, final C symbol,
             final RenderingContext2D context) throws PortrayalException {
         final SymbolizerRenderer renderer = createRenderer(symbol, context);
-        renderer.portray(graphic);
+        return renderer.portray(graphic);
     }
 
     @Override

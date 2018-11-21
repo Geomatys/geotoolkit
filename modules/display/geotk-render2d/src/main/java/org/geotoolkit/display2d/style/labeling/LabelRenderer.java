@@ -53,8 +53,9 @@ public interface LabelRenderer {
      * Portray all labels in the rendering context.
      * This method shall be called by the renderer when after all graphics
      * have been painted.
+     * @return true if some datas has been rendered
      */
-    void portrayLabels() throws TransformException;
+    boolean portrayLabels() throws TransformException;
 
     /**
      * Portray the labelLayer immidiately.

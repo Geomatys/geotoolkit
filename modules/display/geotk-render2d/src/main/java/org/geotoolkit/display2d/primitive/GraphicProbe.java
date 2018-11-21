@@ -42,8 +42,9 @@ public class GraphicProbe extends GraphicJ2D{
     }
 
     @Override
-    public void paint(final RenderingContext2D context) {
+    public boolean paint(final RenderingContext2D context) {
         monitor.contextPaint(context);
+        return false;
     }
 
     @Override

@@ -63,7 +63,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
     }
 
     @Override
-    public void portray(ProjectedCoverage projectedCoverage) throws PortrayalException {
+    public boolean portray(ProjectedCoverage projectedCoverage) throws PortrayalException {
 
         try{
             final GridCoverageResource covref = projectedCoverage.getCandidate().getCoverageReference();
@@ -166,10 +166,10 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                         renderingContext.getObjectiveToDisplay(),
                         false,toRead);
             } catch (DisjointCoverageDomainException ex) {
-                return;
+                return false;
             }
             if (dataCoverage == null) {
-                return;
+                return false;
             }
 
             //check if the reader honored the band request
@@ -209,7 +209,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
         } catch (Exception e) {
             monitor.exceptionOccured(e, Level.WARNING);
         }
-
+        return true;
     }
 
     private static double evaluate(DynamicRangeSymbolizer.DRBound bound, Map<String,Object> stats) throws PortrayalException{

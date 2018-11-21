@@ -116,13 +116,13 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
      * @param context2D
      */
     @Override
-    public void paintLayer(final RenderingContext2D context2D) {
+    public boolean paintLayer(final RenderingContext2D context2D) {
 
         final CanvasMonitor monitor = context2D.getMonitor();
         final TileSetResult result = listTiles(context2D);
         if(result==null){
             //no pyramid or tiles match this context definition
-            return;
+            return false;
         }
 
         //tiles to render
@@ -145,13 +145,13 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         //paint tiles ----------------------------------------------------------
         if(queries.isEmpty()){
             //bypass if no queries
-            return;
+            return false;
         }
         Integer maxTiles = (Integer)context2D.getRenderingHints().get(GO2Hints.KEY_MAX_TILES);
         if(maxTiles==null) maxTiles = 500;
         if( queries.size() > maxTiles) {
             LOGGER.log(Level.INFO, "Too much tiles required to render layer at this scale.");
-            return;
+            return false;
         }
 
         final BlockingQueue<Object> queue;
@@ -159,9 +159,10 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             queue = result.mosaic.getTiles(queries.keySet(), hints);
         } catch (DataStoreException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
-            return;
+            return false;
         }
 
+        boolean dataRendered = false;
         final StatelessContextParams params = new StatelessContextParams(getCanvas(), getUserObject());
         params.update(context2D);
         while(true){
@@ -186,13 +187,14 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             if(obj instanceof TileReference){
                 final TileReference tile = (TileReference)obj;
                 try {
-                    paintTile(context2D, params, result.rules, result.pyramid.getId(), result.mosaic.getId(), tile);
+                    dataRendered |= paintTile(context2D, params, result.rules, result.pyramid.getId(), result.mosaic.getId(), tile);
                 } catch (Exception e) {
                     LOGGER.log(Level.WARNING, "Error on tile : "+tile.getPosition()+". Input is : "+tile.getInput(), e);
                 }
             }
         }
 
+        return dataRendered;
     }
 
     /**
@@ -442,21 +444,24 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         return new ProjectedCoverage(params, tilelayer);
     }
 
-    private void paintTile(final RenderingContext2D context, StatelessContextParams params, CachedRule[] rules,
+    private boolean paintTile(final RenderingContext2D context, StatelessContextParams params, CachedRule[] rules,
             final String pyramidId, final String mosaicId, final TileReference tile) {
         final PyramidalCoverageResource covRef = (PyramidalCoverageResource) item.getCoverageReference();
 
         final ProjectedCoverage projectedCoverage = asCoverage(context,
                 params, covRef, pyramidId, mosaicId, tile);
+
+        boolean dataRendered = false;
         for(final CachedRule rule : rules){
             for(final CachedSymbolizer symbol : rule.symbolizers()){
                 try {
-                    GO2Utilities.portray(projectedCoverage, symbol, context);
+                    dataRendered |= GO2Utilities.portray(projectedCoverage, symbol, context);
                 } catch (PortrayalException ex) {
                     context.getMonitor().exceptionOccured(ex, Level.WARNING);
                 }
             }
         }
+        return dataRendered;
     }
 
     @Override

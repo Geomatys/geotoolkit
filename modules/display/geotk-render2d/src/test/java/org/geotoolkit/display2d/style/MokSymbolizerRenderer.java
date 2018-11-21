@@ -41,12 +41,14 @@ public class MokSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedMokS
     }
 
     @Override
-    public void portray(final ProjectedObject graphic) throws PortrayalException {
+    public boolean portray(final ProjectedObject graphic) throws PortrayalException {
         called++;
+        return false;
     }
 
     @Override
-    public void portray(final ProjectedCoverage graphic) throws PortrayalException {
+    public boolean portray(final ProjectedCoverage graphic) throws PortrayalException {
+        return false;
     }
 
     @Override
