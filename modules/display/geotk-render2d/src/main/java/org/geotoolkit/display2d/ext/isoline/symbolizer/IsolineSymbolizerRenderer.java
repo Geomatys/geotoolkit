@@ -191,7 +191,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
             }
 
             return isRendered;
-            
+
         } catch (DataStoreException ex) {
             throw new PortrayalException(ex.getMessage(), ex);
         } catch (ProcessException e) {
