@@ -143,7 +143,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             return false;
         }
 
-
+        boolean isRendered = false;
         double minx = Double.NaN;
         double miny = Double.NaN;
         double maxx = Double.NaN;
@@ -229,7 +229,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                 if(interpolateCoverageColor){
                     //paint with the black and white palette
                     try {
-                        return GO2Utilities.portray(context, coverage);
+                        isRendered = GO2Utilities.portray(context, coverage);
                     } catch (PortrayalException ex) {
                         context.getMonitor().exceptionOccured(ex, Level.WARNING);
                         return false;
@@ -238,16 +238,15 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                     //paint with the style
                     final CoverageMapLayer covlayer = MapBuilder.createCoverageLayer(coverage, coverageStyle, "test");
                     final StatelessCoverageLayerJ2D graphic = new StatelessCoverageLayerJ2D(getCanvas(), covlayer);
-                    graphic.paint(context);
+                    isRendered = graphic.paint(context);
                 }
             }
 
             if(isolines != null && isoLineStyle != null){
                 final FeatureMapLayer flayer = MapBuilder.createFeatureLayer(isolines, isoLineStyle);
                 final StatelessFeatureLayerJ2D graphic = new StatelessFeatureLayerJ2D(getCanvas(), flayer);
-                graphic.paint(context);
+                isRendered |= graphic.paint(context);
             }
-            return true;
         } catch (TransformException ex) {
             getLogger().log(Level.WARNING, null, ex);
         } catch (FeatureStoreRuntimeException ex) {
@@ -255,7 +254,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
         } catch (DataStoreException ex) {
             getLogger().log(Level.WARNING, null, ex);
         }
-        return false;
+        return isRendered;
     }
 
 }

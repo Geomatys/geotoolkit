@@ -37,8 +37,8 @@ import org.opengis.display.primitive.Graphic;
 public abstract class PositionedGraphic2D extends GraphicJ2D{
 
     private int position = SwingConstants.SOUTH_EAST;
-    private int[] offset = new int[]{0,0};
-    private Dimension minimumCanvasSize = new Dimension(0,0);
+    private final int[] offset = new int[]{0,0};
+    private final Dimension minimumCanvasSize = new Dimension(0,0);
 
     public PositionedGraphic2D(final J2DCanvas canvas) {
         super(canvas);
@@ -65,6 +65,11 @@ public abstract class PositionedGraphic2D extends GraphicJ2D{
         this.offset[1] = offsetY;
     }
 
+    /**
+     * WARNING: Always return false, because for now, this subclass is used only for decorations.
+     * @param context Context to draw upon.
+     * @return False, because decorations are not considered updatable data.
+     */
     @Override
     public boolean paint(final RenderingContext2D context) {
         Rectangle rect = context.getCanvasDisplayBounds();

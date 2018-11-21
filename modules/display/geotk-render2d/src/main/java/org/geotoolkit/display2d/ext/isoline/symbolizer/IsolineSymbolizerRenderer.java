@@ -79,12 +79,13 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
         IsolineSymbolizer isolineSymbolizer = symbol.getSource();
 
         try {
+            boolean isRendered = false;
             ////////////////////
             // 1 - Render raster
             ////////////////////
             final CachedRasterSymbolizer cachedRasterSymbolizer = symbol.getCachedRasterSymbolizer();
             if (!isolineSymbolizer.getIsolineOnly() || isJenksFunction(cachedRasterSymbolizer)) {
-                GO2Utilities.portray(graphic, cachedRasterSymbolizer, renderingContext);
+                isRendered = GO2Utilities.portray(graphic, cachedRasterSymbolizer, renderingContext);
             }
 
 //            final MutableStyle rasterStyle = GO2Utilities.STYLE_FACTORY.style(cachedRasterSymbolizer.getSource());
@@ -185,17 +186,17 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                     FeatureMapLayer fml = MapBuilder.createFeatureLayer(isolines, featureStyle);
 
                     StatelessFeatureLayerJ2D statelessFeatureLayerJ2D = new StatelessFeatureLayerJ2D(renderingContext.getCanvas(), fml);
-                    return statelessFeatureLayerJ2D.paintLayer(renderingContext);
-                } else {
-                    return false;
+                    isRendered |= statelessFeatureLayerJ2D.paintLayer(renderingContext);
                 }
             }
+
+            return isRendered;
+            
         } catch (DataStoreException ex) {
             throw new PortrayalException(ex.getMessage(), ex);
         } catch (ProcessException e) {
             throw new PortrayalException(e.getMessage(), e);
         }
-        return false;
     }
 
     private boolean isJenksFunction(CachedRasterSymbolizer cachedRasterSymbolizer) {

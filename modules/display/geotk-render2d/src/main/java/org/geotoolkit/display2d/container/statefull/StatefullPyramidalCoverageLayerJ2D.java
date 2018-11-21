@@ -57,6 +57,8 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display.primitive.SceneNode;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
@@ -300,10 +302,10 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
 
         //paint sub tiles ------------------------------------------------------
         boolean dataRendered = false;
-        final Object[] cp = getChildren().toArray();
-        for(Object obj : cp){
-            ((StatefullTileJ2D)obj).paint(context2D);
-            dataRendered = true;
+        for(SceneNode node : getChildren()) {
+            if (node instanceof GraphicJ2D) {
+                dataRendered |= ((GraphicJ2D) node).paint(context2D);
+            }
         }
         return dataRendered;
     }

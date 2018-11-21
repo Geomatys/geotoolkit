@@ -232,6 +232,8 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
             final PathIterator ite = j2dShape.getPathIterator(null);
             final PathWalker walker = new PathWalker(ite);
             walker.walk(initGap);
+            if (walker.isFinished())
+                return false; // Nothing to browse
             while(!walker.isFinished()){
                 //paint the motif --------------------------------------------------
                 walker.getPosition(pt);

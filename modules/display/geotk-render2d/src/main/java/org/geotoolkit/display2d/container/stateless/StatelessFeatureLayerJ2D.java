@@ -43,8 +43,6 @@ import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.FeatureStoreContentEvent;
-import org.geotoolkit.data.FeatureStoreManagementEvent;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -277,7 +275,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                     final CachedSymbolizer cs = srs.createCachedSymbolizer(symbolizer);
                     final SymbolizerRenderer sr = srs.createRenderer(cs, context);
                     try {
-                        sr.portray(projectedCandidate);
+                        dataRendered |= sr.portray(projectedCandidate);
                     } catch (PortrayalException ex) {
                         monitor.exceptionOccured(ex, Level.WARNING);
                     }
