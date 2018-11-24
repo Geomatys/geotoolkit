@@ -326,30 +326,24 @@ CREATE TABLE rasters."GridCoverages" (
     "series"    INTEGER           NOT NULL REFERENCES rasters."Series" ON UPDATE CASCADE ON DELETE CASCADE,
     "filename"  VARCHAR(200)      NOT NULL,
     "index"     SMALLINT          NOT NULL DEFAULT 1 CHECK ("index" >= 1),
-    "startTime" TIMESTAMP WITHOUT TIME ZONE,
-    "endTime"   TIMESTAMP WITHOUT TIME ZONE,
+    "time"      TSRANGE,
     "grid"      INTEGER           NOT NULL REFERENCES rasters."GridGeometries" ON UPDATE CASCADE ON DELETE RESTRICT,
-    PRIMARY KEY ("series", "filename", "index"),
-    CHECK ((("startTime" IS     NULL) AND ("endTime" IS     NULL)) OR
-           (("startTime" IS NOT NULL) AND ("endTime" IS NOT NULL) AND ("startTime" <= "endTime")))
+    PRIMARY KEY ("series", "filename", "index")
 );
 
--- Index "endTime" before "startTime" because we are often interrested in the latest raster available.
-ALTER TABLE rasters."GridCoverages" ADD CONSTRAINT "GridCoverages_series_key" UNIQUE("series", "endTime", "startTime");
 CREATE INDEX "GridCoverages_search_index" ON rasters."GridCoverages" ("series", "grid");
+CREATE INDEX "GridCoverages_time_index"   ON rasters."GridCoverages" USING GIST ("time");
 
 COMMENT ON TABLE  rasters."GridCoverages"              IS 'List of all the rasters available. Each line corresponds to a raster file.';
 COMMENT ON COLUMN rasters."GridCoverages"."series"     IS 'Series to which the raster belongs.';
 COMMENT ON COLUMN rasters."GridCoverages"."filename"   IS 'File name of the raster, relative to the directory specified in the series.';
 COMMENT ON COLUMN rasters."GridCoverages"."index"      IS 'Index of the raster in the file (for files containing multiple rasters). Numbered from 1.';
-COMMENT ON COLUMN rasters."GridCoverages"."startTime"  IS 'Date and time of the raster acquisition start (inclusive), in UTC. In the case of averages, the time corresponds to the beginning of the interval used to calculate the average.';
-COMMENT ON COLUMN rasters."GridCoverages"."endTime"    IS 'Date and time of the raster acquisition end (exclusive), in UTC. This time must be greater than or equal to the acquisition start time.';
+COMMENT ON COLUMN rasters."GridCoverages"."time"       IS 'Date and time of the raster acquisition, in UTC.';
 COMMENT ON COLUMN rasters."GridCoverages"."grid"       IS 'Grid Geomerty that defines the spatial footprint of this coverage.';
 COMMENT ON INDEX  rasters."GridCoverages_search_index" IS 'Index of all the rasters in a geographic region.';
-COMMENT ON CONSTRAINT "GridCoverages_series_key"  ON rasters."GridCoverages" IS 'The time range of the raster must be unique in each series.';
+COMMENT ON INDEX  rasters."GridCoverages_time_index"   IS 'Index of rasters temporal extent.';
 COMMENT ON CONSTRAINT "GridCoverages_series_fkey" ON rasters."GridCoverages" IS 'Each raster belongs to a series.';
 COMMENT ON CONSTRAINT "GridCoverages_grid_fkey"   ON rasters."GridCoverages" IS 'Each raster must have a spatial extent.';
-COMMENT ON CONSTRAINT "GridCoverages_check"       ON rasters."GridCoverages" IS 'The start and end times must be both null or both non-null, and the end time must be greater than or equal to the start time.';
 COMMENT ON CONSTRAINT "GridCoverages_index_check" ON rasters."GridCoverages" IS 'The raster index must be positive.';
 
 
@@ -363,8 +357,8 @@ CREATE VIEW rasters."DomainOfSeries" AS
            "west", "east", "south", "north", "xResolution", "yResolution"
       FROM
    (SELECT "series",
-           MIN("startTime") AS "startTime",
-           MAX("endTime")   AS "endTime"
+           MIN(LOWER("time")) AS "startTime",
+           MAX(UPPER("time")) AS "endTime"
       FROM rasters."GridCoverages" GROUP BY "series") AS "TimeRanges"
       JOIN
    (SELECT "series",

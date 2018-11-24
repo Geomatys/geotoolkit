@@ -24,7 +24,6 @@ import java.sql.Timestamp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
-import java.sql.Types;
 import java.nio.file.Path;
 import java.time.Instant;
 import org.opengis.geometry.Envelope;
@@ -106,11 +105,11 @@ final class GridCoverageTable extends Table {
     public final List<GridCoverageReference> find(final String product, final Envelope areaOfInterest)
             throws SQLException, CatalogException, TransformException
     {
-        final PreparedStatement statement = prepareStatement("SELECT \"series\", \"filename\", \"index\","
-                + " \"startTime\", \"endTime\", \"grid\" FROM " + SCHEMA + ".\"" + TABLE + "\""
+        final PreparedStatement statement = prepareStatement("SELECT \"series\", \"filename\", \"index\", \"grid\","
+                + " LOWER(\"time\") AS \"startTime\", UPPER(\"time\") AS \"endTime\" FROM " + SCHEMA + ".\"" + TABLE + "\""
                 + " INNER JOIN " + SCHEMA + ".\"" + SeriesTable.TABLE + "\" ON (\"series\" = \"" + SeriesTable.TABLE + "\".\"identifier\")"
                 + " INNER JOIN " + SCHEMA + ".\"" + GridGeometryTable.TABLE + "\" ON (\"grid\" = \"" + GridGeometryTable.TABLE + "\".\"identifier\")"
-                + " WHERE \"product\" = ? AND \"startTime\" <= ? AND \"endTime\" > ? AND ST_Intersects(extent, ST_GeomFromText(?,4326))");
+                + " WHERE \"product\"=? AND \"time\" && TSRANGE(?,?) AND ST_Intersects(extent, ST_GeomFromText(?,4326))");
 
         final Envelope normalized = Envelopes.transform(areaOfInterest, transaction.database.spatioTemporalCRS);
         final DefaultTemporalCRS temporalCRS = transaction.database.temporalCRS;
@@ -118,8 +117,8 @@ final class GridCoverageTable extends Table {
         final long tMax = temporalCRS.toInstant(normalized.getMaximum(2)).toEpochMilli();
         final Calendar calendar = newCalendar();
         statement.setString   (1, product);
-        statement.setTimestamp(2, new Timestamp(tMax), calendar);
-        statement.setTimestamp(3, new Timestamp(tMin), calendar);
+        statement.setTimestamp(2, new Timestamp(tMin), calendar);
+        statement.setTimestamp(3, new Timestamp(tMax), calendar);
         statement.setString   (4, Envelopes.toPolygonWKT(GeneralEnvelope.castOrCopy(normalized).subEnvelope(0, 2)));
         final List<GridCoverageReference> entries = new ArrayList<>();
         try (final ResultSet results = statement.executeQuery()) {
@@ -130,9 +129,9 @@ final class GridCoverageTable extends Table {
                 final int       seriesID  = results.getInt      (1);
                 final String    filename  = results.getString   (2);
                 final short     index     = results.getShort    (3);                    // We expect 0 if null.
-                final Timestamp startTime = results.getTimestamp(4, calendar);
-                final Timestamp endTime   = results.getTimestamp(5, calendar);
-                final int       gridID    = results.getInt      (6);
+                final int       gridID    = results.getInt      (4);
+                final Timestamp startTime = results.getTimestamp(5, calendar);
+                final Timestamp endTime   = results.getTimestamp(6, calendar);
                 if (series == null || series.identifier != seriesID) {
                     series = seriesTable.getEntry(seriesID);
                 }
@@ -147,27 +146,11 @@ final class GridCoverageTable extends Table {
     }
 
     /**
-     * Adds a coverage having the specified properties.
-     *
-     * @param  directory   the path relative to the root directory, or the base URL.
-     * @param  filename    the raster filename without its extension.
-     * @param  extension   the file extension, or {@code null} or empty if none.
-     * @param  imageIndex  1-based index of the image.
-     * @param  grid        grid size and transform from grid coordinates to "real world" coordinates.
-     * @return the identifier of a matching entry (never {@code null}).
-     * @throws SQLException if an error occurred while reading from or writing to the database.
-     */
-    private void add(final String product, final String format, String directory, final String filename, final String extension,
-            final int imageIndex, final GridGeometry grid, final Timestamp startTime, final Timestamp endTime)
-            throws SQLException, FactoryException, TransformException, IllegalUpdateException
-    {
-    }
-
-    /**
      * Adds a coverage having the specified grid geometry.
      *
      * @param  path       path to the file to add.
      * @param  imageIndex 1-based index of the image.
+     * @throws SQLException if an error occurred while reading from or writing to the database.
      */
     final void add(final String product, Path path, final GridGeometry geometry, final List<GridSampleDimension> bands, final int imageIndex)
             throws SQLException, FactoryException, TransformException, CatalogException
@@ -194,26 +177,33 @@ final class GridCoverageTable extends Table {
         final Instant[] period = new Instant[2];        // Values to be provided by 'gridGeometries'.
         final int gridID = gridGeometries.findOrInsert(geometry, period, product);
         final int series = seriesTable.findOrInsert(product, directory, extension, "NetCDF", bands);
+        final Instant startTime = period[0];
+        final Instant endTime   = period[1];
+        final boolean hasTime   = startTime != null && endTime != null;
         /*
          * Insert the grid coverage entry.
          */
-        final PreparedStatement statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\"("
-                    + "\"series\", \"filename\", \"index\", \"startTime\", \"endTime\", \"grid\") VALUES (?,?,?,?,?,?)");
-
-        final Calendar calendar = newCalendar();
+        String sql = "INSERT INTO " + SCHEMA + ".\"" + TABLE + "\"("
+                    + "\"series\", \"filename\", \"index\", \"grid\", \"time\") VALUES (?,?,?,?,TSRANGE(?,?,?))";
+        if (!hasTime) {
+            // Remove insertion of time range.
+            sql = sql.replace(", \"time\"", "").replace("TSRANGE(?,?,?)", "");
+        }
+        final PreparedStatement statement = prepareStatement(sql);
         statement.setInt   (1, series);
         statement.setString(2, filename);
         statement.setInt   (3, imageIndex);
-        for (int i=0; i<2; i++) {
-            final int column = 4 + i;
-            final Instant instant = period[i];
-            if (instant != null) {
+        statement.setInt   (4, gridID);
+        if (hasTime) {
+            final Calendar calendar = newCalendar();
+            for (int i=0; i<2; i++) {
+                final int column = 5 + i;
+                final Instant instant = period[i];
                 statement.setTimestamp(column, new Timestamp(instant.toEpochMilli()), calendar);
-            } else {
-                statement.setNull(column, Types.TIMESTAMP);
             }
+            // If both time are equal, we need to use inclusive upper bound.
+            statement.setString(7, endTime.equals(startTime) ? "[]" : "[)");
         }
-        statement.setInt(6, gridID);
         if (statement.executeUpdate() != 1) {
             throw new IllegalUpdateException("Can not add the coverage.");      // Should never happen (paranoiac check).
         }

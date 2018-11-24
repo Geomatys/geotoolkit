@@ -263,24 +263,17 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                         }
                         final int dim = targetDims[0];
                         final CoordinateReferenceSystem crs1D = CRS.getComponentAt(crs, dim, dim+1);
-                        final double[] values = new double[Math.toIntExact(extent.getSize(dim) + 1)];
-                        for (int j=1; j<values.length; j++) values[j] = j;
-                        gridToCRS.transform(values, 0, values, 0, values.length);
                         if (period[0] == null && period[1] == null && crs1D instanceof TemporalCRS) {
                             final DefaultTemporalCRS temporal = DefaultTemporalCRS.castOrCopy((TemporalCRS) crs1D);
-                            double min = Double.POSITIVE_INFINITY;
-                            double max = Double.NEGATIVE_INFINITY;
-                            for (final double v : values) {
-                                if (v < min) min = v;
-                                if (v > max) max = v;
-                            }
-                            if (min <= max) {
-                                period[0] = temporal.toInstant(min);
-                                period[1] = temporal.toInstant(max);
-                            }
+                            final Envelope range = geometry.getEnvelope();
+                            period[0] = temporal.toInstant(range.getMinimum(dim));
+                            period[1] = temporal.toInstant(range.getMaximum(dim));
                         } else {
-                            // This cast should never fail since a 1D CRS can not be compound.
+                            final double[] values = new double[Math.toIntExact(extent.getSize(dim) + 1)];
+                            for (int j=1; j<values.length; j++) values[j] = j;
+                            gridToCRS.transform(values, 0, values, 0, values.length);
                             additionalAxes.add(getAxisTable().findOrInsert((SingleCRS) crs1D, values, suggestedID));
+                            // Above cast should never fail since a 1D CRS can not be compound.
                         }
                     }
                     /*

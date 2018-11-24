@@ -232,11 +232,14 @@ final class AdditionalAxisTable extends CachedTable<String, AdditionalAxisTable.
     {
         final Double[] wrappers = new Double[values.length];
         for (int i=0; i<values.length; i++) wrappers[i] = values[i];
-        final Array    bounds = getConnection().createArrayOf("FLOAT8", wrappers);
-        final String   datum  = crs.getDatum().getName().getCode();
+        final Array bounds = getConnection().createArrayOf("FLOAT8", wrappers);
+        String datum = crs.getDatum().getName().getCode();
+        if (datum.equalsIgnoreCase("Unknown datum presumably based upon Mean Sea Level")) {
+            datum = "Mean Sea Level";
+        }
         final CoordinateSystemAxis axis = crs.getCoordinateSystem().getAxis(0);
-        final String direction  =  Types.getCodeName(axis.getDirection());
-        final String units      =  axis.getUnit().toString();
+        final String direction = Types.getCodeName(axis.getDirection());
+        final String units     = axis.getUnit().toString();
         boolean insert = false;
         do {
             final PreparedStatement statement;
