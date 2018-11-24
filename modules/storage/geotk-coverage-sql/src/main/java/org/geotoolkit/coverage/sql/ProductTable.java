@@ -76,7 +76,7 @@ final class ProductTable extends CachedTable<String,Product> {
      */
     public List<String> list() throws SQLException {
         final List<String> names = new ArrayList<>();
-        try (Statement statement = transaction.connection.createStatement();
+        try (Statement statement = getConnection().createStatement();
              ResultSet results   = statement.executeQuery("SELECT \"name\" FROM " + SCHEMA + ".\"" + TABLE + '"'))
         {
             while (results.next()) {

@@ -137,7 +137,7 @@ final class FormatTable extends CachedTable<String,Format> {
      */
     private String search(final String driver, final List<GridSampleDimension> bands) throws SQLException, CatalogException {
         final int numBands = size(bands);
-        try (PreparedStatement statement = transaction.connection.prepareStatement(
+        try (PreparedStatement statement = getConnection().prepareStatement(
                 "SELECT \"name\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"driver\" = ?"))
         {
             statement.setString(1, driver);
@@ -200,9 +200,9 @@ next:           while (results.next()) {
     }
 
     /**
-     * Creates a new format for the given sample dimensions, or returns an existing one.
+     * Inserts a new format for the given sample dimensions, or returns an existing one.
      * If a format already exists, then this method returns its identifier.
-     * Otherwise a new format created with the given driver and the bands.
+     * Otherwise a new format is created with the given driver and the bands.
      *
      * @param  name    suggested name of the new format.
      * @param  driver  the name of the data store to use.
@@ -210,7 +210,7 @@ next:           while (results.next()) {
      * @return the format name.
      * @throws SQLException if an error occurred while writing to the database.
      */
-    public String findOrCreate(String name, final String driver, final List<GridSampleDimension> bands)
+    public String findOrInsert(String name, final String driver, final List<GridSampleDimension> bands)
             throws SQLException, CatalogException
     {
         String existing = search(driver, bands);
@@ -229,7 +229,7 @@ next:           while (results.next()) {
         for (int n=2; ; n++) {
             statement.setString(1, name);
             if (statement.executeUpdate() != 0) {
-                if (!bands.isEmpty()) {
+                if (bands != null && !bands.isEmpty()) {
                     sampleDimensions.insert(name, bands);
                 }
                 return name;

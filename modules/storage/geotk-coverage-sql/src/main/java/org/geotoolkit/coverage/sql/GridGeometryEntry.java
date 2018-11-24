@@ -19,7 +19,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Date;
+import java.time.Instant;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
@@ -47,9 +47,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-
 
 /**
  * Implementation of a four-dimensional grid geometry. This class assumes that the two first
@@ -66,10 +63,10 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
  */
 final class GridGeometryEntry {
     /**
-     * Number of dimensions in the {@code "GridGeometries"} table, before taking in account
-     * the additional axes.
+     * Number of dimensions of the "grid to CRS" part to be represented as an affine transform
+     * in the "GridGeometries" table.
      */
-    private static final int DIMENSIONS = 2;
+    static final int AFFINE_DIMENSION = 2;
 
     /**
      * The temporal coordinate reference system created for the date.
@@ -91,12 +88,24 @@ final class GridGeometryEntry {
      * The coordinate reference system is the one declared in the {@link GridGeometryTable} for that entry.
      * The envelope must include the vertical range if any, but not the temporal dimension.
      */
-    private final GridGeometry geometry;
+    final GridGeometry geometry;
+
+    /**
+     * Extent of the grid {@linkplain #geometry} expanded with a temporal component.
+     */
+    private final GridExtent spatioTemporalExtent;
 
     /**
      * Same coordinate reference system than the one used by {@link #geometry}, with time axis added.
      */
     private final CoordinateReferenceSystem spatioTemporalCRS;
+
+    /**
+     * Whether the "grid to CRS" transform is only an approximation of non-linear transform.
+     * In such case, it is not sufficient to rely on the {@link #geometry} field; caller may
+     * need to reload the grid geometry from original file.
+     */
+    final boolean approximate;
 
     /**
      * Creates an entry from the given grid geometry. This constructor does not clone
@@ -106,12 +115,13 @@ final class GridGeometryEntry {
      * @param width         number of cells in the first dimension.
      * @param height        number of cells in the second dimension.
      * @param affine        the grid to CRS affine transform for the two first dimensions.
+     * @param approximate   whether the "grid to CRS" transform is only an approximation of non-linear transform.
      * @param crs           the coordinate reference system for the two first dimensions.
      * @param axes          additional dimensions, or {@code null} if none.
      * @param extraDimName  a label for the additional dimensions, or {@code null} if none.
      */
-    GridGeometryEntry(final long width, final long height,
-                      final AffineTransform2D affine, CoordinateReferenceSystem crs,
+    GridGeometryEntry(final long width, final long height, final AffineTransform2D affine,
+                      final boolean approximate, CoordinateReferenceSystem crs,
                       final AdditionalAxisTable.Entry[] axes, final String extraDimName,
                       final Database database) throws FactoryException, TransformException, IllegalRecordException
     {
@@ -133,11 +143,10 @@ final class GridGeometryEntry {
          * Collects the data for grid extent and the envelope, starting from the two first dimensions
          * and adding all supplemental axes.
          */
-        int dim = DIMENSIONS;
+        int dim = AFFINE_DIMENSION;
         if (axes != null) {
             dim += axes.length;
         }
-        final long[]   lower   = new long  [dim];
         final long[]   upper   = new long  [dim];
         final double[] minimum = new double[dim];
         final double[] maximum = new double[dim];
@@ -151,20 +160,22 @@ final class GridGeometryEntry {
             gridToCRS = database.mtFactory.createPassThroughTransform(0, gridToCRS, axes.length);
             for (int i=0; i<axes.length; i++) {
                 final AdditionalAxisTable.Entry axis = axes[i];
-                names  [DIMENSIONS + i] = axis.type();
-                upper  [DIMENSIONS + i] = axis.count;
-                minimum[DIMENSIONS + i] = axis.standardMin;
-                maximum[DIMENSIONS + i] = axis.standardMax;
-                components[      1 + i] = axis.crs;
+                names  [AFFINE_DIMENSION + i] = axis.type();
+                upper  [AFFINE_DIMENSION + i] = axis.count;
+                minimum[AFFINE_DIMENSION + i] = axis.standardMin;
+                maximum[AFFINE_DIMENSION + i] = axis.standardMax;
+                components[            1 + i] = axis.crs;
                 MathTransform tr = axis.gridToCRS;
-                tr = database.mtFactory.createPassThroughTransform(DIMENSIONS + i, tr, 0);
+                tr = database.mtFactory.createPassThroughTransform(AFFINE_DIMENSION + i, tr, 0);
                 gridToCRS = database.mtFactory.createConcatenatedTransform(gridToCRS, tr);
             }
             crs = database.crsFactory.createCompoundCRS(properties(crs, extraDimName), components);
         }
-        geometry = new GridGeometry(new GridExtent(names, lower, upper, false), PixelInCell.CELL_CORNER, gridToCRS, crs);
+        geometry = new GridGeometry(new GridExtent(names, null, upper, false), PixelInCell.CELL_CORNER, gridToCRS, crs);
         standardEnvelope = new ImmutableEnvelope(minimum, maximum, null);
         spatioTemporalCRS = database.crsFactory.createCompoundCRS(properties(crs, "time"), crs, database.temporalCRS);
+        spatioTemporalExtent = geometry.getExtent().append(DimensionNameType.TIME, 0, 0, true);
+        this.approximate = approximate;
     }
 
     /**
@@ -199,31 +210,16 @@ final class GridGeometryEntry {
     }
 
     /**
-     * Returns the Geotk implementation of grid geometry for the given time range.
-     *
-     * @todo the GeneralGridEnvelope created in this method could be created once-for-all in the constructor.
-     *       Waiting for the replacement of Geotk classes by Apache SIS classes before doing so.
+     * Returns the grid geometry for the given time range.
      */
-    final GeneralGridGeometry getGridGeometry(final Date startTime, final Date endTime) {
-        final boolean hasTime = (startTime != null && endTime != null);
-        final GridExtent extent = geometry.getExtent();
-        final int dimension = extent.getDimension();
-        final int[] lower = new int[dimension + (hasTime ? 1 : 0)];
-        final int[] upper = new int[lower.length];
-        for (int i=0; i<dimension; i++) {
-            lower[i] = Math.toIntExact(extent.getLow (i));
-            upper[i] = Math.toIntExact(extent.getHigh(i));
+    final GridGeometry getGridGeometry(final Instant startTime, final Instant endTime) throws TransformException {
+        if (startTime == null || endTime == null) {
+            return geometry;
         }
         MathTransform gridToCRS = geometry.getGridToCRS(PixelInCell.CELL_CORNER);
-        final CoordinateReferenceSystem crs;
-        if (hasTime) {
-            final double tMin = TEMPORAL_CRS.toValue(startTime);
-            final double tMax = TEMPORAL_CRS.toValue(endTime);
-            gridToCRS = MathTransforms.compound(gridToCRS, MathTransforms.linear(tMax - tMin, tMin));
-            crs = spatioTemporalCRS;
-        } else {
-            crs = geometry.getCoordinateReferenceSystem();
-        }
-        return new GeneralGridGeometry(new GeneralGridEnvelope(lower, upper, true), PixelInCell.CELL_CORNER, gridToCRS, crs);
+        final double tMin = TEMPORAL_CRS.toValue(startTime);
+        final double tMax = TEMPORAL_CRS.toValue(endTime);
+        gridToCRS = MathTransforms.compound(gridToCRS, MathTransforms.linear(tMax - tMin, tMin));
+        return new GridGeometry(spatioTemporalExtent, PixelInCell.CELL_CORNER, gridToCRS, spatioTemporalCRS);
     }
 }

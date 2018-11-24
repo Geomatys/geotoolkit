@@ -22,18 +22,21 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Date;
+import java.time.Instant;
 
 import org.opengis.geometry.Envelope;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.image.palette.IIOListeners;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.resources.Errors;
 
 import static java.lang.Double.NaN;
@@ -68,12 +71,12 @@ public final class GridCoverageReference implements CoverageStack.Element {
     /**
      * Image start time, inclusive.
      */
-    private final long startTime;
+    private final Instant startTime;
 
     /**
      * Image end time, exclusive.
      */
-    private final long endTime;
+    private final Instant endTime;
 
     /**
      * The spatial and vertical extents of the grid coverage, together with the <cite>grid to CRS</cite> transform.
@@ -87,13 +90,13 @@ public final class GridCoverageReference implements CoverageStack.Element {
      * @param  endTime    the coverage end time, or {@code null} if none.
      */
     GridCoverageReference(final SeriesTable.Entry series, final String filename, final short imageIndex,
-            final Date startTime, final Date endTime, final GridGeometryEntry grid) throws SQLException
+            final Instant startTime, final Instant endTime, final GridGeometryEntry grid) throws SQLException
     {
         this.series     = series;
         this.filename   = filename;
         this.imageIndex = imageIndex;
-        this.startTime  = (startTime != null) ? startTime.getTime() : Long.MIN_VALUE;
-        this.endTime    = (  endTime != null) ?   endTime.getTime() : Long.MAX_VALUE;
+        this.startTime  = startTime;
+        this.endTime    = endTime;
         this.grid       = grid;
     }
 
@@ -128,15 +131,23 @@ public final class GridCoverageReference implements CoverageStack.Element {
         return series.path(filename);
     }
 
+    private GridGeometry gridGeometry() throws IOException {
+        try {
+            return grid.getGridGeometry(startTime, endTime);
+        } catch (TransformException e) {
+            throw new IOException(e);
+        }
+    }
+
     /**
      * Returns the grid geometry.
      *
      * @return the grid geometry.
+     * @throws IOException if the operation failed (should actually be a {@code DataStoreException}).
      */
     @Override
-    public GeneralGridGeometry getGridGeometry() {
-        return grid.getGridGeometry(startTime != Long.MIN_VALUE ? new Date(startTime) : null,
-                                      endTime != Long.MAX_VALUE ? new Date(  endTime) : null);
+    public GeneralGridGeometry getGridGeometry() throws IOException {
+        return CoverageUtilities.toGeotk(gridGeometry());
     }
 
     /**
@@ -147,8 +158,8 @@ public final class GridCoverageReference implements CoverageStack.Element {
      * @return the coverage spatio-temporal envelope.
      */
     @Override
-    public Envelope getEnvelope() {
-        return getGridGeometry().getEnvelope();
+    public Envelope getEnvelope() throws IOException {
+        return gridGeometry().getEnvelope();
     }
 
     @Override
@@ -199,8 +210,8 @@ public final class GridCoverageReference implements CoverageStack.Element {
             min = Double.NEGATIVE_INFINITY;
             max = Double.POSITIVE_INFINITY;
             final DefaultTemporalCRS temporalCRS = GridGeometryEntry.TEMPORAL_CRS;
-            if (startTime != Long.MIN_VALUE) min = temporalCRS.toValue(new Date(startTime));
-            if (  endTime != Long.MAX_VALUE) max = temporalCRS.toValue(new Date(  endTime));
+            if (startTime != null) min = temporalCRS.toValue(startTime);
+            if (  endTime != null) max = temporalCRS.toValue(  endTime);
         }
         return NumberRange.create(min, true, max, false);
     }

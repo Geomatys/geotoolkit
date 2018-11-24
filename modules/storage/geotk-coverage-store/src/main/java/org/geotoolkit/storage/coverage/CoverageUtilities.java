@@ -34,6 +34,7 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.StrictlyCoverageFinder;
+import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -383,6 +384,21 @@ public final class CoverageUtilities {
     }
 
     /**
+     * Converts a SIS grid extent into a Geotk grid envelope.
+     */
+    public static GeneralGridEnvelope toGeotk(final GridExtent env) {
+        if (env == null) return null;
+        final int dim = env.getDimension();
+        final int[] lower = new int[dim];
+        final int[] upper = new int[dim];
+        for (int i=0; i<dim; i++) {
+            lower[i] = Math.toIntExact(env.getLow(i));
+            upper[i] = Math.toIntExact(env.getHigh(i));
+        }
+        return new GeneralGridEnvelope(lower, upper, true);
+    }
+
+    /**
      * Converts a GeoAPI grid geometry (to be deprecated later) into an Apache SIS grid geometry.
      */
     public static org.apache.sis.coverage.grid.GridGeometry toSIS(final GridGeometry g) throws TransformException {
@@ -405,6 +421,26 @@ public final class CoverageUtilities {
             return new org.apache.sis.coverage.grid.GridGeometry(PixelInCell.CELL_CENTER, gridToCRS, envelope);
         } else {
             return new org.apache.sis.coverage.grid.GridGeometry(toSIS(extent), PixelInCell.CELL_CENTER, gridToCRS, crs);
+        }
+    }
+
+    /**
+     * Converts a SIS grid geometry into a Geotk grid geometry.
+     */
+    public static GeneralGridGeometry toGeotk(final org.apache.sis.coverage.grid.GridGeometry gg) {
+        if (gg == null) return null;
+        GridExtent                extent    = null;
+        Envelope                  envelope  = null;
+        MathTransform             gridToCRS = null;
+        CoordinateReferenceSystem crs       = null;
+        if (gg.isDefined(org.apache.sis.coverage.grid.GridGeometry.EXTENT))      extent    = gg.getExtent();
+        if (gg.isDefined(org.apache.sis.coverage.grid.GridGeometry.ENVELOPE))    envelope  = gg.getEnvelope();
+        if (gg.isDefined(org.apache.sis.coverage.grid.GridGeometry.GRID_TO_CRS)) gridToCRS = gg.getGridToCRS(PixelInCell.CELL_CENTER);
+        if (gg.isDefined(org.apache.sis.coverage.grid.GridGeometry.CRS))         crs       = gg.getCoordinateReferenceSystem();
+        if (envelope != null && extent == null) {
+            return new GeneralGridGeometry(PixelInCell.CELL_CENTER, gridToCRS, envelope);
+        } else {
+            return new GeneralGridGeometry(toGeotk(extent), PixelInCell.CELL_CENTER, gridToCRS, crs);
         }
     }
 }

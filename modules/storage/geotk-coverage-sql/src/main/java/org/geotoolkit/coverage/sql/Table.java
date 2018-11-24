@@ -16,10 +16,13 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.Locale;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.resources.Errors;
@@ -63,13 +66,20 @@ abstract class Table implements AutoCloseable {
     }
 
     /**
+     * Returns the connection to the database.
+     */
+    final Connection getConnection() {
+        return transaction.connection;
+    }
+
+    /**
      * Returns a prepared statement for the given query.
      */
     @SuppressWarnings("StringEquality")
     final PreparedStatement prepareStatement(final String sql) throws SQLException {
         if (currentSQL != sql) {        // Identity check okay for the purpose of this package.
             close();
-            statement  = transaction.connection.prepareStatement(sql);
+            statement  = getConnection().prepareStatement(sql);
             currentSQL = sql;
         }
         return statement;
@@ -83,7 +93,7 @@ abstract class Table implements AutoCloseable {
     final PreparedStatement prepareStatement(final String sql, final String keyColumn) throws SQLException {
         if (currentSQL != sql) {        // Identity check okay for the purpose of this package.
             close();
-            statement  = transaction.connection.prepareStatement(sql, new String[] {keyColumn});
+            statement  = getConnection().prepareStatement(sql, new String[] {keyColumn});
             currentSQL = sql;
         }
         return statement;
@@ -94,6 +104,10 @@ abstract class Table implements AutoCloseable {
      */
     final Calendar newCalendar() {
         return new GregorianCalendar(transaction.database.timezone, Locale.CANADA);
+    }
+
+    static Instant toInstant(final Date date) {
+        return (date != null) ? date.toInstant() : null;
     }
 
     /**

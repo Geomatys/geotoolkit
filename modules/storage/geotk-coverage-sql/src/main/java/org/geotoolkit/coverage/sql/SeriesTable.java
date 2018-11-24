@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.List;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -25,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.Types;
+import org.geotoolkit.coverage.GridSampleDimension;
 
 
 /**
@@ -114,7 +116,7 @@ final class SeriesTable extends CachedTable<Integer, SeriesTable.Entry> {
     /**
      * The table to use for fetching information about formats.
      */
-    final FormatTable formats;
+    private final FormatTable formats;
 
     /**
      * Creates a series table.
@@ -161,13 +163,15 @@ final class SeriesTable extends CachedTable<Integer, SeriesTable.Entry> {
      *
      * @param  directory  the path relative to the root directory, or the base URL.
      * @param  extension  the extension to add to filenames, or {@code null} or empty if none.
-     * @param  format     the format for the series considered.
+     * @param  driver     driver (data store name) of the format for the series considered.
+     * @param  bands      the sample dimensions of the data to be added.
      * @return the identifier of a matching entry (never {@code null}).
      * @throws SQLException if an error occurred while reading from or writing to the database.
      */
-    public int findOrCreate(final String product, final String directory, final String extension, final String format)
-            throws SQLException, IllegalUpdateException
+    public int findOrInsert(final String product, final String directory, final String extension, final String driver,
+            final List<GridSampleDimension> bands) throws SQLException, CatalogException
     {
+        final String format = formats.findOrInsert(product, driver, bands);
         boolean insert = false;
         do {
             final PreparedStatement statement;

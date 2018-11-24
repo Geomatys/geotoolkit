@@ -17,18 +17,18 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.util.Date;
 import java.util.Calendar;
 import java.awt.geom.Dimension2D;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.time.Instant;
 
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
 import org.apache.sis.geometry.Envelope2D;
 
-import org.geotoolkit.util.DateRange;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 
 
@@ -49,12 +49,12 @@ final class DomainOfProductTable extends Table {
         /**
          * A null domain.
          */
-        static final Entry NULL = new Entry(null, null, null);
+        static final Entry NULL = new Entry(null, null, null, null);
 
         /**
          * The time range, or {@code null} if none.
          */
-        final DateRange timeRange;
+        final Instant startTime, endTime;
 
         /**
          * The envelope in units of the database horizontal CRS, or {@code null} if none.
@@ -69,8 +69,9 @@ final class DomainOfProductTable extends Table {
         /**
          * Creates a new entry with the specified values, which are <strong>not</strong> cloned.
          */
-        private Entry(final DateRange timeRange, final Envelope2D bbox, final Dimension2D resolution) {
-            this.timeRange  = timeRange;
+        private Entry(final Instant startTime, final Instant endTime, final Envelope2D bbox, final Dimension2D resolution) {
+            this.startTime  = startTime;
+            this.endTime    = endTime;
             this.bbox       = bbox;
             this.resolution = resolution;
         }
@@ -99,21 +100,16 @@ final class DomainOfProductTable extends Table {
         final Calendar calendar = newCalendar();
         try (ResultSet results = statement.executeQuery()) {
             if (results.next()) {
-                Date   startTime   = results.getTimestamp(1, calendar);
-                Date   endTime     = results.getTimestamp(2, calendar);
-                double west        = results.getDouble(3); if (results.wasNull()) west  = Longitude.MIN_VALUE;
-                double east        = results.getDouble(4); if (results.wasNull()) east  = Longitude.MAX_VALUE;
-                double south       = results.getDouble(5); if (results.wasNull()) south = Latitude .MIN_VALUE;
-                double north       = results.getDouble(6); if (results.wasNull()) north = Latitude .MAX_VALUE;
-                double xResolution = results.getDouble(7); if (results.wasNull()) xResolution = Double.NaN;
-                double yResolution = results.getDouble(8); if (results.wasNull()) yResolution = Double.NaN;
-                /*
-                 * Replace java.sql.Timestamp by java.util.Date.
-                 */
-                if (startTime != null) startTime = new Date(startTime.getTime());
-                if (endTime   != null) endTime   = new Date(endTime.getTime());
+                Timestamp startTime   = results.getTimestamp(1, calendar);
+                Timestamp endTime     = results.getTimestamp(2, calendar);
+                double    west        = results.getDouble(3); if (results.wasNull()) west  = Longitude.MIN_VALUE;
+                double    east        = results.getDouble(4); if (results.wasNull()) east  = Longitude.MAX_VALUE;
+                double    south       = results.getDouble(5); if (results.wasNull()) south = Latitude .MIN_VALUE;
+                double    north       = results.getDouble(6); if (results.wasNull()) north = Latitude .MAX_VALUE;
+                double    xResolution = results.getDouble(7); if (results.wasNull()) xResolution = Double.NaN;
+                double    yResolution = results.getDouble(8); if (results.wasNull()) yResolution = Double.NaN;
                 Envelope2D bbox = new Envelope2D(transaction.database.extentCRS, west, south, east-west, north-south);
-                entry = new Entry((startTime != null || endTime != null) ? new DateRange(startTime, endTime) : null, bbox,
+                entry = new Entry(toInstant(startTime), toInstant(endTime), bbox,
                                   (xResolution>0 || yResolution>0) ? new DoubleDimension2D(xResolution, yResolution) : null);
             }
         }

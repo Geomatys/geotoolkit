@@ -24,6 +24,7 @@ import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.Coverage;
+import org.opengis.referencing.operation.TransformException;
 
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -37,6 +38,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.CoverageUtilities;
 
 
 final class Reader extends GridCoverageReader {
@@ -54,8 +56,8 @@ final class Reader extends GridCoverageReader {
     @Override
     public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException {
         try (Transaction transaction = entry.transaction()) {
-            return entry.product(transaction).getGridGeometry(transaction);
-        } catch (SQLException e) {
+            return CoverageUtilities.toGeotk(entry.product(transaction).getGridGeometry(transaction));
+        } catch (SQLException | TransformException e) {
             throw new CatalogException(e);
         }
     }

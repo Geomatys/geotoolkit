@@ -21,9 +21,9 @@ import java.util.List;
 import java.sql.SQLException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.opengis.util.FactoryException;
-import org.opengis.metadata.Metadata;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.operation.TransformException;
@@ -38,11 +38,9 @@ import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
-import org.geotoolkit.util.DateRange;
 import org.geotoolkit.resources.Errors;
 
 
@@ -106,6 +104,16 @@ public final class Product {
     }
 
     /**
+     * Returns a string representation of this product for debugging purpose.
+     *
+     * @return string representation (may change in any future version).
+     */
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    /**
      * Returns the resources bundle for error messages.
      */
     private Errors errors() {
@@ -128,9 +136,8 @@ public final class Product {
         md.addIdentifier(null, name, MetadataBuilder.Scope.RESOURCE);
         if (domain != null) {
             md.addExtent(domain.bbox);
-            final DateRange dates = domain.timeRange;
-            if (dates != null) {
-                md.addTemporalExtent(dates.getMinValue(), dates.getMaxValue());
+            if (domain.startTime != null && domain.endTime != null) {
+                md.addTemporalExtent(Date.from(domain.startTime), Date.from(domain.endTime));
             }
         }
         md.addResolution(spatialResolution);
@@ -152,7 +159,7 @@ public final class Product {
         }
     }
 
-    synchronized GeneralGridGeometry getGridGeometry(final Transaction transaction) throws SQLException, CatalogException {
+    synchronized GridGeometry getGridGeometry(final Transaction transaction) throws SQLException, CatalogException, TransformException {
         final List<GridGeometryEntry> geometries;
         try (final GridCoverageTable table = new GridCoverageTable(transaction)) {
             geometries = table.getGridGeometries(name);
@@ -162,9 +169,7 @@ public final class Product {
         }
         ensureDomainIsKnown(transaction);
         int index = 0;      // TODO: select the "best" geometry.
-        final DateRange dates = domain.timeRange;
-        return geometries.get(index).getGridGeometry((dates != null) ? dates.getMinValue() : null,
-                                                     (dates != null) ? dates.getMaxValue() : null);
+        return geometries.get(index).getGridGeometry(domain.startTime, domain.endTime);
     }
 
     /**
@@ -195,7 +200,7 @@ public final class Product {
     void addCoverageReference(final Transaction transaction, final List<NewRaster> rasters) throws CatalogException {
         try (final GridCoverageTable table = new GridCoverageTable(transaction)) {
             for (final NewRaster r : rasters) {
-                table.add(name, r.path, r.geometry, r.bands, r.metadata, r.imageIndex + 1);
+                table.add(name, r.path, r.geometry, r.bands, r.imageIndex + 1);
             }
         } catch (SQLException | FactoryException | TransformException exception) {
             throw new CatalogException(exception);
@@ -224,16 +229,21 @@ public final class Product {
         List<GridSampleDimension> bands;
 
         /**
-         * Metadata, or {@code null} if none.
-         */
-        Metadata metadata;
-
-        /**
          * Creates information about a new raster to be added to the catalog.
          */
         NewRaster(final Path file, final int index) {
             this.path  = file;
             imageIndex = index;
+        }
+
+        /**
+         * Returns a string representation of this raster entry for debugging purpose.
+         *
+         * @return string representation (may change in any future version).
+         */
+        @Override
+        public String toString() {
+            return path.getFileName().toString() + " @ " + imageIndex;
         }
 
         static List<NewRaster> list(final Path... files) throws DataStoreException {
@@ -258,13 +268,11 @@ public final class Product {
             } else if (resource instanceof org.apache.sis.storage.GridCoverageResource) {
                 final NewRaster r = new NewRaster(file, index);
                 r.geometry = ((org.apache.sis.storage.GridCoverageResource) resource).getGridGeometry();
-                r.metadata = ((org.apache.sis.storage.GridCoverageResource) resource).getMetadata();
                 rasters.add(r);
             } else if (resource instanceof GridCoverageResource) {
                 final NewRaster r = new NewRaster(file, index);
                 GridCoverageReader reader = ((GridCoverageResource) resource).acquireReader();
                 r.geometry = CoverageUtilities.toSIS(reader.getGridGeometry(r.imageIndex));
-                r.metadata = reader.getMetadata();
                 r.bands = reader.getSampleDimensions(r.imageIndex);
                 reader.dispose();
                 rasters.add(r);

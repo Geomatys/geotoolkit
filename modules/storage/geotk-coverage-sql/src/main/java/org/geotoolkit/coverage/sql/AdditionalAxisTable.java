@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.sql;
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.PreparedStatement;
 import javax.measure.Unit;
 import javax.measure.format.ParserException;
 import org.opengis.referencing.crs.SingleCRS;
@@ -37,6 +38,7 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.metadata.VerticalDatumTypes;
 import org.apache.sis.internal.metadata.AxisDirections;
 
+// Use static imports for avoiding confusion with SQL Array.
 import static java.lang.reflect.Array.getDouble;
 import static java.lang.reflect.Array.getLength;
 
@@ -74,10 +76,14 @@ final class AdditionalAxisTable extends CachedTable<String, AdditionalAxisTable.
 
         /**
          * Creates a new entry for an additional axis.
+         *
+         * @param values  limits of all layers. The array length is the number of layers + 1.
+         *                The first and last values are the raster bounds along the axis.
+         *                Other values are interstice between layers.
          */
         private Entry(final SingleCRS crs, final double[] values) {
             this.crs  = crs;
-            gridToCRS = MathTransforms.interpolate(null, values);
+            gridToCRS = MathTransforms.interpolate(null, values);       // Integer indices map lower bounds.
             double min = Double.POSITIVE_INFINITY;
             double max = Double.NEGATIVE_INFINITY;
             for (int i=0; i<values.length; i++) {
@@ -211,5 +217,53 @@ final class AdditionalAxisTable extends CachedTable<String, AdditionalAxisTable.
             }
         }
         return null;
+    }
+
+    /**
+     * Returns an identifier for an additional axis having the given data, or inserts a new entry in the database
+     * if no suitable identifier is found.
+     *
+     * @param  crs          coordinate reference system.
+     * @param  values       values on the coordinate axis. Must map lower corner.
+     * @param  suggestedID  suggested identifier if a new entry must be inserted.
+     */
+    final String findOrInsert(final SingleCRS crs, final double[] values, final String suggestedID)
+            throws SQLException, IllegalUpdateException
+    {
+        final Double[] wrappers = new Double[values.length];
+        for (int i=0; i<values.length; i++) wrappers[i] = values[i];
+        final Array    bounds = getConnection().createArrayOf("FLOAT8", wrappers);
+        final String   datum  = crs.getDatum().getName().getCode();
+        final CoordinateSystemAxis axis = crs.getCoordinateSystem().getAxis(0);
+        final String direction  =  Types.getCodeName(axis.getDirection());
+        final String units      =  axis.getUnit().toString();
+        boolean insert = false;
+        do {
+            final PreparedStatement statement;
+            if (!insert) {
+                statement = prepareStatement("SELECT \"name\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE "
+                        + "\"datum\"=? AND \"direction\"=CAST(? AS metadata.\"AxisDirection\") AND \"units\"=? AND \"bounds\"=?");
+            } else {
+                statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\"("
+                        + "\"datum\", \"direction\", \"units\", \"bounds\", \"name\")"
+                        + " VALUES (?,CAST(? AS metadata.\"AxisDirection\"),?,?,?)");
+            }
+            statement.setString(1, datum);
+            statement.setString(2, direction);
+            statement.setString(3, units);
+            statement.setArray (4, bounds);
+            if (insert) {
+                statement.setString(5, suggestedID);
+                if (statement.executeUpdate() != 0) {
+                    return suggestedID;
+                }
+            } else try (ResultSet results = statement.executeQuery()) {
+                while (results.next()) {
+                    final String name = results.getString(1);
+                    if (!results.wasNull()) return name;                // Should never be null, but we are paranoiac.
+                }
+            }
+        } while ((insert = !insert) == true);
+        throw new IllegalUpdateException("Can not add the series.");    // TODO: provide better error message.
     }
 }
