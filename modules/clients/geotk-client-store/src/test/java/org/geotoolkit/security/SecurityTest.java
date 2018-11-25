@@ -59,8 +59,5 @@ public class SecurityTest extends org.geotoolkit.test.TestBase {
 
         //test.com has 1 inderection level
         assertEquals(2, INC.get());
-
-
     }
-
 }
