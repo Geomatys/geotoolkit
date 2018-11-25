@@ -57,7 +57,7 @@ public class DimRangeRenderer extends AbstractCoverageSymbolizerRenderer<CachedD
     }
 
     @Override
-    public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
+    public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
 
         double[] resolution = renderingContext.getResolution();
         final Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
@@ -76,7 +76,7 @@ public class DimRangeRenderer extends AbstractCoverageSymbolizerRenderer<CachedD
 
         if(dataCoverage == null){
             LOGGER.log(Level.WARNING, "Requested an area where no coverage where found.");
-            return;
+            return false;
         }
 
         final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
@@ -92,7 +92,7 @@ public class DimRangeRenderer extends AbstractCoverageSymbolizerRenderer<CachedD
             }
         } catch (CoverageProcessingException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
-            return;
+            return false;
         } catch(Exception ex){
             //several kind of errors can happen here, we catch anything to avoid blocking the map component.
             monitor.exceptionOccured(
@@ -101,12 +101,12 @@ public class DimRangeRenderer extends AbstractCoverageSymbolizerRenderer<CachedD
                 " was expecting : \n" +
                 renderingContext.getObjectiveCRS() +
                 "\nOriginal Cause:"+ ex.getMessage(), ex), Level.WARNING);
-            return;
+            return false;
         }
 
         if(dataCoverage == null){
             LOGGER.log(Level.WARNING, "Reprojected coverage is null.");
-            return;
+            return false;
         }
 
 
@@ -134,11 +134,12 @@ public class DimRangeRenderer extends AbstractCoverageSymbolizerRenderer<CachedD
         final RenderedImage img = dataCoverage.getRenderableImage(0, 1).createDefaultRendering();
 
 
-
+        boolean dataRendered = false;
         final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D();
         if(trs2D instanceof AffineTransform){
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
             g2.drawRenderedImage(img, (AffineTransform)trs2D);
+            dataRendered = true;
         }else if (trs2D instanceof LinearTransform) {
             final LinearTransform lt = (LinearTransform) trs2D;
             final int col = lt.getMatrix().getNumCol();
@@ -150,5 +151,6 @@ public class DimRangeRenderer extends AbstractCoverageSymbolizerRenderer<CachedD
         }
 
         renderingContext.switchToDisplayCRS();
+        return dataRendered;
     }
 }

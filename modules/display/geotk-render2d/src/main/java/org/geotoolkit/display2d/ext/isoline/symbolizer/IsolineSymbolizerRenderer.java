@@ -74,17 +74,18 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
     }
 
     @Override
-    public void portray(ProjectedCoverage graphic) throws PortrayalException {
+    public boolean portray(ProjectedCoverage graphic) throws PortrayalException {
 
         IsolineSymbolizer isolineSymbolizer = symbol.getSource();
 
         try {
+            boolean isRendered = false;
             ////////////////////
             // 1 - Render raster
             ////////////////////
             final CachedRasterSymbolizer cachedRasterSymbolizer = symbol.getCachedRasterSymbolizer();
             if (!isolineSymbolizer.getIsolineOnly() || isJenksFunction(cachedRasterSymbolizer)) {
-                GO2Utilities.portray(graphic, cachedRasterSymbolizer, renderingContext);
+                isRendered = GO2Utilities.portray(graphic, cachedRasterSymbolizer, renderingContext);
             }
 
 //            final MutableStyle rasterStyle = GO2Utilities.STYLE_FACTORY.style(cachedRasterSymbolizer.getSource());
@@ -185,9 +186,11 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                     FeatureMapLayer fml = MapBuilder.createFeatureLayer(isolines, featureStyle);
 
                     StatelessFeatureLayerJ2D statelessFeatureLayerJ2D = new StatelessFeatureLayerJ2D(renderingContext.getCanvas(), fml);
-                    statelessFeatureLayerJ2D.paintLayer(renderingContext);
+                    isRendered |= statelessFeatureLayerJ2D.paintLayer(renderingContext);
                 }
             }
+
+            return isRendered;
 
         } catch (DataStoreException ex) {
             throw new PortrayalException(ex.getMessage(), ex);

@@ -156,8 +156,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
+    public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
 
+        boolean dataRendered = false;
         try {
             GridCoverage2D dataCoverage = getObjectiveCoverage(projectedCoverage);
             GridCoverage2D elevationCoverage = getObjectiveElevationCoverage(projectedCoverage);
@@ -168,7 +169,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
             if (dataCoverage == null) {
                 //LOGGER.log(Level.WARNING, "RasterSymbolizer : Reprojected coverage is null.");
-                return;
+                return false;
             }
 
             final RasterSymbolizer sourceSymbol = symbol.getSource();
@@ -228,7 +229,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
             if (renderingContext.wraps == null) {
                 //single rendering
-                renderCoverage(projectedCoverage, dataImage, trs2D);
+                dataRendered |= renderCoverage(projectedCoverage, dataImage, trs2D);
 
             } else {
                 //check if the geometry overlaps the meridian
@@ -248,16 +249,16 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     //duplicate geometry on the other warp line
                     nbIncRep++;
                 }
-                renderCoverage(projectedCoverage, dataImage, trs2D);
+                dataRendered |= renderCoverage(projectedCoverage, dataImage, trs2D);
 
                 //-- repetition of increasing and decreasing sides.
                 for (int i = 0; i < nbDecRep; i++) {
                     g2d.setTransform(renderingContext.wraps.wrapDecObjToDisp[i]);
-                    renderCoverage(projectedCoverage, dataImage, trs2D);
+                    dataRendered |= renderCoverage(projectedCoverage, dataImage, trs2D);
                 }
                 for (int i = 0; i < nbIncRep; i++) {
                     g2d.setTransform(renderingContext.wraps.wrapIncObjToDisp[i]);
-                    renderCoverage(projectedCoverage, dataImage, trs2D);
+                    dataRendered |= renderCoverage(projectedCoverage, dataImage, trs2D);
                 }
             }
 
@@ -267,6 +268,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         } catch (Exception e) {
             LOGGER.log(Level.WARNING,"Portrayal exception: "+e.getMessage(),e);
         }
+        return dataRendered;
     }
 
     /**
@@ -741,11 +743,14 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         throw new PortrayalException("Band for name/indice "+name+" not found");
     }
 
-    private void renderCoverage(final ProjectedCoverage projectedCoverage, RenderedImage img, MathTransform2D trs2D) throws PortrayalException{
+    private boolean renderCoverage(final ProjectedCoverage projectedCoverage, RenderedImage img, MathTransform2D trs2D) throws PortrayalException{
+        boolean dataRendered = false;
+
         if (trs2D instanceof AffineTransform) {
             g2d.setComposite(symbol.getJ2DComposite());
             try {
                 g2d.drawRenderedImage(img, (AffineTransform)trs2D);
+                dataRendered = true;
             } catch (Exception ex) {
                 final StringWriter sw = new StringWriter();
                 final PrintWriter pw = new PrintWriter(sw);
@@ -780,6 +785,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                             final ImageLayout layout = new ImageLayout().setColorModel(model);
                             img = new NullOpImage(img, layout, null, OpImage.OP_COMPUTE_BOUND);
                             g2d.drawRenderedImage(img, (AffineTransform)trs2D);
+                            dataRendered = true;
                         }catch(Exception e){
                             //plenty of errors can happen when painting an image
                             monitor.exceptionOccured(e, Level.WARNING);
@@ -809,8 +815,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //draw the border if there is one---------------------------------------
         CachedSymbolizer outline = symbol.getOutLine();
         if(outline != null){
-            GO2Utilities.portray(projectedCoverage, outline, renderingContext);
+            dataRendered |= GO2Utilities.portray(projectedCoverage, outline, renderingContext);
         }
+        return dataRendered;
     }
 
     /**

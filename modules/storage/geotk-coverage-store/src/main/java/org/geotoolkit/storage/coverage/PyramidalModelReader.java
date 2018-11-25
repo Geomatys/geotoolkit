@@ -430,11 +430,9 @@ public class PyramidalModelReader extends GridCoverageReader{
             final Collection<Point> candidates = new ArrayList<>();
 
             for (int tileCol = (int) tileMinCol; tileCol < tileMaxCol; tileCol++) {
-
                 for(int tileRow = (int) tileMinRow; tileRow < tileMaxRow; tileRow++) {
-
-                    if (mosaic.isMissing(tileCol, tileRow)) continue;//--tile not available
-
+                    //do not check missing tiles, the query pool will exclude them
+                    //if (mosaic.isMissing(tileCol, tileRow)) continue;//--tile not available
                     candidates.add(new Point(tileCol, tileRow));
                 }
             }
@@ -551,11 +549,13 @@ public class PyramidalModelReader extends GridCoverageReader{
                 }
             }
 
-            if(image == null){
-                image = new BufferedImage(
-                    (int)(tileMaxCol-tileMinCol)*tileSize.width,
-                    (int)(tileMaxRow-tileMinRow)*tileSize.height,
-                    BufferedImage.TYPE_INT_ARGB);
+            if (image == null) {
+                //no tiles intersect
+                LOGGER.log(Level.FINE, "Following Requested envelope : "
+                        +wantedEnv
+                        + "\n do not intersect data define by following data Envelope."
+                        +mosaic.getEnvelope());
+                return null;
             }
         }
 ////

@@ -120,7 +120,7 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
      * {@inheritDoc }
      */
     @Override
-    public void paintLayer(final RenderingContext2D renderingContext) {
+    public boolean paintLayer(final RenderingContext2D renderingContext) {
 
         final GenericName coverageName = item.getCoverageReference().getIdentifier();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
@@ -129,22 +129,25 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
         if (rules.length == 0) {
-            return;
+            return false;
         }
 
+        boolean dataRendered = false;
         final CollectionCoverageResource ref = (CollectionCoverageResource) item.getCoverageReference();
         final Collection<GridCoverageResource> references = ref.getCoverages(null);
         final LoopLayer layer = new LoopLayer();
         for (GridCoverageResource cref : references) {
             layer.ref = cref;
-            paintRaster(layer, rules, renderingContext);
+            dataRendered |= paintRaster(layer, rules, renderingContext);
         }
+        return dataRendered;
     }
 
-    private void paintRaster(final CoverageMapLayer item, final CachedRule[] rules,
+    private boolean paintRaster(final CoverageMapLayer item, final CachedRule[] rules,
             final RenderingContext2D context) {
         updateCache(context);
 
+        boolean dataRendered = false;
         //search for a special graphic renderer
         if(!ignoreBuilders){
             final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) item.getGraphicBuilder(GraphicJ2D.class);
@@ -152,9 +155,9 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
                 //this layer has a special graphic rendering, use it instead of normal rendering
                 final Collection<GraphicJ2D> graphics = builder.createGraphics(item, getCanvas());
                 for(GraphicJ2D gra : graphics){
-                    gra.paint(context);
+                    dataRendered |= gra.paint(context);
                 }
-                return;
+                return dataRendered;
             }
         }
 
@@ -162,13 +165,14 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
         for(final CachedRule rule : rules){
             for(final CachedSymbolizer symbol : rule.symbolizers()){
                 try {
-                    GO2Utilities.portray(projectedCoverage, symbol, context);
+                    dataRendered |= GO2Utilities.portray(projectedCoverage, symbol, context);
                 } catch (PortrayalException ex) {
                     context.getMonitor().exceptionOccured(ex, Level.WARNING);
                 }
             }
         }
 
+        return dataRendered;
     }
 
     /**

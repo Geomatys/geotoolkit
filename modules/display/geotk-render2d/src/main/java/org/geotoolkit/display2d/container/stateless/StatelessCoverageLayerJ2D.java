@@ -111,7 +111,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
      * {@inheritDoc }
      */
     @Override
-    public void paintLayer(final RenderingContext2D renderingContext) {
+    public boolean paintLayer(final RenderingContext2D renderingContext) {
 
         final GenericName coverageName = item.getCoverageReference().getIdentifier();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
@@ -120,13 +120,13 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
         if (rules.length == 0) {
-            return;
+            return false;
         }
 
-        paintRaster(item, rules, renderingContext);
+        return paintRaster(item, rules, renderingContext);
     }
 
-    private void paintRaster(final CoverageMapLayer item, final CachedRule[] rules,
+    private boolean paintRaster(final CoverageMapLayer item, final CachedRule[] rules,
             final RenderingContext2D context) {
         updateCache(context);
 
@@ -136,10 +136,11 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
             if(builder != null){
                 //this layer has a special graphic rendering, use it instead of normal rendering
                 final Collection<GraphicJ2D> graphics = builder.createGraphics(item, getCanvas());
+                boolean dataRendered = false;
                 for(GraphicJ2D gra : graphics){
-                    gra.paint(context);
+                    dataRendered |= gra.paint(context);
                 }
-                return;
+                return dataRendered;
             }
         }
 
@@ -149,16 +150,17 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
         //    return;
         //}
 
+        boolean dataRendered = false;
         for(final CachedRule rule : rules){
             for(final CachedSymbolizer symbol : rule.symbolizers()){
                 try {
-                    GO2Utilities.portray(projectedCoverage, symbol, context);
+                    dataRendered |= GO2Utilities.portray(projectedCoverage, symbol, context);
                 } catch (PortrayalException ex) {
                     context.getMonitor().exceptionOccured(ex, Level.WARNING);
                 }
             }
         }
-
+        return dataRendered;
     }
 
     /**

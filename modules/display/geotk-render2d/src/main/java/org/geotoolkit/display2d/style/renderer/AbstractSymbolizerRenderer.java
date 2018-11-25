@@ -77,11 +77,13 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
     }
 
     @Override
-    public void portray(final Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
+    public boolean portray(final Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
+        boolean dataRendered = false;
         while(graphics.hasNext()){
-            if(monitor.stopRequested()) return;
-            portray(graphics.next());
+            if(monitor.stopRequested()) return dataRendered;
+            dataRendered |= portray(graphics.next());
         }
+        return dataRendered;
     }
 
     ////////////////////////////////////////////////////////////////////////////

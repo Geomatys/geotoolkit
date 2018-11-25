@@ -57,6 +57,8 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display.primitive.SceneNode;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
@@ -117,9 +119,9 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
      * @param context2D
      */
     @Override
-    public void paint(RenderingContext2D context2D) {
+    public boolean paint(RenderingContext2D context2D) {
 
-        if(!item.isVisible()) return;
+        if(!item.isVisible()) return false;
 
         final GenericName coverageName = item.getCoverageReference().getIdentifier();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
@@ -128,7 +130,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
         if (rules.length == 0) {
-            return;
+            return false;
         }
 
         final CanvasMonitor monitor = context2D.getMonitor();
@@ -140,7 +142,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
             pyramidSet = model.getPyramidSet();
         } catch (DataStoreException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
-            return;
+            return false;
         }
 
         Pyramid pyramid = null;
@@ -148,12 +150,12 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
             pyramid = coverageFinder.findPyramid(pyramidSet, canvasEnv.getCoordinateReferenceSystem());
         } catch (FactoryException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
-            return;
+            return false;
         }
 
         if(pyramid == null){
             //no reliable pyramid
-            return;
+            return false;
         }
 
         final CoordinateReferenceSystem pyramidCRS = pyramid.getCoordinateReferenceSystem();
@@ -166,7 +168,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
             wantedEnv = new GeneralEnvelope(ReferencingUtilities.transform(canvasEnv, pyramidCRS));
         } catch (TransformException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
-            return;
+            return false;
         }
 
 
@@ -187,7 +189,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
             wantedResolution = GO2Utilities.pixelResolution(context2D, wantedEnv);
         } catch (TransformException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
-            return;
+            return false;
         }
 
         GridMosaic mosaic = null;
@@ -195,11 +197,11 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
             mosaic = coverageFinder.findMosaic(pyramid, wantedResolution, tolerance, wantedEnv,100);
         } catch (FactoryException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
-            return;
+            return false;
         }
         if(mosaic == null){
             //no reliable mosaic
-            return;
+            return false;
         }
 
         GO2Utilities.removeNaN(wantedEnv);
@@ -238,7 +240,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         if(maxTiles==null) maxTiles = 500;
         if( (tileMaxCol-tileMinCol) * (tileMaxRow-tileMinRow) > maxTiles) {
             LOGGER.log(Level.INFO, "Too much tiles requiered to render layer at this scale.");
-            return;
+            return false;
         }
 
         //tiles to render
@@ -299,10 +301,13 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         }
 
         //paint sub tiles ------------------------------------------------------
-        final Object[] cp = getChildren().toArray();
-        for(Object obj : cp){
-            ((StatefullTileJ2D)obj).paint(context2D);
+        boolean dataRendered = false;
+        for(SceneNode node : getChildren()) {
+            if (node instanceof GraphicJ2D) {
+                dataRendered |= ((GraphicJ2D) node).paint(context2D);
+            }
         }
+        return dataRendered;
     }
 
     @Override

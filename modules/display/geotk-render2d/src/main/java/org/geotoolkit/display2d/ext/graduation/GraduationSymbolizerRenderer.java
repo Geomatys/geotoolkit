@@ -81,13 +81,13 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
     }
 
     @Override
-    public void portray(ProjectedObject graphic) throws PortrayalException {
+    public boolean portray(ProjectedObject graphic) throws PortrayalException {
         final ProjectedGeometry projGeom = graphic.getGeometry(null);
-        if(projGeom==null) return;
+        if(projGeom==null) return false;
 
         final CoordinateReferenceSystem displayCrs = renderingContext.getDisplayCRS();
         final List<CachedGraduationSymbolizer.CachedGraduation> grads = symbol.getCachedGraduations();
-        if(grads.isEmpty()) return;
+        if(grads.isEmpty()) return false;
 
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
@@ -131,7 +131,7 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
                 }
             }
         }
-        if(forwardCandidates.isEmpty() && backwardCandidates.isEmpty())return;
+        if(forwardCandidates.isEmpty() && backwardCandidates.isEmpty())return false;
 
 
         renderingContext.switchToDisplayCRS();
@@ -151,13 +151,13 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
                 final GeodeticPathWalker walker = new GeodeticPathWalker(dispShape.getPathIterator(null), displayCrs);
                 portray(walker,gradInfos);
             }
-
+            return true;
         } catch (TransformException ex) {
             throw new PortrayalException(ex.getMessage(), ex);
         }catch(IllegalArgumentException ex){
             //may happen with geodetic calculator when geometry goes outside the valid envelope
         }
-
+        return true;
     }
 
     private void portray(GeodeticPathWalker walker, GradInfo[] gradInfos) throws TransformException{
@@ -288,6 +288,7 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
      * @throws PortrayalException
      */
     @Override
-    public void portray(ProjectedCoverage graphic) throws PortrayalException {
+    public boolean portray(ProjectedCoverage graphic) throws PortrayalException {
+        return false;
     }
 }

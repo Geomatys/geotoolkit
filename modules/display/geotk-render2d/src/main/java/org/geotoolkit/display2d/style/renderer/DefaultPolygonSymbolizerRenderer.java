@@ -63,7 +63,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedObject projectedFeature) throws PortrayalException{
+    public boolean portray(final ProjectedObject projectedFeature) throws PortrayalException{
 
         final Object candidate = projectedFeature.getCandidate();
 
@@ -73,27 +73,28 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
             final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
 
             //symbolizer doesnt match the featuretype, no geometry found with this name.
-            if(projectedGeometry == null) return;
+            if(projectedGeometry == null) return false;
 
-            portray(projectedGeometry, candidate);
+            return portray(projectedGeometry, candidate);
         }
+        return false;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
+    public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
         //portray the border of the coverage
         final ProjectedGeometry projectedGeometry = projectedCoverage.getEnvelopeGeometry();
 
         //could not find the border geometry
-        if(projectedGeometry == null) return;
+        if(projectedGeometry == null) return false;
 
-        portray(projectedGeometry, null);
+        return portray(projectedGeometry, null);
     }
 
-    private void portray(final ProjectedGeometry projectedGeometry, final Object candidate) throws PortrayalException{
+    private boolean portray(final ProjectedGeometry projectedGeometry, final Object candidate) throws PortrayalException{
 
         final float offset = symbol.getOffset(candidate, coeff);
         final Shape[] shapes;
@@ -138,7 +139,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
 
         if(shapes == null){
             //no geometry, end here
-            return;
+            return false;
         }
 
         final float coeff = this.coeff * sizeCorrection;
@@ -156,7 +157,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
                 //we need the upperleft point to properly paint the polygon
                 final float margin = symbol.getMargin(candidate, coeff) /2f;
                 final Rectangle2D bounds = shape.getBounds2D();
-                if(bounds == null)return;
+                if(bounds == null)return true;
                 x = (int) (bounds.getMinX() - margin);
                 y = (int) (bounds.getMinY() - margin);
             }else{
@@ -223,7 +224,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
                 g2d.translate(-dispStep.getX(), -dispStep.getY());
             }
         }
-
+        return true;
     }
 
     /**

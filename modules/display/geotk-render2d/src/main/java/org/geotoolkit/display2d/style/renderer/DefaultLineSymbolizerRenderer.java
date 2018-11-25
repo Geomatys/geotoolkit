@@ -68,38 +68,39 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
+    public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
         //portray the border of the coverage
         final ProjectedGeometry projectedGeometry = projectedCoverage.getEnvelopeGeometry();
 
         //could not find the border geometry
-        if(projectedGeometry == null) return;
+        if(projectedGeometry == null) return false;
 
-        portray(projectedGeometry, null);
+        return portray(projectedGeometry, null);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedObject projectedFeature) throws PortrayalException{
+    public boolean portray(final ProjectedObject projectedFeature) throws PortrayalException{
         final Object candidate = projectedFeature.getCandidate();
         final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
 
         //symbolizer doesnt match the featuretype, no geometry found with this name.
-        if(projectedGeometry == null) return;
+        if(projectedGeometry == null) return false;
 
         //test if the symbol is visible on this feature
         if(symbol.isVisible(candidate)){
-            portray(projectedGeometry, candidate);
+            return portray(projectedGeometry, candidate);
         }
+        return false;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void portray(final Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
+    public boolean portray(final Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
 
         if(dispGeom){
             renderingContext.switchToDisplayCRS();
@@ -107,6 +108,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
             renderingContext.switchToObjectiveCRS();
         }
 
+        boolean dataRendered = false;
         while(graphics.hasNext()){
 
             if(monitor.stopRequested()){
@@ -133,12 +135,13 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
             }
 
             for(Shape j2dShape : j2dShapes){
-                portray(symbol, g2d, j2dShape, cachedStroke, feature, coeff, hints);
+                dataRendered |= portray(symbol, g2d, j2dShape, cachedStroke, feature, coeff, hints);
             }
         }
+        return dataRendered;
     }
 
-    private void portray(final ProjectedGeometry projectedGeometry, final Object feature) throws PortrayalException{
+    private boolean portray(final ProjectedGeometry projectedGeometry, final Object feature) throws PortrayalException{
 
         final Shape[] j2dShapes;
 
@@ -151,12 +154,14 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         j2dShapes = getShapes(projectedGeometry, feature);
 
         if(j2dShapes == null){
-            return;
+            return false;
         }
 
+        boolean dataRendered = false;
         for(Shape j2dShape : j2dShapes){
-            portray(symbol, g2d, j2dShape, cachedStroke, feature, coeff, hints);
+            dataRendered |= portray(symbol, g2d, j2dShape, cachedStroke, feature, coeff, hints);
         }
+        return dataRendered;
     }
 
     private Shape[] getShapes(ProjectedGeometry projectedGeometry, Object feature) throws PortrayalException{
@@ -192,7 +197,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         return j2dShapes;
     }
 
-    public static void portray(CachedSymbolizer symbol, Graphics2D g2d, Shape j2dShape,
+    public static boolean portray(CachedSymbolizer symbol, Graphics2D g2d, Shape j2dShape,
             CachedStroke cachedStroke, Object feature, float coeff, RenderingHints hints){
 
         if(cachedStroke instanceof CachedStrokeSimple){
@@ -211,6 +216,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
             }
             g2d.setStroke(cs.getJ2DStroke(feature,coeff));
             g2d.draw(j2dShape);
+            return true;
         }else if(cachedStroke instanceof CachedStrokeGraphic){
             final CachedStrokeGraphic gc = (CachedStrokeGraphic)cachedStroke;
             g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
@@ -226,6 +232,8 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
             final PathIterator ite = j2dShape.getPathIterator(null);
             final PathWalker walker = new PathWalker(ite);
             walker.walk(initGap);
+            if (walker.isFinished())
+                return false; // Nothing to browse
             while(!walker.isFinished()){
                 //paint the motif --------------------------------------------------
                 walker.getPosition(pt);
@@ -242,8 +250,9 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
                 //walk over the gap ------------------------------------------------
                 walker.walk(gap);
             }
+            return true;
         }
-
+        return false;
     }
 
 

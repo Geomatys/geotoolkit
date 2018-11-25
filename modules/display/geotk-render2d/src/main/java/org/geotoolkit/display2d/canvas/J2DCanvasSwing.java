@@ -99,8 +99,9 @@ public class J2DCanvasSwing extends J2DCanvas{
     }
 
     @Override
-    public void repaint(final Shape displayArea) {
+    public boolean repaint(final Shape displayArea) {
         component.repaint();
+        return true;
     }
 
     private void paint(final Graphics2D output, final Shape displayArea){
