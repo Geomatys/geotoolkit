@@ -222,7 +222,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
      * @throws SQLException if the operation failed.
      */
     final int findOrInsert(final GridGeometry geometry, final Instant[] period, final String suggestedID)
-            throws SQLException, FactoryException, TransformException, IllegalUpdateException
+            throws SQLException, FactoryException, TransformException, CatalogException
     {
         final List<String> additionalAxes = new ArrayList<>();
         /*
@@ -323,10 +323,6 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
         throw new IllegalUpdateException("Illegal grid geometry.");
     }
 
-    private static void adjust() {
-
-    }
-
     /**
      * Finds a {@code spatial_ref_sys} code for the given coordinate reference system.
      */
@@ -334,17 +330,13 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
         final IdentifiedObjectFinder finder = IdentifiedObjects.newFinder("EPSG");
         finder.setIgnoringAxes(true);
         final AbstractCRS c = AbstractCRS.castOrCopy((CoordinateReferenceSystem) finder.findSingleton(crs));
-        Integer srid = null;
         if (c != null && c.forConvention(AxesConvention.NORMALIZED).equals(crs, ComparisonMode.APPROXIMATIVE)) {
             Identifier id = IdentifiedObjects.getIdentifier(c, Citations.EPSG);
             if (id != null) try {
-                srid = Integer.valueOf(id.getCode());
+                return Integer.valueOf(id.getCode());
             } catch (NumberFormatException e) {
-                throw new IllegalUpdateException("Illegal SRID.");
+                throw new IllegalUpdateException("Illegal SRID: " + id);
             }
-        }
-        if (srid != null) {
-            return srid;
         }
         /*
          * Temporary hack for Coriolis data (to be removed in a future version).

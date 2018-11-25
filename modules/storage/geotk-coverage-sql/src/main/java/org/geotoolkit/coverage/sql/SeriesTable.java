@@ -171,7 +171,7 @@ final class SeriesTable extends CachedTable<Integer, SeriesTable.Entry> {
     public int findOrInsert(final String product, final String directory, final String extension, final String driver,
             final List<GridSampleDimension> bands) throws SQLException, CatalogException
     {
-        final String format = formats.findOrInsert(product, driver, bands);
+        final String format = formats.findOrInsert(driver, bands, product);
         boolean insert = false;
         do {
             final PreparedStatement statement;

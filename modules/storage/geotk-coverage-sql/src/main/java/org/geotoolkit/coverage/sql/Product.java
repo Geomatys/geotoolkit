@@ -200,7 +200,7 @@ public final class Product {
     void addCoverageReference(final Transaction transaction, final List<NewRaster> rasters) throws CatalogException {
         try (final GridCoverageTable table = new GridCoverageTable(transaction)) {
             for (final NewRaster r : rasters) {
-                table.add(name, r.path, r.geometry, r.bands, r.imageIndex + 1);
+                table.add(name, r);
             }
         } catch (SQLException | FactoryException | TransformException exception) {
             throw new CatalogException(exception);
@@ -208,6 +208,11 @@ public final class Product {
     }
 
     static final class NewRaster {
+        /**
+         * The format name as given by the data store provider. Example: "NetCDF".
+         */
+        final String driver;
+
         /**
          * Path to the new file to add.
          */
@@ -231,9 +236,10 @@ public final class Product {
         /**
          * Creates information about a new raster to be added to the catalog.
          */
-        NewRaster(final Path file, final int index) {
-            this.path  = file;
-            imageIndex = index;
+        NewRaster(final String driver, final Path file, final int index) {
+            this.driver = driver;
+            this.path   = file;
+            imageIndex  = index;
         }
 
         /**
@@ -250,7 +256,8 @@ public final class Product {
             final List<NewRaster> rasters = new ArrayList<>(files.length);
             for (final Path file : files) {
                 try (final DataStore ds = DataStores.open(file)) {
-                    collect(file, ds, rasters, 0);
+                    String driver = ds.getProvider().getShortName();
+                    collect(driver, file, ds, rasters, 0);
                 } catch (TransformException e) {
                     throw new CatalogException(e);
                 }
@@ -258,19 +265,29 @@ public final class Product {
             return rasters;
         }
 
-        private static void collect(final Path file, final Resource resource, final List<NewRaster> rasters, int index)
-                throws DataStoreException, TransformException
+        /**
+         * Adds to the given {@code rasters} list information about all resources found in the given node.
+         * This method add recursively all children resources.
+         *
+         * @param  driver    the format name as given by the data store provider. Example: "NetCDF".
+         * @param  file      path to the file, including parent directories and file extension.
+         * @param  resource  the resource to add to the given {@code rasters} list.
+         * @param  rasters   where to add the information about rasters.
+         * @param  index     zero-based index of the image to read.
+         */
+        private static void collect(final String driver, final Path file, final Resource resource,
+                final List<NewRaster> rasters, int index) throws DataStoreException, TransformException
         {
             if (resource instanceof Aggregate) {
                 for (final Resource child : ((Aggregate) resource).components()) {
-                    collect(file, child, rasters, index++);
+                    collect(driver, file, child, rasters, index++);
                 }
             } else if (resource instanceof org.apache.sis.storage.GridCoverageResource) {
-                final NewRaster r = new NewRaster(file, index);
+                final NewRaster r = new NewRaster(driver, file, index);
                 r.geometry = ((org.apache.sis.storage.GridCoverageResource) resource).getGridGeometry();
                 rasters.add(r);
             } else if (resource instanceof GridCoverageResource) {
-                final NewRaster r = new NewRaster(file, index);
+                final NewRaster r = new NewRaster(driver, file, index);
                 GridCoverageReader reader = ((GridCoverageResource) resource).acquireReader();
                 r.geometry = CoverageUtilities.toSIS(reader.getGridGeometry(r.imageIndex));
                 r.bands = reader.getSampleDimensions(r.imageIndex);

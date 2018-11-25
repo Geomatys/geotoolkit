@@ -39,7 +39,7 @@ final class IO {
     static DataStore store(final String format, final Path path) throws DataStoreException {
         for (DataStoreProvider provider : DataStores.providers()) {
             if (format.equalsIgnoreCase(provider.getShortName())) {
-                provider.open(new StorageConnector(path));
+                return provider.open(new StorageConnector(path));
             }
         }
         return DataStores.open(path);

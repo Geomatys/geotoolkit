@@ -30,10 +30,8 @@ import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Envelopes;
-import org.geotoolkit.coverage.GridSampleDimension;
 
 
 /**
@@ -152,12 +150,13 @@ final class GridCoverageTable extends Table {
      * @param  imageIndex 1-based index of the image.
      * @throws SQLException if an error occurred while reading from or writing to the database.
      */
-    final void add(final String product, Path path, final GridGeometry geometry, final List<GridSampleDimension> bands, final int imageIndex)
+    final void add(final String product, final Product.NewRaster raster)
             throws SQLException, FactoryException, TransformException, CatalogException
     {
         /*
          * Decompose the given path into the directory, filename and extension components.
          */
+        Path path = raster.path;
         if (path.isAbsolute()) {
             path = transaction.database.root.relativize(path);
         }
@@ -172,11 +171,10 @@ final class GridCoverageTable extends Table {
         final String directory = (path != null) ? path.toString() : ".";
         /*
          * Insert dependencies in other tables.
-         * TODO: NetCDF driver currently hard-coded.
          */
         final Instant[] period = new Instant[2];        // Values to be provided by 'gridGeometries'.
-        final int gridID = gridGeometries.findOrInsert(geometry, period, product);
-        final int series = seriesTable.findOrInsert(product, directory, extension, "NetCDF", bands);
+        final int gridID = gridGeometries.findOrInsert(raster.geometry, period, product);
+        final int series = seriesTable.findOrInsert(product, directory, extension, raster.driver, raster.bands);
         final Instant startTime = period[0];
         final Instant endTime   = period[1];
         final boolean hasTime   = startTime != null && endTime != null;
@@ -192,7 +190,7 @@ final class GridCoverageTable extends Table {
         final PreparedStatement statement = prepareStatement(sql);
         statement.setInt   (1, series);
         statement.setString(2, filename);
-        statement.setInt   (3, imageIndex);
+        statement.setInt   (3, raster.imageIndex + 1);
         statement.setInt   (4, gridID);
         if (hasTime) {
             final Calendar calendar = newCalendar();

@@ -26,7 +26,12 @@ import java.time.Instant;
 
 import org.opengis.geometry.Envelope;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.opengis.referencing.operation.TransformException;
@@ -118,7 +123,7 @@ public final class GridCoverageReference implements CoverageStack.Element {
     /**
      * Returns the name of the driver to use for reading data.
      */
-    final String getFormat() {
+    private String getFormat() {
         return series.format.rasterFormat;
     }
 
@@ -127,7 +132,7 @@ public final class GridCoverageReference implements CoverageStack.Element {
      *
      * @return path to the file.
      */
-    final Path getPath() {
+    private Path getPath() {
         return series.path(filename);
     }
 
@@ -251,5 +256,27 @@ public final class GridCoverageReference implements CoverageStack.Element {
             }
             throw new IIOException(Errors.format(Errors.Keys.CantReadFile_1, getName()), e);
         }
+    }
+
+    void read(final Envelope aoi) throws TransformException, DataStoreException {
+        final GridExtent extent = grid.extent(aoi);
+        try (DataStore store = IO.store(getFormat(), getPath())) {
+            final GridCoverageResource r = resource(store);
+            if (r != null) {
+                // TODO
+            }
+        }
+    }
+
+    private static GridCoverageResource resource(final Resource resource) throws DataStoreException {
+        if (resource instanceof Aggregate) {
+            for (final Resource child : ((Aggregate) resource).components()) {
+                GridCoverageResource r = resource(child);
+                if (r != null) return r;
+            }
+        } else if (resource instanceof GridCoverageResource) {
+            return (GridCoverageResource) resource;
+        }
+        return null;
     }
 }

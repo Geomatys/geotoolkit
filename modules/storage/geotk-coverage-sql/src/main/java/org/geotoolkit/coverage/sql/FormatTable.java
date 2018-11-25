@@ -204,13 +204,13 @@ next:           while (results.next()) {
      * If a format already exists, then this method returns its identifier.
      * Otherwise a new format is created with the given driver and the bands.
      *
-     * @param  name    suggested name of the new format.
-     * @param  driver  the name of the data store to use.
-     * @param  bands   the sample dimensions to add to the database.
-     * @return the format name.
+     * @param  driver       the name of the data store to use.
+     * @param  bands        the sample dimensions to add to the database.
+     * @param  suggestedID  suggested name if a new format needs to be inserted.
+     * @return the actual format name.
      * @throws SQLException if an error occurred while writing to the database.
      */
-    public String findOrInsert(String name, final String driver, final List<GridSampleDimension> bands)
+    public String findOrInsert(final String driver, final List<GridSampleDimension> bands, String suggestedID)
             throws SQLException, CatalogException
     {
         String existing = search(driver, bands);
@@ -227,21 +227,21 @@ next:           while (results.next()) {
         statement.setString(2, driver);
         StringBuilder buffer = null;
         for (int n=2; ; n++) {
-            statement.setString(1, name);
+            statement.setString(1, suggestedID);
             if (statement.executeUpdate() != 0) {
                 if (bands != null && !bands.isEmpty()) {
-                    sampleDimensions.insert(name, bands);
+                    sampleDimensions.insert(suggestedID, bands);
                 }
-                return name;
+                return suggestedID;
             }
             if (n >= MAX_FORMATS) {
-                throw new CatalogException("Rows already exist for all names up to \"" + name + "\".");
+                throw new CatalogException("Rows already exist for all names up to \"" + suggestedID + "\".");
             }
             if (buffer == null) {
-                buffer = new StringBuilder(name).append('-');
+                buffer = new StringBuilder(suggestedID).append('-');
             }
             final int s = buffer.length();
-            name = buffer.append(n).toString();
+            suggestedID = buffer.append(n).toString();
             buffer.setLength(s);
         }
     }

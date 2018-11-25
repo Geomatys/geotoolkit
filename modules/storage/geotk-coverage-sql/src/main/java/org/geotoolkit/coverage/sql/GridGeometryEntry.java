@@ -23,6 +23,7 @@ import java.time.Instant;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
+import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -37,6 +38,7 @@ import org.opengis.metadata.spatial.DimensionNameType;
 import org.apache.sis.geometry.ImmutableEnvelope;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
@@ -88,7 +90,7 @@ final class GridGeometryEntry {
      * The coordinate reference system is the one declared in the {@link GridGeometryTable} for that entry.
      * The envelope must include the vertical range if any, but not the temporal dimension.
      */
-    final GridGeometry geometry;
+    private final GridGeometry geometry;
 
     /**
      * Extent of the grid {@linkplain #geometry} expanded with a temporal component.
@@ -105,7 +107,7 @@ final class GridGeometryEntry {
      * In such case, it is not sufficient to rely on the {@link #geometry} field; caller may
      * need to reload the grid geometry from original file.
      */
-    final boolean approximate;
+    private final boolean approximate;
 
     /**
      * Creates an entry from the given grid geometry. This constructor does not clone
@@ -221,5 +223,24 @@ final class GridGeometryEntry {
         final double tMax = TEMPORAL_CRS.toValue(endTime);
         gridToCRS = MathTransforms.compound(gridToCRS, MathTransforms.linear(tMax - tMin, tMin));
         return new GridGeometry(spatioTemporalExtent, PixelInCell.CELL_CORNER, gridToCRS, spatioTemporalCRS);
+    }
+
+    /**
+     * Returns the indices of pixel to read for the given region of interest.
+     * The region of interest can be specified in any CRS.
+     *
+     * @param  aoi  the region of interest.
+     * @return indices of pixels to read.
+     */
+    final GridExtent extent(Envelope aoi) throws TransformException {
+        aoi = Envelopes.transform(aoi, geometry.getCoordinateReferenceSystem());
+        aoi = Envelopes.transform(geometry.getGridToCRS(PixelInCell.CELL_CORNER).inverse(), aoi);
+        final long[] lower = new long[aoi.getDimension()];
+        final long[] upper = new long[lower.length];
+        for (int i=0; i<lower.length; i++) {
+            lower[i] = Math.round(aoi.getMinimum(i));
+            upper[i] = Math.round(aoi.getMaximum(i));
+        }
+        return new GridExtent(null, lower, upper, true);
     }
 }

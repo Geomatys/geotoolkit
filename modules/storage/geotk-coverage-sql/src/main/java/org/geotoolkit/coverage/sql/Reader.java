@@ -23,21 +23,15 @@ import java.sql.SQLException;
 import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.Coverage;
 import org.opengis.referencing.operation.TransformException;
 
-import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.Aggregate;
-import org.apache.sis.storage.Resource;
 
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.CoverageUtilities;
 
 
@@ -84,39 +78,14 @@ final class Reader extends GridCoverageReader {
             throw new CatalogException(e);
         }
         for (final GridCoverageReference c : coverages) {
-            try (DataStore store = IO.store(c.getFormat(), c.getPath())) {
-                final CoverageResource r = resource(store);
-                if (r != null) {
-                    CoverageReader reader = r.acquireReader();
-                    final Coverage coverage = reader.read(c.imageIndex, param);
-                    reader.dispose();
-                    if (coverage instanceof GridCoverage) {
-                        return (GridCoverage) coverage;
-                    }
-                }
+            try {
+                c.read(envelope);   // TODO
             } catch (CoverageStoreException e) {
                 throw e;
-            } catch (DataStoreException e) {
+            } catch (DataStoreException | TransformException e) {
                 throw new CatalogException(e);
             }
         }
         return null;
-    }
-
-    private static CoverageResource resource(final Resource resource) throws DataStoreException {
-        if (resource instanceof Aggregate) {
-            for (final Resource child : ((Aggregate) resource).components()) {
-                CoverageResource r = resource(child);
-                if (r != null) return r;
-            }
-        } else if (resource instanceof CoverageResource) {
-            return (CoverageResource) resource;
-        }
-        return null;
-    }
-
-    @Override
-    public void dispose() throws CoverageStoreException {
-        super.dispose();
     }
 }

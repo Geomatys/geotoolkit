@@ -127,6 +127,12 @@ final class AdditionalAxisTable extends CachedTable<String, AdditionalAxisTable.
     private static final String TABLE = "AdditionalAxes";
 
     /**
+     * Maximum number of additional axes for the same name. Current algorithm is very inefficient
+     * for a large number of name collisions, so we are better to keep this limit small.
+     */
+    private static final int MAX_AXES = 100;
+
+    /**
      * Creates an additional axes table.
      */
     AdditionalAxisTable(final Transaction transaction) {
@@ -226,9 +232,10 @@ final class AdditionalAxisTable extends CachedTable<String, AdditionalAxisTable.
      * @param  crs          coordinate reference system.
      * @param  values       values on the coordinate axis. Must map lower corner.
      * @param  suggestedID  suggested identifier if a new entry must be inserted.
+     * @return actual name of the additional axis.
      */
-    final String findOrInsert(final SingleCRS crs, final double[] values, final String suggestedID)
-            throws SQLException, IllegalUpdateException
+    final String findOrInsert(final SingleCRS crs, final double[] values, String suggestedID)
+            throws SQLException, CatalogException
     {
         final Double[] wrappers = new Double[values.length];
         for (int i=0; i<values.length; i++) wrappers[i] = values[i];
@@ -249,16 +256,33 @@ final class AdditionalAxisTable extends CachedTable<String, AdditionalAxisTable.
             } else {
                 statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\"("
                         + "\"datum\", \"direction\", \"units\", \"bounds\", \"name\")"
-                        + " VALUES (?,CAST(? AS metadata.\"AxisDirection\"),?,?,?)");
+                        + " VALUES (?,CAST(? AS metadata.\"AxisDirection\"),?,?,?) ON CONFLICT (\"name\") DO NOTHING");
             }
             statement.setString(1, datum);
             statement.setString(2, direction);
             statement.setString(3, units);
             statement.setArray (4, bounds);
             if (insert) {
-                statement.setString(5, suggestedID);
-                if (statement.executeUpdate() != 0) {
-                    return suggestedID;
+                /*
+                 * Attempt to insert a new record may cause a name collision.
+                 * Following algorithm is inefficient, but should be okay if
+                 * there is few additional axes for the same product.
+                 */
+                StringBuilder buffer = null;
+                for (int n=2; ; n++) {
+                    statement.setString(5, suggestedID);
+                    if (statement.executeUpdate() != 0) {
+                        return suggestedID;
+                    }
+                    if (n >= MAX_AXES) {
+                        throw new CatalogException("Axes already exist for all names up to \"" + suggestedID + "\".");
+                    }
+                    if (buffer == null) {
+                        buffer = new StringBuilder(suggestedID).append('-');
+                    }
+                    final int s = buffer.length();
+                    suggestedID = buffer.append(n).toString();
+                    buffer.setLength(s);
                 }
             } else try (ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
@@ -267,6 +291,6 @@ final class AdditionalAxisTable extends CachedTable<String, AdditionalAxisTable.
                 }
             }
         } while ((insert = !insert) == true);
-        throw new IllegalUpdateException("Can not add the series.");    // TODO: provide better error message.
+        throw new CatalogException();                                   // Should never reach this point.
     }
 }
