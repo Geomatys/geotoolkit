@@ -38,7 +38,8 @@ import org.opengis.metadata.spatial.DimensionNameType;
 import org.apache.sis.geometry.ImmutableEnvelope;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.metadata.AxisDirections;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
@@ -228,19 +229,22 @@ final class GridGeometryEntry {
     /**
      * Returns the indices of pixel to read for the given region of interest.
      * The region of interest can be specified in any CRS.
+     * If the given envelope has a time component, it must be the last dimension.
      *
      * @param  aoi  the region of interest.
      * @return indices of pixels to read.
      */
     final GridExtent extent(Envelope aoi) throws TransformException {
-        aoi = Envelopes.transform(aoi, geometry.getCoordinateReferenceSystem());
-        aoi = Envelopes.transform(geometry.getGridToCRS(PixelInCell.CELL_CORNER).inverse(), aoi);
-        final long[] lower = new long[aoi.getDimension()];
-        final long[] upper = new long[lower.length];
-        for (int i=0; i<lower.length; i++) {
-            lower[i] = Math.round(aoi.getMinimum(i));
-            upper[i] = Math.round(aoi.getMaximum(i));
+        final CoordinateReferenceSystem crs = aoi.getCoordinateReferenceSystem();
+        if (crs != null) {
+            final CoordinateSystem cs = crs.getCoordinateSystem();
+            final int last = cs.getDimension() - 1;
+            if (AxisDirections.isTemporal(cs.getAxis(last).getDirection())) {
+                final GeneralEnvelope env = GeneralEnvelope.castOrCopy(aoi).subEnvelope(0, last);
+                env.setCoordinateReferenceSystem(CRS.getComponentAt(crs, 0, last));
+                aoi = env;
+            }
         }
-        return new GridExtent(null, lower, upper, true);
+        return geometry.getExtent(aoi);
     }
 }

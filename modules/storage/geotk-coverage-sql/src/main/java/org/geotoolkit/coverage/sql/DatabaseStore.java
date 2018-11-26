@@ -16,17 +16,14 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.awt.Image;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import javax.sql.DataSource;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
-import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -36,17 +33,13 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
@@ -130,7 +123,7 @@ public final class DatabaseStore extends DataStore implements Aggregate {
 
     private final Parameters parameters;
 
-    private final Database database;
+    final Database database;
 
     private List<Resource> components;
 
@@ -187,9 +180,9 @@ public final class DatabaseStore extends DataStore implements Aggregate {
             } catch (SQLException e) {
                 throw new CatalogException(e);
             }
-            final Raster[] resources = new Raster[names.size()];
+            final DatabaseResource[] resources = new DatabaseResource[names.size()];
             for (int i=0; i<resources.length; i++) {
-                resources[i] = new Raster(this, names.get(i));
+                resources[i] = new DatabaseResource(this, names.get(i));
             }
             components = UnmodifiableArrayList.wrap(resources);
         }
@@ -211,60 +204,5 @@ public final class DatabaseStore extends DataStore implements Aggregate {
 
     @Override
     public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
-    static final class Raster extends AbstractCoverageResource {
-        private Product product;
-
-        Raster(final DatabaseStore store, final String product) {
-            super(store, new NamedIdentifier(null, product));
-        }
-
-        @Override
-        protected DefaultMetadata createMetadata() throws DataStoreException {
-            try (Transaction tr = transaction()) {
-                return product(tr).createMetadata(tr);
-            } catch (SQLException | TransformException e) {
-                throw new CatalogException(e);
-            }
-        }
-
-        @Override
-        public int getImageIndex() {
-            return 0;
-        }
-
-        @Override
-        public boolean isWritable() {
-            return true;
-        }
-
-        final Transaction transaction() throws SQLException {
-            return ((DatabaseStore) store).database.transaction();
-        }
-
-        final synchronized Product product(final Transaction transaction) throws SQLException, CatalogException {
-            if (product == null) {
-                try (ProductTable table = new ProductTable(transaction)) {
-                    product = table.getEntry(identifier.getCode());
-                }
-            }
-            return product;
-        }
-
-        @Override
-        public GridCoverageReader acquireReader() throws CatalogException {
-            return new Reader(this);
-        }
-
-        @Override
-        public GridCoverageWriter acquireWriter() throws CatalogException {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Image getLegend() throws DataStoreException {
-            return null;
-        }
     }
 }
