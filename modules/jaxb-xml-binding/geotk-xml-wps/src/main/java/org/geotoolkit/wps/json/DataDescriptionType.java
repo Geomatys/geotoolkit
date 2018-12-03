@@ -47,11 +47,19 @@ public class DataDescriptionType extends DescriptionType {
 
     public DataDescriptionType(InputDescription desc) {
         super(desc);
-        if (desc != null && desc.getDataDescription() != null) {
-            this.formats = new ArrayList<>();
-            for (Format format : desc.getDataDescription().getFormat()) {
-                this.formats.add(new FormatDescription(format));
+        if (desc != null) {
+            if (desc.getDataDescription() != null) {
+                this.formats = new ArrayList<>();
+                for (Format format : desc.getDataDescription().getFormat()) {
+                    this.formats.add(new FormatDescription(format));
+                }
             }
+            if (desc.getMaxOccurs() == Integer.MAX_VALUE) {
+                this.maxOccurs = "unbounded";
+            } else {
+                this.maxOccurs = Integer.toString(desc.getMaxOccurs());
+            }
+            this.minOccurs = Integer.toString(desc.getMinOccurs());
         }
     }
 
