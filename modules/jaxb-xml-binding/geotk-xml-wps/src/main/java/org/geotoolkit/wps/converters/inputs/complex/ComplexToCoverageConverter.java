@@ -61,7 +61,7 @@ public class ComplexToCoverageConverter extends AbstractComplexInputConverter<Gr
     public GridCoverage2D convert(Data source, Map<String, Object> params) throws UnconvertibleObjectException {
 
         try {
-            if (params.get(ENCODING).equals(WPSEncoding.BASE64.getValue())) {
+            if (params.get(ENCODING) != null && params.get(ENCODING).equals(WPSEncoding.BASE64.getValue())) {
                 final List<Object> data = source.getContent();
                 if (data.size() != 1) {
                     throw new UnconvertibleObjectException("Only one object in Complex content.");

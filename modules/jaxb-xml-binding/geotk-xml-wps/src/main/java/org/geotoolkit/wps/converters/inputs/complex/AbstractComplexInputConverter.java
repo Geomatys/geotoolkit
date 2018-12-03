@@ -34,7 +34,6 @@ import org.geotoolkit.wps.converters.inputs.references.ReferenceToFeatureCollect
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Data;
-import org.geotoolkit.wps.xml.v200.Data;
 
 /**
  *
