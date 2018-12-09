@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Optional;
 import java.sql.Types;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,15 +31,16 @@ import javax.measure.format.ParserException;
 
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.ArraysExt;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.resources.Errors;
 
 
 /**
  * Connection to a table of grid sample dimensions.
- * This table creates instances of {@link GridSampleDimension} for a given format.
+ * This table creates instances of {@link SampleDimension} for a given format.
  * Sample dimensions are one of the components needed for creation of {@code GridCoverage2D}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
@@ -73,7 +74,7 @@ final class SampleDimensionTable extends Table {
          * The sample dimensions built from the {@link #categories} map. This field is initially
          * {@code null} and is initialized by {@link SampleDimensionTable#getSampleDimensions(String)}.
          */
-        GridSampleDimension[] sampleDimensions;
+        SampleDimension[] sampleDimensions;
 
         /**
          * Reference to an entry in the {@code metadata.SampleDimension} table, or {@code null} if none.
@@ -188,13 +189,14 @@ final class SampleDimensionTable extends Table {
         if (numSampleDimensions == 0) {
             return null;
         }
-        final GridSampleDimension[] sampleDimensions = new GridSampleDimension[numSampleDimensions];
+        final SampleDimension[] sampleDimensions = new SampleDimension[numSampleDimensions];
         final CategoryTable categories = getCategoryTable();
-        final Entry entry = categories.query(format);
+        final Entry entry = categories.query(format, units);
         final Map<Integer,Category[]> cat = entry.categories;
         try {
             for (int i=0; i<numSampleDimensions; i++) {
-                sampleDimensions[i] = new GridSampleDimension(names[i], cat.remove(i+1), units[i]).geophysics(!packs[i]);
+                sampleDimensions[i] = new SampleDimension(new SimpleInternationalString(names[i]),
+                        null, Arrays.asList(cat.remove(i+1))).forConvertedValues(!packs[i]);
             }
         } catch (IllegalArgumentException exception) {
             throw new IllegalRecordException(exception, null, 0, format);
@@ -213,20 +215,20 @@ final class SampleDimensionTable extends Table {
      * @param  bands   the sample dimensions to add.
      * @throws SQLException if an error occurred while writing to the database.
      */
-    public void insert(final String format, final List<GridSampleDimension> bands) throws SQLException, IllegalUpdateException {
+    public void insert(final String format, final List<SampleDimension> bands) throws SQLException, IllegalUpdateException {
         final PreparedStatement statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\" ("
                 + "\"format\", \"band\", \"identifier\", \"units\", \"isPacked\") VALUES (?,?,?,?,?)");
         statement.setString(1, format);
         final List<List<Category>> categories = new ArrayList<>(bands.size());
         boolean areAllEmpty = true;
         int bandNumber = 0;
-        for (GridSampleDimension band : bands) {
-            final boolean isPacked = (band == (band = band.geophysics(false)));
+        for (SampleDimension band : bands) {
+            final boolean isPacked = (band == (band = band.forConvertedValues(false)));
             statement.setInt(2, ++bandNumber);
-            statement.setString(3, String.valueOf(band.getDescription()));
-            final Unit<?> unit = band.getUnits();
-            if (unit != null) {
-                statement.setString(4, transaction.database.unitFormat.format(unit));
+            statement.setString(3, String.valueOf(band.getName()));
+            final Optional<Unit<?>> unit = band.getUnits();
+            if (unit.isPresent()) {
+                statement.setString(4, transaction.database.unitFormat.format(unit.get()));
             } else {
                 statement.setNull(4, Types.VARCHAR);
             }
@@ -235,12 +237,8 @@ final class SampleDimensionTable extends Table {
             if (count != 1) {
                 throw new IllegalUpdateException(transaction.database.locale, count);
             }
-            List<Category> bandCategories = band.getCategories();
-            if (bandCategories == null) {
-                bandCategories = Collections.emptyList();
-            } else if (areAllEmpty) {
-                areAllEmpty = bandCategories.isEmpty();
-            }
+            final List<Category> bandCategories = band.getCategories();
+            areAllEmpty &= bandCategories.isEmpty();
             categories.add(bandCategories);
         }
         if (!areAllEmpty) {

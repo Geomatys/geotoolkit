@@ -41,7 +41,7 @@ import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.storage.coverage.CoverageUtilities;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.resources.Errors;
 
 import static java.lang.Double.NaN;
@@ -57,7 +57,7 @@ import static java.lang.Double.NaN;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Sam Hiatt
  */
-public final class GridCoverageReference implements CoverageStack.Element {
+public final class GridCoverageStack implements CoverageStack.Element {
     /**
      * The series in which the {@code GridCoverageReference} is defined.
      */
@@ -94,7 +94,7 @@ public final class GridCoverageReference implements CoverageStack.Element {
      * @param  startTime  the coverage start time, or {@code null} if none.
      * @param  endTime    the coverage end time, or {@code null} if none.
      */
-    GridCoverageReference(final SeriesTable.Entry series, final String filename, final short imageIndex,
+    GridCoverageStack(final SeriesTable.Entry series, final String filename, final short imageIndex,
             final Instant startTime, final Instant endTime, final GridGeometryEntry grid) throws SQLException
     {
         this.series     = series;
@@ -231,7 +231,7 @@ public final class GridCoverageReference implements CoverageStack.Element {
      */
     @Override
     public GridSampleDimension[] getSampleDimensions() {
-        final List<GridSampleDimension> sd = series.format.sampleDimensions;
+        final List<GridSampleDimension> sd = CoverageUtilities.toGeotk(series.format.sampleDimensions);
         if (sd == null) {
             return null;
         }

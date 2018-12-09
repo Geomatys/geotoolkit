@@ -30,7 +30,7 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.coverage.AbstractCoverageResource;
-import org.geotoolkit.storage.coverage.CoverageUtilities;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
@@ -123,14 +123,14 @@ final class DatabaseResource extends AbstractCoverageResource {
             if (envelope == null) {
                 throw new CoverageStoreException("Must specify an envelope.");
             }
-            final List<GridCoverageReference> coverages;
+            final List<GridCoverageStack> coverages;
             try (Transaction transaction = transaction()) {
                 final Product product = product(transaction);
                 coverages = product.getCoverageReferences(transaction, envelope);
             } catch (SQLException e) {
                 throw new CatalogException(e);
             }
-            for (final GridCoverageReference c : coverages) {
+            for (final GridCoverageStack c : coverages) {
                 try {
                     c.read(envelope);   // TODO
                 } catch (CoverageStoreException e) {

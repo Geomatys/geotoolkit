@@ -21,23 +21,26 @@ import java.awt.Color;
 import java.io.IOException;
 import java.util.Map;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.Types;
+import java.util.function.DoubleToIntFunction;
+import javax.measure.Unit;
 import javax.swing.ComboBoxModel;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.metadata.content.TransferFunctionType;
 
+import org.apache.sis.coverage.Category;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 
-import org.geotoolkit.coverage.Category;
 import org.geotoolkit.image.palette.PaletteFactory;
+import org.geotoolkit.internal.coverage.ColoredCategory;
 
 
 /**
@@ -47,7 +50,7 @@ import org.geotoolkit.image.palette.PaletteFactory;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  */
-final class CategoryTable extends Table {
+final class CategoryTable extends Table implements DoubleToIntFunction {
     /**
      * Name of this table in the database.
      */
@@ -78,10 +81,11 @@ final class CategoryTable extends Table {
      * Returns the list of categories for the given format.
      *
      * @param  format  the name of the format for which the categories are defined.
+     * @param  units   the unit of measurement of quantitative categories for each sample dimension.
      * @return the categories for each sample dimension in the given format.
      * @throws SQLException if an error occurred while reading the database.
      */
-    public SampleDimensionTable.Entry query(final String format) throws SQLException, CatalogException {
+    public SampleDimensionTable.Entry query(final String format, final Unit<?>[] units) throws SQLException, CatalogException {
         String paletteName = null;
         int paletteRange = 0;
         final List<Category> categories = new ArrayList<>();
@@ -94,7 +98,7 @@ final class CategoryTable extends Table {
         try (ResultSet results = statement.executeQuery()) {
             while (results.next()) {
                 boolean isQuantifiable = true;
-                final int        band = results.getInt   (1);
+                final int        band = results.getInt   (1);       // Numbering starts at 1.
                 final String     name = results.getString(2);
                 final int       lower = results.getInt   (3);
                 final int       upper = results.getInt   (4);
@@ -149,7 +153,8 @@ final class CategoryTable extends Table {
                         throw new CatalogException(e);
                     }
                 }
-                final Category category = new Category(name, colors, range, tr);
+                final Unit<?> unit = (band < units.length) ? units[band - 1] : null;
+                final Category category = new ColoredCategory(name, colors, range, tr, unit, this);
                 /*
                  * Add the new category to the list. If we are beginning a new band,
                  * stores the previous categories in the 'dimensions' map.
@@ -163,6 +168,21 @@ final class CategoryTable extends Table {
         }
         store(dimensions, bandOfPreviousCategory, categories);
         return new SampleDimensionTable.Entry(dimensions, paletteName);
+    }
+
+    /**
+     * Mapping from sample values to ordinal values to be supplied to {@link MathFunctions#toNanFloat(int)}.
+     * That mapping should ensure that there is no ordinal value collision between different categories in
+     * the same {@link SampleDimension}.
+     *
+     * @param  value  a real number in the {@code samples} range.
+     * @return a value between {@value MathFunctions#MIN_NAN_ORDINAL} and {@value MathFunctions#MAX_NAN_ORDINAL} inclusive.
+     *
+     * @todo check against collision is not yet implemented.
+     */
+    @Override
+    public int applyAsInt(double value) {
+        return Math.round((float) value);
     }
 
     /**
@@ -193,8 +213,7 @@ final class CategoryTable extends Table {
         int bandNumber = 0;
         for (final List<Category> list : categories) {
             statement.setInt(2, ++bandNumber);
-            for (Category category : list) {
-                category = category.geophysics(false);
+            for (final Category category : list) {
                 final org.geotoolkit.coverage.sql.TransferFunction tf =
                         new org.geotoolkit.coverage.sql.TransferFunction(category, transaction.database.locale);
                 if (tf.warning != null) {
@@ -216,7 +235,10 @@ final class CategoryTable extends Table {
                     statement.setNull(7, Types.DOUBLE);
                     statement.setNull(8, Types.VARCHAR);
                 }
-                final String paletteName = getPaletteName(category.getColors());
+                String paletteName = null;
+                if (category instanceof ColoredCategory) {
+                    paletteName = getPaletteName(((ColoredCategory) category).getColors());
+                }
                 if (paletteName != null) {
                     statement.setString(9, paletteName);
                 } else {

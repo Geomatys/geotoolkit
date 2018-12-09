@@ -18,9 +18,10 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.Locale;
+import java.util.Optional;
+import org.apache.sis.coverage.Category;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.coverage.Category;
 import org.apache.sis.util.Exceptions;
 
 
@@ -31,27 +32,28 @@ import org.apache.sis.util.Exceptions;
  *
  * @author Martin Desruisseaux (Geomatys)
  */
+@SuppressWarnings("serial")
 final class TransferFunction extends org.apache.sis.referencing.operation.transform.TransferFunction {
     /**
      * The minimum and maximum sample values, inclusive.
      */
-    public final int minimum, maximum;
+    final int minimum, maximum;
 
     /**
      * {@code true} if a transfer function exists.
      */
-    public boolean isQuantitative;
+    boolean isQuantitative;
 
     /**
      * {@code true} if a transfer function exists and is the identity transform.
      */
-    public boolean isGeophysics;
+    boolean isGeophysics;
 
     /**
      * If an error occurred while fetching the information, the error message.
      * Otherwise {@code null}.
      */
-    public String warning;
+    String warning;
 
     /**
      * Extracts the transfer function from the given category.
@@ -61,16 +63,17 @@ final class TransferFunction extends org.apache.sis.referencing.operation.transf
      * @param category The category for which to get the transfer function type.
      * @param locale The locale to use for formatting error message, if any.
      */
-    public TransferFunction(final Category category, final Locale locale) {
-        final NumberRange<?> range = category.getRange();
+    TransferFunction(final Category category, final Locale locale) {
+        final NumberRange<?> range = category.getSampleRange();
         minimum = (int) Math.round(range.getMinDouble(true));
         maximum = (int) Math.round(range.getMaxDouble(true));
-        MathTransform1D function = category.getSampleToGeophysics();
-        if (function != null) {
+        Optional<MathTransform1D> function = category.getTransferFunction();
+        if (function.isPresent()) {
+            MathTransform1D tr = function.get();
             isQuantitative = true;
-            isGeophysics = function.isIdentity();
+            isGeophysics = tr.isIdentity();
             try {
-                setTransform(function);
+                setTransform(tr);
             } catch (IllegalArgumentException e) {
                 warning = Exceptions.getLocalizedMessage(e, locale);
             }

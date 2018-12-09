@@ -22,7 +22,6 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.*;
 import javax.imageio.ImageReader;
-import org.apache.sis.coverage.grid.GridExtent;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -34,8 +33,6 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.StrictlyCoverageFinder;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.image.io.XImageIO;
@@ -44,8 +41,6 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -53,8 +48,6 @@ import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.EllipsoidalCS;
 import org.opengis.referencing.cs.SphericalCS;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -366,81 +359,5 @@ public final class CoverageUtilities {
             }
         }
         return pyramidEnv;
-    }
-
-    /**
-     * Converts a GeoAPI grid envelope (to be deprecated later) into an Apache SIS grid extent.
-     */
-    public static GridExtent toSIS(final GridEnvelope env) {
-        if (env == null) return null;
-        final int dim = env.getDimension();
-        final long[] lower = new long[dim];
-        final long[] upper = new long[dim];
-        for (int i=0; i<dim; i++) {
-            lower[i] = env.getLow(i);
-            upper[i] = env.getHigh(i);
-        }
-        return new GridExtent(null, lower, upper, true);
-    }
-
-    /**
-     * Converts a SIS grid extent into a Geotk grid envelope.
-     */
-    public static GeneralGridEnvelope toGeotk(final GridExtent env) {
-        if (env == null) return null;
-        final int dim = env.getDimension();
-        final int[] lower = new int[dim];
-        final int[] upper = new int[dim];
-        for (int i=0; i<dim; i++) {
-            lower[i] = Math.toIntExact(env.getLow(i));
-            upper[i] = Math.toIntExact(env.getHigh(i));
-        }
-        return new GeneralGridEnvelope(lower, upper, true);
-    }
-
-    /**
-     * Converts a GeoAPI grid geometry (to be deprecated later) into an Apache SIS grid geometry.
-     */
-    public static org.apache.sis.coverage.grid.GridGeometry toSIS(final GridGeometry g) throws TransformException {
-        if (g == null) return null;
-        GridEnvelope              extent    = null;
-        Envelope                  envelope  = null;
-        MathTransform             gridToCRS = null;
-        CoordinateReferenceSystem crs       = null;
-        if (g instanceof GeneralGridGeometry) {
-            final GeneralGridGeometry gg = (GeneralGridGeometry) g;
-            if (gg.isDefined(GeneralGridGeometry.EXTENT))      extent    = gg.getExtent();
-            if (gg.isDefined(GeneralGridGeometry.ENVELOPE))    envelope  = gg.getEnvelope();
-            if (gg.isDefined(GeneralGridGeometry.GRID_TO_CRS)) gridToCRS = gg.getGridToCRS();
-            if (gg.isDefined(GeneralGridGeometry.CRS))         crs       = gg.getCoordinateReferenceSystem();
-        } else {
-            extent    = g.getExtent();
-            gridToCRS = g.getGridToCRS();
-        }
-        if (envelope != null && extent == null) {
-            return new org.apache.sis.coverage.grid.GridGeometry(PixelInCell.CELL_CENTER, gridToCRS, envelope);
-        } else {
-            return new org.apache.sis.coverage.grid.GridGeometry(toSIS(extent), PixelInCell.CELL_CENTER, gridToCRS, crs);
-        }
-    }
-
-    /**
-     * Converts a SIS grid geometry into a Geotk grid geometry.
-     */
-    public static GeneralGridGeometry toGeotk(final org.apache.sis.coverage.grid.GridGeometry gg) {
-        if (gg == null) return null;
-        GridExtent                extent    = null;
-        Envelope                  envelope  = null;
-        MathTransform             gridToCRS = null;
-        CoordinateReferenceSystem crs       = null;
-        if (gg.isDefined(org.apache.sis.coverage.grid.GridGeometry.EXTENT))      extent    = gg.getExtent();
-        if (gg.isDefined(org.apache.sis.coverage.grid.GridGeometry.ENVELOPE))    envelope  = gg.getEnvelope();
-        if (gg.isDefined(org.apache.sis.coverage.grid.GridGeometry.GRID_TO_CRS)) gridToCRS = gg.getGridToCRS(PixelInCell.CELL_CENTER);
-        if (gg.isDefined(org.apache.sis.coverage.grid.GridGeometry.CRS))         crs       = gg.getCoordinateReferenceSystem();
-        if (envelope != null && extent == null) {
-            return new GeneralGridGeometry(PixelInCell.CELL_CENTER, gridToCRS, envelope);
-        } else {
-            return new GeneralGridGeometry(toGeotk(extent), PixelInCell.CELL_CENTER, gridToCRS, crs);
-        }
     }
 }

@@ -141,7 +141,7 @@ public final strictfp class SampleTranscoderTest extends org.geotoolkit.test.Tes
         double[] sourceData = source.getData().getSamples(0, 0, SIZE, SIZE, 0, (double[]) null);
         double[] targetData = target.getData().getSamples(0, 0, SIZE, SIZE, 0, (double[]) null);
         band.getSampleToGeophysics().transform(sourceData, 0, sourceData, 0, sourceData.length);
-        CategoryListTest.compare(sourceData, targetData, EPS);
+        compare(sourceData, targetData, EPS);
         /*
          * Construct a new image with the resulting data, and apply an inverse transformation.
          * Compare the resulting values with the original data.
@@ -153,11 +153,30 @@ public final strictfp class SampleTranscoderTest extends org.geotoolkit.test.Tes
         assertEquals(DataBuffer.TYPE_BYTE, back.getSampleModel().getDataType());
         sourceData = source.getData().getSamples(0, 0, SIZE, SIZE, 0, (double[]) null);
         targetData =   back.getData().getSamples(0, 0, SIZE, SIZE, 0, (double[]) null);
-        CategoryListTest.compare(sourceData, targetData, 1.0 + EPS);
+        compare(sourceData, targetData, 1.0 + EPS);
         /*
          * Returns the "geophysics view" of the image.
          */
         return target;
+    }
+
+    /**
+     * Copy of CategoryListTest.compare(…).
+     */
+    private static void compare(final double[] output0, final double[] output1, final double eps) {
+        assertEquals("length", output0.length, output1.length);
+        for (int i=0; i<output0.length; i++) {
+            final double expected = output0[i];
+            final double actual   = output1[i];
+            final String name = "transform[" + i + ']';
+            if (Double.isNaN(expected)) {
+                final String hex1 = Integer.toHexString(Float.floatToRawIntBits((float) expected));
+                final String hex2 = Integer.toHexString(Float.floatToRawIntBits((float)   actual));
+                assertEquals(name, hex1, hex2);
+                continue;
+            }
+            assertEquals(name, expected, actual, eps);
+        }
     }
 
     /**

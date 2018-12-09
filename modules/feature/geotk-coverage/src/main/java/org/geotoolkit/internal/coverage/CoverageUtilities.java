@@ -18,36 +18,47 @@
 package org.geotoolkit.internal.coverage;
 
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.stream.Collectors;
+import java.awt.Color;
 import java.awt.RenderingHints;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.IndexColorModel;
-import java.util.LinkedList;
+import javax.measure.Unit;
 
 import javax.media.jai.Interpolation;
 import javax.media.jai.InterpolationBilinear;
 import javax.media.jai.InterpolationNearest;
 import javax.media.jai.PropertySource;
 
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.measure.NumberRange;
 
+import org.opengis.util.FactoryException;
+import org.opengis.util.InternationalString;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.geometry.Envelope;
+import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.crs.GeographicCRS;
-import org.opengis.util.FactoryException;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.geometry.Envelope;
 
 import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.lang.Static;
@@ -59,6 +70,8 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.RenderedCoverage;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.apache.sis.geometry.Envelope2D;
+import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.OutOfDomainOfValidityException;
 
@@ -144,7 +157,10 @@ public final class CoverageUtilities extends Static {
      *
      * @param coverage to use for guessing background values.
      * @return an array of double values to use as a background.
+     *
+     * @deprecated Replaced by {@link GridSampleDimension#getNoDataValues()}.
      */
+    @Deprecated
     public static double[] getBackgroundValues(final GridCoverage coverage) {
         /*
          * Get the sample value to use for background. We will try to fetch this
@@ -567,5 +583,138 @@ public final class CoverageUtilities extends Static {
             scales[i] = scalesList.get(i);
         }
         return new AbstractMap.SimpleEntry<Envelope, double[]>(targetEnv, scales);
+    }
+
+    /**
+     * Converts a GeoAPI grid envelope (to be deprecated later) into an Apache SIS grid extent.
+     */
+    public static GridExtent toSIS(final GridEnvelope env) {
+        if (env == null) return null;
+        final int dim = env.getDimension();
+        final long[] lower = new long[dim];
+        final long[] upper = new long[dim];
+        for (int i=0; i<dim; i++) {
+            lower[i] = env.getLow(i);
+            upper[i] = env.getHigh(i);
+        }
+        return new GridExtent(null, lower, upper, true);
+    }
+
+    /**
+     * Converts a SIS grid extent into a Geotk grid envelope.
+     */
+    public static GeneralGridEnvelope toGeotk(final GridExtent env) {
+        if (env == null) return null;
+        final int dim = env.getDimension();
+        final int[] lower = new int[dim];
+        final int[] upper = new int[dim];
+        for (int i=0; i<dim; i++) {
+            lower[i] = Math.toIntExact(env.getLow(i));
+            upper[i] = Math.toIntExact(env.getHigh(i));
+        }
+        return new GeneralGridEnvelope(lower, upper, true);
+    }
+
+    /**
+     * Converts a GeoAPI grid geometry (to be deprecated later) into an Apache SIS grid geometry.
+     */
+    public static org.apache.sis.coverage.grid.GridGeometry toSIS(final GridGeometry g) throws TransformException {
+        if (g == null) return null;
+        GridEnvelope              extent    = null;
+        Envelope                  envelope  = null;
+        MathTransform             gridToCRS = null;
+        CoordinateReferenceSystem crs       = null;
+        if (g instanceof GeneralGridGeometry) {
+            final GeneralGridGeometry gg = (GeneralGridGeometry) g;
+            if (gg.isDefined(GeneralGridGeometry.EXTENT))      extent    = gg.getExtent();
+            if (gg.isDefined(GeneralGridGeometry.ENVELOPE))    envelope  = gg.getEnvelope();
+            if (gg.isDefined(GeneralGridGeometry.GRID_TO_CRS)) gridToCRS = gg.getGridToCRS();
+            if (gg.isDefined(GeneralGridGeometry.CRS))         crs       = gg.getCoordinateReferenceSystem();
+        } else {
+            extent    = g.getExtent();
+            gridToCRS = g.getGridToCRS();
+        }
+        if (envelope != null && extent == null) {
+            return new org.apache.sis.coverage.grid.GridGeometry(PixelInCell.CELL_CENTER, gridToCRS, envelope);
+        } else {
+            return new org.apache.sis.coverage.grid.GridGeometry(toSIS(extent), PixelInCell.CELL_CENTER, gridToCRS, crs);
+        }
+    }
+
+    /**
+     * Converts a SIS grid geometry into a Geotk grid geometry.
+     */
+    public static GeneralGridGeometry toGeotk(final org.apache.sis.coverage.grid.GridGeometry gg) {
+        if (gg == null) return null;
+        GridExtent                extent    = null;
+        Envelope                  envelope  = null;
+        MathTransform             gridToCRS = null;
+        CoordinateReferenceSystem crs       = null;
+        if (gg.isDefined(org.apache.sis.coverage.grid.GridGeometry.EXTENT))      extent    = gg.getExtent();
+        if (gg.isDefined(org.apache.sis.coverage.grid.GridGeometry.ENVELOPE))    envelope  = gg.getEnvelope();
+        if (gg.isDefined(org.apache.sis.coverage.grid.GridGeometry.GRID_TO_CRS)) gridToCRS = gg.getGridToCRS(PixelInCell.CELL_CENTER);
+        if (gg.isDefined(org.apache.sis.coverage.grid.GridGeometry.CRS))         crs       = gg.getCoordinateReferenceSystem();
+        if (envelope != null && extent == null) {
+            return new GeneralGridGeometry(PixelInCell.CELL_CENTER, gridToCRS, envelope);
+        } else {
+            return new GeneralGridGeometry(toGeotk(extent), PixelInCell.CELL_CENTER, gridToCRS, crs);
+        }
+    }
+
+    /**
+     * Converts a Geotk sample dimension to a SIS one.
+     */
+    public static org.apache.sis.coverage.SampleDimension toSIS(final GridSampleDimension sd) {
+        if (sd == null) return null;
+        List<Category> categories = sd.getCategories();
+        List<org.apache.sis.coverage.Category> copied = new ArrayList<>();
+        if (categories != null) {
+            final Set<Integer> padValues = new HashSet<>();
+            for (final Category c : categories) {
+                InternationalString name = c.getName();
+                NumberRange<?> range = c.getRange();
+                MathTransform1D tr = c.getSampleToGeophysics();
+                Unit<?> units = (tr != null) ? sd.getUnits() : null;
+                copied.add(new ColoredCategory(name, c.getColors(), range, tr, units, (v) -> Math.round((float) v)));
+            }
+        }
+        return new org.apache.sis.coverage.SampleDimension(sd.getDescription(), null, copied);
+    }
+
+    /**
+     * Converts Geotk sample dimensions to SIS ones.
+     */
+    public static List<org.apache.sis.coverage.SampleDimension> toSIS(final List<? extends GridSampleDimension> sd) {
+        if (sd == null) return null;
+        return sd.stream().map(CoverageUtilities::toSIS).collect(Collectors.toList());
+    }
+
+    /**
+     * Converts a SIS category to a Geotk one.
+     */
+    public static Category toGeotk(final org.apache.sis.coverage.Category c) {
+        if (c == null) return null;
+        Color[] colors = null;
+        if (c instanceof ColoredCategory) {
+            colors = ((ColoredCategory) c).colors;
+        }
+        return new Category(c.getName(), colors, c.getSampleRange(), c.getTransferFunction().orElse(null));
+    }
+
+    /**
+     * Converts a SIS sample dimension to a Geotk one.
+     */
+    public static GridSampleDimension toGeotk(final org.apache.sis.coverage.SampleDimension sd) {
+        if (sd == null) return null;
+        List<Category> categories = sd.getCategories().stream().map(CoverageUtilities::toGeotk).collect(Collectors.toList());
+        return new GridSampleDimension(null, categories.toArray(new Category[categories.size()]), sd.getUnits().orElse(null));
+    }
+
+    /**
+     * Converts Geotk sample dimensions to SIS ones.
+     */
+    public static List<GridSampleDimension> toGeotk(final List<? extends org.apache.sis.coverage.SampleDimension> sd) {
+        if (sd == null) return null;
+        return sd.stream().map(CoverageUtilities::toGeotk).collect(Collectors.toList());
     }
 }

@@ -70,7 +70,10 @@ public final class XMath extends Static {
      *                or a multiple of the above.
      * @return One of previous or next representable number as a {@code double}.
      * @throws IllegalArgumentException if {@code type} is not one of supported types.
+     *
+     * @deprecated Not used anymore after removal of {@link org.geotoolkit.coverage.Category} class.
      */
+    @Deprecated
     public static double adjacentForType(final Class<? extends Number> type, double value, int amount)
             throws IllegalArgumentException
     {

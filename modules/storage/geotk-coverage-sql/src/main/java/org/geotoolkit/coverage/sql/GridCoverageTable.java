@@ -36,13 +36,13 @@ import org.apache.sis.geometry.Envelopes;
 
 /**
  * Connection to a table of grid coverages. This table builds references in the form of
- * {@link GridCoverageReference} objects, which will defer the image loading until first
+ * {@link GridCoverageStack} objects, which will defer the image loading until first
  * needed. A {@code GridCoverageTable} can produce a list of available image intercepting
  * a given {@linkplain #setEnvelope2D horizontal area} and {@linkplain #setTimeRange time range}.
  *
  * {@section Implementation note}
  * For proper working of this class, the SQL query must sort entries by end time. If this
- * condition is changed, then {@link GridCoverageReference#equalsAsSQL} must be updated accordingly.
+ * condition is changed, then {@link GridCoverageStack#equalsAsSQL} must be updated accordingly.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Sam Hiatt
@@ -100,7 +100,7 @@ final class GridCoverageTable extends Table {
      *
      * @todo returns a stream instead. Requires to be careful about closing the statement and the connection.
      */
-    public final List<GridCoverageReference> find(final String product, final Envelope areaOfInterest)
+    public final List<GridCoverageStack> find(final String product, final Envelope areaOfInterest)
             throws SQLException, CatalogException, TransformException
     {
         final PreparedStatement statement = prepareStatement("SELECT \"series\", \"filename\", \"index\", \"grid\","
@@ -118,7 +118,7 @@ final class GridCoverageTable extends Table {
         statement.setTimestamp(2, new Timestamp(tMin), calendar);
         statement.setTimestamp(3, new Timestamp(tMax), calendar);
         statement.setString   (4, Envelopes.toPolygonWKT(GeneralEnvelope.castOrCopy(normalized).subEnvelope(0, 2)));
-        final List<GridCoverageReference> entries = new ArrayList<>();
+        final List<GridCoverageStack> entries = new ArrayList<>();
         try (final ResultSet results = statement.executeQuery()) {
             SeriesTable.Entry series = null;
             GridGeometryEntry grid   = null;
@@ -137,7 +137,7 @@ final class GridCoverageTable extends Table {
                     grid = gridGeometries.getEntry(gridID);
                     lastGridID = gridID;
                 }
-                entries.add(new GridCoverageReference(series, filename, index, toInstant(startTime), toInstant(endTime), grid));
+                entries.add(new GridCoverageStack(series, filename, index, toInstant(startTime), toInstant(endTime), grid));
             }
         }
         return entries;

@@ -32,15 +32,15 @@ import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStores;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 
-import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.storage.coverage.CoverageUtilities;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.resources.Errors;
 
 
@@ -181,8 +181,8 @@ public final class Product {
      * @return the set of coverages of this product which intersect the given envelope.
      * @throws CatalogException if an error occurred while querying the database.
      */
-    List<GridCoverageReference> getCoverageReferences(final Transaction transaction, final Envelope areaOfInterest) throws CatalogException {
-        final List<GridCoverageReference> entries;
+    List<GridCoverageStack> getCoverageReferences(final Transaction transaction, final Envelope areaOfInterest) throws CatalogException {
+        final List<GridCoverageStack> entries;
         try (final GridCoverageTable table = new GridCoverageTable(transaction)) {
             entries = table.find(name, areaOfInterest);
         } catch (SQLException exception) {
@@ -231,7 +231,7 @@ public final class Product {
         /**
          * Description of bands.
          */
-        List<GridSampleDimension> bands;
+        List<SampleDimension> bands;
 
         /**
          * Creates information about a new raster to be added to the catalog.
@@ -282,15 +282,17 @@ public final class Product {
                 for (final Resource child : ((Aggregate) resource).components()) {
                     collect(driver, file, child, rasters, index++);
                 }
-            } else if (resource instanceof org.apache.sis.storage.GridCoverageResource) {
-                final NewRaster r = new NewRaster(driver, file, index);
-                r.geometry = ((org.apache.sis.storage.GridCoverageResource) resource).getGridGeometry();
-                rasters.add(r);
             } else if (resource instanceof GridCoverageResource) {
                 final NewRaster r = new NewRaster(driver, file, index);
-                GridCoverageReader reader = ((GridCoverageResource) resource).acquireReader();
+                final GridCoverageResource gr = (GridCoverageResource) resource;
+                r.geometry = gr.getGridGeometry();
+                r.bands = gr.getSampleDimensions();
+                rasters.add(r);
+            } else if (resource instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
+                final NewRaster r = new NewRaster(driver, file, index);
+                GridCoverageReader reader = ((org.geotoolkit.storage.coverage.GridCoverageResource) resource).acquireReader();
                 r.geometry = CoverageUtilities.toSIS(reader.getGridGeometry(r.imageIndex));
-                r.bands = reader.getSampleDimensions(r.imageIndex);
+                r.bands = CoverageUtilities.toSIS(reader.getSampleDimensions(r.imageIndex));
                 reader.dispose();
                 rasters.add(r);
             }

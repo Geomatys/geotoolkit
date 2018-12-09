@@ -23,10 +23,8 @@ import javax.media.jai.RenderedOp;
 import javax.media.jai.OperationRegistry;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.ParameterListDescriptor;
-
-
-import org.apache.sis.test.DependsOn;
 import org.junit.*;
+
 import static org.junit.Assert.*;
 
 
@@ -40,7 +38,6 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-@DependsOn(CategoryListTest.class)
 public final strictfp class SampleDimensionTest extends org.geotoolkit.test.TestBase {
     /**
      * The categories making the sample dimension to test.
@@ -99,31 +96,6 @@ public final strictfp class SampleDimensionTest extends org.geotoolkit.test.Test
         }
         categories[CATEGORIES.length] = new Category("SST", null, minimum, maximum, scale, offset);
         test = new GridSampleDimension("Temperature" ,categories, null);
-    }
-
-    /**
-     * Tests the consistency of the sample dimension.
-     */
-    @Test
-    public void testSampleDimension() {
-        final double[] nodataValues = test.getNoDataValues();
-        assertEquals("nodataValues.length", CATEGORIES.length, nodataValues.length);
-        for (int i=0; i<CATEGORIES.length; i++) {
-            assertEquals("nodataValues["+i+']', NO_DATA[i], nodataValues[i], 0);
-        }
-        assertTrue  ("identity", !test.getSampleToGeophysics().isIdentity());
-        assertEquals("scale",     scale,  test.getScale(),        0);
-        assertEquals("offset",    offset, test.getOffset(),       0);
-        assertEquals("minimum",   0,      test.getMinimumValue(), 0);
-        assertEquals("maximum",   255,    test.getMaximumValue(), 0);
-
-        final GridSampleDimension invt = test.geophysics(true);
-        assertTrue(test != invt);
-        assertTrue  ("identity", invt.getSampleToGeophysics().isIdentity());
-        assertEquals("scale",    1,                       invt.getScale(),        0);
-        assertEquals("offset",   0,                       invt.getOffset(),       0);
-        assertEquals("minimum",  minimum   *scale+offset, invt.getMinimumValue(), 0);
-        assertEquals("maximum", (maximum-1)*scale+offset, invt.getMaximumValue(), EPS);
     }
 
     /**

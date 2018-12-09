@@ -26,7 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.Types;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 
 
 /**
@@ -169,7 +169,7 @@ final class SeriesTable extends CachedTable<Integer, SeriesTable.Entry> {
      * @throws SQLException if an error occurred while reading from or writing to the database.
      */
     public int findOrInsert(final String product, final String directory, final String extension, final String driver,
-            final List<GridSampleDimension> bands) throws SQLException, CatalogException
+            final List<SampleDimension> bands) throws SQLException, CatalogException
     {
         final String format = formats.findOrInsert(driver, bands, product);
         boolean insert = false;

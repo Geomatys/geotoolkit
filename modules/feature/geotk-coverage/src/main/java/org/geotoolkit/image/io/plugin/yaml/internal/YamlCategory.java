@@ -233,6 +233,4 @@ public class YamlCategory {
         ArgumentChecks.ensureNonNull("value", value);
         this.value = value;
     }
-
-
 }

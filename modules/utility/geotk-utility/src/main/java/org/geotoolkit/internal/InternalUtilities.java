@@ -269,7 +269,10 @@ public final class InternalUtilities extends Static {
      * @return The converted value.
      *
      * @since 3.19
+     *
+     * @deprecated Replaced by {@link org.apache.sis.math.DecimalFunctions#floatToDouble(float)}.
      */
+    @Deprecated
     public static double convert10(final float value) {
         return Double.parseDouble(Float.toString(value));
     }

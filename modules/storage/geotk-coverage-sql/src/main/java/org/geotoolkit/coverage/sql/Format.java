@@ -19,14 +19,14 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.List;
 import java.util.Arrays;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.image.io.metadata.SampleDomain;
+import java.util.Iterator;
+import java.util.Set;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.coverage.Category;
+import org.geotoolkit.image.io.metadata.SampleDomain;
 
-import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
 
 
 /**
@@ -53,10 +53,8 @@ final class Format {
      * For example coverages read from PNG files will typically store their data as integer values
      * (non-geophysics), while coverages read from ASCII files will often store their pixel values
      * as real numbers (geophysics values).</p>
-     *
-     * @see GridSampleDimension#geophysics(boolean)
      */
-    final List<GridSampleDimension> sampleDimensions;
+    final List<SampleDimension> sampleDimensions;
 
     /**
      * The range of valid sample values and the fill values for each sample dimension.
@@ -82,12 +80,12 @@ final class Format {
      *                     The bands given to this constructor shall <strong>not</strong> be geophysics.
      * @param metadata     reference to an entry in the {@code metadata.Format} table, or {@code null}.
      */
-    Format(final String driver, final String paletteName, final GridSampleDimension[] bands, final String metadata) {
+    Format(final String driver, final String paletteName, final SampleDimension[] bands, final String metadata) {
         rasterFormat = driver.trim();
         if (bands != null) {
             final SampleDomain[] domains = new SampleDomain[bands.length];
             for (int i=0; i<bands.length; i++) {
-                final GridSampleDimension band = bands[i];
+                final SampleDimension band = bands[i];
                 domains[i] = new Domain(band);
                 bands  [i] = band;
             }
@@ -101,37 +99,11 @@ final class Format {
         this.metadata    = metadata;
     }
 
-    /**
-     * Returns the ranges of valid sample values for each band in this format.
-     * The range are always expressed in <cite>geophysics</cite> values.
-     */
-    final MeasurementRange<Double>[] getSampleValueRanges() {
-        final List<GridSampleDimension> bands = sampleDimensions;
-        if (bands == null) {
-            return null;
-        }
-        @SuppressWarnings({"unchecked","rawtypes"})         // Generic array creation.
-        final MeasurementRange<Double>[] ranges = new MeasurementRange[bands.size()];
-        for (int i=0; i<ranges.length; i++) {
-            final GridSampleDimension band = bands.get(i).geophysics(true);
-            /*
-             * The call 'roundIfAlmostInteger' is a work-around for rounding error. We perform the
-             * workaround here instead than at GridSampleDimension construction time because the
-             * minimal and maximal values are the result of a computation, not a stored value.
-             */
-            ranges[i] = MeasurementRange.create(
-                    adjustForRoundingError(band.getMinimumValue()), true,
-                    adjustForRoundingError(band.getMaximumValue()), true,
-                    band.getUnits());
-        }
-        return ranges;
-    }
-
 
 
 
     /**
-     * Default implementation of {@link SampleDomain} created from a {@link GridSampleDimension}.
+     * Default implementation of {@link SampleDomain} created from a {@link SampleDimension}.
      *
      * @author Martin Desruisseaux (Geomatys)
      */
@@ -147,15 +119,20 @@ final class Format {
         private final double[] fillValues;
 
         /**
-         * Creates a new {@code Domain} from the given {@code GridSampleDimension}.
+         * Creates a new {@code Domain} from the given {@code SampleDimension}.
          *
-         * @param dimension  the {@code GridSampleDimension} from which to extract the information.
+         * @param dimension  the {@code SampleDimension} from which to extract the information.
          */
-        Domain(GridSampleDimension dimension) {
-            dimension  = dimension.geophysics(false);
-            fillValues = dimension.getNoDataValues();
+        Domain(SampleDimension dimension) {
+            dimension = dimension.forConvertedValues(false);
+            Set<Number> nodata = dimension.getNoDataValues();
+            fillValues = new double[nodata.size()];
+            int i = 0;
+            for (final Iterator<Number> it=nodata.iterator(); it.hasNext();) {
+                fillValues[i++] = it.next().doubleValue();
+            }
             /*
-             * Computes the range ourself instead than relying on GridSampleDimension.getRange()
+             * Computes the range ourself instead than relying on SampleDimension.getRange()
              * becauce we want to exclude the qualitative categories (i.e. the fill values).
              */
             NumberRange<?> range = null;
@@ -163,7 +140,7 @@ final class Format {
             if (categories != null) {
                 for (final Category category : categories) {
                     if (category.isQuantitative()) {
-                        final NumberRange<?> extent = category.getRange();
+                        final NumberRange<?> extent = category.getSampleRange();
                         if (!Double.isNaN(extent.getMinDouble()) && !Double.isNaN(extent.getMaxDouble())) {
                             if (range != null) {
                                 range = range.unionAny(extent);
@@ -175,7 +152,7 @@ final class Format {
                 }
             }
             this.range = range;
-            assert (range == null) || dimension.getRange().containsAny(range);
+            assert (range == null) || dimension.getSampleRange().get().containsAny(range);
         }
 
         /**
