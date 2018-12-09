@@ -56,7 +56,7 @@ public class ComplexToFileConverter extends AbstractComplexInputConverter<File> 
                 throw new UnconvertibleObjectException("There's no available data in this complex content.");
             }
             String rawData = (String) data.get(0);
-            if (params != null && params.get(ENCODING).equals(WPSEncoding.BASE64.getValue())) {
+            if (params != null && params.get(ENCODING) != null && params.get(ENCODING).equals(WPSEncoding.BASE64.getValue())) {
 
                 final byte[] byteData = Base64.decode(rawData);
                 if (byteData != null && byteData.length > 0) {

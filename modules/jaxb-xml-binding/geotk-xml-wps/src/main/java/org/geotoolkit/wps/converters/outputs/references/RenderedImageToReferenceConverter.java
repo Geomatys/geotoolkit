@@ -36,6 +36,8 @@ import java.util.UUID;
 
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
+import javax.imageio.spi.ImageReaderSpi;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.wps.xml.v200.Reference;;
 
 /**
@@ -90,7 +92,17 @@ public class RenderedImageToReferenceConverter extends AbstractReferenceOutputCo
         reference.setEncoding((String) params.get(ENCODING));
         reference.setSchema((String) params.get(SCHEMA));
 
-        final String randomFileName = UUID.randomUUID().toString();
+        // try to find a suffix file
+        String suffix = "";
+        ImageReaderSpi spi = XImageIO.getReaderSpiByFormatName(formatName);
+        if (spi != null) {
+            String[] suffixes = spi.getFileSuffixes();
+            if (suffixes != null && suffixes.length != 0) {
+                suffix = suffixes[0];
+            }
+        }
+
+        final String randomFileName = UUID.randomUUID().toString() + suffix;
         try {
 
             final Path imageFile = buildPath(params, randomFileName);
