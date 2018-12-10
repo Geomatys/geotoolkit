@@ -34,7 +34,7 @@ import java.lang.reflect.Array;
 import java.util.Hashtable;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.util.Static;
-import org.geotoolkit.image.color.ScaledColorSpace;
+import org.apache.sis.internal.raster.ScaledColorSpace;
 
 /**
  *

@@ -51,7 +51,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.util.GenericName;
-import org.geotoolkit.image.color.ScaledColorSpace;
+import org.apache.sis.internal.raster.ScaledColorSpace;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;

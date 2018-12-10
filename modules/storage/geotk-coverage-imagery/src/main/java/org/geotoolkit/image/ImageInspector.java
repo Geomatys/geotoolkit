@@ -33,7 +33,7 @@ import org.opengis.coverage.PaletteInterpretation;
 
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.image.color.ColorModels;
+import org.apache.sis.internal.raster.ColorModelFactory;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.color.ColorUtilities;
 
@@ -359,7 +359,7 @@ public class ImageInspector {
     final ColorModel setColorModel(final RenderingHints hints, ColorModel cm) {
         final ImageLayout layout = modifiable(getImageLayout(hints), hints);
         if (cm != null) {
-            cm = ColorModels.unique(cm);
+            cm = ColorModelFactory.unique(cm);
             final SampleModel sm = cm.createCompatibleSampleModel(image.getWidth(), image.getHeight());
             layout.setColorModel(cm);
             layout.setSampleModel(sm);

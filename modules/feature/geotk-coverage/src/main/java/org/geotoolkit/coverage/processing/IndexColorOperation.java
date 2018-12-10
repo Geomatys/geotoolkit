@@ -38,8 +38,8 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Classes;
+import org.apache.sis.internal.raster.ColorModelFactory;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.image.color.ColorUtilities;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 
@@ -156,7 +156,7 @@ public abstract class IndexColorOperation extends Operation2D {
              * image operator.
              */
             if (colorChanged && (i == visibleBand)) {
-                targetModel = ColorUtilities.getIndexColorModel(ARGB, bands.length, visibleBand, -1);
+                targetModel = ColorModelFactory.createIndexColorModel(ARGB, bands.length, visibleBand, -1);
             }
         }
         if (!bandChanged) {

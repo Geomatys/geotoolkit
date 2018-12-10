@@ -32,7 +32,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.processing.OperationJAI;
-import org.geotoolkit.image.color.ColorUtilities;
+import org.apache.sis.internal.raster.ColorModelFactory;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 
 
@@ -210,7 +210,7 @@ final class BandSelector2D extends GridCoverage2D {
                 final IndexColorModel indexed = (IndexColorModel) colors;
                 final int[] ARGB = new int[indexed.getMapSize()];
                 indexed.getRGBs(ARGB);
-                colors = ColorUtilities.getIndexColorModel(ARGB, targetBands.length, visibleTargetBand, -1);
+                colors = ColorModelFactory.createIndexColorModel(ARGB, targetBands.length, visibleTargetBand, -1);
             } else {
                 colors = targetBands[visibleTargetBand]
                       .getColorModel(visibleTargetBand, targetBands.length);

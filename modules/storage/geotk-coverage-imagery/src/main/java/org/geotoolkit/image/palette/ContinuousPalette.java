@@ -24,7 +24,7 @@ import java.awt.color.ColorSpace;
 import javax.imageio.ImageTypeSpecifier;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.image.color.ScaledColorSpace;
+import org.apache.sis.internal.raster.ScaledColorSpace;
 
 
 /**

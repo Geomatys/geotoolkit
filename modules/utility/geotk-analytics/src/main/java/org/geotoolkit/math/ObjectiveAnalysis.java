@@ -36,7 +36,7 @@ import org.geotoolkit.resources.Errors;
 import org.apache.sis.coverage.grid.PixelTranslation;
 
 import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
-import org.geotoolkit.image.color.ScaledColorSpace;
+import org.apache.sis.internal.raster.ScaledColorSpace;
 
 
 /**

@@ -33,11 +33,11 @@ import static org.opengis.coverage.SampleDimensionType.*;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
+import org.apache.sis.internal.raster.ColorModelFactory;
 import org.apache.sis.util.iso.AbstractInternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Range;
-import org.geotoolkit.image.color.ColorUtilities;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.math.NumberSet;
 
@@ -563,7 +563,7 @@ public final class TypeMap extends Static {
     public static ColorInterpretation getColorInterpretation(final ColorModel model, final int band)
             throws IllegalArgumentException
     {
-        if (band < 0 || band >= ColorUtilities.getNumBands(model)) {
+        if (band < 0 || band >= ColorModelFactory.getNumBands(model)) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalBandNumber_1, band));
         }
         if (model instanceof IndexColorModel) {

@@ -90,7 +90,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Debug;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.util.iso.Types;
-import org.geotoolkit.image.color.ScaledColorSpace;
+import org.apache.sis.internal.raster.ScaledColorSpace;
 import org.geotoolkit.image.internal.ImageUtilities;
 
 

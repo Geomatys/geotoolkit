@@ -39,7 +39,7 @@ import static org.geotoolkit.coverage.wkb.WKBRasterConstants.*;
 import org.geotoolkit.io.LEDataInputStream;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.image.color.ScaledColorSpace;
+import org.apache.sis.internal.raster.ScaledColorSpace;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.operation.MathTransform;

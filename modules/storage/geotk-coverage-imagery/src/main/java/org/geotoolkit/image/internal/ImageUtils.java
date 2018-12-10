@@ -34,7 +34,7 @@ import java.awt.image.SampleModel;
 
 import javax.imageio.ImageTypeSpecifier;
 
-import org.geotoolkit.image.color.ScaledColorSpace;
+import org.apache.sis.internal.raster.ScaledColorSpace;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 import org.geotoolkit.lang.Static;
 

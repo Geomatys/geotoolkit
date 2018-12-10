@@ -33,7 +33,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.jai.Mask;
 import org.geotoolkit.image.jai.SilhouetteMask;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.image.color.ColorModels;
+import org.apache.sis.internal.raster.ColorModelFactory;
 import org.geotoolkit.image.internal.LookupTables;
 import org.geotoolkit.image.color.ColorUtilities;
 import org.geotoolkit.image.internal.ImageUtilities;
@@ -330,8 +330,8 @@ public class ImageWorker extends ImageInspector {
              */
             final int[] RGB = new int[newSize];
             oldCM.getRGBs(RGB);
-            final IndexColorModel newCM = ColorModels.unique(new IndexColorModel(pixelSize, newSize,
-                    RGB, 0, false, transparent, ColorUtilities.getTransferType(newSize)));
+            final IndexColorModel newCM = ColorModelFactory.unique(new IndexColorModel(pixelSize, newSize,
+                    RGB, 0, false, transparent, ColorModelFactory.getTransferType(newSize)));
             if (!changed) {
                 // Special case if the lookup don't do anything. Just replace the color model.
                 image = ImageUtilities.replaceColorModel(image, newCM);
