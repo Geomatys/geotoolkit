@@ -70,6 +70,7 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.RenderedCoverage;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -678,7 +679,7 @@ public final class CoverageUtilities extends Static {
                 copied.add(new ColoredCategory(name, c.getColors(), range, tr, units, (v) -> Math.round((float) v)));
             }
         }
-        return new org.apache.sis.coverage.SampleDimension(sd.getDescription(), null, copied);
+        return new org.apache.sis.coverage.SampleDimension(Names.createMemberName(null, null, sd.getDescription(), String.class), null, copied);
     }
 
     /**
