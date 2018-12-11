@@ -29,11 +29,11 @@ import java.sql.PreparedStatement;
 import javax.measure.Unit;
 import javax.measure.format.ParserException;
 
+import org.opengis.util.GenericName;
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.util.iso.Names;
 
 import org.geotoolkit.resources.Errors;
 
@@ -195,8 +195,9 @@ final class SampleDimensionTable extends Table {
         final Map<Integer,Category[]> cat = entry.categories;
         try {
             for (int i=0; i<numSampleDimensions; i++) {
-                sampleDimensions[i] = new SampleDimension(Names.createMemberName(null, null, names[i], String.class),
-                        null, Arrays.asList(cat.remove(i+1))).forConvertedValues(!packs[i]);
+                GenericName name = transaction.database.nameFactory.createLocalName(null, names[i]);
+                sampleDimensions[i] = new SampleDimension(name, null,
+                        Arrays.asList(cat.remove(i+1))).forConvertedValues(!packs[i]);
             }
         } catch (IllegalArgumentException exception) {
             throw new IllegalRecordException(exception, null, 0, format);

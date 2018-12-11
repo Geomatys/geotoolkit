@@ -172,7 +172,7 @@ public final class DatabaseStore extends DataStore implements Aggregate {
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public synchronized Collection<Resource> components() throws DataStoreException {
         if (components == null) {
-            final List<String> names;
+            final List<Product> names;
             try (Transaction transaction = database.transaction();
                  ProductTable table = new ProductTable(transaction))
             {
@@ -180,9 +180,9 @@ public final class DatabaseStore extends DataStore implements Aggregate {
             } catch (SQLException e) {
                 throw new CatalogException(e);
             }
-            final DatabaseResource[] resources = new DatabaseResource[names.size()];
+            final ProductGeotk[] resources = new ProductGeotk[names.size()];
             for (int i=0; i<resources.length; i++) {
-                resources[i] = new DatabaseResource(this, names.get(i));
+                resources[i] = new ProductGeotk(this, names.get(i));
             }
             components = UnmodifiableArrayList.wrap(resources);
         }

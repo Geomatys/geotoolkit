@@ -23,6 +23,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.opengis.util.NameSpace;
+import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
@@ -35,9 +37,11 @@ import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.internal.storage.MetadataBuilder;
-import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.util.logging.WarningListeners;
 
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
@@ -49,11 +53,16 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  */
-public final class Product {
+final class Product extends AbstractGridResource {
     /**
      * The name of this product.
      */
     private final String name;
+
+    /**
+     * Same value than {@link #name} but provided as a name space.
+     */
+    private final NameSpace namespace;
 
     /**
      * Typical resolution in metres, or {@link Double#NaN} if unknown.
@@ -77,10 +86,10 @@ public final class Product {
     private final String metadata;
 
     /**
-     * The domain for this product, or {@code null} if not yet computed.
-     * Will be computed only when first needed.
+     * The grid geometry, or {@code null} if not yet computed. This field is opportunistically computed
+     * and stored when {@linkplain #createMetadata(MetadataBuilder) metadata are created}.
      */
-    private DomainOfProductTable.Entry domain;
+    private GridGeometry gridGeometry;
 
     /**
      * The database that produced this entry.
@@ -96,11 +105,13 @@ public final class Product {
      * @param metadata            optional entry in {@code metadata.Metadata} table, or {@code null}.
      */
     Product(final Database database, final String name, final double spatialResolution, final double temporalResolution, final String metadata) {
+        super((WarningListeners<DataStore>) null);
         this.name               = name;
         this.spatialResolution  = spatialResolution;
         this.temporalResolution = temporalResolution;
         this.metadata           = metadata;
         this.database           = database;
+        this.namespace          = database.nameFactory.createNameSpace(database.nameFactory.createLocalName(null, name), null);
     }
 
     /**
@@ -114,6 +125,21 @@ public final class Product {
     }
 
     /**
+     * Returns a unique identifier for this resource.
+     */
+    @Override
+    public GenericName getIdentifier() {
+        return namespace.name();
+    }
+
+    /**
+     * Creates an identifier for a subset of this resource.
+     */
+    final GenericName createIdentifier(final String subset) {
+        return database.nameFactory.createLocalName(namespace, subset);
+    }
+
+    /**
      * Returns the resources bundle for error messages.
      */
     private Errors errors() {
@@ -121,7 +147,14 @@ public final class Product {
     }
 
     /**
-     * Creates metadata (potentially costly operation). Contains:
+     * Creates a new transaction with the database.
+     */
+    private Transaction transaction() throws SQLException {
+        return database.transaction();
+    }
+
+    /**
+     * Creates the metadata when first needed. Metadata contains:
      *
      * <ul>
      *   <li>A time range encompassing all coverages in this product.</li>
@@ -129,47 +162,58 @@ public final class Product {
      *       (for example if it is a projected CRS), then this method will transform the product
      *       envelope from the product CRS to a geographic CRS.
      * </ul>
+     *
+     * This method also initializes {@link #gridGeometry} as a side-effect.
      */
-    synchronized final DefaultMetadata createMetadata(final Transaction transaction) throws SQLException, TransformException {
-        ensureDomainIsKnown(transaction);
-        final MetadataBuilder md = new MetadataBuilder();
-        md.addIdentifier(null, name, MetadataBuilder.Scope.RESOURCE);
-        if (domain != null) {
-            md.addExtent(domain.bbox);
-            if (domain.startTime != null && domain.endTime != null) {
-                md.addTemporalExtent(Date.from(domain.startTime), Date.from(domain.endTime));
+    @Override
+    protected void createMetadata(final MetadataBuilder metadata) throws DataStoreException {
+        try (Transaction transaction = transaction()) {
+            final DomainOfProductTable.Entry domain;
+            try (DomainOfProductTable table = new DomainOfProductTable(transaction)) {
+                domain = table.query(name);
             }
+            final List<GridGeometryEntry> geometries;
+            try (final GridCoverageTable table = new GridCoverageTable(transaction)) {
+                geometries = table.getGridGeometries(name);
+            }
+            if (!geometries.isEmpty()) {
+                gridGeometry = representative(geometries).getGridGeometry(domain.startTime, domain.endTime);
+            }
+            metadata.addIdentifier(null, name, MetadataBuilder.Scope.RESOURCE);
+            metadata.addExtent(domain.bbox);
+            if (domain.startTime != null && domain.endTime != null) {
+                metadata.addTemporalExtent(Date.from(domain.startTime), Date.from(domain.endTime));
+            }
+            metadata.addResolution(spatialResolution);
+            metadata.addTemporalResolution(temporalResolution);
+        } catch (SQLException | TransformException e) {
+            throw new DataStoreException(e);
         }
-        md.addResolution(spatialResolution);
-        md.addTemporalResolution(temporalResolution);
-        return md.build(true);
     }
 
     /**
-     * Ensures that the domain of this product is initialized.
+     * Selects the most representative grid geometry entry in the given list.
      *
-     * @throws SQLException if an error occurred while fetching the domain.
+     * @todo Not yet seriously implemented.
      */
-    private void ensureDomainIsKnown(final Transaction transaction) throws SQLException {
-        assert Thread.holdsLock(this);
-        if (domain == null) {
-            try (DomainOfProductTable d = new DomainOfProductTable(transaction)) {
-                domain = d.query(name);
-            }
-        }
+    private static GridGeometryEntry representative(final List<GridGeometryEntry> geometries) {
+        return geometries.get(0);
     }
 
-    synchronized GridGeometry getGridGeometry(final Transaction transaction) throws SQLException, CatalogException, TransformException {
-        final List<GridGeometryEntry> geometries;
-        try (final GridCoverageTable table = new GridCoverageTable(transaction)) {
-            geometries = table.getGridGeometries(name);
-        }
-        if (geometries.isEmpty()) {
-            return null;
-        }
-        ensureDomainIsKnown(transaction);
-        int index = 0;      // TODO: select the "best" geometry.
-        return geometries.get(index).getGridGeometry(domain.startTime, domain.endTime);
+    @Override
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        getMetadata();              // Trig 'gridGeometry' creating as a side-effect.
+        return gridGeometry;
+    }
+
+    @Override
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
+
+    @Override
+    public GridCoverage read(GridGeometry gg, int... ints) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
     }
 
     /**
@@ -181,9 +225,9 @@ public final class Product {
      * @return the set of coverages of this product which intersect the given envelope.
      * @throws CatalogException if an error occurred while querying the database.
      */
-    List<GridCoverageStack> getCoverageReferences(final Transaction transaction, final Envelope areaOfInterest) throws CatalogException {
-        final List<GridCoverageStack> entries;
-        try (final GridCoverageTable table = new GridCoverageTable(transaction)) {
+    final ProductSubset subset(final Envelope areaOfInterest) throws CatalogException {
+        final List<GridCoverageEntry> entries;
+        try (Transaction transaction = transaction(); GridCoverageTable table = new GridCoverageTable(transaction)) {
             entries = table.find(name, areaOfInterest);
         } catch (SQLException exception) {
             throw new CatalogException(exception);
@@ -191,7 +235,7 @@ public final class Product {
             throw new MismatchedReferenceSystemException(errors()
                     .getString(Errors.Keys.IllegalCoordinateReferenceSystem, exception));
         }
-        return entries;
+        return new ProductSubset(this, entries);
     }
 
     /**

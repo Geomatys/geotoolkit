@@ -26,6 +26,7 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
 
+import org.opengis.util.NameFactory;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.crs.CRSFactory;
@@ -84,6 +85,11 @@ final class Database {
     final Path root;
 
     /**
+     * The factory to use for creating names.
+     */
+    final NameFactory nameFactory;
+
+    /**
      * The factory to use for creating coordinate reference systems from codes.
      *
      * @todo Currently an EPSG factory, but should be a PostGIS factory.
@@ -135,6 +141,7 @@ final class Database {
         root              = directory;
         locale            = Locale.getDefault(Locale.Category.DISPLAY);
         authorityFactory  = CRS.getAuthorityFactory("EPSG");
+        nameFactory       = DefaultFactories.forBuildin(NameFactory.class);
         crsFactory        = DefaultFactories.forBuildin(CRSFactory.class);
         mtFactory         = DefaultFactories.forBuildin(MathTransformFactory.class);
         paletteFactory    = PaletteFactory.getDefault();

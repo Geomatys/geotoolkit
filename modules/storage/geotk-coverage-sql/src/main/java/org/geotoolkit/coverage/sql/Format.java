@@ -18,21 +18,14 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.List;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Set;
 import java.nio.file.Path;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
-import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.image.io.metadata.SampleDomain;
-
 
 
 /**
@@ -63,11 +56,6 @@ final class Format {
     final List<SampleDimension> sampleDimensions;
 
     /**
-     * The range of valid sample values and the fill values for each sample dimension.
-     */
-    private final List<SampleDomain> sampleDomains;
-
-    /**
      * The name of the color palette, or {@code null} if unspecified.
      */
     private final String paletteName;
@@ -88,19 +76,7 @@ final class Format {
      */
     Format(String driver, final String paletteName, final SampleDimension[] bands, final String metadata) {
         driver = driver.trim();
-        if (bands != null) {
-            final SampleDomain[] domains = new SampleDomain[bands.length];
-            for (int i=0; i<bands.length; i++) {
-                final SampleDimension band = bands[i];
-                domains[i] = new Domain(band);
-                bands  [i] = band;
-            }
-            sampleDimensions = UnmodifiableArrayList.wrap(bands);
-            sampleDomains    = UnmodifiableArrayList.wrap(domains);
-        } else {
-            sampleDimensions = null;
-            sampleDomains    = null;
-        }
+        sampleDimensions = UnmodifiableArrayList.wrap(bands);
         this.paletteName = paletteName;
         this.metadata    = metadata;
         for (DataStoreProvider provider : DataStores.providers()) {
@@ -120,87 +96,6 @@ final class Format {
             return provider.open(new StorageConnector(path));
         } else {
             return DataStores.open(path);
-        }
-    }
-
-
-
-
-    /**
-     * Default implementation of {@link SampleDomain} created from a {@link SampleDimension}.
-     *
-     * @author Martin Desruisseaux (Geomatys)
-     */
-    private static final class Domain implements SampleDomain {
-        /**
-         * The range of valid sample values (excluding fill values), or {@code null}.
-         */
-        private final NumberRange<?> range;
-
-        /**
-         * The fill values.
-         */
-        private final double[] fillValues;
-
-        /**
-         * Creates a new {@code Domain} from the given {@code SampleDimension}.
-         *
-         * @param dimension  the {@code SampleDimension} from which to extract the information.
-         */
-        Domain(SampleDimension dimension) {
-            dimension = dimension.forConvertedValues(false);
-            Set<Number> nodata = dimension.getNoDataValues();
-            fillValues = new double[nodata.size()];
-            int i = 0;
-            for (final Iterator<Number> it=nodata.iterator(); it.hasNext();) {
-                fillValues[i++] = it.next().doubleValue();
-            }
-            /*
-             * Computes the range ourself instead than relying on SampleDimension.getRange()
-             * becauce we want to exclude the qualitative categories (i.e. the fill values).
-             */
-            NumberRange<?> range = null;
-            final List<Category> categories = dimension.getCategories();
-            if (categories != null) {
-                for (final Category category : categories) {
-                    if (category.isQuantitative()) {
-                        final NumberRange<?> extent = category.getSampleRange();
-                        if (!Double.isNaN(extent.getMinDouble()) && !Double.isNaN(extent.getMaxDouble())) {
-                            if (range != null) {
-                                range = range.unionAny(extent);
-                            } else {
-                                range = extent;
-                            }
-                        }
-                    }
-                }
-            }
-            this.range = range;
-            assert (range == null) || dimension.getSampleRange().get().containsAny(range);
-        }
-
-        /**
-         * Returns the range of valid sample values, excluding fill values.
-         */
-        @Override
-        public NumberRange<?> getValidSampleValues() {
-            return range;
-        }
-
-        /**
-         * Returns the fill values.
-         */
-        @Override
-        public double[] getFillSampleValues() {
-            return fillValues.clone();
-        }
-
-        /**
-         * Returns a string representation for debugging purpose.
-         */
-        @Override
-        public String toString() {
-            return "SampleDomain[" + range + ", fillValues=" + Arrays.toString(fillValues) + ']';
         }
     }
 }

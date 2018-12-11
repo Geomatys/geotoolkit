@@ -72,18 +72,22 @@ final class ProductTable extends CachedTable<String,Product> {
     }
 
     /**
-     * Returns the name of all available products.
+     * Returns all available products.
      */
-    public List<String> list() throws SQLException {
-        final List<String> names = new ArrayList<>();
+    public List<Product> list() throws SQLException {
+        final List<Product> products = new ArrayList<>();
+        final StringBuilder sql = new StringBuilder(select());
+        sql.setLength(sql.lastIndexOf(" WHERE"));
+        sql.insert(sql.lastIndexOf(" FROM"), ", \"name\"");
         try (Statement statement = getConnection().createStatement();
-             ResultSet results   = statement.executeQuery("SELECT \"name\" FROM " + SCHEMA + ".\"" + TABLE + '"'))
+             ResultSet results   = statement.executeQuery(sql.toString()))
         {
             while (results.next()) {
-                names.add(results.getString(1));
+                final String name = results.getString(5);
+                products.add(createEntry(results, name));
             }
         }
-        return names;
+        return products;
     }
 
     /**

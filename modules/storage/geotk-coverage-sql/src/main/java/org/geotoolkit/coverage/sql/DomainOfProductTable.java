@@ -41,16 +41,11 @@ import org.geotoolkit.display.shape.DoubleDimension2D;
  */
 final class DomainOfProductTable extends Table {
     /**
-     * The spatio-temporal domain of a product. For internal use by {@link ProductEntry} only.
+     * The spatiotemporal domain of a product.
      *
      * @author Martin Desruisseaux (IRD, Geomatys)
      */
     static final class Entry {
-        /**
-         * A null domain.
-         */
-        static final Entry NULL = new Entry(null, null, null, null);
-
         /**
          * The time range, or {@code null} if none.
          */
@@ -76,6 +71,12 @@ final class DomainOfProductTable extends Table {
             this.resolution = resolution;
         }
     }
+
+    /**
+     * A null domain.
+     */
+    private static final Entry NULL = new Entry(null, null, null, null);
+
     /**
      * Name of this table in the database.
      */
@@ -89,10 +90,11 @@ final class DomainOfProductTable extends Table {
     }
 
     /**
-     * Returns the domain of the given product, or {@code null} if none.
+     * Returns the domain of the given product.
+     * Never returns {@code null} but may return a domain containing null elements.
      */
     public Entry query(final String product) throws SQLException {
-        Entry entry = null;
+        Entry entry = NULL;
         final PreparedStatement statement = prepareStatement("SELECT \"startTime\", \"endTime\","
                 + " \"west\", \"east\", \"south\", \"north\", \"xResolution\", \"yResolution\""
                 + " FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"product\" = ?");

@@ -37,11 +37,6 @@ import org.geotoolkit.resources.Errors;
  */
 abstract class Table implements AutoCloseable {
     /**
-     * For keeping trace of temporary hacks.
-     */
-    static final boolean HACK = true;
-
-    /**
      * Name of the schema where all tables are stored.
      */
     static final String SCHEMA = "rasters";
