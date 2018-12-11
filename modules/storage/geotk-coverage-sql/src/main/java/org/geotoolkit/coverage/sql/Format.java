@@ -21,6 +21,12 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
+import java.nio.file.Path;
+import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.DataStores;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
@@ -36,9 +42,9 @@ import org.geotoolkit.image.io.metadata.SampleDomain;
  */
 final class Format {
     /**
-     * The raster format name as declared in the database.
+     * The data store provider to use for opening files, or {@code null} if unknown.
      */
-    final String rasterFormat;
+    private final DataStoreProvider provider;
 
     /**
      * The sample dimensions for coverages encoded with this format, or {@code null} if undefined.
@@ -80,8 +86,8 @@ final class Format {
      *                     The bands given to this constructor shall <strong>not</strong> be geophysics.
      * @param metadata     reference to an entry in the {@code metadata.Format} table, or {@code null}.
      */
-    Format(final String driver, final String paletteName, final SampleDimension[] bands, final String metadata) {
-        rasterFormat = driver.trim();
+    Format(String driver, final String paletteName, final SampleDimension[] bands, final String metadata) {
+        driver = driver.trim();
         if (bands != null) {
             final SampleDomain[] domains = new SampleDomain[bands.length];
             for (int i=0; i<bands.length; i++) {
@@ -97,6 +103,24 @@ final class Format {
         }
         this.paletteName = paletteName;
         this.metadata    = metadata;
+        for (DataStoreProvider provider : DataStores.providers()) {
+            if (driver.equalsIgnoreCase(provider.getShortName())) {
+                this.provider = provider;
+                return;
+            }
+        }
+        provider = null;
+    }
+
+    /**
+     * Opens the resource at the given path.
+     */
+    final DataStore open(final Path path) throws DataStoreException {
+        if (provider != null) {
+            return provider.open(new StorageConnector(path));
+        } else {
+            return DataStores.open(path);
+        }
     }
 
 

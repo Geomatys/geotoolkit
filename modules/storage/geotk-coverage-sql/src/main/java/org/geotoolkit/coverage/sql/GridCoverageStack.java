@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.time.Instant;
 
+import org.opengis.coverage.Coverage;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.Resource;
@@ -31,8 +32,8 @@ import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.opengis.referencing.operation.TransformException;
 
@@ -40,7 +41,10 @@ import org.geotoolkit.image.palette.IIOListeners;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.io.CoverageReader;
+import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.resources.Errors;
 
@@ -118,13 +122,6 @@ public final class GridCoverageStack implements CoverageStack.Element {
             buffer.append(':').append(imageIndex);
         }
         return buffer.toString();
-    }
-
-    /**
-     * Returns the name of the driver to use for reading data.
-     */
-    private String getFormat() {
-        return series.format.rasterFormat;
     }
 
     /**
@@ -247,8 +244,30 @@ public final class GridCoverageStack implements CoverageStack.Element {
      */
     @Override
     public GridCoverage2D getCoverage(final IIOListeners listeners) throws IOException {
-        try {
-            return IO.read(getFormat(), getPath());
+        try (DataStore store = series.format.open(getPath())) {
+            /*
+             * Apache SIS compatibility.
+             */
+            final GridCoverageResource r = resource(store);
+            if (r != null) {
+                GridCoverage coverage = r.read(null);
+                GridCoverageBuilder builder = new GridCoverageBuilder();
+                builder.setGridGeometry(CoverageUtilities.toGeotk(gridGeometry()));                       // Use our grid geometry instead of coverage one.
+                builder.setSampleDimensions(CoverageUtilities.toGeotk(coverage.getSampleDimensions()));
+                builder.setRenderedImage(coverage.asRenderedImage(0, 1));
+                return builder.getGridCoverage2D();
+            }
+            /*
+             * Geotk compatibility.
+             */
+            if (store instanceof CoverageResource) {
+                CoverageReader reader = ((CoverageResource) store).acquireReader();
+                final Coverage coverage = reader.read(0, null);
+                reader.dispose();
+                if (coverage instanceof GridCoverage2D) {
+                    return (GridCoverage2D) coverage;
+                }
+            }
         } catch (DataStoreException e) {
             final Throwable cause = e.getCause();
             if (cause instanceof IOException) {
@@ -256,16 +275,7 @@ public final class GridCoverageStack implements CoverageStack.Element {
             }
             throw new IIOException(Errors.format(Errors.Keys.CantReadFile_1, getName()), e);
         }
-    }
-
-    void read(final Envelope aoi) throws TransformException, DataStoreException {
-        final GridExtent extent = grid.extent(aoi);
-        try (DataStore store = IO.store(getFormat(), getPath())) {
-            final GridCoverageResource r = resource(store);
-            if (r != null) {
-                // TODO
-            }
-        }
+        throw new IOException("Can not read.");
     }
 
     private static GridCoverageResource resource(final Resource resource) throws DataStoreException {

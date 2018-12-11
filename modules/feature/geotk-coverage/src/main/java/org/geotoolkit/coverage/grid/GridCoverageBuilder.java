@@ -22,6 +22,7 @@ import java.util.TreeMap;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Collection;
 import java.awt.Point;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -81,12 +82,13 @@ import org.apache.sis.coverage.grid.PixelTranslation;
 import org.geotoolkit.resources.Errors;
 
 import org.apache.sis.referencing.operation.transform.TransferFunction;
-import static java.awt.image.DataBuffer.*;
-import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.palette.PaletteFactory;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
+
+import static java.awt.image.DataBuffer.*;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -1592,6 +1594,15 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             sampleDimensions = bands;
         }
         return (bands != null) ? bands.clone() : null;
+    }
+
+    /**
+     * Sets all sample dimensions.
+     *
+     * @param bands The new sample dimensions, or {@code null}.
+     */
+    public void setSampleDimensions(final Collection<? extends SampleDimension> bands) {
+        setSampleDimensions(bands != null ? bands.toArray(new SampleDimension[bands.size()]) : null);
     }
 
     /**

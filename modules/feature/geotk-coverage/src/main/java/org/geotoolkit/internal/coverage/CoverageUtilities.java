@@ -73,6 +73,7 @@ import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.OutOfDomainOfValidityException;
 
@@ -712,10 +713,22 @@ public final class CoverageUtilities extends Static {
     }
 
     /**
-     * Converts Geotk sample dimensions to SIS ones.
+     * Converts SIS sample dimensions to Geotk ones.
      */
     public static List<GridSampleDimension> toGeotk(final List<? extends org.apache.sis.coverage.SampleDimension> sd) {
         if (sd == null) return null;
         return sd.stream().map(CoverageUtilities::toGeotk).collect(Collectors.toList());
+    }
+
+    /**
+     * Converts SIS grid coverage to Geotk one.
+     */
+    public static GridCoverage2D toGeotk(final org.apache.sis.coverage.grid.GridCoverage coverage) {
+        if (coverage == null) return null;
+        GridCoverageBuilder builder = new GridCoverageBuilder();
+        builder.setGridGeometry(toGeotk(coverage.getGridGeometry()));
+        builder.setSampleDimensions(toGeotk(coverage.getSampleDimensions()));
+        builder.setRenderedImage(coverage.asRenderedImage(0, 1));
+        return builder.getGridCoverage2D();
     }
 }

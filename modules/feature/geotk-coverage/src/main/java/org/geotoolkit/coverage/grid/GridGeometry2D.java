@@ -228,7 +228,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
         } else {
             final int[] dimensions;
             dimensions     = new int[4];
-            gridToCRS2D    = getMathTransform2D(gridToCRS, extent, dimensions, null);
+            gridToCRS2D    = getMathTransform2D(gridToCRS, extent, dimensions);
             gridFromCRS2D  = inverse(gridToCRS2D);
             gridDimensionX = dimensions[0];
             gridDimensionY = dimensions[1];
@@ -313,7 +313,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
         super(extent, anchor, gridToCRS, crs);
         final int[] dimensions;
         dimensions     = new int[4];
-        gridToCRS2D    = getMathTransform2D(super.gridToCRS, extent, dimensions, hints);
+        gridToCRS2D    = getMathTransform2D(super.gridToCRS, extent, dimensions);
         gridFromCRS2D  = inverse(gridToCRS2D);
         gridDimensionX = dimensions[0];
         gridDimensionY = dimensions[1];
@@ -321,7 +321,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
         axisDimensionY = dimensions[3];
         crs2D          = createCRS2D();
         if (PixelInCell.CELL_CORNER.equals(anchor)) {
-            cornerToCRS2D = getMathTransform2D(gridToCRS, extent, dimensions, hints);
+            cornerToCRS2D = getMathTransform2D(gridToCRS, extent, dimensions);
         }
         assert isValid() : this;
     }
@@ -364,7 +364,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
                           final Hints hints)
             throws IllegalArgumentException, MismatchedDimensionException
     {
-        this(extent, anchor, gridToCRS, new int[4], crs, hints);
+        this(extent, anchor, gridToCRS, new int[4], crs);
     }
 
     /**
@@ -376,12 +376,11 @@ public class GridGeometry2D extends GeneralGridGeometry {
                            final PixelOrientation anchor,
                            final MathTransform    gridToCRS,
                            final int[]            dimensions,  // Allocated by caller.
-                           final CoordinateReferenceSystem crs,
-                           final Hints hints)
+                           final CoordinateReferenceSystem crs)
     {
         this(extent, anchor, (gridToCRS == null || PixelOrientation.CENTER.equals(anchor))
                             ? PixelInCell.CELL_CENTER : PixelInCell.CELL_CORNER, gridToCRS,
-             getMathTransform2D(gridToCRS, extent, dimensions, hints), dimensions, crs);
+             getMathTransform2D(gridToCRS, extent, dimensions), dimensions, crs);
     }
 
     /**
@@ -448,7 +447,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
         super(anchor, gridToCRS, envelope);
         final int[] dimensions;
         dimensions     = new int[4];
-        gridToCRS2D    = getMathTransform2D(this.gridToCRS, extent, dimensions, hints);
+        gridToCRS2D    = getMathTransform2D(this.gridToCRS, extent, dimensions);
         gridFromCRS2D  = inverse(gridToCRS2D);
         gridDimensionX = dimensions[0];
         gridDimensionY = dimensions[1];
@@ -456,7 +455,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
         axisDimensionY = dimensions[3];
         crs2D          = createCRS2D();
         if (PixelInCell.CELL_CORNER.equals(anchor)) {
-            cornerToCRS2D = getMathTransform2D(gridToCRS, extent, dimensions, hints);
+            cornerToCRS2D = getMathTransform2D(gridToCRS, extent, dimensions);
         }
         assert isValid() : this;
     }
@@ -497,7 +496,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
         super(extent, evelope, reverse, swapXY, automatic);
         final int[] dimensions;
         dimensions     = new int[4];
-        gridToCRS2D    = getMathTransform2D(gridToCRS, extent, dimensions, null);
+        gridToCRS2D    = getMathTransform2D(gridToCRS, extent, dimensions);
         gridFromCRS2D  = inverse(gridToCRS2D);
         gridDimensionX = dimensions[0];
         gridDimensionY = dimensions[1];
@@ -579,8 +578,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * @throws IllegalArgumentException if the 2D part is not separable.
      */
     private static MathTransform2D getMathTransform2D(final MathTransform gridToCRS,
-            final GridEnvelope extent, final int[] dimensions, final Hints hints)
-            throws IllegalArgumentException
+            final GridEnvelope extent, final int[] dimensions) throws IllegalArgumentException
     {
         if (gridToCRS != null) {
             if (extent != null) {

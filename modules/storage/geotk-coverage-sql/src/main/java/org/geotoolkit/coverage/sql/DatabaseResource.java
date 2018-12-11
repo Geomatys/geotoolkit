@@ -17,12 +17,14 @@
 package org.geotoolkit.coverage.sql;
 
 import java.awt.Image;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -33,6 +35,7 @@ import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 
@@ -130,16 +133,25 @@ final class DatabaseResource extends AbstractCoverageResource {
             } catch (SQLException e) {
                 throw new CatalogException(e);
             }
-            for (final GridCoverageStack c : coverages) {
-                try {
-                    c.read(envelope);   // TODO
-                } catch (CoverageStoreException e) {
-                    throw e;
-                } catch (DataStoreException | TransformException e) {
-                    throw new CatalogException(e);
-                }
+            if (coverages.isEmpty()) {
+                throw new CoverageStoreException("No data in given area or time range.");
             }
-            return null;
+            try {
+                if (Table.HACK) {
+                    return coverages.get(0).getCoverage(null);
+                } else {
+                    // TODO: incompatible types: CoverageStack can not be converted to GridCoverage.
+                    CoordinateReferenceSystem crs = coverages.get(0).getGridGeometry().getCoordinateReferenceSystem();
+                    CoverageStack stack = new CoverageStack("CoverageStack", crs, coverages, null);
+                    return null; // need to return stack;
+                }
+            } catch (IOException e) {
+                Throwable cause = e.getCause();
+                if (cause instanceof CoverageStoreException) {
+                    throw (CoverageStoreException) cause;
+                }
+                throw new CoverageStoreException(e);
+            }
         }
     }
 }

@@ -174,6 +174,9 @@ final class GridGeometryEntry {
             }
             crs = database.crsFactory.createCompoundCRS(properties(crs, extraDimName), components);
         }
+        if (Table.HACK) {
+            java.util.Arrays.fill(upper, 2, upper.length, 1);
+        }
         geometry = new GridGeometry(new GridExtent(names, null, upper, false), PixelInCell.CELL_CORNER, gridToCRS, crs);
         standardEnvelope = new ImmutableEnvelope(minimum, maximum, null);
         spatioTemporalCRS = database.crsFactory.createCompoundCRS(properties(crs, "time"), crs, database.temporalCRS);
