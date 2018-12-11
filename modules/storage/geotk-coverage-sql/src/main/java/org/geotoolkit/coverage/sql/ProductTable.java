@@ -32,7 +32,7 @@ import org.apache.sis.util.ArgumentChecks;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  */
-final class ProductTable extends CachedTable<String,Product> {
+final class ProductTable extends CachedTable<String,ProductEntry> {
     /**
      * Name of this table in the database.
      */
@@ -63,19 +63,19 @@ final class ProductTable extends CachedTable<String,Product> {
      * @throws SQLException if an error occurred while reading the database.
      */
     @Override
-    Product createEntry(final ResultSet results, final String name) throws SQLException {
+    ProductEntry createEntry(final ResultSet results, final String name) throws SQLException {
         // TODO: handle parent.
         double spatialResolution  = results.getDouble(2); if (results.wasNull()) spatialResolution  = Double.NaN;
         double temporalResolution = results.getDouble(3); if (results.wasNull()) temporalResolution = Double.NaN;
         final String metadata     = results.getString(4);
-        return new Product(transaction.database, name, spatialResolution, temporalResolution, metadata);
+        return new ProductEntry(transaction.database, name, spatialResolution, temporalResolution, metadata);
     }
 
     /**
      * Returns all available products.
      */
-    public List<Product> list() throws SQLException {
-        final List<Product> products = new ArrayList<>();
+    public List<ProductEntry> list() throws SQLException {
+        final List<ProductEntry> products = new ArrayList<>();
         final StringBuilder sql = new StringBuilder(select());
         sql.setLength(sql.lastIndexOf(" WHERE"));
         sql.insert(sql.lastIndexOf(" FROM"), ", \"name\"");

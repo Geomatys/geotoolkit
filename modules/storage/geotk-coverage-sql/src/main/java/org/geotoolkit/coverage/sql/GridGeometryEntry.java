@@ -125,7 +125,7 @@ final class GridGeometryEntry {
      */
     GridGeometryEntry(final long width, final long height, final AffineTransform2D affine,
                       final boolean approximate, CoordinateReferenceSystem crs,
-                      final AdditionalAxisTable.Entry[] axes, final String extraDimName,
+                      final AdditionalAxisEntry[] axes, final String extraDimName,
                       final Database database) throws FactoryException, TransformException, IllegalRecordException
     {
         /*
@@ -162,7 +162,7 @@ final class GridGeometryEntry {
             components[0] = crs;
             gridToCRS = database.mtFactory.createPassThroughTransform(0, gridToCRS, axes.length);
             for (int i=0; i<axes.length; i++) {
-                final AdditionalAxisTable.Entry axis = axes[i];
+                final AdditionalAxisEntry axis = axes[i];
                 names  [AFFINE_DIMENSION + i] = axis.type();
                 upper  [AFFINE_DIMENSION + i] = axis.count;
                 minimum[AFFINE_DIMENSION + i] = axis.standardMin;

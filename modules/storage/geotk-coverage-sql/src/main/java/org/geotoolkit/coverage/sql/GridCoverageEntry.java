@@ -48,7 +48,7 @@ public final class GridCoverageEntry {
     /**
      * The series in which the {@code GridCoverageReference} is defined.
      */
-    private final SeriesTable.Entry series;
+    private final SeriesEntry series;
 
     /**
      * The grid coverage filename, not including the extension.
@@ -81,7 +81,7 @@ public final class GridCoverageEntry {
      * @param  startTime  the coverage start time, or {@code null} if none.
      * @param  endTime    the coverage end time, or {@code null} if none.
      */
-    GridCoverageEntry(final SeriesTable.Entry series, final String filename, final short imageIndex,
+    GridCoverageEntry(final SeriesEntry series, final String filename, final short imageIndex,
             final Instant startTime, final Instant endTime, final GridGeometryEntry grid) throws SQLException
     {
         this.series     = series;

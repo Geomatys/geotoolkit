@@ -34,7 +34,7 @@ import org.apache.sis.coverage.SampleDimension;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  */
-final class FormatTable extends CachedTable<String,Format> {
+final class FormatTable extends CachedTable<String,FormatEntry> {
     /**
      * Name of this table in the database.
      */
@@ -76,20 +76,20 @@ final class FormatTable extends CachedTable<String,Format> {
      * @throws SQLException if an error occurred while reading the database.
      */
     @Override
-    Format createEntry(final ResultSet results, final String identifier) throws SQLException, CatalogException {
+    FormatEntry createEntry(final ResultSet results, final String identifier) throws SQLException, CatalogException {
         final String  format   = results.getString(1);
         final String  metadata = results.getString(2);
-        SampleDimensionTable.Entry categories = sampleDimensions.query(identifier);
-        final SampleDimension[] sampleDimensions;
+        SampleDimensionEntries categories = sampleDimensions.query(identifier);
+        final List<SampleDimension> sampleDimensions;
         final String paletteName;
         if (categories != null) {
-            sampleDimensions = categories.sampleDimensions;
+            sampleDimensions = categories.getSampleDimensions();
             paletteName = categories.paletteName;
         } else {
             sampleDimensions = null;
             paletteName = null;
         }
-        return new Format(format, paletteName, sampleDimensions, metadata);
+        return new FormatEntry(format, paletteName, sampleDimensions, metadata);
     }
 
     /**
@@ -144,7 +144,7 @@ final class FormatTable extends CachedTable<String,Format> {
             try (final ResultSet results = statement.executeQuery()) {
 next:           while (results.next()) {
                     final String name = results.getString(1);
-                    final Format candidate = getEntry(name);                               // May use the cache.
+                    final FormatEntry candidate = getEntry(name);                               // May use the cache.
                     final List<SampleDimension> current = candidate.sampleDimensions;
                     if (size(current) != numBands) {
                         // Number of band don't match: look for an other format.

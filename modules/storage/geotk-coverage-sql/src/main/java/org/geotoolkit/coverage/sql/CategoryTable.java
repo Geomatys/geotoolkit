@@ -85,7 +85,7 @@ final class CategoryTable extends Table implements DoubleToIntFunction {
      * @return the categories for each sample dimension in the given format.
      * @throws SQLException if an error occurred while reading the database.
      */
-    public SampleDimensionTable.Entry query(final String format, final Unit<?>[] units) throws SQLException, CatalogException {
+    public SampleDimensionEntries query(final String format, final Unit<?>[] units) throws SQLException, CatalogException {
         String paletteName = null;
         int paletteRange = 0;
         final List<Category> categories = new ArrayList<>();
@@ -167,7 +167,7 @@ final class CategoryTable extends Table implements DoubleToIntFunction {
             }
         }
         store(dimensions, bandOfPreviousCategory, categories);
-        return new SampleDimensionTable.Entry(dimensions, paletteName);
+        return new SampleDimensionEntries(dimensions, paletteName);
     }
 
     /**

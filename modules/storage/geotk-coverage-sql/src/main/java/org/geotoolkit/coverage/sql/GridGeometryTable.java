@@ -118,13 +118,13 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
         final boolean approximate = results.getBoolean(9);
         final int srid = results.getInt(10);
         final Array refs = results.getArray(11);
-        AdditionalAxisTable.Entry[] axes = null;
+        AdditionalAxisEntry[] axes = null;
         String extraDimName = null;
         if (refs != null) {
             final Object data = refs.getArray();
             final int length = java.lang.reflect.Array.getLength(data);
             if (length != 0) {
-                axes = new AdditionalAxisTable.Entry[length];
+                axes = new AdditionalAxisEntry[length];
                 for (int i=0; i<axes.length; i++) {
                     final String id = (String) java.lang.reflect.Array.get(data, i);
                     extraDimName = (i == 0) ? id : extraDimName + " + " + id;

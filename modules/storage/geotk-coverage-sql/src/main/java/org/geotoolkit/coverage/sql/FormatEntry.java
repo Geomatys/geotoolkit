@@ -25,7 +25,6 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 
 /**
@@ -33,7 +32,7 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  */
-final class Format {
+final class FormatEntry {
     /**
      * The data store provider to use for opening files, or {@code null} if unknown.
      */
@@ -74,9 +73,9 @@ final class Format {
      *                     The bands given to this constructor shall <strong>not</strong> be geophysics.
      * @param metadata     reference to an entry in the {@code metadata.Format} table, or {@code null}.
      */
-    Format(String driver, final String paletteName, final SampleDimension[] bands, final String metadata) {
+    FormatEntry(String driver, final String paletteName, final List<SampleDimension> bands, final String metadata) {
         driver = driver.trim();
-        sampleDimensions = UnmodifiableArrayList.wrap(bands);
+        sampleDimensions = bands;
         this.paletteName = paletteName;
         this.metadata    = metadata;
         for (DataStoreProvider provider : DataStores.providers()) {

@@ -149,7 +149,7 @@ public final class DatabaseStore extends DataStore implements Aggregate {
     }
 
     public synchronized void addRaster(final String product, final AddOption option, final Path... files) throws DataStoreException {
-        final List<Product.NewRaster> rasters = Product.NewRaster.list(files);
+        final List<ProductEntry.NewRaster> rasters = ProductEntry.NewRaster.list(files);
         try (Transaction transaction = database.transaction()) {
             transaction.writeStart();
             try (ProductTable table = new ProductTable(transaction)) {
@@ -158,7 +158,7 @@ public final class DatabaseStore extends DataStore implements Aggregate {
                         throw new CatalogException("Product \"" + product + "\" already exists.");
                     }
                 }
-                Product p = table.getEntry(product);
+                ProductEntry p = table.getEntry(product);
                 p.addCoverageReference(transaction, rasters);
             }
             transaction.writeEnd();
@@ -172,7 +172,7 @@ public final class DatabaseStore extends DataStore implements Aggregate {
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public synchronized Collection<Resource> components() throws DataStoreException {
         if (components == null) {
-            final List<Product> names;
+            final List<ProductEntry> names;
             try (Transaction transaction = database.transaction();
                  ProductTable table = new ProductTable(transaction))
             {

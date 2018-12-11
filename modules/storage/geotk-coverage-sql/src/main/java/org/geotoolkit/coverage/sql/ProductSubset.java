@@ -28,7 +28,7 @@ import org.apache.sis.internal.storage.AbstractGridResource;
 
 
 final class ProductSubset extends AbstractGridResource {
-    private final Product product;
+    private final ProductEntry product;
 
     private final List<GridCoverageEntry> entries;
 
@@ -37,7 +37,7 @@ final class ProductSubset extends AbstractGridResource {
      */
     private final GridCoverageEntry representative;
 
-    ProductSubset(final Product product, final List<GridCoverageEntry> entries) {
+    ProductSubset(final ProductEntry product, final List<GridCoverageEntry> entries) {
         super((WarningListeners<DataStore>) null);
         this.product = product;
         this.entries = entries;

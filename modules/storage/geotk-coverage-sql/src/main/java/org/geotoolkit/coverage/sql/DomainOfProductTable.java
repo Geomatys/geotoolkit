@@ -18,12 +18,10 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.Calendar;
-import java.awt.geom.Dimension2D;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.time.Instant;
 
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
@@ -36,46 +34,12 @@ import org.geotoolkit.display.shape.DoubleDimension2D;
  * Connection to a table of domain of products. For internal use by {@link ProductTable} only.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- *
- * @todo rename DomainOfProducts
  */
 final class DomainOfProductTable extends Table {
     /**
-     * The spatiotemporal domain of a product.
-     *
-     * @author Martin Desruisseaux (IRD, Geomatys)
-     */
-    static final class Entry {
-        /**
-         * The time range, or {@code null} if none.
-         */
-        final Instant startTime, endTime;
-
-        /**
-         * The envelope in units of the database horizontal CRS, or {@code null} if none.
-         */
-        final Envelope2D bbox;
-
-        /**
-         * The resolution in units of the database horizontal CRS, or {@code null} if none.
-         */
-        private final Dimension2D resolution;
-
-        /**
-         * Creates a new entry with the specified values, which are <strong>not</strong> cloned.
-         */
-        private Entry(final Instant startTime, final Instant endTime, final Envelope2D bbox, final Dimension2D resolution) {
-            this.startTime  = startTime;
-            this.endTime    = endTime;
-            this.bbox       = bbox;
-            this.resolution = resolution;
-        }
-    }
-
-    /**
      * A null domain.
      */
-    private static final Entry NULL = new Entry(null, null, null, null);
+    private static final DomainOfProductEntry NULL = new DomainOfProductEntry(null, null, null, null);
 
     /**
      * Name of this table in the database.
@@ -93,8 +57,8 @@ final class DomainOfProductTable extends Table {
      * Returns the domain of the given product.
      * Never returns {@code null} but may return a domain containing null elements.
      */
-    public Entry query(final String product) throws SQLException {
-        Entry entry = NULL;
+    public DomainOfProductEntry query(final String product) throws SQLException {
+        DomainOfProductEntry entry = NULL;
         final PreparedStatement statement = prepareStatement("SELECT \"startTime\", \"endTime\","
                 + " \"west\", \"east\", \"south\", \"north\", \"xResolution\", \"yResolution\""
                 + " FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"product\" = ?");
@@ -111,8 +75,8 @@ final class DomainOfProductTable extends Table {
                 double    xResolution = results.getDouble(7); if (results.wasNull()) xResolution = Double.NaN;
                 double    yResolution = results.getDouble(8); if (results.wasNull()) yResolution = Double.NaN;
                 Envelope2D bbox = new Envelope2D(transaction.database.extentCRS, west, south, east-west, north-south);
-                entry = new Entry(toInstant(startTime), toInstant(endTime), bbox,
-                                  (xResolution>0 || yResolution>0) ? new DoubleDimension2D(xResolution, yResolution) : null);
+                entry = new DomainOfProductEntry(toInstant(startTime), toInstant(endTime), bbox,
+                        (xResolution>0 || yResolution>0) ? new DoubleDimension2D(xResolution, yResolution) : null);
             }
         }
         return entry;

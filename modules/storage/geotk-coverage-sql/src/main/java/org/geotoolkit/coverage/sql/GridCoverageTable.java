@@ -120,9 +120,9 @@ final class GridCoverageTable extends Table {
         statement.setString   (4, Envelopes.toPolygonWKT(GeneralEnvelope.castOrCopy(normalized).subEnvelope(0, 2)));
         final List<GridCoverageEntry> entries = new ArrayList<>();
         try (final ResultSet results = statement.executeQuery()) {
-            SeriesTable.Entry series = null;
-            GridGeometryEntry grid   = null;
-            int lastGridID           = 0;
+            SeriesEntry series = null;
+            GridGeometryEntry grid = null;
+            int lastGridID = 0;
             while (results.next()) {
                 final int       seriesID  = results.getInt      (1);
                 final String    filename  = results.getString   (2);
@@ -150,7 +150,7 @@ final class GridCoverageTable extends Table {
      * @param  imageIndex 1-based index of the image.
      * @throws SQLException if an error occurred while reading from or writing to the database.
      */
-    final void add(final String product, final Product.NewRaster raster)
+    final void add(final String product, final ProductEntry.NewRaster raster)
             throws SQLException, FactoryException, TransformException, CatalogException
     {
         /*

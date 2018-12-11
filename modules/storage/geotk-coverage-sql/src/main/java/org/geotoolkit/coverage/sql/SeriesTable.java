@@ -20,8 +20,6 @@ package org.geotoolkit.coverage.sql;
 import java.util.List;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
@@ -35,79 +33,7 @@ import org.apache.sis.coverage.SampleDimension;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Cédric Briançon (Geomatys)
  */
-final class SeriesTable extends CachedTable<Integer, SeriesTable.Entry> {
-    /**
-     * A series of coverages sharing common characteristics in a {@link ProductEntry}.
-     * A product often regroup all coverages in a single series, but in some cases a product may contain
-     * more than one series. For example a <cite>Sea Surface Temperature</cite> (SST) product from
-     * Nasa <cite>Pathfinder</cite> can be subdivised in two series:
-     *
-     * <ul>
-     *   <li>Final release of historical data. Those data are often two years old.</li>
-     *   <li>More recent but not yet definitive data.</li>
-     * </ul>
-     *
-     * In most cases it is sufficient to work with {@link ProductEntry} as a whole without
-     * the need to go down to the {@code SeriesTable.Entry}.
-     *
-     * @author Martin Desruisseaux (IRD, Geomatys)
-     */
-    static final class Entry {
-        /**
-         * Identifier of this series.
-         */
-        final int identifier;
-
-        /**
-         * Identifier of the product to which this series belong.
-         */
-        final String product;
-
-        /**
-         * The directory which contains the data files for this series.
-         */
-        private final Path directory;
-
-        /**
-         * The extension to add to filenames, not including the dot character.
-         */
-        private final String extension;
-
-        /**
-         * The format of all coverages in this series.
-         */
-        final Format format;
-
-        /**
-         * Creates a new series entry.
-         *
-         * @param root       the root directory or URL, or {@code null} if none.
-         * @param directory  the relative or absolute directory which contains the data files for this series.
-         * @param extension  the extension to add to filenames, not including the dot character.
-         * @param format     the format of all coverages in this series.
-         */
-        private Entry(final int identifier, final String product, final Path root, final URI directory, String extension, final Format format) {
-            this.identifier = identifier;
-            this.product    = product;
-            this.extension  = (extension != null && !(extension = extension.trim()).isEmpty()) ? extension : null;
-            this.format     = format;
-            this.directory  = directory.isAbsolute() ? Paths.get(directory) : root.resolve(directory.toString());
-        }
-
-        /**
-         * Returns the given filename as a {@link Path} in the directory of this series.
-         *
-         * @param  filename  the filename, not including the extension.
-         * @return path to the file.
-         */
-        public Path path(String filename) {
-            if (extension != null) {
-                filename = filename + '.' + extension;
-            }
-            return directory.resolve(filename);
-        }
-    }
-
+final class SeriesTable extends CachedTable<Integer, SeriesEntry> {
     /**
      * Name of this table in the database.
      */
@@ -144,14 +70,14 @@ final class SeriesTable extends CachedTable<Integer, SeriesTable.Entry> {
      * @throws SQLException if an error occurred while reading the database.
      */
     @Override
-    Entry createEntry(final ResultSet results, final Integer identifier) throws SQLException, CatalogException {
+    SeriesEntry createEntry(final ResultSet results, final Integer identifier) throws SQLException, CatalogException {
         final String product   = results.getString(1);
         final String directory = results.getString(2);
         final String extension = results.getString(3);
         final String formatID  = results.getString(4);
-        final Format format    = formats.getEntry(formatID);
+        final FormatEntry format = formats.getEntry(formatID);
         try {
-            return new Entry(identifier, product, transaction.database.root, new URI(directory), extension, format);
+            return new SeriesEntry(identifier, product, transaction.database.root, new URI(directory), extension, format);
         } catch (URISyntaxException e) {
             throw new IllegalRecordException(e, results, 2, identifier);
         }

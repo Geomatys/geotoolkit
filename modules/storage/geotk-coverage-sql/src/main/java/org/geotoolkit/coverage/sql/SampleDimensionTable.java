@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -28,13 +27,9 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import javax.measure.Unit;
 import javax.measure.format.ParserException;
-
-import org.opengis.util.GenericName;
 import org.apache.sis.measure.Units;
-import org.apache.sis.util.ArraysExt;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
-
 import org.geotoolkit.resources.Errors;
 
 
@@ -46,53 +41,6 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (IRD, Geomatys)
  */
 final class SampleDimensionTable extends Table {
-    /**
-     * The result of a query on a {@link SampleDimensionTable} object.
-     *
-     * @author Martin Desruisseaux (Geomatys)
-     */
-    static final class Entry {
-        /**
-         * The name of the color palette, or {@code null} if none. If more than one color
-         * palettes are found, then the one for the largest range of values is used.
-         *
-         * <p>This is used for initializing the {@link FormatEntry#paletteName} attribute,
-         * which is used by {@link GridCoverageLoader}. We retain only one palette name
-         * because there is typically only one visible band in an index color model, so
-         * {@code GridCoverageLoader} wants only one palette.</p>
-         */
-        final String paletteName;
-
-        /**
-         * The categories for each sample dimensions in a given format.
-         * The keys are band numbers, where the first band is numbered 1.
-         * Values are the categories for that band in arbitrary order.
-         */
-        private final Map<Integer,Category[]> categories;
-
-        /**
-         * The sample dimensions built from the {@link #categories} map. This field is initially
-         * {@code null} and is initialized by {@link SampleDimensionTable#getSampleDimensions(String)}.
-         */
-        SampleDimension[] sampleDimensions;
-
-        /**
-         * Reference to an entry in the {@code metadata.SampleDimension} table, or {@code null} if none.
-         * A non-null array may contain {@code null} elements.
-         *
-         * @todo stored but not yet used.
-         */
-        private String[] metadata;
-
-        /**
-         * Creates a new entry.
-         */
-        Entry(final Map<Integer,Category[]> categories, final String paletteName) {
-            this.categories  = categories;
-            this.paletteName = paletteName;
-        }
-    }
-
     /**
      * Name of this table in the database.
      */
@@ -132,7 +80,7 @@ final class SampleDimensionTable extends Table {
      * @return an entry containing the sample dimensions for the given format, or {@code null} if none.
      * @throws SQLException if an error occurred while reading the database.
      */
-    public Entry query(final String format) throws SQLException, CatalogException {
+    public SampleDimensionEntries query(final String format) throws SQLException, CatalogException {
         String[]  names = new String [8];
         Unit<?>[] units = new Unit<?>[8];
         boolean[] packs = new boolean[8];
@@ -189,24 +137,13 @@ final class SampleDimensionTable extends Table {
         if (numSampleDimensions == 0) {
             return null;
         }
-        final SampleDimension[] sampleDimensions = new SampleDimension[numSampleDimensions];
-        final CategoryTable categories = getCategoryTable();
-        final Entry entry = categories.query(format, units);
-        final Map<Integer,Category[]> cat = entry.categories;
+        final SampleDimensionEntries entries = getCategoryTable().query(format, units);
         try {
-            for (int i=0; i<numSampleDimensions; i++) {
-                GenericName name = transaction.database.nameFactory.createLocalName(null, names[i]);
-                sampleDimensions[i] = new SampleDimension(name, null,
-                        Arrays.asList(cat.remove(i+1))).forConvertedValues(!packs[i]);
-            }
+            entries.complete(transaction.database.nameFactory, names, packs, hasMetadata ? mdDim : null, numSampleDimensions);
         } catch (IllegalArgumentException exception) {
             throw new IllegalRecordException(exception, null, 0, format);
         }
-        entry.sampleDimensions = sampleDimensions;
-        if (hasMetadata) {
-            entry.metadata = ArraysExt.resize(mdDim, numSampleDimensions);
-        }
-        return entry;
+        return entries;
     }
 
     /**

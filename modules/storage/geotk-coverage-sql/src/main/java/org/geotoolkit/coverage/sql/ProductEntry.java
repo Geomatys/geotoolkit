@@ -53,7 +53,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  */
-final class Product extends AbstractGridResource {
+final class ProductEntry extends AbstractGridResource {
     /**
      * The name of this product.
      */
@@ -104,7 +104,7 @@ final class Product extends AbstractGridResource {
      * @param temporalResolution  typical time interval (in days) between images, or {@link Double#NaN} if unknown.
      * @param metadata            optional entry in {@code metadata.Metadata} table, or {@code null}.
      */
-    Product(final Database database, final String name, final double spatialResolution, final double temporalResolution, final String metadata) {
+    ProductEntry(final Database database, final String name, final double spatialResolution, final double temporalResolution, final String metadata) {
         super((WarningListeners<DataStore>) null);
         this.name               = name;
         this.spatialResolution  = spatialResolution;
@@ -168,7 +168,7 @@ final class Product extends AbstractGridResource {
     @Override
     protected void createMetadata(final MetadataBuilder metadata) throws DataStoreException {
         try (Transaction transaction = transaction()) {
-            final DomainOfProductTable.Entry domain;
+            final DomainOfProductEntry domain;
             try (DomainOfProductTable table = new DomainOfProductTable(transaction)) {
                 domain = table.query(name);
             }

@@ -24,17 +24,13 @@ import javax.measure.Unit;
 import javax.measure.format.ParserException;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.VerticalCRS;
-import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.VerticalDatumType;
-import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.metadata.spatial.DimensionNameType;
 
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.iso.Types;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.metadata.VerticalDatumTypes;
 import org.apache.sis.internal.metadata.AxisDirections;
 
@@ -48,79 +44,7 @@ import static java.lang.reflect.Array.getLength;
  *
  * @author Martin Desruisseaux (Geomatys)
  */
-final class AdditionalAxisTable extends CachedTable<String, AdditionalAxisTable.Entry> {
-    /**
-     * Information about an additional axes (vertical or other).
-     */
-    static final class Entry {
-        /**
-         * The coordinate reference system for this entry.
-         */
-        final SingleCRS crs;
-
-        /**
-         * The transform from grid coordinates to the {@linkplain #crs}.
-         */
-        final MathTransform1D gridToCRS;
-
-        /**
-         * Minimum and maximum values in standard units and direction. For elevation, this is metres toward up.
-         * For time axis, this is seconds toward future. For pressure, this is Pascal toward up.
-         */
-        final double standardMin, standardMax;
-
-        /**
-         * Number of values along this axis.
-         */
-        final int count;
-
-        /**
-         * Creates a new entry for an additional axis.
-         *
-         * @param values  limits of all layers. The array length is the number of layers + 1.
-         *                The first and last values are the raster bounds along the axis.
-         *                Other values are interstice between layers.
-         */
-        private Entry(final SingleCRS crs, final double[] values) {
-            this.crs  = crs;
-            gridToCRS = MathTransforms.interpolate(null, values);       // Integer indices map lower bounds.
-            double min = Double.POSITIVE_INFINITY;
-            double max = Double.NEGATIVE_INFINITY;
-            for (int i=0; i<values.length; i++) {
-                final double z = values[i];
-                if (z < min) min = z;
-                if (z > max) max = z;
-            }
-            // Transform the (min, max) in "standard" units of the database.
-            final CoordinateSystemAxis axis = crs.getCoordinateSystem().getAxis(0);
-            double scale = Units.toStandardUnit(axis.getUnit());
-            if (AxisDirections.isOpposite(axis.getDirection())) {
-                final double t = max;
-                max = min;
-                min = t;
-                scale = -scale;
-            }
-            min *= scale;
-            max *= scale;
-            standardMin = min;
-            standardMax = max;
-            count = values.length - 1;
-        }
-
-        /**
-         * Returns a standardized identifier for this axis, or {@code null} if none.
-         */
-        final DimensionNameType type() {
-            if (crs instanceof VerticalCRS) {
-                return DimensionNameType.VERTICAL;
-            } else if (crs instanceof TemporalCRS) {
-                return DimensionNameType.TIME;
-            } else {
-                return null;
-            }
-        }
-    }
-
+final class AdditionalAxisTable extends CachedTable<String, AdditionalAxisEntry> {
     /**
      * Name of this table in the database.
      */
@@ -157,7 +81,7 @@ final class AdditionalAxisTable extends CachedTable<String, AdditionalAxisTable.
      * @throws SQLException if an error occurred while reading the database.
      */
     @Override
-    Entry createEntry(final ResultSet results, final String identifier) throws SQLException, IllegalRecordException {
+    AdditionalAxisEntry createEntry(final ResultSet results, final String identifier) throws SQLException, IllegalRecordException {
         final String   datum     = results.getString(1);
         final String   direction = results.getString(2);
         final String   units     = results.getString(3);
@@ -191,7 +115,7 @@ final class AdditionalAxisTable extends CachedTable<String, AdditionalAxisTable.
         if (crs == null) {
             throw new IllegalRecordException("Unsupported CRS definition in \"" + identifier + "\" entry.", error);
         }
-        return new Entry(crs, values);
+        return new AdditionalAxisEntry(crs, values);
     }
 
     /**

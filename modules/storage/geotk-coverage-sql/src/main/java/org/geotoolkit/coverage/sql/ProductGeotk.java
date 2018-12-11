@@ -40,9 +40,9 @@ import org.opengis.util.GenericName;
  * Interoperability with legacy API.
  */
 final class ProductGeotk extends AbstractCoverageResource implements GridCoverageResource {
-    private final Product product;
+    private final ProductEntry product;
 
-    ProductGeotk(final DatabaseStore store, final Product product) throws DataStoreException {
+    ProductGeotk(final DatabaseStore store, final ProductEntry product) throws DataStoreException {
         super(store, product.getIdentifier());
         this.product = product;
     }
