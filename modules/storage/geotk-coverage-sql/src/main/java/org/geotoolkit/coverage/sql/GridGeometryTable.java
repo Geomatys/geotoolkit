@@ -134,8 +134,13 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
             refs.free();
         }
         try {
-            final CoordinateReferenceSystem crs;
+            /*
+             * TODO: the CRS codes are PostGIS codes, not EPSG codes. For now we simulate PostGIS codes
+             * by changing axis order after decoding, but we should really use a PostGIS factory instead.
+             */
+            CoordinateReferenceSystem crs;
             crs = transaction.database.authorityFactory.createCoordinateReferenceSystem(String.valueOf(srid));
+            crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED);
             return new GridGeometryEntry(width, height, gridToCRS, approximate, crs, axes, extraDimName, transaction.database);
         } catch (FactoryException | TransformException exception) {
             throw new IllegalRecordException(exception, results, 9, identifier);
@@ -330,7 +335,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
         final IdentifiedObjectFinder finder = IdentifiedObjects.newFinder("EPSG");
         finder.setIgnoringAxes(true);
         final AbstractCRS c = AbstractCRS.castOrCopy((CoordinateReferenceSystem) finder.findSingleton(crs));
-        if (c != null && c.forConvention(AxesConvention.NORMALIZED).equals(crs, ComparisonMode.APPROXIMATIVE)) {
+        if (c != null && c.forConvention(AxesConvention.RIGHT_HANDED).equals(crs, ComparisonMode.APPROXIMATIVE)) {
             Identifier id = IdentifiedObjects.getIdentifier(c, Citations.EPSG);
             if (id != null) try {
                 return Integer.valueOf(id.getCode());
