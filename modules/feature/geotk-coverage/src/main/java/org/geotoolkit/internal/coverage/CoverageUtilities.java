@@ -728,7 +728,7 @@ public final class CoverageUtilities extends Static {
         GridCoverageBuilder builder = new GridCoverageBuilder();
         builder.setGridGeometry(toGeotk(coverage.getGridGeometry()));
         builder.setSampleDimensions(toGeotk(coverage.getSampleDimensions()));
-        builder.setRenderedImage(coverage.asRenderedImage(0, 1));
+        builder.setRenderedImage(coverage.render(null));        // TODO: choose a slice point.
         return builder.getGridCoverage2D();
     }
 }
