@@ -151,7 +151,7 @@ public final class GridCoverageEntry {
         try (DataStore store = series.format.open(series.path(filename))) {
             final GridCoverageResource r = resource(store);
             if (r != null) {
-                return r.read(null);
+                return r.read(null, null);
             }
         }
         throw new DataStoreException("No GridCoverageResource found for " + filename);

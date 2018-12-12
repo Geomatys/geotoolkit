@@ -92,11 +92,7 @@ final class ProductGeotk extends AbstractCoverageResource implements GridCoverag
 
         @Override
         public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException {
-            try {
-                return CoverageUtilities.toGeotk(product.getSampleDimensions());
-            } catch (DataStoreException e) {
-                throw new CatalogException(e);
-            }
+            return CoverageUtilities.toGeotk(product.getSampleDimensions());
         }
 
         @Override
@@ -109,10 +105,14 @@ final class ProductGeotk extends AbstractCoverageResource implements GridCoverag
                 throw new CoverageStoreException("Must specify an envelope.");
             }
             try {
-                return CoverageUtilities.toGeotk(product.subset(envelope).read(null));
+                final ProductSubset subset = product.subset(envelope);
+                if (subset != null) {
+                    return CoverageUtilities.toGeotk(subset.read(null, null));
+                }
             } catch (DataStoreException e) {
                 throw new CatalogException(e);
             }
+            throw new CoverageStoreException("No data in the given area of interest.");
         }
     }
 

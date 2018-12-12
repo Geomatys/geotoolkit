@@ -79,6 +79,12 @@ final class ProductEntry extends AbstractGridResource {
     private final double temporalResolution;
 
     /**
+     * A representative format for this product. If the product uses different formats,
+     * then this is an arbitrary format in that list.
+     */
+    final FormatEntry format;
+
+    /**
      * Identifier to an entry in {@code metadata.Metadata} table, or {@code null} if none.
      *
      * @todo not yet used.
@@ -104,11 +110,14 @@ final class ProductEntry extends AbstractGridResource {
      * @param temporalResolution  typical time interval (in days) between images, or {@link Double#NaN} if unknown.
      * @param metadata            optional entry in {@code metadata.Metadata} table, or {@code null}.
      */
-    ProductEntry(final Database database, final String name, final double spatialResolution, final double temporalResolution, final String metadata) {
+    ProductEntry(final Database database, final String name, final double spatialResolution, final double temporalResolution,
+            final FormatEntry format, final String metadata)
+    {
         super((WarningListeners<DataStore>) null);
         this.name               = name;
         this.spatialResolution  = spatialResolution;
         this.temporalResolution = temporalResolution;
+        this.format             = format;
         this.metadata           = metadata;
         this.database           = database;
         this.namespace          = database.nameFactory.createNameSpace(database.nameFactory.createLocalName(null, name), null);
@@ -202,17 +211,17 @@ final class ProductEntry extends AbstractGridResource {
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        getMetadata();              // Trig 'gridGeometry' creating as a side-effect.
+        getMetadata();              // Trig 'gridGeometry' creation as a side-effect.
         return gridGeometry;
     }
 
     @Override
-    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
-        throw new DataStoreException("Not supported yet.");
+    public List<SampleDimension> getSampleDimensions() {
+        return format.sampleDimensions;
     }
 
     @Override
-    public GridCoverage read(GridGeometry gg, int... ints) throws DataStoreException {
+    public GridCoverage read(GridGeometry areaOfInterest, int... bands) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
 
@@ -222,7 +231,7 @@ final class ProductEntry extends AbstractGridResource {
      * available for this product regardless of their envelope.
      *
      * @param  areaOfInterest  the envelope for filtering the coverages, or {@code null} for no filtering.
-     * @return the set of coverages of this product which intersect the given envelope.
+     * @return the set of coverages of this product which intersect the given envelope, or {@code null} if none.
      * @throws CatalogException if an error occurred while querying the database.
      */
     final ProductSubset subset(final Envelope areaOfInterest) throws CatalogException {
@@ -234,6 +243,9 @@ final class ProductEntry extends AbstractGridResource {
         } catch (TransformException exception) {
             throw new MismatchedReferenceSystemException(errors()
                     .getString(Errors.Keys.IllegalCoordinateReferenceSystem, exception));
+        }
+        if (entries.isEmpty()) {
+            return null;
         }
         return new ProductSubset(this, entries);
     }

@@ -39,10 +39,16 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
     private static final String TABLE = "Products";
 
     /**
+     * The table of series.
+     */
+    private final SeriesTable seriesTable;
+
+    /**
      * Creates a product table.
      */
     ProductTable(final Transaction transaction) {
         super(Target.PRODUCT, transaction);
+        seriesTable = new SeriesTable(transaction);
     }
 
     /**
@@ -63,18 +69,19 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
      * @throws SQLException if an error occurred while reading the database.
      */
     @Override
-    ProductEntry createEntry(final ResultSet results, final String name) throws SQLException {
+    ProductEntry createEntry(final ResultSet results, final String name) throws SQLException, CatalogException {
         // TODO: handle parent.
         double spatialResolution  = results.getDouble(2); if (results.wasNull()) spatialResolution  = Double.NaN;
         double temporalResolution = results.getDouble(3); if (results.wasNull()) temporalResolution = Double.NaN;
         final String metadata     = results.getString(4);
-        return new ProductEntry(transaction.database, name, spatialResolution, temporalResolution, metadata);
+        final FormatEntry format  = seriesTable.getRepresentativeFormat(name);
+        return new ProductEntry(transaction.database, name, spatialResolution, temporalResolution, format, metadata);
     }
 
     /**
      * Returns all available products.
      */
-    public List<ProductEntry> list() throws SQLException {
+    public List<ProductEntry> list() throws SQLException, CatalogException {
         final List<ProductEntry> products = new ArrayList<>();
         final StringBuilder sql = new StringBuilder(select());
         sql.setLength(sql.lastIndexOf(" WHERE"));

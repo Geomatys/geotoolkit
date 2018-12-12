@@ -132,6 +132,28 @@ final class SeriesTable extends CachedTable<Integer, SeriesEntry> {
     }
 
     /**
+     * Returns what seems a commonly used format for the given product.
+     * Current implementation checks only the number of occurrences in "Series" table;
+     * we do not count the number of occurrences in "GridCoverages" table.
+     */
+    final FormatEntry getRepresentativeFormat(final String product) throws SQLException, CatalogException {
+        String identifier = null;
+        final PreparedStatement statement = prepareStatement("SELECT \"format\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE "
+                + "\"product\"=? GROUP BY \"format\" ORDER BY COUNT(*) DESC");
+        statement.setString(1, product);
+        try (ResultSet results = statement.executeQuery()) {
+            while (results.next()) {
+                identifier = results.getString(1);
+                if (!results.wasNull()) break;      // Paranoiac check.
+            }
+        }
+        if (identifier != null) {
+            return formats.getEntry(identifier);
+        }
+        return null;
+    }
+
+    /**
      * Closes the prepared statements created by this table.
      */
     @Override

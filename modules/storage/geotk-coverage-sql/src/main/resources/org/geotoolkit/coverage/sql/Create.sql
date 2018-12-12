@@ -353,10 +353,11 @@ COMMENT ON CONSTRAINT "GridCoverages_index_check" ON rasters."GridCoverages" IS 
 -- Dependencies: "GridCoverages", "BoundingBoxes", "Series".
 --
 CREATE VIEW rasters."DomainOfSeries" AS
-    SELECT "TimeRanges"."series", "startTime", "endTime",
+    SELECT "TimeRanges"."series", "count", "startTime", "endTime",
            "west", "east", "south", "north", "xResolution", "yResolution"
       FROM
    (SELECT "series",
+           COUNT(*) AS "count",
            MIN(LOWER("time")) AS "startTime",
            MAX(UPPER("time")) AS "endTime"
       FROM rasters."GridCoverages" GROUP BY "series") AS "TimeRanges"
@@ -370,11 +371,11 @@ CREATE VIEW rasters."DomainOfSeries" AS
            MIN(("north" - "south") / "height") AS "yResolution"
       FROM (SELECT DISTINCT "series", "grid" FROM rasters."GridCoverages") AS "Extents"
  LEFT JOIN rasters."BoundingBoxes" ON "Extents"."grid" = "BoundingBoxes"."identifier"
-  GROUP BY "series") AS "BoundingBoxRanges" ON "TimeRanges".series = "BoundingBoxRanges".series
-  ORDER BY "series";
+  GROUP BY "series") AS "BoundingBoxRanges" ON "TimeRanges".series = "BoundingBoxRanges".series;
 
 CREATE VIEW rasters."DomainOfProducts" AS
  SELECT "product",
+        SUM("count")       AS "count",
         MIN("startTime")   AS "startTime",
         MAX("endTime")     AS "endTime",
         MIN("west")        AS "west",
@@ -385,8 +386,7 @@ CREATE VIEW rasters."DomainOfProducts" AS
         MIN("yResolution") AS "yResolution"
    FROM rasters."DomainOfSeries"
    JOIN rasters."Series" ON "DomainOfSeries"."series" = "Series"."identifier"
-  GROUP BY "product"
-  ORDER BY "product";
+  GROUP BY "product";
 
 
 COMMENT ON VIEW rasters."DomainOfSeries"   IS 'List of geographical areas used by each sub-series.';
