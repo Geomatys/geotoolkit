@@ -76,7 +76,7 @@ abstract class CachedTable<K,E> extends Table {
      * @throws SQLException if an error occurred will reading from the database.
      * @throws NoSuchRecordException if no record was found for the specified key.
      */
-    public E getEntry(final K identifier) throws SQLException, CatalogException {
+    final E getEntry(final K identifier) throws SQLException, CatalogException {
         if (identifier == null) {
             return null;
         }

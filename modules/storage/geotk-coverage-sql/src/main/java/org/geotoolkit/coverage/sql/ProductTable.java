@@ -26,8 +26,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.opengis.util.FactoryException;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.util.ArgumentChecks;
 
@@ -96,7 +99,9 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
         try {
             if (FETCH_ALL_DATES) {
                 final double[] timestamps = seriesTable.listAllDates(name);
-                exportedGrid = gridEntry.getGridGeometry(timestamps.length, MathTransforms.interpolate(null, timestamps));
+                MathTransform tr = MathTransforms.interpolate(null, timestamps);
+                tr = PixelTranslation.translate(tr, PixelInCell.CELL_CENTER, GridGeometryEntry.CELL_ORIGIN);
+                exportedGrid = gridEntry.getGridGeometry(timestamps.length, tr);
             } else {
                 // TODO: specify startTime and endTime.
                 exportedGrid = gridEntry.getGridGeometry(null, null);
@@ -111,7 +116,7 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
     /**
      * Returns all available products.
      */
-    public List<ProductEntry> list() throws SQLException, CatalogException {
+    final List<ProductEntry> list() throws SQLException, CatalogException {
         final List<ProductEntry> products = new ArrayList<>();
         final StringBuilder sql = new StringBuilder(select());
         sql.setLength(sql.lastIndexOf(" WHERE"));

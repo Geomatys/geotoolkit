@@ -82,7 +82,7 @@ final class GridCoverageTable extends Table {
     /**
      * Returns all grid geometries used by the given product.
      */
-    public final List<GridGeometryEntry> getGridGeometries(final String product) throws SQLException, CatalogException {
+    final List<GridGeometryEntry> getGridGeometries(final String product) throws SQLException, CatalogException {
         final List<GridGeometryEntry> geometries = new ArrayList<>();
         final PreparedStatement statement = prepareStatement("SELECT DISTINCT \"grid\" FROM " + SCHEMA + ".\"" + TABLE + "\""
                 + " INNER JOIN " + SCHEMA + ".\"" + SeriesTable.TABLE + "\" ON (\"series\" = \"" + SeriesTable.TABLE + "\".\"identifier\")"
@@ -107,7 +107,7 @@ final class GridCoverageTable extends Table {
      *
      * @todo returns a stream instead. Requires to be careful about closing the statement and the connection.
      */
-    public final List<GridCoverageEntry> find(final String product, final Envelope areaOfInterest)
+    final List<GridCoverageEntry> find(final String product, final Envelope areaOfInterest)
             throws SQLException, CatalogException, TransformException
     {
         final PreparedStatement statement = prepareStatement("SELECT \"series\", \"filename\", \"index\", \"grid\","

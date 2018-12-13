@@ -85,7 +85,7 @@ final class CategoryTable extends Table implements DoubleToIntFunction {
      * @return the categories for each sample dimension in the given format.
      * @throws SQLException if an error occurred while reading the database.
      */
-    public SampleDimensionEntries query(final String format, final Unit<?>[] units) throws SQLException, CatalogException {
+    final SampleDimensionEntries query(final String format, final Unit<?>[] units) throws SQLException, CatalogException {
         String paletteName = null;
         int paletteRange = 0;
         final List<Category> categories = new ArrayList<>();
@@ -205,7 +205,7 @@ final class CategoryTable extends Table implements DoubleToIntFunction {
      * @param  categories  the categories to add for each band.
      * @throws SQLException if an error occurred while writing to the database.
      */
-    public void insert(final String format, final List<List<Category>> categories) throws SQLException, IllegalUpdateException {
+    final void insert(final String format, final List<List<Category>> categories) throws SQLException, IllegalUpdateException {
         final PreparedStatement statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\" ("
                 + "\"format\", \"band\", \"name\", \"lower\", \"upper\", \"scale\", \"offset\", \"function\", \"colors\")"
                 + " VALUES (?,?,?,?,?,?,?,CAST(? AS metadata.\"TransferFunctionTypeCode\"),?)");

@@ -64,7 +64,7 @@ public class CatalogException extends CoverageStoreException {
     /**
      * Creates an exception with no cause and no details message.
      */
-    public CatalogException() {
+    CatalogException() {
         super();
     }
 
@@ -73,7 +73,7 @@ public class CatalogException extends CoverageStoreException {
      *
      * @param message The detail message.
      */
-    public CatalogException(final String message) {
+    CatalogException(final String message) {
         super(message);
     }
 
@@ -82,7 +82,7 @@ public class CatalogException extends CoverageStoreException {
      *
      * @param cause The cause for this exception.
      */
-    public CatalogException(final Exception cause) {
+    CatalogException(final Exception cause) {
         super(cause);
     }
 
@@ -92,7 +92,7 @@ public class CatalogException extends CoverageStoreException {
      * @param message The detail message.
      * @param cause The cause for this exception.
      */
-    public CatalogException(final String message, final Exception cause) {
+    CatalogException(final String message, final Exception cause) {
         super(message, cause);
     }
 

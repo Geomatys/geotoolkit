@@ -18,6 +18,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.List;
 import org.opengis.util.GenericName;
+import org.opengis.geometry.Envelope;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -28,20 +29,41 @@ import org.apache.sis.internal.storage.AbstractGridResource;
 
 
 final class ProductSubset extends AbstractGridResource {
+    /**
+     * The product for which this object is a subset.
+     */
     private final ProductEntry product;
 
+    /**
+     * Area of data requested by user.
+     */
+    private final Envelope areaOfInterest;
+
+    /**
+     * List of raster files intersection the {@link #areaOfInterest}.
+     */
     private final List<GridCoverageEntry> entries;
 
     /**
+     * An arbitrary element from {@link #entries} list.
+     *
      * @todo Need a better way than using a representative coverage.
      */
     private final GridCoverageEntry representative;
 
-    ProductSubset(final ProductEntry product, final List<GridCoverageEntry> entries) {
+    /**
+     * Creates a new subset for the given product.
+     */
+    ProductSubset(final ProductEntry product, final Envelope areaOfInterest, final List<GridCoverageEntry> entries) {
         super((WarningListeners<DataStore>) null);
-        this.product = product;
-        this.entries = entries;
-        representative = entries.get(0);
+        this.product        = product;
+        this.areaOfInterest = areaOfInterest;
+        this.entries        = entries;
+        if (ProductCoverage.HACK) {
+            representative = entries.get(entries.size() / 2);
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     @Override
@@ -60,12 +82,7 @@ final class ProductSubset extends AbstractGridResource {
     }
 
     @Override
-    public GridCoverage read(final GridGeometry areaOfInterest, final int... bands) throws DataStoreException {
-        // TODO: select the entry to use.
-        if (ProductCoverage.HACK) {
-            return entries.get(0).coverage();
-        } else {
-            throw new UnsupportedOperationException();
-        }
+    public GridCoverage read(final GridGeometry targetGeometry, final int... bands) throws DataStoreException {
+        return representative.coverage(areaOfInterest);
     }
 }

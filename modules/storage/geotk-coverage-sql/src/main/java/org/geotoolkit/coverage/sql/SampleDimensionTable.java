@@ -80,7 +80,7 @@ final class SampleDimensionTable extends Table {
      * @return an entry containing the sample dimensions for the given format, or {@code null} if none.
      * @throws SQLException if an error occurred while reading the database.
      */
-    public SampleDimensionEntries query(final String format) throws SQLException, CatalogException {
+    final SampleDimensionEntries query(final String format) throws SQLException, CatalogException {
         String[]  names = new String [8];
         Unit<?>[] units = new Unit<?>[8];
         boolean[] packs = new boolean[8];
@@ -153,7 +153,7 @@ final class SampleDimensionTable extends Table {
      * @param  bands   the sample dimensions to add.
      * @throws SQLException if an error occurred while writing to the database.
      */
-    public void insert(final String format, final List<SampleDimension> bands) throws SQLException, IllegalUpdateException {
+    final void insert(final String format, final List<SampleDimension> bands) throws SQLException, IllegalUpdateException {
         final PreparedStatement statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\" ("
                 + "\"format\", \"band\", \"identifier\", \"units\", \"isPacked\") VALUES (?,?,?,?,?)");
         statement.setString(1, format);

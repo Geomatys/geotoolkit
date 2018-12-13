@@ -194,7 +194,7 @@ next:           while (results.next()) {
      * @return the actual format name.
      * @throws SQLException if an error occurred while writing to the database.
      */
-    public String findOrInsert(final String driver, final List<SampleDimension> bands, String suggestedID)
+    final String findOrInsert(final String driver, final List<SampleDimension> bands, String suggestedID)
             throws SQLException, CatalogException
     {
         String existing = search(driver, bands);

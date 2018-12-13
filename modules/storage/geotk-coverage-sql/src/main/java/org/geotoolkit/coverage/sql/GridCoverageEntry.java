@@ -44,7 +44,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Sam Hiatt
  */
-public final class GridCoverageEntry {
+final class GridCoverageEntry {
     /**
      * The series in which the {@code GridCoverageReference} is defined.
      */
@@ -97,6 +97,8 @@ public final class GridCoverageEntry {
      * The position is given in the database-wide CRS, not the coverage CRS.
      *
      * @return the range of values in the given dimension, in units of the database CRS.
+     *
+     * @deprecated not yet used, maybe not needed.
      */
     final double getStandardCenter(final int dimension) {
         double min, max;
@@ -147,11 +149,17 @@ public final class GridCoverageEntry {
      * Loads the data if needed and returns the coverage.
      * Current implementation reads only the first resource.
      */
-    final GridCoverage coverage() throws DataStoreException {
+    final GridCoverage coverage(final Envelope areaOfInterest) throws DataStoreException {
+        final GridGeometry gg;
+        try {
+            gg = grid.getGridGeometry(areaOfInterest);
+        } catch (TransformException e) {
+            throw new CatalogException(e);
+        }
         try (DataStore store = series.format.open(series.path(filename))) {
             final GridCoverageResource r = resource(store);
             if (r != null) {
-                return r.read(null, null);
+                return r.read(gg, null);
             }
         }
         throw new DataStoreException("No GridCoverageResource found for " + filename);

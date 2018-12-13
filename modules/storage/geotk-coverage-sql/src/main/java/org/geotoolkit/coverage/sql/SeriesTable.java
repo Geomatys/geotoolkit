@@ -99,7 +99,7 @@ final class SeriesTable extends CachedTable<Integer, SeriesEntry> {
      * @return the identifier of a matching entry (never {@code null}).
      * @throws SQLException if an error occurred while reading from or writing to the database.
      */
-    public int findOrInsert(final String product, final String directory, final String extension, final String driver,
+    final int findOrInsert(final String product, final String directory, final String extension, final String driver,
             final List<SampleDimension> bands) throws SQLException, CatalogException
     {
         final String format = formats.findOrInsert(driver, bands, product);
@@ -138,6 +138,8 @@ final class SeriesTable extends CachedTable<Integer, SeriesEntry> {
 
     /**
      * Lists the timestamps of all rasters in the given product.
+     * This time returns <em>central</em> date of each raster.
+     * It is caller's responsibility to convert from "pixel center" to "pixel corner" convention.
      *
      * @todo current query does not use the "endTime" column of index. We may be able to achieve better
      *       performance by querying each series separately (they should not overlap anyway) and merge

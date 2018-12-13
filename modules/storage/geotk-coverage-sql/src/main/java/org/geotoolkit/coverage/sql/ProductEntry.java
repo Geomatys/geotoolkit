@@ -163,6 +163,7 @@ final class ProductEntry extends AbstractGridResource {
         try {
             metadata.addIdentifier(null, name, MetadataBuilder.Scope.RESOURCE);
             metadata.addExtent(exportedGrid.getEnvelope());
+            // TODO
 //          metadata.addResolution(exportedGrid);
 //          metadata.addTemporalResolution(temporalResolution);
         } catch (TransformException e) {
@@ -207,6 +208,6 @@ final class ProductEntry extends AbstractGridResource {
         if (entries.isEmpty()) {
             return null;
         }
-        return new ProductSubset(this, entries);
+        return new ProductSubset(this, areaOfInterest, entries);
     }
 }

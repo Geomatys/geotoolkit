@@ -35,7 +35,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.SingleCRS;
-import org.opengis.referencing.datum.PixelInCell;
 
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -237,7 +236,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
          */
         final int dimension = geometry.getDimension();          // Dimension of the grid (not necessarily the CRS).
         if (dimension >= AFFINE_DIMENSION) {
-            final TransformSeparator sep = new TransformSeparator(geometry.getGridToCRS(PixelInCell.CELL_CORNER));
+            final TransformSeparator sep = new TransformSeparator(geometry.getGridToCRS(GridGeometryEntry.CELL_ORIGIN));
             sep.addSourceDimensionRange(0, AFFINE_DIMENSION);
             final MathTransform gridToCRS2D = sep.separate();
             int[] targetDims = sep.getTargetDimensions();
@@ -284,7 +283,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                     /*
                      * At this point we collected all additional axes. Process to the insertion.
                      * The first two dimensions should be linear. But if this is not the case,
-                     * we will use the coefficients of an approximation at the image center.
+                     * we will use the coefficients of an approximation at the raster center.
                      */
                     Matrix gridToCRS = MathTransforms.getMatrix(gridToCRS2D);
                     final boolean isLinear = (gridToCRS != null);
@@ -295,8 +294,8 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                         }
                         gridToCRS = MathTransforms.getMatrix(gridToCRS2D, center);
                         /*
-                         * Above linear approximation has been computed for image center. It may resut in unrealistic coordinates
-                         * on image borders. We adjust by comparing the envelopes, then change the matrix coefficients for having
+                         * Above linear approximation has been computed for raster center. It may resut in unrealistic coordinates
+                         * on raster borders. We adjust by comparing the envelopes, then change the matrix coefficients for having
                          * the same envelope size. The center may be slightly shifted. We keep using the transform for pixel centers
                          * because this adjustment is only approximate anyway.
                          */

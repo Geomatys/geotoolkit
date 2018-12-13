@@ -28,8 +28,8 @@ import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.ProbeResult;
-import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
@@ -125,7 +125,7 @@ public final class DatabaseStore extends DataStore implements Aggregate {
 
     final Database database;
 
-    private List<Resource> components;
+    private List<GridCoverageResource> components;
 
     public DatabaseStore(final Provider provider, final Parameters parameters) throws DataStoreException {
         super(provider, new StorageConnector(parameters.getMandatoryValue(Provider.DATABASE)));
@@ -166,7 +166,7 @@ public final class DatabaseStore extends DataStore implements Aggregate {
 
     @Override
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
-    public synchronized Collection<Resource> components() throws DataStoreException {
+    public synchronized Collection<GridCoverageResource> components() throws DataStoreException {
         if (components == null) {
             final List<ProductEntry> products;
             try (Transaction transaction = database.transaction();
@@ -186,7 +186,7 @@ public final class DatabaseStore extends DataStore implements Aggregate {
     }
 
     @Override
-    public synchronized Resource findResource(final String productName) throws DataStoreException {
+    public synchronized GridCoverageResource findResource(final String productName) throws DataStoreException {
         final ProductEntry product;
         try (Transaction transaction = database.transaction();
              ProductTable table = new ProductTable(transaction))
