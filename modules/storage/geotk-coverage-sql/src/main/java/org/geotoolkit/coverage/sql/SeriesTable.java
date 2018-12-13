@@ -138,6 +138,10 @@ final class SeriesTable extends CachedTable<Integer, SeriesEntry> {
 
     /**
      * Lists the timestamps of all rasters in the given product.
+     *
+     * @todo current query does not use the "endTime" column of index. We may be able to achieve better
+     *       performance by querying each series separately (they should not overlap anyway) and merge
+     *       them together in Java code. TODO: check with PostgreSQL "EXPLAIN" on a larger data set.
      */
     final double[] listAllDates(final String product) throws SQLException {
         int count = 0;

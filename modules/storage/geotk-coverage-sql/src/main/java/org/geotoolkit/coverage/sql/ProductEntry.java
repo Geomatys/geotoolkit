@@ -20,7 +20,6 @@ package org.geotoolkit.coverage.sql;
 import java.util.List;
 import java.time.Duration;
 import java.sql.SQLException;
-import java.util.Date;
 
 import org.opengis.util.NameSpace;
 import org.opengis.util.GenericName;
@@ -73,7 +72,7 @@ final class ProductEntry extends AbstractGridResource {
      * A representative format for this product. If the product uses different formats,
      * then this is an arbitrary format in that list.
      */
-    final FormatEntry format;
+    private final FormatEntry format;
 
     /**
      * Identifier to an entry in {@code metadata.Metadata} table, or {@code null} if none.
@@ -81,12 +80,6 @@ final class ProductEntry extends AbstractGridResource {
      * @todo not yet used.
      */
     private final String metadata;
-
-    /**
-     * The grid geometry, or {@code null} if not yet computed. This field is opportunistically computed
-     * and stored when {@linkplain #createMetadata(MetadataBuilder) metadata are created}.
-     */
-    private GridGeometry gridGeometry;
 
     /**
      * The database that produced this entry.
@@ -167,45 +160,19 @@ final class ProductEntry extends AbstractGridResource {
      */
     @Override
     protected void createMetadata(final MetadataBuilder metadata) throws DataStoreException {
-        try (Transaction transaction = transaction()) {
-            final DomainOfProductEntry domain;
-            try (DomainOfProductTable table = new DomainOfProductTable(transaction)) {
-                domain = table.query(name);
-            }
-            if (gridGeometry == null) {
-                final List<GridGeometryEntry> geometries;
-                try (final GridCoverageTable table = new GridCoverageTable(transaction)) {
-                    geometries = table.getGridGeometries(name);
-                }
-                if (!geometries.isEmpty()) {
-                    gridGeometry = representative(geometries).getGridGeometry(domain.startTime, domain.endTime);
-                }
-            }
+        try {
             metadata.addIdentifier(null, name, MetadataBuilder.Scope.RESOURCE);
-            metadata.addExtent(domain.bbox);
-            if (domain.startTime != null && domain.endTime != null) {
-                metadata.addTemporalExtent(Date.from(domain.startTime), Date.from(domain.endTime));
-            }
+            metadata.addExtent(exportedGrid.getEnvelope());
 //          metadata.addResolution(exportedGrid);
 //          metadata.addTemporalResolution(temporalResolution);
-        } catch (SQLException | TransformException e) {
+        } catch (TransformException e) {
             throw new DataStoreException(e);
         }
     }
 
-    /**
-     * Selects the most representative grid geometry entry in the given list.
-     *
-     * @todo Not yet seriously implemented.
-     */
-    private static GridGeometryEntry representative(final List<GridGeometryEntry> geometries) {
-        return geometries.get(0);
-    }
-
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        getMetadata();              // Trig 'gridGeometry' creation as a side-effect.
-        return gridGeometry;
+        return exportedGrid;
     }
 
     @Override
