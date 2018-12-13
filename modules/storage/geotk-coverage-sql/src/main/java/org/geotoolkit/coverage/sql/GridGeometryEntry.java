@@ -91,21 +91,22 @@ final class GridGeometryEntry {
      * The coordinate reference system is the one declared in the {@link GridGeometryTable} for that entry.
      * The envelope must include the vertical range if any, but not the temporal dimension.
      */
-    private final GridGeometry geometry;
+    private final GridGeometry spatialGeometry;
 
     /**
-     * Extent of the grid {@linkplain #geometry} expanded with a temporal component.
+     * Extent of the grid {@linkplain #spatialGeometry} expanded with the {@link #spatioTemporalCRS}.
      */
     private final GridExtent spatioTemporalExtent;
 
     /**
-     * Same coordinate reference system than the one used by {@link #geometry}, with time axis added.
+     * Same coordinate reference system than the one used by {@link #spatialGeometry}, with time axis added.
+     * The time axis is the same for all images in the database, namely {@link Database#temporalCRS}.
      */
     private final CoordinateReferenceSystem spatioTemporalCRS;
 
     /**
      * Whether the "grid to CRS" transform is only an approximation of non-linear transform.
-     * In such case, it is not sufficient to rely on the {@link #geometry} field; caller may
+     * In such case, it is not sufficient to rely on the {@link #spatialGeometry} field; caller may
      * need to reload the grid geometry from original file.
      */
     private final boolean approximate;
@@ -177,11 +178,11 @@ final class GridGeometryEntry {
         if (ProductCoverage.HACK) {
             java.util.Arrays.fill(upper, 2, upper.length, 1);
         }
-        geometry = new GridGeometry(new GridExtent(names, null, upper, false), PixelInCell.CELL_CORNER, gridToCRS, crs);
-        standardEnvelope = new ImmutableEnvelope(minimum, maximum, null);
-        spatioTemporalCRS = database.crsFactory.createCompoundCRS(properties(crs, "time"), crs, database.temporalCRS);
-        spatioTemporalExtent = geometry.getExtent().append(DimensionNameType.TIME, 0, 0, true);
-        this.approximate = approximate;
+        spatialGeometry      = new GridGeometry(new GridExtent(names, null, upper, false), PixelInCell.CELL_CORNER, gridToCRS, crs);
+        standardEnvelope     = new ImmutableEnvelope(minimum, maximum, null);
+        spatioTemporalCRS    = database.crsFactory.createCompoundCRS(properties(crs, "time"), crs, database.temporalCRS);
+        spatioTemporalExtent = spatialGeometry.getExtent().append(DimensionNameType.TIME, 0, 0, true);
+        this.approximate     = approximate;
     }
 
     /**
@@ -220,13 +221,26 @@ final class GridGeometryEntry {
      */
     final GridGeometry getGridGeometry(final Instant startTime, final Instant endTime) throws TransformException {
         if (startTime == null || endTime == null) {
-            return geometry;
+            return spatialGeometry;
         }
-        MathTransform gridToCRS = geometry.getGridToCRS(PixelInCell.CELL_CORNER);
+        MathTransform gridToCRS = spatialGeometry.getGridToCRS(PixelInCell.CELL_CORNER);
         final double tMin = TEMPORAL_CRS.toValue(startTime);
         final double tMax = TEMPORAL_CRS.toValue(endTime);
         gridToCRS = MathTransforms.compound(gridToCRS, MathTransforms.linear(tMax - tMin, tMin));
         return new GridGeometry(spatioTemporalExtent, PixelInCell.CELL_CORNER, gridToCRS, spatioTemporalCRS);
+    }
+
+    /**
+     * Returns the grid geometry for the given enumerated dates.
+     *
+     * @param  gridExtent  number of cell values in the temporal dimension.
+     * @param  timestamps  the conversion from [0 … n] grid cells to timestamp in the {@link #TEMPORAL_CRS} axis.
+     */
+    final GridGeometry getGridGeometry(final int gridExtent, final MathTransform timestamps) throws TransformException {
+        MathTransform gridToCRS = spatialGeometry.getGridToCRS(PixelInCell.CELL_CORNER);
+        gridToCRS = MathTransforms.compound(gridToCRS, timestamps);
+        GridExtent extent = spatialGeometry.getExtent().append(DimensionNameType.TIME, 0, gridExtent, false);
+        return new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCRS, spatioTemporalCRS);
     }
 
     /**
@@ -248,6 +262,6 @@ final class GridGeometryEntry {
                 aoi = env;
             }
         }
-        return geometry.getExtent(aoi);
+        return spatialGeometry.getExtent(aoi);
     }
 }

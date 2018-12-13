@@ -18,13 +18,18 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.List;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
+import java.sql.Timestamp;
 import java.sql.Types;
+import org.apache.sis.util.ArraysExt;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 
 
 /**
@@ -129,6 +134,31 @@ final class SeriesTable extends CachedTable<Integer, SeriesEntry> {
             }
         } while ((insert = !insert) == true);
         throw new IllegalUpdateException("Can not add the series.");    // TODO: provide better error message.
+    }
+
+    /**
+     * Lists the timestamps of all rasters in the given product.
+     */
+    final double[] listAllDates(final String product) throws SQLException {
+        int count = 0;
+        double[] timestamps = new double[100];
+        final PreparedStatement statement = prepareStatement(
+                "SELECT DISTINCT \"startTime\" + (\"endTime\" - \"startTime\")/2 AS \"time\" " +
+                "FROM " + SCHEMA + ".\"" + GridCoverageTable.TABLE + "\" INNER JOIN " + SCHEMA + ".\"" + TABLE + "\" " +
+                "ON (\"series\" = \"" + TABLE + "\".\"identifier\") WHERE \"product\"=? ORDER BY \"time\"");
+        statement.setString(1, product);
+        try (ResultSet results = statement.executeQuery()) {
+            final Calendar calendar = newCalendar();
+            final DefaultTemporalCRS axis = transaction.database.temporalCRS;
+            while (results.next()) {
+                final Timestamp stamp = results.getTimestamp(1, calendar);
+                if (count >= timestamps.length) {
+                    timestamps = Arrays.copyOf(timestamps, count*2);
+                }
+                timestamps[count++] = axis.toValue(stamp);
+            }
+        }
+        return ArraysExt.resize(timestamps, count);
     }
 
     /**

@@ -149,44 +149,53 @@ public final class DatabaseStore extends DataStore implements Aggregate {
     }
 
     public synchronized void addRaster(final String product, final AddOption option, final Path... files) throws DataStoreException {
-        final List<ProductEntry.NewRaster> rasters = ProductEntry.NewRaster.list(files);
-        try (Transaction transaction = database.transaction()) {
-            transaction.writeStart();
-            try (ProductTable table = new ProductTable(transaction)) {
-                if (option != AddOption.NO_CREATE) {
-                    if (!table.createIfAbsent(product) && option == AddOption.CREATE_NEW_PRODUCT) {
-                        throw new CatalogException("Product \"" + product + "\" already exists.");
-                    }
+        final List<NewRaster> rasters = NewRaster.list(files);
+        if (!rasters.isEmpty()) {
+            try (Transaction transaction = database.transaction()) {
+                transaction.writeStart();
+                try (ProductTable table = new ProductTable(transaction)) {
+                    table.addCoverageReferences(product, option, rasters);
                 }
-                ProductEntry p = table.getEntry(product);
-                p.addCoverageReference(transaction, rasters);
+                transaction.writeEnd();
+            } catch (SQLException e) {
+                throw new CatalogException(e);
             }
-            transaction.writeEnd();
-        } catch (SQLException e) {
-            throw new CatalogException(e);
+            components = null;
         }
-        components = null;
     }
 
     @Override
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public synchronized Collection<Resource> components() throws DataStoreException {
         if (components == null) {
-            final List<ProductEntry> names;
+            final List<ProductEntry> products;
             try (Transaction transaction = database.transaction();
                  ProductTable table = new ProductTable(transaction))
             {
-                names = table.list();
+                products = table.list();
             } catch (SQLException e) {
                 throw new CatalogException(e);
             }
-            final ProductGeotk[] resources = new ProductGeotk[names.size()];
+            final ProductGeotk[] resources = new ProductGeotk[products.size()];
             for (int i=0; i<resources.length; i++) {
-                resources[i] = new ProductGeotk(this, names.get(i));
+                resources[i] = new ProductGeotk(this, products.get(i));
             }
             components = UnmodifiableArrayList.wrap(resources);
         }
         return components;
+    }
+
+    @Override
+    public synchronized Resource findResource(final String productName) throws DataStoreException {
+        final ProductEntry product;
+        try (Transaction transaction = database.transaction();
+             ProductTable table = new ProductTable(transaction))
+        {
+            product = table.getEntry(productName);
+        } catch (SQLException e) {
+            throw new CatalogException(e);
+        }
+        return new ProductGeotk(this, product);
     }
 
     @Override

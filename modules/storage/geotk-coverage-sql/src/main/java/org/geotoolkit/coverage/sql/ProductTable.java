@@ -19,11 +19,16 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.time.Instant;
+import java.time.Duration;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import org.opengis.util.FactoryException;
+import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.util.ArgumentChecks;
 
 
@@ -39,9 +44,20 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
     private static final String TABLE = "Products";
 
     /**
+     * Whether the product grid geometry needs to contain the date of all images.
+     * This is a potentially costly operation.
+     */
+    private static final boolean FETCH_ALL_DATES = true;
+
+    /**
      * The table of series.
      */
     private final SeriesTable seriesTable;
+
+    /**
+     * The table of grid geometries.
+     */
+    private final GridGeometryTable gridGeometries;
 
     /**
      * Creates a product table.
@@ -49,6 +65,7 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
     ProductTable(final Transaction transaction) {
         super(Target.PRODUCT, transaction);
         seriesTable = new SeriesTable(transaction);
+        gridGeometries = new GridGeometryTable(transaction);
     }
 
     /**
@@ -56,7 +73,7 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
      */
     @Override
     String select() {
-        return "SELECT \"parent\", \"spatialResolution\", \"temporalResolution\", \"metadata\""
+        return "SELECT \"parent\", \"exportedGrid\", \"temporalResolution\", \"metadata\""
                 + " FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"name\" = ?";
     }
 
@@ -71,11 +88,24 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
     @Override
     ProductEntry createEntry(final ResultSet results, final String name) throws SQLException, CatalogException {
         // TODO: handle parent.
-        double spatialResolution  = results.getDouble(2); if (results.wasNull()) spatialResolution  = Double.NaN;
-        double temporalResolution = results.getDouble(3); if (results.wasNull()) temporalResolution = Double.NaN;
-        final String metadata     = results.getString(4);
+        final int gridID            = results.getInt(2);
+        Duration temporalResolution = null;  // TODO results.getString(3);
+        final String metadata       = results.getString(4);
+        GridGeometryEntry gridEntry = gridGeometries.getEntry(gridID);
+        GridGeometry exportedGrid;
+        try {
+            if (FETCH_ALL_DATES) {
+                final double[] timestamps = seriesTable.listAllDates(name);
+                exportedGrid = gridEntry.getGridGeometry(timestamps.length, MathTransforms.interpolate(null, timestamps));
+            } else {
+                // TODO: specify startTime and endTime.
+                exportedGrid = gridEntry.getGridGeometry(null, null);
+            }
+        } catch (TransformException e) {
+            throw new CatalogException(e);
+        }
         final FormatEntry format  = seriesTable.getRepresentativeFormat(name);
-        return new ProductEntry(transaction.database, name, spatialResolution, temporalResolution, format, metadata);
+        return new ProductEntry(transaction.database, name, exportedGrid, temporalResolution, format, metadata);
     }
 
     /**
@@ -100,12 +130,14 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
     /**
      * Creates a new product if none exist for the given name.
      *
-     * @param  name  the name of the product.
+     * @param  name     the name of the product.
+     * @param  rasters  the rasters from which to fetch a grid geometry if a new entry needs to be created.
      * @return {@code true} if a new product has been created, or {@code false} if it already exists.
      * @throws SQLException if an error occurred while reading or writing the database.
      */
-    public boolean createIfAbsent(final String name) throws SQLException, CatalogException {
-        ArgumentChecks.ensureNonNull("name", name);
+    private boolean createIfAbsent(final String name, final List<NewRaster> rasters)
+            throws SQLException, CatalogException, FactoryException, TransformException
+    {
         try {
             if (getEntry(name) != null) {
                 return false;
@@ -113,9 +145,30 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
         } catch (NoSuchRecordException e) {
             // TODO: replace this use of exception by null return value.
         }
+        GridGeometry exportedGrid = rasters.get(0).geometry;                            // TODO: make a better choice.
+        final int gridID = gridGeometries.findOrInsert(exportedGrid, new Instant[2], name);
         final PreparedStatement statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\"("
-                + "\"name\") VALUES (?)");
+                + "\"name\", \"exportedGrid\") VALUES (?,?)");
         statement.setString(1, name);
+        statement.setInt(2, gridID);
         return statement.executeUpdate() != 0;
+    }
+
+    void addCoverageReferences(final String product, final AddOption option, final List<NewRaster> rasters) throws CatalogException {
+        ArgumentChecks.ensureNonNull("product", product);
+        try {
+            if (option != AddOption.NO_CREATE) {
+                if (!createIfAbsent(product, rasters) && option == AddOption.CREATE_NEW_PRODUCT) {
+                    throw new CatalogException("Product \"" + product + "\" already exists.");
+                }
+            }
+            try (final GridCoverageTable table = new GridCoverageTable(transaction, seriesTable, gridGeometries)) {
+                for (final NewRaster r : rasters) {
+                    table.add(product, r);
+                }
+            }
+        } catch (SQLException | FactoryException | TransformException exception) {
+            throw new CatalogException(exception);
+        }
     }
 }

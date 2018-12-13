@@ -52,7 +52,7 @@ final class GridCoverageTable extends Table {
     /**
      * Name of this table in the database.
      */
-    private static final String TABLE = "GridCoverages";
+    static final String TABLE = "GridCoverages";
 
     /**
      * The table of series.
@@ -71,6 +71,12 @@ final class GridCoverageTable extends Table {
         super(transaction);
         seriesTable = new SeriesTable(transaction);
         gridGeometries = new GridGeometryTable(transaction);
+    }
+
+    GridCoverageTable(final Transaction transaction, final SeriesTable seriesTable, final GridGeometryTable gridGeometries) {
+        super(transaction);
+        this.seriesTable    = seriesTable;
+        this.gridGeometries = gridGeometries;
     }
 
     /**
@@ -156,7 +162,7 @@ final class GridCoverageTable extends Table {
      * @param  imageIndex 1-based index of the image.
      * @throws SQLException if an error occurred while reading from or writing to the database.
      */
-    final void add(final String product, final ProductEntry.NewRaster raster)
+    final void add(final String product, final NewRaster raster)
             throws SQLException, FactoryException, TransformException, CatalogException
     {
         /*
