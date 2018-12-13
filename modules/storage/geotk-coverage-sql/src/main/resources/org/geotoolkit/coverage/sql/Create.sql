@@ -17,12 +17,16 @@ COMMENT ON SCHEMA rasters IS 'Catalog of grid rasters';
 -- Requires the "metadata" schema to be created and populated before this "rasters" schema.
 --
 CREATE TABLE rasters."Formats" (
-  "name"     VARCHAR(120) NOT NULL PRIMARY KEY,
-  "driver"   VARCHAR(120) NOT NULL,
-  "metadata" VARCHAR(15)  REFERENCES metadata."Format" ("ID") ON UPDATE CASCADE ON DELETE RESTRICT
+    "name"     VARCHAR(120) NOT NULL PRIMARY KEY,
+    "driver"   VARCHAR(120) NOT NULL,
+    "metadata" VARCHAR(15),
+    CONSTRAINT "Reference to ISO metadata" FOREIGN KEY ("metadata")
+        REFERENCES metadata."Format" ("ID")
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
 );
 
-COMMENT ON TABLE  rasters."Formats"            IS 'Raster formats. Each format is associated with an aribtrary number of SampleDimensions.';
+COMMENT ON TABLE  rasters."Formats"            IS 'Raster formats. Each format is associated to an arbitrary number of SampleDimensions.';
 COMMENT ON COLUMN rasters."Formats"."name"     IS 'Unique name of the format to be used as an identifier.';
 COMMENT ON COLUMN rasters."Formats"."driver"   IS 'Name of the driver to use for decoding the rasters. Examples: GeoTIFF, NetCDF.';
 COMMENT ON COLUMN rasters."Formats"."metadata" IS 'Reference to additional information about the format.';
@@ -39,24 +43,33 @@ INSERT INTO rasters."Formats" ("name", "driver", "metadata") VALUES
 -- Note that the "units" column duplicates metadata."SampleDimension"."units".
 --
 CREATE TABLE rasters."SampleDimensions" (
-  "format"     VARCHAR(120) NOT NULL REFERENCES rasters."Formats" ON UPDATE CASCADE ON DELETE CASCADE,
-  "band"       SMALLINT     NOT NULL DEFAULT 1 CHECK (band >= 1),
-  "identifier" VARCHAR(120),
-  "units"      VARCHAR(20),
-  "isPacked"   BOOLEAN      NOT NULL DEFAULT TRUE,
-  "metadata"   VARCHAR(15)  REFERENCES metadata."SampleDimension" ("ID") ON UPDATE CASCADE ON DELETE RESTRICT,
-  PRIMARY KEY ("format", "band")
+    "format"     VARCHAR(120) NOT NULL,
+    "band"       SMALLINT     NOT NULL DEFAULT 1,
+    "identifier" VARCHAR(120),
+    "units"      VARCHAR(20),
+    "isPacked"   BOOLEAN      NOT NULL DEFAULT TRUE,
+    "metadata"   VARCHAR(15),
+    PRIMARY KEY ("format", "band"),
+    CONSTRAINT "Reference to enclosing format" FOREIGN KEY ("format")
+        REFERENCES rasters."Formats" ("name")
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT "Reference to ISO metadata" FOREIGN KEY ("metadata")
+        REFERENCES metadata."SampleDimension" ("ID")
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    CONSTRAINT "Restriction on band number" CHECK ("band" >= 1)
 );
 
-COMMENT ON TABLE  rasters."SampleDimensions"              IS 'Descriptions of the bands in each raster format.';
+COMMENT ON TABLE  rasters."SampleDimensions"              IS 'Descriptions of bands in each raster format.';
 COMMENT ON COLUMN rasters."SampleDimensions"."format"     IS 'Format having this band.';
 COMMENT ON COLUMN rasters."SampleDimensions"."band"       IS 'Band sequence number (starting at 1).';
 COMMENT ON COLUMN rasters."SampleDimensions"."identifier" IS 'If the raster format requires an identifier for accessing data (for example a variable name in a netCDF file), that identifier. Otherwise can be used as a label.';
 COMMENT ON COLUMN rasters."SampleDimensions"."units"      IS 'Units of measurement. May be left blank if not applicable. Should be consistent with units declared in metadata.';
 COMMENT ON COLUMN rasters."SampleDimensions"."isPacked"   IS 'Whether values are stored using a smaller data type, to be converted using an offset and scale factor.';
 COMMENT ON COLUMN rasters."SampleDimensions"."metadata"   IS 'Reference to additional information about the band, including offset, scale factor and units of measurement.';
-COMMENT ON CONSTRAINT "SampleDimensions_format_fkey" ON rasters."SampleDimensions" IS 'Each band forms part of the description of the image.';
-COMMENT ON CONSTRAINT "SampleDimensions_band_check"  ON rasters."SampleDimensions" IS 'The band number must be positive.';
+COMMENT ON CONSTRAINT "Reference to enclosing format" ON rasters."SampleDimensions" IS 'Each band is part of the description of the raster format.';
+COMMENT ON CONSTRAINT "Restriction on band number"    ON rasters."SampleDimensions" IS 'The band number shall be strictly positive.';
 
 
 
@@ -77,13 +90,15 @@ CREATE TABLE rasters."Categories" (
     "offset"   DOUBLE PRECISION,
     "function" metadata."TransferFunctionTypeCode",
     "colors"   VARCHAR(80),
-    PRIMARY KEY ("format", "band", "name"),
-    FOREIGN KEY ("format", "band") REFERENCES rasters."SampleDimensions" ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT "Categories_range" CHECK ("lower" <= "upper"),
-    CONSTRAINT "Categories_coefficients" CHECK (("scale" IS NULL) = ("offset" IS NULL) AND "scale" <> 0)
+    PRIMARY KEY ("format", "band", "lower"),
+    CONSTRAINT "Reference to enclosing sample dimension" FOREIGN KEY ("band", "format")
+        REFERENCES rasters."SampleDimensions" ("band", "format")
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT "Restriction on transfer function" CHECK (("scale" IS NULL) = ("offset" IS NULL) AND "scale" <> 0),
+    CONSTRAINT "Restriction on sample value range" CHECK ("lower" <= "upper")
 );
 
-CREATE INDEX "Categories_index" ON rasters."Categories" ("band", "lower");
 
 
 
@@ -95,12 +110,11 @@ COMMENT ON COLUMN rasters."Categories"."lower"    IS 'Minimum cell value (inclus
 COMMENT ON COLUMN rasters."Categories"."upper"    IS 'Maximum cell value (inclusive) for this category.';
 COMMENT ON COLUMN rasters."Categories"."scale"    IS 'Coefficient C1 of the equation y=C0+C1*x, where x is the cell value and y is the value of the geophysical measurement. May be left blank if not applicable.';
 COMMENT ON COLUMN rasters."Categories"."offset"   IS 'Coefficient C0 of the equation y=C0+C1*x, where x is the cell value and y is the value of the geophysical measurement. May be left blank if not applicable.';
-COMMENT ON COLUMN rasters."Categories"."function" IS 'Transform function to be used when scaling a physical value: "linear" (or omitted) for y=C0+C1*x, or "expentional" for y=10^(C0+C1*x).';
+COMMENT ON COLUMN rasters."Categories"."function" IS 'Transform function to be used when scaling a physical value: "linear" (or omitted) for y=C0+C1*x, or "exponentional" for y=10^(C0+C1*x).';
 COMMENT ON COLUMN rasters."Categories"."colors"   IS 'This field can be either a color code or the name of a color pallet.';
-COMMENT ON INDEX  rasters."Categories_index"      IS 'Index of categories belonging to a band.';
-COMMENT ON CONSTRAINT "Categories_format_fkey"  ON rasters."Categories" IS 'Each category is an element of the band description.';
-COMMENT ON CONSTRAINT "Categories_coefficients" ON rasters."Categories" IS 'Both coefficients C0 and C1 must be either null or non-null.';
-COMMENT ON CONSTRAINT "Categories_range"        ON rasters."Categories" IS 'Lower value shall not be greater than upper value.';
+COMMENT ON CONSTRAINT "Reference to enclosing sample dimension" ON rasters."Categories" IS 'Each category is an element of the band description.';
+COMMENT ON CONSTRAINT "Restriction on transfer function"        ON rasters."Categories" IS 'Both coefficients C0 and C1 must be either null or non-null.';
+COMMENT ON CONSTRAINT "Restriction on sample value range"       ON rasters."Categories" IS 'Lower value shall not be greater than upper value.';
 
 
 --
@@ -141,10 +155,20 @@ COMMENT ON VIEW rasters."RangeOfFormats" IS 'Value range of each raster format.'
 --
 CREATE TABLE rasters."Products" (
     "name"               VARCHAR(120) NOT NULL PRIMARY KEY,
-    "parent"             VARCHAR(120) REFERENCES rasters."Products" ON UPDATE CASCADE ON DELETE RESTRICT,
-    "spatialResolution"  DOUBLE PRECISION CHECK ("spatialResolution"  > 0),
-    "temporalResolution" DOUBLE PRECISION CHECK ("temporalResolution" > 0),
-    "metadata"           VARCHAR(15) REFERENCES metadata."Metadata" ON UPDATE CASCADE ON DELETE RESTRICT
+    "parent"             VARCHAR(120),
+    "spatialResolution"  DOUBLE PRECISION,
+    "temporalResolution" DOUBLE PRECISION,
+    "metadata"           VARCHAR(15),
+    CONSTRAINT "Reference to ISO metadata" FOREIGN KEY ("metadata")
+        REFERENCES metadata."Metadata" ("ID")
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    CONSTRAINT "Reference to the parent product" FOREIGN KEY ("parent")
+        REFERENCES rasters."Products" ("name")
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    CONSTRAINT "Restriction on temporal resolution" CHECK ("temporalResolution" > 0),
+    CONSTRAINT "Restriction on spatial resolution"  CHECK ("spatialResolution"  > 0)
 );
 
 COMMENT ON TABLE  rasters."Products"                      IS 'Set of data series from the same producer observing the same phenomenon.';
@@ -153,8 +177,8 @@ COMMENT ON COLUMN rasters."Products"."parent"             IS 'If this product is
 COMMENT ON COLUMN rasters."Products"."spatialResolution"  IS 'Approximative resolution in metres. May be blank if unknown.';
 COMMENT ON COLUMN rasters."Products"."temporalResolution" IS 'Number of days between rasters. Can be approximate or left blank if not applicable.';
 COMMENT ON COLUMN rasters."Products"."metadata"           IS 'Reference to additional information about the product.';
-COMMENT ON CONSTRAINT "Products_spatialResolution_check"  ON rasters."Products" IS 'The spatial resolution shall be strictly positive.';
-COMMENT ON CONSTRAINT "Products_temporalResolution_check" ON rasters."Products" IS 'The temporal resolution shall be strictly positive.';
+COMMENT ON CONSTRAINT "Restriction on spatial resolution"  ON rasters."Products" IS 'The spatial resolution shall be strictly positive.';
+COMMENT ON CONSTRAINT "Restriction on temporal resolution" ON rasters."Products" IS 'The temporal resolution shall be strictly positive.';
 
 
 
@@ -164,25 +188,33 @@ COMMENT ON CONSTRAINT "Products_temporalResolution_check" ON rasters."Products" 
 --
 CREATE TABLE rasters."Series" (
     "identifier" INTEGER NOT NULL PRIMARY KEY GENERATED BY DEFAULT AS IDENTITY,
-    "product"    VARCHAR(120) NOT NULL REFERENCES rasters."Products"  ON UPDATE CASCADE ON DELETE CASCADE,
+    "product"    VARCHAR(120) NOT NULL,
     "directory"  VARCHAR(120) NOT NULL,
     "extension"  VARCHAR(40),
-    "format"     VARCHAR(120) NOT NULL REFERENCES rasters."Formats" ON UPDATE CASCADE ON DELETE RESTRICT,
-    "comments"   VARCHAR(1000)
+    "format"     VARCHAR(120) NOT NULL,
+    "comments"   VARCHAR(1000),
+    CONSTRAINT "Reference to enclosing product" FOREIGN KEY ("product")
+        REFERENCES rasters."Products" ("name")
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT "Reference to used format" FOREIGN KEY ("format")
+        REFERENCES rasters."Formats" ("name")
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
 );
 
-CREATE INDEX "Series_index" ON rasters."Series" ("product");
+CREATE INDEX "Enclosing products" ON rasters."Series" ("product");
 
 COMMENT ON TABLE  rasters."Series"              IS 'A collection of rasters related by a common heritage adhering to a common specification.';
 COMMENT ON COLUMN rasters."Series"."identifier" IS 'Unique identifier (auto-generated).';
 COMMENT ON COLUMN rasters."Series"."product"    IS 'The product to which the rasters in the series belong.';
 COMMENT ON COLUMN rasters."Series"."directory"  IS 'Relative path to the files in the series. The root path should not be specified if it is machine-dependent.';
-COMMENT ON COLUMN rasters."Series"."extension"  IS 'File extention of the rasters in the series. May be blank if the files have no extension.';
+COMMENT ON COLUMN rasters."Series"."extension"  IS 'File extension of the rasters in the series. May be blank if the files have no extension.';
 COMMENT ON COLUMN rasters."Series"."format"     IS 'Format of the rasters in the series.';
 COMMENT ON COLUMN rasters."Series"."comments"   IS 'Free text for comments.';
-COMMENT ON INDEX  rasters."Series_index"        IS 'Index of series belonging to a product.';
-COMMENT ON CONSTRAINT "Series_product_fkey"  ON rasters."Series" IS 'Each series belongs to a product.';
-COMMENT ON CONSTRAINT "Series_format_fkey"   ON rasters."Series" IS 'All the images of a series use the same series.';
+COMMENT ON INDEX  rasters."Enclosing products"  IS 'Index of series belonging to a product.';
+COMMENT ON CONSTRAINT "Reference to enclosing product" ON rasters."Series" IS 'Each series belongs to a product.';
+COMMENT ON CONSTRAINT "Reference to used format"       ON rasters."Series" IS 'All the images of a series use the same format.';
 
 
 
@@ -224,16 +256,19 @@ CREATE TABLE rasters."GridGeometries" (
     "translateX"   DOUBLE PRECISION  NOT NULL DEFAULT 0,
     "translateY"   DOUBLE PRECISION  NOT NULL DEFAULT 0,
     "approximate"  BOOLEAN           NOT NULL DEFAULT FALSE,
-    "srid"         INTEGER           NOT NULL DEFAULT 4326 REFERENCES spatial_ref_sys(srid) ON UPDATE CASCADE ON DELETE RESTRICT,
-    CONSTRAINT "GridGeometries_size" CHECK ("width" > 0 AND "height" > 0)
+    "srid"         INTEGER           NOT NULL DEFAULT 4326,
+    CONSTRAINT "Reference to CRS" FOREIGN KEY ("srid")
+        REFERENCES spatial_ref_sys(srid)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    CONSTRAINT "Restriction on raster size" CHECK ("width" > 0 AND "height" > 0)
 );
 
 SELECT AddGeometryColumn('rasters', 'GridGeometries', 'extent', 4326, 'POLYGON', 2);
 ALTER TABLE rasters."GridGeometries" ALTER COLUMN "extent" SET NOT NULL;
 ALTER TABLE rasters."GridGeometries" ADD COLUMN "additionalAxes" VARCHAR(120)[];
 
-CREATE INDEX "Extent_index" ON rasters."GridGeometries" USING GIST("extent");
-
+CREATE INDEX "Bounding boxes" ON rasters."GridGeometries" USING GIST("extent");
 
 COMMENT ON TABLE  rasters."GridGeometries"                  IS 'Spatial referencing parameters for rasters. Defines the grid envelopes and "grid to CRS" affine conversions to cell corners.';
 COMMENT ON COLUMN rasters."GridGeometries"."identifier"     IS 'Unique identifier (auto-generated).';
@@ -248,9 +283,9 @@ COMMENT ON COLUMN rasters."GridGeometries"."translateY"     IS 'Element (1,2) of
 COMMENT ON COLUMN rasters."GridGeometries"."approximate"    IS 'Whether the affine transform coefficients are only approximations of a non-linear "grid to CRS" conversion.';
 COMMENT ON COLUMN rasters."GridGeometries"."srid"           IS 'Two-dimensional coordinate reference system code.';
 COMMENT ON COLUMN rasters."GridGeometries"."extent"         IS 'Two-dimensional shape expressed in a CRS common to all rasters. Computed automatically if none is explicitly defined.';
-COMMENT ON COLUMN rasters."GridGeometries"."additionalAxes" IS 'Coordinates in dimensions other than the two main dimentions defined in this table.';
-COMMENT ON INDEX  rasters."Extent_index"                    IS 'Index of geometries intersecting a geographical area.';
-COMMENT ON CONSTRAINT "GridGeometries_size" ON rasters."GridGeometries" IS 'The dimensions of the rasters must be positive.';
+COMMENT ON COLUMN rasters."GridGeometries"."additionalAxes" IS 'Coordinates in dimensions other than the two main dimensions defined in this table.';
+COMMENT ON INDEX  rasters."Bounding boxes"                  IS 'Index of geometries intersecting a geographical area.';
+COMMENT ON CONSTRAINT "Restriction on raster size" ON rasters."GridGeometries" IS 'The dimensions of the rasters shall be strictly positive.';
 
 
 
@@ -320,23 +355,39 @@ COMMENT ON VIEW rasters."BoundingBoxes" IS 'Comparison between the calculated en
 
 
 --
--- The main table listing all rasters.
+-- The main table listing all rasters. PRIMARY KEY would be ("series", "filename", "index") but is omitted
+-- for now because not used. Notes on indexes:
+--
+--   • "series" is the starting point of our queries.
+--   • "startTime" and "endTime" must scan in opposite directions for more efficient search of intersections.
+--   • "grid" is part of our queries, but does not seem to be used by PostgreSQL.
+--
+-- We do not use PostgreSQL TSRANGE type for portability and for more efficient queries of minimal and maximal
+-- dates in a series.
 --
 CREATE TABLE rasters."GridCoverages" (
-    "series"    INTEGER           NOT NULL REFERENCES rasters."Series" ON UPDATE CASCADE ON DELETE CASCADE,
+    "series"    INTEGER           NOT NULL,
     "filename"  VARCHAR(200)      NOT NULL,
-    "index"     SMALLINT          NOT NULL DEFAULT 1 CHECK ("index" >= 1),
+    "index"     SMALLINT          NOT NULL DEFAULT 1,
     "startTime" TIMESTAMP WITHOUT TIME ZONE,
     "endTime"   TIMESTAMP WITHOUT TIME ZONE,
-    "grid"      INTEGER           NOT NULL REFERENCES rasters."GridGeometries" ON UPDATE CASCADE ON DELETE RESTRICT,
-    PRIMARY KEY ("series", "filename", "index"),
-    CHECK ((("startTime" IS     NULL) AND ("endTime" IS     NULL)) OR
-           (("startTime" IS NOT NULL) AND ("endTime" IS NOT NULL) AND ("startTime" <= "endTime")))
+    "grid"      INTEGER           NOT NULL,
+    CONSTRAINT "Reference to enclosing series" FOREIGN KEY ("series")
+        REFERENCES rasters."Series" ("identifier")
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT "Reference to used grid geometry" FOREIGN KEY ("grid")
+        REFERENCES rasters."GridGeometries" ("identifier")
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    CONSTRAINT "Restriction on time range" CHECK (("startTime" IS NULL AND "endTime" IS NULL)
+        OR ("startTime" IS NOT NULL AND "endTime" IS NOT NULL AND "startTime" <= "endTime")),
+    CONSTRAINT "Restriction on image index" CHECK ("index" >= 1)
 );
 
 -- Index "endTime" before "startTime" because we are often interrested in the latest raster available.
-CREATE INDEX "GridCoverages_time_index" ON rasters."GridCoverages" ("series", "endTime" DESC, "startTime" ASC);
-CREATE INDEX "GridCoverages_grid_index" ON rasters."GridCoverages" ("grid");
+CREATE INDEX "Time ranges per series" ON rasters."GridCoverages" ("series", "endTime" DESC, "startTime" ASC);
+CREATE INDEX "Used grid geometries"   ON rasters."GridCoverages" ("grid");
 
 COMMENT ON TABLE  rasters."GridCoverages"              IS 'List of all the rasters available. Each line corresponds to a raster file.';
 COMMENT ON COLUMN rasters."GridCoverages"."series"     IS 'Series to which the raster belongs.';
@@ -344,13 +395,13 @@ COMMENT ON COLUMN rasters."GridCoverages"."filename"   IS 'File name of the rast
 COMMENT ON COLUMN rasters."GridCoverages"."index"      IS 'Index of the raster in the file (for files containing multiple rasters). Numbered from 1.';
 COMMENT ON COLUMN rasters."GridCoverages"."startTime"  IS 'Date and time of the raster acquisition start (inclusive), in UTC. In the case of averages, the time corresponds to the beginning of the interval used to calculate the average.';
 COMMENT ON COLUMN rasters."GridCoverages"."endTime"    IS 'Date and time of the raster acquisition end (exclusive), in UTC. This time must be greater than or equal to the acquisition start time.';
-COMMENT ON COLUMN rasters."GridCoverages"."grid"       IS 'Grid Geomerty that defines the spatial footprint of this coverage.';
-COMMENT ON INDEX  rasters."GridCoverages_grid_index"   IS 'Index of all the rasters in a geographic region.';
-COMMENT ON INDEX  rasters."GridCoverages_time_index"   IS 'Index of time ranges for rasters in a series.';
-COMMENT ON CONSTRAINT "GridCoverages_series_fkey" ON rasters."GridCoverages" IS 'Each raster belongs to a series.';
-COMMENT ON CONSTRAINT "GridCoverages_grid_fkey"   ON rasters."GridCoverages" IS 'Each raster must have a spatial extent.';
-COMMENT ON CONSTRAINT "GridCoverages_check"       ON rasters."GridCoverages" IS 'The start and end times must be both null or both non-null, and the end time must be greater than or equal to the start time.';
-COMMENT ON CONSTRAINT "GridCoverages_index_check" ON rasters."GridCoverages" IS 'The raster index must be positive.';
+COMMENT ON COLUMN rasters."GridCoverages"."grid"       IS 'Grid geometry that defines the spatial footprint of this coverage.';
+COMMENT ON INDEX  rasters."Used grid geometries"       IS 'Index of all the rasters in a geographic region.';
+COMMENT ON INDEX  rasters."Time ranges per series"     IS 'Index of time ranges for rasters in a series.';
+COMMENT ON CONSTRAINT "Reference to enclosing series"   ON rasters."GridCoverages" IS 'Each raster belongs to a series.';
+COMMENT ON CONSTRAINT "Reference to used grid geometry" ON rasters."GridCoverages" IS 'Each raster must have a spatial extent.';
+COMMENT ON CONSTRAINT "Restriction on time range"       ON rasters."GridCoverages" IS 'The start and end times must be both null or both non-null, and the end time must be greater than or equal to the start time.';
+COMMENT ON CONSTRAINT "Restriction on image index"      ON rasters."GridCoverages" IS 'The image index shall be strictly positive.';
 
 
 
