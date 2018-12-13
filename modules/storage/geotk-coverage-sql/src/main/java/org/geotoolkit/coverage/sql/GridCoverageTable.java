@@ -24,6 +24,7 @@ import java.sql.Timestamp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
+import java.sql.Types;
 import java.nio.file.Path;
 import java.time.Instant;
 import org.opengis.geometry.Envelope;
@@ -104,11 +105,16 @@ final class GridCoverageTable extends Table {
             throws SQLException, CatalogException, TransformException
     {
         final PreparedStatement statement = prepareStatement("SELECT \"series\", \"filename\", \"index\", \"grid\","
-                + " LOWER(\"time\") AS \"startTime\", UPPER(\"time\") AS \"endTime\" FROM " + SCHEMA + ".\"" + TABLE + "\""
+                + " \"startTime\", \"endTime\" FROM " + SCHEMA + ".\"" + TABLE + "\""
                 + " INNER JOIN " + SCHEMA + ".\"" + SeriesTable.TABLE + "\" ON (\"series\" = \"" + SeriesTable.TABLE + "\".\"identifier\")"
                 + " INNER JOIN " + SCHEMA + ".\"" + GridGeometryTable.TABLE + "\" ON (\"grid\" = \"" + GridGeometryTable.TABLE + "\".\"identifier\")"
-                + " WHERE \"product\"=? AND \"time\" && TSRANGE(?,?) AND ST_Intersects(extent, ST_GeomFromText(?,4326))");
-
+                + " WHERE \"product\"=? AND \"endTime\" >= ? and \"startTime\" <= ? AND ST_Intersects(extent, ST_GeomFromText(?,4326))");
+        /*
+         * endTime >= tmin or  startTime  <= tmax
+         *
+         * Note: we could wrote    ("startTime", "endTime") OVERLAPS (?,?)    but our tests
+         * with EXPLAIN on PostgreSQL 10.5 suggests that >= and <= make better use of index.
+         */
         final Envelope normalized = Envelopes.transform(areaOfInterest, transaction.database.spatioTemporalCRS);
         final DefaultTemporalCRS temporalCRS = transaction.database.temporalCRS;
         final long tMin = temporalCRS.toInstant(normalized.getMinimum(2)).toEpochMilli();
@@ -175,32 +181,26 @@ final class GridCoverageTable extends Table {
         final Instant[] period = new Instant[2];        // Values to be provided by 'gridGeometries'.
         final int gridID = gridGeometries.findOrInsert(raster.geometry, period, product);
         final int series = seriesTable.findOrInsert(product, directory, extension, raster.driver, raster.bands);
-        final Instant startTime = period[0];
-        final Instant endTime   = period[1];
-        final boolean hasTime   = startTime != null && endTime != null;
         /*
          * Insert the grid coverage entry.
          */
         String sql = "INSERT INTO " + SCHEMA + ".\"" + TABLE + "\"("
-                    + "\"series\", \"filename\", \"index\", \"grid\", \"time\") VALUES (?,?,?,?,TSRANGE(?,?,?))";
-        if (!hasTime) {
-            // Remove insertion of time range.
-            sql = sql.replace(", \"time\"", "").replace(",TSRANGE(?,?,?)", "");
-        }
+                    + "\"series\", \"filename\", \"index\", \"grid\", \"startTime\", \"endTime\") VALUES (?,?,?,?,?,?)";
         final PreparedStatement statement = prepareStatement(sql);
         statement.setInt   (1, series);
         statement.setString(2, filename);
         statement.setInt   (3, raster.imageIndex + 1);
         statement.setInt   (4, gridID);
-        if (hasTime) {
-            final Calendar calendar = newCalendar();
-            for (int i=0; i<2; i++) {
-                final int column = 5 + i;
-                final Instant instant = period[i];
+        Calendar calendar = null;
+        for (int i=0; i<2; i++) {
+            final int column = 5 + i;
+            final Instant instant = period[i];
+            if (instant != null) {
+                if (calendar == null) calendar = newCalendar();
                 statement.setTimestamp(column, new Timestamp(instant.toEpochMilli()), calendar);
+            } else {
+                statement.setNull(column, Types.TIMESTAMP);
             }
-            // If both time are equal, we need to use inclusive upper bound.
-            statement.setString(7, endTime.equals(startTime) ? "[]" : "[)");
         }
         if (statement.executeUpdate() != 1) {
             throw new IllegalUpdateException("Can not add the coverage.");      // Should never happen (paranoiac check).

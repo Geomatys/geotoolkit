@@ -326,24 +326,30 @@ CREATE TABLE rasters."GridCoverages" (
     "series"    INTEGER           NOT NULL REFERENCES rasters."Series" ON UPDATE CASCADE ON DELETE CASCADE,
     "filename"  VARCHAR(200)      NOT NULL,
     "index"     SMALLINT          NOT NULL DEFAULT 1 CHECK ("index" >= 1),
-    "time"      TSRANGE,
+    "startTime" TIMESTAMP WITHOUT TIME ZONE,
+    "endTime"   TIMESTAMP WITHOUT TIME ZONE,
     "grid"      INTEGER           NOT NULL REFERENCES rasters."GridGeometries" ON UPDATE CASCADE ON DELETE RESTRICT,
-    PRIMARY KEY ("series", "filename", "index")
+    PRIMARY KEY ("series", "filename", "index"),
+    CHECK ((("startTime" IS     NULL) AND ("endTime" IS     NULL)) OR
+           (("startTime" IS NOT NULL) AND ("endTime" IS NOT NULL) AND ("startTime" <= "endTime")))
 );
 
-CREATE INDEX "GridCoverages_search_index" ON rasters."GridCoverages" ("series", "grid");
-CREATE INDEX "GridCoverages_time_index"   ON rasters."GridCoverages" USING GIST ("time");
+-- Index "endTime" before "startTime" because we are often interrested in the latest raster available.
+CREATE INDEX "GridCoverages_time_index" ON rasters."GridCoverages" ("series", "endTime" DESC, "startTime" ASC);
+CREATE INDEX "GridCoverages_grid_index" ON rasters."GridCoverages" ("grid");
 
 COMMENT ON TABLE  rasters."GridCoverages"              IS 'List of all the rasters available. Each line corresponds to a raster file.';
 COMMENT ON COLUMN rasters."GridCoverages"."series"     IS 'Series to which the raster belongs.';
 COMMENT ON COLUMN rasters."GridCoverages"."filename"   IS 'File name of the raster, relative to the directory specified in the series.';
 COMMENT ON COLUMN rasters."GridCoverages"."index"      IS 'Index of the raster in the file (for files containing multiple rasters). Numbered from 1.';
-COMMENT ON COLUMN rasters."GridCoverages"."time"       IS 'Date and time of the raster acquisition, in UTC.';
+COMMENT ON COLUMN rasters."GridCoverages"."startTime"  IS 'Date and time of the raster acquisition start (inclusive), in UTC. In the case of averages, the time corresponds to the beginning of the interval used to calculate the average.';
+COMMENT ON COLUMN rasters."GridCoverages"."endTime"    IS 'Date and time of the raster acquisition end (exclusive), in UTC. This time must be greater than or equal to the acquisition start time.';
 COMMENT ON COLUMN rasters."GridCoverages"."grid"       IS 'Grid Geomerty that defines the spatial footprint of this coverage.';
-COMMENT ON INDEX  rasters."GridCoverages_search_index" IS 'Index of all the rasters in a geographic region.';
-COMMENT ON INDEX  rasters."GridCoverages_time_index"   IS 'Index of rasters temporal extent.';
+COMMENT ON INDEX  rasters."GridCoverages_grid_index"   IS 'Index of all the rasters in a geographic region.';
+COMMENT ON INDEX  rasters."GridCoverages_time_index"   IS 'Index of time ranges for rasters in a series.';
 COMMENT ON CONSTRAINT "GridCoverages_series_fkey" ON rasters."GridCoverages" IS 'Each raster belongs to a series.';
 COMMENT ON CONSTRAINT "GridCoverages_grid_fkey"   ON rasters."GridCoverages" IS 'Each raster must have a spatial extent.';
+COMMENT ON CONSTRAINT "GridCoverages_check"       ON rasters."GridCoverages" IS 'The start and end times must be both null or both non-null, and the end time must be greater than or equal to the start time.';
 COMMENT ON CONSTRAINT "GridCoverages_index_check" ON rasters."GridCoverages" IS 'The raster index must be positive.';
 
 
@@ -358,8 +364,8 @@ CREATE VIEW rasters."DomainOfSeries" AS
       FROM
    (SELECT "series",
            COUNT(*) AS "count",
-           MIN(LOWER("time")) AS "startTime",
-           MAX(UPPER("time")) AS "endTime"
+           MIN("startTime") AS "startTime",
+           MAX("endTime")   AS "endTime"
       FROM rasters."GridCoverages" GROUP BY "series") AS "TimeRanges"
       JOIN
    (SELECT "series",
@@ -391,3 +397,27 @@ CREATE VIEW rasters."DomainOfProducts" AS
 
 COMMENT ON VIEW rasters."DomainOfSeries"   IS 'List of geographical areas used by each sub-series.';
 COMMENT ON VIEW rasters."DomainOfProducts" IS 'Number of rasters and geographical area for each product used.';
+
+
+
+
+--
+-- Get an estimation of the number of rows in a table.
+-- Adapted from https://wiki.postgresql.org/wiki/Count_estimate
+--
+CREATE FUNCTION rasters.count_estimate(series integer) RETURNS INTEGER AS
+$BODY$
+DECLARE
+    rec   record;
+    ROWS  INTEGER;
+BEGIN
+    FOR rec IN EXECUTE 'EXPLAIN SELECT * FROM rasters."GridCoverages" WHERE "series"=' || series LOOP
+        ROWS := SUBSTRING(rec."QUERY PLAN" FROM ' rows=([[:digit:]]+)');
+        EXIT WHEN ROWS IS NOT NULL;
+    END LOOP;
+    RETURN ROWS;
+END
+$BODY$ LANGUAGE plpgsql;
+
+COMMENT ON FUNCTION rasters.count_estimate(integer)
+    IS 'Returns an estimate of the number of grid coverages in a given series.';
