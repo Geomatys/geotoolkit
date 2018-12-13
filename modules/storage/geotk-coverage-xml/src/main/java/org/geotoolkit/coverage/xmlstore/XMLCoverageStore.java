@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
@@ -53,7 +54,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class XMLCoverageStore extends AbstractCoverageStore implements WritableAggregate {
+public class XMLCoverageStore extends AbstractCoverageStore implements WritableAggregate, ResourceOnFileSystem {
 
     private final Path root;
     private final List<Resource> resources = new ArrayList<>();
@@ -220,6 +221,11 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
 
     @Override
     public void close() {
+    }
+
+    @Override
+    public Path[] getComponentFiles() throws DataStoreException {
+        return new Path[] {root};
     }
 
 }
