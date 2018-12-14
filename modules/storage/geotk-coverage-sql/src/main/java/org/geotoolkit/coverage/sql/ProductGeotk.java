@@ -85,6 +85,8 @@ final class ProductGeotk extends AbstractCoverageResource implements GridCoverag
         public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException {
             try {
                 return CoverageUtilities.toGeotk(product.getGridGeometry());
+            } catch (CoverageStoreException e) {
+                throw e;
             } catch (DataStoreException e) {
                 throw new CatalogException(e);
             }
@@ -109,6 +111,8 @@ final class ProductGeotk extends AbstractCoverageResource implements GridCoverag
                 if (subset != null) {
                     return CoverageUtilities.toGeotk(subset.read(null, null));
                 }
+            } catch (CoverageStoreException e) {
+                throw e;
             } catch (DataStoreException e) {
                 throw new CatalogException(e);
             }

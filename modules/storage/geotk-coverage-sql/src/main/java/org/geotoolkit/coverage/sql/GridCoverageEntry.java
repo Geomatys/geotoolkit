@@ -21,6 +21,7 @@ import java.util.List;
 import java.time.Instant;
 import java.sql.SQLException;
 import org.opengis.geometry.Envelope;
+import org.opengis.util.FactoryException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
@@ -150,17 +151,15 @@ final class GridCoverageEntry {
      * Current implementation reads only the first resource.
      */
     final GridCoverage coverage(final Envelope areaOfInterest) throws DataStoreException {
-        final GridGeometry gg;
-        try {
-            gg = grid.getGridGeometry(areaOfInterest);
-        } catch (TransformException e) {
-            throw new CatalogException(e);
-        }
         try (DataStore store = series.format.open(series.path(filename))) {
             final GridCoverageResource r = resource(store);
             if (r != null) {
+                GridGeometry gg = r.getGridGeometry();
+                gg = grid.getGridGeometry(gg, areaOfInterest);
                 return r.read(gg, null);
             }
+        } catch (FactoryException | TransformException e) {
+            throw new CatalogException(e);
         }
         throw new DataStoreException("No GridCoverageResource found for " + filename);
     }

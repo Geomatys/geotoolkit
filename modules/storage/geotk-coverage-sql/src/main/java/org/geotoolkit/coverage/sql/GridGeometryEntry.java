@@ -26,9 +26,11 @@ import java.awt.geom.Rectangle2D;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.cs.RangeMeaning;
+import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -49,6 +51,7 @@ import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.util.ArraysExt;
 
 
 /**
@@ -247,27 +250,67 @@ final class GridGeometryEntry {
     /**
      * Returns the grid geometry for the given region of interest.
      * The region of interest can be specified in any CRS.
-     * If the given envelope has a time component, it must be the last dimension.
-     * The returned grid geometry will not have the temporal dimension.
      *
-     * @param  aoi  the region of interest, or {@code null} for the full spatial extent.
+     * @param  dataGrid  the grid geometry of the image to read. Used for deciding if there is dimensions to discard.
+     * @param  aoi       the region of interest, or {@code null} for the full spatial extent.
      * @return indices of pixels to read.
      */
-    final GridGeometry getGridGeometry(Envelope aoi) throws TransformException {
+    static GridGeometry getGridGeometry(final GridGeometry dataGrid, Envelope aoi) throws FactoryException, TransformException {
         if (aoi == null) {
-            return spatialGeometry;
+            return dataGrid;
         }
-        final CoordinateReferenceSystem crs = aoi.getCoordinateReferenceSystem();
+        CoordinateReferenceSystem crs = aoi.getCoordinateReferenceSystem();
         if (crs != null) {
-            final CoordinateSystem cs = crs.getCoordinateSystem();
-            final int last = cs.getDimension() - 1;
-            if (AxisDirections.isTemporal(cs.getAxis(last).getDirection())) {
-                final GeneralEnvelope env = GeneralEnvelope.castOrCopy(aoi).subEnvelope(0, last);
-                env.setCoordinateReferenceSystem(CRS.getComponentAt(crs, 0, last));
+            /*
+             * Verify if the given envelope contains any unexpected axes, for example a vertical axis
+             * for querying data that do not have vertical axis. We will need to remove those axes.
+             */
+            final CoordinateReferenceSystem expected = dataGrid.getCoordinateReferenceSystem();
+            final CoordinateSystem expectedAxes = expected.getCoordinateSystem();
+            final CoordinateSystem specifiedAxes = crs.getCoordinateSystem();
+            final int[] dimensions = new int[specifiedAxes.getDimension()];
+            int verticalDim = -2, count = 0;
+            for (int i=0; i<dimensions.length; i++) {
+                AxisDirection dir = specifiedAxes.getAxis(i).getDirection();
+                if (AxisDirections.indexOfColinear(expectedAxes, dir) >= 0) {
+                    if (AxisDirections.isVertical(dir)) verticalDim = i;
+                    dimensions[count++] = i;
+                }
+            }
+            /*
+             * If we found any unexpected axis, create a new envelope with a new CRS without those axes.
+             * We also go through those steps if we find a vertical axis that may need to be replaced.
+             * We do that as a hack for the lack of support of conversion between ellipsoidal heights.
+             */
+            if (verticalDim >= 0 || count != dimensions.length) {
+                final CoordinateReferenceSystem[] crsComponents = new CoordinateReferenceSystem[count];
+                final GeneralEnvelope env = new GeneralEnvelope(count);
+                int crsFirstDim = 0, crsLastDim = 0, crsCount = 0;
+                for (int i=0; i<count; i++) {
+                    final int sourceDim = dimensions[i];
+                    env.setRange(i, aoi.getMinimum(sourceDim), aoi.getMaximum(sourceDim));
+                    if (sourceDim != crsLastDim || sourceDim == verticalDim || sourceDim == verticalDim+1) {
+                        crsComponents[crsCount++] = CRS.getComponentAt(crs, crsFirstDim, crsLastDim);
+                        crsFirstDim = sourceDim;
+                    }
+                    crsLastDim = sourceDim+1;
+                }
+                crsComponents[crsCount++] = CRS.getComponentAt(crs, crsFirstDim, crsLastDim);
+                /*
+                 * Replace vertical axis.
+                 */
+                for (int i=0; i<crsCount; i++) {
+                    if (crsComponents[i] instanceof VerticalCRS) {
+                        VerticalCRS replacement = CRS.getVerticalComponent(expected, false);
+                        if (replacement != null) crsComponents[i] = replacement;
+                        break;
+                    }
+                }
+                env.setCoordinateReferenceSystem(CRS.compound(ArraysExt.resize(crsComponents, crsCount)));
                 aoi = env;
             }
         }
-        GridExtent extent = spatialGeometry.getExtent(aoi);
-        return new GridGeometry(spatialGeometry, extent);
+        GridExtent extent = dataGrid.getExtent(aoi);
+        return new GridGeometry(dataGrid, extent);
     }
 }

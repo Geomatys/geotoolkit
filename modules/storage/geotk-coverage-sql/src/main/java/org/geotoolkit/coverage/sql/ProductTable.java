@@ -104,7 +104,9 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
                 exportedGrid = gridEntry.getGridGeometry(timestamps.length, tr);
             } else {
                 // TODO: specify startTime and endTime.
-                exportedGrid = gridEntry.getGridGeometry(null, null);
+                Instant startTime = null;
+                Instant endTime = null;
+                exportedGrid = gridEntry.getGridGeometry(startTime, endTime);
             }
         } catch (TransformException e) {
             throw new CatalogException(e);
