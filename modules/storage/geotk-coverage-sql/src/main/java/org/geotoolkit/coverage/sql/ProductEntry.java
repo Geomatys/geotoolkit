@@ -56,7 +56,7 @@ final class ProductEntry extends AbstractGridResource {
     private final NameSpace namespace;
 
     /**
-     * The spatial component of the grid geometry. This information may be only approximate.
+     * The spatiotemporal grid geometry. This information may be only approximate.
      */
     private final GridGeometry exportedGrid;
 
@@ -183,7 +183,7 @@ final class ProductEntry extends AbstractGridResource {
 
     @Override
     public GridCoverage read(GridGeometry areaOfInterest, int... bands) throws DataStoreException {
-        throw new DataStoreException("Not supported yet.");
+        return subset(exportedGrid.getEnvelope()).read(areaOfInterest, bands);
     }
 
     /**

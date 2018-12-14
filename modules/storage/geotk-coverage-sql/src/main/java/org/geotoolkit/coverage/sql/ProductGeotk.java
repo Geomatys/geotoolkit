@@ -103,10 +103,10 @@ final class ProductGeotk extends AbstractCoverageResource implements GridCoverag
             if (param != null) {
                 envelope = param.getEnvelope();
             }
-            if (envelope == null) {
-                throw new CoverageStoreException("Must specify an envelope.");
-            }
             try {
+                if (envelope == null) {
+                    return CoverageUtilities.toGeotk(product.read(null, null));
+                }
                 final ProductSubset subset = product.subset(envelope);
                 if (subset != null) {
                     return CoverageUtilities.toGeotk(subset.read(null, null));
