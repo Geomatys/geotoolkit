@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
+import org.geotoolkit.georss.xml.v100.WhereType;
 
 
 /**
@@ -108,23 +109,12 @@ public class FeedType {
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
+    private static final ObjectFactory OBJ_ATOM_FACT = new ObjectFactory();
+    private static final org.geotoolkit.georss.xml.v100.ObjectFactory OBJ_GEORSS_FACT = new org.geotoolkit.georss.xml.v100.ObjectFactory();
+
     /**
      * Gets the value of the authorOrCategoryOrContributor property.
      *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the authorOrCategoryOrContributor property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAuthorOrCategoryOrContributor().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link TextType }{@code >}
      * {@link JAXBElement }{@code <}{@link DateTimeType }{@code >}
@@ -145,9 +135,39 @@ public class FeedType {
      */
     public List<Object> getAuthorOrCategoryOrContributor() {
         if (authorOrCategoryOrContributor == null) {
-            authorOrCategoryOrContributor = new ArrayList<Object>();
+            authorOrCategoryOrContributor = new ArrayList<>();
         }
         return this.authorOrCategoryOrContributor;
+    }
+
+    public void addId(IdType id) {
+        if (id != null) {
+            getAuthorOrCategoryOrContributor().add(OBJ_ATOM_FACT.createEntryTypeId(id));
+        }
+    }
+
+    public void addTitle(TextType title) {
+        if (title != null) {
+            getAuthorOrCategoryOrContributor().add(OBJ_ATOM_FACT.createEntryTypeTitle(title));
+        }
+    }
+
+    public void addUpdated(DateTimeType updated) {
+        if (updated != null) {
+            getAuthorOrCategoryOrContributor().add(OBJ_ATOM_FACT.createEntryTypeUpdated(updated));
+        }
+    }
+
+    public void addWhere(WhereType where) {
+        if (where != null) {
+            getAuthorOrCategoryOrContributor().add(OBJ_GEORSS_FACT.createWhere(where));
+        }
+    }
+
+    public void addEntry(EntryType entry) {
+        if (entry != null) {
+            getAuthorOrCategoryOrContributor().add(OBJ_ATOM_FACT.createEntry(entry));
+        }
     }
 
     /**
