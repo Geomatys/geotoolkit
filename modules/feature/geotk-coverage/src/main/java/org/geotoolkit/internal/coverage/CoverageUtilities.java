@@ -70,6 +70,7 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.RenderedCoverage;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -605,14 +606,19 @@ public final class CoverageUtilities extends Static {
     /**
      * Converts a SIS grid extent into a Geotk grid envelope.
      */
-    public static GeneralGridEnvelope toGeotk(final GridExtent env) {
+    public static GeneralGridEnvelope toGeotk(final GridExtent env, final boolean forceLowerToZero) {
         if (env == null) return null;
         final int dim = env.getDimension();
         final int[] lower = new int[dim];
         final int[] upper = new int[dim];
         for (int i=0; i<dim; i++) {
-            lower[i] = Math.toIntExact(env.getLow(i));
+            int low  = Math.toIntExact(env.getLow(i));
             upper[i] = Math.toIntExact(env.getHigh(i));
+            if (forceLowerToZero) {
+                upper[i] -= low;
+            } else {
+                lower[i] = low;
+            }
         }
         return new GeneralGridEnvelope(lower, upper, true);
     }
@@ -646,7 +652,7 @@ public final class CoverageUtilities extends Static {
     /**
      * Converts a SIS grid geometry into a Geotk grid geometry.
      */
-    public static GeneralGridGeometry toGeotk(final org.apache.sis.coverage.grid.GridGeometry gg) {
+    public static GeneralGridGeometry toGeotk(final org.apache.sis.coverage.grid.GridGeometry gg, final boolean forceLowerToZero) {
         if (gg == null) return null;
         GridExtent                extent    = null;
         Envelope                  envelope  = null;
@@ -658,9 +664,18 @@ public final class CoverageUtilities extends Static {
         if (gg.isDefined(org.apache.sis.coverage.grid.GridGeometry.CRS))         crs       = gg.getCoordinateReferenceSystem();
         if (envelope != null && extent == null) {
             return new GeneralGridGeometry(PixelInCell.CELL_CENTER, gridToCRS, envelope);
-        } else {
-            return new GeneralGridGeometry(toGeotk(extent), PixelInCell.CELL_CENTER, gridToCRS, crs);
         }
+        /*
+         * Shift lower coordinates to zero; this is what BufferedImage wants.
+         */
+        if (forceLowerToZero) {
+            final double[] vector = new double[extent.getDimension()];
+            for (int i=0; i<vector.length; i++) {
+                vector[i] = extent.getLow(i);
+            }
+            gridToCRS = MathTransforms.concatenate(MathTransforms.translation(vector), gridToCRS);
+        }
+        return new GeneralGridGeometry(toGeotk(extent, forceLowerToZero), PixelInCell.CELL_CENTER, gridToCRS, crs);
     }
 
     /**
@@ -726,7 +741,7 @@ public final class CoverageUtilities extends Static {
     public static GridCoverage2D toGeotk(final org.apache.sis.coverage.grid.GridCoverage coverage) {
         if (coverage == null) return null;
         GridCoverageBuilder builder = new GridCoverageBuilder();
-        builder.setGridGeometry(toGeotk(coverage.getGridGeometry()));
+        builder.setGridGeometry(toGeotk(coverage.getGridGeometry(), true));
         builder.setSampleDimensions(toGeotk(coverage.getSampleDimensions()));
         builder.setRenderedImage(coverage.render(null));        // TODO: choose a slice point.
         return builder.getGridCoverage2D();
