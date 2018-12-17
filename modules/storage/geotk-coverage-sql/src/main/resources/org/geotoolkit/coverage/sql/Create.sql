@@ -356,8 +356,7 @@ COMMENT ON CONSTRAINT "Reference to used format"       ON rasters."Series" IS 'A
 
 
 --
--- The main table listing all rasters. PRIMARY KEY would be ("series", "filename", "index") but is omitted
--- for now because not used. Notes on indexes:
+-- The main table listing all rasters. Notes on indexes:
 --
 --   • "series" is the starting point of our queries.
 --   • "startTime" and "endTime" must scan in opposite directions for more efficient search of intersections.
@@ -383,7 +382,8 @@ CREATE TABLE rasters."GridCoverages" (
         ON DELETE RESTRICT,
     CONSTRAINT "Restriction on time range" CHECK (("startTime" IS NULL AND "endTime" IS NULL)
         OR ("startTime" IS NOT NULL AND "endTime" IS NOT NULL AND "startTime" <= "endTime")),
-    CONSTRAINT "Restriction on image index" CHECK ("index" >= 1)
+    CONSTRAINT "Restriction on image index" CHECK ("index" >= 1),
+    PRIMARY KEY ("series", "filename", "index")
 );
 
 -- Index "endTime" before "startTime" because we are often interrested in the latest raster available.

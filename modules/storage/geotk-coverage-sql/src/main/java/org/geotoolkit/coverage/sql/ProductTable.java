@@ -174,8 +174,20 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
                     table.add(product, r);
                 }
             }
-        } catch (SQLException | FactoryException | TransformException exception) {
-            throw new CatalogException(exception);
+        } catch (SQLException | FactoryException | TransformException e) {
+            throw new CatalogException(e);
         }
+    }
+
+    /**
+     * Deletes the product of the given name.
+     *
+     * @param  product  the product to delete.
+     * @return whether the product has been deleted.
+     */
+    boolean delete(final ProductEntry product) throws SQLException {
+        final PreparedStatement statement = prepareStatement("DELETE FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"name\"=?");
+        statement.setString(1, product.name);
+        return statement.executeUpdate() != 0;
     }
 }

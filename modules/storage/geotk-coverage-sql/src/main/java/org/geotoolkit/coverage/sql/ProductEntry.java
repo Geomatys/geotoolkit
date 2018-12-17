@@ -48,7 +48,7 @@ final class ProductEntry extends AbstractGridResource {
     /**
      * The name of this product.
      */
-    private final String name;
+    final String name;
 
     /**
      * Same value than {@link #name} but provided as a name space.
@@ -84,7 +84,7 @@ final class ProductEntry extends AbstractGridResource {
     /**
      * The database that produced this entry.
      */
-    private final Database database;
+    final Database database;
 
     /**
      * Creates a new product.

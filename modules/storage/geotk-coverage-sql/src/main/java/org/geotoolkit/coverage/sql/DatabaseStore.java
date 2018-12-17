@@ -24,13 +24,14 @@ import javax.sql.DataSource;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
-import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
+import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.storage.ResourceType;
@@ -47,7 +48,7 @@ import org.opengis.util.GenericName;
 /**
  * Provides access to resource read from the database.
  */
-public final class DatabaseStore extends DataStore implements Aggregate {
+public final class DatabaseStore extends DataStore implements WritableAggregate {
     /**
      * Provider of {@link DatabaseStore}.
      */
@@ -166,7 +167,7 @@ public final class DatabaseStore extends DataStore implements Aggregate {
 
     @Override
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
-    public synchronized Collection<GridCoverageResource> components() throws DataStoreException {
+    public synchronized Collection<GridCoverageResource> components() throws CatalogException {
         if (components == null) {
             final List<ProductEntry> products;
             try (Transaction transaction = database.transaction();
@@ -186,7 +187,7 @@ public final class DatabaseStore extends DataStore implements Aggregate {
     }
 
     @Override
-    public synchronized GridCoverageResource findResource(final String productName) throws DataStoreException {
+    public synchronized GridCoverageResource findResource(final String productName) throws CatalogException {
         final ProductEntry product;
         try (Transaction transaction = database.transaction();
              ProductTable table = new ProductTable(transaction))
@@ -199,11 +200,39 @@ public final class DatabaseStore extends DataStore implements Aggregate {
     }
 
     @Override
-    public void close() throws DataStoreException {
+    public Resource add(final Resource resource) throws CatalogException {
+        throw new CatalogException("Not supported yet.");
     }
 
     @Override
-    public Metadata getMetadata() throws DataStoreException {
+    public void remove(Resource resource) throws CatalogException {
+        if (resource instanceof ProductGeotk) {
+            resource = ((ProductGeotk) resource).product;
+        }
+        if (resource instanceof ProductEntry) {
+            final ProductEntry product = (ProductEntry) resource;
+            if (product.database == database) {
+                try (final Transaction transaction = database.transaction()) {
+                    transaction.writeStart();
+                    try (ProductTable table = new ProductTable(transaction)) {
+                        table.delete(product);
+                    }
+                    transaction.writeEnd();
+                } catch (SQLException e) {
+                    throw new CatalogException(e);
+                }
+                return;
+            }
+        }
+        throw new CatalogException("Not a resource from this data store.");
+    }
+
+    @Override
+    public void close() throws CatalogException {
+    }
+
+    @Override
+    public Metadata getMetadata() throws CatalogException {
         return null;
     }
 
