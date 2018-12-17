@@ -74,7 +74,21 @@ public class DateTimeType {
     @XmlSchemaType(name = "language")
     protected String lang;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private Map<QName, String> otherAttributes = new HashMap<>();
+
+    public DateTimeType() {
+
+    }
+
+    public DateTimeType(XMLGregorianCalendar value) {
+        this.value = value;
+    }
+
+    public DateTimeType(XMLGregorianCalendar value, String base, String lang) {
+        this.value = value;
+        this.base = base;
+        this.lang = lang;
+    }
 
     /**
      * Gets the value of the value property.

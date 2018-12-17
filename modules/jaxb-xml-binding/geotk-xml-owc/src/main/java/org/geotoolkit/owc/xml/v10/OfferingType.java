@@ -78,21 +78,18 @@ public class OfferingType {
     @XmlAttribute(name = "code", required = true)
     protected String code;
 
+    private static final ObjectFactory OBJ_OWC_FACT = new ObjectFactory();
+
+    public OfferingType() {
+
+    }
+
+    public OfferingType(String code) {
+        this.code = code;
+    }
+
     /**
      * Gets the value of the operationOrContentOrStyleSet property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the operationOrContentOrStyleSet property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getOperationOrContentOrStyleSet().add(newItem);
-     * </pre>
-     *
      *
      * <p>
      * Objects of the following type(s) are allowed in the list
@@ -106,9 +103,15 @@ public class OfferingType {
      */
     public List<Object> getOperationOrContentOrStyleSet() {
         if (operationOrContentOrStyleSet == null) {
-            operationOrContentOrStyleSet = new ArrayList<Object>();
+            operationOrContentOrStyleSet = new ArrayList<>();
         }
         return this.operationOrContentOrStyleSet;
+    }
+
+    public void addOperation(OperationType op) {
+        if (op != null) {
+            getOperationOrContentOrStyleSet().add(OBJ_OWC_FACT.createOfferingTypeOperation(op));
+        }
     }
 
     /**
