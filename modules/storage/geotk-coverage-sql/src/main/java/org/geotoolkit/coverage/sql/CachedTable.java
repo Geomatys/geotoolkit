@@ -128,4 +128,11 @@ abstract class CachedTable<K,E> extends Table {
      * @throws CatalogException if a logical error has been detected in the database content.
      */
     abstract E createEntry(ResultSet results, K identifier) throws SQLException, CatalogException;
+
+    /**
+     * Removes the cached entry for the given identifier.
+     */
+    final void removeCached(final K identifier) {
+        cache.remove(identifier);
+    }
 }

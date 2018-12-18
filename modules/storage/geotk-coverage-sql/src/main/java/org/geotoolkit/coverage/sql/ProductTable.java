@@ -185,9 +185,11 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
      * @param  product  the product to delete.
      * @return whether the product has been deleted.
      */
-    boolean delete(final ProductEntry product) throws SQLException {
+    void delete(final ProductEntry product) throws SQLException {
         final PreparedStatement statement = prepareStatement("DELETE FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"name\"=?");
         statement.setString(1, product.name);
-        return statement.executeUpdate() != 0;
+        if (statement.executeUpdate() != 0) {
+            removeCached(product.name);
+        }
     }
 }
