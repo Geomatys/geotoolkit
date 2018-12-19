@@ -40,7 +40,7 @@ import org.apache.sis.util.collection.Cache;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  */
-abstract class CachedTable<K,E> extends Table {
+abstract class CachedTable<K, E extends Entry> extends Table {
     /**
      * The table for which caching is performed.
      */

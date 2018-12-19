@@ -44,7 +44,7 @@ import static java.lang.reflect.Array.getLength;
  *
  * @author Martin Desruisseaux (Geomatys)
  */
-final class AdditionalAxisTable extends CachedTable<String, AdditionalAxisEntry> {
+final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> {
     /**
      * Name of this table in the database.
      */

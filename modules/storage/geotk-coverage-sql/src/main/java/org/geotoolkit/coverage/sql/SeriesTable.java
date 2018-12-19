@@ -38,7 +38,7 @@ import org.apache.sis.referencing.crs.DefaultTemporalCRS;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Cédric Briançon (Geomatys)
  */
-final class SeriesTable extends CachedTable<Integer, SeriesEntry> {
+final class SeriesTable extends CachedTable<Integer,SeriesEntry> {
     /**
      * Name of this table in the database.
      */
