@@ -106,6 +106,11 @@ final class ProductEntry extends Entry {
     private List<ProductEntry> components;
 
     /**
+     * {@code true} if this product has been deleted.
+     */
+    private boolean isDeleted;
+
+    /**
      * Creates a new product.
      *
      * @param parent              the parent of this product, or {@code null} if none.
@@ -208,6 +213,7 @@ final class ProductEntry extends Entry {
      */
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public synchronized List<ProductEntry> components() throws DataStoreException {
+        ensureValid();
         if (components == null) {
             try (Transaction transaction = database.transaction();
                  ProductTable table = new ProductTable(transaction))
@@ -240,6 +246,7 @@ final class ProductEntry extends Entry {
      * This method also initializes {@link #gridGeometry} as a side-effect.
      */
     final void createMetadata(final MetadataBuilder metadata) throws DataStoreException {
+        ensureValid();
         metadata.addIdentifier(null, name, MetadataBuilder.Scope.RESOURCE);
         metadata.addSpatialRepresentation(null, exportedGrid, true);
         if (exportedGrid != null) try {
@@ -260,11 +267,13 @@ final class ProductEntry extends Entry {
      * Returns the grid geometry envelope, or {@code null} if unknown.
      * This method is invoked indirectly by {@link #createMetadata(MetadataBuilder)}.
      */
-    public Envelope getEnvelope() {
+    public Envelope getEnvelope() throws CatalogException {
+        ensureValid();
         return (exportedGrid != null) ? exportedGrid.getEnvelope() : null;
     }
 
     public GridGeometry getGridGeometry() throws CatalogException {
+        ensureValid();
         if (exportedGrid != null) {
             return exportedGrid;
         } else {
@@ -273,6 +282,7 @@ final class ProductEntry extends Entry {
     }
 
     public List<SampleDimension> getSampleDimensions() throws CatalogException {
+        ensureValid();
         if (format != null) {
             return format.sampleDimensions;
         } else {
@@ -294,6 +304,7 @@ final class ProductEntry extends Entry {
      * @throws DataStoreException if an error occurred while querying the database.
      */
     final ProductSubset subset(final Envelope areaOfInterest) throws DataStoreException {
+        ensureValid();
         final List<GridCoverageEntry> entries;
         try (Transaction transaction = database.transaction();
              GridCoverageTable table = new GridCoverageTable(transaction))
@@ -334,6 +345,17 @@ final class ProductEntry extends Entry {
         prefetch(table);
         for (final ProductEntry c : components) {
             c.removeCached(table);
+        }
+        table.removeCached(name);
+        isDeleted = true;
+    }
+
+    /**
+     * Throws an exception if this product has been deleted.
+     */
+    private void ensureValid() throws CatalogException {
+        if (isDeleted) {
+            throw new CatalogException("Product \"" + name + "\" has been deleted.");
         }
     }
 }
