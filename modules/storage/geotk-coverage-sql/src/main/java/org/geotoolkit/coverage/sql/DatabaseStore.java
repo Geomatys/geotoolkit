@@ -222,9 +222,15 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
 
     @Override
     public void remove(Resource resource) throws CatalogException {
-        if (!(resource instanceof ProductResource && ((ProductResource) resource).product.remove(database))) {
+        final ProductEntry product;
+        if (resource instanceof ProductResource) {
+            product = ((ProductResource) resource).product;
+        } else if (resource instanceof ProductAggregate) {
+            product = ((ProductAggregate) resource).product;
+        } else {
             throw new CatalogException("Not a resource from this data store.");
         }
+        product.remove();
     }
 
     @Override

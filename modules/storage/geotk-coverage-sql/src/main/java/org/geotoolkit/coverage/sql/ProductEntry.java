@@ -242,7 +242,7 @@ final class ProductEntry extends Entry {
     final void createMetadata(final MetadataBuilder metadata) throws DataStoreException {
         metadata.addIdentifier(null, name, MetadataBuilder.Scope.RESOURCE);
         metadata.addSpatialRepresentation(null, exportedGrid, true);
-        try {
+        if (exportedGrid != null) try {
             metadata.addExtent(exportedGrid.getEnvelope());
         } catch (TransformException e) {
             throw new DataStoreReferencingException(e);
@@ -311,13 +311,8 @@ final class ProductEntry extends Entry {
 
     /**
      * Removes this product from the given database.
-     *
-     * @param  caller  the database from which to remove this product.
      */
-    final boolean remove(final Database caller) throws CatalogException {
-        if (caller != database) {
-            return false;
-        }
+    final boolean remove() throws CatalogException {
         try (final Transaction transaction = database.transaction()) {
             transaction.writeStart();
             try (ProductTable table = new ProductTable(transaction)) {

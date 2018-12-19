@@ -32,7 +32,7 @@ import org.geotoolkit.storage.AbstractResource;
 final class ProductAggregate extends AbstractResource implements Aggregate {
     private final DatabaseStore store;
 
-    private final ProductEntry product;
+    final ProductEntry product;
 
     private List<Resource> components;
 
