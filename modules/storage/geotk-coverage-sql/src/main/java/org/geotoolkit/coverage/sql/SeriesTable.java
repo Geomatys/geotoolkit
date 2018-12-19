@@ -29,6 +29,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 
 
@@ -75,7 +76,7 @@ final class SeriesTable extends CachedTable<Integer,SeriesEntry> {
      * @throws SQLException if an error occurred while reading the database.
      */
     @Override
-    SeriesEntry createEntry(final ResultSet results, final Integer identifier) throws SQLException, CatalogException {
+    SeriesEntry createEntry(final ResultSet results, final Integer identifier) throws SQLException, DataStoreException {
         final String product   = results.getString(1);
         final String directory = results.getString(2);
         final String extension = results.getString(3);
@@ -100,7 +101,7 @@ final class SeriesTable extends CachedTable<Integer,SeriesEntry> {
      * @throws SQLException if an error occurred while reading from or writing to the database.
      */
     final int findOrInsert(final String product, final String directory, final String extension, final String driver,
-            final List<SampleDimension> bands) throws SQLException, CatalogException
+            final List<SampleDimension> bands) throws SQLException, DataStoreException
     {
         final String format = formats.findOrInsert(driver, bands, product);
         boolean insert = false;
@@ -172,7 +173,7 @@ final class SeriesTable extends CachedTable<Integer,SeriesEntry> {
      * Current implementation checks only the number of occurrences in "Series" table;
      * we do not count the number of occurrences in "GridCoverages" table.
      */
-    final FormatEntry getRepresentativeFormat(final String product) throws SQLException, CatalogException {
+    final FormatEntry getRepresentativeFormat(final String product) throws SQLException, DataStoreException {
         String identifier = null;
         final PreparedStatement statement = prepareStatement("SELECT \"format\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE "
                 + "\"product\"=? GROUP BY \"format\" ORDER BY COUNT(*) DESC");

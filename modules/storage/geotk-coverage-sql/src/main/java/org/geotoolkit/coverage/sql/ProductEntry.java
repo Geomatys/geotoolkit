@@ -195,7 +195,7 @@ final class ProductEntry extends Entry {
      * Fetches now the list of components if not already available.
      * This method should be invoked when the caller is going to invoke {@link #components()} soon.
      */
-    final synchronized void prefetch(final ProductTable table) throws SQLException, CatalogException {
+    final synchronized void prefetch(final ProductTable table) throws SQLException, DataStoreException {
         if (components == null) {
             components = table.list(name);
         }
@@ -207,7 +207,7 @@ final class ProductEntry extends Entry {
      * by listing all products.
      */
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
-    public synchronized List<ProductEntry> components() throws CatalogException {
+    public synchronized List<ProductEntry> components() throws DataStoreException {
         if (components == null) {
             try (Transaction transaction = database.transaction();
                  ProductTable table = new ProductTable(transaction))
@@ -289,9 +289,9 @@ final class ProductEntry extends Entry {
      *
      * @param  areaOfInterest  the envelope for filtering the coverages, or {@code null} for no filtering.
      * @return the set of coverages of this product which intersect the given envelope, or {@code null} if none.
-     * @throws CatalogException if an error occurred while querying the database.
+     * @throws DataStoreException if an error occurred while querying the database.
      */
-    final ProductSubset subset(final Envelope areaOfInterest) throws CatalogException {
+    final ProductSubset subset(final Envelope areaOfInterest) throws DataStoreException {
         final List<GridCoverageEntry> entries;
         try (Transaction transaction = database.transaction();
              GridCoverageTable table = new GridCoverageTable(transaction))
@@ -312,16 +312,26 @@ final class ProductEntry extends Entry {
     /**
      * Removes this product from the given database.
      */
-    final boolean remove() throws CatalogException {
+    final void remove() throws DataStoreException {
         try (final Transaction transaction = database.transaction()) {
             transaction.writeStart();
             try (ProductTable table = new ProductTable(transaction)) {
+                removeCached(table);
                 table.delete(name);
             }
             transaction.writeEnd();
         } catch (SQLException e) {
             throw new CatalogException(e);
         }
-        return true;
+    }
+
+    /**
+     * Removed recursively all cached values.
+     */
+    private void removeCached(final ProductTable table) throws SQLException, DataStoreException {
+        prefetch(table);
+        for (final ProductEntry c : components) {
+            c.removeCached(table);
+        }
     }
 }

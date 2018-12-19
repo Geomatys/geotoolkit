@@ -167,7 +167,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
 
     @Override
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
-    public synchronized Collection<Resource> components() throws CatalogException {
+    public synchronized Collection<Resource> components() throws DataStoreException {
         if (components == null) {
             final List<ProductEntry> products;
             try (Transaction transaction = database.transaction();
@@ -188,7 +188,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     }
 
     @Override
-    public synchronized Resource findResource(final String productName) throws CatalogException {
+    public synchronized Resource findResource(final String productName) throws DataStoreException {
         final ProductEntry product;
         try (Transaction transaction = database.transaction();
              ProductTable table = new ProductTable(transaction))
@@ -205,7 +205,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
      * Wraps the given product entry in a resource, which may be a grid resource or an aggregate.
      * It is recommended to have product components prefetched before to invoke this method.
      */
-    final Resource createResource(final ProductEntry product) throws CatalogException {
+    final Resource createResource(final ProductEntry product) throws DataStoreException {
         if (product.components().isEmpty()) {
             return new ProductResource(this, product);
         } else if (product.isGrid()) {
@@ -221,7 +221,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     }
 
     @Override
-    public void remove(Resource resource) throws CatalogException {
+    public void remove(Resource resource) throws DataStoreException {
         final ProductEntry product;
         if (resource instanceof ProductResource) {
             product = ((ProductResource) resource).product;

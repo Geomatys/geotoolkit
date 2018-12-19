@@ -36,6 +36,8 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreReferencingException;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
@@ -105,7 +107,7 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
      * @throws SQLException if an error occurred while reading the database.
      */
     @Override
-    ProductEntry createEntry(final ResultSet results, final String name) throws SQLException, CatalogException {
+    ProductEntry createEntry(final ResultSet results, final String name) throws SQLException, DataStoreException {
         final String   parent       = results.getString(2);
         final int      gridID       = results.getInt(3);
         final boolean  hasNoGrid    = results.wasNull();
@@ -127,7 +129,7 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
                     exportedGrid = gridEntry.getGridGeometry(startTime, endTime);
                 }
             } catch (TransformException e) {
-                throw new CatalogException(e);
+                throw new DataStoreReferencingException(e);
             }
         }
         final FormatEntry format  = seriesTable.getRepresentativeFormat(name);
@@ -137,7 +139,7 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
     /**
      * Returns all available products having the given parent as an unmodifiable list.
      */
-    final List<ProductEntry> list(final String parent) throws SQLException, CatalogException {
+    final List<ProductEntry> list(final String parent) throws SQLException, DataStoreException {
         final List<ProductEntry> products = new ArrayList<>();
         final StringBuilder sql = new StringBuilder(select());
         final int p = sql.lastIndexOf(NAME);
@@ -157,7 +159,7 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
     /**
      * Returns all available products as an unmodifiable list.
      */
-    final List<ProductEntry> list() throws SQLException, CatalogException {
+    final List<ProductEntry> list() throws SQLException, DataStoreException {
         final Map<String,ProductEntry> products = new HashMap<>();
         final List<ProductEntry> deferred = new ArrayList<>();
         final StringBuilder sql = new StringBuilder(select());
@@ -194,7 +196,7 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
      * @throws SQLException if an error occurred while reading or writing the database.
      */
     private void createIfAbsent(final AddOption option, final String name, final String parent, final List<NewRaster> rasters)
-            throws SQLException, CatalogException, FactoryException, TransformException
+            throws SQLException, DataStoreException, FactoryException, TransformException
     {
         if (option != AddOption.NO_CREATE) {
             boolean exists;
@@ -233,7 +235,7 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
      * Adds entries in the {@code "GridCoverages"} table for this product.
      * This method adds sub-products if the rasters to add have more than one component.
      */
-    void addCoverageReferences(String product, final AddOption option, final Map<String,List<NewRaster>> rasters) throws CatalogException {
+    void addCoverageReferences(String product, final AddOption option, final Map<String,List<NewRaster>> rasters) throws DataStoreException {
         ArgumentChecks.ensureNonNull("product", product);
         try (final GridCoverageTable table = new GridCoverageTable(transaction, seriesTable, gridGeometries)) {
             final String parent;
@@ -267,8 +269,6 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
     void delete(final String product) throws SQLException {
         final PreparedStatement statement = prepareStatement("DELETE FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"name\"=?");
         statement.setString(1, product);
-        if (statement.executeUpdate() != 0) {
-            removeCached(product);
-        }
+        statement.executeUpdate();
     }
 }

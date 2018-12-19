@@ -42,7 +42,7 @@ final class ProductAggregate extends AbstractResource implements Aggregate {
         this.product = product;
     }
 
-    private static List<Resource> wrap(final DatabaseStore store, final List<ProductEntry> products) throws CatalogException {
+    private static List<Resource> wrap(final DatabaseStore store, final List<ProductEntry> products) throws DataStoreException {
         final Resource[] resources = new ProductResource[products.size()];
         for (int i=0; i<resources.length; i++) {
             final ProductEntry product = products.get(i);
@@ -53,7 +53,7 @@ final class ProductAggregate extends AbstractResource implements Aggregate {
 
     @Override
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
-    public List<Resource> components() throws CatalogException {
+    public List<Resource> components() throws DataStoreException {
         if (components == null) {
             components = wrap(store, product.components());
         }
@@ -76,7 +76,7 @@ final class ProductAggregate extends AbstractResource implements Aggregate {
 
         @Override
         @SuppressWarnings("ReturnOfCollectionOrArrayField")
-        public List<Resource> components() throws CatalogException {
+        public List<Resource> components() throws DataStoreException {
             if (components == null) {
                 components = wrap((DatabaseStore) store, product.components());
             }

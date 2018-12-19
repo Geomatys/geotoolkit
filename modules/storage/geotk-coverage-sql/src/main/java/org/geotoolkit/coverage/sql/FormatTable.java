@@ -27,6 +27,7 @@ import org.apache.sis.util.Numbers;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.storage.DataStoreException;
 
 
 /**
@@ -135,7 +136,7 @@ final class FormatTable extends CachedTable<String,FormatEntry> {
      * @return identifier of an existing format, or {@code null} if none.
      * @throws SQLException if an error occurred while querying the database.
      */
-    private String search(final String driver, final List<SampleDimension> bands) throws SQLException, CatalogException {
+    private String search(final String driver, final List<SampleDimension> bands) throws SQLException, DataStoreException {
         final int numBands = size(bands);
         try (PreparedStatement statement = getConnection().prepareStatement(
                 "SELECT \"name\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"driver\" = ?"))
@@ -195,7 +196,7 @@ next:           while (results.next()) {
      * @throws SQLException if an error occurred while writing to the database.
      */
     final String findOrInsert(final String driver, final List<SampleDimension> bands, String suggestedID)
-            throws SQLException, CatalogException
+            throws SQLException, DataStoreException
     {
         String existing = search(driver, bands);
         if (existing != null) {
