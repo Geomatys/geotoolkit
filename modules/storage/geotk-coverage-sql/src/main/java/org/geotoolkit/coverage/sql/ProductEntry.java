@@ -249,8 +249,10 @@ final class ProductEntry extends Entry {
 
         }
 //      metadata.addTemporalResolution(temporalResolution);                 // TODO
-        for (final SampleDimension band : getSampleDimensions()) {
-            metadata.addNewBand(band);
+        if (format != null) {
+            for (final SampleDimension band : format.sampleDimensions) {
+                metadata.addNewBand(band);
+            }
         }
     }
 
