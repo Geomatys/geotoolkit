@@ -177,7 +177,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
             } catch (SQLException e) {
                 throw new CatalogException(e);
             }
-            final Resource[] resources = new ProductResource[products.size()];
+            final Resource[] resources = new Resource[products.size()];
             for (int i=0; i<resources.length; i++) {
                 // No need to call prefetch(table) for products obtained by list().
                 resources[i] = createResource(products.get(i));
