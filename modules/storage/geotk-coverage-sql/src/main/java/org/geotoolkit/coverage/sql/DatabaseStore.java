@@ -16,24 +16,32 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.util.Map;
-import java.util.List;
-import java.util.Collection;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import javax.sql.DataSource;
+import org.apache.sis.internal.metadata.sql.ScriptRunner;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
-import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.metadata.Metadata;
@@ -70,14 +78,34 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
         private static final ParameterDescriptor<Path> ROOT_DIRECTORY;
 
         /**
+         * Parameter for the database creation.
+         */
+        private static final ParameterDescriptor<Boolean> CREATE;
+
+        /**
          * All parameters.
          */
         private static final ParameterDescriptorGroup PARAMETERS;
         static {
             final ParameterBuilder builder = new ParameterBuilder();
             DATABASE       = builder.addName("database").setRequired(true).create(DataSource.class, null);
+            CREATE         = builder.addName("create").setRequired(false).create(Boolean.class, true);
             ROOT_DIRECTORY = builder.addName("rootDirectory").setRemarks("local data directory root").setRequired(true).create(Path.class, null);
-            PARAMETERS     = builder.addName(NAME).createGroup(DATABASE, ROOT_DIRECTORY);
+            PARAMETERS     = builder.addName(NAME).createGroup(DATABASE, ROOT_DIRECTORY, CREATE);
+        }
+
+        /**
+         * Get singleton instance of Coverage-SQL provider.
+         *
+         * <p>
+         * Note : this method is named after Java 9 service loader provider method.
+         * {@link https://docs.oracle.com/javase/9/docs/api/java/util/ServiceLoader.html}
+         * </p>
+         *
+         * @return singleton instance of CoverageSQL Provider
+         */
+        public static Provider provider() {
+            return (Provider) DataStores.getProviderById(NAME);
         }
 
         @Override
@@ -88,6 +116,14 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
         @Override
         public ParameterDescriptorGroup getOpenParameters() {
             return PARAMETERS;
+        }
+
+        public DatabaseStore open(DataSource dataSource, Path rootDirectory, boolean create) throws DataStoreException {
+            final Parameters params = Parameters.castOrWrap(PARAMETERS.createValue());
+            params.getOrCreate(DATABASE).setValue(dataSource);
+            params.getOrCreate(CREATE).setValue(create);
+            params.getOrCreate(ROOT_DIRECTORY).setValue(rootDirectory);
+            return open(params);
         }
 
         @Override
@@ -130,6 +166,41 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
 
     public DatabaseStore(final Provider provider, final Parameters parameters) throws DataStoreException {
         super(provider, new StorageConnector(parameters.getMandatoryValue(Provider.DATABASE)));
+
+        if (parameters.booleanValue(Provider.CREATE)) {
+            //check if schema exist
+            final DataSource dataSource = parameters.getMandatoryValue(Provider.DATABASE);
+
+            boolean exist;
+            try (Connection cnx = dataSource.getConnection();
+                 Statement stmt = cnx.createStatement();
+                 ResultSet rs = stmt.executeQuery("SELECT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = 'rasters');");) {
+                rs.next();
+                exist = rs.getBoolean(1);
+            } catch (SQLException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+
+            if (!exist) {
+                //create schema
+                final String sql;
+                try (InputStream in = DatabaseStore.class.getResourceAsStream("/org/geotoolkit/coverage/sql/Create.sql")) {
+                    sql = IOUtilities.toString(in);
+                } catch (IOException ex) {
+                    throw new DataStoreException(ex.getMessage(), ex);
+                }
+
+                try (Connection cnx = dataSource.getConnection()) {
+                    final ScriptRunner runner = new ScriptRunner(cnx, 100);
+                    runner.run(sql);
+                    runner.close();
+                } catch (SQLException | IOException ex) {
+                    throw new DataStoreException(ex.getMessage(), ex);
+                }
+
+            }
+        }
+
         try {
             database = new Database(parameters.getMandatoryValue(Provider.DATABASE),
                                     parameters.getMandatoryValue(Provider.ROOT_DIRECTORY));
