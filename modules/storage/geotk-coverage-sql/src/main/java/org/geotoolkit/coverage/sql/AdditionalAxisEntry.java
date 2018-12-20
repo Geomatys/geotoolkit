@@ -33,7 +33,7 @@ import org.apache.sis.internal.metadata.AxisDirections;
  *
  * @author Martin Desruisseaux (Geomatys)
  */
-final class AdditionalAxisEntry {
+final class AdditionalAxisEntry extends Entry {
     /**
      * The coordinate reference system for this entry.
      */

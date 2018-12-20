@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -39,10 +40,10 @@ import org.opengis.util.GenericName;
 /**
  * Interoperability with legacy API.
  */
-final class ProductGeotk extends AbstractCoverageResource implements GridCoverageResource {
+class ProductResource extends AbstractCoverageResource implements GridCoverageResource {
     final ProductEntry product;
 
-    ProductGeotk(final DatabaseStore store, final ProductEntry product)  {
+    ProductResource(final DataStore store, final ProductEntry product)  {
         super(store, product.getIdentifier());
         this.product = product;
     }
@@ -78,18 +79,12 @@ final class ProductGeotk extends AbstractCoverageResource implements GridCoverag
 
         @Override
         public List<GenericName> getCoverageNames() throws CoverageStoreException {
-            return Collections.singletonList(ProductGeotk.this.getIdentifier());
+            return Collections.singletonList(ProductResource.this.getIdentifier());
         }
 
         @Override
         public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException {
-            try {
-                return CoverageUtilities.toGeotk(product.getGridGeometry(), true);
-            } catch (CoverageStoreException e) {
-                throw e;
-            } catch (DataStoreException e) {
-                throw new CatalogException(e);
-            }
+            return CoverageUtilities.toGeotk(product.getGridGeometry(), true);
         }
 
         @Override

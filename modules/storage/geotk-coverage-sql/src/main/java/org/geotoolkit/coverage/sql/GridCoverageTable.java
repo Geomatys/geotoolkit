@@ -31,6 +31,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Envelopes;
 
@@ -82,7 +83,7 @@ final class GridCoverageTable extends Table {
     /**
      * Returns all grid geometries used by the given product.
      */
-    final List<GridGeometryEntry> getGridGeometries(final String product) throws SQLException, CatalogException {
+    final List<GridGeometryEntry> getGridGeometries(final String product) throws SQLException, DataStoreException {
         final List<GridGeometryEntry> geometries = new ArrayList<>();
         final PreparedStatement statement = prepareStatement("SELECT DISTINCT \"grid\" FROM " + SCHEMA + ".\"" + TABLE + "\""
                 + " INNER JOIN " + SCHEMA + ".\"" + SeriesTable.TABLE + "\" ON (\"series\" = \"" + SeriesTable.TABLE + "\".\"identifier\")"
@@ -108,7 +109,7 @@ final class GridCoverageTable extends Table {
      * @todo returns a stream instead. Requires to be careful about closing the statement and the connection.
      */
     final List<GridCoverageEntry> find(final String product, final Envelope areaOfInterest)
-            throws SQLException, CatalogException, TransformException
+            throws SQLException, DataStoreException, TransformException
     {
         final PreparedStatement statement = prepareStatement("SELECT \"series\", \"filename\", \"index\", \"grid\","
                 + " \"startTime\", \"endTime\" FROM " + SCHEMA + ".\"" + TABLE + "\""
@@ -163,7 +164,7 @@ final class GridCoverageTable extends Table {
      * @throws SQLException if an error occurred while reading from or writing to the database.
      */
     final void add(final String product, final NewRaster raster)
-            throws SQLException, FactoryException, TransformException, CatalogException
+            throws SQLException, FactoryException, TransformException, DataStoreException
     {
         /*
          * Decompose the given path into the directory, filename and extension components.

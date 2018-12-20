@@ -38,7 +38,7 @@ import java.nio.file.Paths;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  */
-final class SeriesEntry {
+final class SeriesEntry extends Entry {
     /**
      * Identifier of this series.
      */

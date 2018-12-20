@@ -292,13 +292,13 @@ COMMENT ON VIEW rasters."RangeOfFormats" IS 'Value range of each raster format.'
 CREATE TABLE rasters."Products" (
     "name"               VARCHAR(120) NOT NULL PRIMARY KEY,
     "parent"             VARCHAR(120),
-    "exportedGrid"       INTEGER NOT NULL,
+    "exportedGrid"       INTEGER,
     "temporalResolution" INTERVAL,
     "metadata"           VARCHAR(15),
     CONSTRAINT "Reference to the parent product" FOREIGN KEY ("parent")
         REFERENCES rasters."Products" ("name")
         ON UPDATE CASCADE
-        ON DELETE RESTRICT,
+        ON DELETE CASCADE,
     CONSTRAINT "Reference to ISO metadata" FOREIGN KEY ("metadata")
         REFERENCES metadata."Metadata" ("ID")
         ON UPDATE CASCADE
@@ -309,12 +309,15 @@ CREATE TABLE rasters."Products" (
         ON DELETE RESTRICT
 );
 
+CREATE INDEX "Parent products" ON rasters."Products" ("parent");
+
 COMMENT ON TABLE  rasters."Products"                      IS 'Set of data series from the same producer observing the same phenomenon.';
 COMMENT ON COLUMN rasters."Products"."name"               IS 'Name of the product.';
 COMMENT ON COLUMN rasters."Products"."parent"             IS 'If this product is a sub-product of another product, the parent product.';
 COMMENT ON COLUMN rasters."Products"."exportedGrid"       IS 'Grid geometry for this product. Should be the grid geometry used by most rasters.';
 COMMENT ON COLUMN rasters."Products"."temporalResolution" IS 'Interval of time between rasters. Can be approximate or left blank if not applicable.';
 COMMENT ON COLUMN rasters."Products"."metadata"           IS 'Reference to additional information about the product.';
+COMMENT ON INDEX  rasters."Parent products"               IS 'Index of the product that contains a sub-product.';
 COMMENT ON CONSTRAINT "Reference to a grid geometry" ON rasters."Products" IS 'Each producy should have a spatial extent.';
 
 
@@ -357,10 +360,12 @@ COMMENT ON CONSTRAINT "Reference to used format"       ON rasters."Series" IS 'A
 
 --
 -- The main table listing all rasters. Notes on indexes:
+-- (rule of thumb: index for equality first — then for ranges)
 --
 --   • "series" is the starting point of our queries.
 --   • "startTime" and "endTime" must scan in opposite directions for more efficient search of intersections.
 --   • "grid" is part of our queries, but does not seem to be used by PostgreSQL.
+--   • The primary key arbitrarily starts with "filename" instead than "series" for avoiding redundancy with other index.
 --
 -- We do not use PostgreSQL TSRANGE type for portability and for more efficient queries of minimal and maximal
 -- dates in a series.
@@ -383,7 +388,7 @@ CREATE TABLE rasters."GridCoverages" (
     CONSTRAINT "Restriction on time range" CHECK (("startTime" IS NULL AND "endTime" IS NULL)
         OR ("startTime" IS NOT NULL AND "endTime" IS NOT NULL AND "startTime" <= "endTime")),
     CONSTRAINT "Restriction on image index" CHECK ("index" >= 1),
-    PRIMARY KEY ("series", "filename", "index")
+    PRIMARY KEY ("filename", "series", "index")
 );
 
 -- Index "endTime" before "startTime" because we are often interrested in the latest raster available.
@@ -457,13 +462,13 @@ COMMENT ON VIEW rasters."DomainOfProducts" IS 'Number of rasters and geographica
 -- Get an estimation of the number of rows in a table.
 -- Adapted from https://wiki.postgresql.org/wiki/Count_estimate
 --
-CREATE FUNCTION rasters.count_estimate(series integer) RETURNS INTEGER AS
+CREATE FUNCTION rasters.count_estimate("series" INTEGER) RETURNS INTEGER AS
 $BODY$
 DECLARE
     rec   record;
     ROWS  INTEGER;
 BEGIN
-    FOR rec IN EXECUTE 'EXPLAIN SELECT * FROM rasters."GridCoverages" WHERE "series"=' || series LOOP
+    FOR rec IN EXECUTE 'EXPLAIN SELECT * FROM rasters."GridCoverages" WHERE "series"=' || "series" LOOP
         ROWS := SUBSTRING(rec."QUERY PLAN" FROM ' rows=([[:digit:]]+)');
         EXIT WHEN ROWS IS NOT NULL;
     END LOOP;
@@ -471,5 +476,5 @@ BEGIN
 END
 $BODY$ LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION rasters.count_estimate(integer)
+COMMENT ON FUNCTION rasters.count_estimate(INTEGER)
     IS 'Returns an estimate of the number of grid coverages in a given series.';

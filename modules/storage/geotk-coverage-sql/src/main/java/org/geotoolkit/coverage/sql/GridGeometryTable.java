@@ -52,6 +52,7 @@ import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ComparisonMode;
 
 import static org.geotoolkit.coverage.sql.GridGeometryEntry.AFFINE_DIMENSION;
@@ -103,7 +104,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
      */
     @Override
     @SuppressWarnings("fallthrough")
-    GridGeometryEntry createEntry(final ResultSet results, final Integer identifier) throws SQLException, CatalogException {
+    GridGeometryEntry createEntry(final ResultSet results, final Integer identifier) throws SQLException, DataStoreException {
         final long width  = results.getLong(1);
         final long height = results.getLong(2);
         final AffineTransform2D gridToCRS = new AffineTransform2D(

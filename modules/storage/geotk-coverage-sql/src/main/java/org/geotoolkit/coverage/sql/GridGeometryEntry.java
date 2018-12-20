@@ -63,7 +63,7 @@ import org.apache.sis.util.ArraysExt;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Sam Hiatt
  */
-final class GridGeometryEntry {
+final class GridGeometryEntry extends Entry {
     /**
      * Number of dimensions of the "grid to CRS" part to be represented as an affine transform
      * in the "GridGeometries" table.

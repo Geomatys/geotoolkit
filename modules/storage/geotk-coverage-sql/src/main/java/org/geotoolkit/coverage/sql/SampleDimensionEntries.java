@@ -33,7 +33,7 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
  *
  * @author Martin Desruisseaux (Geomatys)
  */
-final class SampleDimensionEntries {
+final class SampleDimensionEntries extends Entry {
     /**
      * The name of the color palette, or {@code null} if none. If more than one color
      * palettes are found, then the one for the largest range of values is used.

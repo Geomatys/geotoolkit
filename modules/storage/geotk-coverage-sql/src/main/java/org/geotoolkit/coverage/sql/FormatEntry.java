@@ -32,7 +32,7 @@ import org.apache.sis.coverage.SampleDimension;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  */
-final class FormatEntry {
+final class FormatEntry extends Entry {
     /**
      * The data store provider to use for opening files, or {@code null} if unknown.
      */

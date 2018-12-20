@@ -17,7 +17,10 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.Map;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.time.Duration;
 import java.sql.SQLException;
 
@@ -27,28 +30,42 @@ import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.operation.TransformException;
 
-import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreReferencingException;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.internal.storage.MetadataBuilder;
-import org.apache.sis.util.logging.WarningListeners;
+import org.apache.sis.internal.util.CollectionsExt;
 
 import org.geotoolkit.resources.Errors;
 
 
 /**
- * A coverage product.
+ * A coverage product, which may be an aggregate of other products.
+ * This class provides the public methods of {@link Aggregate} and {@link GridCoverageResource}
+ * but without implementing those interfaces, since the set of interfaces to implement depends
+ * on whether this entry is for a product or a group of products (or both - this is allowed).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  */
-final class ProductEntry extends AbstractGridResource {
+final class ProductEntry extends Entry {
+    /**
+     * The database that produced this entry.
+     */
+    private final Database database;
+
+    /**
+     * The parent of this product, or {@code null} if none.
+     */
+    private final String parent;
+
     /**
      * The name of this product.
      */
-    final String name;
+    private final String name;
 
     /**
      * Same value than {@link #name} but provided as a name space.
@@ -56,7 +73,9 @@ final class ProductEntry extends AbstractGridResource {
     private final NameSpace namespace;
 
     /**
-     * The spatiotemporal grid geometry. This information may be only approximate.
+     * The spatiotemporal grid geometry of the datacube to give to users, or {@code null} if none.
+     * This information may be {@code null} or only approximate. If {@code null}, then we have no
+     * datacube for this product but we may have an aggregate of sub-products.
      */
     private final GridGeometry exportedGrid;
 
@@ -69,8 +88,8 @@ final class ProductEntry extends AbstractGridResource {
     private final Duration temporalResolution;
 
     /**
-     * A representative format for this product. If the product uses different formats,
-     * then this is an arbitrary format in that list.
+     * A representative format for this product, or {@code null} if none.
+     * If the product uses different formats, then this is an arbitrary format in that list.
      */
     private final FormatEntry format;
 
@@ -82,28 +101,34 @@ final class ProductEntry extends AbstractGridResource {
     private final String metadata;
 
     /**
-     * The database that produced this entry.
+     * The sub-products (maybe empty), or {@code null} if not yet determined. Shall be an unmodifiable list.
      */
-    final Database database;
+    private List<ProductEntry> components;
+
+    /**
+     * {@code true} if this product has been deleted.
+     */
+    private boolean isDeleted;
 
     /**
      * Creates a new product.
      *
+     * @param parent              the parent of this product, or {@code null} if none.
      * @param name                the product name.
-     * @param exportedGrid        the spatial component of the grid geometry. This information may be only approximate.
+     * @param exportedGrid        the spatial component of the grid geometry. May be {@code null} or only approximate.
      * @param temporalResolution  typical time interval between images, or {@code null} if unknown.
      * @param metadata            optional entry in {@code metadata.Metadata} table, or {@code null}.
      */
-    ProductEntry(final Database database, final String name, final GridGeometry exportedGrid, final Duration temporalResolution,
-            final FormatEntry format, final String metadata)
+    ProductEntry(final Database database, final String parent, final String name, final GridGeometry exportedGrid,
+            final Duration temporalResolution, final FormatEntry format, final String metadata)
     {
-        super((WarningListeners<DataStore>) null);
+        this.database           = database;
+        this.parent             = parent;
         this.name               = name;
         this.exportedGrid       = exportedGrid;
         this.temporalResolution = temporalResolution;
         this.format             = format;
         this.metadata           = metadata;
-        this.database           = database;
         this.namespace          = database.nameFactory.createNameSpace(database.nameFactory.createLocalName(null, name), null);
     }
 
@@ -119,8 +144,9 @@ final class ProductEntry extends AbstractGridResource {
 
     /**
      * Returns a unique identifier for this resource.
+     *
+     * @see GridCoverageResource#getIdentifier()
      */
-    @Override
     public GenericName getIdentifier() {
         return namespace.name();
     }
@@ -133,17 +159,78 @@ final class ProductEntry extends AbstractGridResource {
     }
 
     /**
-     * Returns the resources bundle for error messages.
+     * If this product has a parent, adds itself to the component of that parent.
+     * Otherwise adds itself to the given map.
+     *
+     * This method is not synchronized. All {@code ProductEntry} initialized with this method
+     * shall be created in the same thread.
+     *
+     * @param  products  a map of products by names. Will be filled by this method.
+     * @return whether this method has been able to proceed or not.
      */
-    private Errors errors() {
-        return Errors.getResources(database.locale);
+    final boolean dispatch(final Map<String,ProductEntry> products) throws CatalogException {
+        if (parent == null) {
+            if (products.put(name, this) != null) {
+                throw new CatalogException("Duplicated product: " + name);
+            }
+            return true;
+        } else {
+            final ProductEntry p = products.get(parent);
+            if (p == null) {
+                return false;
+            }
+            List<ProductEntry> addTo = p.components;
+            if (addTo == null) {
+                p.components = addTo = new ArrayList<>();
+            }
+            return addTo.add(this);
+        }
     }
 
     /**
-     * Creates a new transaction with the database.
+     * Invoked after the caller finished to create {@link #dispatch(Map)} for all products.
+     * This method is not synchronized. All {@code ProductEntry} initialized with this method
+     * shall be created in the same thread.
      */
-    private Transaction transaction() throws SQLException {
-        return database.transaction();
+    final void finish() {
+        components = (components != null) ? CollectionsExt.unmodifiableOrCopy(components) : Collections.emptyList();
+    }
+
+    /**
+     * Fetches now the list of components if not already available.
+     * This method should be invoked when the caller is going to invoke {@link #components()} soon.
+     */
+    final synchronized void prefetch(final ProductTable table) throws SQLException, DataStoreException {
+        if (components == null) {
+            components = table.list(name);
+        }
+    }
+
+    /**
+     * Returns the sub-products. This method fetches them when first needed, if not already known.
+     * Deferred listing of components may happen if the product was fetched by name instead than
+     * by listing all products.
+     */
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
+    public synchronized List<ProductEntry> components() throws DataStoreException {
+        ensureValid();
+        if (components == null) {
+            try (Transaction transaction = database.transaction();
+                 ProductTable table = new ProductTable(transaction))
+            {
+                components = table.list(name);
+            } catch (SQLException e) {
+                throw new CatalogException(e);
+            }
+        }
+        return components;
+    }
+
+    /**
+     * Returns whether this product can be considered as a grid resource.
+     */
+    final boolean isGrid() {
+        return exportedGrid != null;
     }
 
     /**
@@ -158,32 +245,53 @@ final class ProductEntry extends AbstractGridResource {
      *
      * This method also initializes {@link #gridGeometry} as a side-effect.
      */
-    @Override
-    protected void createMetadata(final MetadataBuilder metadata) throws DataStoreException {
-        try {
-            metadata.addIdentifier(null, name, MetadataBuilder.Scope.RESOURCE);
+    final void createMetadata(final MetadataBuilder metadata) throws DataStoreException {
+        ensureValid();
+        metadata.addIdentifier(null, name, MetadataBuilder.Scope.RESOURCE);
+        metadata.addSpatialRepresentation(null, exportedGrid, true);
+        if (exportedGrid != null) try {
             metadata.addExtent(exportedGrid.getEnvelope());
-            // TODO
-//          metadata.addResolution(exportedGrid);
-//          metadata.addTemporalResolution(temporalResolution);
         } catch (TransformException e) {
-            throw new DataStoreException(e);
+            throw new DataStoreReferencingException(e);
+
+        }
+//      metadata.addTemporalResolution(temporalResolution);                 // TODO
+        if (format != null) {
+            for (final SampleDimension band : format.sampleDimensions) {
+                metadata.addNewBand(band);
+            }
         }
     }
 
-    @Override
-    public GridGeometry getGridGeometry() throws DataStoreException {
-        return exportedGrid;
+    /**
+     * Returns the grid geometry envelope, or {@code null} if unknown.
+     * This method is invoked indirectly by {@link #createMetadata(MetadataBuilder)}.
+     */
+    public Envelope getEnvelope() throws CatalogException {
+        ensureValid();
+        return (exportedGrid != null) ? exportedGrid.getEnvelope() : null;
     }
 
-    @Override
-    public List<SampleDimension> getSampleDimensions() {
-        return format.sampleDimensions;
+    public GridGeometry getGridGeometry() throws CatalogException {
+        ensureValid();
+        if (exportedGrid != null) {
+            return exportedGrid;
+        } else {
+            throw new CatalogException("No grid geometry for \"" + name + "\" product.");
+        }
     }
 
-    @Override
+    public List<SampleDimension> getSampleDimensions() throws CatalogException {
+        ensureValid();
+        if (format != null) {
+            return format.sampleDimensions;
+        } else {
+            throw new CatalogException("No sample dimension for \"" + name + "\" product.");
+        }
+    }
+
     public GridCoverage read(GridGeometry areaOfInterest, int... bands) throws DataStoreException {
-        return subset(exportedGrid.getEnvelope()).read(areaOfInterest, bands);
+        return subset(getGridGeometry().getEnvelope()).read(areaOfInterest, bands);
     }
 
     /**
@@ -193,21 +301,61 @@ final class ProductEntry extends AbstractGridResource {
      *
      * @param  areaOfInterest  the envelope for filtering the coverages, or {@code null} for no filtering.
      * @return the set of coverages of this product which intersect the given envelope, or {@code null} if none.
-     * @throws CatalogException if an error occurred while querying the database.
+     * @throws DataStoreException if an error occurred while querying the database.
      */
-    final ProductSubset subset(final Envelope areaOfInterest) throws CatalogException {
+    final ProductSubset subset(final Envelope areaOfInterest) throws DataStoreException {
+        ensureValid();
         final List<GridCoverageEntry> entries;
-        try (Transaction transaction = transaction(); GridCoverageTable table = new GridCoverageTable(transaction)) {
+        try (Transaction transaction = database.transaction();
+             GridCoverageTable table = new GridCoverageTable(transaction))
+        {
             entries = table.find(name, areaOfInterest);
         } catch (SQLException exception) {
             throw new CatalogException(exception);
         } catch (TransformException exception) {
-            throw new MismatchedReferenceSystemException(errors()
+            throw new MismatchedReferenceSystemException(Errors.getResources(database.locale)
                     .getString(Errors.Keys.IllegalCoordinateReferenceSystem, exception));
         }
         if (entries.isEmpty()) {
             return null;
         }
         return new ProductSubset(this, areaOfInterest, entries);
+    }
+
+    /**
+     * Removes this product from the given database.
+     */
+    final void remove() throws DataStoreException {
+        try (final Transaction transaction = database.transaction()) {
+            transaction.writeStart();
+            try (ProductTable table = new ProductTable(transaction)) {
+                removeCached(table);
+                table.delete(name);
+            }
+            transaction.writeEnd();
+        } catch (SQLException e) {
+            throw new CatalogException(e);
+        }
+    }
+
+    /**
+     * Removed recursively all cached values.
+     */
+    private void removeCached(final ProductTable table) throws SQLException, DataStoreException {
+        prefetch(table);
+        for (final ProductEntry c : components) {
+            c.removeCached(table);
+        }
+        table.removeCached(name);
+        isDeleted = true;
+    }
+
+    /**
+     * Throws an exception if this product has been deleted.
+     */
+    private void ensureValid() throws CatalogException {
+        if (isDeleted) {
+            throw new CatalogException("Product \"" + name + "\" has been deleted.");
+        }
     }
 }

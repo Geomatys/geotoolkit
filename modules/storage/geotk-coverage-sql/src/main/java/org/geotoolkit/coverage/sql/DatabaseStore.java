@@ -16,10 +16,11 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.Map;
+import java.util.List;
+import java.util.Collection;
 import java.nio.file.Path;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.List;
 import javax.sql.DataSource;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.parameter.ParameterBuilder;
@@ -28,7 +29,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.storage.WritableAggregate;
@@ -126,7 +126,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
 
     final Database database;
 
-    private List<GridCoverageResource> components;
+    private List<Resource> components;
 
     public DatabaseStore(final Provider provider, final Parameters parameters) throws DataStoreException {
         super(provider, new StorageConnector(parameters.getMandatoryValue(Provider.DATABASE)));
@@ -150,7 +150,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     }
 
     public synchronized void addRaster(final String product, final AddOption option, final Path... files) throws DataStoreException {
-        final List<NewRaster> rasters = NewRaster.list(files);
+        final Map<String,List<NewRaster>> rasters = NewRaster.list(files);
         if (!rasters.isEmpty()) {
             try (Transaction transaction = database.transaction()) {
                 transaction.writeStart();
@@ -167,7 +167,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
 
     @Override
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
-    public synchronized Collection<GridCoverageResource> components() throws CatalogException {
+    public synchronized Collection<Resource> components() throws DataStoreException {
         if (components == null) {
             final List<ProductEntry> products;
             try (Transaction transaction = database.transaction();
@@ -177,9 +177,10 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
             } catch (SQLException e) {
                 throw new CatalogException(e);
             }
-            final ProductGeotk[] resources = new ProductGeotk[products.size()];
+            final Resource[] resources = new Resource[products.size()];
             for (int i=0; i<resources.length; i++) {
-                resources[i] = new ProductGeotk(this, products.get(i));
+                // No need to call prefetch(table) for products obtained by list().
+                resources[i] = createResource(products.get(i));
             }
             components = UnmodifiableArrayList.wrap(resources);
         }
@@ -187,16 +188,31 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     }
 
     @Override
-    public synchronized GridCoverageResource findResource(final String productName) throws CatalogException {
+    public synchronized Resource findResource(final String productName) throws DataStoreException {
         final ProductEntry product;
         try (Transaction transaction = database.transaction();
              ProductTable table = new ProductTable(transaction))
         {
             product = table.getEntry(productName);
+            product.prefetch(table);
         } catch (SQLException e) {
             throw new CatalogException(e);
         }
-        return new ProductGeotk(this, product);
+        return createResource(product);
+    }
+
+    /**
+     * Wraps the given product entry in a resource, which may be a grid resource or an aggregate.
+     * It is recommended to have product components prefetched before to invoke this method.
+     */
+    final Resource createResource(final ProductEntry product) throws DataStoreException {
+        if (product.components().isEmpty()) {
+            return new ProductResource(this, product);
+        } else if (product.isGrid()) {
+            return new ProductAggregate.AlsoGrid(this, product);
+        } else {
+            return new ProductAggregate(this, product);
+        }
     }
 
     @Override
@@ -205,26 +221,16 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     }
 
     @Override
-    public void remove(Resource resource) throws CatalogException {
-        if (resource instanceof ProductGeotk) {
-            resource = ((ProductGeotk) resource).product;
+    public void remove(Resource resource) throws DataStoreException {
+        final ProductEntry product;
+        if (resource instanceof ProductResource) {
+            product = ((ProductResource) resource).product;
+        } else if (resource instanceof ProductAggregate) {
+            product = ((ProductAggregate) resource).product;
+        } else {
+            throw new CatalogException("Not a resource from this data store.");
         }
-        if (resource instanceof ProductEntry) {
-            final ProductEntry product = (ProductEntry) resource;
-            if (product.database == database) {
-                try (final Transaction transaction = database.transaction()) {
-                    transaction.writeStart();
-                    try (ProductTable table = new ProductTable(transaction)) {
-                        table.delete(product);
-                    }
-                    transaction.writeEnd();
-                } catch (SQLException e) {
-                    throw new CatalogException(e);
-                }
-                return;
-            }
-        }
-        throw new CatalogException("Not a resource from this data store.");
+        product.remove();
     }
 
     @Override

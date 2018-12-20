@@ -45,7 +45,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Sam Hiatt
  */
-final class GridCoverageEntry {
+final class GridCoverageEntry extends Entry {
     /**
      * The series in which the {@code GridCoverageReference} is defined.
      */
@@ -91,6 +91,14 @@ final class GridCoverageEntry {
         this.startTime  = startTime;
         this.endTime    = endTime;
         this.grid       = grid;
+    }
+
+    /**
+     * Returns a string representation for debugging purpose.
+     */
+    @Override
+    public String toString() {
+        return filename + ':' + imageIndex + " @ " + endTime;
     }
 
     /**
