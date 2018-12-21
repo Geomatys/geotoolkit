@@ -189,6 +189,15 @@ final class GridCoverageTable extends Table {
         final int gridID = gridGeometries.findOrInsert(raster.geometry, period, product);
         final int series = seriesTable.findOrInsert(product, directory, extension, raster.driver, raster.bands);
         /*
+         * If the "gridToCRS" has NaN scale factor and is mapping pixel corner, then only the lower
+         * bounds is set since we can not compute the upper bounds. But for insertion in GridCoverages
+         * table, we need both bounds. Set the upper bounds to the same value for now. Future version
+         * should use the temporal resolution instead (TODO).
+         */
+        if (period[1] == null) {
+            period[1] = period[0];
+        }
+        /*
          * Insert the grid coverage entry.
          */
         String sql = "INSERT INTO " + SCHEMA + ".\"" + TABLE + "\"("
