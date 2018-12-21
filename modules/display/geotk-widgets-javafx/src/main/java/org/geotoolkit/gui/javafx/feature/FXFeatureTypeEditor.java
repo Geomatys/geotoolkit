@@ -30,7 +30,7 @@ import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.BorderPane;
 import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.gui.referencing.CRSButton;
+import org.geotoolkit.gui.javafx.crs.CRSButton;
 import org.geotoolkit.internal.GeotkFX;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;

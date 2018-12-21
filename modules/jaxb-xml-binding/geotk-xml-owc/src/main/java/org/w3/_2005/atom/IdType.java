@@ -79,6 +79,20 @@ public class IdType {
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
+    public IdType() {
+
+    }
+
+    public IdType(String value) {
+        this.value = value;
+    }
+
+    public IdType(String value, String base, String lang) {
+        this.value = value;
+        this.base = base;
+        this.lang = lang;
+    }
+
     /**
      * Gets the value of the value property.
      *

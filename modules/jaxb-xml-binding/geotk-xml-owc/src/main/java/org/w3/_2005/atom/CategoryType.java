@@ -83,6 +83,23 @@ public class CategoryType {
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
+    public CategoryType() {
+
+    }
+
+    public CategoryType(String term, String scheme) {
+        this.term = term;
+        this.scheme = scheme;
+    }
+
+    public CategoryType(String term, String scheme, String label, String base, String lang) {
+        this.term = term;
+        this.scheme = scheme;
+        this.label = label;
+        this.base = base;
+        this.lang = lang;
+    }
+
     /**
      * Gets the value of the term property.
      *

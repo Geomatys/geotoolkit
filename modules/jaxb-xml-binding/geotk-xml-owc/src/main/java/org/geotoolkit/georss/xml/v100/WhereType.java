@@ -34,6 +34,14 @@ public class WhereType {
     @XmlElement(name="Envelope", namespace = "http://www.opengis.net/gml", required = true)
     protected EnvelopeType envelope;
 
+    public WhereType() {
+
+    }
+
+    public WhereType(EnvelopeType envelope) {
+        this.envelope = envelope;
+    }
+
     public EnvelopeType getEnvelope() {
         return envelope;
     }

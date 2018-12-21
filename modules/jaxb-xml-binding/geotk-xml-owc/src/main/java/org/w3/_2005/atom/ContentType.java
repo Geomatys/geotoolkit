@@ -92,25 +92,25 @@ public class ContentType {
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
+    public ContentType() {
+
+    }
+
+    public ContentType(String type) {
+        this.type = type;
+    }
+
+    public ContentType(String type, String src, String base, String lang) {
+        this.type = type;
+        this.src = src;
+        this.base = base;
+        this.lang = lang;
+    }
+
     /**
      *
-     *              The Atom content construct is defined in section 4.1.3 of the format spec.
-     *          Gets the value of the content property.
+     * The Atom content construct is defined in section 4.1.3 of the format spec.
      *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the content property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getContent().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * {@link Object }

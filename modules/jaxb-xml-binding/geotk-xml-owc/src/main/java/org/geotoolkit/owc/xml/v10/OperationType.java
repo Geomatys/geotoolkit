@@ -96,27 +96,24 @@ public class OperationType {
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
+    public OperationType() {
+
+    }
+
+    public OperationType(String code, String href, String type, List<Object> requestOrResultOrAny) {
+        this.code = code;
+        this.href = href;
+        this.type = type;
+        this.requestOrResultOrAny = requestOrResultOrAny;
+    }
+
     /**
      * Gets the value of the requestOrResultOrAny property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the requestOrResultOrAny property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getRequestOrResultOrAny().add(newItem);
-     * </pre>
-     *
      *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
      * {@link Element }
-     * {@link JAXBElement }{@code <}{@link ContentType }{@code >}
      * {@link JAXBElement }{@code <}{@link ContentType }{@code >}
      *
      *

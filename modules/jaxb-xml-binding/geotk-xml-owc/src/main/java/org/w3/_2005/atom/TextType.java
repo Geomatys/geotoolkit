@@ -86,11 +86,26 @@ public class TextType {
     @XmlSchemaType(name = "language")
     protected String lang;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private Map<QName, String> otherAttributes = new HashMap<>();
+
+    public TextType() {
+
+    }
+
+    public TextType(List<Object> content) {
+        this.content = content;
+    }
+
+    public TextType(List<Object> content, TextTypeType type, String base, String lang) {
+        this.content = content;
+        this.type = type;
+        this.base = base;
+        this.lang = lang;
+    }
 
     /**
      *
-     *              The Atom text construct is defined in section 3.1 of the format spec.
+     *  The Atom text construct is defined in section 3.1 of the format spec.
      *          Gets the value of the content property.
      *
      * <p>
@@ -115,7 +130,7 @@ public class TextType {
      */
     public List<Object> getContent() {
         if (content == null) {
-            content = new ArrayList<Object>();
+            content = new ArrayList<>();
         }
         return this.content;
     }
