@@ -119,7 +119,12 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
             final double[] timestamps = FETCH_ALL_DATES ? seriesTable.listAllDates(name) : ArraysExt.EMPTY_DOUBLE;
             try {
                 if (timestamps.length != 0) {
-                    MathTransform tr = MathTransforms.interpolate(null, timestamps);
+                    MathTransform tr;
+                    if (timestamps.length == 1) {
+                        tr = MathTransforms.linear(Double.NaN, timestamps[0]);
+                    } else {
+                        tr = MathTransforms.interpolate(null, timestamps);
+                    }
                     tr = PixelTranslation.translate(tr, PixelInCell.CELL_CENTER, GridGeometryEntry.CELL_ORIGIN);
                     exportedGrid = gridEntry.getGridGeometry(timestamps.length, tr);
                 } else {
