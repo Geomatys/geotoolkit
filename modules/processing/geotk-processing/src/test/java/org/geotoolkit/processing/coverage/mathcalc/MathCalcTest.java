@@ -24,33 +24,31 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.*;
-
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.coverage.GridCoverageStack;
-import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
-import org.geotoolkit.util.NamesExt;
-import org.opengis.util.GenericName;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.GridMosaic;
+import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.util.NamesExt;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -82,7 +80,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         final MPCoverageStore store = new MPCoverageStore();
         final PyramidalCoverageResource outRef = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(n));
         outRef.setPackMode(ViewType.GEOPHYSICS);
-        outRef.setSampleDimensions(Collections.singletonList(new GridSampleDimension("data")));
+        outRef.setGridSampleDimensions(Collections.singletonList(new GridSampleDimension("data")));
         outRef.setSampleModel(baseCoverage.getRenderedImage().getSampleModel());
         outRef.setColorModel(baseCoverage.getRenderedImage().getColorModel());
         final Pyramid pyramid = outRef.createPyramid(crs);
@@ -134,7 +132,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         final MPCoverageStore store = new MPCoverageStore();
         final PyramidalCoverageResource outRef = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(n));
         outRef.setPackMode(ViewType.GEOPHYSICS);
-        outRef.setSampleDimensions(Collections.singletonList(new GridSampleDimension("data")));
+        outRef.setGridSampleDimensions(Collections.singletonList(new GridSampleDimension("data")));
         outRef.setSampleModel(baseCoverage.getRenderedImage().getSampleModel());
         outRef.setColorModel(baseCoverage.getRenderedImage().getColorModel());
         final Pyramid pyramid = outRef.createPyramid(crs);
@@ -187,7 +185,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         final MPCoverageStore store = new MPCoverageStore();
         final PyramidalCoverageResource outRef = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(n));
         outRef.setPackMode(ViewType.GEOPHYSICS);
-        outRef.setSampleDimensions(Collections.singletonList(new GridSampleDimension("data")));
+        outRef.setGridSampleDimensions(Collections.singletonList(new GridSampleDimension("data")));
         outRef.setSampleModel(baseCoverage1.getRenderedImage().getSampleModel());
         outRef.setColorModel(baseCoverage1.getRenderedImage().getColorModel());
         final Pyramid pyramid = outRef.createPyramid(crs);
@@ -325,7 +323,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         dimensions.add(dim);
 
         final Pyramid pyramid = ref.createPyramid(crs);
-        ref.setSampleDimensions(dimensions);
+        ref.setGridSampleDimensions(dimensions);
 
         final Dimension gridSize = new Dimension(4, 3);
         final Dimension tilePixelSize = new Dimension(width, height);

@@ -26,7 +26,6 @@ import java.awt.image.WritableRenderedImage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,47 +38,47 @@ import javax.imageio.ImageReader;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.image.io.XImageIO;
-import org.opengis.util.GenericName;
+import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
+import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.image.io.large.AbstractLargeRenderedImage;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.process.Monitor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessListener;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.storage.Resource;
-import org.apache.sis.storage.WritableAggregate;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.image.internal.ImageUtilities;
-import org.geotoolkit.image.io.large.AbstractLargeRenderedImage;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.lineage.ProcessStep;
+import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
-import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.geotoolkit.process.Monitor;
-import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.util.GenericName;
 
 /**
  * <p>Resampling, re-project, tile cut and insert in given datastore, image from
@@ -589,7 +588,7 @@ public class PyramidCoverageBuilder {
                         "Input coverage should have compatible GridSampleDimension with output Pyramid.");
             }
 
-            pm.setSampleDimensions(sampleList);
+            pm.setGridSampleDimensions(sampleList);
             //----------------------------------------------------------------------
 
             //Image
@@ -631,7 +630,7 @@ public class PyramidCoverageBuilder {
                 throw new DataStoreException("Incompatible GridSampleDimensions. " +
                         "Input coverage should have compatible GridSampleDimension with output Pyramid.");
             }
-            pm.setSampleDimensions(coverageSampleDims);
+            pm.setGridSampleDimensions(coverageSampleDims);
             //----------------------------------------------------------------------
 
             final GridGeometry currentGridGeometry = reader.getGridGeometry(imageIndex);
@@ -1097,7 +1096,7 @@ public class PyramidCoverageBuilder {
     private boolean isDimensionsCompatible(PyramidalCoverageResource pyramidRef, List<GridSampleDimension> coverageSampleDims)
             throws DataStoreException {
 
-        final List<GridSampleDimension> pyramidSampleDims = pyramidRef.getSampleDimensions();
+        final List<GridSampleDimension> pyramidSampleDims = pyramidRef.getGridSampleDimensions();
         // pyramidSampleDims list is considered as valid in case of the pyramid have just been created.
         if (pyramidSampleDims == null || pyramidSampleDims.isEmpty()) {
             return true;

@@ -47,7 +47,7 @@ public final class GridMosaicCoverage2D {
         gcb.setGridToCRS((MathTransform)AbstractGridMosaic.getTileGridToCRS(mosaic, new Point(0, 0)));
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(new GridMosaicRenderedImage(mosaic));
-        final List<GridSampleDimension> dims = ref.getSampleDimensions();
+        final List<GridSampleDimension> dims = ref.getGridSampleDimensions();
         gcb.setSampleDimensions(dims.toArray(new SampleDimension[0]));
         return gcb.getGridCoverage2D();
     }

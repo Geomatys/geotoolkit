@@ -59,7 +59,7 @@ public class TimedReader extends GridCoverageReader {
 
     @Override
     public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
-        return parent.getGridGeometry();
+        return parent.getGridGeometryInternal();
     }
 
     @Override
@@ -76,7 +76,7 @@ public class TimedReader extends GridCoverageReader {
         Envelope envelope = param.getEnvelope();
         if (envelope == null) {
             // We'll try to read the most recent data.
-            final GeneralEnvelope totalEnv = new GeneralEnvelope(parent.getGridGeometry().getEnvelope());
+            final GeneralEnvelope totalEnv = new GeneralEnvelope(parent.getGridGeometryInternal().getEnvelope());
             final double lastTime = totalEnv.getMaximum(parent.index.timeIndex);
             totalEnv.setRange(parent.index.timeIndex, lastTime, lastTime);
             envelope = totalEnv;

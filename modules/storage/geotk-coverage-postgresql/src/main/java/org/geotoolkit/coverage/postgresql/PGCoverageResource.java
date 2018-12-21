@@ -16,7 +16,10 @@
  */
 package org.geotoolkit.coverage.postgresql;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
@@ -27,8 +30,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -38,17 +45,12 @@ import java.util.logging.Level;
 import javax.measure.Unit;
 import net.iharder.Base64;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
-import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
-import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
-import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidSet;
-import org.geotoolkit.storage.coverage.PyramidalModelWriter;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -56,21 +58,26 @@ import org.geotoolkit.coverage.postgresql.epsg.PGEPSGWriter;
 import org.geotoolkit.coverage.wkb.WKBRasterConstants;
 import org.geotoolkit.coverage.wkb.WKBRasterWriter;
 import org.geotoolkit.internal.InternalUtilities;
+import org.geotoolkit.process.Monitor;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
+import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
+import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
+import org.geotoolkit.storage.coverage.GridMosaic;
+import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.storage.coverage.PyramidSet;
+import org.geotoolkit.storage.coverage.PyramidalModelWriter;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.version.Version;
 import org.opengis.coverage.SampleDimensionType;
-import org.opengis.util.GenericName;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.FactoryException;
-import org.apache.sis.measure.Units;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.process.Monitor;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -443,7 +450,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
     }
 
     @Override
-    public List<GridSampleDimension> getSampleDimensions() throws DataStoreException{
+    public List<GridSampleDimension> getGridSampleDimensions() throws DataStoreException{
         final List<GridSampleDimension> dimensions = new LinkedList<>();
 
         boolean versionSupport = isVersionColumnExist();
@@ -585,7 +592,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
     }
 
     @Override
-    public void setSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
+    public void setGridSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
 
         boolean versionSupport = isVersionColumnExist();
 

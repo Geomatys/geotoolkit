@@ -67,7 +67,7 @@ public interface PyramidalCoverageResource extends GridCoverageResource{
      * @return can be null
      * @throws DataStoreException
      */
-    List<GridSampleDimension> getSampleDimensions() throws DataStoreException;
+    List<GridSampleDimension> getGridSampleDimensions() throws DataStoreException;
 
     /**
      * Set sample dimensions.
@@ -75,7 +75,7 @@ public interface PyramidalCoverageResource extends GridCoverageResource{
      * @param dimensions
      * @throws org.apache.sis.storage.DataStoreException
      */
-    void setSampleDimensions(final List<GridSampleDimension> dimensions) throws DataStoreException;
+    void setGridSampleDimensions(final List<GridSampleDimension> dimensions) throws DataStoreException;
 
     /**
      * Get default color model.

@@ -105,7 +105,6 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
             } catch (DataStoreException ex) {
                 throw new CoverageStoreException(ex.getMessage(), ex);
             }
-
         }
     }
 

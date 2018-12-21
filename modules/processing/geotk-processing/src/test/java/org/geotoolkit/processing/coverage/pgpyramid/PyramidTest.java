@@ -32,28 +32,28 @@ import java.util.Map;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.GridMosaicCoverage2D;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
-import org.geotoolkit.storage.coverage.DefaultCoverageResource;
-import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.coverage.pyramid.PyramidDescriptor;
+import org.geotoolkit.storage.coverage.DefaultCoverageResource;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.GridMosaic;
+import org.geotoolkit.storage.coverage.GridMosaicCoverage2D;
+import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.util.NamesExt;
 import org.junit.Test;
-import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -81,7 +81,7 @@ public class PyramidTest extends org.geotoolkit.test.TestBase {
         final GridSampleDimension dim2 = new GridSampleDimension("sampleDesc2");
         dims.add(dim1);
         dims.add(dim2);
-        pcr.setSampleDimensions(dims);
+        pcr.setGridSampleDimensions(dims);
 
         final Pyramid pyramid = pcr.createPyramid(crs);
         final GridMosaic mosaic = pcr.createMosaic(pyramid.getId(), new Dimension(2, 1), new Dimension(tileSize, tileSize), upperLeft, 1);

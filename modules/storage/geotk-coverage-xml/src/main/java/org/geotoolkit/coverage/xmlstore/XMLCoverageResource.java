@@ -25,6 +25,9 @@ import java.awt.image.SampleModel;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -38,34 +41,30 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.sis.internal.raster.ScaledColorSpace;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
-import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.util.NamesExt;
-import org.opengis.coverage.SampleDimensionType;
-import org.opengis.util.GenericName;
-import org.apache.sis.internal.raster.ScaledColorSpace;
 import org.geotoolkit.image.internal.ImageUtils;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.internal.PlanarConfiguration;
 import org.geotoolkit.image.internal.SampleType;
-
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-import static java.nio.file.StandardOpenOption.WRITE;
-import org.apache.sis.referencing.NamedIdentifier;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.process.Monitor;
+import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
+import org.geotoolkit.storage.coverage.GridMosaic;
+import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.util.NamesExt;
+import org.opengis.coverage.SampleDimensionType;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
 
 /**
  * XML implementation of {@link PyramidalCoverageReference}.
@@ -411,7 +410,7 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
      * {@inheritDoc }.
      */
     @Override
-    public synchronized List<GridSampleDimension> getSampleDimensions() throws DataStoreException {
+    public synchronized List<GridSampleDimension> getGridSampleDimensions() throws DataStoreException {
         if (cacheDimensions == null) {
             if (sampleDimensions == null) return null;
             assert !sampleDimensions.isEmpty() : "XmlCoverageReference.getSampleDimension : sampleDimension should not be empty.";
@@ -427,7 +426,7 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
      * {@inheritDoc }.
      */
     @Override
-    public void setSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
+    public void setGridSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
         if (dimensions == null || dimensions.isEmpty()) return;
         this.cacheDimensions = null; //clear cache
 

@@ -35,13 +35,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import org.apache.sis.geometry.Envelopes;
-
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -57,7 +56,6 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.Cancellable;
-
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.DirectPosition;
@@ -71,7 +69,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
-import org.apache.sis.util.Utilities;
 
 /**
  * GridCoverage reader on top of a Pyramidal object.
@@ -211,7 +208,7 @@ public class PyramidalModelReader extends GridCoverageReader{
     @Override
     public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException, CancellationException {
         try {
-            return getPyramidalModel().getSampleDimensions();
+            return getPyramidalModel().getGridSampleDimensions();
         } catch (DataStoreException ex) {
             throw new CoverageStoreException(ex.getMessage(), ex);
         }

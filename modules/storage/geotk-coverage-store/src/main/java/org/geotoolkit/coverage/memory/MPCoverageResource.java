@@ -28,9 +28,9 @@ import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.storage.coverage.*;
-import org.opengis.util.GenericName;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -71,7 +71,7 @@ public class MPCoverageResource extends AbstractPyramidalCoverageResource {
      * {@inheritDoc }.
      */
     @Override
-    public List<GridSampleDimension> getSampleDimensions() throws DataStoreException {
+    public List<GridSampleDimension> getGridSampleDimensions() throws DataStoreException {
         return dimensions;
     }
 
@@ -79,7 +79,7 @@ public class MPCoverageResource extends AbstractPyramidalCoverageResource {
      * {@inheritDoc }.
      */
     @Override
-    public void setSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
+    public void setGridSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
         this.dimensions = dimensions;
     }
 

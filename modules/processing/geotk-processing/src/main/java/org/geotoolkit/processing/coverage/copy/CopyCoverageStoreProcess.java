@@ -16,37 +16,6 @@
  */
 package org.geotoolkit.processing.coverage.copy;
 
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidSet;
-import org.geotoolkit.storage.coverage.TileReference;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.opengis.util.GenericName;
-import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.process.Process;
-import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.coverage.reducetodomain.ReduceToDomainDescriptor;
-import org.geotoolkit.processing.coverage.straighten.StraightenDescriptor;
-import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.opengis.geometry.Envelope;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.ImageCRS;
-import org.opengis.referencing.operation.TransformException;
-
-import javax.imageio.ImageReader;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -63,21 +32,50 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
+import javax.imageio.ImageReader;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
-import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
-
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.ERASE;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.INSTANCE;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.REDUCE_TO_DOMAIN;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.STORE_IN;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.STORE_OUT;
+import org.geotoolkit.processing.coverage.reducetodomain.ReduceToDomainDescriptor;
+import org.geotoolkit.processing.coverage.straighten.StraightenDescriptor;
+import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.storage.coverage.GridMosaic;
+import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.storage.coverage.PyramidSet;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.storage.coverage.TileReference;
+import org.geotoolkit.temporal.object.TemporalUtilities;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.ImageCRS;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.GenericName;
 
 /**
  * Copy a {@linkplain CoverageStore coverage store} into another one, that supports
@@ -187,9 +185,9 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
     private void savePMtoPM(final PyramidalCoverageResource inPM, final PyramidalCoverageResource outPM) throws DataStoreException{
         final PyramidSet inPS = inPM.getPyramidSet();
 
-        final List<GridSampleDimension> sampleDimensions = inPM.getSampleDimensions();
+        final List<GridSampleDimension> sampleDimensions = inPM.getGridSampleDimensions();
         if(sampleDimensions != null){
-            outPM.setSampleDimensions(sampleDimensions);
+            outPM.setGridSampleDimensions(sampleDimensions);
         }
 
         //count total number of tiles
@@ -367,7 +365,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
 
         //create sampleDimensions bands
         final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(imageIndex);
-        outPM.setSampleDimensions(sampleDimensions);
+        outPM.setGridSampleDimensions(sampleDimensions);
 
         final Pyramid pyramid = outPM.createPyramid(crs);
 

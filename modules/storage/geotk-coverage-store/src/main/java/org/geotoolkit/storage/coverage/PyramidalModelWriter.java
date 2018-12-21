@@ -32,26 +32,30 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.Utilities;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
-import org.geotoolkit.image.BufferedImages;
+import org.opengis.coverage.InterpolationMethod;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -61,10 +65,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.util.logging.Logging;
-import org.opengis.coverage.InterpolationMethod;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.util.Utilities;
 
 
 /**
@@ -492,7 +492,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
 
                     }else{
                         //todo not exact
-                        final List<GridSampleDimension> dims = pm.getSampleDimensions();
+                        final List<GridSampleDimension> dims = pm.getGridSampleDimensions();
                         if(nbBand==3){
                             currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_RGB);
                         }else if(nbBand==4){

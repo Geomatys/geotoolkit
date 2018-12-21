@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.Spliterators;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
@@ -39,7 +40,6 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.apache.sis.coverage.grid.PixelTranslation;
 import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.datum.PixelInCell;
@@ -119,7 +119,7 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    GeneralGridGeometry getGridGeometry() throws CoverageStoreException {
+    GeneralGridGeometry getGridGeometryInternal() throws CoverageStoreException {
         final GeneralEnvelope treeEnv;
         try {
             treeEnv = index.getEnvelope()

@@ -26,34 +26,26 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
-
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.*;
-import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.storage.coverage.*;
-import org.junit.Test;
-import org.opengis.util.GenericName;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.operation.TransformException;
-
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
+import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.coverage.*;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Assume;
 import org.junit.BeforeClass;
-
-import org.geotoolkit.storage.DataStores;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.measure.Units;
-import org.apache.sis.storage.Resource;
-import org.geotoolkit.parameter.Parameters;
+import org.junit.Test;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -203,9 +195,9 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         dimensions.add(1, dim2);
 
         //test create SampleDimensions
-        cref.setSampleDimensions(dimensions);
+        cref.setGridSampleDimensions(dimensions);
 
-        List<GridSampleDimension> resultSamples = cref.getSampleDimensions();
+        List<GridSampleDimension> resultSamples = cref.getGridSampleDimensions();
         assertNotNull(resultSamples);
         assertEquals(2, resultSamples.size());
 

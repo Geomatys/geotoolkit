@@ -16,23 +16,36 @@
  */
 package org.geotoolkit.storage.coverage;
 
+import java.awt.image.RenderedImage;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.GridCoverageStack;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.geometry.GeometricUtilities;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.feature.CoverageFeature;
 import org.geotoolkit.internal.feature.TypeConventions;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
-import org.geotoolkit.geometry.GeometricUtilities;
-import org.geotoolkit.geometry.jts.JTS;
-import org.locationtech.jts.geom.Geometry;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Resource to a coverage in the coverage store.
@@ -40,7 +53,7 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface GridCoverageResource extends CoverageResource {
+public interface GridCoverageResource extends CoverageResource, org.apache.sis.storage.GridCoverageResource {
     /**
      * Same as {@link org.apache.sis.storage.Resource} without exception.
      *
@@ -108,5 +121,66 @@ public interface GridCoverageResource extends CoverageResource {
         }
         feature.setProperty(CoverageFeature.coverageRecords(this,role));
         return Stream.of(feature);
+    }
+
+    @Override
+    default GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+        final GridCoverageReader reader = acquireReader();
+        try {
+            final GridCoverageReadParam param = new GridCoverageReadParam();
+            param.setSourceBands(range);
+
+            if (domain.isDefined(GridGeometry.ENVELOPE)) {
+                param.setEnvelope(domain.getEnvelope());
+                final double[] resolution = domain.getResolution(true);
+                param.setResolution(resolution);
+            }
+
+            org.opengis.coverage.grid.GridCoverage cov = reader.read(getImageIndex(), param);
+            while (cov instanceof GridCoverageStack) {
+                //pick the first slice
+                cov = (org.opengis.coverage.grid.GridCoverage) ((GridCoverageStack) cov).coverageAtIndex(0);
+            }
+
+            if (!(cov instanceof GridCoverage2D)) {
+                throw new DataStoreException("Read coverage is not a GridCoverage2D");
+            }
+            final GridCoverage2D cov2d = (GridCoverage2D) cov;
+            final List<GridSampleDimension> sampleDims = Arrays.asList(cov2d.getSampleDimensions());
+            final List<SampleDimension> bands = org.geotoolkit.internal.coverage.CoverageUtilities.toSIS(sampleDims);
+
+            return new GridCoverage(domain, bands) {
+                @Override
+                public RenderedImage render(DirectPosition slicePoint) throws CannotEvaluateException {
+                    return cov2d.getRenderedImage();
+                }
+            };
+        } finally {
+            recycle(reader);
+        }
+    }
+
+    @Override
+    default List<SampleDimension> getSampleDimensions() throws DataStoreException {
+        final GridCoverageReader reader = acquireReader();
+        try {
+            final List<GridSampleDimension> dims = reader.getSampleDimensions(getImageIndex());
+            return org.geotoolkit.internal.coverage.CoverageUtilities.toSIS(dims);
+        } finally {
+            recycle(reader);
+        }
+    }
+
+    @Override
+    default GridGeometry getGridGeometry() throws DataStoreException {
+        final GridCoverageReader reader = acquireReader();
+        try {
+            final GeneralGridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
+            return org.geotoolkit.internal.coverage.CoverageUtilities.toSIS(gridGeom);
+        } catch (TransformException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        } finally {
+            recycle(reader);
+        }
     }
 }

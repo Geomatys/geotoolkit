@@ -33,8 +33,8 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
-import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -122,7 +122,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
      * @return
      * @throws CoverageStoreException
      */
-    private synchronized GeneralGridGeometry getGridGeometry() throws CoverageStoreException {
+    private synchronized GeneralGridGeometry getGridGeometryInternal() throws CoverageStoreException {
         if (gridGeom != null) return gridGeom;
 
         try {
@@ -169,7 +169,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
      * @return
      * @throws CoverageStoreException
      */
-    private synchronized List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException {
+    private synchronized List<GridSampleDimension> getSampleDimensionsInternal() throws CoverageStoreException {
         if (sampleDimensions != null) return sampleDimensions;
 
         final Collection<GridCoverageResource> references = getCoverages(null);
@@ -191,12 +191,12 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
 
         @Override
         public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
-            return AbstractCollectionCoverageResource.this.getGridGeometry();
+            return AbstractCollectionCoverageResource.this.getGridGeometryInternal();
         }
 
         @Override
         public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException, CancellationException {
-            return AbstractCollectionCoverageResource.this.getSampleDimensions();
+            return AbstractCollectionCoverageResource.this.getSampleDimensionsInternal();
         }
 
         @Override

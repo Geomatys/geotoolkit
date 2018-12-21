@@ -26,22 +26,21 @@ import java.awt.image.WritableRaster;
 import java.util.Arrays;
 import java.util.Collection;
 import javax.measure.IncommensurableException;
-
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-
 import org.geotoolkit.coverage.*;
+import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display3d.utils.TextureUtils;
+import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display3d.utils.TextureUtils;
-import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.storage.coverage.*;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -49,7 +48,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.geometry.Envelopes;
 
 /**
  *
@@ -77,7 +75,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
 
         ArgumentChecks.ensureNonNull("pyramid", dataSource);
 
-        final GridSampleDimension elevationDim = ref.getSampleDimensions().get(0).geophysics(true);
+        final GridSampleDimension elevationDim = ref.getGridSampleDimensions().get(0).geophysics(true);
         this.minElevation = elevationDim.getMinimumValue();
         this.maxElevation = elevationDim.getMaximumValue();
     }

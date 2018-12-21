@@ -36,7 +36,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.geometry.Envelopes;
@@ -155,12 +154,12 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
     }
 
     @Override
-    public List<GridSampleDimension> getSampleDimensions() throws DataStoreException {
+    public List<GridSampleDimension> getGridSampleDimensions() throws DataStoreException {
         return null;
     }
 
     @Override
-    public void setSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
+    public void setGridSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
         throw new DataStoreException("Pyramid writing not supported.");
     }
 
@@ -395,7 +394,7 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
         gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);
 
-        final List<GridSampleDimension> dimensions = covRef.getSampleDimensions();
+        final List<GridSampleDimension> dimensions = covRef.getGridSampleDimensions();
         if(dimensions!=null){
             gcb.setSampleDimensions(dimensions.toArray(new GridSampleDimension[0]));
         }
