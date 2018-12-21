@@ -17,30 +17,30 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.time.Instant;
-import java.time.Duration;
-import java.sql.Types;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.opengis.util.FactoryException;
+import java.sql.Types;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.PixelTranslation;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreReferencingException;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.iso.DefaultNameSpace;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.apache.sis.coverage.grid.PixelTranslation;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.DataStoreReferencingException;
-import org.apache.sis.util.iso.DefaultNameSpace;
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.ArraysExt;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -121,7 +121,8 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
                 if (timestamps.length != 0) {
                     MathTransform tr;
                     if (timestamps.length == 1) {
-                        tr = MathTransforms.linear(Double.NaN, timestamps[0]);
+                        //TODO
+                        tr = MathTransforms.linear(1.0, timestamps[0]);
                     } else {
                         tr = MathTransforms.interpolate(null, timestamps);
                     }

@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.sql;
 import java.awt.Image;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStore;
@@ -30,10 +31,11 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.geotoolkit.storage.coverage.AbstractCoverageResource;
+import org.geotoolkit.storage.coverage.GeoReferencedGridCoverageReader;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.geometry.Envelope;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 
 
@@ -73,8 +75,9 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
         return null;
     }
 
-    private final class Reader extends GridCoverageReader {
+    private final class Reader extends GeoReferencedGridCoverageReader {
         Reader() {
+            super(ProductResource.this);
         }
 
         @Override
@@ -93,25 +96,16 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
         }
 
         @Override
-        public GridCoverage read(final int index, final GridCoverageReadParam param) throws CoverageStoreException {
-            Envelope envelope = null;
-            if (param != null) {
-                envelope = param.getEnvelope();
-            }
+        protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, GridCoverageReadParam param)
+                throws CoverageStoreException, TransformException, CancellationException {
             try {
-                if (envelope == null) {
-                    return CoverageUtilities.toGeotk(product.read(null, null));
-                }
-                final ProductSubset subset = product.subset(envelope);
-                if (subset != null) {
-                    return CoverageUtilities.toGeotk(subset.read(null, null));
-                }
-            } catch (CoverageStoreException e) {
-                throw e;
-            } catch (DataStoreException e) {
-                throw new CatalogException(e);
+                final GeneralGridGeometry gg = getGridGeometry(0);
+                final GeneralGridGeometry subg = GeoReferencedGridCoverageReader.getGridGeometry(gg, areaLower, areaUpper, subsampling);
+                return CoverageUtilities.toGeotk(product.read(CoverageUtilities.toSIS(subg), null));
+            } catch (DataStoreException ex) {
+                throw new CoverageStoreException(ex.getMessage(), ex);
             }
-            throw new CoverageStoreException("No data in the given area of interest.");
+
         }
     }
 
