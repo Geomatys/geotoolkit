@@ -39,6 +39,7 @@ import javax.media.jai.InterpolationNearest;
 import javax.media.jai.PropertySource;
 
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -643,7 +644,7 @@ public final class CoverageUtilities extends Static {
             gridToCRS = g.getGridToCRS();
         }
         if (envelope != null && extent == null) {
-            return new org.apache.sis.coverage.grid.GridGeometry(PixelInCell.CELL_CENTER, gridToCRS, envelope);
+            return new org.apache.sis.coverage.grid.GridGeometry(PixelInCell.CELL_CENTER, gridToCRS, envelope, GridRoundingMode.NEAREST);
         } else {
             return new org.apache.sis.coverage.grid.GridGeometry(toSIS(extent), PixelInCell.CELL_CENTER, gridToCRS, crs);
         }
