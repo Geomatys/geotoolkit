@@ -24,13 +24,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
 import org.apache.sis.internal.metadata.sql.ScriptRunner;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.metadata.sql.MetadataSource;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.factory.sql.EPSGFactory;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
@@ -168,36 +171,61 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
         super(provider, new StorageConnector(parameters.getMandatoryValue(Provider.DATABASE)));
 
         if (parameters.booleanValue(Provider.CREATE)) {
-            //check if schema exist
+            //check if schemas exist
             final DataSource dataSource = parameters.getMandatoryValue(Provider.DATABASE);
 
-            boolean exist;
-            try (Connection cnx = dataSource.getConnection();
-                 Statement stmt = cnx.createStatement();
-                 ResultSet rs = stmt.executeQuery("SELECT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = 'rasters');");) {
-                rs.next();
-                exist = rs.getBoolean(1);
+            try (Connection cnx = dataSource.getConnection()) {
+                boolean rasterExist;
+                boolean epsgExist;
+                boolean metadataExist;
+                try (Statement stmt = cnx.createStatement();
+                    ResultSet rs = stmt.executeQuery("SELECT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = 'rasters'), "
+                                                          + "EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = 'EPSG'), "
+                                                          + "EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = 'metadata');");) {
+                    rs.next();
+                    rasterExist = rs.getBoolean(1);
+                    epsgExist = rs.getBoolean(2);
+                    metadataExist = rs.getBoolean(3);
+                } catch (SQLException ex) {
+                    throw new DataStoreException(ex.getMessage(), ex);
+                }
+
+                if (!epsgExist) {
+                    //install epsg schema
+                    Map epsgParams = new HashMap();
+                    try {
+                        EPSGFactory epsgFactory = new EPSGFactory(epsgParams);
+                        epsgFactory.install(cnx);
+                        epsgFactory.close();
+                    } catch (FactoryException ex) {
+                        throw new DataStoreException(ex.getMessage(), ex);
+                    }
+                }
+
+                if (!metadataExist) {
+                    //install metadata schema
+                    try (ScriptRunner runner = new ScriptRunner(cnx, 100)) {
+                        runner.run(MetadataSource.class, "Citations.sql");
+                        runner.run(MetadataSource.class, "Contents.sql");
+                        runner.run(MetadataSource.class, "Metadata.sql");
+                        runner.run(MetadataSource.class, "Referencing.sql");
+                    } catch (IOException ex) {
+                        throw new DataStoreException(ex.getMessage(), ex);
+                    }
+                }
+
+                if (!rasterExist) {
+                    //create raster schema
+                    try (InputStream in = DatabaseStore.class.getResourceAsStream("/org/geotoolkit/coverage/sql/Create.sql");
+                         ScriptRunner runner = new ScriptRunner(cnx, 100)) {
+                        runner.run(IOUtilities.toString(in));
+                    } catch (IOException ex) {
+                        throw new DataStoreException(ex.getMessage(), ex);
+                    }
+                }
+
             } catch (SQLException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
-            }
-
-            if (!exist) {
-                //create schema
-                final String sql;
-                try (InputStream in = DatabaseStore.class.getResourceAsStream("/org/geotoolkit/coverage/sql/Create.sql")) {
-                    sql = IOUtilities.toString(in);
-                } catch (IOException ex) {
-                    throw new DataStoreException(ex.getMessage(), ex);
-                }
-
-                try (Connection cnx = dataSource.getConnection()) {
-                    final ScriptRunner runner = new ScriptRunner(cnx, 100);
-                    runner.run(sql);
-                    runner.close();
-                } catch (SQLException | IOException ex) {
-                    throw new DataStoreException(ex.getMessage(), ex);
-                }
-
             }
         }
 

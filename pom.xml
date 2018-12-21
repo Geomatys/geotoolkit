@@ -278,6 +278,28 @@
           <artifactId>sis-referencing</artifactId>
           <version>${sis.version}</version>
       </dependency>
+      <dependency>
+          <groupId>org.apache.sis.non-free</groupId>
+          <artifactId>sis-embedded-data</artifactId>
+          <version>${sis.non-free.version}</version>
+          <exclusions>
+              <exclusion>
+                  <groupId>org.apache.sis.core</groupId>
+                  <artifactId>sis-referencing</artifactId>
+              </exclusion>
+          </exclusions>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.sis.non-free</groupId>
+          <artifactId>sis-epsg</artifactId>
+          <version>${sis.non-free.version}</version>
+          <exclusions>
+              <exclusion>
+                  <groupId>org.apache.sis.core</groupId>
+                  <artifactId>sis-referencing</artifactId>
+              </exclusion>
+          </exclusions>
+      </dependency>
 
       <dependency>
           <groupId>org.apache.sis.core</groupId>
