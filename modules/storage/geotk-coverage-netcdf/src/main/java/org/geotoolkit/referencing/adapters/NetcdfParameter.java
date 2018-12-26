@@ -31,7 +31,7 @@ import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
 
 import org.opengis.parameter.ParameterDirection;
-import org.apache.sis.internal.util.Numerics;
+import org.geotoolkit.image.jai.SampleValues;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.resources.Errors;
 
@@ -351,7 +351,7 @@ final class NetcdfParameter<T> extends NetcdfIdentifiedObject implements
     @Override
     public int[] intValueList() throws InvalidParameterTypeException {
         final double[] values = doubleValueList();
-        final int[] result = Numerics.copyAsInts(values);
+        final int[] result = SampleValues.copyAsInts(values);
         for (int i=0; i<result.length; i++) {
             if (result[i] != values[i]) {
                 throw invalidType(parameter, int[].class);
