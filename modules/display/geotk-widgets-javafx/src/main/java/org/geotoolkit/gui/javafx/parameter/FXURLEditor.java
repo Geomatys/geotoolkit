@@ -18,6 +18,7 @@ package org.geotoolkit.gui.javafx.parameter;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,6 +32,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.util.StringConverter;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.feature.util.converter.SimpleConverter;
 import org.geotoolkit.gui.javafx.util.FXFileTextField;
 
 /**
@@ -100,7 +103,37 @@ public class FXURLEditor extends FXValueEditor {
 
 
     public void updateConverter(ObservableValue observable, Object oldValue, Object newValue) {
-        valueConverter = ObjectConverters.find(String.class, getValueClass());
+        final Class valueClass = getValueClass();
+
+        if (Path.class.equals(valueClass)) {
+            valueConverter = new SimpleConverter<String, Object>() {
+                @Override
+                public Class<String> getSourceClass() {
+                    return String.class;
+                }
+
+                @Override
+                public Class<Object> getTargetClass() {
+                    return Object.class;
+                }
+
+                @Override
+                public Object apply(String input) throws UnconvertibleObjectException {
+                    if (PROTOCOL_START.matcher(input).find()) {
+                        //URI type
+                        try {
+                            return Paths.get(new URI(input));
+                        } catch (URISyntaxException ex) {
+                            throw new UnconvertibleObjectException(ex.getMessage(), ex);
+                        }
+                    } else {
+                        return Paths.get(input);
+                    }
+                }
+            };
+        } else {
+            valueConverter = ObjectConverters.find(String.class, valueClass);
+        }
     }
 
     protected static String checkAndAdaptPath(final String input) {
