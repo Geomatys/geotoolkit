@@ -19,12 +19,6 @@ package org.geotoolkit.coverage.postgresql;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
-import java.awt.image.WritableRaster;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,23 +26,21 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
 import java.util.TimeZone;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import javax.measure.Unit;
-import net.iharder.Base64;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -56,25 +48,22 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.postgresql.epsg.PGEPSGWriter;
 import org.geotoolkit.coverage.wkb.WKBRasterConstants;
-import org.geotoolkit.coverage.wkb.WKBRasterWriter;
+import org.geotoolkit.data.multires.MultiResolutionModel;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.internal.InternalUtilities;
-import org.geotoolkit.process.Monitor;
+import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidSet;
 import org.geotoolkit.storage.coverage.PyramidalModelWriter;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.version.Version;
 import org.opengis.coverage.SampleDimensionType;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
@@ -87,14 +76,182 @@ import org.opengis.util.GenericName;
 public class PGCoverageResource extends AbstractPyramidalCoverageResource {
 
     private final PGCoverageStore pgstore;
-    private final PGPyramidSet pyramidSet;
+    private boolean updated = false;
+    private final List<Pyramid> pyramids = new ArrayList<Pyramid>();
     final Version version;
 
     public PGCoverageResource(final PGCoverageStore store, final GenericName name, Version version) {
         super(store,name,0);
         this.pgstore = store;
-        this.pyramidSet = new PGPyramidSet(this);
         this.version = version;
+    }
+
+    void mustUpdate(){
+        updated = false;
+    }
+
+    public synchronized Collection<Pyramid> getPyramids() {
+        updateModel();
+        return pyramids;
+    }
+
+    /**
+     * Explore pyramids and rebuild model
+     */
+    private synchronized void updateModel(){
+        if (updated) return;
+        pyramids.clear();
+
+        Connection cnx = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try{
+            cnx = pgstore.getDataSource().getConnection();
+            stmt = cnx.createStatement();
+            final int layerId = pgstore.getLayerId(cnx,getIdentifier().tip().toString());
+
+            final StringBuilder query = new StringBuilder();
+            query.append("SELECT p.id, p.epsg, pp.value FROM ");
+            query.append(pgstore.encodeTableName("Pyramid"));
+            query.append(" as p ");
+            query.append("LEFT OUTER JOIN ");
+            query.append(pgstore.encodeTableName("PyramidProperty"));
+            query.append(" AS pp ON pp.\"pyramidId\" = p.id");
+            query.append(" WHERE p.\"layerId\" = ");
+            query.append(layerId);
+            query.append(" AND (pp.key IS NULL OR pp.key = 'version')"); //grab version
+            if(version==null || version.getLabel().equals(PGVersionControl.UNSET)){
+                query.append(" AND pp.value IS NULL");
+            }else{
+                query.append(" AND pp.value = '");
+                query.append(TemporalUtilities.toISO8601Z(version.getDate(), PGVersionControl.GMT0));
+                query.append("'");
+            }
+
+            final Map<Integer,String> map = new HashMap<Integer, String>();
+            rs = stmt.executeQuery(query.toString());
+            while(rs.next()){
+                map.put(rs.getInt(1),rs.getString(2));
+            }
+            pgstore.closeSafe(null,stmt,rs);
+            for(Map.Entry<Integer,String> entry : map.entrySet()){
+                pyramids.add(readPyramid(cnx, entry.getKey(), entry.getValue()));
+            }
+
+        }catch(SQLException ex){
+            pgstore.getLogger().log(Level.WARNING, ex.getMessage(),ex);
+        }catch(FactoryException ex){
+            pgstore.getLogger().log(Level.WARNING, ex.getMessage(),ex);
+        }finally{
+            pgstore.closeSafe(cnx, stmt, rs);
+        }
+
+        updated = true;
+    }
+
+    private PGPyramid readPyramid(final Connection cnx, final int pyramidId, final String epsgcode) throws SQLException, FactoryException{
+
+        final PGCoverageStore store = getStore();
+        final CoordinateReferenceSystem crs = store.getEPSGFactory().createCoordinateReferenceSystem(epsgcode);
+        PGPyramid pyramid = new PGPyramid(this, pyramidId, crs);
+
+        Statement stmt = null;
+        ResultSet rs = null;
+        try{
+            stmt = cnx.createStatement();
+
+            //get mosaic additional axis values to recreate discret axis
+            final SortedSet[] discretValues = new SortedSet[crs.getCoordinateSystem().getDimension()];
+            for(int i=0;i<discretValues.length;i++){
+                discretValues[i] = new TreeSet();
+            }
+
+            StringBuilder query = new StringBuilder();
+            query.append("SELECT ma.\"indice\", ma.\"value\" FROM ");
+            query.append(store.encodeTableName("Mosaic"));
+            query.append(" AS m , ");
+            query.append(store.encodeTableName("MosaicAxis"));
+            query.append(" AS ma WHERE m.\"pyramidId\" = ");
+            query.append(pyramidId);
+            query.append(" AND ma.\"mosaicId\" = m.\"id\"");
+
+            rs = stmt.executeQuery(query.toString());
+            while(rs.next()){
+                final int indice = rs.getInt(1);
+                final double value = rs.getDouble(2);
+                discretValues[indice].add(value);
+            }
+            store.closeSafe(rs);
+
+            final double[][] table = new double[discretValues.length][0];
+            for(int i=0;i<discretValues.length;i++){
+                final Object[] ds = discretValues[i].toArray();
+                final double[] vals = new double[ds.length];
+                for(int k=0;k<ds.length;k++){
+                    vals[k] = (Double)ds[k];
+                }
+                table[i] = vals;
+            }
+
+            final CoordinateReferenceSystem dcrs = DiscreteReferencingFactory.createDiscreteCRS(crs, table);
+            pyramid = new PGPyramid(this, pyramidId, dcrs);
+
+            query = new StringBuilder();
+            query.append("SELECT \"id\",\"upperCornerX\",\"upperCornerY\",\"gridWidth\",\"gridHeight\",\"scale\",\"tileWidth\",\"tileHeight\" FROM ");
+            query.append(store.encodeTableName("Mosaic"));
+            query.append(" WHERE \"pyramidId\" = ");
+            query.append(pyramidId);
+
+            rs = stmt.executeQuery(query.toString());
+            while(rs.next()){
+                final long mosaicId = rs.getLong(1);
+                final double cornerX = rs.getDouble(2);
+                final double cornerY = rs.getDouble(3);
+                final int gridWidth = rs.getInt(4);
+                final int gridHeight = rs.getInt(5);
+                final double scale = rs.getDouble(6);
+                final int tileWidth = rs.getInt(7);
+                final int tileHeight = rs.getInt(8);
+
+                final GeneralDirectPosition position = new GeneralDirectPosition(crs);
+                position.setOrdinate(0, cornerX);
+                position.setOrdinate(1, cornerY);
+
+
+                if(crs.getCoordinateSystem().getDimension() > 2){
+                    //retrieve additional axis value
+                    Statement stmt2 = null;
+                    ResultSet rs2 = null;
+                    try{
+                        stmt2 = cnx.createStatement();
+                        query = new StringBuilder();
+                        query.append("SELECT \"indice\",\"value\" FROM ");
+                        query.append(store.encodeTableName("MosaicAxis"));
+                        query.append(" WHERE \"mosaicId\" = ");
+                        query.append(mosaicId);
+                        rs2 = stmt2.executeQuery(query.toString());
+                        while(rs2.next()){
+                            position.setOrdinate(rs2.getInt(1), rs2.getDouble(2));
+                        }
+                    }finally{
+                        store.closeSafe(null, stmt2, rs2);
+                    }
+                }
+
+                final PGGridMosaic mosaic = new PGGridMosaic(this,
+                        mosaicId, pyramid, position,
+                        new Dimension(gridWidth, gridHeight),
+                        new Dimension(tileWidth, tileHeight), scale);
+                pyramid.mosaics.add(mosaic);
+            }
+
+        }catch(SQLException ex){
+            store.getLogger().log(Level.WARNING, ex.getMessage(),ex);
+        }finally{
+            store.closeSafe(null, stmt, rs);
+        }
+
+        return pyramid;
     }
 
     @Override
@@ -113,12 +270,48 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
     }
 
     @Override
-    public PyramidSet getPyramidSet() throws DataStoreException {
-        return pyramidSet;
+    public Collection<Pyramid> getModels() throws DataStoreException {
+        return getPyramids();
     }
 
     @Override
-    public Pyramid createPyramid(final CoordinateReferenceSystem crs) throws DataStoreException {
+    public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
+        if (template instanceof Pyramid) {
+            final Pyramid p = (Pyramid) template;
+            final Pyramid n = newPyramid(p.getCoordinateReferenceSystem());
+            Pyramids.copyStructure(p, n);
+            return n;
+        } else {
+            throw new DataStoreException("Unsupported template : "+template);
+        }
+    }
+
+    @Override
+    public void removeModel(String identifier) throws DataStoreException {
+        Connection cnx = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try{
+            cnx = pgstore.getDataSource().getConnection();
+            cnx.setReadOnly(false);
+            stmt = cnx.createStatement();
+            final int pyramidIdInt = Integer.valueOf(identifier);
+            final StringBuilder sql = new StringBuilder("DELETE FROM ");
+            sql.append(pgstore.encodeTableName("Pyramid"));
+            sql.append(" WHERE id = ");
+            sql.append(pyramidIdInt);
+            stmt.executeUpdate(sql.toString());
+        }catch(NumberFormatException ex){
+            throw new DataStoreException("Identifier "+identifier+" not found in models");
+        }catch(SQLException ex){
+            throw new DataStoreException(ex.getMessage(), ex);
+        }finally{
+            pgstore.closeSafe(cnx, stmt, rs);
+            mustUpdate();
+        }
+    }
+
+    private Pyramid newPyramid(final CoordinateReferenceSystem crs) throws DataStoreException {
 
         String pyramidId = "";
 
@@ -173,280 +366,17 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
             pgstore.closeSafe(cnx, stmt, rs);
         }
 
-        pyramidSet.mustUpdate();
+        mustUpdate();
         final CoverageStoreManagementEvent event = firePyramidAdded(pyramidId);
         getStore().forwardEvent(event);
-        for(Pyramid p : pyramidSet.getPyramids()){
-            if(p.getId().equals(pyramidId)){
+        for(Pyramid p : getPyramids()){
+            if(p.getIdentifier().equals(pyramidId)){
                 return p;
             }
         }
 
         //should not happen
         throw new DataStoreException("Generated pyramid not found.");
-    }
-
-    @Override
-    public void deletePyramid(String pyramidId) throws DataStoreException {
-        Connection cnx = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-        try{
-            cnx = pgstore.getDataSource().getConnection();
-            cnx.setReadOnly(false);
-            stmt = cnx.createStatement();
-            final int pyramidIdInt = Integer.valueOf(pyramidId);
-            final StringBuilder sql = new StringBuilder("DELETE FROM ");
-            sql.append(pgstore.encodeTableName("Pyramid"));
-            sql.append(" WHERE id = ");
-            sql.append(pyramidIdInt);
-            stmt.executeUpdate(sql.toString());
-        }catch(SQLException ex){
-            throw new DataStoreException(ex.getMessage(), ex);
-        }finally{
-            pgstore.closeSafe(cnx, stmt, rs);
-            pyramidSet.mustUpdate();
-        }
-    }
-
-    @Override
-    public GridMosaic createMosaic(final String pyramidId, final Dimension gridSize, final Dimension tilePixelSize,
-            final DirectPosition upperleft, final double pixelscale) throws DataStoreException {
-
-        long mosaicId = 0;
-
-        Connection cnx = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-        try{
-            cnx = pgstore.getDataSource().getConnection();
-            cnx.setReadOnly(false);
-            stmt = cnx.createStatement();
-
-            final int pyramidIdInt = Integer.valueOf(pyramidId);
-
-            StringBuilder query = new StringBuilder();
-            query.append("INSERT INTO ");
-            query.append(pgstore.encodeTableName("Mosaic"));
-            query.append("(\"pyramidId\",\"upperCornerX\",\"upperCornerY\",\"gridWidth\",\"gridHeight\",\"scale\",\"tileWidth\",\"tileHeight\") VALUES (");
-            query.append(pyramidIdInt           ).append(',');
-            query.append(upperleft.getOrdinate(0)).append(',');
-            query.append(upperleft.getOrdinate(1)).append(',');
-            query.append(gridSize.width         ).append(',');
-            query.append(gridSize.height        ).append(',');
-            query.append(pixelscale             ).append(',');
-            query.append(tilePixelSize.width    ).append(',');
-            query.append(tilePixelSize.height   );
-            query.append(")");
-
-            stmt.executeUpdate(query.toString(), new String[]{"id"});
-
-            rs = stmt.getGeneratedKeys();
-            if(rs.next()){
-                mosaicId = rs.getLong(1);
-            }
-
-            final CoordinateReferenceSystem crs = upperleft.getCoordinateReferenceSystem();
-            final CoordinateSystem cs = crs.getCoordinateSystem();
-            for(int i=2,n=cs.getDimension();i<n;i++){
-                final double value = upperleft.getOrdinate(i);
-                query = new StringBuilder();
-                query.append("INSERT INTO ");
-                query.append(pgstore.encodeTableName("MosaicAxis"));
-                query.append("(\"mosaicId\",\"indice\",\"value\") VALUES (");
-                query.append(mosaicId).append(',');
-                query.append(i).append(',');
-                query.append(value);
-                query.append(")");
-                stmt.executeUpdate(query.toString());
-            }
-
-        }catch(SQLException ex){
-            throw new DataStoreException(ex.getMessage(), ex);
-        }finally{
-            pgstore.closeSafe(cnx, stmt, rs);
-        }
-
-        pyramidSet.mustUpdate();
-        final CoverageStoreManagementEvent event = fireMosaicAdded(pyramidId, String.valueOf(mosaicId));
-        getStore().forwardEvent(event);
-        for (final Pyramid p : pyramidSet.getPyramids()) {
-            if (p.getId().equals(pyramidId)) {
-                for(GridMosaic mosaic : p.getMosaics()){
-                    if (((PGGridMosaic)mosaic).getDatabaseId() == mosaicId) {
-                        return mosaic;
-                    }
-                }
-            }
-        }
-
-        //should not happen
-        throw new DataStoreException("Generated mosaic not found.");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
-        Connection cnx = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-        try{
-            cnx = pgstore.getDataSource().getConnection();
-            cnx.setReadOnly(false);
-            stmt = cnx.createStatement();
-            final int mosaicdIdInt = Integer.valueOf(mosaicId);
-            final StringBuilder sql = new StringBuilder("DELETE FROM ");
-            sql.append(pgstore.encodeTableName("Mosaic"));
-            sql.append(" WHERE id = ");
-            sql.append(mosaicdIdInt);
-            stmt.executeUpdate(sql.toString());
-        }catch(SQLException ex){
-            throw new DataStoreException(ex.getMessage(), ex);
-        }finally{
-            pgstore.closeSafe(cnx, stmt, rs);
-            pyramidSet.mustUpdate();
-        }
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void writeTiles(final String pyramidId, final String mosaicId, final RenderedImage image, final Rectangle area,
-                           final boolean onlyMissing, final Monitor monitor) throws DataStoreException {
-
-        final int offsetX = image.getMinTileX();
-        final int offsetY = image.getMinTileY();
-
-        final int startX = (int)area.getMinX();
-        final int startY = (int)area.getMinY();
-        final int endX = (int)area.getMaxX();
-        final int endY = (int)area.getMaxY();
-
-        assert startX >= 0;
-        assert startY >= 0;
-        assert endX > startX && endX <= image.getNumXTiles();
-        assert endY > startY && endY <= image.getNumYTiles();
-
-        final RejectedExecutionHandler rejectHandler = new ThreadPoolExecutor.CallerRunsPolicy();
-        final BlockingQueue queue = new ArrayBlockingQueue(Runtime.getRuntime().availableProcessors());
-        final ThreadPoolExecutor executor = new ThreadPoolExecutor(
-                0, Runtime.getRuntime().availableProcessors(), 1, TimeUnit.MINUTES, queue, rejectHandler);
-
-        for(int y=startY; y<endY;y++){
-            for(int x=startX;x<endX;x++){
-                final Raster raster = image.getTile(offsetX+x, offsetY+y);
-                final RenderedImage img = new BufferedImage(image.getColorModel(),
-                        (WritableRaster)raster, image.getColorModel().isAlphaPremultiplied(), null);
-
-                final int tx = offsetX+x;
-                final int ty = offsetY+y;
-
-                executor.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (monitor != null && monitor.isCanceled()) {
-                            return;
-                        }
-                        try {
-                            writeTile(pyramidId, mosaicId, tx, ty, img);
-                        } catch (DataStoreException ex) {
-                            Logging.getLogger("org.geotoolkit.coverage.postgresql").log(Level.SEVERE, null, ex);
-                        }
-                    }
-                });
-
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void writeTile(String pyramidId, String mosaicId, int col, int row, RenderedImage image) throws DataStoreException {
-
-        Connection cnx = null;
-        Statement insertStmt = null;
-        Statement deleteStmt = null;
-        Statement selectStmt = null;
-        ResultSet rs = null;
-        try{
-            StringBuilder query = new StringBuilder();
-            query.append("SELECT id,\"mosaicId\",\"positionX\",\"positionY\" FROM ")
-                 .append(pgstore.encodeTableName("Tile"))
-                 .append(" WHERE \"mosaicId\"=").append(Integer.valueOf(mosaicId))
-                 .append(" AND \"positionX\"=").append(Integer.valueOf(col))
-                 .append(" AND \"positionY\"=").append(Integer.valueOf(row));
-            cnx = pgstore.getDataSource().getConnection();
-            cnx.setReadOnly(false);
-            selectStmt = cnx.createStatement();
-            rs = selectStmt.executeQuery(query.toString());
-
-            while (rs.next()) {
-                final int id = rs.getInt("id");
-                query = new StringBuilder();
-                query.append("DELETE FROM ")
-                     .append(pgstore.encodeTableName("Tile"))
-                     .append(" WHERE id=").append(id);
-                deleteStmt = cnx.createStatement();
-                deleteStmt.executeUpdate(query.toString());
-            }
-
-            final WKBRasterWriter writer = new WKBRasterWriter();
-            final byte[] wkbimg = writer.write(image, null, 0);
-            final String base64 = Base64.encodeBytes(wkbimg);
-
-            query = new StringBuilder();
-            query.append("INSERT INTO");
-            query.append(pgstore.encodeTableName("Tile"));
-            query.append("(\"raster\",\"mosaicId\",\"positionX\",\"positionY\") VALUES ( (");
-            query.append("encode(").append("decode('").append(base64).append("','base64')").append(",'hex')").append(")::raster,");
-            query.append(Integer.valueOf(mosaicId)).append(',');
-            query.append(col).append(',');
-            query.append(row).append(')');
-
-            insertStmt = cnx.createStatement();
-            insertStmt.executeUpdate(query.toString());
-
-            final CoverageStoreContentEvent event = fireTileUpdated(pyramidId, mosaicId, Collections.singletonList(new Point(col,row)));
-            getStore().forwardEvent(event);
-        }catch(IOException ex){
-            throw new DataStoreException(ex.getMessage(), ex);
-        }catch(SQLException ex){
-            throw new DataStoreException(ex.getMessage(), ex);
-        }finally{
-            pgstore.closeSafe(cnx, selectStmt, rs);
-            pgstore.closeSafe(insertStmt);
-            pgstore.closeSafe(deleteStmt);
-        }
-
-    }
-
-    @Override
-    public void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException {
-        Connection cnx = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-        try{
-            cnx = pgstore.getDataSource().getConnection();
-            cnx.setReadOnly(false);
-            stmt = cnx.createStatement();
-            final int mosaicdIdInt = Integer.valueOf(mosaicId);
-            final StringBuilder sql = new StringBuilder("DELETE FROM ");
-            sql.append(pgstore.encodeTableName("Tile"));
-            sql.append(" WHERE \"mosaicId\" = ").append(mosaicdIdInt);
-            sql.append(" AND \"positionX\" = ").append(col);
-            sql.append(" AND \"positionY\" = ").append(row);
-            stmt.executeUpdate(sql.toString());
-        }catch(SQLException ex){
-            throw new DataStoreException(ex.getMessage(), ex);
-        }finally{
-            pgstore.closeSafe(cnx, stmt, rs);
-            pyramidSet.mustUpdate();
-        };
     }
 
     @Override
@@ -794,5 +724,21 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
         }
         return colorCode.toUpperCase();
     }
+
+    @Override
+    public CoverageStoreManagementEvent fireMosaicAdded(String pyramidId, String mosaicId) {
+        return super.fireMosaicAdded(pyramidId, mosaicId);
+    }
+
+    @Override
+    public CoverageStoreManagementEvent fireMosaicDeleted(String pyramidId, String mosaicId) {
+        return super.fireMosaicDeleted(pyramidId, mosaicId);
+    }
+
+    @Override
+    public CoverageStoreContentEvent fireTileUpdated(String pyramidId, String mosaicId, List<Point> tiles) {
+        return super.fireTileUpdated(pyramidId, mosaicId, tiles);
+    }
+
 
 }

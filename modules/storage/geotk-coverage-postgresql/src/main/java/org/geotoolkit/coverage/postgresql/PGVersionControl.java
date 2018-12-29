@@ -28,13 +28,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.data.multires.Pyramids;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.version.AbstractVersionControl;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  * Postgresql version control.
@@ -82,9 +83,9 @@ public class PGVersionControl extends AbstractVersionControl{
     public void dropVersion(Version version) throws VersioningException {
         try {
             final PyramidalCoverageResource ref = (PyramidalCoverageResource) store.findResource(name, version);
-            final Collection<Pyramid> pyramids = ref.getPyramidSet().getPyramids();
+            final Collection<Pyramid> pyramids = Pyramids.getPyramids(ref);
             for(Pyramid p : pyramids){
-                ref.deletePyramid(p.getId());
+                ref.removeModel(p.getIdentifier());
             }
         } catch (DataStoreException ex) {
             throw new VersioningException(ex.getMessage(), ex);

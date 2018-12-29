@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.postgresql;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
@@ -26,17 +27,28 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Stream;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.*;
+import org.geotoolkit.coverage.Category;
+import org.geotoolkit.coverage.GridSampleDimension;
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
+import org.geotoolkit.data.multires.DefiningMosaic;
+import org.geotoolkit.data.multires.DefiningPyramid;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.*;
+import org.geotoolkit.storage.coverage.DefaultImageTile;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.storage.coverage.ImageTile;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.version.VersioningException;
 import static org.junit.Assert.*;
@@ -100,8 +112,8 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         upperLeft.setOrdinate(1, +180);
         PyramidalCoverageResource cref;
         Pyramid pyramid;
-        GridMosaic mosaic;
-        BufferedImage image;
+        Mosaic mosaic;
+        RenderedImage image;
 
         final GenericName name = NamesExt.create(null, "versLayer");
         store.add(new DefiningCoverageResource(name));
@@ -111,47 +123,50 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         assertNotNull(cref);
 
         //test create pyramid
-        pyramid = cref.createPyramid(CommonCRS.WGS84.geographic());
-        assertEquals(1,cref.getPyramidSet().getPyramids().size());
+        pyramid = (Pyramid) cref.createModel(new DefiningPyramid(CommonCRS.WGS84.geographic()));
+        assertEquals(1,cref.getModels().size());
 
         //test create mosaic
-        mosaic = cref.createMosaic(pyramid.getId(), new Dimension(1, 4), dimension, upperLeft, 1);
-        pyramid = cref.getPyramidSet().getPyramid(pyramid.getId());
+        mosaic = pyramid.createMosaic(
+                new DefiningMosaic(null, upperLeft, 1, dimension, new Dimension(1, 4)));
+        pyramid = Pyramids.getPyramid(cref, pyramid.getIdentifier());
         assertEquals(1,pyramid.getMosaics().size());
 
         //test insert tile
-        cref.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, createImage(dimension, Color.RED));
-        cref.writeTile(pyramid.getId(), mosaic.getId(), 0, 1, createImage(dimension, Color.GREEN));
-        cref.writeTile(pyramid.getId(), mosaic.getId(), 0, 2, createImage(dimension, Color.BLUE));
-        cref.writeTile(pyramid.getId(), mosaic.getId(), 0, 3, createImage(dimension, Color.YELLOW));
-        image = mosaic.getTile(0, 0, null).getImageReader().read(0);
+        mosaic.writeTiles(Stream.of(
+                new DefaultImageTile(createImage(dimension, Color.RED),    new Point(0, 0)),
+                new DefaultImageTile(createImage(dimension, Color.GREEN),  new Point(0, 1)),
+                new DefaultImageTile(createImage(dimension, Color.BLUE),   new Point(0, 2)),
+                new DefaultImageTile(createImage(dimension, Color.YELLOW), new Point(0, 3)))
+                , null);
+        image = ((ImageTile) mosaic.getTile(0, 0)).getImage();
         assertImageColor(image, Color.RED);
-        image = mosaic.getTile(0, 1, null).getImageReader().read(1);
+        image = ((ImageTile) mosaic.getTile(0, 1)).getImage();
         assertImageColor(image, Color.GREEN);
-        image = mosaic.getTile(0, 2, null).getImageReader().read(2);
+        image = ((ImageTile) mosaic.getTile(0, 2)).getImage();
         assertImageColor(image, Color.BLUE);
-        image = mosaic.getTile(0, 3, null).getImageReader().read(3);
+        image = ((ImageTile) mosaic.getTile(0, 3)).getImage();
         assertImageColor(image, Color.YELLOW);
 
         //test delete tile
-        cref.deleteTile(pyramid.getId(), mosaic.getId(), 0, 1);
-        assertNotNull(mosaic.getTile(0, 2, null).getInput());
-        cref.deleteTile(pyramid.getId(), mosaic.getId(), 0, 2);
-        assertNull(mosaic.getTile(0, 2, null).getInput());
+        mosaic.deleteTile(0, 1);
+        assertNotNull(((ImageTile) mosaic.getTile(0, 2)).getInput());
+        mosaic.deleteTile(0, 2);
+        assertNull(((ImageTile) mosaic.getTile(0, 2)).getInput());
 
         //test update tile
-        cref.writeTile(pyramid.getId(), mosaic.getId(), 0, 3, createImage(dimension, Color.PINK));
-        image = mosaic.getTile(0, 3, null).getImageReader().read(3);
+        mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(dimension, Color.PINK), new Point(0, 3))), null);
+        image = ((ImageTile) mosaic.getTile(0, 3)).getImageReader().read(3);
         assertImageColor(image, Color.PINK);
 
         //test delete mosaic
-        cref.deleteMosaic(pyramid.getId(), mosaic.getId());
-        pyramid = cref.getPyramidSet().getPyramid(pyramid.getId());
+        pyramid.deleteMosaic(mosaic.getIdentifier());
+        pyramid = Pyramids.getPyramid(cref, pyramid.getIdentifier());
         assertTrue(pyramid.getMosaics().isEmpty());
 
         //test delete pyramid
-        cref.deletePyramid(pyramid.getId());
-        assertTrue(cref.getPyramidSet().getPyramids().isEmpty());
+        cref.removeModel(pyramid.getIdentifier());
+        assertTrue(cref.getModels().isEmpty());
 
     }
 
@@ -165,7 +180,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         upperLeft.setOrdinate(1, +180);
         PyramidalCoverageResource cref;
         Pyramid pyramid;
-        GridMosaic mosaic;
+        Mosaic mosaic;
         BufferedImage image;
 
         final GenericName name = NamesExt.create(null, "sampleTestLayer");
@@ -176,8 +191,8 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         assertNotNull(cref);
 
         //test create pyramid
-        pyramid = cref.createPyramid(CommonCRS.WGS84.geographic());
-        assertEquals(1,cref.getPyramidSet().getPyramids().size());
+        pyramid = (Pyramid) cref.createModel(new DefiningPyramid(CommonCRS.WGS84.geographic()));
+        assertEquals(1,cref.getModels().size());
 
         final List<GridSampleDimension> dimensions = new LinkedList<>();
         // dim 1

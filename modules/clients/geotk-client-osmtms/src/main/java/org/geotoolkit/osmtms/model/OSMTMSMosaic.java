@@ -21,11 +21,12 @@ import java.awt.Point;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-import org.geotoolkit.storage.coverage.AbstractGridMosaic;
-import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.TileReference;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.PyramidSet;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.data.multires.AbstractMosaic;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.data.multires.Pyramids;
+import org.geotoolkit.storage.coverage.ImageTile;
 import org.opengis.geometry.DirectPosition;
 
 /**
@@ -33,14 +34,16 @@ import org.opengis.geometry.DirectPosition;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class OSMTMSMosaic extends AbstractGridMosaic{
+public class OSMTMSMosaic extends AbstractMosaic{
 
+    private final OSMTMSPyramidSet set;
     private final int scaleLevel;
 
-    public OSMTMSMosaic(Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize,
+    public OSMTMSMosaic(OSMTMSPyramidSet set, Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize,
             Dimension tileSize, double scale, int scaleLevel) {
         super(pyramid,upperLeft,gridSize,tileSize,scale);
         this.scaleLevel = scaleLevel;
+        this.set = set;
     }
 
     public int getScaleLevel() {
@@ -48,15 +51,20 @@ public class OSMTMSMosaic extends AbstractGridMosaic{
     }
 
     @Override
-    public TileReference getTile(int col, int row, Map hints) throws DataStoreException {
-        hints.put(PyramidSet.HINT_FORMAT, "image/png");
-        return ((OSMTMSPyramidSet)getPyramid().getPyramidSet()).getTile(this, col, row, hints);
+    protected boolean isWritable() throws CoverageStoreException {
+        return false;
+    }
+
+    @Override
+    public ImageTile getTile(int col, int row, Map hints) throws DataStoreException {
+        hints.put(Pyramids.HINT_FORMAT, "image/png");
+        return set.getTile(getPyramid(), this, col, row, hints);
     }
 
     @Override
     public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
-        hints.put(PyramidSet.HINT_FORMAT, "image/png");
-        return ((OSMTMSPyramidSet)getPyramid().getPyramidSet()).getTiles(this, positions, hints);
+        hints.put(Pyramids.HINT_FORMAT, "image/png");
+        return set.getTiles(getPyramid(), this, positions, hints);
     }
 
 }

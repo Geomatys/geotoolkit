@@ -17,13 +17,14 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import com.sun.media.imageio.stream.RawImageInputStream;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
-import java.io.File;
 import java.io.EOFException;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -39,24 +40,20 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
-
 import javax.media.jai.iterator.RectIterFactory;
 import javax.media.jai.iterator.WritableRectIter;
-import com.sun.media.imageio.stream.RawImageInputStream;
-
-import org.opengis.metadata.spatial.PixelOrientation;
-
-import org.geotoolkit.image.io.TextImageReader;
-import org.geotoolkit.image.io.SampleConverter;
-import org.geotoolkit.image.io.ImageMetadataException;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.apache.sis.internal.storage.io.ChannelImageInputStream;
+import org.geotoolkit.image.io.ImageMetadataException;
+import org.geotoolkit.image.io.SampleConverter;
+import org.geotoolkit.image.io.TextImageReader;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.DataTypes;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;
+import org.opengis.metadata.spatial.PixelOrientation;
 
 
 /**
@@ -208,6 +205,7 @@ public class AsciiGridReader extends TextImageReader {
      * This value is valid only if {@link #headerValid} is {@code true}.
      */
     private double fillValue;
+    private String fillValueStr;
 
     /**
      * The minimum and maximum values, or infinities if they are not specified.
@@ -281,6 +279,7 @@ public class AsciiGridReader extends TextImageReader {
                     scaleY = parseDouble(ensureDefined("CELLSIZE", header.remove(key = "DY")));
                 }
                 value = header.remove(key = "NODATA_VALUE");
+                fillValueStr = value;
                 fillValue = (value != null) ? parseDouble(value) : super.getPadValue(0);
                 value = header.remove(key = "MIN_VALUE");
                 minValue = (value != null) ? parseDouble(value) : Double.NEGATIVE_INFINITY;
@@ -686,24 +685,28 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
                     if (isValid && --sx == 0) {
                         sx = sourceXSubsampling;
                         final String value = new String(charBuffer, 0, nChar);
-                        try {
-                            switch (dataType) {
-                                case DataBuffer.TYPE_DOUBLE: {
-                                    iter.setSample(converter.convert(Double.parseDouble(value)));
-                                    break;
+                        if (value.equals(fillValueStr)) {
+                            iter.setSample(Double.NaN);
+                        } else {
+                            try {
+                                switch (dataType) {
+                                    case DataBuffer.TYPE_DOUBLE: {
+                                        iter.setSample(converter.convert(Double.parseDouble(value)));
+                                        break;
+                                    }
+                                    case DataBuffer.TYPE_FLOAT: {
+                                        iter.setSample(converter.convert(Float.parseFloat(value)));
+                                        break;
+                                    }
+                                    default: {
+                                        iter.setSample(converter.convert(Integer.parseInt(value)));
+                                        break;
+                                    }
                                 }
-                                case DataBuffer.TYPE_FLOAT: {
-                                    iter.setSample(converter.convert(Float.parseFloat(value)));
-                                    break;
-                                }
-                                default: {
-                                    iter.setSample(converter.convert(Integer.parseInt(value)));
-                                    break;
-                                }
+                            } catch (NumberFormatException cause) {
+                                throw new IIOException(Warnings.message(this,
+                                        Errors.Keys.UnparsableNumber_1, value), cause);
                             }
-                        } catch (NumberFormatException cause) {
-                            throw new IIOException(Warnings.message(this,
-                                    Errors.Keys.UnparsableNumber_1, value), cause);
                         }
                         /*
                          * Move to the next pixel in the destination image. The reading process

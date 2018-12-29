@@ -18,6 +18,7 @@ package org.geotoolkit.io;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -59,11 +60,41 @@ public class LEDataInputStream extends InputStream implements DataInput {
                 | (buffer[0] & 0xff));
     }
 
+    /**
+     * Read multiple values in one call.
+     *
+     * @param nbValues number of valeus to read
+     * @return array of values
+     * @throws java.io.IOException
+     */
+    public short[] readShorts(int nbValues) throws IOException {
+        final short[] array = new short[nbValues];
+        for (int i=0; i<nbValues; i++) {
+            array[i] = readShort();
+        }
+        return array;
+    }
+
     @Override
     public final int readUnsignedShort() throws IOException {
         position+=2;
         ds.readFully(buffer, 0, 2);
         return ((buffer[1] & 0xff) << 8 | (buffer[0] & 0xff));
+    }
+
+    /**
+     * Read multiple values in one call.
+     *
+     * @param nbValues number of valeus to read
+     * @return array of values
+     * @throws java.io.IOException
+     */
+    public int[] readUnsignedShorts(int nbValues) throws IOException {
+        final int[] array = new int[nbValues];
+        for (int i=0; i<nbValues; i++) {
+            array[i] = readUnsignedShort();
+        }
+        return array;
     }
 
     @Override
@@ -84,6 +115,21 @@ public class LEDataInputStream extends InputStream implements DataInput {
                 | (buffer[0] & 0xff);
     }
 
+    /**
+     * Read multiple values in one call.
+     *
+     * @param nbValues number of valeus to read
+     * @return array of values
+     * @throws java.io.IOException
+     */
+    public int[] readInts(int nbValues) throws IOException {
+        final int[] array = new int[nbValues];
+        for (int i=0; i<nbValues; i++) {
+            array[i] = readInt();
+        }
+        return array;
+    }
+
     @Override
     public final long readLong() throws IOException {
         position+=8;
@@ -98,14 +144,59 @@ public class LEDataInputStream extends InputStream implements DataInput {
                 | (long) (buffer[0] & 0xff);
     }
 
+    /**
+     * Read multiple values in one call.
+     *
+     * @param nbValues number of valeus to read
+     * @return array of values
+     * @throws java.io.IOException
+     */
+    public long[] readLongs(int nbValues) throws IOException {
+        final long[] array = new long[nbValues];
+        for (int i=0; i<nbValues; i++) {
+            array[i] = readLong();
+        }
+        return array;
+    }
+
     @Override
     public final float readFloat() throws IOException {
         return Float.intBitsToFloat(readInt());
     }
 
+    /**
+     * Read multiple values in one call.
+     *
+     * @param nbValues number of valeus to read
+     * @return array of values
+     * @throws java.io.IOException
+     */
+    public float[] readFloats(int nbValues) throws IOException {
+        final float[] array = new float[nbValues];
+        for (int i=0; i<nbValues; i++) {
+            array[i] = readFloat();
+        }
+        return array;
+    }
+
     @Override
     public final double readDouble() throws IOException {
         return Double.longBitsToDouble(readLong());
+    }
+
+    /**
+     * Read multiple values in one call.
+     *
+     * @param nbValues number of valeus to read
+     * @return array of values
+     * @throws java.io.IOException
+     */
+    public double[] readDoubles(int nbValues) throws IOException {
+        final double[] array = new double[nbValues];
+        for (int i=0; i<nbValues; i++) {
+            array[i] = readDouble();
+        }
+        return array;
     }
 
     @Override
@@ -132,6 +223,12 @@ public class LEDataInputStream extends InputStream implements DataInput {
         int nb = ds.skipBytes(n);
         position+=nb;
         return nb;
+    }
+
+    public final void skipFully(int n) throws IOException {
+        while (n > 0) {
+            n -= skipBytes(n);
+        }
     }
 
     @Override
@@ -166,6 +263,26 @@ public class LEDataInputStream extends InputStream implements DataInput {
     @Override
     public final String readUTF() throws IOException {
         return ds.readUTF();
+    }
+
+    /**
+     * Ralign stream position, skipping any remaining byte to match given block size.
+     * Older formats or javascript buffer requiere to be aligned on 2, 4 or 8 bytes
+     * (short,int,float,double) to read datas.
+     *
+     * @param blockSize
+     * @return number of bytes skipped
+     */
+    public int realign(int blockSize) throws IOException {
+        final long position = getPosition();
+        final long res = position % blockSize;
+        if (res == 0) return 0;
+        try {
+            skipFully((int) (blockSize-res));
+        } catch (EOFException ex) {
+            return -1;
+        }
+        return (int) res;
     }
 
     @Override

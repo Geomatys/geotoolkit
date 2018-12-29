@@ -21,18 +21,19 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Map;
 import javax.imageio.ImageIO;
-import org.geotoolkit.client.Request;
-import org.geotoolkit.client.map.CachedPyramidSet;
-import org.geotoolkit.storage.coverage.DefaultPyramid;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.PyramidSet;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.client.Request;
+import org.geotoolkit.client.map.CachedPyramidSet;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.googlemaps.GetMapRequest;
 import org.geotoolkit.googlemaps.GoogleCoverageResource;
 import org.geotoolkit.googlemaps.StaticGoogleMapsClient;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.multires.DefaultPyramid;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -101,7 +102,7 @@ public class GoogleMapsPyramidSet extends CachedPyramidSet{
         }
 
 
-        final DefaultPyramid pyramid = new DefaultPyramid(this, GOOGLE_MERCATOR);
+        final DefaultPyramid pyramid = new DefaultPyramid(GOOGLE_MERCATOR);
 
         final int tileWidth = BASE_TILE_SIZE;
         final int tileHeight = BASE_TILE_SIZE;
@@ -117,7 +118,7 @@ public class GoogleMapsPyramidSet extends CachedPyramidSet{
             final double scale = scale0Resolution / size;
 
             final GoogleMapsMosaic mosaic = new GoogleMapsMosaic(
-                    pyramid, upperLeft,
+                    this, pyramid, upperLeft,
                     new Dimension(size,size),
                     new Dimension(tileHeight, tileWidth),
                     scale,
@@ -135,12 +136,12 @@ public class GoogleMapsPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    public Request getTileRequest(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+    public Request getTileRequest(Pyramid pyramid, Mosaic mosaic, int col, int row, Map hints) throws DataStoreException {
         final int zoom = ((GoogleMapsMosaic)mosaic).getScaleLevel();
 
         final GetMapRequest request = ref.createGetMap();
 
-        Object format = hints.get(PyramidSet.HINT_FORMAT);
+        Object format = hints.get(Pyramids.HINT_FORMAT);
         if(format == null){
             //set a default value
             format = "image/png";

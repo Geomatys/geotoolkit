@@ -25,11 +25,13 @@ import java.awt.image.DataBuffer;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
-
+import java.util.stream.Stream;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -37,10 +39,13 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.HyperCubeIterator;
-import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.storage.coverage.*;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.DirectPosition;
@@ -50,8 +55,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.util.Utilities;
 
 /**
  * TODO : This should be part of the CoverageWriter interface.
@@ -197,21 +200,21 @@ public class FillCoverage {
         final ColorModel cm = outRef.getColorModel();
         final SampleModel sm = outRef.getSampleModel();
 
-        for(Pyramid pyramid : outRef.getPyramidSet().getPyramids()){
-            for(GridMosaic mosaic : pyramid.getMosaics()){
+        for(Pyramid pyramid : outRef.getModels()){
+            for(Mosaic mosaic : pyramid.getMosaics()){
                 final Dimension tileSize = mosaic.getTileSize();
                 final double[] upperLeftGeo = mosaic.getUpperLeftCorner().getCoordinate();
 
                 final Dimension gridSize = mosaic.getGridSize();
                 for(int y=0;y<gridSize.height;y++){
                     for(int x=0;x<gridSize.width;x++){
-                        final MathTransform gridToCRS = AbstractGridMosaic.getTileGridToCRS(mosaic, new Point(x, y), PixelInCell.CELL_CENTER);
+                        final MathTransform gridToCRS = Pyramids.getTileGridToCRS(mosaic, new Point(x, y), PixelInCell.CELL_CENTER);
                         final MathTransform crsToGrid = gridToCRS.inverse();
                         final double[] baseCoord = new double[upperLeftGeo.length];
                         crsToGrid.transform(upperLeftGeo, 0, baseCoord, 0, 1);
                         final MathCalcImageEvaluator eval = new MathCalcImageEvaluator(baseCoord, gridToCRS, evaluator.copy());
                         final ProcessedRenderedImage image = new ProcessedRenderedImage(sm, cm, eval, tileSize.width, tileSize.height);
-                        outRef.writeTile(pyramid.getId(), mosaic.getId(), x, y, image);
+                        mosaic.writeTiles(Stream.of(new DefaultImageTile(image, new Point(x, y))), null);
                     }
                 }
             }

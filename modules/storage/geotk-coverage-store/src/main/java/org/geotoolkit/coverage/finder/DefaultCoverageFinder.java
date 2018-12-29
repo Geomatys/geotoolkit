@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramid;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
@@ -42,13 +42,13 @@ public class DefaultCoverageFinder extends CoverageFinder {
      * {@inheritDoc }.
      */
     @Override
-    public GridMosaic findMosaic(Pyramid pyramid, double resolution, double tolerance, Envelope env, Integer maxTileNumber) throws FactoryException {
-        final List<GridMosaic> mosaics = new ArrayList<GridMosaic>(pyramid.getMosaics());
+    public Mosaic findMosaic(Pyramid pyramid, double resolution, double tolerance, Envelope env, Integer maxTileNumber) throws FactoryException {
+        final List<Mosaic> mosaics = new ArrayList<Mosaic>(pyramid.getMosaics());
         Collections.sort(mosaics, SCALE_COMPARATOR);
         Collections.reverse(mosaics);
-        GridMosaic result = null;
+        Mosaic result = null;
         mosaicLoop:
-        for (GridMosaic candidate : mosaics) {
+        for (Mosaic candidate : mosaics) {
             //check the mosaic intersect the searched envelope
             final GeneralEnvelope clip = new GeneralEnvelope(candidate.getEnvelope());
             if (!clip.intersects(env, true)) continue;

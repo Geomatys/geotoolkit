@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.googlemaps.map;
 
-import org.geotoolkit.storage.coverage.PyramidSet;
 import org.geotoolkit.googlemaps.GetMapRequest;
 import org.geotoolkit.googlemaps.StaticGoogleMapsClient;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
@@ -24,6 +23,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.data.multires.Pyramids;
 import org.opengis.util.GenericName;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 
@@ -65,7 +65,7 @@ public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
         super(getReference(server,maptype),
               new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
         this.server = server;
-        setUserProperty(PyramidSet.HINT_FORMAT, DEFAULT_FORMAT);
+        setUserProperty(Pyramids.HINT_FORMAT, DEFAULT_FORMAT);
     }
 
     /**
@@ -74,7 +74,7 @@ public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
      */
     public void setFormat(final String format) {
         ArgumentChecks.ensureNonNull("format", format);
-        setUserProperty(PyramidSet.HINT_FORMAT, format);
+        setUserProperty(Pyramids.HINT_FORMAT, format);
     }
 
     /**
@@ -82,7 +82,7 @@ public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
      * @return
      */
     public String getFormat() {
-        Object val = getUserProperty(PyramidSet.HINT_FORMAT);
+        Object val = getUserProperty(Pyramids.HINT_FORMAT);
         if(val != null){
             return val.toString();
         }

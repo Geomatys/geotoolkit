@@ -18,12 +18,18 @@
 package org.geotoolkit.processing.coverage.mathcalc;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
@@ -36,10 +42,13 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
+import org.geotoolkit.data.multires.DefiningMosaic;
+import org.geotoolkit.data.multires.DefiningPyramid;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.junit.Assert;
@@ -83,10 +92,11 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         outRef.setGridSampleDimensions(Collections.singletonList(new GridSampleDimension("data")));
         outRef.setSampleModel(baseCoverage.getRenderedImage().getSampleModel());
         outRef.setColorModel(baseCoverage.getRenderedImage().getColorModel());
-        final Pyramid pyramid = outRef.createPyramid(crs);
+        final Pyramid pyramid = (Pyramid) outRef.createModel(new DefiningPyramid(crs));
         final GeneralDirectPosition corner = new GeneralDirectPosition(crs);
         corner.setCoordinate(env.getMinimum(0), env.getMaximum(1));
-        outRef.createMosaic(pyramid.getId(), new Dimension(1, 1), new Dimension(width, height), corner, 0.1);
+        pyramid.createMosaic(
+                new DefiningMosaic(null, corner, 0.1, new Dimension(width, height), new Dimension(1, 1)));
 
 
         //run math calc process
@@ -135,10 +145,11 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         outRef.setGridSampleDimensions(Collections.singletonList(new GridSampleDimension("data")));
         outRef.setSampleModel(baseCoverage.getRenderedImage().getSampleModel());
         outRef.setColorModel(baseCoverage.getRenderedImage().getColorModel());
-        final Pyramid pyramid = outRef.createPyramid(crs);
+        final Pyramid pyramid = (Pyramid) outRef.createModel(new DefiningPyramid(crs));
         final GeneralDirectPosition corner = new GeneralDirectPosition(crs);
         corner.setCoordinate(env.getMinimum(0), env.getMaximum(1));
-        outRef.createMosaic(pyramid.getId(), new Dimension(1, 1), new Dimension(width, height), corner, 0.1);
+        pyramid.createMosaic(
+                new DefiningMosaic(null, corner, 0.1, new Dimension(width, height), new Dimension(1, 1)));
 
 
         //run math calc process
@@ -188,10 +199,11 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         outRef.setGridSampleDimensions(Collections.singletonList(new GridSampleDimension("data")));
         outRef.setSampleModel(baseCoverage1.getRenderedImage().getSampleModel());
         outRef.setColorModel(baseCoverage1.getRenderedImage().getColorModel());
-        final Pyramid pyramid = outRef.createPyramid(crs);
+        final Pyramid pyramid = (Pyramid) outRef.createModel(new DefiningPyramid(crs));
         final GeneralDirectPosition corner = new GeneralDirectPosition(crs);
         corner.setCoordinate(env.getMinimum(0), env.getMaximum(1));
-        outRef.createMosaic(pyramid.getId(), new Dimension(1, 1), new Dimension(width, height), corner, 0.1);
+        pyramid.createMosaic(
+                new DefiningMosaic(null, corner, 0.1, new Dimension(width, height), new Dimension(1, 1)));
 
 
         //run math calc process
@@ -318,11 +330,11 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
     private static void create4DPyramid(PyramidalCoverageResource ref, CoordinateReferenceSystem crs,
                                         int width, int height, double[][] geovalues) throws DataStoreException {
 
-        final List<GridSampleDimension> dimensions = new ArrayList<GridSampleDimension>();
+        final List<GridSampleDimension> dimensions = new ArrayList<>();
         final GridSampleDimension dim = new GridSampleDimension("samples");
         dimensions.add(dim);
 
-        final Pyramid pyramid = ref.createPyramid(crs);
+        final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(crs));
         ref.setGridSampleDimensions(dimensions);
 
         final Dimension gridSize = new Dimension(4, 3);
@@ -331,13 +343,16 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         for(double[] slice : geovalues){
             final GeneralDirectPosition upperLeft = new GeneralDirectPosition(crs);
             upperLeft.setCoordinate(-50, 60, slice[0], slice[1]);
-            final GridMosaic mosaic = ref.createMosaic(pyramid.getId(), gridSize, tilePixelSize, upperLeft, 1);
+            final Mosaic mosaic = pyramid.createMosaic(
+                    new DefiningMosaic(null, upperLeft, 1, tilePixelSize, gridSize));
 
             final float sample = (float)slice[2];
             for(int x=0;x<gridSize.width;x++){
                 for(int y=0;y<gridSize.height;y++){
-                    ref.writeTile(pyramid.getId(), mosaic.getId(), x, y, createRenderedImage(
-                            tilePixelSize.width, tilePixelSize.height, sample, sample));
+                    mosaic.writeTiles(
+                            Stream.of(new DefaultImageTile(
+                                    createRenderedImage(tilePixelSize.width, tilePixelSize.height, sample, sample)
+                                    , new Point(x, y))),null);
                 }
             }
         }

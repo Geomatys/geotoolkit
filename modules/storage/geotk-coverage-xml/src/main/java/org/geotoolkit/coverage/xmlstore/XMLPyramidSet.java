@@ -18,19 +18,16 @@ package org.geotoolkit.coverage.xmlstore;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.xml.bind.annotation.*;
-
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.storage.coverage.AbstractPyramidSet;
-import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -41,7 +38,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class XMLPyramidSet extends AbstractPyramidSet{
+public class XMLPyramidSet {
 
     public static final String GEOPHYSICS = "geophysics";
     public static final String NATIVE = "native";
@@ -92,30 +89,13 @@ public class XMLPyramidSet extends AbstractPyramidSet{
         return pyramids;
     }
 
-    @Override
-    public String getId() {
-        return ref.getId();
-    }
-
-    @Override
     public Collection<Pyramid> getPyramids() {
         return (Collection)pyramids();
     }
 
     @Override
-    public List<String> getFormats() {
-        final String format = getFormatName();
-        switch (format) {
-            case "JPEG": return Arrays.asList("image/jpeg");
-            case "PNG": return Arrays.asList("image/png");
-            case "PostGISWKBraster" : return Arrays.asList("application/wkb"); // better mime type ?
-            default : throw new IllegalStateException("unexpected pyramid format");
-        }
-    }
-
-    @Override
     public String toString(){
-        return StringUtilities.toStringTree(Classes.getShortClassName(this)+" "+getId(), getPyramids());
+        return StringUtilities.toStringTree(Classes.getShortClassName(this)+" "+ref.getId(), getPyramids());
     }
 
     /**

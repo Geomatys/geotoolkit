@@ -24,26 +24,19 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import javax.imageio.ImageIO;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.PyramidCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.lang.Setup;
@@ -51,18 +44,13 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
-import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.image.io.large.ImageCacheConfiguration;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.junit.Test;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.junit.Assert.assertTrue;
-import org.opengis.util.GenericName;
+import org.junit.Test;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Test between output image from renderer and images from some differents storing source.
@@ -176,61 +164,6 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
 
         final BufferedImage imgResult = DefaultPortrayalService.portray(cdef, sdef, vdef);
         checkImage(sourceImage, imgResult, proportionalityCoefficient);
-    }
-
-    /**
-     * <p>Test between output image from renderer and source image within pyramidal model.<br/>
-     * Note : PyramidalModel use for this test is a "MemoryCoverageStore" which store all raster in memory.</p>
-     *
-     * @throws PortrayalException
-     * @throws DataStoreException
-     * @throws TransformException
-     * @throws FactoryException
-     */
-    @Test
-    public void pyramidtest() throws PortrayalException, DataStoreException, TransformException, FactoryException, IOException {
-
-        ImageIO.scanForPlugins();
-        Setup.initialize(null);
-
-        ImageCacheConfiguration.setCacheSwapEnable(false);
-
-        final File input = new File("src/test/resources/org/geotoolkit/display2d/clouds.jpg");
-        final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
-
-        final MPCoverageStore mpCovStore = new MPCoverageStore();
-        final PyramidCoverageBuilder pcb = new PyramidCoverageBuilder();
-        pcb.setTileSize(new Dimension(25, 25));
-        pcb.setInterpolation(InterpolationCase.NEIGHBOR);
-        pcb.setLanczosWindow(2);
-        final double[] fillValue = new double[3];
-
-        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
-        env.setEnvelope(-180, -90, 180, 90);
-        final double[] scales = new double[]{1.40625, 2.8125};
-        final Map<Envelope, double[]> map = new HashMap<>();
-        map.put(env, scales);
-        final GenericName name = NamesExt.create("memory_store_test");
-        pcb.setFillValues(fillValue);
-        pcb.setResolutionPerEnvelope(map);
-        pcb.setSourceReader(reader);
-        pcb.setTargetStore(mpCovStore, name);
-        pcb.execute();
-
-        final GridCoverage2D gridcov = (GridCoverage2D) reader.read(0, null);
-
-        final RenderedImage img = gridcov.getRenderedImage();
-        srcWidth  = img.getWidth();
-        srcHeight = img.getHeight();
-
-        //Envelope result
-        resEnv = gridcov.getEnvelope();
-        proportionalityCoefficient = 2;
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(mpCovStore.findResource(name.toString()));
-        testImageLayer(img, cl);
-
-        proportionalityCoefficient = 1;
-        testImageLayer(img, cl);
     }
 
     /**

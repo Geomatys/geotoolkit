@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.coverage.xmlstore;
 
-import java.awt.Dimension;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Path;
@@ -31,17 +30,15 @@ import javax.xml.bind.annotation.XmlTransient;
 import net.iharder.Base64;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.io.wkt.*;
-import org.apache.sis.io.wkt.WKTFormat;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.Pyramid;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.IdentifiedObjects;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.util.StringUtilities;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -96,6 +93,17 @@ public class XMLPyramid implements Pyramid {
         }
     }
 
+    @Override
+    public String getFormat() {
+        final String format = set.getFormatName();
+        switch (format) {
+            case "JPEG": return "image/jpeg";
+            case "PNG": return "image/png";
+            case "PostGISWKBraster" : return "application/wkb"; // better mime type ?
+            default : throw new IllegalStateException("unexpected pyramid format");
+        }
+    }
+
     public List<XMLMosaic> mosaics() {
         if(mosaics == null){
             mosaics = new CopyOnWriteArrayList<>();
@@ -104,15 +112,14 @@ public class XMLPyramid implements Pyramid {
     }
 
     @Override
-    public String getId() {
+    public String getIdentifier() {
         return id;
     }
 
     public Path getFolder(){
-        return getPyramidSet().getRef().getFolder().resolve(getId());
+        return getPyramidSet().getRef().getFolder().resolve(getIdentifier());
     }
 
-    @Override
     public XMLPyramidSet getPyramidSet() {
         return set;
     }
@@ -185,7 +192,7 @@ public class XMLPyramid implements Pyramid {
     public double[] getScales() {
         final SortedSet<Double> scaleSet = new TreeSet<Double>();
 
-        for(GridMosaic m : mosaics()){
+        for(Mosaic m : mosaics()){
             scaleSet.add(m.getScale());
         }
 
@@ -199,10 +206,10 @@ public class XMLPyramid implements Pyramid {
     }
 
     @Override
-    public Collection<GridMosaic> getMosaics(int index) {
-        final List<GridMosaic> candidates = new ArrayList<GridMosaic>();
+    public Collection<Mosaic> getMosaics(int index) {
+        final List<Mosaic> candidates = new ArrayList<>();
         final double[] scales = getScales();
-        for(GridMosaic m : mosaics()){
+        for(Mosaic m : mosaics()){
             if(m.getScale() == scales[index]){
                 candidates.add(m);
             }
@@ -211,14 +218,14 @@ public class XMLPyramid implements Pyramid {
     }
 
     @Override
-    public List<GridMosaic> getMosaics() {
-        return new ArrayList<GridMosaic>(mosaics());
+    public List<Mosaic> getMosaics() {
+        return new ArrayList<Mosaic>(mosaics());
     }
 
     @Override
     public Envelope getEnvelope() {
         GeneralEnvelope env = null;
-        for(GridMosaic mosaic : getMosaics()){
+        for(Mosaic mosaic : getMosaics()){
             if(env==null){
                 env = new GeneralEnvelope(mosaic.getEnvelope());
             }else{
@@ -230,10 +237,9 @@ public class XMLPyramid implements Pyramid {
 
     @Override
     public String toString(){
-        return StringUtilities.toStringTree(
-                Classes.getShortClassName(this)
+        return StringUtilities.toStringTree(Classes.getShortClassName(this)
                 +" "+IdentifiedObjects.getIdentifierOrName(getCoordinateReferenceSystem())
-                +" "+getId(),
+                +" "+getIdentifier(),
                 mosaics());
     }
 
@@ -246,57 +252,36 @@ public class XMLPyramid implements Pyramid {
      */
     XMLMosaic getMosaic(String mosaicId) throws DataStoreException{
         for(final XMLMosaic mo : mosaics()){
-            if(mosaicId.equals(mo.getId())){
+            if(mosaicId.equals(mo.getIdentifier())){
                 return mo;
             }
         }
         throw new DataStoreException("No mosaic for ID : " + mosaicId);
     }
 
-    /**
-     * Create and register a new mosaic in this pyramid
-     *
-     * @param gridSize
-     * @param tilePixelSize
-     * @param upperleft
-     * @param pixelscale
-     * @return
-     */
-    XMLMosaic createMosaic(Dimension gridSize, Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) {
+    @Override
+    public Mosaic createMosaic(Mosaic template) throws DataStoreException {
         final XMLMosaic mosaic = new XMLMosaic();
-        mosaic.scale = pixelscale;
-        mosaic.gridWidth = gridSize.width;
-        mosaic.gridHeight = gridSize.height;
-        mosaic.tileWidth = tilePixelSize.width;
-        mosaic.tileHeight = tilePixelSize.height;
-        mosaic.upperLeft = upperleft.getCoordinate();
+        mosaic.scale = template.getScale();
+        mosaic.gridWidth = template.getGridSize().width;
+        mosaic.gridHeight = template.getGridSize().height;
+        mosaic.tileWidth = template.getTileSize().width;
+        mosaic.tileHeight = template.getTileSize().height;
+        mosaic.upperLeft = template.getUpperLeftCorner().getCoordinate();
+        mosaic.dataPixelWidth = template.getDataExtent().width;
+        mosaic.dataPixelHeight = template.getDataExtent().height;
         mosaics.add(mosaic);
         mosaic.initialize(this);
+        set.getRef().save();
         return mosaic;
     }
 
     /**
-     * Create and register a new mosaic in this pyramid
-     *
-     * @param gridSize
-     * @param tilePixelSize
-     * @param upperleft
-     * @param pixelscale
-     * @return
+     * {@inheritDoc }.
      */
-    XMLMosaic createMosaic(Dimension gridSize, Dimension tilePixelSize, Dimension dataPixelSize, DirectPosition upperleft, double pixelscale) {
-        final XMLMosaic mosaic = new XMLMosaic();
-        mosaic.scale = pixelscale;
-        mosaic.gridWidth = gridSize.width;
-        mosaic.gridHeight = gridSize.height;
-        mosaic.tileWidth = tilePixelSize.width;
-        mosaic.tileHeight = tilePixelSize.height;
-        mosaic.upperLeft = upperleft.getCoordinate();
-        mosaic.dataPixelWidth = dataPixelSize.width;
-        mosaic.dataPixelHeight = dataPixelSize.height;
-        mosaics.add(mosaic);
-        mosaic.initialize(this);
-        return mosaic;
+    @Override
+    public void deleteMosaic(String mosaicId) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
     }
 
 }

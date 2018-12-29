@@ -16,10 +16,12 @@
  */
 package org.geotoolkit.googlemaps;
 
-import org.geotoolkit.googlemaps.model.GoogleMapsPyramidSet;
+import java.util.Collection;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.multires.MultiResolutionModel;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.googlemaps.model.GoogleMapsPyramidSet;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
-import org.geotoolkit.storage.coverage.PyramidSet;
 import org.opengis.util.GenericName;
 
 /**
@@ -41,9 +43,23 @@ public class GoogleCoverageResource extends AbstractPyramidalCoverageResource {
         return new DefaultGetMap( (StaticGoogleMapsClient)store, getIdentifier().tip().toString());
     }
 
-    @Override
-    public PyramidSet getPyramidSet() throws DataStoreException {
+    public GoogleMapsPyramidSet getPyramidSet() {
         return set;
+    }
+
+    @Override
+    public Collection<Pyramid> getModels() throws DataStoreException {
+        return set.getPyramids();
+    }
+
+    @Override
+    public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
+        throw new DataStoreException("Not supported.");
+    }
+
+    @Override
+    public void removeModel(String identifier) throws DataStoreException {
+        throw new DataStoreException("Not supported.");
     }
 
 }

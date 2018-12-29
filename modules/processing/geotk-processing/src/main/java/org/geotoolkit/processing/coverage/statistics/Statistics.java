@@ -16,42 +16,40 @@
  */
 package org.geotoolkit.processing.coverage.statistics;
 
-import org.geotoolkit.metadata.ImageStatistics;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.coverage.*;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.image.internal.SampleType;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.storage.coverage.CoverageUtilities;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.util.Arrays;
-import org.geotoolkit.coverage.grid.ViewType;
-
-import static org.geotoolkit.processing.coverage.statistics.StatisticsDescriptor.*;
-import org.opengis.geometry.Envelope;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
+import org.geotoolkit.coverage.*;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.image.internal.SampleType;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.geotoolkit.metadata.ImageStatistics;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.AbstractProcess;
+import static org.geotoolkit.processing.coverage.statistics.StatisticsDescriptor.*;
+import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
+import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Process to create a {@link org.geotoolkit.process.coverage.statistics.ImageStatistics}
@@ -282,7 +280,7 @@ public class Statistics extends AbstractProcess {
         NumericHistogram[] histo = new NumericHistogram[nbBands];
         if (image instanceof GridMosaicRenderedImage) {
             final GridMosaicRenderedImage mosaicImage = (GridMosaicRenderedImage) image;
-            final GridMosaic gridMosaic = mosaicImage.getGridMosaic();
+            final Mosaic gridMosaic = mosaicImage.getGridMosaic();
             final Dimension gridSize = gridMosaic.getGridSize();
 
             int startX = 0;

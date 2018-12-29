@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.postgresql;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
@@ -31,17 +32,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.stream.Stream;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageReader;
-
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
-import org.geotoolkit.util.NamesExt;
-import org.opengis.util.GenericName;
+import org.geotoolkit.data.multires.DefiningMosaic;
+import org.geotoolkit.data.multires.DefiningPyramid;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.coverage.DefaultImageTile;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -50,11 +58,7 @@ import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
-import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.storage.coverage.DefiningCoverageResource;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -114,7 +118,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         Version version;
         PyramidalCoverageResource cref;
         Pyramid pyramid;
-        GridMosaic mosaic;
+        Mosaic mosaic;
         GridCoverage2D coverage;
 
         final GenericName name = NamesExt.create(null, "versLayer");
@@ -130,9 +134,10 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         cref = (PyramidalCoverageResource) store.findResource(name, version);
         assertNotNull(cref);
         //we need to create a pyramid otherwise the version not really be created
-        pyramid = cref.createPyramid(CommonCRS.WGS84.geographic());
-        mosaic = cref.createMosaic(pyramid.getId(), new Dimension(1, 1), dimension, upperLeft, 1);
-        cref.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, createImage(dimension, Color.RED));
+        pyramid = (Pyramid) cref.createModel(new DefiningPyramid(CommonCRS.WGS84.geographic()));
+        mosaic = pyramid.createMosaic(
+                new DefiningMosaic(null, upperLeft, 1, dimension, new Dimension(1, 1)));
+        mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(dimension, Color.RED), new Point(0, 0))), null);
 
         versions = vc.list();
         assertEquals(1, versions.size());
@@ -151,9 +156,10 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         cref = (PyramidalCoverageResource) store.findResource(name, version);
         assertNotNull(cref);
         //we need to create a pyramid otherwise the version not really be created
-        pyramid = cref.createPyramid(CommonCRS.WGS84.geographic());
-        mosaic = cref.createMosaic(pyramid.getId(), new Dimension(1, 1), dimension, upperLeft, 1);
-        cref.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, createImage(dimension, Color.BLUE));
+        pyramid = (Pyramid) cref.createModel(new DefiningPyramid(CommonCRS.WGS84.geographic()));
+        mosaic = pyramid.createMosaic(
+                new DefiningMosaic(null, upperLeft, 1, dimension, new Dimension(1, 1)));
+        mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(dimension, Color.BLUE), new Point(0, 0))), null);
 
         reader = cref.acquireReader();
         coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
@@ -172,9 +178,10 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         cref = (PyramidalCoverageResource) store.findResource(name, version);
         assertNotNull(cref);
         //we need to create a pyramid otherwise the version not really be created
-        pyramid = cref.createPyramid(CommonCRS.WGS84.geographic());
-        mosaic = cref.createMosaic(pyramid.getId(), new Dimension(1, 1), dimension, upperLeft, 1);
-        cref.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, createImage(dimension, Color.GREEN));
+        pyramid = (Pyramid) cref.createModel(new DefiningPyramid(CommonCRS.WGS84.geographic()));
+        mosaic = pyramid.createMosaic(
+                new DefiningMosaic(null, upperLeft, 1, dimension, new Dimension(1, 1)));
+        mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(dimension, Color.BLUE), new Point(0, 0))), null);
 
         reader = cref.acquireReader();
         coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);

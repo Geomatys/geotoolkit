@@ -16,11 +16,6 @@
  */
 package org.geotoolkit.processing.coverage.isoline2;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-
 import java.awt.Point;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
@@ -34,41 +29,45 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
-
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.apache.sis.coverage.grid.PixelTranslation;
-import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.AbstractProcess;
+import static org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2.*;
+import org.geotoolkit.storage.coverage.*;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.geotoolkit.storage.coverage.*;
 import org.opengis.geometry.MismatchedDimensionException;
-
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.internal.feature.AttributeConvention;
-
-import static org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2.*;
 
 
 /**
@@ -155,15 +154,14 @@ public class Isoline2 extends AbstractProcess {
 
     private void computeIsolineFromPM(PyramidalCoverageResource pm) throws DataStoreException, ProcessException, InterruptedException{
 
-        final PyramidSet set = pm.getPyramidSet();
-        final Collection<Pyramid> pyramids = set.getPyramids();
+        final Collection<Pyramid> pyramids = pm.getModels();
 
         final ExecutorService exec = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         for (Pyramid pyramid : pyramids) {
 
             //analyse mosaics in order to count all not missing tiles.
             int tiles = 0;
-            for (final GridMosaic mosaic : pyramid.getMosaics()) {
+            for (final Mosaic mosaic : pyramid.getMosaics()) {
                 for (int y=0; y<mosaic.getGridSize().height; y++) {
                     for (int x=0; x<mosaic.getGridSize().width; x++) {
                         if ( !mosaic.isMissing(x,y)) tiles++;
@@ -171,38 +169,27 @@ public class Isoline2 extends AbstractProcess {
                 }
             }
 
-            for (final GridMosaic mosaic : pyramid.getMosaics()) {
+            for (final Mosaic mosaic : pyramid.getMosaics()) {
                 final GridMosaicRenderedImage gridImage = new GridMosaicRenderedImage(mosaic);
 
                 for (int y=0; y<gridImage.getNumYTiles(); y++) {
                     for (int x=0; x<gridImage.getNumXTiles(); x++) {
                         if (!mosaic.isMissing(x,y)) {
-                            try{
-                                final TileReference ref = mosaic.getTile(x, y, null);
-                                MathTransform gridtoCRS = AbstractGridMosaic.getTileGridToCRS(mosaic, new Point(x, y));
-                                gridtoCRS = PixelTranslation.translate(gridtoCRS, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
-                                final Object obj = ref.getInput();
-                                final RenderedImage image;
-                                if (obj instanceof RenderedImage) {
-                                    image = (RenderedImage) obj;
-                                } else {
-                                    //final RenderedImage image = new LargeRenderedImage(imgReader, imgIndex);
-                                    //final PixelIterator ite = PixelIteratorFactory.createDefaultIterator(image);
-                                    final ImageReader imgReader = ref.getImageReader();
-                                    if(imgReader==null){
-                                        LOGGER.log(Level.WARNING, "Can't compute isoline, ImageReader can't be found.");
-                                        return;
-                                    }
-                                    image = imgReader.read(0);
-                                }
-                                final PixelIterator ite = PixelIteratorFactory.createDefaultIterator(image);
-                                final int width = image.getWidth();
-                                final int height = image.getHeight();
-                                final BlockRunnable runnable = new BlockRunnable(gridtoCRS, ite, width, height, 0);
-                                exec.submit(runnable);
-                            } catch(IOException ex) {
-                                throw new ProcessException(ex.getMessage(), this, ex);
+                            final ImageTile ref = (ImageTile) mosaic.getTile(x, y);
+                            MathTransform gridtoCRS = Pyramids.getTileGridToCRS(mosaic, new Point(x, y));
+                            gridtoCRS = PixelTranslation.translate(gridtoCRS, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
+                            final RenderedImage image;
+                            try {
+                                image = ref.getImage();
+                            } catch (IOException ex) {
+                                LOGGER.log(Level.WARNING, "Can't compute isoline, ImageReader can't be found.");
+                                return;
                             }
+                            final PixelIterator ite = PixelIteratorFactory.createDefaultIterator(image);
+                            final int width = image.getWidth();
+                            final int height = image.getHeight();
+                            final BlockRunnable runnable = new BlockRunnable(gridtoCRS, ite, width, height, 0);
+                            exec.submit(runnable);
                         }
                     }
                 }

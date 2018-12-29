@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import org.apache.sis.util.logging.Logging;
-
-import javax.imageio.ImageReader;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.IOException;
@@ -28,6 +25,9 @@ import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.Cache;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Tile;
 import org.geotoolkit.math.XMath;
 
 /**
@@ -51,7 +51,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
     /**
      * The original mosaic to read
      */
-    private final GridMosaic mosaic;
+    private final Mosaic mosaic;
 
     /**
      * Tile range to map as a rendered image in the mosaic
@@ -72,7 +72,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
      * Constructor
      * @param mosaic the mosaic to read as a rendered image
      */
-    public GridMosaicRenderedImage(final GridMosaic mosaic){
+    public GridMosaicRenderedImage(final Mosaic mosaic){
         this(mosaic,new Rectangle(mosaic.getGridSize()));
     }
 
@@ -82,7 +82,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
      * @param gridRange the tile to include in the rendered image.
      *        rectangle max max values are exclusive.
      */
-    public GridMosaicRenderedImage(final GridMosaic mosaic, Rectangle gridRange){
+    public GridMosaicRenderedImage(final Mosaic mosaic, Rectangle gridRange){
         ArgumentChecks.ensureNonNull("mosaic", mosaic);
         ArgumentChecks.ensureNonNull("range", gridRange);
 
@@ -108,15 +108,10 @@ public class GridMosaicRenderedImage implements RenderedImage {
                 final Dimension tileSize = mosaic.getTileSize();
                 if (dataArea != null) {
 
-                    final TileReference tile = mosaic.getTile(dataArea.x / tileSize.width, dataArea.y / tileSize.height, null);
-                    if (tile != null) {
-                        if (tile.getInput() instanceof RenderedImage) {
-                            firstTile = (RenderedImage) tile.getInput();
-                        } else {
-                            final ImageReader reader = tile.getImageReader();
-                            firstTile = reader.read(0);
-                            reader.dispose();
-                        }
+                    final Tile tile = mosaic.getTile(dataArea.x / tileSize.width, dataArea.y / tileSize.height);
+                    if (tile instanceof ImageTile) {
+                        final ImageTile imgTile = (ImageTile) tile;
+                        firstTile = imgTile.getImage();
                     }
                 }
             } catch (IOException e) {
@@ -132,7 +127,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
      * Return intern GridMosaic
      * @return GridMosaic
      */
-    public GridMosaic getGridMosaic(){
+    public Mosaic getGridMosaic(){
         return this.mosaic;
     }
 
@@ -315,16 +310,8 @@ public class GridMosaicRenderedImage implements RenderedImage {
                 DataBuffer buffer = null;
 
                 if (!mosaic.isMissing(tileX,tileY)) {
-                    final TileReference tile = mosaic.getTile(tileX,tileY, null);
-                    if (tile != null) {
-                        if (tile.getInput() instanceof RenderedImage) {
-                            buffer = ((RenderedImage)tile.getInput()).getData().getDataBuffer();
-                        } else {
-                            final ImageReader reader = tile.getImageReader();
-                            buffer = reader.read(0).getData().getDataBuffer();
-                            reader.dispose();
-                        }
-                    }
+                    final ImageTile tile = (ImageTile) mosaic.getTile(tileX,tileY);
+                    buffer = tile.getImage().getData().getDataBuffer();
                 }
 
                 if(buffer==null){
@@ -353,8 +340,8 @@ public class GridMosaicRenderedImage implements RenderedImage {
         return mosaic.isMissing(x+gridRange.x, y+gridRange.y);
     }
 
-    private TileReference getTileReference(int x, int y) throws DataStoreException{
-        return mosaic.getTile(x+gridRange.x,y+gridRange.y,null);
+    private ImageTile getTileReference(int x, int y) throws DataStoreException{
+        return (ImageTile) mosaic.getTile(x+gridRange.x,y+gridRange.y);
     }
 
     /**
@@ -379,15 +366,8 @@ public class GridMosaicRenderedImage implements RenderedImage {
                 for (int y = 0; y < this.getNumYTiles(); y++) {
                     for (int x = 0; x < this.getNumYTiles(); x++) {
                         if (!isTileMissing(x, y)) {
-                            final TileReference tile = getTileReference(x, y);
-                            final RenderedImage sourceImg;
-
-                            if (tile.getInput() instanceof RenderedImage) {
-                                sourceImg = (RenderedImage) tile.getInput();
-                            } else {
-                                sourceImg = tile.getImageReader().read(tile.getImageIndex());
-                            }
-
+                            final ImageTile tile = getTileReference(x, y);
+                            final RenderedImage sourceImg = tile.getImage();
                             final Raster rasterIn = sourceImg.getData();
 
                             rasterOut.getSampleModel().setDataElements(x * this.getTileWidth(), y * this.getTileHeight(), this.getTileWidth(), this.getTileHeight(),
@@ -429,7 +409,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
                 for (int y = Math.max(upperLeftPosition.y, 0); y < Math.min(lowerRightPosition.y + 1, this.getNumYTiles()); y++) {
                     for (int x = Math.max(upperLeftPosition.x, 0); x < Math.min(lowerRightPosition.x + 1, this.getNumXTiles()); x++) {
                         if (!isTileMissing(x, y)) {
-                            final TileReference tile = getTileReference(x, y);
+                            final ImageTile tile = getTileReference(x, y);
                             final Rectangle tileRect = new Rectangle(x * this.getTileWidth(), y * this.getTileHeight(), this.getTileWidth(), this.getTileHeight());
 
                             final int minX, maxX, minY, maxY;
@@ -447,13 +427,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
                                 continue;
                             }
 
-                            final RenderedImage sourceImg;
-                            if (tile.getInput() instanceof RenderedImage) {
-                                sourceImg = (RenderedImage) tile.getInput();
-                            } else {
-                                sourceImg = tile.getImageReader().read(tile.getImageIndex());
-                            }
-
+                            final RenderedImage sourceImg = tile.getImage();
                             final Raster rasterIn = sourceImg.getData();
 
                             rasterOut.getSampleModel().setDataElements(rectOut.x, rectOut.y, rectOut.width, rectOut.height,

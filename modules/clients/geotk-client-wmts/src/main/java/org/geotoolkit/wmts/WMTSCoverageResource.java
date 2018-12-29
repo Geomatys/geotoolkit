@@ -16,9 +16,11 @@
  */
 package org.geotoolkit.wmts;
 
+import java.util.Collection;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.multires.MultiResolutionModel;
+import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
-import org.geotoolkit.storage.coverage.PyramidSet;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
 import org.opengis.util.GenericName;
 
@@ -30,16 +32,30 @@ import org.opengis.util.GenericName;
  */
 public class WMTSCoverageResource extends AbstractPyramidalCoverageResource {
 
-    private final PyramidSet set;
+    private final WMTSPyramidSet set;
 
     WMTSCoverageResource(WebMapTileClient server, GenericName name, boolean cacheImage){
         super(server,name,0);
         set = new WMTSPyramidSet(server, name.tip().toString(), cacheImage);
     }
 
-    @Override
-    public PyramidSet getPyramidSet() throws DataStoreException {
+    public WMTSPyramidSet getPyramidSet() {
         return set;
+    }
+
+    @Override
+    public Collection<Pyramid> getModels() throws DataStoreException {
+        return set.getPyramids();
+    }
+
+    @Override
+    public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
+        throw new DataStoreException("Not supported.");
+    }
+
+    @Override
+    public void removeModel(String identifier) throws DataStoreException {
+        throw new DataStoreException("Not supported.");
     }
 
 }

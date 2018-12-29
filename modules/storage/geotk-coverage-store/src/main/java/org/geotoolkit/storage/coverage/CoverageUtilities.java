@@ -17,28 +17,32 @@
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.*;
-import javax.imageio.ImageReader;
-
+import java.util.stream.Stream;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
-
 import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.StrictlyCoverageFinder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.data.multires.DefiningMosaic;
+import org.geotoolkit.data.multires.DefiningPyramid;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.MultiResolutionResource;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
-
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.DirectPosition;
@@ -74,7 +78,7 @@ public final class CoverageUtilities {
      * TODO: Is it really OK ? If we search a Lambert pyramid, and we've only got polar ones...
      * @deprecated use {@link org.geotoolkit.coverage.finder.StrictlyCoverageFinder#findPyramid(PyramidSet, org.opengis.referencing.crs.CoordinateReferenceSystem)}
      */
-    public static Pyramid findPyramid(final PyramidSet set, final CoordinateReferenceSystem crs) throws FactoryException {
+    public static Pyramid findPyramid(final MultiResolutionResource set, final CoordinateReferenceSystem crs) throws FactoryException, DataStoreException {
         CoverageFinder finder = new StrictlyCoverageFinder();
         return finder.findPyramid(set, crs);
     }
@@ -84,7 +88,7 @@ public final class CoverageUtilities {
      *
      * @deprecated use {@link org.geotoolkit.coverage.finder.StrictlyCoverageFinder#findMosaic(Pyramid, double, double, org.opengis.geometry.Envelope, Integer)}
      */
-    public static GridMosaic findMosaic(final Pyramid pyramid, final double resolution,
+    public static Mosaic findMosaic(final Pyramid pyramid, final double resolution,
             final double tolerance, final Envelope env, int maxTileNumber) throws FactoryException
     {
         CoverageFinder finder = new StrictlyCoverageFinder();
@@ -106,14 +110,14 @@ public final class CoverageUtilities {
      * @throws TransformException If input filter {@link CoordinateReferenceSystem} is not compatible with
      * input mosaics one.
      */
-    public static List<GridMosaic> findMosaics(final Pyramid toSearchIn, Envelope filter, boolean containOnly) throws TransformException {
-        final ArrayList<GridMosaic> result = new ArrayList<GridMosaic>();
+    public static List<Mosaic> findMosaics(final Pyramid toSearchIn, Envelope filter, boolean containOnly) throws TransformException {
+        final ArrayList<Mosaic> result = new ArrayList<Mosaic>();
 
         // Rebuild filter envelope from pyramid CRS
         final GeneralEnvelope tmpFilter = new GeneralEnvelope(
                 ReferencingUtilities.transform(filter, toSearchIn.getCoordinateReferenceSystem()));
 
-        for (GridMosaic source : toSearchIn.getMosaics()) {
+        for (Mosaic source : toSearchIn.getMosaics()) {
             final Envelope sourceEnv = source.getEnvelope();
             if ((containOnly && tmpFilter.contains(sourceEnv, true))
                     || (!containOnly && tmpFilter.intersects(sourceEnv, true))) {
@@ -195,16 +199,15 @@ public final class CoverageUtilities {
      * @throws IOException If a problem occurs at image reading/writing.
      */
     public static void copyPyramidReference(PyramidalCoverageResource sourceRef, PyramidalCoverageResource targetRef) throws DataStoreException, IOException {
-        final Collection<Pyramid> pyramids = sourceRef.getPyramidSet().getPyramids();
+        final Collection<? extends Pyramid> pyramids = Pyramids.getPyramids(sourceRef);
 
         // Create pyramids
         for (Pyramid sP : pyramids) {
-            final Pyramid tP = targetRef.createPyramid(sP.getCoordinateReferenceSystem());
+            final Pyramid tP = (Pyramid) targetRef.createModel(new DefiningPyramid(sP.getCoordinateReferenceSystem()));
 
-            // Create mosaics
-            for (GridMosaic sM : sP.getMosaics()) {
-                final GridMosaic tM = targetRef.createMosaic(tP.getId(), sM.getGridSize(), sM.getTileSize(), sM.getUpperLeftCorner(), sM.getScale());
-
+            //create mosaics
+            for (Mosaic sM : sP.getMosaics()) {
+                final Mosaic tM = tP.createMosaic(sM);
                 final int height = sM.getGridSize().height;
                 final int width = sM.getGridSize().width;
 
@@ -212,24 +215,9 @@ public final class CoverageUtilities {
                 for (int y = 0; y < height; y++) {
                     for (int x = 0; x < width; x++) {
                         if (!sM.isMissing(x, y)) {
-                            final TileReference sT = sM.getTile(x, y, null);
-
-                            final RenderedImage sourceImg;
-                            ImageReader reader = null;
-                            try {
-                                if (sT.getInput() instanceof RenderedImage) {
-                                    sourceImg = (RenderedImage) sT.getInput();
-                                } else {
-                                    final int imgIdx = sT.getImageIndex();
-                                    reader = sT.getImageReader();
-                                    sourceImg = sT.getImageReader().read(imgIdx);
-                                }
-                            } finally {
-                                if (reader != null) {
-                                    XImageIO.dispose(reader);
-                                }
-                            }
-                            targetRef.writeTile(tP.getId(), tM.getId(), x, y, sourceImg);
+                            final ImageTile sT = (ImageTile) sM.getTile(x, y);
+                            final RenderedImage sourceImg = sT.getImage();
+                            tM.writeTiles(Stream.of(new DefaultImageTile(sourceImg, new Point(x, y))), null);
                         }
                     }
                 }
@@ -274,7 +262,7 @@ public final class CoverageUtilities {
         // Find if we already have a pyramid in the given CRS
         Pyramid pyramid = null;
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
-        for (Pyramid candidate : container.getPyramidSet().getPyramids()) {
+        for (Pyramid candidate : Pyramids.getPyramids(container)) {
             if (Utilities.equalsApproximatively(crs, candidate.getCoordinateReferenceSystem())) {
                 pyramid = candidate;
                 break;
@@ -282,7 +270,7 @@ public final class CoverageUtilities {
         }
         if (pyramid == null) {
             // We didn't find a pyramid, create one
-            pyramid = container.createPyramid(crs);
+            pyramid = (Pyramid) container.createModel(new DefiningPyramid(crs));
         }
 
         // Those parameters can change if another mosaic already exist
@@ -307,7 +295,8 @@ public final class CoverageUtilities {
 
             // Check if we already have a mosaic at this scale
             boolean mosaicFound = false;
-            for (GridMosaic m : pyramid.getMosaics()) {
+            int index = 0;
+            for (Mosaic m : pyramid.getMosaics()) {
                 if (m.getScale() == scale) {
                     mosaicFound = true;
                     break;
@@ -315,7 +304,9 @@ public final class CoverageUtilities {
             }
             if (!mosaicFound) {
                 // Create a new mosaic
-                container.createMosaic(pyramid.getId(),gridSize, tileDim, new Dimension(dataPixelWidth, dataPixelHeight), newUpperleft, scale);
+                final DefiningMosaic dm = new DefiningMosaic(null, newUpperleft,
+                        scale, tileSize, gridSize, new Rectangle(dataPixelWidth, dataPixelHeight));
+                pyramid.createMosaic(dm);
             }
         }
         return pyramid;
@@ -348,10 +339,10 @@ public final class CoverageUtilities {
      * @param pyramid shouldn't be null
      * @return pyramid Envelope or null if no mosaic found.
      */
-    public static GeneralEnvelope getPyramidEnvelope(Pyramid pyramid) {
+    public static GeneralEnvelope getPyramidEnvelope(org.geotoolkit.data.multires.Pyramid pyramid) {
         ArgumentChecks.ensureNonNull("pyramid", pyramid);
         GeneralEnvelope pyramidEnv = null;
-        for (GridMosaic mosaic : pyramid.getMosaics()) {
+        for (Mosaic mosaic : pyramid.getMosaics()) {
             if (pyramidEnv == null) {
                 pyramidEnv = new GeneralEnvelope(mosaic.getEnvelope());
             } else {

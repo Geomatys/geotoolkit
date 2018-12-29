@@ -16,24 +16,23 @@
  */
 package org.geotoolkit.processing.coverage.resample;
 
-import org.opengis.util.FactoryException;
+import org.apache.sis.internal.referencing.CoordinateOperations;
+import org.apache.sis.referencing.factory.InvalidGeodeticParameterException;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.resources.Errors;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
-import org.apache.sis.referencing.operation.matrix.Matrices;
-import org.apache.sis.referencing.operation.matrix.MatrixSIS;
-import org.apache.sis.referencing.factory.InvalidGeodeticParameterException;
-import org.apache.sis.internal.referencing.CoordinateOperations;
-import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.ComparisonMode;
-import org.apache.sis.util.resources.Errors;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -226,7 +225,8 @@ final class WraparoundTransform extends AbstractMathTransform {
     }
 
     /**
-     * Returns the identity transform as the pseudo-inverse of this transform.
+     * Throws a {@code NoninvertibleTransformException}.
+     *
      * We do not return another {@code WraparoundTransform} for three reasons:
      *
      * <ol>
@@ -240,10 +240,16 @@ final class WraparoundTransform extends AbstractMathTransform {
      *       may happen after the geographic CRS. But in the "GeographicCRS → BaseCRS → ProjectedCRS" inverse
      *       operation, the wraparound would be between BaseCRS and ProjectedCRS, which is often not needed.</li>
      * </ol>
+     *
+     * We do not return an identity transform because it causes incorrect
+     * resampling operation steps when concatenated, especially when testing if transforms
+     * are mutually the inverse of each other.
+     *
+     * TODO revisit
      */
     @Override
-    public MathTransform inverse() {
-        return MathTransforms.identity(dimension);
+    public MathTransform inverse() throws NoninvertibleTransformException {
+        throw new NoninvertibleTransformException();
     }
 
     /**

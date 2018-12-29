@@ -16,30 +16,6 @@
  */
 package org.geotoolkit.display2d.container.statefull;
 
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidSet;
-import org.geotoolkit.coverage.finder.CoverageFinder;
-import org.geotoolkit.display.canvas.control.CanvasMonitor;
-import org.geotoolkit.display2d.GO2Hints;
-import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.style.CachedRule;
-import org.opengis.util.GenericName;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.referencing.ReferencingUtilities;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
-
-import javax.vecmath.Point3d;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,16 +27,39 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
+import javax.vecmath.Point3d;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.finder.CoverageFinder;
+import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.data.multires.Pyramids;
+import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.primitive.SceneNode;
+import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.display2d.style.CachedRule;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 
 /**
  * Graphic for pyramidal coverage layers.
@@ -137,18 +136,11 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
 
         final Envelope canvasEnv2D = context2D.getCanvasObjectiveBounds2D();
         final Envelope canvasEnv = context2D.getCanvasObjectiveBounds2D();
-        final PyramidSet pyramidSet;
-        try {
-            pyramidSet = model.getPyramidSet();
-        } catch (DataStoreException ex) {
-            monitor.exceptionOccured(ex, Level.WARNING);
-            return false;
-        }
 
         Pyramid pyramid = null;
         try {
-            pyramid = coverageFinder.findPyramid(pyramidSet, canvasEnv.getCoordinateReferenceSystem());
-        } catch (FactoryException ex) {
+            pyramid = coverageFinder.findPyramid(model, canvasEnv.getCoordinateReferenceSystem());
+        } catch (FactoryException | DataStoreException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
             return false;
         }
@@ -192,7 +184,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
             return false;
         }
 
-        GridMosaic mosaic = null;
+        Mosaic mosaic = null;
         try {
             mosaic = coverageFinder.findMosaic(pyramid, wantedResolution, tolerance, wantedEnv,100);
         } catch (FactoryException ex) {
@@ -323,13 +315,13 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         }
     }
 
-    private Point3d[] getReplacements(Pyramid pyramid, Point3d coord, final GridMosaic mosaicUpdate,
+    private Point3d[] getReplacements(Pyramid pyramid, Point3d coord, final Mosaic mosaicUpdate,
             double qtileMinCol, double qtileMaxCol, double qtileMinRow, double qtileMaxRow){
         double[] tscales = pyramid.getScales();
 
         final int indexBase = Arrays.binarySearch(tscales, coord.z);
-        final GridMosaic mosaicBase = pyramid.getMosaics(indexBase).iterator().next();
-        final Envelope env = mosaicBase.getEnvelope((int)coord.x, (int)coord.y);
+        final Mosaic mosaicBase = pyramid.getMosaics(indexBase).iterator().next();
+        final Envelope env = Pyramids.computeTileEnvelope(mosaicBase, (int)coord.x, (int)coord.y);
 
         double bBoxMinX = env.getMinimum(0);
         double bBoxMinY = env.getMinimum(1);
