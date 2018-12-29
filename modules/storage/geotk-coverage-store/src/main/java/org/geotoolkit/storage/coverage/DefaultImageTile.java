@@ -17,10 +17,12 @@
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Point;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.storage.AbstractResource;
 
 /**
  * Default implementation of a TileReference
@@ -28,14 +30,25 @@ import org.geotoolkit.image.io.XImageIO;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultTileReference implements TileReference{
+public class DefaultImageTile extends AbstractResource implements ImageTile{
 
     protected final ImageReaderSpi spi;
     protected final Object input;
     protected final int imageIndex;
     protected final Point position;
 
-    public DefaultTileReference(ImageReaderSpi spi, Object input, int imageIndex, Point position) {
+    public DefaultImageTile(RenderedImage image, int x, int y) {
+        this(image, new Point(x, y));
+    }
+
+    public DefaultImageTile(RenderedImage image, Point position) {
+        this.spi = null;
+        this.input = image;
+        this.imageIndex = 0;
+        this.position = position;
+    }
+
+    public DefaultImageTile(ImageReaderSpi spi, Object input, int imageIndex, Point position) {
         this.spi = spi;
         this.input = input;
         this.imageIndex = imageIndex;

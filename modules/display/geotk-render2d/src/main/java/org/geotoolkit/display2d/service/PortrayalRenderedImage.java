@@ -30,16 +30,15 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.logging.Level;
 import javax.media.jai.RasterFactory;
 import javax.swing.event.EventListenerList;
-
-import org.geotoolkit.storage.coverage.CoverageUtilities;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
-import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * Implementation of {@link RenderedImage} that is computed on the fly using portrayal rendering.
@@ -316,8 +315,7 @@ public class PortrayalRenderedImage implements RenderedImage{
         return sampleModel;
     }
 
-    @Override
-    public Raster getTile(int col, int row) {
+    public BufferedImage getTileImage(int col, int row) {
 
         final double tilespanX = scale*tileSize.width;
         final double tilespanY = scale*tileSize.height;
@@ -359,10 +357,14 @@ public class PortrayalRenderedImage implements RenderedImage{
         //cut the canvas buffer in pieces
         cvs.repaint();
         final BufferedImage canvasBuffer = cvs.getSnapShot();
-        final Raster data = canvasBuffer.getData(); // make a copy since we will reuse canvas
         fireTileCreated(col,row);
         canvas.push(cvs);
-        return data;
+        return canvasBuffer;
+    }
+
+    @Override
+    public Raster getTile(int col, int row) {
+        return getTileImage(col, row).getData(); // make a copy since we will reuse canvas
     }
 
     @Override

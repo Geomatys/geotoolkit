@@ -16,14 +16,14 @@
  */
 package org.geotoolkit.osmtms.map;
 
-import org.geotoolkit.storage.coverage.PyramidSet;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.osmtms.OSMTileMapClient;
-import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 
 /**
@@ -50,7 +50,7 @@ public class OSMTMSMapLayer extends DefaultCoverageMapLayer {
     public OSMTMSMapLayer(final OSMTileMapClient server) {
         super(getReference(server),
               new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
-        setUserProperty(PyramidSet.HINT_FORMAT, DEFAULT_FORMAT);
+        setUserProperty(Pyramids.HINT_FORMAT, DEFAULT_FORMAT);
     }
 
     /**
@@ -59,14 +59,14 @@ public class OSMTMSMapLayer extends DefaultCoverageMapLayer {
      */
     public void setFormat(final String format) {
         ArgumentChecks.ensureNonNull("format", format);
-        setUserProperty(PyramidSet.HINT_FORMAT, format);
+        setUserProperty(Pyramids.HINT_FORMAT, format);
     }
 
     /**
      * Gets the extension for the output response. By default {@code .png}.
      */
     public String getFormat() {
-        Object val = getUserProperty(PyramidSet.HINT_FORMAT);
+        Object val = getUserProperty(Pyramids.HINT_FORMAT);
         if(val != null){
             return val.toString();
         }

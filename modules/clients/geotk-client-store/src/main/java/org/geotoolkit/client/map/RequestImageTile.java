@@ -27,16 +27,16 @@ import org.apache.sis.setup.OptionKey;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.storage.coverage.DefaultTileReference;
+import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.image.io.XImageIO;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class RequestTileReference extends DefaultTileReference {
+public class RequestImageTile extends DefaultImageTile {
 
-    public RequestTileReference(ImageReaderSpi spi, Request input, int imageIndex, Point position) {
+    public RequestImageTile(ImageReaderSpi spi, Request input, int imageIndex, Point position) {
         super(spi, input, imageIndex, position);
     }
 

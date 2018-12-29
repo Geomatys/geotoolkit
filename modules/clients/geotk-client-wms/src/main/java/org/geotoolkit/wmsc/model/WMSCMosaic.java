@@ -21,11 +21,14 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.TileReference;
+import java.util.stream.Stream;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.data.multires.Tile;
+import org.geotoolkit.process.Monitor;
+import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.wms.xml.v111.BoundingBox;
 import org.geotoolkit.wmsc.xml.v111.TileSet;
 import org.opengis.geometry.DirectPosition;
@@ -36,7 +39,7 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMSCMosaic implements GridMosaic{
+public class WMSCMosaic implements Mosaic {
 
     private final String id = UUID.randomUUID().toString();
     private final WMSCPyramid pyramid;
@@ -65,11 +68,10 @@ public class WMSCMosaic implements GridMosaic{
     }
 
     @Override
-    public String getId() {
+    public String getIdentifier() {
         return id;
     }
 
-    @Override
     public Pyramid getPyramid() {
         return pyramid;
     }
@@ -97,23 +99,6 @@ public class WMSCMosaic implements GridMosaic{
     }
 
     @Override
-    public Envelope getEnvelope(int col, int row) {
-
-        final DirectPosition ul = getUpperLeftCorner();
-        final double minX = ul.getOrdinate(0);
-        final double maxY = ul.getOrdinate(1);
-        final double spanX = tileSpanX;
-        final double spanY = tileSpanY;
-
-        final GeneralEnvelope envelope = new GeneralEnvelope(
-                getPyramid().getCoordinateReferenceSystem());
-        envelope.setRange(0, minX + col*spanX, minX + (col+1)*spanX);
-        envelope.setRange(1, maxY - (row+1)*spanY, maxY - row*spanY);
-
-        return envelope;
-    }
-
-    @Override
     public Envelope getEnvelope() {
         final DirectPosition ul = getUpperLeftCorner();
         final double minX = ul.getOrdinate(0);
@@ -122,7 +107,7 @@ public class WMSCMosaic implements GridMosaic{
         final double spanY = getTileSize().height* getGridSize().height* getScale();
 
         final GeneralEnvelope envelope = new GeneralEnvelope(
-                getPyramid().getCoordinateReferenceSystem());
+                pyramid.getCoordinateReferenceSystem());
         envelope.setRange(0, minX, minX + spanX);
         envelope.setRange(1, maxY - spanY, maxY );
 
@@ -135,18 +120,28 @@ public class WMSCMosaic implements GridMosaic{
     }
 
     @Override
-    public TileReference getTile(int col, int row, Map hints) throws DataStoreException {
-        return ((WMSCPyramidSet)getPyramid().getPyramidSet()).getTile(this, col, row, hints);
+    public ImageTile getTile(int col, int row, Map hints) throws DataStoreException {
+        return pyramid.getPyramidSet().getTile(pyramid, this, col, row, hints);
     }
 
     @Override
     public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
-        return ((WMSCPyramidSet)getPyramid().getPyramidSet()).getTiles(this, positions, hints);
+        return pyramid.getPyramidSet().getTiles(pyramid, this, positions, hints);
     }
 
     @Override
     public Rectangle getDataExtent() {
         TileSet tileset = pyramid.getTileset();
         return new Rectangle(0,0, gridSize.width * tileset.getWidth() , gridSize.height * tileset.getHeight());
+    }
+
+    @Override
+    public void writeTiles(Stream<Tile> tiles, Monitor monitor) throws DataStoreException {
+        throw new DataStoreException("WMS-C is not writable");
+    }
+
+    @Override
+    public void deleteTile(int tileX, int tileY) throws DataStoreException {
+        throw new DataStoreException("WMS-C is not writable");
     }
 }

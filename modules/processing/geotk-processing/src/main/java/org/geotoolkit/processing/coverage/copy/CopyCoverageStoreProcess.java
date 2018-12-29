@@ -16,37 +16,6 @@
  */
 package org.geotoolkit.processing.coverage.copy;
 
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidSet;
-import org.geotoolkit.storage.coverage.TileReference;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.opengis.util.GenericName;
-import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.process.Process;
-import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.coverage.reducetodomain.ReduceToDomainDescriptor;
-import org.geotoolkit.processing.coverage.straighten.StraightenDescriptor;
-import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.opengis.geometry.Envelope;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.ImageCRS;
-import org.opengis.referencing.operation.TransformException;
-
-import javax.imageio.ImageReader;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -63,21 +32,53 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
+import java.util.stream.Stream;
+import javax.imageio.ImageReader;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
-import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
-
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.data.multires.DefiningMosaic;
+import org.geotoolkit.data.multires.DefiningPyramid;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.ERASE;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.INSTANCE;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.REDUCE_TO_DOMAIN;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.STORE_IN;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.STORE_OUT;
+import org.geotoolkit.processing.coverage.reducetodomain.ReduceToDomainDescriptor;
+import org.geotoolkit.processing.coverage.straighten.StraightenDescriptor;
+import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.storage.coverage.ImageTile;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.temporal.object.TemporalUtilities;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.ImageCRS;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.GenericName;
 
 /**
  * Copy a {@linkplain CoverageStore coverage store} into another one, that supports
@@ -185,7 +186,6 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      * If both source and target are pyramid model, we can copy each tiles.
      */
     private void savePMtoPM(final PyramidalCoverageResource inPM, final PyramidalCoverageResource outPM) throws DataStoreException{
-        final PyramidSet inPS = inPM.getPyramidSet();
 
         final List<GridSampleDimension> sampleDimensions = inPM.getSampleDimensions();
         if(sampleDimensions != null){
@@ -194,8 +194,8 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
 
         //count total number of tiles
         long nb = 0;
-        for(final Pyramid inPY : inPS.getPyramids()){
-            for(final GridMosaic inGM : inPY.getMosaics()){
+        for(final Pyramid inPY : inPM.getModels()){
+            for(final Mosaic inGM : inPY.getMosaics()){
                 nb += inGM.getGridSize().height*inGM.getGridSize().width;
             }
         }
@@ -208,14 +208,12 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
 
             final AtomicLong count = new AtomicLong();
             //copy pyramids
-            for(final Pyramid inPY : inPS.getPyramids()){
-                final Pyramid outPY = outPM.createPyramid(inPY.getCoordinateReferenceSystem());
+            for(final Pyramid inPY : inPM.getModels()){
+                final Pyramid outPY = (Pyramid) outPM.createModel(new DefiningPyramid(inPY.getCoordinateReferenceSystem()));
                 //copy mosaics
-                for(final GridMosaic inGM : inPY.getMosaics()){
+                for(final Mosaic inGM : inPY.getMosaics()){
                     final Dimension gridDimension = inGM.getGridSize();
-                    final GridMosaic outGM = outPM.createMosaic(outPY.getId(),
-                            gridDimension, inGM.getTileSize(),
-                            inGM.getUpperLeftCorner(), inGM.getScale());
+                    final Mosaic outGM = outPY.createMosaic(inGM);
 
 
                     //collection of all tile points
@@ -280,35 +278,28 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
                             Logging.getLogger("org.geotoolkit.processing.coverage.copy").log(Level.SEVERE, null, ex);
                             continue;
                         }
-                        if(obj == GridMosaic.END_OF_QUEUE){
+                        if(obj == Mosaic.END_OF_QUEUE){
                             break;
                         }else if(obj == null){
                             continue;
                         }
-                        final TileReference inTR = (TileReference) obj;
+                        final ImageTile inTR = (ImageTile) obj;
                         final int x = inTR.getPosition().x;
                         final int y = inTR.getPosition().y;
                         ImageReader inReader = null;
                         try{
-                            Object input = inTR.getInput();
-                            RenderedImage image;
-                            if(input instanceof RenderedImage){
-                                image = (RenderedImage) input;
-                                if(image.getColorModel() instanceof IndexColorModel){
-                                    final BufferedImage bg = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                                    bg.createGraphics().drawRenderedImage(image, new AffineTransform());
-                                    image = bg;
-                                }
-                            }else{
-                                inReader = inTR.getImageReader();
-                                image = inReader.read(inTR.getImageIndex());
+                            RenderedImage image = inTR.getImage();
+                            if (image.getColorModel() instanceof IndexColorModel) {
+                                final BufferedImage bg = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                                bg.createGraphics().drawRenderedImage(image, new AffineTransform());
+                                image = bg;
                             }
                             final RenderedImage img = image;
                             es.submit(new Runnable() {
                                 @Override
                                 public void run() {
                                     try {
-                                        outPM.writeTile(outPY.getId(), outGM.getId(), x, y, img);
+                                        outGM.writeTiles(Stream.of(new DefaultImageTile(img, new Point(x, y))), null);
                                     } catch (DataStoreException ex) {
                                         CopyCoverageStoreProcess.this.fireWarningOccurred(ex.getMessage(), 0, ex);
                                         return;
@@ -369,7 +360,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(imageIndex);
         outPM.setSampleDimensions(sampleDimensions);
 
-        final Pyramid pyramid = outPM.createPyramid(crs);
+        final Pyramid pyramid = (Pyramid) outPM.createModel(new DefiningPyramid(crs));
 
         // save all possible envelope slice combinations in a separate mosaic.
         final GridCombineIterator gridCIte = new GridCombineIterator(globalGeom);
@@ -446,7 +437,8 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         for (int i = 2, n = env.getDimension(); i < n; i++) {
             upperleft.setOrdinate(i, env.getMedian(i));
         }
-        final GridMosaic mosaic = pm.createMosaic(pyramid.getId(), gridSize, TileSize, upperleft, scale);
-        pm.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, img);
+        final Mosaic mosaic = pyramid.createMosaic(
+                new DefiningMosaic(null, upperleft, scale, TileSize, gridSize));
+        mosaic.writeTiles(Stream.of(new DefaultImageTile(img, new Point(0, 0))), null);
     }
 }

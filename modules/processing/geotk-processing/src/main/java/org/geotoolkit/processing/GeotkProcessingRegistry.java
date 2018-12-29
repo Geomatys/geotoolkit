@@ -55,7 +55,6 @@ public class GeotkProcessingRegistry extends AbstractProcessingRegistry {
                 org.geotoolkit.processing.coverage.mathcalc.MathCalcDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.merge.MergeDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.metadataextractor.ExtractionDescriptor.INSTANCE,
-                org.geotoolkit.processing.coverage.pyramid.PyramidDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.reducetodomain.ReduceToDomainDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.reformat.ReformatDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.resample.IOResampleDescriptor.INSTANCE,

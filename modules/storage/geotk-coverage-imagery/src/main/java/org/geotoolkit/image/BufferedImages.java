@@ -31,8 +31,10 @@ import java.awt.image.DataBufferShort;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Hashtable;
 import javax.media.jai.RasterFactory;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.util.Static;
 import org.geotoolkit.image.color.ScaledColorSpace;
 
@@ -155,5 +157,25 @@ public class BufferedImages extends Static {
         else{
             throw new IllegalArgumentException("Unexpected array type "+data.getClass());
         }
+    }
+
+    /**
+     * Compare the pixles of given image to reference pixel and return true
+     * if all pixels share those same samples.
+     *
+     * @param img image to test
+     * @param pixel reference pixel to compare with
+     * @return true if all pixels is image are equal to reference pixel.
+     */
+    public static boolean isAll(RenderedImage img, double[] pixel) {
+        final PixelIterator ite = PixelIterator.create(img);
+        final double[] buffer = new double[pixel.length];
+        while (ite.next()) {
+            ite.getPixel(buffer);
+            if (!Arrays.equals(pixel, buffer)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

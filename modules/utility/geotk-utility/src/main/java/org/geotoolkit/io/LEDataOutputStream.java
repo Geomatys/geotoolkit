@@ -72,6 +72,34 @@ public class LEDataOutputStream extends FilterOutputStream implements DataOutput
         position+=2;
     }
 
+    /**
+     * Write multiple values in one call.
+     *
+     * @param values values to write
+     * @throws IOException
+     */
+    public final void writeShorts(short[] values) throws IOException {
+        for (short value : values) {
+            writeShort(value);
+        }
+    }
+
+    public void writeUnsignedShort(int s) throws IOException {
+        writeShort(s);
+    }
+
+    /**
+     * Write multiple values in one call.
+     *
+     * @param values values to write
+     * @throws IOException
+     */
+    public final void writeUnsignedShorts(int[] values) throws IOException {
+        for (int value : values) {
+            writeUnsignedShort(value);
+        }
+    }
+
     @Override
     public void writeChar(int c) throws IOException {
         out.write((c      ) & 0xFF);
@@ -88,6 +116,18 @@ public class LEDataOutputStream extends FilterOutputStream implements DataOutput
         position+=4;
     }
 
+    /**
+     * Write multiple values in one call.
+     *
+     * @param values values to write
+     * @throws IOException
+     */
+    public final void writeInts(int[] values) throws IOException {
+        for (int value : values) {
+            writeInt(value);
+        }
+    }
+
     @Override
     public void writeLong(long l) throws IOException {
         out.write((int) (l       ) & 0xFF);
@@ -101,14 +141,50 @@ public class LEDataOutputStream extends FilterOutputStream implements DataOutput
         position+=8;
     }
 
+    /**
+     * Write multiple values in one call.
+     *
+     * @param values values to write
+     * @throws IOException
+     */
+    public final void writeLongs(long[] values) throws IOException {
+        for (long value : values) {
+            writeLong(value);
+        }
+    }
+
     @Override
     public final void writeFloat(float f) throws IOException {
         this.writeInt(Float.floatToIntBits(f));
     }
 
+    /**
+     * Write multiple values in one call.
+     *
+     * @param values values to write
+     * @throws IOException
+     */
+    public final void writeFloats(float[] values) throws IOException {
+        for (float value : values) {
+            writeFloat(value);
+        }
+    }
+
     @Override
     public final void writeDouble(double d) throws IOException {
         this.writeLong(Double.doubleToLongBits(d));
+    }
+
+    /**
+     * Write multiple values in one call.
+     *
+     * @param values values to write
+     * @throws IOException
+     */
+    public final void writeDoubles(double[] values) throws IOException {
+        for (double value : values) {
+            writeDouble(value);
+        }
     }
 
     @Override

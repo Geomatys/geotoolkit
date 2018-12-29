@@ -18,15 +18,15 @@ package org.geotoolkit.coverage.memory;
 
 import java.awt.Point;
 import java.awt.image.RenderedImage;
-import org.geotoolkit.storage.coverage.DefaultTileReference;
+import org.geotoolkit.storage.coverage.DefaultImageTile;
 
 /**
  *
  * @author rmarechal
  */
-public class MPTileReference extends DefaultTileReference {
+public class MPImageTile extends DefaultImageTile {
 
-    public MPTileReference(RenderedImage input, int imageIndex, Point position) {
+    public MPImageTile(RenderedImage input, int imageIndex, Point position) {
         super(IImageReader.IISpi.INSTANCE, input, imageIndex, position);
     }
 

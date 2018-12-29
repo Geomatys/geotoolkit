@@ -16,19 +16,29 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
-import org.locationtech.jts.geom.Geometry;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.AbstractGridMosaic;
-import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
-import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
-import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidSet;
-import org.geotoolkit.storage.coverage.TileReference;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.finder.CoverageFinder;
+import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.VisitFilter;
@@ -45,15 +55,19 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer;
-import org.opengis.util.GenericName;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapBuilder;
-import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
+import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
+import org.geotoolkit.storage.coverage.ImageTile;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.util.Cancellable;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -61,24 +75,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.opengis.util.GenericName;
 
 /**
  * Graphic for pyramidal coverage layers.
@@ -137,7 +134,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
                 }
 
                 final Point pt = new Point(tileCol, tileRow);
-                final MathTransform trs = AbstractGridMosaic.getTileGridToCRS(result.mosaic, pt);
+                final MathTransform trs = Pyramids.getTileGridToCRS(result.mosaic, pt);
                 queries.put(pt,trs);
             }
         }
@@ -180,14 +177,14 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
                 break;
             }
 
-            if(obj == GridMosaic.END_OF_QUEUE){
+            if(obj == Mosaic.END_OF_QUEUE){
                 break;
             }
 
-            if(obj instanceof TileReference){
-                final TileReference tile = (TileReference)obj;
+            if(obj instanceof ImageTile){
+                final ImageTile tile = (ImageTile)obj;
                 try {
-                    dataRendered |= paintTile(context2D, params, result.rules, result.pyramid.getId(), result.mosaic.getId(), tile);
+                    dataRendered |= paintTile(context2D, params, result.rules, result.pyramid.getIdentifier(), result.mosaic.getIdentifier(), tile);
                 } catch (Exception e) {
                     LOGGER.log(Level.WARNING, "Error on tile : "+tile.getPosition()+". Input is : "+tile.getInput(), e);
                 }
@@ -265,11 +262,11 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
                     continue;
                 }
 
-                final Envelope tileEnvelope = result.mosaic.getEnvelope(tileCol, tileRow);
+                final Envelope tileEnvelope = Pyramids.computeTileEnvelope(result.mosaic, tileCol, tileRow);
                 final Geometry geom = JTS.toGeometry(tileEnvelope);
 
                 if(searchGeom.intersects(geom)){
-                    final ProjectedCoverage pc = asCoverage(context2D, params, covRef, result.pyramid.getId(), result.mosaic.getId(),tileCol,tileRow);
+                    final ProjectedCoverage pc = asCoverage(context2D, params, covRef, result.pyramid.getIdentifier(), result.mosaic.getIdentifier(),tileCol,tileRow);
                     graphics.add(pc);
                 }
             }
@@ -303,15 +300,8 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
 
         //find the best pyramid
         try {
-            result.pyramidSet = model.getPyramidSet();
-        } catch (DataStoreException ex) {
-            monitor.exceptionOccured(ex, Level.WARNING);
-            return null;
-        }
-
-        try {
-            result.pyramid = coverageFinder.findPyramid(result.pyramidSet, canvasEnv2D.getCoordinateReferenceSystem());
-        } catch (FactoryException ex) {
+            result.pyramid = coverageFinder.findPyramid(model, canvasEnv2D.getCoordinateReferenceSystem());
+        } catch (FactoryException | DataStoreException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
             return null;
         }
@@ -429,7 +419,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
     }
 
     private ProjectedCoverage asCoverage(final RenderingContext2D context, StatelessContextParams params,
-            PyramidalCoverageResource ref, String pyramidId, String mosaicId, TileReference tile) {
+            PyramidalCoverageResource ref, String pyramidId, String mosaicId, ImageTile tile) {
 
         final GridCoverage2D coverage;
         try {
@@ -445,7 +435,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
     }
 
     private boolean paintTile(final RenderingContext2D context, StatelessContextParams params, CachedRule[] rules,
-            final String pyramidId, final String mosaicId, final TileReference tile) {
+            final String pyramidId, final String mosaicId, final ImageTile tile) {
         final PyramidalCoverageResource covRef = (PyramidalCoverageResource) item.getCoverageReference();
 
         final ProjectedCoverage projectedCoverage = asCoverage(context,
@@ -477,9 +467,8 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         private CachedRule[] rules;
         private CoordinateReferenceSystem pyramidCRS2D;
         //tiles informations
-        private PyramidSet pyramidSet;
         private Pyramid pyramid;
-        private GridMosaic mosaic;
+        private Mosaic mosaic;
         private double tileMinCol;
         private double tileMaxCol;
         private double tileMinRow;

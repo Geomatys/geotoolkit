@@ -17,13 +17,13 @@
 package org.geotoolkit.wmts.model;
 
 import java.util.*;
-import org.geotoolkit.client.Request;
-import org.geotoolkit.client.map.CachedPyramidSet;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.client.Request;
+import org.geotoolkit.client.map.CachedPyramidSet;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.wmts.GetTileRequest;
 import org.geotoolkit.wmts.WebMapTileClient;
 import org.geotoolkit.wmts.xml.v100.*;
@@ -41,7 +41,6 @@ public class WMTSPyramidSet extends CachedPyramidSet{
     public static final String HINT_STYLE = "style";
 
     private final String layerName;
-    private final String id = UUID.randomUUID().toString();
     private LayerType wmtsLayer;
     private Collection<Pyramid> pyramids;
 
@@ -75,14 +74,9 @@ public class WMTSPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
     public synchronized Collection<Pyramid> getPyramids() {
         if(pyramids == null){
-            final List<Pyramid> pyramids = new ArrayList<Pyramid>();
+            final List<Pyramid> pyramids = new ArrayList<>();
             final ContentsType contents = getServer().getServiceCapabilities().getContents();
 
             //first find the layer
@@ -107,7 +101,7 @@ public class WMTSPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    public Request getTileRequest(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+    public Request getTileRequest(Pyramid pyramid, Mosaic mosaic, int col, int row, Map hints) throws DataStoreException {
         final WMTSMosaic wmtsMosaic = (WMTSMosaic) mosaic;
 
         if(hints == null) hints = new HashMap();
@@ -115,11 +109,11 @@ public class WMTSPyramidSet extends CachedPyramidSet{
         final GetTileRequest request = getServer().createGetTile();
 
         //set the format
-        Object format = hints.get(PyramidSet.HINT_FORMAT);
+        Object format = hints.get(Pyramids.HINT_FORMAT);
 
         //extract the default format from server
         if(format == null){
-            final WMTSPyramidSet ps = (WMTSPyramidSet) mosaic.getPyramid().getPyramidSet();
+            final WMTSPyramidSet ps = ((WMTSPyramid) pyramid).getPyramidSet();
             final List<LayerType> layers = ps.getCapabilities().getContents().getLayers();
             for(LayerType lt : layers){
                 final String name = lt.getIdentifier().getValue();

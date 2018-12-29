@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011-2012, Geomatys
+ *    (C) 2018, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,27 +14,29 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.storage.coverage;
+package org.geotoolkit.data.multires;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.stream.Stream;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.process.Monitor;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
 /**
- * A Grid Mosaic in a grid of image. all images share common attributes :
- * - Size
- * - CRS
- * - Span
+ * A Mosaic is collection of tiles with the same size and properties placed
+ * on a regular grid with no overlaping.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
-public interface GridMosaic {
+public interface Mosaic {
 
     /**
      * Sentinel object used to notify the end of the queue.
@@ -44,14 +46,13 @@ public interface GridMosaic {
     /**
      * @return unique id.
      */
-    String getId();
+    String getIdentifier();
 
     /**
-     * @return pyramid containing this mosaic.
-     */
-    Pyramid getPyramid();
-
-    /**
+     * Returns the upper left corner of the mosaic.
+     * The corner is in PixelInCell.CELL_CORNER, so it contains a translate of a half
+     * pixel compared to a GridToCrs transform of a coverage.
+     *
      * @return upper left corner of the mosaic, expressed in pyramid CRS.
      */
     DirectPosition getUpperLeftCorner();
@@ -67,25 +68,18 @@ public interface GridMosaic {
     double getScale();
 
     /**
-     * @return image width in cell units.
+     * @return tile dimension in cell units.
      */
     Dimension getTileSize();
-
-    /**
-     * Envelope of the given tile.
-     *
-     * @param col
-     * @param row
-     * @return Envelope of the given tile.
-     */
-    Envelope getEnvelope(int col, int row);
 
     /**
      * Envelope of the mosaic.
      *
      * @return Envelope
      */
-    Envelope getEnvelope();
+    default Envelope getEnvelope() {
+        return Pyramids.computeMosaicEnvelope(this);
+    }
 
     /**
      * Some services define some missing tiles.
@@ -103,11 +97,22 @@ public interface GridMosaic {
      * Get a tile.
      * @param col : tile column index
      * @param row : row column index
+     * @return Tile , may be null if tile is missing.
+     * @throws DataStoreException
+     */
+    public default Tile getTile(int col, int row) throws DataStoreException {
+        return getTile(col, row, null);
+    }
+
+    /**
+     * Get a tile.
+     * @param col : tile column index
+     * @param row : row column index
      * @param hints : additional hints. Can be null.
      * @return TileReference , may be null if tile is missing.
      * @throws DataStoreException
      */
-    TileReference getTile(int col, int row, Map hints) throws DataStoreException;
+    Tile getTile(int col, int row, Map hints) throws DataStoreException;
 
     /**
      * Retrieve a set of TileReferences.<p>
@@ -121,7 +126,17 @@ public interface GridMosaic {
      *         Order might be different from the list of positions.
      * @throws DataStoreException
      */
-    BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException;
+    default BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
+        final ArrayBlockingQueue queue = new ArrayBlockingQueue(positions.size()+1);
+        for(Point p : positions){
+            final Tile t = getTile(p.x, p.y, hints);
+            if (t != null) {
+                queue.offer(t);
+            }
+        }
+        queue.offer(END_OF_QUEUE);
+        return queue;
+    }
 
     /**
      * Returns Extent of written data into mosaic tile.<br>
@@ -135,4 +150,7 @@ public interface GridMosaic {
      */
     Rectangle getDataExtent();
 
+    void writeTiles(Stream<Tile> tiles, Monitor monitor) throws DataStoreException;
+
+    void deleteTile(int tileX, int tileY) throws DataStoreException;
 }

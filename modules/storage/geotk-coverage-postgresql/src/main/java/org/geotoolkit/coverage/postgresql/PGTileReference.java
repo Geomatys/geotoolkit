@@ -27,14 +27,15 @@ import java.util.logging.Level;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import net.iharder.Base64;
-import org.geotoolkit.storage.coverage.TileReference;
 import org.geotoolkit.coverage.wkb.WKBRasterImageReader;
+import org.geotoolkit.storage.AbstractResource;
+import org.geotoolkit.storage.coverage.ImageTile;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PGTileReference implements TileReference{
+public class PGTileReference extends AbstractResource implements ImageTile{
 
     private static final WKBRasterImageReader.Spi SPI = new WKBRasterImageReader.Spi();
 

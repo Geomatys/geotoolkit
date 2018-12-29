@@ -30,7 +30,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.TransformSeparator;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
@@ -41,24 +47,18 @@ import org.geotoolkit.coverage.processing.AbstractCoverageProcessor;
 import org.geotoolkit.coverage.processing.CannotReprojectException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.parameter.Parameters;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
+import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import static org.geotoolkit.internal.coverage.CoverageUtilities.hasRenderingCategories;
-import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-
+import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
-
 import org.geotoolkit.referencing.CRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.referencing.operation.transform.TransformSeparator;
-import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.image.BufferedImages;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
@@ -74,7 +74,6 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.util.Utilities;
 
 /**
  *
@@ -255,6 +254,14 @@ public class ResampleProcess extends AbstractProcess {
                                            final Hints               hints)
             throws FactoryException, TransformException
     {
+
+        double[] fillValue = getFillValue(sourceCoverage);
+        if (background != null) {
+            if (fillValue.length != background.length) {
+                throw new TransformException("Invalid default values, expected size " + fillValue.length + " but was " + background.length);
+            }
+            fillValue = background;
+        }
 
         //set default values
         if(borderComportement==null) borderComportement = ResampleBorderComportement.EXTRAPOLATION;
@@ -470,6 +477,25 @@ public class ResampleProcess extends AbstractProcess {
         final Rectangle targetBB = targetGG.getExtent2D();
         final BufferedImage targetImage = BufferedImages.createImage(targetBB.width,targetBB.height, sourceImage);
         final WritableRaster targetRaster = targetImage.getRaster();
+        //fill target image with fill values
+        if (fillValue != null) {
+            //if fill values are all 0 do nothing
+            //zero is the default value in created raster
+            boolean allZero = true;
+            for (double d : fillValue) {
+                if (d != 0.0) {
+                    allZero = false;
+                    break;
+                }
+            }
+            if (!allZero) {
+                final WritablePixelIterator writer = WritablePixelIterator.create(targetImage);
+                while (writer.next()) {
+                    writer.setPixel(fillValue);
+                }
+                writer.close();
+            }
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////
         ////                                                                                ////
@@ -531,7 +557,6 @@ public class ResampleProcess extends AbstractProcess {
 //            }
 //        }
 
-        final double[] fillValue = getFillValue(sourceCoverage);
 
 //        final Interpolation interpolator = Interpolation.create(
 //                PixelIteratorFactory.createDefaultIterator(sourceImage,sourceBB), interpolationType, 2);

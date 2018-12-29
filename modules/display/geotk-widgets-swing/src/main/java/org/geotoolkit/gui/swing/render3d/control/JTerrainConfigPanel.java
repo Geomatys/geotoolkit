@@ -38,8 +38,10 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display3d.Map3D;
 import org.geotoolkit.display3d.scene.ContextContainer3D;
@@ -60,13 +62,12 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -203,7 +204,7 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
                     final GridCoverageResource modelImg = ((CoverageMapLayer)layer).getCoverageReference();
                     if(modelImg instanceof PyramidalCoverageResource){
                         final PyramidalCoverageResource pcf = (PyramidalCoverageResource) modelImg;
-                        final List<Pyramid> pyramidsImg = (List<Pyramid>) pcf.getPyramidSet().getPyramids();
+                        final List<Pyramid> pyramidsImg = (List<Pyramid>) Pyramids.getPyramids(pcf);
                         Pyramid pyramidImg = null;
                         if (pyramidsImg.size() > 0){
                             pyramidImg = pyramidsImg.get(0);

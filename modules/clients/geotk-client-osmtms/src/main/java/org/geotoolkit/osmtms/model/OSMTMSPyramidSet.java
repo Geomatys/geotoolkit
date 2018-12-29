@@ -18,16 +18,17 @@ package org.geotoolkit.osmtms.model;
 
 import java.awt.Dimension;
 import java.util.Map;
-import org.geotoolkit.client.Request;
-import org.geotoolkit.client.map.CachedPyramidSet;
-import org.geotoolkit.storage.coverage.DefaultPyramid;
-import org.geotoolkit.storage.coverage.GridMosaic;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.osmtms.GetTileRequest;
-import org.geotoolkit.osmtms.OSMTileMapClient;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.client.Request;
+import org.geotoolkit.client.map.CachedPyramidSet;
+import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.osmtms.GetTileRequest;
+import org.geotoolkit.osmtms.OSMTileMapClient;
+import org.geotoolkit.data.multires.DefaultPyramid;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -63,7 +64,7 @@ public class OSMTMSPyramidSet extends CachedPyramidSet{
     public OSMTMSPyramidSet(final OSMTileMapClient server, final int maxScale, boolean cacheImage) {
         super(server,true,cacheImage);
 
-        final DefaultPyramid pyramid = new DefaultPyramid(this,GOOGLE_MERCATOR);
+        final DefaultPyramid pyramid = new DefaultPyramid(GOOGLE_MERCATOR);
 
         final int tileWidth = (int) BASE_TILE_SIZE;
         final int tileHeight = (int) BASE_TILE_SIZE;
@@ -81,7 +82,7 @@ public class OSMTMSPyramidSet extends CachedPyramidSet{
             final double scale = scale0Resolution / size;
 
             final OSMTMSMosaic mosaic = new OSMTMSMosaic(
-                    pyramid, upperLeft,
+                    this, pyramid, upperLeft,
                     new Dimension(size, size),
                     new Dimension(tileWidth,tileHeight),
                     scale,
@@ -99,7 +100,7 @@ public class OSMTMSPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    public Request getTileRequest(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+    public Request getTileRequest(Pyramid pyramid, Mosaic mosaic, int col, int row, Map hints) throws DataStoreException {
         final GetTileRequest request = getServer().createGetTile();
         request.setScaleLevel( ((OSMTMSMosaic)mosaic).getScaleLevel() );
         request.setTileCol(col);

@@ -63,10 +63,12 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
+import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.internal.storage.io.ChannelImageInputStream;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.io.InputStreamAdapter;
@@ -74,6 +76,7 @@ import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.lang.SystemOverride;
 import org.geotoolkit.metadata.geotiff.GeoTiffConstants;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
@@ -871,7 +874,42 @@ public class TiffImageReader extends SpatialImageReader {
     @Override
     public BufferedImage read(final int imageIndex, final ImageReadParam param) throws IOException {
         checkLayers();
-        return readLayer(getLayerIndex(imageIndex), param);
+        BufferedImage img = readLayer(getLayerIndex(imageIndex), param);
+
+        //check if we are in float or double type
+        final int dataType = img.getRaster().getDataBuffer().getDataType();
+        rewrite:
+        if (DataBuffer.TYPE_FLOAT == dataType || DataBuffer.TYPE_DOUBLE == dataType) {
+            final SpatialMetadata sm = getImageMetadata(imageIndex);
+
+            final DimensionAccessor accessor = new DimensionAccessor(sm);
+            final List<GridSampleDimension> sampleDimensions = accessor.getGridSampleDimensions();
+            if (sampleDimensions == null || sampleDimensions.size() != 1) break rewrite;
+
+            //check if we have a numeric noData value
+            final GridSampleDimension sd = sampleDimensions.get(0);
+            final double[] noDataValues = sd.getNoDataValues();
+            if (noDataValues == null || noDataValues.length != 1) break rewrite;
+
+            boolean replace = false;
+            for (double d : noDataValues) {
+                if (!Double.isNaN(d)) {
+                    replace = true;
+                    break;
+                }
+            }
+            if (!replace) break rewrite;
+
+            final WritablePixelIterator writer = WritablePixelIterator.create(img);
+            while (writer.next()) {
+                double v = writer.getSampleDouble(0);
+                if (v == noDataValues[0]) {
+                    writer.setSample(0, Double.NaN);
+                }
+            }
+            writer.close();
+        }
+        return img;
     }
 
     /**

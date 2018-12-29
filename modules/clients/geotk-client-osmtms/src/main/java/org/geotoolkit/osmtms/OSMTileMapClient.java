@@ -27,7 +27,6 @@ import org.geotoolkit.client.Client;
 import org.geotoolkit.osmtms.model.OSMTMSPyramidSet;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.PyramidSet;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -114,7 +113,7 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client, 
         return parameters.getValue(OSMTMSClientFactory.IMAGE_CACHE);
     }
 
-    public PyramidSet getPyramidSet(){
+    public OSMTMSPyramidSet getPyramidSet(){
         return pyramidSet;
     }
 

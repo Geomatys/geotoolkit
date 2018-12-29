@@ -16,18 +16,16 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import java.awt.*;
 import java.awt.image.ColorModel;
-import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import java.util.Collection;
 import java.util.List;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.process.Monitor;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.data.multires.MultiResolutionResource;
+import org.geotoolkit.data.multires.Pyramid;
 
 /**
  * May be implemented by Coverage reference when the underlying structure is a
@@ -36,9 +34,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface PyramidalCoverageResource extends GridCoverageResource{
+public interface PyramidalCoverageResource extends GridCoverageResource, MultiResolutionResource {
 
-    PyramidSet getPyramidSet() throws DataStoreException;
+    @Override
+    Collection<Pyramid> getModels() throws DataStoreException;
 
     /**
      * Get the defined mode in which datas are stored.
@@ -125,98 +124,4 @@ public interface PyramidalCoverageResource extends GridCoverageResource{
     @Override
     boolean isWritable() throws CoverageStoreException;
 
-    /**
-     *
-     * @param crs
-     * @return created pyramid
-     * @throws DataStoreException
-     */
-    Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException;
-
-    /**
-     * Delete given pyramid.
-     *
-     * @throws DataStoreException
-     */
-    void deletePyramid(String pyramidId) throws DataStoreException;
-
-    /**
-     *
-     * @param pyramidId : pyramid id in which to insert the mosaic
-     * @param gridSize : size in number of column and row
-     * @param tilePixelSize : size of a tile in pixel
-     * @param upperleft : upperleft corner position in pyramid crs
-     * @param pixelscale : size of a pixel in crs unit
-     * @return created mosaic
-     * @throws DataStoreException
-     */
-    @Deprecated
-    GridMosaic createMosaic(String pyramidId, Dimension gridSize,
-             Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException;
-
-
-    /**
-     * Create {@link GridMosaic} .
-     *
-     * @param pyramidId : pyramid id in which to insert the mosaic
-     * @param gridSize : size in number of column and row
-     * @param tilePixelSize : size of a tile in pixel
-     * @param dataPixelSize : size of the data pixel, written into tile mosaic space.
-     * @param upperleft : upperleft corner position in pyramid crs
-     * @param pixelscale : size of a pixel in crs unit
-     * @return created mosaic
-     * @throws DataStoreException
-     */
-    GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize,
-            Dimension dataPixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException;
-    /**
-     * Delete given mosaic.
-     *
-     * @throws DataStoreException
-     */
-    void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException;
-
-    /**
-     * Write a complete mosaic level used the given rendered image.
-     * The rendered image size and tile size must match the mosaic definition.
-     *
-     * @param pyramidId
-     * @param mosaicId
-     * @param image
-     * @param onlyMissing : set to true to fill only missing tiles
-     * @param monitor A progress monitor in order to eventually cancel the process. May be {@code null}.
-     * @throws DataStoreException
-     */
-    void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing, Monitor monitor) throws DataStoreException;
-
-    /**
-     * Write a part of mosaic level from the given rendered image and rectangle area
-     * The rendered image size and tile size must match the mosaic definition.
-     *
-     * @param pyramidId
-     * @param mosaicId
-     * @param image
-     * @param area Rectangle2D that define area to copy in grid system (edges exclusive)
-     * @param onlyMissing : set to true to fill only missing tiles
-     * @param monitor A progress monitor in order to eventually cancel the process. May be {@code null}.
-     * @throws DataStoreException
-     */
-    void writeTiles(String pyramidId, String mosaicId, RenderedImage image, Rectangle area, boolean onlyMissing,
-                    Monitor monitor) throws DataStoreException;
-
-
-    /**
-     * Write or update a single tile in the mosaic.
-     * Rendered image size must match mosaic tile size.
-     *
-     * @param pyramidId : pyramid id in which to insert the tile
-     * @param mosaicId : mosaic id in which to insert the tile
-     * @param tileX : position of the tile , column
-     * @param tileY : position of the tile , row
-     * @param image : image to insert
-     * @throws DataStoreException
-     */
-    void writeTile(String pyramidId, String mosaicId, int tileX, int tileY, RenderedImage image) throws DataStoreException;
-
-    void deleteTile(String pyramidId, String mosaicId, int tileX, int tileY) throws DataStoreException;
 }

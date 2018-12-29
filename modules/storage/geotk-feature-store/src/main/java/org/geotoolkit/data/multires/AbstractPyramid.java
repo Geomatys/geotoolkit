@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011-2012, Geomatys
+ *    (C) 2011-2018, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,11 +14,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.storage.coverage;
+package org.geotoolkit.data.multires;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -31,24 +30,22 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * Default pyramid
+ * Abstract pyramid
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultPyramid implements Pyramid{
+public abstract class AbstractPyramid implements Pyramid {
 
-    private final String id;
-    private final PyramidSet set;
-    private final CoordinateReferenceSystem crs;
-    private final List<GridMosaic> mosaics = new ArrayList<GridMosaic>();
+    protected final String id;
+    protected final CoordinateReferenceSystem crs;
+    protected String format = null;
 
-    public DefaultPyramid(PyramidSet set, CoordinateReferenceSystem crs) {
-        this(null,set,crs);
+    public AbstractPyramid(CoordinateReferenceSystem crs) {
+        this(null,crs);
     }
 
-    public DefaultPyramid(String id, PyramidSet set, CoordinateReferenceSystem crs) {
-        this.set = set;
+    public AbstractPyramid(String id, CoordinateReferenceSystem crs) {
         this.crs = crs;
         if(id == null){
             this.id = UUID.randomUUID().toString();
@@ -58,20 +55,13 @@ public class DefaultPyramid implements Pyramid{
     }
 
     @Override
-    public String getId() {
+    public String getIdentifier() {
         return id;
     }
 
-    /**
-     * Internal list of pyramids, modify with causion.
-     */
-    public List<GridMosaic> getMosaicsInternal() {
-        return mosaics;
-    }
-
     @Override
-    public PyramidSet getPyramidSet() {
-        return set;
+    public String getFormat() {
+        return format;
     }
 
     @Override
@@ -83,7 +73,7 @@ public class DefaultPyramid implements Pyramid{
     public double[] getScales() {
         final SortedSet<Double> scaleSet = new TreeSet<Double>();
 
-        for(GridMosaic m : mosaics){
+        for(Mosaic m : getMosaics()){
             scaleSet.add(m.getScale());
         }
 
@@ -99,10 +89,10 @@ public class DefaultPyramid implements Pyramid{
     }
 
     @Override
-    public Collection<GridMosaic> getMosaics(int index) {
-        final List<GridMosaic> candidates = new ArrayList<GridMosaic>();
+    public Collection<Mosaic> getMosaics(int index) {
+        final List<Mosaic> candidates = new ArrayList<>();
         final double[] scales = getScales();
-        for(GridMosaic m : mosaics){
+        for(Mosaic m : getMosaics()){
             if(m.getScale() == scales[index]){
                 candidates.add(m);
             }
@@ -111,23 +101,17 @@ public class DefaultPyramid implements Pyramid{
     }
 
     @Override
-    public List<GridMosaic> getMosaics() {
-        return Collections.unmodifiableList(mosaics);
-    }
-
-    @Override
     public String toString(){
-        return StringUtilities.toStringTree(
-                Classes.getShortClassName(this)
+        return StringUtilities.toStringTree(Classes.getShortClassName(this)
                 +" "+IdentifiedObjects.getIdentifierOrName(getCoordinateReferenceSystem())
-                +" "+getId(),
-                getMosaicsInternal());
+                +" "+getIdentifier(),
+                getMosaics());
     }
 
     @Override
     public Envelope getEnvelope() {
         GeneralEnvelope env = null;
-        for(GridMosaic mosaic : getMosaics()){
+        for(Mosaic mosaic : getMosaics()){
             if(env==null){
                 env = new GeneralEnvelope(mosaic.getEnvelope());
             }else{
