@@ -40,6 +40,11 @@ final class ProductSubset extends AbstractGridResource {
     private final Envelope areaOfInterest;
 
     /**
+     * Desired resolution in units of AOI, or {@code null} for no sub-sampling.
+     */
+    private final double[] resolution;
+
+    /**
      * List of raster files intersection the {@link #areaOfInterest}.
      */
     private final List<GridCoverageEntry> entries;
@@ -54,10 +59,13 @@ final class ProductSubset extends AbstractGridResource {
     /**
      * Creates a new subset for the given product.
      */
-    ProductSubset(final ProductEntry product, final Envelope areaOfInterest, final List<GridCoverageEntry> entries) {
+    ProductSubset(final ProductEntry product, final Envelope areaOfInterest, final double[] resolution,
+            final List<GridCoverageEntry> entries)
+    {
         super((WarningListeners<DataStore>) null);
         this.product        = product;
         this.areaOfInterest = areaOfInterest;
+        this.resolution     = resolution;
         this.entries        = entries;
         if (ProductCoverage.HACK) {
             representative = entries.get(entries.size() / 2);
@@ -83,6 +91,6 @@ final class ProductSubset extends AbstractGridResource {
 
     @Override
     public GridCoverage read(final GridGeometry targetGeometry, final int... bands) throws DataStoreException {
-        return representative.coverage(areaOfInterest);
+        return representative.coverage(areaOfInterest, resolution);
     }
 }

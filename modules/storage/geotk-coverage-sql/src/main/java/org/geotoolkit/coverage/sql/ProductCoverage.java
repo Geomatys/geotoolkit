@@ -53,7 +53,7 @@ final class ProductCoverage extends GridCoverage {
     @Override
     public RenderedImage render(DirectPosition slicePoint) {
         try {
-            return entries.get(0).coverage(null).render(slicePoint);
+            return entries.get(0).coverage(null, null).render(slicePoint);
         } catch (DataStoreException e) {
             throw new BackingStoreException(e);
         }

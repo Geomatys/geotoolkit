@@ -291,7 +291,7 @@ final class ProductEntry extends Entry {
     }
 
     public GridCoverage read(GridGeometry areaOfInterest, int... bands) throws DataStoreException {
-        return subset(getGridGeometry().getEnvelope()).read(areaOfInterest, bands);
+        return subset(getGridGeometry().getEnvelope(), getGridGeometry().getResolution(true)).read(areaOfInterest, bands);
     }
 
     /**
@@ -300,10 +300,11 @@ final class ProductEntry extends Entry {
      * available for this product regardless of their envelope.
      *
      * @param  areaOfInterest  the envelope for filtering the coverages, or {@code null} for no filtering.
+     * @param  resolution      resolution in unit of AOI, or {@code null} for no sub-sampling.
      * @return the set of coverages of this product which intersect the given envelope, or {@code null} if none.
      * @throws DataStoreException if an error occurred while querying the database.
      */
-    final ProductSubset subset(final Envelope areaOfInterest) throws DataStoreException {
+    private ProductSubset subset(final Envelope areaOfInterest, final double[] resolution) throws DataStoreException {
         ensureValid();
         final List<GridCoverageEntry> entries;
         try (Transaction transaction = database.transaction();
@@ -319,7 +320,7 @@ final class ProductEntry extends Entry {
         if (entries.isEmpty()) {
             return null;
         }
-        return new ProductSubset(this, areaOfInterest, entries);
+        return new ProductSubset(this, areaOfInterest, resolution, entries);
     }
 
     /**

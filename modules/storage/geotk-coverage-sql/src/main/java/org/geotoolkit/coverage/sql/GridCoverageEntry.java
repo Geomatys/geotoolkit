@@ -158,12 +158,12 @@ final class GridCoverageEntry extends Entry {
      * Loads the data if needed and returns the coverage.
      * Current implementation reads only the first resource.
      */
-    final GridCoverage coverage(final Envelope areaOfInterest) throws DataStoreException {
+    final GridCoverage coverage(final Envelope areaOfInterest, final double[] resolution) throws DataStoreException {
         try (DataStore store = series.format.open(series.path(filename))) {
             final GridCoverageResource r = resource(store);
             if (r != null) {
                 GridGeometry gg = r.getGridGeometry();
-                gg = grid.getGridGeometry(gg, areaOfInterest);
+                gg = grid.getGridGeometry(gg, areaOfInterest, resolution);
                 return r.read(gg, null);
             }
         } catch (FactoryException | TransformException e) {

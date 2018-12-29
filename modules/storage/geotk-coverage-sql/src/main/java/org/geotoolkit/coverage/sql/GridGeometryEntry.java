@@ -251,15 +251,15 @@ final class GridGeometryEntry extends Entry {
      * Returns the grid geometry for the given region of interest.
      * The region of interest can be specified in any CRS.
      *
-     * @param  dataGrid  the grid geometry of the image to read. Used for deciding if there is dimensions to discard.
-     * @param  aoi       the region of interest, or {@code null} for the full spatial extent.
+     * @param  dataGrid    the grid geometry of the image to read. Used for deciding if there is dimensions to discard.
+     * @param  aoi         the region of interest, or {@code null} for the full spatial extent.
+     * @param  resolution  desired resolution in units of AOI.
      * @return indices of pixels to read.
      */
-    static GridGeometry getGridGeometry(final GridGeometry dataGrid, Envelope aoi) throws FactoryException, TransformException {
-        if (aoi == null) {
-            return dataGrid;
-        }
-        CoordinateReferenceSystem crs = aoi.getCoordinateReferenceSystem();
+    static GridGeometry getGridGeometry(final GridGeometry dataGrid, Envelope aoi, double[] resolution)
+            throws FactoryException, TransformException
+    {
+        CoordinateReferenceSystem crs = (aoi != null) ? aoi.getCoordinateReferenceSystem() : null;
         if (crs != null) {
             /*
              * Verify if the given envelope contains any unexpected axes, for example a vertical axis
@@ -285,9 +285,11 @@ final class GridGeometryEntry extends Entry {
             if (verticalDim >= 0 || count != dimensions.length) {
                 final CoordinateReferenceSystem[] crsComponents = new CoordinateReferenceSystem[count];
                 final GeneralEnvelope env = new GeneralEnvelope(count);
+                final double[] res = new double[count];
                 int crsFirstDim = 0, crsLastDim = 0, crsCount = 0;
                 for (int i=0; i<count; i++) {
                     final int sourceDim = dimensions[i];
+                    res[i] = resolution[sourceDim];
                     env.setRange(i, aoi.getMinimum(sourceDim), aoi.getMaximum(sourceDim));
                     if (sourceDim != crsLastDim || sourceDim == verticalDim || sourceDim == verticalDim+1) {
                         crsComponents[crsCount++] = CRS.getComponentAt(crs, crsFirstDim, crsLastDim);
@@ -308,9 +310,9 @@ final class GridGeometryEntry extends Entry {
                 }
                 env.setCoordinateReferenceSystem(CRS.compound(ArraysExt.resize(crsComponents, crsCount)));
                 aoi = env;
+                resolution = res;
             }
         }
-        GridExtent extent = dataGrid.getExtent(aoi);
-        return new GridGeometry(dataGrid, extent);
+        return dataGrid.subgrid(aoi, resolution);
     }
 }
