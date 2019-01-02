@@ -221,7 +221,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
     /**
      * Casts the specified envelope into a grid envelope. This is sometime useful after an
      * envelope has been transformed from "real world" coordinates to grid coordinates using the
-     * {@linkplain org.opengis.coverage.grid.GridGeometry#getGridToCRS grid to CRS} transform.
+     * {@linkplain org.geotoolkit.coverage.grid.GridGeometry#getGridToCRS grid to CRS} transform.
      * The floating point values are rounded toward the nearest integers.
      *
      * {@section Note about rounding mode}
@@ -239,7 +239,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
      * nearest integer} in this implementation.
      * <p>
      * {@section Anchor}
-     * According OpenGIS specification, {@linkplain org.opengis.coverage.grid.GridGeometry grid
+     * According OpenGIS specification, {@linkplain org.geotoolkit.coverage.grid.GridGeometry grid
      * geometry} maps pixel's center. But envelopes typically encompass all pixels. This means
      * that grid coordinates (0,0) has an envelope starting at (-0.5, -0.5). In order to revert
      * back such envelope to a grid envelope, it is necessary to add 0.5 to every coordinates

@@ -24,7 +24,7 @@ import java.awt.geom.AffineTransform;
 import javax.imageio.metadata.IIOMetadata;
 
 import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.Matrix;

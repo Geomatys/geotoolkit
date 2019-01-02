@@ -221,7 +221,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
      * referenced. This is the CRS used when accessing a coverage or grid coverage with
      * the {@code evaluate(...)} methods. This coordinate reference system is usually
      * different than coordinate system of the grid. It is the target coordinate reference
-     * system of the {@link org.opengis.coverage.grid.GridGeometry#getGridToCRS gridToCRS}
+     * system of the {@link org.geotoolkit.coverage.grid.GridGeometry#getGridToCRS gridToCRS}
      * math transform.
      * <p>
      * Grid coverage can be accessed (re-projected) with new coordinate reference system

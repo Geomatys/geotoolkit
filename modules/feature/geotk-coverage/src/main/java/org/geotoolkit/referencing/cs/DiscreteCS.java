@@ -25,7 +25,7 @@ import java.io.Serializable;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.cs.TimeCS;
 import org.opengis.referencing.cs.VerticalCS;

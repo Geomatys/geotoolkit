@@ -34,7 +34,7 @@ import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
 import org.opengis.coverage.Coverage;
-import org.opengis.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -93,7 +93,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *   </tr>
  *   <tr>
  *     <td>{@code "GridGeometry"}</td>
- *     <td>{@link org.opengis.coverage.grid.GridGeometry}</td>
+ *     <td>{@link org.geotoolkit.coverage.grid.GridGeometry}</td>
  *     <td>(automatic)</td>
  *     <td align="center">N/A</td>
  *     <td align="center">N/A</td>

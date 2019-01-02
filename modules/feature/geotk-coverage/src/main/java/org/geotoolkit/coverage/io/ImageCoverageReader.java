@@ -41,7 +41,7 @@ import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.image.io.large.LargeRenderedImage;
 import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.PixelOrientation;

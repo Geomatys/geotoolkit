@@ -31,18 +31,18 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.awt.image.RenderedImage;
-import java.util.List;
 import static org.opengis.annotation.Obligation.*;
 import static org.opengis.annotation.Specification.*;
 import org.opengis.annotation.UML;
-import org.opengis.coverage.Coverage;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 
 
 /**
- * Represent the basic implementation which provides access to grid coverage data.
- * A {@code GridCoverage} implementation may provide the ability to update grid values.
+ * Describes the geometry and georeferencing information of the grid coverage.
+ * The {@linkplain #getExtent() extent} attribute determines the valid grid coordinates and allows
+ * for calculation of grid size. A grid coverage may or may not have georeferencing.
  *
  * <div class="warning"><b>Warning — this class will change</b><br>
  * Current API is derived from OGC <a href="http://www.opengis.org/docs/01-004.pdf">Grid Coverages Implementation specification 1.0</a>.
@@ -55,36 +55,47 @@ import org.geotoolkit.coverage.grid.GridGeometry;
  * @version <A HREF="http://www.opengis.org/docs/01-004.pdf">Grid Coverage specification 1.0</A>
  * @author  Martin Desruisseaux (IRD)
  * @since   GeoAPI 1.0
- *
- * @see RenderedImage
  */
-@UML(identifier="CV_GridCoverage", specification=OGC_01004)
-public interface GridCoverage extends Coverage {
+@UML(identifier="CV_GridGeometry", specification=OGC_01004)
+public interface GridGeometry {
+    /**
+     * The valid domain of a grid coverage. The {@linkplain GridEnvelope#getLow() lowest} valid grid
+     * coordinate is often (but not always) zero. A grid with 512 cells typically have a minimum
+     * coordinate of 0 and maximum of 512, with 511 as the {@linkplain GridEnvelope#getHigh() highest}
+     * valid index.
+     *
+     * <div class="note"><b>Note:</b>
+     * the attribute name in the OGC 01-004 specification was "<code>gridRange</code>", while
+     * the ISO 19123 specification uses "<code>extent</code>" for similar information. This
+     * interface uses the ISO name both for consistency with ISO interfaces, and because the
+     * <cite>range</cite> term is already used by ISO 19123 for a different meaning.</div>
+     *
+     * @return the valid domain of a grid coverage.
+     *
+     * @see org.opengis.coverage.grid.Grid#getExtent()
+     */
+    @UML(identifier="gridRange", obligation=MANDATORY, specification=OGC_01004)
+    GridEnvelope getExtent();
 
     /**
-     * Information for the grid coverage geometry.
-     * Grid geometry includes the valid range of grid coordinates and the georeferencing.
-     *
-     * @return the information for the grid coverage geometry.
+     * @deprecated Renamed {@link #getExtent()}.
      */
-    @UML(identifier="gridGeometry", obligation=MANDATORY, specification=OGC_01004)
-    GridGeometry getGridGeometry();
+    @Deprecated
+    GridEnvelope getGridRange();
 
     /**
-     * Returns the sources data for a grid coverage. If the {@code GridCoverage} was
-     * produced from an underlying dataset, this method should returns an empty list.
+     * Returns the conversion from grid coordinates to real world earth coordinates.
+     * The transform is often an affine transform. The coordinate reference system
+     * of the real world coordinates is given by the
+     * {@link org.opengis.coverage.Coverage#getCoordinateReferenceSystem()} method
+     * and maps to {@linkplain PixelInCell#CELL_CENTER pixel center}.
      *
-     * If the {@code GridCoverage} was produced using
-     * {link org.opengis.coverage.processing.GridCoverageProcessor} then it should return the
-     * source grid coverages of the one used as input to {@code GridCoverageProcessor}.
-     * In general this method is intended to return the original {@code GridCoverage}
-     * on which it depends.
+     * @return the conversion from grid coordinates to
+     *         {@linkplain org.opengis.coverage.Coverage#getCoordinateReferenceSystem
+     *         real world earth coordinates}.
      *
-     * This is intended to allow applications to establish what {@code GridCoverage}s
-     * will be affected when others are updated, as well as to trace back to the "raw data".
-     *
-     * @return the sources data for a grid coverage.
+     * @since GeoAPI 2.1
      */
-    List<GridCoverage> getSources();
-
+    @UML(identifier="gridToCoordinateSystem", obligation=MANDATORY, specification=OGC_01004)
+    MathTransform getGridToCRS();
 }

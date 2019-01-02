@@ -24,7 +24,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.Serializable;
 
-import org.opengis.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.apache.sis.util.Classes;

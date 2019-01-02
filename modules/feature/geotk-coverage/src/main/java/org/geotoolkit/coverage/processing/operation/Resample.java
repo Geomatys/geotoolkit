@@ -25,7 +25,7 @@ import javax.media.jai.operator.AffineDescriptor;
 import org.opengis.geometry.Envelope;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
@@ -110,7 +110,7 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
  *   </tr>
  *   <tr>
  *     <td>{@code "GridGeometry"}</td>
- *     <td>{@link org.opengis.coverage.grid.GridGeometry}</td>
+ *     <td>{@link org.geotoolkit.coverage.grid.GridGeometry}</td>
  *     <td>(automatic)</td>
  *     <td align="center">N/A</td>
  *     <td align="center">N/A</td>

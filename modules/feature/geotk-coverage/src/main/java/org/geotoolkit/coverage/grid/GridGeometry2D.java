@@ -26,7 +26,7 @@ import java.util.Locale;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.util.FactoryException;

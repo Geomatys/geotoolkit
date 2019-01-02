@@ -38,7 +38,7 @@ import org.apache.sis.util.collection.CheckedContainer;
  * @version 3.20
  *
  * @see org.opengis.referencing.cs.CoordinateSystemAxis
- * @see org.opengis.coverage.grid.GridGeometry#getGridToCRS()
+ * @see org.geotoolkit.coverage.grid.GridGeometry#getGridToCRS()
  *
  * @since 3.15
  * @module
