@@ -34,7 +34,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.junit.Test;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ImageCRS;
 import org.opengis.referencing.cs.AxisDirection;

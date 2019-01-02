@@ -39,7 +39,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.NamesExt;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;

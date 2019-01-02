@@ -36,7 +36,7 @@ import org.geotoolkit.processing.image.sampleclassifier.SampleClassifier;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifierDescriptor;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.coverage.Coverage;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;

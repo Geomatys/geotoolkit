@@ -25,7 +25,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.Dimension;
 
 import org.opengis.util.InternationalString;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

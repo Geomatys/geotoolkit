@@ -34,7 +34,7 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.storage.coverage.GeoReferencedGridCoverageReader;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 

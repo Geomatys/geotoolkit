@@ -20,7 +20,7 @@ import org.geotoolkit.coverage.filestore.FileCoverageStore;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.util.GenericName;
 import ucar.ma2.ArrayFloat;
 import ucar.nc2.dataset.CoordinateSystem;

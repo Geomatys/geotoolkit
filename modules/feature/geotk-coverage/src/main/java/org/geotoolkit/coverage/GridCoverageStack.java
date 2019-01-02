@@ -28,7 +28,7 @@ import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.GridPacking;

@@ -178,7 +178,7 @@ public final class Axes {
             Vocabulary.Keys.Northing, "N", AxisDirection.NORTH, Units.METRE);
 
     /**
-     * A default axis for column indices in a {@linkplain org.opengis.coverage.grid.GridCoverage
+     * A default axis for column indices in a {@linkplain org.geotoolkit.coverage.grid.GridCoverage
      * grid coverage}. Increasing values go toward {@linkplain AxisDirection#COLUMN_POSITIVE
      * positive column number}.
      *
@@ -188,7 +188,7 @@ public final class Axes {
             Vocabulary.Keys.Column, "i", AxisDirection.COLUMN_POSITIVE, Units.UNITY);
 
     /**
-     * A default axis for row indices in a {@linkplain org.opengis.coverage.grid.GridCoverage grid
+     * A default axis for row indices in a {@linkplain org.geotoolkit.coverage.grid.GridCoverage grid
      * coverage}. Increasing values go toward {@linkplain AxisDirection#ROW_POSITIVE positive row
      * number}.
      *

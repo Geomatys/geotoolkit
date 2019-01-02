@@ -104,7 +104,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.style.StyleConstants.*;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;

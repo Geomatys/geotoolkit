@@ -20,7 +20,7 @@ import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.test.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;

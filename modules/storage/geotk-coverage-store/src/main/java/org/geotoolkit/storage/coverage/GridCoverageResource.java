@@ -136,10 +136,10 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
                 param.setResolution(resolution);
             }
 
-            org.opengis.coverage.grid.GridCoverage cov = reader.read(getImageIndex(), param);
+            org.geotoolkit.coverage.grid.GridCoverage cov = reader.read(getImageIndex(), param);
             while (cov instanceof GridCoverageStack) {
                 //pick the first slice
-                cov = (org.opengis.coverage.grid.GridCoverage) ((GridCoverageStack) cov).coverageAtIndex(0);
+                cov = (org.geotoolkit.coverage.grid.GridCoverage) ((GridCoverageStack) cov).coverageAtIndex(0);
             }
 
             if (!(cov instanceof GridCoverage2D)) {

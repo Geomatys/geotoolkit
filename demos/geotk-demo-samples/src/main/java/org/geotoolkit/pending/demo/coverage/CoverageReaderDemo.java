@@ -16,7 +16,7 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 
 import java.awt.image.RenderedImage;
 import java.io.InputStream;

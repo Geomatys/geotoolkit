@@ -24,7 +24,7 @@ import javax.imageio.ImageWriter;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;

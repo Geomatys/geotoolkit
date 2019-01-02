@@ -24,7 +24,7 @@
  * <p>
  * If the operation to apply is know at compile time, then the easiest way to use this package
  * is to use the {@link org.geotoolkit.coverage.processing.Operations} convenience class. For
- * example a {@linkplain org.opengis.coverage.grid.GridCoverage grid coverage} can be resampled
+ * example a {@linkplain org.geotoolkit.coverage.grid.GridCoverage grid coverage} can be resampled
  * to a different {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem coordinate
  * reference system} using the following code:
  *

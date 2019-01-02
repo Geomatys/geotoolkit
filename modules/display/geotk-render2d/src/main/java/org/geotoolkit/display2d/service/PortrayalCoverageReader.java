@@ -32,7 +32,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;

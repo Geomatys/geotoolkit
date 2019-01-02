@@ -142,7 +142,7 @@ public abstract class AbstractGridCoverage extends AbstractCoverage implements G
     /**
      * Returns the source data for a grid coverage. If the {@code GridCoverage} was produced from
      * an underlying dataset, the returned list is an empty list. If the {@code GridCoverage} was
-     * produced using {@link org.opengis.coverage.grid.GridCoverageProcessor}, then it should
+     * produced using {@link org.geotoolkit.coverage.grid.GridCoverageProcessor}, then it should
      * return the source grid coverage of the one used as input to {@code GridCoverageProcessor}.
      * In general the {@code getSources()} method is intended to return the original
      * {@code GridCoverage} on which it depends. This is intended to allow applications

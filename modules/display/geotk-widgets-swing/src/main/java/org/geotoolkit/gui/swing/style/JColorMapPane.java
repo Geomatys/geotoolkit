@@ -122,7 +122,7 @@ import org.geotoolkit.style.interval.Palette;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.feature.Property;
 import org.opengis.filter.FilterFactory;

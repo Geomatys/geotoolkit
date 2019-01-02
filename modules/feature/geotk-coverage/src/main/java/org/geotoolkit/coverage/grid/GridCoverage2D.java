@@ -45,7 +45,7 @@ import javax.media.jai.remote.SerializableRenderedImage;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.coverage.SampleDimension;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

@@ -54,7 +54,7 @@ import org.geotoolkit.util.NamesExt;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.coverage.Coverage;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;

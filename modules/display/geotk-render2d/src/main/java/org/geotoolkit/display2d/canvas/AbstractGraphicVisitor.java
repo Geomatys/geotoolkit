@@ -59,7 +59,7 @@ import org.geotoolkit.storage.coverage.GridCoverageResource;
  * {@link org.opengis.display.primitive.Graphic} objects of a scene and through
  * the {@code Graphic} objects, to the underlying
  * {@link org.opengis.feature.Feature} or
- * {@link org.opengis.coverage.grid.GridCoverage}.
+ * {@link org.geotoolkit.coverage.grid.GridCoverage}.
  *
  * @author Johann Sorel (Geomatys)
  * @module

@@ -89,7 +89,7 @@ import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.geotoolkit.style.interval.Palette;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;

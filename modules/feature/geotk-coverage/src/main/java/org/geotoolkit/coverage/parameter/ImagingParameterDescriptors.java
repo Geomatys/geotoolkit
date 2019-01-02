@@ -49,7 +49,7 @@ import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterNameException;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.metadata.citation.Responsibility;
 import org.opengis.util.InternationalString;
 import org.opengis.util.GenericName;

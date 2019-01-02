@@ -42,7 +42,7 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.process.ProcessException;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.GenericName;

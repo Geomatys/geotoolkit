@@ -40,7 +40,7 @@ import org.geotoolkit.storage.DataStores;
 import org.apache.sis.storage.Resource;
 import org.junit.Assert;
 import org.junit.Test;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

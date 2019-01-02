@@ -44,7 +44,7 @@ import org.geotoolkit.storage.coverage.DefaultCoverageResource;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.util.NamesExt;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.GenericName;
 

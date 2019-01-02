@@ -24,7 +24,7 @@ import java.awt.image.RenderedImage;
 import java.awt.geom.AffineTransform;
 import javax.imageio.metadata.IIOMetadata;
 
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;

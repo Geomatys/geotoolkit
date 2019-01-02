@@ -42,7 +42,7 @@ import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.feature.FeatureType;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 

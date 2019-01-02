@@ -23,7 +23,7 @@ import java.awt.geom.AffineTransform;
 import java.nio.file.Path;
 import javax.imageio.ImageIO;
 
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.GridEnvelope;
 

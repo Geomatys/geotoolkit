@@ -17,20 +17,13 @@
  */
 package org.geotoolkit.test;
 
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import java.io.*;
 import java.util.Collection;
 import java.util.zip.CRC32;
-import java.awt.image.Raster;
-import java.awt.image.DataBuffer;
-import java.awt.image.RenderedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.geom.AffineTransform;
-
-import org.opengis.coverage.Coverage;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridGeometry;
-import org.opengis.referencing.operation.MathTransform;
-
 import static org.junit.Assert.*;
 
 
@@ -72,28 +65,6 @@ public strictfp class Commons {
         }
         assertEquals("Premature end of iteration.", strings.length, i);
         return strings;
-    }
-
-    /**
-     * Returns the "Sample to geophysics" transform as an affine transform, or {@code null}
-     * if none. Note that the returned instance may be an immutable one, not necessarily the
-     * default Java2D implementation.
-     *
-     * @param  coverage The coverage for which to get the "grid to CRS" affine transform.
-     * @return The "grid to CRS" affine transform of the given coverage, or {@code null}
-     *         if none or if the transform is not affine.
-     */
-    public static AffineTransform getAffineTransform(final Coverage coverage) {
-        if (coverage instanceof GridCoverage) {
-            final GridGeometry geometry = ((GridCoverage) coverage).getGridGeometry();
-            if (geometry != null) {
-                final MathTransform gridToCRS = geometry.getGridToCRS();
-                if (gridToCRS instanceof AffineTransform) {
-                    return (AffineTransform) gridToCRS;
-                }
-            }
-        }
-        return null;
     }
 
     /**

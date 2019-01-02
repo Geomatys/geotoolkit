@@ -71,7 +71,7 @@ import org.geotoolkit.image.color.ColorUtilities;
  * only if the category is quantitative.
  * <p>
  * While this class can be used with arbitrary {@linkplain org.opengis.coverage.Coverage coverage},
- * the primary target for this implementation is {@linkplain org.opengis.coverage.grid.GridCoverage
+ * the primary target for this implementation is {@linkplain org.geotoolkit.coverage.grid.GridCoverage
  * grid coverage} storing their sample values as integers. This explain the "{@code Grid}" prefix
  * in the class name.
  *

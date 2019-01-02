@@ -48,7 +48,7 @@ import org.apache.sis.io.TableAppender;
 import org.opengis.util.InternationalString;
 import org.opengis.geometry.Envelope;
 import org.opengis.coverage.SampleDimension;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.InterpolationMethod;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.MathTransform2D;

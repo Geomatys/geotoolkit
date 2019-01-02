@@ -50,7 +50,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.FactoryException;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.SampleDimensionType;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.content.TransferFunctionType;

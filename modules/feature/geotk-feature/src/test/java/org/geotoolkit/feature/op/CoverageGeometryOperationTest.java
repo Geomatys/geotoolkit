@@ -32,7 +32,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.coverage.Coverage;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 

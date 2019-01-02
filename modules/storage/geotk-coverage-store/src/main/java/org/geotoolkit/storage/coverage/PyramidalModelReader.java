@@ -56,7 +56,7 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.Cancellable;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;

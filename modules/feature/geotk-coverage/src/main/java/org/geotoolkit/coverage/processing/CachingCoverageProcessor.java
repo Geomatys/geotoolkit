@@ -22,7 +22,7 @@ import java.awt.image.RenderedImage;
 import javax.media.jai.PlanarImage;
 
 import org.opengis.coverage.Coverage;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.processing.Operation;
 import org.opengis.coverage.processing.OperationNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;

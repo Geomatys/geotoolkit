@@ -17,43 +17,42 @@
  */
 package org.geotoolkit.coverage.processing;
 
-import java.util.Collections;
-import java.util.Map;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
+import java.util.Collections;
+import java.util.Map;
 import javax.media.jai.JAI;
-
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.crs.DefaultProjectedCRS;
+import org.apache.sis.referencing.operation.DefaultConversion;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
+import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.SampleCoverage;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.referencing.cs.PredefinedCS;
+import org.geotoolkit.referencing.operation.MathTransforms;
+import static org.geotoolkit.test.Assert.*;
+import static org.geotoolkit.test.Commons.*;
+import org.junit.*;
+import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridGeometry;
-import org.opengis.util.FactoryException;
-import org.opengis.util.NoSuchIdentifierException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationNotFoundException;
-
-import org.geotoolkit.factory.Hints;
-import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.cs.PredefinedCS;
-import org.apache.sis.referencing.crs.DefaultProjectedCRS;
-import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
-import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.coverage.grid.SampleCoverage;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.apache.sis.referencing.operation.DefaultConversion;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-
-import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import org.opengis.util.FactoryException;
+import org.opengis.util.NoSuchIdentifierException;
 
 
 /**
@@ -311,5 +310,28 @@ public final strictfp class ResampleTest extends GridProcessingTestBase {
         } finally {
             Hints.removeSystemDefault(Hints.LENIENT_DATUM_SHIFT);
         }
+    }
+
+
+    /**
+     * Returns the "Sample to geophysics" transform as an affine transform, or {@code null}
+     * if none. Note that the returned instance may be an immutable one, not necessarily the
+     * default Java2D implementation.
+     *
+     * @param  coverage The coverage for which to get the "grid to CRS" affine transform.
+     * @return The "grid to CRS" affine transform of the given coverage, or {@code null}
+     *         if none or if the transform is not affine.
+     */
+    public static AffineTransform getAffineTransform(final Coverage coverage) {
+        if (coverage instanceof GridCoverage) {
+            final GridGeometry geometry = ((GridCoverage) coverage).getGridGeometry();
+            if (geometry != null) {
+                final MathTransform gridToCRS = geometry.getGridToCRS();
+                if (gridToCRS instanceof AffineTransform) {
+                    return (AffineTransform) gridToCRS;
+                }
+            }
+        }
+        return null;
     }
 }

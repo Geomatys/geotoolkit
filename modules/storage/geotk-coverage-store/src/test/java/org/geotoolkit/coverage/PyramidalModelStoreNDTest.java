@@ -47,7 +47,7 @@ import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.coverage.Coverage;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.geometry.Envelope;

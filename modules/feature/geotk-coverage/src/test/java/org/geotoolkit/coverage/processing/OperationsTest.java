@@ -21,7 +21,7 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import javax.media.jai.OperationNode;
 
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.SampleCoverage;
 import static org.geotoolkit.coverage.grid.ViewType.*;
 

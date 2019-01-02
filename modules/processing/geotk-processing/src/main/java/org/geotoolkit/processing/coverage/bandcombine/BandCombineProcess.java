@@ -24,7 +24,7 @@ import org.apache.sis.parameter.Parameters;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridGeometry;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.parameter.ParameterValueGroup;
 
 import org.apache.sis.util.ArgumentChecks;

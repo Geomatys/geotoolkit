@@ -26,7 +26,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.lang.Static;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -58,7 +58,7 @@ public class CoverageExtractor extends Static {
     }
 
     /**
-     * Call {@link org.opengis.coverage.grid.GridCoverage#evaluate(org.opengis.geometry.DirectPosition, double[])} on all
+     * Call {@link org.geotoolkit.coverage.grid.GridCoverage#evaluate(org.opengis.geometry.DirectPosition, double[])} on all
      * {@link org.geotoolkit.coverage.grid.GridCoverage2D} slices returned by reader.
      *
      * @param point position given to evaluate function.
@@ -80,7 +80,7 @@ public class CoverageExtractor extends Static {
     }
 
     /**
-     * Call {@link org.opengis.coverage.grid.GridCoverage#evaluate(org.opengis.geometry.DirectPosition, double[])} on all
+     * Call {@link org.geotoolkit.coverage.grid.GridCoverage#evaluate(org.opengis.geometry.DirectPosition, double[])} on all
      * {@link org.geotoolkit.coverage.grid.GridCoverage2D slices}.
      *
      * @param directPos position given to evaluate function.

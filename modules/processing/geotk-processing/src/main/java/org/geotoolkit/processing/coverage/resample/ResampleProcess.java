@@ -59,7 +59,7 @@ import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.geometry.Envelope;

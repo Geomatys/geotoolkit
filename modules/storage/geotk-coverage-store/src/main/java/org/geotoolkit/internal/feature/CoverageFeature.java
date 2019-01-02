@@ -51,7 +51,7 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.feature.TypeConventions;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.feature.AttributeType;

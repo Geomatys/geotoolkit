@@ -41,7 +41,7 @@ import javax.media.jai.operator.MosaicDescriptor;
 import javax.media.jai.InterpolationNearest;
 
 import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.datum.PixelInCell;

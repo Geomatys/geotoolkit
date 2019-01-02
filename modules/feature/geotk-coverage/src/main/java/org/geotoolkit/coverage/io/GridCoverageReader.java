@@ -49,7 +49,7 @@ import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.SpatialRepresentation;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.util.GenericName;
 import org.apache.sis.util.ArraysExt;
 

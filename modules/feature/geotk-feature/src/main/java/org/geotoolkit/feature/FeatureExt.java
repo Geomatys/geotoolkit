@@ -47,7 +47,7 @@ import org.apache.sis.util.Static;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;

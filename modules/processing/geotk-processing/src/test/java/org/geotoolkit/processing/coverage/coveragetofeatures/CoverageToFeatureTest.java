@@ -57,7 +57,7 @@ import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.AbstractProcessTest;
 
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

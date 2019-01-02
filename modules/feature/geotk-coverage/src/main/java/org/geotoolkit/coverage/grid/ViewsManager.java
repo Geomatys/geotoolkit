@@ -35,7 +35,7 @@ import javax.media.jai.operator.FormatDescriptor;
 import javax.media.jai.operator.LookupDescriptor;
 
 import org.opengis.util.InternationalString;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;

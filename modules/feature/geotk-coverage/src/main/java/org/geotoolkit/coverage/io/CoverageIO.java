@@ -27,7 +27,7 @@ import java.util.Collections;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.internal.image.io.CheckedImageOutputStream;
 import org.geotoolkit.resources.Errors;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.lang.Static;

@@ -17,32 +17,28 @@
  */
 package org.geotoolkit.coverage.processing;
 
-import java.util.Collections;
-import java.util.Map;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
+import static java.lang.StrictMath.*;
+import java.util.Collections;
+import java.util.Map;
 import java.util.logging.Level;
 import javax.media.jai.RenderedOp;
-
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.opengis.referencing.crs.SingleCRS;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.coverage.grid.Viewer;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.apache.sis.internal.referencing.provider.Affine;
+import org.apache.sis.referencing.crs.DefaultDerivedCRS;
+import org.apache.sis.referencing.operation.DefaultConversion;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageTestBase;
-import org.apache.sis.referencing.crs.DefaultDerivedCRS;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.coverage.grid.Viewer;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.operation.MathTransforms;
-
-import org.apache.sis.internal.referencing.provider.Affine;
-import org.apache.sis.referencing.operation.DefaultConversion;
 import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
-import static java.lang.StrictMath.*;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.operation.MathTransform;
 
 
 /**
@@ -72,7 +68,7 @@ public abstract strictfp class GridProcessingTestBase extends GridCoverageTestBa
      */
     protected final void rotate(final double angle) {
         final AffineTransform atr = AffineTransform.getRotateInstance(toRadians(angle));
-        atr.concatenate(getAffineTransform(coverage));
+        atr.concatenate(ResampleTest.getAffineTransform(coverage));
         final MathTransform tr = MathTransforms.linear(atr);
         SingleCRS crs = (SingleCRS) coverage.getCoordinateReferenceSystem();
         final Map<String, String> name = Collections.singletonMap(DefaultDerivedCRS.NAME_KEY, "Rotation " + angle + "°");

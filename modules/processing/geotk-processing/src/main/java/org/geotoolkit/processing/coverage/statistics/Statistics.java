@@ -43,7 +43,7 @@ import static org.geotoolkit.processing.coverage.statistics.StatisticsDescriptor
 import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;

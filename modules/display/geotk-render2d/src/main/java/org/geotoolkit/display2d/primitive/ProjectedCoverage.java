@@ -30,7 +30,7 @@ import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.referencing.CRS;
