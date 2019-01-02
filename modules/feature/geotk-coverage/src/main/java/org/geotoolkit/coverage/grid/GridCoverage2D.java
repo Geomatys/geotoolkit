@@ -29,6 +29,7 @@ import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -39,6 +40,7 @@ import javax.media.jai.OperationNode;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.RenderedImageAdapter;
 import javax.media.jai.remote.SerializableRenderedImage;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.coverage.AbstractCoverage;
@@ -52,7 +54,6 @@ import org.geotoolkit.resources.Loggings;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.coverage.SampleDimension;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -242,7 +243,16 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
          */
         final int dimension = crs.getCoordinateSystem().getDimension();
         if (!gridGeometry.isDefined(GridGeometry2D.EXTENT)) {
-            final GridEnvelope r = new GeneralGridEnvelope(image, dimension);
+            final long[] low = new long[dimension];
+            final long[] high = new long[dimension];
+            Arrays.fill(low, 1);
+            Arrays.fill(high, 1);
+            low[0] = image.getMinX();
+            low[1] = image.getMinY();
+            high[0] = image.getWidth();
+            high[1] = image.getHeight();
+
+            final GridExtent r = new GridExtent(null, low, high, false);
             if (gridGeometry.isDefined(GridGeometry2D.GRID_TO_CRS)) {
                 gridGeometry = new GridGeometry2D(r, PIXEL_IN_CELL,
                         gridGeometry.getGridToCRS(PIXEL_IN_CELL), crs, hints);
@@ -297,10 +307,10 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * method will thrown an {@link IllegalStateException} in this case.
      */
     private static String checkConsistency(final RenderedImage image, final GridGeometry2D grid) {
-        final GridEnvelope range = grid.getExtent();
+        final GridExtent range = grid.getExtent();
         final int dimension = range.getDimension();
         for (int i=0; i<dimension; i++) {
-            final int min, span;
+            final long min, span;
             final Object label;
             if (i == grid.gridDimensionX) {
                 min   = image.getMinX();
@@ -312,10 +322,10 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                 label = "\"Y\"";
             } else {
                 min   = range.getLow(i);
-                span  = Math.min(Math.max(range.getSpan(i), 0), 1);
+                span  = Math.min(Math.max(range.getSize(i), 0), 1);
                 label = Integer.valueOf(i);
             }
-            if (range.getLow(i)!=min || range.getSpan(i)!=span) {
+            if (range.getLow(i)!=min || range.getSize(i)!=span) {
                 return Errors.format(Errors.Keys.IllegalGridEnvelope_3, label, min, min + span);
             }
         }

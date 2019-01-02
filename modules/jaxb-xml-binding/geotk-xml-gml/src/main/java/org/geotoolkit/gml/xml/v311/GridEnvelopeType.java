@@ -54,7 +54,7 @@ import org.opengis.coverage.grid.GridEnvelope;
     "low",
     "high"
 })
-public class GridEnvelopeType implements GridEnvelope {
+public class GridEnvelopeType {
 
     @XmlList
     @XmlElement(required = true)

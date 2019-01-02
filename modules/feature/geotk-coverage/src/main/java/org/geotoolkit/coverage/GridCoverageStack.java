@@ -20,16 +20,15 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.geotoolkit.coverage.grid.GridGeometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.*;
@@ -84,16 +83,16 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
 
 
         //build the grid geometry
-        final int[] gridLower = new int[nbDim];
-        final int[] gridUpper = new int[nbDim];
+        final long[] gridLower = new long[nbDim];
+        final long[] gridUpper = new long[nbDim];
         final double[] zAxisSteps = new double[elements.length];
         MathTransform baseGridToCRS = null;
         int k=0;
         for (Element element : elements) {
             final GridCoverage coverage = (GridCoverage) element.getCoverage(null);
 
-            final GridGeometry gg  = coverage.getGridGeometry();
-            final GridEnvelope ext = gg.getExtent();
+            final GridGeometry gg = coverage.getGridGeometry();
+            final GridExtent ext = gg.getExtent();
 
             //-- check extent pertinency
             //we expect the axisIndex dimension to be a slice, low == high
@@ -176,7 +175,7 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
         }
 
         //build gridGeometry
-        final GeneralGridEnvelope gridEnv = new GeneralGridEnvelope(gridLower, gridUpper, true);
+        final GridExtent gridEnv = new GridExtent(null, gridLower, gridUpper, true);
         gridGeometry = new GeneralGridGeometry(gridEnv, PixelInCell.CELL_CORNER, gridToCRS, crs);
     }
 

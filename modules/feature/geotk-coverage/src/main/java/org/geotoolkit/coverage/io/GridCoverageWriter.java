@@ -21,20 +21,19 @@ import java.awt.Rectangle;
 import java.util.Iterator;
 import java.util.concurrent.CancellationException;
 import javax.imageio.ImageWriter;
-
-import org.opengis.geometry.Envelope;
-import org.opengis.coverage.grid.GridEnvelope;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
+import org.geotoolkit.resources.Errors;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.geotoolkit.resources.Errors;
-import org.apache.sis.geometry.Envelopes;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-
-import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 
 
 /**
@@ -189,11 +188,15 @@ public abstract class GridCoverageWriter extends GridCoverageStore implements Co
             final Envelope requestEnvelope, final CoordinateReferenceSystem requestCRS)
             throws TransformException, CoverageStoreException
     {
-        final GridEnvelope gridEnvelope = new GeneralGridEnvelope(
+        final GeneralEnvelope envinv = Envelopes.transform(destToExtractedGrid.inverse(), requestEnvelope);
+        final GridExtent gridEnvelope = new GridGeometry(PixelInCell.CELL_CORNER,
+                null, requestEnvelope, GridRoundingMode.ENCLOSING).getExtent();
+        LAAAAAAAAAAAAAAAAAAA
+        final GridExtent gridEnvelope = new GridExtent(
                 Envelopes.transform(destToExtractedGrid.inverse(), requestEnvelope),
                 PixelInCell.CELL_CORNER, false);
         for (int i=gridEnvelope.getDimension(); --i>=0;) {
-            if (gridEnvelope.getSpan(i) <= 0) {
+            if (gridEnvelope.getSize(i) <= 0) {
                 String message = formatErrorMessage(Errors.Keys.ValueTendTowardInfinity);
                 if (requestCRS != null) {
                     message = requestCRS.getCoordinateSystem().getAxis(i).getName().getCode() + ": " + message;
@@ -202,10 +205,10 @@ public abstract class GridCoverageWriter extends GridCoverageStore implements Co
             }
         }
         requestedBounds = new Rectangle(
-                gridEnvelope.getLow (X_DIMENSION),
-                gridEnvelope.getLow (Y_DIMENSION),
-                gridEnvelope.getSpan(X_DIMENSION),
-                gridEnvelope.getSpan(Y_DIMENSION));
+                (int) gridEnvelope.getLow (X_DIMENSION),
+                (int) gridEnvelope.getLow (Y_DIMENSION),
+                (int) gridEnvelope.getSize(X_DIMENSION),
+                (int) gridEnvelope.getSize(Y_DIMENSION));
     }
 
     /**

@@ -17,78 +17,72 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Collection;
-import java.awt.Point;
+import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Color;
 import java.awt.Image;
-import java.awt.image.Raster;
-import java.awt.image.DataBufferFloat;
-import java.awt.image.ColorModel;
-import java.awt.image.SampleModel;
-import java.awt.image.RenderedImage;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
-import java.awt.image.renderable.RenderableImage;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import static java.awt.image.DataBuffer.*;
+import java.awt.image.DataBufferFloat;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
+import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import javax.measure.Unit;
 import javax.media.jai.*;
 import javax.media.jai.operator.ImageFunctionDescriptor;
-
-import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.util.FactoryException;
-import org.opengis.coverage.SampleDimension;
-import org.opengis.coverage.SampleDimensionType;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridGeometry;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.metadata.content.TransferFunctionType;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.Matrix;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.referencing.operation.TransformException;
-
-import org.geotoolkit.lang.Builder;
-import org.geotoolkit.util.Cloneable;
-import org.apache.sis.measure.NumberRange;
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.factory.Hints;
-import org.apache.sis.measure.Units;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.ImmutableEnvelope;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
-import org.apache.sis.coverage.grid.PixelTranslation;
-import org.geotoolkit.resources.Errors;
-
-import org.apache.sis.referencing.operation.transform.TransferFunction;
-import org.geotoolkit.image.internal.ImageUtilities;
-import org.geotoolkit.image.palette.PaletteFactory;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
-
-import static java.awt.image.DataBuffer.*;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.TransferFunction;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.collection.BackingStoreException;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import org.geotoolkit.coverage.Category;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.image.internal.ImageUtilities;
+import org.geotoolkit.image.palette.PaletteFactory;
+import org.geotoolkit.lang.Builder;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.Cloneable;
+import org.opengis.coverage.SampleDimension;
+import org.opengis.coverage.SampleDimensionType;
+import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.metadata.content.TransferFunctionType;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -324,7 +318,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @since 3.20
      */
-    protected GridEnvelope extent;
+    protected GridExtent extent;
 
     /**
      * The <cite>grid to CRS</cite> transform, or {@code null} if unspecified. This field is non-null
@@ -950,12 +944,10 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @since 3.20
      */
-    public GridEnvelope getExtent() {
-        final GridEnvelope extent = this.extent;
+    public GridExtent getExtent() {
+        final GridExtent extent = this.extent;
         if (extent != null) {
-            if (extent instanceof Cloneable) {
-                return (GridEnvelope) ((Cloneable) extent).clone();
-            }
+            return extent;
         } else {
             if (isDefined(GeneralGridGeometry.EXTENT)) {
                 return gridGeometry.getExtent();
@@ -963,7 +955,16 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             final RenderedImage image = this.image;
             if (image != null) {
                 final Envelope envelope = this.envelope;
-                return new GeneralGridEnvelope(image, getGridDimension(envelope != null ? envelope.getDimension() : 2));
+                final int dimension = getGridDimension(envelope != null ? envelope.getDimension() : 2);
+                final long[] low = new long[dimension];
+                final long[] high = new long[dimension];
+                Arrays.fill(low, 1);
+                Arrays.fill(high, 1);
+                low[0] = image.getMinX();
+                low[1] = image.getMinY();
+                high[0] = image.getWidth();
+                high[1] = image.getHeight();
+                return new GridExtent(null, low, high, false);
             }
         }
         return extent;
@@ -983,7 +984,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @since 3.20
      */
-    public void setExtent(final GridEnvelope extent) throws MismatchedDimensionException {
+    public void setExtent(final GridExtent extent) throws MismatchedDimensionException {
         if (extent != null) {
             final int dim = getGridDimension(-1);
             if (dim >= 0) {
@@ -1013,7 +1014,14 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @since 3.20
      */
     public void setExtent(final int... span) throws MismatchedDimensionException {
-        setExtent(span != null ? new GeneralGridEnvelope(new int[span.length], span, false) : null);
+        if (span == null) setExtent((GridExtent) null);
+
+        final long[] low = new long[span.length];
+        final long[] high = new long[span.length];
+        for (int i=0;i<span.length;i++) {
+            high[i] = span[i];
+        }
+        setExtent(new GridExtent(null, low, high, false));
     }
 
     /**
@@ -1157,7 +1165,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     public void setGridToCRS(final MathTransform gridToCRS) throws MismatchedDimensionException {
         if (gridToCRS != null) {
             final CoordinateReferenceSystem crs = this.crs;
-            final GridEnvelope extent = this.extent;
+            final GridExtent extent = this.extent;
             if (extent != null) {
                 ensureDimensionMatch("gridToCRS", gridToCRS.getSourceDimensions(), extent.getDimension());
             }
@@ -1309,7 +1317,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         if (geom == null) {
             geom = cachedGridGeometry;
             if (geom == null) {
-                final GridEnvelope extent = getExtent();
+                final GridExtent extent = getExtent();
                 final MathTransform gridToCRS;
                 if (useGridToCRS && (gridToCRS = getGridToCRS()) != null) {
                     geom = new GridGeometry2D(extent, getPixelAnchor(),
@@ -1831,7 +1839,12 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     public Rectangle getImageBounds() throws IncompleteGridGeometryException {
         final GridGeometry2D gridGeometry = GridGeometry2D.castOrCopy(getGridGeometry());
         if (gridGeometry != null) {
-            return gridGeometry.getExtent2D();
+            GridExtent ext = gridGeometry.getExtent2D();
+            return new Rectangle(
+                    (int) ext.getLow(0),
+                    (int) ext.getLow(1),
+                    (int) ext.getSize(0),
+                    (int) ext.getSize(1));
         }
         final RenderedImage image = this.image;
         if (image != null) {
@@ -2119,11 +2132,11 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             final double yScale =  at.getScaleY();
             final double xTrans = -at.getTranslateX() / xScale;
             final double yTrans = -at.getTranslateY() / yScale;
-            final GridEnvelope extent = gridGeometry.getExtent();
+            final GridExtent extent = gridGeometry.getExtent();
             data = ImageFunctionDescriptor.create(
                     function,
-                    extent.getSpan(0), // width
-                    extent.getSpan(1), // height
+                    (int) extent.getSize(0), // width
+                    (int) extent.getSize(1), // height
                     (float) xScale,
                     (float) yScale,
                     (float) xTrans,

@@ -17,46 +17,43 @@
  */
 package org.geotoolkit.image.io;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.io.File;
-import java.io.Closeable;
-import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Locale;
-import java.util.Set;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
-import java.util.Collections;
-import java.awt.image.Raster;
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
+import java.util.Locale;
+import java.util.Set;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.spi.ServiceRegistry;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.metadata.IIOMetadataFormat;
-import javax.imageio.stream.ImageInputStream;
+import javax.imageio.event.IIOReadProgressListener;
 import javax.imageio.event.IIOReadUpdateListener;
 import javax.imageio.event.IIOReadWarningListener;
-import javax.imageio.event.IIOReadProgressListener;
-
-import org.opengis.coverage.grid.GridEnvelope;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataFormat;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.spi.ServiceRegistry;
+import javax.imageio.stream.ImageInputStream;
+import org.apache.sis.coverage.grid.GridExtent;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.ArraysExt;
-
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
-import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
+import org.geotoolkit.internal.image.io.Formats;
+import org.geotoolkit.lang.Decorator;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Strings;
-
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -380,8 +377,8 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      * @since 3.19
      */
     @Override
-    public GridEnvelope getGridEnvelope(final int imageIndex) throws IOException {
-        final GridEnvelope range;
+    public GridExtent getGridEnvelope(final int imageIndex) throws IOException {
+        final GridExtent range;
         if (main instanceof SpatialImageReader) {
             checkImageIndex(imageIndex);
             range = ((SpatialImageReader) main).getGridEnvelope(imageIndex);

@@ -1,14 +1,14 @@
 package org.geotoolkit.coverage.grid;
 
+import java.awt.Rectangle;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.internal.metadata.AxisDirections;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.geotoolkit.coverage.grid.GridGeometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 
@@ -30,7 +30,7 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
      */
     private final GridIterator gridIterator;
 
-    private final Function<GridEnvelope, GeneralGridGeometry> generator;
+    private final Function<GridExtent, GeneralGridGeometry> generator;
 
     /**
      * Create an iterator which will try to split given geometry as a series of
@@ -149,7 +149,7 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
      */
     static int[] buildSteps(final GridGeometry source, CoordinateReferenceSystem crs) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("Source grid", source);
-        final GridEnvelope extent = source.getExtent();
+        final GridExtent extent = source.getExtent();
         if (crs != null) {
             final SingleCRS horizontal = CRS.getHorizontalComponent(crs);
             if (horizontal != null) {
@@ -184,4 +184,29 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
 
         return steps;
     }
+
+    public static long[] getLow(GridExtent extent) {
+        final long[] array = new long[extent.getDimension()];
+        for (int i=0;i<array.length;i++) {
+            array[i] = extent.getLow(i);
+        }
+        return array;
+    }
+
+    public static long[] getHigh(GridExtent extent) {
+        final long[] array = new long[extent.getDimension()];
+        for (int i=0;i<array.length;i++) {
+            array[i] = extent.getHigh(i);
+        }
+        return array;
+    }
+
+    public static Rectangle toRectangle(GridExtent extent) {
+        return new Rectangle(
+                (int) extent.getLow(0),
+                (int) extent.getLow(1),
+                (int) extent.getSize(0),
+                (int) extent.getSize(1));
+    }
+
 }

@@ -47,11 +47,11 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.factory.Hints;
@@ -60,8 +60,6 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.OutOfDomainOfValidityException;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.geotoolkit.coverage.grid.GridGeometry;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -557,46 +555,11 @@ public final class CoverageUtilities extends Static {
     }
 
     /**
-     * Converts a GeoAPI grid envelope (to be deprecated later) into an Apache SIS grid extent.
-     */
-    public static GridExtent toSIS(final GridEnvelope env) {
-        if (env == null) return null;
-        final int dim = env.getDimension();
-        final long[] lower = new long[dim];
-        final long[] upper = new long[dim];
-        for (int i=0; i<dim; i++) {
-            lower[i] = env.getLow(i);
-            upper[i] = env.getHigh(i);
-        }
-        return new GridExtent(null, lower, upper, true);
-    }
-
-    /**
-     * Converts a SIS grid extent into a Geotk grid envelope.
-     */
-    public static GeneralGridEnvelope toGeotk(final GridExtent env, final boolean forceLowerToZero) {
-        if (env == null) return null;
-        final int dim = env.getDimension();
-        final int[] lower = new int[dim];
-        final int[] upper = new int[dim];
-        for (int i=0; i<dim; i++) {
-            int low  = Math.toIntExact(env.getLow(i));
-            upper[i] = Math.toIntExact(env.getHigh(i));
-            if (forceLowerToZero) {
-                upper[i] -= low;
-            } else {
-                lower[i] = low;
-            }
-        }
-        return new GeneralGridEnvelope(lower, upper, true);
-    }
-
-    /**
      * Converts a GeoAPI grid geometry (to be deprecated later) into an Apache SIS grid geometry.
      */
     public static org.apache.sis.coverage.grid.GridGeometry toSIS(final GridGeometry g) throws TransformException {
         if (g == null) return null;
-        GridEnvelope              extent    = null;
+        GridExtent                extent    = null;
         Envelope                  envelope  = null;
         MathTransform             gridToCRS = null;
         CoordinateReferenceSystem crs       = null;
@@ -613,7 +576,7 @@ public final class CoverageUtilities extends Static {
         if (envelope != null && extent == null) {
             return new org.apache.sis.coverage.grid.GridGeometry(PixelInCell.CELL_CENTER, gridToCRS, envelope, GridRoundingMode.NEAREST);
         } else {
-            return new org.apache.sis.coverage.grid.GridGeometry(toSIS(extent), PixelInCell.CELL_CENTER, gridToCRS, crs);
+            return new org.apache.sis.coverage.grid.GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCRS, crs);
         }
     }
 
@@ -643,7 +606,7 @@ public final class CoverageUtilities extends Static {
             }
             gridToCRS = MathTransforms.concatenate(MathTransforms.translation(vector), gridToCRS);
         }
-        return new GeneralGridGeometry(toGeotk(extent, forceLowerToZero), PixelInCell.CELL_CENTER, gridToCRS, crs);
+        return new GeneralGridGeometry(extent, PixelInCell.CELL_CENTER, gridToCRS, crs);
     }
 
     /**

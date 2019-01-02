@@ -31,10 +31,10 @@
  */
 package org.geotoolkit.coverage.grid;
 
+import org.apache.sis.coverage.grid.GridExtent;
 import static org.opengis.annotation.Obligation.*;
 import static org.opengis.annotation.Specification.*;
 import org.opengis.annotation.UML;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 
@@ -75,13 +75,7 @@ public interface GridGeometry {
      * @see org.opengis.coverage.grid.Grid#getExtent()
      */
     @UML(identifier="gridRange", obligation=MANDATORY, specification=OGC_01004)
-    GridEnvelope getExtent();
-
-    /**
-     * @deprecated Renamed {@link #getExtent()}.
-     */
-    @Deprecated
-    GridEnvelope getGridRange();
+    GridExtent getExtent();
 
     /**
      * Returns the conversion from grid coordinates to real world earth coordinates.

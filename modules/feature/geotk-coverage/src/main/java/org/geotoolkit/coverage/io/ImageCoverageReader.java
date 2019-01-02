@@ -17,80 +17,77 @@
  */
 package org.geotoolkit.coverage.io;
 
-import java.util.Set;
-import java.util.Map;
-import java.util.List;
-import java.util.Locale;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.HashMap;
-import java.util.Collections;
-import java.util.concurrent.CancellationException;
-import java.util.logging.Level;
-import java.io.IOException;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CancellationException;
+import java.util.logging.Level;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
-import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
-
-import org.geotoolkit.image.io.large.LargeRenderedImage;
-import org.opengis.geometry.Envelope;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.geotoolkit.coverage.grid.GridGeometry;
-import org.opengis.coverage.grid.RectifiedGrid;
-import org.opengis.metadata.spatial.Georectified;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.crs.CompoundCRS;
-import org.opengis.referencing.operation.Matrix;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.util.GenericName;
-import org.opengis.util.NameFactory;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArraysExt;
-
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.FactoryFinder;
+import org.apache.sis.util.collection.BackingStoreException;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.ImageMetadataException;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.SampleConversionType;
 import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.image.io.large.LargeRenderedImage;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
-import org.geotoolkit.image.io.mosaic.MosaicImageReader;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 import org.geotoolkit.image.io.mosaic.MosaicImageReadParam;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.image.io.mosaic.MosaicImageReader;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
+import org.geotoolkit.internal.image.io.DimensionAccessor;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.XCollections;
-import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.referencing.crs.PredefinedCRS;
-import org.apache.sis.referencing.operation.matrix.Matrices;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-
-import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
-import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
-import org.geotoolkit.internal.image.io.DimensionAccessor;
-import org.apache.sis.geometry.Envelopes;
+import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.Georectified;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.crs.CompoundCRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.GenericName;
+import org.opengis.util.NameFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -639,12 +636,12 @@ public class ImageCoverageReader extends GridCoverageReader {
              * for all dimensions other than X and Y, even if the original file has more data,
              * since this is a GridGeometry2D requirement.
              */
-            final int[] lower = new int[dimension];
-            final int[] upper = new int[dimension];
+            final long[] lower = new long[dimension];
+            final long[] upper = new long[dimension];
             Arrays.fill(upper, 1);
             upper[X_DIMENSION] = width;
             upper[Y_DIMENSION] = height;
-            final GridEnvelope gridExtent = new GeneralGridEnvelope(lower, upper, false);
+            final GridExtent gridExtent = new GridExtent(null, lower, upper, false);
             gridGeometry = new GridGeometry2D(gridExtent, pointInPixel, gridToCRS, crs, null);
             Map.Entry<Map<Integer,GridGeometry2D>,GridGeometry2D> entry = setCached(gridGeometry, gridGeometries, index);
             gridGeometries = entry.getKey();
@@ -1067,7 +1064,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                             }
                             final double[] indices = new double[gridDim];
                             gridGeometry.getGridToCRS().inverse().transform(median, 0, indices, 0, 1);
-                            final GridEnvelope gridExtent;
+                            final GridExtent gridExtent;
                             if (crs instanceof GridGeometry) {
                                 gridExtent = ((GridGeometry) crs).getExtent();
                             } else {
@@ -1155,9 +1152,9 @@ public class ImageCoverageReader extends GridCoverageReader {
                 matrix.setElement(yi, gridDimension, change.getTranslateY() - ymin);
                 newGridToCRS = MathTransforms.concatenate(MathTransforms.linear(matrix), gridToCRS);
             }
-            final GridEnvelope gridExtent = gridGeometry.getExtent();
-            final int[] low  = gridExtent.getLow ().getCoordinateValues();
-            final int[] high = gridExtent.getHigh().getCoordinateValues();
+            final GridExtent gridExtent = gridGeometry.getExtent();
+            final long[] low  = GridGeometryIterator.getLow(gridExtent);
+            final long[] high = GridGeometryIterator.getHigh(gridExtent);
             low[xi] = xmin; high[xi] = xmin + image.getWidth()  - 1;
             low[yi] = ymin; high[yi] = ymin + image.getHeight() - 1;
             if (imageParam instanceof SpatialImageReadParam) {
@@ -1170,7 +1167,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                     }
                 }
             }
-            final GridEnvelope newGridRange = new GeneralGridEnvelope(low, high, true);
+            final GridExtent newGridRange = new GridExtent(null, low, high, true);
             if (newGridToCRS != gridToCRS || !newGridRange.equals(gridExtent)) {
                 gridGeometry = new GridGeometry2D(newGridRange, PixelInCell.CELL_CORNER,
                         newGridToCRS, gridGeometry.getCoordinateReferenceSystem(), null);

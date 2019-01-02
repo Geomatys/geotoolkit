@@ -21,67 +21,62 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-import java.awt.image.renderable.ParameterBlock;
 import java.awt.image.DataBuffer;
+import java.awt.image.renderable.ParameterBlock;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.logging.LogRecord;
-
-import javax.media.jai.JAI;
-import javax.media.jai.Warp;
-import javax.media.jai.RenderedOp;
-import javax.media.jai.PlanarImage;
-import javax.media.jai.ImageLayout;
-import javax.media.jai.Interpolation;
+import java.util.logging.Logger;
 import javax.media.jai.BorderExtender;
 import javax.media.jai.BorderExtenderConstant;
-import javax.media.jai.operator.MosaicDescriptor;
+import javax.media.jai.ImageLayout;
+import javax.media.jai.Interpolation;
 import javax.media.jai.InterpolationNearest;
-
-import org.opengis.coverage.grid.GridEnvelope;
+import javax.media.jai.JAI;
+import javax.media.jai.PlanarImage;
+import javax.media.jai.RenderedOp;
+import javax.media.jai.Warp;
+import javax.media.jai.operator.MosaicDescriptor;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.geometry.AbstractEnvelope;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.Utilities;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.util.FactoryException;
-import org.opengis.util.InternationalString;
-import org.opengis.referencing.datum.PixelInCell;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.coverage.processing.AbstractCoverageProcessor;
+import org.geotoolkit.coverage.processing.CannotReprojectException;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.image.internal.ImageUtilities;
+import static org.geotoolkit.internal.InternalUtilities.debugEquals;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.geotoolkit.io.LineFormat;
+import org.geotoolkit.lang.Workaround;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.geotoolkit.referencing.operation.transform.DimensionFilter;
+import org.geotoolkit.referencing.operation.transform.WarpFactory;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.Loggings;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.geometry.Envelope;
-
-import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.io.LineFormat;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.processing.AbstractCoverageProcessor;
-import org.geotoolkit.coverage.processing.CannotReprojectException;
-import org.apache.sis.geometry.AbstractEnvelope;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.geometry.Envelopes;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.referencing.operation.transform.DimensionFilter;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.referencing.operation.transform.WarpFactory;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.geotoolkit.image.internal.ImageUtilities;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Loggings;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.lang.Workaround;
-
-import org.apache.sis.util.Utilities;
-import static org.geotoolkit.internal.InternalUtilities.debugEquals;
+import org.opengis.util.FactoryException;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -343,7 +338,7 @@ final class Resampler2D extends GridCoverage2D {
                     Envelope gridEnvelope;
                     gridEnvelope = toEnvelope(sourceGG.getExtent());
                     gridEnvelope = Envelopes.transform(allSteps.inverse(), gridEnvelope);
-                    targetGG  = new GridGeometry2D(new GeneralGridEnvelope(gridEnvelope,
+                    targetGG  = new GridGeometry2D(new GridExtent(gridEnvelope,
                             PixelInCell.CELL_CORNER, false), step1, targetCRS);
                 }
             }
@@ -378,8 +373,8 @@ final class Resampler2D extends GridCoverage2D {
              *   big enough to hold the result.
              */
             if (targetGG == null) {
-                final GridEnvelope targetGR;
-                targetGR = force2D ? new GeneralGridEnvelope(sourceGG.getExtent2D()) : sourceGG.getExtent();
+                final GridExtent targetGR;
+                targetGR = force2D ? new GridExtent(sourceGG.getExtent2D()) : sourceGG.getExtent();
                 targetGG = new GridGeometry2D(targetGR, targetEnvelope);
                 step1    = targetGG.getGridToCRS(CORNER);
             } else if (!targetGG.isDefined(GridGeometry2D.GRID_TO_CRS)) {
@@ -390,7 +385,7 @@ final class Resampler2D extends GridCoverage2D {
                 if (!targetGG.isDefined(GridGeometry2D.EXTENT)) {
                     final GeneralEnvelope gridEnvelope = Envelopes.transform(step1.inverse(), targetEnvelope);
                     // According OpenGIS specification, GridGeometry maps pixel's center.
-                    targetGG = new GridGeometry2D(new GeneralGridEnvelope(gridEnvelope,
+                    targetGG = new GridGeometry2D(new GridExtent(gridEnvelope,
                             PixelInCell.CELL_CENTER, false), step1, targetCRS);
                 }
             }
@@ -433,13 +428,13 @@ final class Resampler2D extends GridCoverage2D {
             // Let the operation decide itself. This is necessary in case we change the
             // source, as we do if we choose the "Mosaic" operation.
         }
-        final Rectangle sourceBB = sourceGG.getExtent2D();
-        final Rectangle targetBB = targetGG.getExtent2D();
+        final GridExtent sourceBB = sourceGG.getExtent2D();
+        final GridExtent targetBB = targetGG.getExtent2D();
         if (isBoundsUndefined(layout, false)) {
-            layout.setMinX  (targetBB.x);
-            layout.setMinY  (targetBB.y);
-            layout.setWidth (targetBB.width);
-            layout.setHeight(targetBB.height);
+            layout.setMinX  ((int) targetBB.getLow(0));
+            layout.setMinY  ((int) targetBB.getLow(1));
+            layout.setWidth ((int) targetBB.getSize(0));
+            layout.setHeight((int) targetBB.getSize(1));
         }
         if (isBoundsUndefined(layout, true)) {
             Dimension size = new Dimension(layout.getWidth (sourceImage),

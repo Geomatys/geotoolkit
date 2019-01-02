@@ -18,13 +18,7 @@ package org.geotoolkit.coverage.combineIterator;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.crs.CompoundCRS;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
-import org.opengis.geometry.Envelope;
-
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.measure.NumberRange;
@@ -32,13 +26,15 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
-
 import org.junit.Assert;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
+import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.crs.CompoundCRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  * Test multidimensionnal {@link Envelope} iterator, {@link  GridCombineIterator}.
@@ -60,9 +56,9 @@ public strictfp class GridCombineIteratorTest extends org.geotoolkit.test.TestBa
     @Test
     public void test2D() {
         final CoordinateReferenceSystem crsTest = PredefinedCRS.CARTESIAN_2D;
-        final int[] gridLow   = new int[]{0,0};
-        final int[] gridHigh = new int[]{1,1};
-        GeneralGridEnvelope extent = new GeneralGridEnvelope(gridLow, gridHigh, true);
+        final long[] gridLow   = new long[]{0,0};
+        final long[] gridHigh = new long[]{1,1};
+        GridExtent extent = new GridExtent(null, gridLow, gridHigh, true);
         GridCombineIterator it = new GridCombineIterator(extent, crsTest, new AffineTransform2D(1, 0, 0, 1, 0, 0));
         final List<Envelope> listEnvelope = new ArrayList<Envelope>();
         while (it.hasNext()) {
@@ -75,7 +71,7 @@ public strictfp class GridCombineIteratorTest extends org.geotoolkit.test.TestBa
 
         //-- test with exclusive high border
         //-- should return only low point
-        extent = new GeneralGridEnvelope(gridLow, gridHigh, false);
+        extent = new GridExtent(null, gridLow, gridHigh, false);
         it = new GridCombineIterator(extent, crsTest, new AffineTransform2D(1, 0, 0, 1, 0, 0));
         listEnvelope.clear();
         while (it.hasNext()) {
@@ -92,7 +88,7 @@ public strictfp class GridCombineIteratorTest extends org.geotoolkit.test.TestBa
         gridHigh[0] = 13;
         gridHigh[1] = 11;
 
-        extent = new GeneralGridEnvelope(gridLow, gridHigh, true);
+        extent = new GridExtent(null, gridLow, gridHigh, true);
         it = new GridCombineIterator(extent, crsTest, new AffineTransform2D(2,0,0,3,-3,5));
         listEnvelope.clear();
         while (it.hasNext()) {
@@ -105,7 +101,7 @@ public strictfp class GridCombineIteratorTest extends org.geotoolkit.test.TestBa
         checkEnvelope(result, -13, -16, 23, 38);
 
         //-- test with exclusive high border
-        extent = new GeneralGridEnvelope(gridLow, gridHigh, false);
+        extent = new GridExtent(null, gridLow, gridHigh, false);
         it = new GridCombineIterator(extent, crsTest, new AffineTransform2D(2,0,0,3,-3,5));
         listEnvelope.clear();
         while (it.hasNext()) {
@@ -124,9 +120,9 @@ public strictfp class GridCombineIteratorTest extends org.geotoolkit.test.TestBa
     @Test
     public void test3D() throws FactoryException {
 
-        final int[] gridLow   = new int[]{0, 0, 0};
-        final int[] gridHigh = new int[]{1, 1, 1};
-        GeneralGridEnvelope extent = new GeneralGridEnvelope(gridLow, gridHigh, true);
+        final long[] gridLow   = new long[]{0, 0, 0};
+        final long[] gridHigh = new long[]{1, 1, 1};
+        GridExtent extent = new GridExtent(null, gridLow, gridHigh, true);
 
         final CoordinateReferenceSystem crs3D = new GeodeticObjectBuilder().addName("compoundcrstest")
                                                                            .createCompoundCRS(PredefinedCRS.CARTESIAN_2D,
@@ -157,7 +153,7 @@ public strictfp class GridCombineIteratorTest extends org.geotoolkit.test.TestBa
 
         //-- test with exclusive high border
         //-- should return only low point
-        extent = new GeneralGridEnvelope(gridLow, gridHigh, false);
+        extent = new GridExtent(null, gridLow, gridHigh, false);
         it = new GridCombineIterator(extent, crs3D, MathTransforms.linear(mat));
         listEnvelope.clear();
         while (it.hasNext()) {
@@ -175,7 +171,7 @@ public strictfp class GridCombineIteratorTest extends org.geotoolkit.test.TestBa
         gridLow[2] = -2;
         gridHigh[2] = 1;
 
-        extent = new GeneralGridEnvelope(gridLow, gridHigh, true);
+        extent = new GridExtent(null, gridLow, gridHigh, true);
         it = new GridCombineIterator(extent, crs3D, MathTransforms.linear(mat));
         listEnvelope.clear();
         while (it.hasNext()) {
@@ -203,9 +199,9 @@ public strictfp class GridCombineIteratorTest extends org.geotoolkit.test.TestBa
                                                                                              CommonCRS.WGS84.geographic(),
                                                                                              CommonCRS.Vertical.DEPTH.crs());
 
-        final int[] gridLow        = new int[]{-2,  0,  0, 1};
-        final int[] gridHigh       = new int[]{ 0, 11, 11, 4}; //-- 11 because exclusive high border
-        GeneralGridEnvelope extent = new GeneralGridEnvelope(gridLow, gridHigh, false);//-- exclusive high border
+        final long[] gridLow        = new long[]{-2,  0,  0, 1};
+        final long[] gridHigh       = new long[]{ 0, 11, 11, 4}; //-- 11 because exclusive high border
+        GridExtent extent = new GridExtent(null, gridLow, gridHigh, false);//-- exclusive high border
 
         MatrixSIS mat = Matrices.createDiagonal(5, 5);//-- identity
         mat.setElements(new double[]{2,  0,  0, 0,   -3, //-- Temporal ordinate

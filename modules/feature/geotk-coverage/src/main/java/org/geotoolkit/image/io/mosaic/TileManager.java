@@ -17,35 +17,33 @@
  */
 package org.geotoolkit.image.io.mosaic;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Set;
-import java.util.Map;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Collection;
-import java.util.NoSuchElementException;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.io.PrintWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
-
-import org.apache.sis.util.logging.Logging;
-import org.opengis.metadata.spatial.PixelOrientation;
-
-import org.geotoolkit.coverage.grid.ImageGeometry;
-import org.apache.sis.util.collection.FrequencySortedSet;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.internal.referencing.j2d.ImmutableAffineTransform;
+import org.apache.sis.util.collection.FrequencySortedSet;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;
-
 import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
+import org.opengis.metadata.spatial.PixelOrientation;
 
 
 /**
@@ -213,7 +211,7 @@ public abstract class TileManager implements Serializable {
      * @throws IOException If it was necessary to fetch an image dimension from its
      *         {@linkplain Tile#getImageReader reader} and this operation failed.
      */
-    Rectangle getRegion() throws IOException {
+    GridExtent getRegion() throws IOException {
         return getGridGeometry().getExtent();
     }
 

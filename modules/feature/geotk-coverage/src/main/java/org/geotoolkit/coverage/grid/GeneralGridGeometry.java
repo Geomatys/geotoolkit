@@ -17,36 +17,33 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.util.Objects;
-import java.io.Serializable;
 import java.awt.image.RenderedImage;
-import org.apache.sis.util.logging.Logging;
-
-import org.opengis.coverage.grid.GridEnvelope;
-import org.geotoolkit.coverage.grid.GridGeometry;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.Matrix;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.metadata.spatial.PixelOrientation; // For javadoc
-
-import org.apache.sis.math.MathFunctions;
-import org.geotoolkit.util.Cloneable;
+import java.io.Serializable;
+import java.util.Objects;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.ImmutableEnvelope;
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.coverage.grid.PixelTranslation;
-import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
+import org.apache.sis.math.MathFunctions;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
+import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 import org.geotoolkit.resources.Errors;
-
-import static org.apache.sis.util.ArgumentChecks.*;
+import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -139,7 +136,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * @see RenderedImage#getWidth()
      * @see RenderedImage#getHeight()
      */
-    protected final GridEnvelope extent;
+    protected final GridExtent extent;
 
     /**
      * The geodetic envelope, or {@code null} if none. If non-null, this envelope is usually the
@@ -239,7 +236,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      *
      * @since 2.2
      */
-    public GeneralGridGeometry(final GridEnvelope  extent,
+    public GeneralGridGeometry(final GridExtent  extent,
                                final MathTransform gridToCRS,
                                final CoordinateReferenceSystem crs)
             throws MismatchedDimensionException, IllegalArgumentException
@@ -273,7 +270,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      *
      * @since 2.5
      */
-    public GeneralGridGeometry(final GridEnvelope  extent,
+    public GeneralGridGeometry(final GridExtent  extent,
                                final PixelInCell   anchor,
                                final MathTransform gridToCRS,
                                final CoordinateReferenceSystem crs)
@@ -353,7 +350,12 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalTransformForType_1,
                     gridToCRS.getClass()), exception);
         }
-        extent = new GeneralGridEnvelope(transformed, anchor, false);
+
+        try {
+            extent = new org.apache.sis.coverage.grid.GridGeometry(anchor, gridToCRS, envelope, GridRoundingMode.ENCLOSING).getExtent();
+        } catch (TransformException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
     }
 
     /**
@@ -380,7 +382,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      *
      * @since 2.2
      */
-    public GeneralGridGeometry(final GridEnvelope extent, final Envelope envelope)
+    public GeneralGridGeometry(final GridExtent extent, final Envelope envelope)
             throws MismatchedDimensionException
     {
         this(extent, envelope, null, false, true);
@@ -389,7 +391,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     /**
      * Implementation of heuristic constructors.
      */
-    GeneralGridGeometry(final GridEnvelope extent,
+    GeneralGridGeometry(final GridExtent extent,
                         final Envelope  envelope,
                         final boolean[] reverse,
                         final boolean   swapXY,
@@ -414,10 +416,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * for the {@link GridEnvelope2D} super-class which defines a {@code clone()} method, instead of
      * {@link GridEnvelope2D} itself, for gaining some generality.
      */
-    private static GridEnvelope clone(GridEnvelope extent) {
-        if (extent instanceof Cloneable) {
-            extent = (GridEnvelope) ((Cloneable) extent).clone();
-        }
+    private static GridExtent clone(GridExtent extent) {
         return extent;
     }
 
@@ -515,16 +514,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * @since 3.20 (derived from 1.2)
      */
     @Override
-    public GridEnvelope getExtent() throws IncompleteGridGeometryException {
-        return getGridRange();
-    }
-
-    /**
-     * @deprecated Renamed {@link #getExtent()}.
-     */
-    @Override
-    @Deprecated
-    public GridEnvelope getGridRange() throws IncompleteGridGeometryException {
+    public GridExtent getExtent() throws IncompleteGridGeometryException {
         if (extent != null) {
             assert isDefined(EXTENT);
             return clone(extent);
@@ -659,7 +649,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
         final int gridDimension = extent.getDimension();
         final GeneralDirectPosition gridCenter = new GeneralDirectPosition(gridDimension);
         for (int i=0; i<gridDimension; i++) {
-            gridCenter.setOrdinate(i, extent.getLow(i) + 0.5*extent.getSpan(i));
+            gridCenter.setOrdinate(i, extent.getLow(i) + 0.5*extent.getSize(i));
         }
         final double[] res = resolution(gridToCRS.derivative(gridCenter), 0);
         if (!allowEstimates) {
@@ -864,7 +854,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * @return Transformed extent
      * @throws IllegalArgumentException If we cannot apply the transform, or given CRS is not compatible with output envelope.
      */
-    protected static GeneralEnvelope defineFromGrid(final GridEnvelope source, final MathTransform gridToCRS, final CoordinateReferenceSystem crs) throws IllegalArgumentException {
+    protected static GeneralEnvelope defineFromGrid(final GridExtent source, final MathTransform gridToCRS, final CoordinateReferenceSystem crs) throws IllegalArgumentException {
         final GeneralEnvelope tmpGridEnvelope = new GeneralEnvelope(source.getDimension());
         // As input ordinates represent pixel center, we expand them to get boundaries
         for (int i = 0; i < source.getDimension(); i++) {

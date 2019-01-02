@@ -21,6 +21,7 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import javax.imageio.metadata.IIOMetadata;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArraysExt;
@@ -34,7 +35,6 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
 import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingError;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.resources.Errors;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -130,14 +130,14 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
     public void setGridGeometry(final GridGeometry geometry, final PixelInCell pixelInCell,
             final CellGeometry cellGeometry, final int axisToReverse)
     {
-        final GridEnvelope gridEnvelope = geometry.getExtent();
+        final GridExtent gridEnvelope = geometry.getExtent();
         if (gridEnvelope != null) {
             final int gridDimension = gridEnvelope.getDimension();
             final int[] lower = new int[gridDimension];
             final int[] upper = new int[gridDimension];
             for (int i=0; i<gridDimension; i++) {
-                lower[i] = gridEnvelope.getLow (i);
-                upper[i] = gridEnvelope.getHigh(i);
+                lower[i] = (int) gridEnvelope.getLow (i);
+                upper[i] = (int) gridEnvelope.getHigh(i);
             }
             final MathTransform gridToCRS = geometry.getGridToCRS(); // Really want pixel center.
             if (gridToCRS != null) {
@@ -182,7 +182,7 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
                 if (gridEnvelope == null) {
                     return; // Can't write a correct origin without this information.
                 }
-                int span = gridEnvelope.getSpan(axisToReverse);
+                long span = gridEnvelope.getSize(axisToReverse);
                 if (pixelInCell == null || pixelInCell.equals(PixelInCell.CELL_CENTER)) {
                     span--;
                 }

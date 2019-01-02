@@ -17,23 +17,20 @@
 package org.geotoolkit.coverage.grid;
 
 import java.util.NoSuchElementException;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralEnvelope;
-
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
-
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-
-import org.junit.Test;
 import static org.junit.Assert.*;
-import org.opengis.coverage.grid.GridEnvelope;
+import org.junit.Test;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.FactoryException;
 
 /**
  * Test slicing of a data cube using {@link GridGeometryIterator}.
@@ -51,7 +48,7 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
     @Test
     public void test2D() {
         // Most simple case : identity transform
-        GridEnvelope extent = new GeneralGridEnvelope(new int[]{0, 0}, new int[]{2, 2}, true);
+        GridExtent extent = new GridExtent(null, new long[]{0, 0}, new long[]{2, 2}, true);
         GeneralGridGeometry sourceGeom = new GridGeometry2D(extent, PixelInCell.CELL_CORNER, new AffineTransform2D(1, 0, 0, 1, 0, 0), CommonCRS.defaultGeographic(), null);
         GridGeometryIterator it = new GridGeometryIterator(sourceGeom);
         assertTrue(it.hasNext());
@@ -59,7 +56,7 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
         assertFalse(it.hasNext());
 
         // Arbitrary transform
-        extent = new GeneralGridEnvelope(new int[]{-5, -7}, new int[]{19, 19}, true);
+        extent = new GridExtent(null, new long[]{-5, -7}, new long[]{19, 19}, true);
         sourceGeom = new GridGeometry2D(extent, PixelInCell.CELL_CORNER, new AffineTransform2D(2,0,0,3,-3,5), CommonCRS.defaultGeographic(), null);
         it = new GridGeometryIterator(sourceGeom);
         assertEquals(sourceGeom, it.next());
@@ -73,9 +70,9 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
 
     @Test
     public void test3D() throws FactoryException {
-        final int[] gridLow  = new int[]{0, 0, 0};
-        final int[] gridHigh = new int[]{1, 1, 1};
-        GeneralGridEnvelope extent = new GeneralGridEnvelope(gridLow, gridHigh, true);
+        final long[] gridLow  = new long[]{0, 0, 0};
+        final long[] gridHigh = new long[]{1, 1, 1};
+        GridExtent extent = new GridExtent(null, gridLow, gridHigh, true);
 
         final CoordinateReferenceSystem crs3d = new GeodeticObjectBuilder()
                 .addName("compoundcrstest")
@@ -91,7 +88,7 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
 
         GridGeometryIterator it = new GridGeometryIterator(new GeneralGridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs3d));
         final GeneralEnvelope expectedEnvelope = new GeneralEnvelope(crs3d);
-        GeneralGridEnvelope expectedGrid = new GeneralGridEnvelope(new int[]{0, 0, 0}, new int[]{1, 1, 0}, true);
+        GridExtent expectedGrid = new GridExtent(null, new long[]{0, 0, 0}, new int[]{1, 1, 0}, true);
 
         expectedEnvelope.setEnvelope(7, 8, 3, 13, 18, 5);
         GeneralGridGeometry expectedGeom = new GridGeometry2D(expectedGrid, PixelInCell.CELL_CORNER, gridToCrs, crs3d, null);
@@ -100,7 +97,7 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
         assertEquals(expectedEnvelope, GeneralEnvelope.castOrCopy(next.getEnvelope()));
 
         expectedEnvelope.setEnvelope(7, 8, 5, 13, 18, 7);
-        expectedGrid = new GeneralGridEnvelope(new int[]{0, 0, 1}, new int[]{1, 1, 1}, true);
+        expectedGrid = new GridExtent(null, new int[]{0, 0, 1}, new int[]{1, 1, 1}, true);
         expectedGeom = new GridGeometry2D(expectedGrid, PixelInCell.CELL_CORNER, gridToCrs, crs3d, null);
         next = it.next();
         assertEquals(expectedGeom, next);
@@ -109,7 +106,7 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
         assertFalse(it.hasNext());
 
         //-- test with exclusive high border
-        extent = new GeneralGridEnvelope(gridLow, gridHigh, false);
+        extent = new GridExtent(gridLow, gridHigh, false);
         it = new GridGeometryIterator(new GeneralGridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs3d));
 
         expectedEnvelope.setEnvelope(7, 8, 3, 10, 13, 5);
@@ -142,7 +139,7 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
 
         final int[] gridLow        = new int[]{-2,  0,  0, 1};
         final int[] gridHigh       = new int[]{ 0, 10, 10, 4};
-        GeneralGridEnvelope extent = new GeneralGridEnvelope(gridLow, gridHigh, false);//-- exclusive high border
+        GridExtent extent = new GridExtent(gridLow, gridHigh, false);//-- exclusive high border
 
         final MathTransform gridToCrs = MathTransforms.linear(Matrices.create(5, 5, new double[] {
             2,  0,  0, 0,   -3,
@@ -160,7 +157,7 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
 
         GridGeometryIterator it = new GridGeometryIterator(sourceGeom);
         final GeneralEnvelope expectedEnvelope = new GeneralEnvelope(crs);
-        GeneralGridEnvelope expectedGrid = new GeneralGridEnvelope(new int[]{-2, 0, 0, 1}, new int[]{-2, 9, 9, 1}, true);
+        GridExtent expectedGrid = new GridExtent(new int[]{-2, 0, 0, 1}, new int[]{-2, 9, 9, 1}, true);
         GeneralGridGeometry expectedGeom;
         GeneralGridGeometry next;
 
@@ -175,7 +172,7 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
 
         // Time = -1
         expectedEnvelope.setEnvelope(-5, -180, -90, 8, -3, 180, 90, 11);
-        expectedGrid = new GeneralGridEnvelope(new int[]{-1, 0, 0, 1}, new int[]{-1, 9, 9, 1}, true);
+        expectedGrid = new GridExtent(new int[]{-1, 0, 0, 1}, new int[]{-1, 9, 9, 1}, true);
         expectedGeom = new GridGeometry2D(expectedGrid, PixelInCell.CELL_CORNER, gridToCrs, crs, null);
         next = it.next();
         assertEquals(expectedGeom, next);
@@ -187,7 +184,7 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
 
         // Time = -2
         expectedEnvelope.setEnvelope(-7, -180, -90, 11, -5, 180, 90, 14);
-        expectedGrid = new GeneralGridEnvelope(new int[]{-2, 0, 0, 2}, new int[]{-2, 9, 9, 2}, true);
+        expectedGrid = new GridExtent(new int[]{-2, 0, 0, 2}, new int[]{-2, 9, 9, 2}, true);
         expectedGeom = new GridGeometry2D(expectedGrid, PixelInCell.CELL_CORNER, gridToCrs, crs, null);
         next = it.next();
         assertEquals(expectedGeom, next);
@@ -195,7 +192,7 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
 
         // Time = -1
         expectedEnvelope.setEnvelope(-5, -180, -90, 11, -3, 180, 90, 14);
-        expectedGrid = new GeneralGridEnvelope(new int[]{-1, 0, 0, 2}, new int[]{-1, 9, 9, 2}, true);
+        expectedGrid = new GridExtent(new int[]{-1, 0, 0, 2}, new int[]{-1, 9, 9, 2}, true);
         expectedGeom = new GridGeometry2D(expectedGrid, PixelInCell.CELL_CORNER, gridToCrs, crs, null);
         next = it.next();
         assertEquals(expectedGeom, next);
@@ -205,7 +202,7 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
 
         // Time = -2
         expectedEnvelope.setEnvelope(-7, -180, -90, 14, -5, 180, 90, 17);
-        expectedGrid = new GeneralGridEnvelope(new int[]{-2, 0, 0, 3}, new int[]{-2, 9, 9, 3}, true);
+        expectedGrid = new GridExtent(new int[]{-2, 0, 0, 3}, new int[]{-2, 9, 9, 3}, true);
         expectedGeom = new GridGeometry2D(expectedGrid, PixelInCell.CELL_CORNER, gridToCrs, crs, null);
         next = it.next();
         assertEquals(expectedGeom, next);
@@ -213,7 +210,7 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
 
         // Time = -1
         expectedEnvelope.setEnvelope(-5, -180, -90, 14, -3, 180, 90, 17);
-        expectedGrid = new GeneralGridEnvelope(new int[]{-1, 0, 0, 3}, new int[]{-1, 9, 9, 3}, true);
+        expectedGrid = new GridExtent(new int[]{-1, 0, 0, 3}, new int[]{-1, 9, 9, 3}, true);
         expectedGeom = new GridGeometry2D(expectedGrid, PixelInCell.CELL_CORNER, gridToCrs, crs, null);
         next = it.next();
         assertEquals(expectedGeom, next);
@@ -226,7 +223,7 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
         //---------------------------------//
 
         it = new GridGeometryIterator(sourceGeom, 0);
-        expectedGrid = new GeneralGridEnvelope(new int[]{-2, 0, 0, 1}, new int[]{-2, 9, 9, 3}, true);
+        expectedGrid = new GridExtent(new int[]{-2, 0, 0, 1}, new int[]{-2, 9, 9, 3}, true);
 
         expectedEnvelope.setEnvelope(-7, -180, -90, 8, -5, 180, 90, 17);
         expectedGeom = new GeneralGridGeometry(expectedGrid, PixelInCell.CELL_CORNER, gridToCrs, crs);
@@ -235,7 +232,7 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
         assertEquals(expectedEnvelope, GeneralEnvelope.castOrCopy(next.getEnvelope()));
 
         expectedEnvelope.setEnvelope(-5, -180, -90, 8, -3, 180, 90, 17);
-        expectedGrid = new GeneralGridEnvelope(new int[]{-1, 0, 0, 1}, new int[]{-1, 9, 9, 3}, true);
+        expectedGrid = new GridExtent(new int[]{-1, 0, 0, 1}, new int[]{-1, 9, 9, 3}, true);
         expectedGeom = new GeneralGridGeometry(expectedGrid, PixelInCell.CELL_CORNER, gridToCrs, crs);
         next = it.next();
         assertEquals(expectedGeom, next);
@@ -250,14 +247,14 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
         it = new GridGeometryIterator(new int[]{0, 0, 0, 2}, sourceGeom, sourceGeom.getCoordinateReferenceSystem());
 
         expectedEnvelope.setEnvelope(-7, -180, -90, 8, -3, 180, 90, 11);
-        expectedGrid = new GeneralGridEnvelope(new int[]{-2, 0, 0, 1}, new int[]{-1, 9, 9, 1}, true);
+        expectedGrid = new GridExtent(new int[]{-2, 0, 0, 1}, new int[]{-1, 9, 9, 1}, true);
         expectedGeom = new GeneralGridGeometry(expectedGrid, PixelInCell.CELL_CORNER, gridToCrs, crs);
         next = it.next();
         assertEquals(expectedGeom, next);
         assertEquals(expectedEnvelope, GeneralEnvelope.castOrCopy(next.getEnvelope()));
 
         expectedEnvelope.setEnvelope(-7, -180, -90, 14, -3, 180, 90, 17);
-        expectedGrid = new GeneralGridEnvelope(new int[]{-2, 0, 0, 3}, new int[]{-1, 9, 9, 3}, true);
+        expectedGrid = new GridExtent(new int[]{-2, 0, 0, 3}, new int[]{-1, 9, 9, 3}, true);
         expectedGeom = new GeneralGridGeometry(expectedGrid, PixelInCell.CELL_CORNER, gridToCrs, crs);
         next = it.next();
         assertEquals(expectedGeom, next);

@@ -18,25 +18,25 @@ package org.geotoolkit.coverage.combineIterator;
 
 import java.util.Iterator;
 import java.util.List;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.coverage.grid.GridCoordinates;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.opengis.referencing.crs.SingleCRS;
 
 /**
  * {@link Iterator} to iterate on each {@link Envelope} dimensions from {@link GeneralGridGeometry}.<br>
@@ -74,7 +74,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
     /**
      * Current affected ordinate by iterator.
      */
-    private final int[] affectedOrdinateIndex;
+    private final long[] affectedOrdinateIndex;
 
     /**
      * The minimum grid values on all dimensions.
@@ -82,7 +82,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
      * @see GridEnvelope#getLow()
      * @see GridCoordinates#getCoordinateValues()
      */
-    private final int[] gridLow;
+    private final long[] gridLow;
 
     /**
      * The maximum grid values on all dimensions.
@@ -90,7 +90,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
      * @see GridEnvelope#getHigh()
      * @see GridCoordinates#getCoordinateValues()
      */
-    private final int[] gridHigh;
+    private final long[] gridHigh;
 
     /**
      * Define if exist another iteration.
@@ -110,7 +110,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
      *
      * @see #nextCursorPos(int)
      */
-    private final int[] affectedOrdinate;
+    private final long[] affectedOrdinate;
 
     /**
      * An internaly {@code Integer} use to refer the current traveled dimension array.
@@ -134,7 +134,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
      * @throws MismatchedDimensionException if dimension between crs (if it is not null) dimension and {@linkplain MathTransform#getTargetDimensions() gridToCrs.getTargetDimensions()} mismatch,
      * or if dimension between extent and {@linkplain MathTransform#getSourceDimensions() gridToCrs.getSourceDimensions()} mismatch.
      */
-    public GridCombineIterator(final GridEnvelope extent, final CoordinateReferenceSystem outCRS, final MathTransform gridToCrs) {
+    public GridCombineIterator(final GridExtent extent, final CoordinateReferenceSystem outCRS, final MathTransform gridToCrs) {
         ArgumentChecks.ensureNonNull("extent", extent);
         ArgumentChecks.ensureNonNull("gridToCrs", gridToCrs);
         this.gridToCrs = gridToCrs;
@@ -149,8 +149,8 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
                     + "expected dimension = "+dim+" crs dimension = "+outCRS.getCoordinateSystem().getDimension());
 
         //-- fill the min max array with min and max from interested dimension iteration
-        gridLow     = extent.getLow().getCoordinateValues();
-        gridHigh    = extent.getHigh().getCoordinateValues();
+        gridLow     = GridGeometryIterator.getLow(extent);
+        gridHigh    = GridGeometryIterator.getHigh(extent);
 
         //-- build the future generate grid.
         currentGrid = (outCRS != null) ? new GeneralEnvelope(outCRS) : new GeneralEnvelope(dim);
@@ -169,11 +169,11 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
                 throw new MismatchedDimensionException("GridCombineIterator : Extent number dimension mismatch with CRS "
                         + "source Dimension. Extent dim = "+dim+" CRS dim = "+outCRS.getCoordinateSystem().getDimension());
 
-            affectedOrdinate      = new int[dim - 2];
+            affectedOrdinate      = new long[dim - 2];
             int aoi = 0;
 
             //-- fill affected ordinate which represente values at the first iteration.
-            affectedOrdinateIndex = new int[dim - 2];//-- index dans l'iterateur.
+            affectedOrdinateIndex = new long[dim - 2];//-- index dans l'iterateur.
             for (int i = 0; i < dim; i++) {
                 if (i != minHorizonOrdinate && i != (minHorizonOrdinate + 1)) {
                     affectedOrdinate[aoi]      = i;
@@ -203,7 +203,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
      * @throws MismatchedDimensionException if dimension between crs (if it is not null) dimension and {@linkplain MathTransform#getTargetDimensions() gridToCrs.getTargetDimensions()} mismatch,
      * or if dimension between extent and {@linkplain MathTransform#getSourceDimensions() gridToCrs.getSourceDimensions()} mismatch.
      */
-    public GridCombineIterator(final GridEnvelope extent,     final CoordinateReferenceSystem outCRS,
+    public GridCombineIterator(final GridExtent extent,     final CoordinateReferenceSystem outCRS,
                                final MathTransform gridToCrs, final int interestedOrdinateIndex) {
         ArgumentChecks.ensureNonNull("extent", extent);
         ArgumentChecks.ensureNonNull("gridToCrs", gridToCrs);
@@ -231,8 +231,8 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
         }
 
         //-- fill the min max array with min and max from interested dimension iteration
-        gridLow     = extent.getLow().getCoordinateValues();
-        gridHigh    = extent.getHigh().getCoordinateValues();
+        gridLow     = GridGeometryIterator.getLow(extent);
+        gridHigh    = GridGeometryIterator.getHigh(extent);
 
         //-- build the future generate grid.
         currentGrid = (outCRS != null) ? new GeneralEnvelope(outCRS) : new GeneralEnvelope(dim);
@@ -253,10 +253,10 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
                         + "source Dimension. Extent dim = "+dim+" CRS dim = "+outCRS.getCoordinateSystem().getDimension());
 
             //-- prepare iteration on only one axis
-            affectedOrdinate      = new int[]{interestedOrdinateIndex};
+            affectedOrdinate      = new long[]{interestedOrdinateIndex};
 
             //-- fill affected ordinate which represente values at the first iteration.
-            affectedOrdinateIndex = new int[]{extent.getLow(interestedOrdinateIndex)};
+            affectedOrdinateIndex = new long[]{extent.getLow(interestedOrdinateIndex)};
         } else {
             affectedOrdinate = affectedOrdinateIndex = null;
         }
@@ -285,8 +285,8 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
          assert currentDim >= 0 : "CombineIterator.nextCursorPos() : current dimension should be into N space. "
                  + "But it is into Z space. currentDim = "+currentDim;
          affectedOrdinateIndex[currentDim]++;
-         if (affectedOrdinateIndex[currentDim] > gridHigh[affectedOrdinate[currentDim]]) { //-- test if travel all current dimension values
-             affectedOrdinateIndex[currentDim] = gridLow[affectedOrdinate[currentDim]]; //-- initialize current dimension value
+         if (affectedOrdinateIndex[currentDim] > gridHigh[(int) affectedOrdinate[currentDim]]) { //-- test if travel all current dimension values
+             affectedOrdinateIndex[currentDim] = gridLow[(int) affectedOrdinate[currentDim]]; //-- initialize current dimension value
              nextCursorPos(currentDim - 1);//-- pass to the next dimension
          }
     }
@@ -332,7 +332,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
 
             //-- Set appriopriate values into grid envelope.
             for (int i = 0; i < affectedOrdinate.length; i++) {
-                currentGrid.setRange(affectedOrdinate[i], affectedOrdinateIndex[i], affectedOrdinateIndex[i]);
+                currentGrid.setRange((int)affectedOrdinate[i], affectedOrdinateIndex[i], affectedOrdinateIndex[i]);
             }
 
             final GeneralEnvelope returnedEnvelope = Envelopes.transform(gridToCrs, currentGrid);
@@ -459,7 +459,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
      * {@linkplain MathTransform#getSourceDimensions() gridToCrs.getSourceDimensions()} mismatch.
      * @throws IndexOutOfBoundsException if interestedOrdinateIndex is upper than extent or gridtocrs dimension.
      */
-    public static NumberRange<Double>[] extractAxisRanges(final GridEnvelope extent, final MathTransform gridToCrs, final int interestedOrdinateIndex) {
+    public static NumberRange<Double>[] extractAxisRanges(final GridExtent extent, final MathTransform gridToCrs, final int interestedOrdinateIndex) {
         return GridCombineIterator.extractAxisRanges(extent, gridToCrs, null, interestedOrdinateIndex);
     }
 
@@ -483,7 +483,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
      * or if dimension between extent and {@linkplain MathTransform#getSourceDimensions() gridToCrs.getSourceDimensions()} mismatch.
      * @throws IndexOutOfBoundsException if interestedOrdinateIndex is upper than extent or gridtocrs dimension.
      */
-    private static NumberRange<Double>[] extractAxisRanges(final GridEnvelope extent, final MathTransform gridToCrs,
+    private static NumberRange<Double>[] extractAxisRanges(final GridExtent extent, final MathTransform gridToCrs,
                                               final CoordinateReferenceSystem crs,    final int interestedOrdinateIndex) {
         ArgumentChecks.ensureNonNull("extent", extent);
         ArgumentChecks.ensureNonNull("gridToCrs", gridToCrs);
@@ -503,7 +503,9 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
         //---------------------------------
 
         //-- define out array from asked axis value type.
-        final NumberRange[] resultArray = new NumberRange[extent.getHigh(interestedOrdinateIndex) - extent.getLow(interestedOrdinateIndex) + 1];//-- +1 because getHigh() always return inclusive values.
+        final NumberRange[] resultArray = new NumberRange[(int)(
+                extent.getHigh(interestedOrdinateIndex)
+                - extent.getLow(interestedOrdinateIndex)) + 1];//-- +1 because getHigh() always return inclusive values.
 
         int i = 0;
         final GridCombineIterator gcint = new GridCombineIterator(extent, crs, gridToCrs, interestedOrdinateIndex);

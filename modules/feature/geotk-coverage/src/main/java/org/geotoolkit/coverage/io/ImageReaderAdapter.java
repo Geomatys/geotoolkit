@@ -17,44 +17,41 @@
  */
 package org.geotoolkit.coverage.io;
 
-import java.util.Set;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Iterator;
-import java.util.Collections;
-import java.util.concurrent.CancellationException;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.IIOException;
-import java.io.IOException;
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.awt.image.ColorModel;
-import java.awt.image.SampleModel;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CancellationException;
+import javax.imageio.IIOException;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.spi.ImageReaderSpi;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.RenderedImageAdapter;
-
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.TransformException;
-
-import org.apache.sis.util.logging.Logging;
-import org.apache.sis.util.NullArgumentException;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.image.io.SpatialImageReader;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.apache.sis.util.NullArgumentException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.resources.Errors;
-
+import org.geotoolkit.coverage.grid.GridCoverage;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
+import org.geotoolkit.image.io.SpatialImageReader;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.resources.Errors;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -237,7 +234,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
      * @since 3.19
      */
     @Override
-    public GridEnvelope getGridEnvelope(final int imageIndex) throws IOException {
+    public GridExtent getGridEnvelope(final int imageIndex) throws IOException {
         try {
             return reader.getGridGeometry(imageIndex).getExtent();
         } catch (CoverageStoreException e) {
@@ -264,8 +261,8 @@ public class ImageReaderAdapter extends SpatialImageReader {
             } catch (CoverageStoreException e) {
                 throw convert(e);
             }
-            final GridEnvelope range = geometry.getExtent();
-            size = new Dimension(range.getSpan(X_DIMENSION), range.getSpan(Y_DIMENSION));
+            final GridExtent range = geometry.getExtent();
+            size = new Dimension((int) range.getSize(X_DIMENSION), (int) range.getSize(Y_DIMENSION));
             imageSizes.put(key, size);
         }
         return size;
@@ -395,10 +392,10 @@ public class ImageReaderAdapter extends SpatialImageReader {
             } catch (CoverageStoreException e) {
                 throw convert(e);
             }
-            final GridEnvelope range = geometry.getExtent();
+            final GridExtent range = geometry.getExtent();
             final Rectangle srcRect = new Rectangle();
             final Rectangle dstRect = new Rectangle(); // Required but ignored.
-            computeRegions(param, range.getSpan(X_DIMENSION), range.getSpan(Y_DIMENSION), null, srcRect, dstRect);
+            computeRegions(param, (int) range.getSize(X_DIMENSION), (int) range.getSize(Y_DIMENSION), null, srcRect, dstRect);
             GeneralEnvelope region = new GeneralEnvelope(range.getDimension());
             for (int i=region.getDimension(); --i >= 0;) {
                 final double min, max;

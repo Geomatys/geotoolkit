@@ -22,6 +22,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Locale;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelope2D;
@@ -33,7 +34,6 @@ import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.CannotEvaluateException;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -259,7 +259,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *
      * @since 2.2
      */
-    public GridGeometry2D(final GridEnvelope  extent,
+    public GridGeometry2D(final GridExtent  extent,
                           final MathTransform gridToCRS,
                           final CoordinateReferenceSystem crs)
             throws IllegalArgumentException, MismatchedDimensionException
@@ -300,7 +300,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *
      * @since 2.5
      */
-    public GridGeometry2D(final GridEnvelope  extent,
+    public GridGeometry2D(final GridExtent  extent,
                           final PixelInCell   anchor,
                           final MathTransform gridToCRS,
                           final CoordinateReferenceSystem crs,
@@ -354,7 +354,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *
      * @since 2.5
      */
-    public GridGeometry2D(final GridEnvelope     extent,
+    public GridGeometry2D(final GridExtent     extent,
                           final PixelOrientation anchor,
                           final MathTransform    gridToCRS,
                           final CoordinateReferenceSystem crs,
@@ -369,7 +369,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * call in constructors"). We could write this code in a less convolved way if only
      * this requested was honored...
      */
-    private GridGeometry2D(final GridEnvelope     extent,
+    private GridGeometry2D(final GridExtent     extent,
                            final PixelOrientation anchor,
                            final MathTransform    gridToCRS,
                            final int[]            dimensions,  // Allocated by caller.
@@ -384,7 +384,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
      * call in constructors").
      */
-    private GridGeometry2D(final GridEnvelope     extent,
+    private GridGeometry2D(final GridExtent     extent,
                            final PixelOrientation anchor,
                            final PixelInCell      anchorND,     // Computed by caller
                            final MathTransform    gridToCRS,
@@ -474,7 +474,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *
      * @since 2.2
      */
-    public GridGeometry2D(final GridEnvelope extent, final Envelope envelope)
+    public GridGeometry2D(final GridExtent extent, final Envelope envelope)
             throws IllegalArgumentException, MismatchedDimensionException
     {
         this(extent, envelope, null, false, true);
@@ -483,7 +483,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
     /**
      * Implementation of heuristic constructors.
      */
-    private GridGeometry2D(final GridEnvelope extent,
+    private GridGeometry2D(final GridExtent extent,
                            final Envelope  evelope,
                            final boolean[] reverse,
                            final boolean   swapXY,
@@ -521,7 +521,9 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *                 of the last pixel.
      */
     public GridGeometry2D(final Rectangle extent, final Rectangle2D envelope) {
-        this(new GeneralGridEnvelope(extent, 2), getMathTransform(extent, envelope),
+        this(new GridExtent(null,
+                new long[]{extent.x, extent.y},
+                new long[]{extent.width, extent.height}, false), getMathTransform(extent, envelope),
              (CoordinateReferenceSystem) null);
     }
 
@@ -575,7 +577,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * @throws IllegalArgumentException if the 2D part is not separable.
      */
     private static MathTransform2D getMathTransform2D(final MathTransform gridToCRS,
-            final GridEnvelope extent, final int[] dimensions) throws IllegalArgumentException
+            final GridExtent extent, final int[] dimensions) throws IllegalArgumentException
     {
         if (gridToCRS != null) {
             if (extent != null) {
@@ -595,7 +597,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
         if (extent != null) {
             final int dimension = extent.getDimension();
             for (int i=0; i<dimension; i++) {
-                if (extent.getSpan(i) > 1) {
+                if (extent.getSize(i) > 1) {
                     filter.addSourceDimension(i);
                     isEmpty = false;
                 }
@@ -806,14 +808,15 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *
      * @since 3.20 (derived from 2.1)
      */
-    public GridEnvelope2D getExtent2D() throws IncompleteGridGeometryException {
-        final GridEnvelope extent = this.extent;
+    public GridExtent getExtent2D() throws IncompleteGridGeometryException {
+        final GridExtent extent = this.extent;
         if (extent != null) {
             assert isDefined(EXTENT);
-            return new GridEnvelope2D(extent.getLow (gridDimensionX),
-                                      extent.getLow (gridDimensionY),
-                                      extent.getSpan(gridDimensionX),
-                                      extent.getSpan(gridDimensionY));
+            return new GridExtent(
+                    null,
+                    new long[]{extent.getLow (gridDimensionX),extent.getLow (gridDimensionY)},
+                    new long[]{extent.getSize(gridDimensionX),extent.getSize(gridDimensionY)},
+                    false);
         }
         assert !isDefined(EXTENT);
         throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnspecifiedImageSize));

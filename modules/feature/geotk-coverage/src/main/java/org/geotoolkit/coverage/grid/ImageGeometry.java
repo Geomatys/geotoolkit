@@ -17,20 +17,18 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.util.Objects;
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
 import java.io.Serializable;
-
-import org.geotoolkit.coverage.grid.GridGeometry;
-import org.opengis.metadata.spatial.PixelOrientation;
-
-import org.apache.sis.util.Classes;
+import java.util.Objects;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.PixelTranslation;
-import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
+import org.apache.sis.util.Classes;
+import org.opengis.metadata.spatial.PixelOrientation;
 
 
 /**
@@ -67,7 +65,7 @@ public class ImageGeometry implements GridGeometry, Serializable {
     /**
      * The extent of grid coordinates in the grid coverage.
      */
-    private final GridEnvelope2D extent;
+    private final GridExtent extent;
 
     /**
      * The <cite>grid to CRS</cite> affine transform.
@@ -82,7 +80,10 @@ public class ImageGeometry implements GridGeometry, Serializable {
      * @param gridToCRS The affine transform from pixel coordinates to "real world" coordinates.
      */
     public ImageGeometry(final Rectangle bounds, AffineTransform gridToCRS) {
-        this.extent = new GridEnvelope2D(bounds);
+        this.extent = new GridExtent(null,
+                new long[]{bounds.x,bounds.y},
+                new long[]{bounds.width, bounds.height}, 
+                false);
         if (gridToCRS.getClass() == AffineTransform2D.class) {
             // Cast only if this is exactly the AffineTransform2D class,
             // not a subclass (otherwise it could be mutable).
@@ -98,17 +99,8 @@ public class ImageGeometry implements GridGeometry, Serializable {
      * @since 3.20 (derived from 2.5)
      */
     @Override
-    public GridEnvelope2D getExtent() {
-        return getGridRange();
-    }
-
-    /**
-     * @deprecated Renamed {@link #getExtent()}.
-     */
-    @Override
-    @Deprecated
-    public GridEnvelope2D getGridRange() {
-        return extent.clone();
+    public GridExtent getExtent() {
+        return extent;
     }
 
     /**
@@ -139,7 +131,11 @@ public class ImageGeometry implements GridGeometry, Serializable {
     public Rectangle2D getEnvelope(final PixelOrientation orientation) {
         // Reminder: this algorithm must be consistent with GeneralEnvelope(GridEnvelope, ...).
         final PixelTranslation pt = PixelTranslation.getPixelTranslation(orientation);
-        final Rectangle gr = extent;
+        final Rectangle gr = new Rectangle(
+                (int) extent.getLow(0),
+                (int) extent.getLow(1),
+                (int) extent.getSize(0),
+                (int) extent.getSize(1));
         final Rectangle2D.Double envelope = new Rectangle2D.Double(
                 gr.x - (pt.dx + 0.5), gr.y - (pt.dy + 0.5), gr.width, gr.height);
         return AffineTransforms2D.transform(gridToCRS, envelope, envelope);
