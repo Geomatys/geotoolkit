@@ -19,12 +19,12 @@ package org.geotoolkit.internal.coverage;
 import java.util.Map;
 import org.geotoolkit.coverage.grid.AbstractGridCoverage;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.coverage.SampleDimension;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -100,11 +100,6 @@ public class ResampledCoverage extends AbstractGridCoverage {
     @Override
     public GridGeometry getGridGeometry() {
         return gridGeometry;
-    }
-
-    @Override
-    public int[] getOptimalDataBlockSizes() {
-        return null;
     }
 
 }

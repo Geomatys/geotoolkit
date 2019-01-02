@@ -20,19 +20,16 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.apache.sis.referencing.operation.transform.PassThroughTransform;
-import org.apache.sis.coverage.grid.PixelTranslation;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
-import org.opengis.coverage.grid.GridPacking;
-import org.opengis.coverage.grid.GridRange;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.*;
@@ -184,38 +181,8 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
     }
 
     @Override
-    public boolean isDataEditable() {
-        return false;
-    }
-
-    @Override
-    public GridPacking getGridPacking() {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    @Override
     public GridGeometry getGridGeometry() {
         return gridGeometry;
-    }
-
-    @Override
-    public int[] getOptimalDataBlockSizes() {
-        return null;
-    }
-
-    @Override
-    public int getNumOverviews() {
-        return 0;
-    }
-
-    @Override
-    public GridGeometry getOverviewGridGeometry(int index) {
-        throw new IndexOutOfBoundsException("No overviews available");
-    }
-
-    @Override
-    public GridCoverage getOverview(int index) {
-        throw new IndexOutOfBoundsException("No overviews available");
     }
 
     @Override
@@ -223,68 +190,4 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
         return Collections.emptyList();
     }
 
-    @Override
-    public boolean[] getDataBlock(GridRange range, boolean[] destination) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    @Override
-    public byte[] getDataBlock(GridRange range, byte[] destination) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    @Override
-    public short[] getDataBlock(GridRange range, short[] destination) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    @Override
-    public int[] getDataBlock(GridRange range, int[] destination) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    @Override
-    public float[] getDataBlock(GridRange range, float[] destination) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    @Override
-    public double[] getDataBlock(GridRange range, double[] destination) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    @Override
-    public byte[] getPackedDataBlock(GridRange range) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    @Override
-    public void setDataBlock(GridRange range, boolean[] values) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    @Override
-    public void setDataBlock(GridRange range, byte[] values) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    @Override
-    public void setDataBlock(GridRange range, short[] values) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    @Override
-    public void setDataBlock(GridRange range, int[] values) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    @Override
-    public void setDataBlock(GridRange range, float[] values) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    @Override
-    public void setDataBlock(GridRange range, double[] values) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
 }

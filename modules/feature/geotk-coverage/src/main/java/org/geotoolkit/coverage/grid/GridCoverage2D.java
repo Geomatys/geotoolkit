@@ -20,17 +20,15 @@ package org.geotoolkit.coverage.grid;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.Raster;
 import java.awt.image.DataBuffer;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import java.awt.image.WritableRenderedImage;
 import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -41,29 +39,26 @@ import javax.media.jai.OperationNode;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.RenderedImageAdapter;
 import javax.media.jai.remote.SerializableRenderedImage;
-
+import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.util.Classes;
+import org.geotoolkit.coverage.AbstractCoverage;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.geometry.TransformedDirectPosition;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.geotoolkit.lang.Debug;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.Loggings;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.coverage.SampleDimension;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
-
-import org.geotoolkit.factory.Hints;
-import org.apache.sis.geometry.Envelope2D;
-import org.geotoolkit.geometry.TransformedDirectPosition;
-import org.geotoolkit.coverage.AbstractCoverage;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.apache.sis.util.Classes;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Loggings;
-import org.geotoolkit.lang.Debug;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Basic access to grid data values backed by a two-dimensional
@@ -325,16 +320,6 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
             }
         }
         return null;
-    }
-
-    /**
-     * Returns {@code true} if grid data can be edited. The default
-     * implementation returns {@code true} if {@link #image} is an
-     * instance of {@link WritableRenderedImage}.
-     */
-    @Override
-    public boolean isDataEditable() {
-        return (image instanceof WritableRenderedImage);
     }
 
     /**
@@ -689,19 +674,6 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
             return buffer.append(']').toString();
         }
         return null;
-    }
-
-    /**
-     * Returns the optimal size to use for each dimension when accessing grid values.
-     * The default implementation returns the image's tiles size.
-     */
-    @Override
-    public int[] getOptimalDataBlockSizes() {
-        final int[] size = new int[getDimension()];
-        Arrays.fill(size, 1);
-        size[gridGeometry.gridDimensionX] = image.getTileWidth();
-        size[gridGeometry.gridDimensionY] = image.getTileHeight();
-        return size;
     }
 
     /**

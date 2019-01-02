@@ -17,67 +17,61 @@
  */
 package org.geotoolkit.internal.coverage;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.stream.Collectors;
 import java.awt.Color;
 import java.awt.RenderingHints;
 import java.awt.image.ColorModel;
-import java.awt.image.RenderedImage;
 import java.awt.image.IndexColorModel;
+import java.awt.image.RenderedImage;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.measure.Unit;
-
 import javax.media.jai.Interpolation;
 import javax.media.jai.InterpolationBilinear;
 import javax.media.jai.InterpolationNearest;
 import javax.media.jai.PropertySource;
-
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.measure.NumberRange;
-
-import org.opengis.util.FactoryException;
-import org.opengis.util.InternationalString;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.util.iso.Names;
+import org.geotoolkit.coverage.Category;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.lang.Static;
+import org.geotoolkit.referencing.OutOfDomainOfValidityException;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
+import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.geometry.Envelope;
-
-import org.apache.sis.geometry.Envelopes;
-import org.geotoolkit.lang.Static;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.grid.RenderedCoverage;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.OutOfDomainOfValidityException;
+import org.opengis.util.FactoryException;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -242,33 +236,6 @@ public final class CoverageUtilities extends Static {
             MathTransform1D tr = sd.getSampleToGeophysics();
             if (tr!=null && !tr.isIdentity()) {
                 return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Returns {@code true} if the specified grid coverage or any of its source
-     * uses the following image.
-     *
-     * @param  coverage The coverage to check for its sources.
-     * @param  image The image which may be a source of the given coverage.
-     * @return {@code true} if the coverage use the given image as a source.
-     */
-    public static boolean uses(final GridCoverage coverage, final RenderedImage image) {
-        if (coverage != null) {
-            if (coverage instanceof RenderedCoverage) {
-                if (((RenderedCoverage) coverage).getRenderedImage() == image) {
-                    return true;
-                }
-            }
-            final Collection<GridCoverage> sources = coverage.getSources();
-            if (sources != null) {
-                for (final GridCoverage source : sources) {
-                    if (uses(source, image)) {
-                        return true;
-                    }
-                }
             }
         }
         return false;
