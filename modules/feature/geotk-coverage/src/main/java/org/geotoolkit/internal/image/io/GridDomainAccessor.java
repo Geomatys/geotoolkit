@@ -17,40 +17,32 @@
  */
 package org.geotoolkit.internal.image.io;
 
-import java.util.Date;
 import java.awt.Rectangle;
-import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import javax.imageio.metadata.IIOMetadata;
-
-import org.opengis.coverage.grid.GridEnvelope;
-import org.geotoolkit.coverage.grid.GridGeometry;
-import org.opengis.metadata.spatial.CellGeometry;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.operation.Matrix;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.crs.TemporalCRS;
-import org.opengis.referencing.datum.PixelInCell;
-
+import org.apache.sis.coverage.grid.PixelTranslation;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.coverage.grid.PixelTranslation;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
-import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
-import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.resources.Errors;
-
-import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingError;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.geotoolkit.resources.Errors;
+import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.metadata.spatial.CellGeometry;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -168,20 +160,6 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
                                 continue;
                             }
                             CoordinateSystemAxis axis = crs.getCoordinateSystem().getAxis(i);
-                            if (axis instanceof DiscreteCoordinateSystemAxis<?>) {
-                                final int c = (lower[i] + upper[i]) / 2;            // TODO: may not be the right index.
-                                if (c >= 0 && c < ((DiscreteCoordinateSystemAxis<?>) axis).length()) {
-                                    Comparable<?> value = ((DiscreteCoordinateSystemAxis<?>) axis).getOrdinateAt(c);
-                                    if (value instanceof Number) {
-                                        center[i] = ((Number) value).doubleValue();
-                                    } else if (value instanceof Date) {
-                                        crs = CRS.getComponentAt(crs, i, i+1);
-                                        if (crs instanceof TemporalCRS) {
-                                            center[i] = DefaultTemporalCRS.castOrCopy((TemporalCRS) crs).toValue((Date) value);
-                                        }
-                                    }
-                                }
-                            }
                         }
                     }
                     setSpatialRepresentation(center, cellGeometry, PixelTranslation.getPixelOrientation(pixelInCell));
@@ -198,7 +176,7 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
          * Now set the origin and offset vectors, which are inferred from the gridToCRS matrix.
          * This is possible only if the transform is affine.
          */
-        final Matrix matrix = DiscreteReferencingFactory.getAffineTransform(geometry, pixelInCell);
+        final Matrix matrix = getAffineTransform(geometry, pixelInCell);
         if (matrix != null) {
             if (axisToReverse >= 0) {
                 if (gridEnvelope == null) {
@@ -525,4 +503,35 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
         }
         return value;
     }
+
+    private static Matrix getAffineTransform(final GridGeometry geometry, PixelInCell pixelInCell) {
+        MathTransform tr;
+        if (pixelInCell != null && geometry instanceof GeneralGridGeometry) {
+            tr = ((GeneralGridGeometry) geometry).getGridToCRS(pixelInCell);
+            pixelInCell = null; // Indicates that the offset is already applied.
+        } else {
+            tr = geometry.getGridToCRS();
+        }
+        Matrix gridToCRS = MathTransforms.getMatrix(tr);
+        /*
+         * If the caller asked for the pixel corner rather than pixel center,
+         * applies a translation of 0.5 pixel along all dimensions.
+         */
+        if (gridToCRS != null && pixelInCell != null) {
+            final double offset = PixelTranslation.getPixelTranslation(pixelInCell);
+            if (offset != 0) {
+                final int lastColumn = gridToCRS.getNumCol() - 1;
+                for (int j=gridToCRS.getNumRow(); --j>=0;) {
+                    double sum = 0;
+                    for (int i=0; i<lastColumn; i++) {
+                        sum += offset * gridToCRS.getElement(j, i);
+                    }
+                    sum += gridToCRS.getElement(j, lastColumn); // Do it last for reducing rounding errors.
+                    gridToCRS.setElement(j, lastColumn, sum);
+                }
+            }
+        }
+        return gridToCRS;
+    }
+
 }

@@ -22,31 +22,28 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Locale;
-
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
+import org.apache.sis.coverage.grid.PixelTranslation;
+import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.geometry.ImmutableEnvelope;
+import org.apache.sis.geometry.Shapes2D;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
+import org.geotoolkit.referencing.operation.MathTransforms;
+import org.geotoolkit.referencing.operation.transform.DimensionFilter;
+import org.geotoolkit.resources.Errors;
+import org.opengis.coverage.CannotEvaluateException;
+import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.geotoolkit.coverage.grid.GridGeometry;
-import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.util.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.geotoolkit.factory.Hints;
-import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.geometry.ImmutableEnvelope;
-import org.apache.sis.geometry.Shapes2D;
-import org.apache.sis.coverage.grid.PixelTranslation;
-import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
-import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
-import org.geotoolkit.referencing.operation.transform.DimensionFilter;
-import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.resources.Errors;
+import org.opengis.util.FactoryException;
 
 
 /**

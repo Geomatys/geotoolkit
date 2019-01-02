@@ -22,14 +22,13 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
+import org.apache.sis.referencing.CommonCRS;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.MathTransform;
-import org.apache.sis.referencing.CommonCRS;
 
 /**
  * Iterator on {@link Envelope} which find all possible dimension combinations upper to 2 dimensions.
@@ -55,16 +54,6 @@ public class CombineIterator implements Iterator<Envelope> {
             final int nbdim = cs.getDimension();
             for (int i = 2; i < nbdim; i++) {
                 final CoordinateSystemAxis axis = cs.getAxis(i);
-                if (axis instanceof DiscreteCoordinateSystemAxis) {
-                    final DiscreteCoordinateSystemAxis daxis = (DiscreteCoordinateSystemAxis) axis;
-                    final List<Comparable> values = new ArrayList<Comparable>();
-                    possibilities.add(values);
-                    final int nbval = daxis.length();
-                    for (int k = 0; k < nbval; k++) {
-                        final Comparable c = daxis.getOrdinateAt(k);
-                        values.add(c);
-                    }
-                }
             }
             this.values       = possibilities;
             this.positions    = new int[possibilities.size()];

@@ -52,7 +52,6 @@ import org.geotoolkit.data.multires.MultiResolutionModel;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.internal.InternalUtilities;
-import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
@@ -193,7 +192,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
                 table[i] = vals;
             }
 
-            final CoordinateReferenceSystem dcrs = DiscreteReferencingFactory.createDiscreteCRS(crs, table);
+            final CoordinateReferenceSystem dcrs = crs;
             pyramid = new PGPyramid(this, pyramidId, dcrs);
 
             query = new StringBuilder();
