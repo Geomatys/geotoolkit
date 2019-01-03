@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -30,16 +31,14 @@ import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.GridCoverageStack;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -164,7 +163,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
             throw new CoverageStoreException(ex.getMessage(), ex);
         }
 
-        final GridEnvelope extent = gridGeom.getExtent();
+        final GridExtent extent = gridGeom.getExtent();
         final int dim = extent.getDimension();
 
         // prepare image readInGridCRS param
@@ -191,12 +190,12 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
         }
 
         // clamp region from data coverage raster boundary
-        int min,max;
+        long min,max;
         for(int i=0;i<dim;i++){
             min = extent.getLow(i);
             max = extent.getHigh(i)+1;//+1 for upper exclusive
-            areaLower[i] = XMath.clamp((int)Math.floor(imgEnv.getMinimum(i)), min, max);
-            areaUpper[i] = XMath.clamp((int)Math.ceil(imgEnv.getMaximum(i)),  min, max);
+            areaLower[i] = Math.toIntExact(XMath.clamp((int)Math.floor(imgEnv.getMinimum(i)), min, max));
+            areaUpper[i] = Math.toIntExact(XMath.clamp((int)Math.ceil(imgEnv.getMaximum(i)),  min, max));
         }
 
         return readInGridCRS(areaLower,areaUpper,subsampling, param);
@@ -299,10 +298,10 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
      * @param areaUpper image features upper corner
      * @param subsampling image subsampling
      */
-    public static int[] getResultExtent(int[] areaLower, int[] areaUpper, int[] subsampling) {
+    public static long[] getResultExtent(int[] areaLower, int[] areaUpper, int[] subsampling) {
 
         //calculate output size
-        final int[] outExtent = new int[areaLower.length];
+        final long[] outExtent = new long[areaLower.length];
         for(int i=0;i<outExtent.length;i++){
             outExtent[i] = (areaUpper[i]-areaLower[i]+subsampling[i]-1) / subsampling[i];
         }
@@ -333,7 +332,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
             throw new CoverageStoreException(ex.getMessage(), ex);
         }
 
-        final GridEnvelope extent = gridGeom.getExtent();
+        final GridExtent extent = gridGeom.getExtent();
         final int dim = extent.getDimension();
 
         // prepare image readInGridCRS param
@@ -360,12 +359,12 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
         }
 
         // clamp region from data coverage raster boundary
-        int min,max;
+        long min,max;
         for(int i=0;i<dim;i++){
             min = extent.getLow(i);
             max = extent.getHigh(i)+1;//+1 for upper exclusive
-            areaLower[i] = XMath.clamp((int)Math.floor(imgEnv.getMinimum(i)), min, max);
-            areaUpper[i] = XMath.clamp((int)Math.ceil(imgEnv.getMaximum(i)),  min, max);
+            areaLower[i] = Math.toIntExact(XMath.clamp((int)Math.floor(imgEnv.getMinimum(i)), min, max));
+            areaUpper[i] = Math.toIntExact(XMath.clamp((int)Math.ceil(imgEnv.getMaximum(i)),  min, max));
         }
 
         return getGridGeometry(gridGeom, areaLower, areaUpper, subsampling);
@@ -385,7 +384,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
             int[] areaLower, int[] areaUpper, int[] subsampling) {
 
         //calculate output size
-        final int[] outExtent = getResultExtent(areaLower, areaUpper, subsampling);
+        final long[] outExtent = getResultExtent(areaLower, areaUpper, subsampling);
 
         //build grid geometry
         int dim = areaLower.length;
@@ -396,7 +395,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
         }
         final MathTransform ssToGrid = MathTransforms.linear(matrix);
         final MathTransform ssToCrs = MathTransforms.concatenate(ssToGrid, gridGeom.getGridToCRS());
-        final GridEnvelope extent = new GeneralGridEnvelope(new int[outExtent.length], outExtent, false);
+        final GridExtent extent = new GridExtent(null, new long[outExtent.length], outExtent, false);
         return new GeneralGridGeometry(extent, ssToCrs, gridGeom.getCoordinateReferenceSystem());
     }
 }

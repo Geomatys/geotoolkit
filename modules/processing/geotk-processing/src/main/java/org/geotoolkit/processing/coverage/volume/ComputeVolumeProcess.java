@@ -16,35 +16,37 @@
  */
 package org.geotoolkit.processing.coverage.volume;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 import java.awt.image.RenderedImage;
 import javax.measure.IncommensurableException;
+import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.measure.Units;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.process.ProcessException;
-import org.opengis.parameter.ParameterValueGroup;
-
-import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.GeodeticCalculator;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.AbstractProcess;
+import org.geotoolkit.referencing.GeodeticCalculator;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.cs.CartesianCS;
@@ -54,9 +56,6 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
-import javax.measure.Unit;
-import org.apache.sis.measure.Units;
-import org.apache.sis.parameter.Parameters;
 
 /**
  * Process which compute volume from DEM (Digital Elevation Model) got
@@ -189,9 +188,9 @@ public class ComputeVolumeProcess extends AbstractProcess {
 
             InterpolationCase interpolationChoice;
             //-- adapt interpolation in function of grid extend
-            final GridEnvelope2D gridEnv2D = gg2d.getExtent2D();
-            final int gWidth               = gridEnv2D.getSpan(0);
-            final int gHeight              = gridEnv2D.getSpan(1);
+            final GridExtent gridEnv2D = gg2d.getExtent2D();
+            final long gWidth = gridEnv2D.getSize(0);
+            final long gHeight = gridEnv2D.getSize(1);
 
             if (gWidth < 1 || gHeight < 1) {
                 outputParameters.getOrCreate(ComputeVolumeDescriptor.OUT_VOLUME_RESULT).setValue(0);

@@ -18,48 +18,26 @@ package org.geotoolkit.coverage.landsat;
 
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.Locale;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.UUID;
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-
-import org.opengis.coverage.Coverage;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.geometry.Envelope;
-import org.opengis.metadata.citation.DateType;
-import org.opengis.metadata.content.AttributeGroup;
-import org.opengis.metadata.content.Band;
-import org.opengis.metadata.content.TransferFunctionType;
-import org.opengis.metadata.identification.Resolution;
-import org.opengis.metadata.lineage.ProcessStep;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.TemporalCRS;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.OperationMethod;
-import org.opengis.util.FactoryException;
-
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -96,15 +74,30 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.DefaultInternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
-
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
+import org.geotoolkit.coverage.landsat.LandsatConstants.CoverageGroup;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.operation.builder.LocalizationGrid;
 import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.geotoolkit.temporal.util.TimeParser;
-
-import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
+import org.opengis.coverage.Coverage;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.citation.DateType;
+import org.opengis.metadata.content.AttributeGroup;
+import org.opengis.metadata.content.Band;
+import org.opengis.metadata.content.TransferFunctionType;
+import org.opengis.metadata.identification.Resolution;
+import org.opengis.metadata.lineage.ProcessStep;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.TemporalCRS;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.operation.CoordinateOperationFactory;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.OperationMethod;
+import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
 
 /**
@@ -759,7 +752,7 @@ public class LandsatMetadataParser {
      * @return Grid Extent from metadata for given Landsat group
      * @throws FactoryException if impossible to compute CRS.
      */
-    GridEnvelope getGridExtent(final CoverageGroup group) throws FactoryException {
+    GridExtent getGridExtent(final CoverageGroup group) throws FactoryException {
 
         //-- grid coordinates
         final String width   = getValue(true, group.toString()+SAMPLES_LABEL);
@@ -767,12 +760,12 @@ public class LandsatMetadataParser {
 
         final CoordinateSystem sysAxxes = getCRS().getCoordinateSystem();
         final int dim = sysAxxes.getDimension();
-        final int[] upper = new int[dim];
+        final long[] upper = new long[dim];
         Arrays.fill(upper, 1);
         upper[0] = Integer.valueOf(width);
         upper[1] = Integer.valueOf(height);
 
-        return new GeneralGridEnvelope(new int[dim], upper, false);
+        return new GridExtent(null, new long[dim], upper, false);
     }
 
     /**
@@ -805,7 +798,7 @@ public class LandsatMetadataParser {
      */
     private AffineTransform getGridToCRS2D(final CoverageGroup group) throws FactoryException {
 
-        final GridEnvelope gridExtent = getGridExtent(group);
+        final GridExtent gridExtent = getGridExtent(group);
 
         final String lowWest;
         final String upWest;
@@ -847,7 +840,7 @@ public class LandsatMetadataParser {
         final double maxLat   = Math.max(Double.valueOf(westNorth), Double.valueOf(estNorth));
         final double spanLat  = maxLat - Math.min(Double.valueOf(westSouth), Double.valueOf(estSouth));
 
-        return new AffineTransform2D(spanLong / gridExtent.getSpan(0), 0, 0, - spanLat / gridExtent.getSpan(1), minLong, maxLat);
+        return new AffineTransform2D(spanLong / gridExtent.getSize(0), 0, 0, - spanLat / gridExtent.getSize(1), minLong, maxLat);
     }
 
     /**

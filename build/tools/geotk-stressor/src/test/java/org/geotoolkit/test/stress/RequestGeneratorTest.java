@@ -17,20 +17,17 @@
  */
 package org.geotoolkit.test.stress;
 
-import org.opengis.geometry.Envelope;
-import org.opengis.coverage.grid.GridEnvelope;
-
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import static org.opengis.referencing.datum.PixelInCell.CELL_CORNER;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import static org.geotoolkit.referencing.crs.PredefinedCRS.CARTESIAN_2D;
-import static org.junit.Assert.*;
-
 import org.junit.*;
+import static org.junit.Assert.*;
+import org.opengis.geometry.Envelope;
+import static org.opengis.referencing.datum.PixelInCell.CELL_CORNER;
 
 
 /**
@@ -48,7 +45,7 @@ public final strictfp class RequestGeneratorTest {
     @Test
     public void testGridDistribution() {
         final AffineTransform2D gridToCRS = new AffineTransform2D(0.02, 0, 0, 0.01, 0, 0);
-        final GridEnvelope2D    range     = new GridEnvelope2D(-1000, -2000, 5000, 7000);
+        final GridExtent    range         = new GridExtent(null, new long[]{-1000, -2000}, new long[]{5000-1000, 7000-2000}, false);
         final GridGeometry2D    geometry  = new GridGeometry2D(range, CELL_CORNER, gridToCRS, CARTESIAN_2D, null);
         final GeneralEnvelope   envelope  = new GeneralEnvelope(geometry.getEnvelope());
         final RequestGenerator  generator = new RequestGenerator(geometry);
@@ -72,12 +69,13 @@ public final strictfp class RequestGeneratorTest {
 
         for (int t=0; t<5000; t++) {
             final GeneralGridGeometry sg = generator.getRandomGrid();
-            final GridEnvelope        sr = sg.getExtent();
+            final GridExtent          sr = sg.getExtent();
             final Envelope            se = sg.getEnvelope();
-            assertTrue("Grid envelope out of bounds.", range.contains(sr.getLow(0), sr.getLow(1), sr.getSpan(0), sr.getSpan(1)));
+            assertTrue("Grid envelope out of bounds.", GridGeometryIterator.toRectangle(range)
+                    .contains(sr.getLow(0), sr.getLow(1), sr.getSize(0), sr.getSize(1)));
             assertTrue("Geodetic envelope out of bounds.", envelope.contains(se));
             for (int i=sr.getDimension(); --i>=0;) {
-                final int span = sr.getSpan(i);
+                final long span = sr.getSize(i);
                 assertTrue("Min", span >= minimalGridSize[i]);
                 assertTrue("Max", span <= maximalGridSize[i]);
                 for (final double scale : generator.getScale(sg)) {

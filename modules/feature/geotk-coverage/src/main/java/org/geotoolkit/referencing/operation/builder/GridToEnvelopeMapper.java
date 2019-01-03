@@ -43,9 +43,9 @@ import org.opengis.referencing.operation.Matrix;
 
 /**
  * A helper class for building <var>n</var>-dimensional {@linkplain AffineTransform affine transform}
- * mapping {@linkplain GridEnvelope grid envelopes} to georeferenced {@linkplain Envelope envelopes}.
+ * mapping {@linkplain GridExtent grid envelopes} to georeferenced {@linkplain Envelope envelopes}.
  * The affine transform will be computed automatically from the information specified by the
- * {@link #setGridExtent(GridEnvelope)} and {@link #setEnvelope(Envelope)} methods, which are
+ * {@link #setGridExtent(GridExtent)} and {@link #setEnvelope(Envelope)} methods, which are
  * mandatory. All other setter methods are optional hints about the affine transform to be created.
  * <p>
  * This builder is convenient when the following conditions are meet:
@@ -280,8 +280,8 @@ public class GridToEnvelopeMapper {
 
     /**
      * Sets the grid envelope as a two-dimensional rectangle. This convenience method
-     * creates a {@link GridEnvelope2D} from the given rectangle and delegates to the
-     * {@link #setGridExtent(GridEnvelope)} method.
+     * creates a {@link GridExtent} from the given rectangle and delegates to the
+     * {@link #setGridExtent(GridExtent)} method.
      *
      * @param extent The new grid envelope.
      *
@@ -296,8 +296,8 @@ public class GridToEnvelopeMapper {
 
     /**
      * Sets the grid envelope as a two-dimensional rectangle. This convenience method
-     * creates a {@link GridEnvelope2D} from the given rectangle and delegates to the
-     * {@link #setGridExtent(GridEnvelope)} method.
+     * creates a {@link GridExtent} from the given rectangle and delegates to the
+     * {@link #setGridExtent(GridExtent)} method.
      *
      * @param x The minimal <var>x</var> ordinate.
      * @param y The minimal <var>y</var> ordinate.

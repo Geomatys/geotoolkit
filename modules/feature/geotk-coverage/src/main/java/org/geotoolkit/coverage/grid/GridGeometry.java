@@ -59,9 +59,9 @@ import org.opengis.referencing.operation.MathTransform;
 @UML(identifier="CV_GridGeometry", specification=OGC_01004)
 public interface GridGeometry {
     /**
-     * The valid domain of a grid coverage. The {@linkplain GridEnvelope#getLow() lowest} valid grid
+     * The valid domain of a grid coverage. The {@linkplain GridExtent#getLow() lowest} valid grid
      * coordinate is often (but not always) zero. A grid with 512 cells typically have a minimum
-     * coordinate of 0 and maximum of 512, with 511 as the {@linkplain GridEnvelope#getHigh() highest}
+     * coordinate of 0 and maximum of 512, with 511 as the {@linkplain GridExtent#getHigh() highest}
      * valid index.
      *
      * <div class="note"><b>Note:</b>

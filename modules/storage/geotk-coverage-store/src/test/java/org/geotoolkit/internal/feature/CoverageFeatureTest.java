@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.internal.feature;
 
-import org.locationtech.jts.geom.GeometryFactory;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
@@ -26,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
@@ -34,18 +34,18 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.SampleDimensionBuilder;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
 import org.geotoolkit.image.BufferedImages;
+import static org.junit.Assert.*;
 import org.junit.Test;
-import org.geotoolkit.coverage.grid.GridCoverage;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
-import static org.junit.Assert.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
@@ -172,7 +172,7 @@ public class CoverageFeatureTest {
                     0, 0, 1, 100,
                     0, 0, 0, 1);
             final MathTransform gridToCrs = MathTransforms.linear(matrix);
-            final GridGeometry2D gg = new GridGeometry2D(new GeneralGridEnvelope(new int[]{0,0,0}, new int[]{2,2,1}, false), gridToCrs, crs3d);
+            final GridGeometry2D gg = new GridGeometry2D(new GridExtent(null, new long[]{0,0,0}, new long[]{2,2,1}, false), gridToCrs, crs3d);
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setName("Slice1");
@@ -197,7 +197,7 @@ public class CoverageFeatureTest {
                     0, 0, 1, 101,
                     0, 0, 0, 1);
             final MathTransform gridToCrs = MathTransforms.linear(matrix);
-            final GridGeometry2D gg = new GridGeometry2D(new GeneralGridEnvelope(new int[]{0,0,0}, new int[]{2,2,1}, false), gridToCrs, crs3d);
+            final GridGeometry2D gg = new GridGeometry2D(new GridExtent(null, new long[]{0,0,0}, new long[]{2,2,1}, false), gridToCrs, crs3d);
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setName("Slice2");

@@ -18,17 +18,14 @@
 package org.geotoolkit.test.stress;
 
 import java.util.Random;
-
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.referencing.operation.Matrix;
-import org.opengis.referencing.datum.PixelInCell;
-
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.math.MathFunctions;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.resources.Errors;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.Matrix;
 
 
 /**
@@ -110,14 +107,14 @@ public class RequestGenerator {
         this.domain    = domain;
         this.gridToCRS = ((LinearTransform) domain.getGridToCRS(PixelInCell.CELL_CORNER)).getMatrix();
         this.domainResolution = getResolution(domain);
-        final GridEnvelope gridExtent = domain.getExtent();
+        final GridExtent gridExtent = domain.getExtent();
         final int dimension = gridExtent.getDimension();
         minimalGridSize = new int[dimension];
         maximalGridSize = new int[dimension];
         for (int i=0; i<dimension; i++) {
-            final int max = Math.min(maxSize, gridExtent.getSpan(i));
-            maximalGridSize[i] = max;
-            minimalGridSize[i] = Math.min(minSize, max);
+            final long max = Math.min(maxSize, gridExtent.getSize(i));
+            maximalGridSize[i] = Math.toIntExact(max);
+            minimalGridSize[i] = Math.toIntExact(Math.min(minSize, max));
         }
         updateScale();
     }
@@ -207,10 +204,10 @@ public class RequestGenerator {
      */
     private void updateScale() {
         double maxScale = Double.POSITIVE_INFINITY;
-        final GridEnvelope gridExtent = domain.getExtent();
+        final GridExtent gridExtent = domain.getExtent();
         final int dimension = gridExtent.getDimension();
         for (int i=0; i<dimension; i++) {
-            final double scale = gridExtent.getSpan(i) / (double) minimalGridSize[i];
+            final double scale = gridExtent.getSize(i) / (double) minimalGridSize[i];
             if (scale < maxScale) {
                 maxScale = scale;
             }
@@ -260,10 +257,10 @@ public class RequestGenerator {
         scale = (scale * scale) + 1;
         assert (scale >= 1 && scale <= maximumScale) : scale;
 
-        final GridEnvelope gridExtent = domain.getExtent();
+        final GridExtent gridExtent = domain.getExtent();
         final int dimension = gridExtent.getDimension();
-        final int[] lower = new int[dimension];
-        final int[] upper = new int[dimension];
+        final long[] lower = new long[dimension];
+        final long[] upper = new long[dimension];
         final Matrix mx  = gridToCRS.clone();
         for (int i=0; i<dimension; i++) {
             /*
@@ -286,7 +283,7 @@ public class RequestGenerator {
             lower[i] = min;
             upper[i] = max;
         }
-        return new GeneralGridGeometry(new GeneralGridEnvelope(lower, upper, false),
+        return new GeneralGridGeometry(new GridExtent(null, lower, upper, false),
                 PixelInCell.CELL_CORNER, MathTransforms.linear(mx),
                 domain.getCoordinateReferenceSystem());
     }

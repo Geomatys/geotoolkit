@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
@@ -14,7 +15,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.CoverageStack;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -37,7 +37,6 @@ import org.geotoolkit.processing.image.sampleclassifier.SampleClassifierDescript
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.coverage.Coverage;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.parameter.ParameterValueGroup;
@@ -328,9 +327,9 @@ public class Categorize extends AbstractProcess {
      * envelope.
      */
     private static GridGeometry2D hack(final GridGeometry2D source) throws TransformException {
-        final GridEnvelope sourceExtent = source.getExtent();
-        final int minX = sourceExtent.getLow(source.gridDimensionX);
-        final int minY = sourceExtent.getLow(source.gridDimensionY);
+        final GridExtent sourceExtent = source.getExtent();
+        final long minX = sourceExtent.getLow(source.gridDimensionX);
+        final long minY = sourceExtent.getLow(source.gridDimensionY);
         if (minX == 0 && minY == 0 && source.getDimension() < 3) {
             return source;
         }
@@ -340,13 +339,13 @@ public class Categorize extends AbstractProcess {
          * whose raster origin is not (0, 0). To bypass this problem, we simply
          * shift source extent, so its horizontal dimensions starts at 0.
          */
-        final int[] low = sourceExtent.getLow().getCoordinateValues();
-        final int[] high = sourceExtent.getHigh().getCoordinateValues();
+        final long[] low = GridGeometryIterator.getLow(sourceExtent);
+        final long[] high = GridGeometryIterator.getHigh(sourceExtent);
         low[source.gridDimensionX] = 0;
         high[source.gridDimensionX] = high[source.gridDimensionX] - minX;
         low[source.gridDimensionY] = 0;
         high[source.gridDimensionY] = high[source.gridDimensionY] - minY;
-        final GeneralGridEnvelope modifiedExtent = new GeneralGridEnvelope(low, high, true);
+        final GridExtent modifiedExtent = new GridExtent(null, low, high, true);
 
         /* Force empty span on dimensions. To be sure the result is correct,
          * coordinates must be reprojected from pixel centers. If not, shifts
@@ -354,10 +353,10 @@ public class Categorize extends AbstractProcess {
          */
         final GeneralEnvelope flattenEnvelope;
         if (source.getDimension() > 2) {
-            final GridEnvelope inExtent = source.getExtent();
+            final GridExtent inExtent = source.getExtent();
             final GeneralEnvelope inGridEnv = new GeneralEnvelope(source.getDimension());
             for (int i = 0; i < source.getDimension(); i++) {
-                if (inExtent.getSpan(i) > 1 || i == source.gridDimensionX || i == source.gridDimensionY) {
+                if (inExtent.getSize(i) > 1 || i == source.gridDimensionX || i == source.gridDimensionY) {
                     inGridEnv.setRange(i, inExtent.getLow(i) - 0.5, inExtent.getHigh(i) + 0.5);
                 } else {
                     inGridEnv.setRange(i, inExtent.getLow(i), inExtent.getHigh(i));

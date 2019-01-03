@@ -27,6 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.StyleSheet;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
@@ -43,7 +44,6 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.resources.Vocabulary;
 import org.opengis.coverage.SampleDimensionType;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -120,7 +120,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
 
                 final CoordinateReferenceSystem crs = gridgeom.getCoordinateReferenceSystem();
                 final Envelope geoEnv = gridgeom.getEnvelope();
-                final GridEnvelope gridEnv = gridgeom.getExtent();
+                final GridExtent gridEnv = gridgeom.getExtent();
                 final MathTransform gridToCrs = gridgeom.getGridToCRS();
 
                 final double[] coordGrid = new double[gridEnv.getDimension()];

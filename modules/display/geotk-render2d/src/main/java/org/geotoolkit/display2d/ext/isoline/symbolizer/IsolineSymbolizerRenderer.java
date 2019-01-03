@@ -17,11 +17,16 @@
 
 package org.geotoolkit.display2d.ext.isoline.symbolizer;
 
+import java.awt.Rectangle;
+import java.util.Map;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
-
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.memory.MemoryCoverageStore;
@@ -33,21 +38,19 @@ import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.renderer.*;
-import org.opengis.util.GenericName;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.process.*;
 import org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
+import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.function.Jenks;
-
-import org.opengis.coverage.grid.GridEnvelope;
-import org.geotoolkit.coverage.grid.GridGeometry;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -56,13 +59,7 @@ import org.opengis.style.ColorMap;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.TextSymbolizer;
-
-import java.util.Map;
-import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.image.interpolation.ResampleBorderComportement;
-import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.opengis.util.GenericName;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -137,7 +134,8 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                 inCoverage = inCoverage.view(ViewType.GEOPHYSICS);
                 coverageReference.recycle(reader);
 
-                final GridEnvelope gridEnv = new GeneralGridEnvelope(renderingContext.getPaintingDisplayBounds(), 2);
+                final Rectangle rec = renderingContext.getPaintingDisplayBounds();
+                final GridExtent gridEnv = new GridExtent(null, new long[]{rec.x,rec.y}, new long[]{rec.width,rec.height}, false);
                 final CoordinateReferenceSystem crs = renderingContext.getObjectiveCRS2D();
                 final MathTransform gridToCRS = renderingContext.getDisplayToObjective();
                 final GridGeometry inGridGeom = new GeneralGridGeometry(gridEnv, gridToCRS, crs);

@@ -17,28 +17,27 @@
  */
 package org.geotoolkit.coverage.io;
 
+import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
-import java.awt.geom.AffineTransform;
 import java.nio.file.Path;
 import javax.imageio.ImageIO;
-
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridGeometry;
-import org.opengis.coverage.grid.GridEnvelope;
-
-import org.apache.sis.test.DependsOn;
-import org.geotoolkit.test.TestData;
-import org.geotoolkit.test.image.ImageTestBase;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.image.io.mosaic.TileTest;
+import org.geotoolkit.image.io.mosaic.MosaicReadWriteTest;
 import org.geotoolkit.image.io.mosaic.TileManager;
+import org.geotoolkit.image.io.mosaic.TileTest;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
-import org.geotoolkit.image.io.mosaic.MosaicReadWriteTest;
-
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.test.TestData;
+import org.geotoolkit.test.image.ImageTestBase;
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -116,9 +115,9 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
         assertEquals("translateX", -179.5, gridToCRS.getTranslateX(), 0);
         assertEquals("translateY", ty-0.5, gridToCRS.getTranslateY(), 0);
 
-        final GridEnvelope range = geom.getExtent();
-        assertEquals("Width",  width,  range.getSpan(0));
-        assertEquals("Height", height, range.getSpan(1));
+        final GridExtent range = geom.getExtent();
+        assertEquals("Width",  width,  range.getSize(0));
+        assertEquals("Height", height, range.getSize(1));
     }
 
     /**

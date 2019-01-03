@@ -21,12 +21,10 @@ import java.awt.geom.Point2D;
 import java.awt.image.Raster;
 import java.io.IOException;
 import javax.media.jai.Interpolation;
-
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.geometry.Envelope;
-
-import org.junit.*;
+import org.apache.sis.coverage.grid.GridExtent;
 import static org.geotoolkit.test.Assert.*;
+import org.junit.*;
+import org.opengis.geometry.Envelope;
 
 
 /**
@@ -64,22 +62,22 @@ public final strictfp class InterpolatorTest extends GridCoverageTestBase {
         double[] buffer = null;
         final Raster          data = coverage.getRenderedImage().getData();
         final Envelope    envelope = coverage.getEnvelope();
-        final GridEnvelope   range = coverage.getGridGeometry().getExtent();
+        final GridExtent     range = coverage.getGridGeometry().getExtent();
         final double          left = envelope.getMinimum(0);
         final double         upper = envelope.getMaximum(1);
         final Point2D.Double point = new Point2D.Double(); // Will maps to pixel upper-left corner
-        for (int j=range.getSpan(1); --j>=1;) {
-            for (int i=range.getSpan(0); --i>=1;) {
+        for (long j=range.getSize(1); --j>=1;) {
+            for (long i=range.getSize(0); --i>=1;) {
                 point.x  = left  + PIXEL_SIZE*i;
                 point.y  = upper - PIXEL_SIZE*j;
                 buffer   = coverage.evaluate(point, buffer);
                 double t = buffer[band];
 
                 // Computes the expected value:
-                double r00 = data.getSampleDouble(i-0, j-0, band);
-                double r01 = data.getSampleDouble(i-0, j-1, band);
-                double r10 = data.getSampleDouble(i-1, j-0, band);
-                double r11 = data.getSampleDouble(i-1, j-1, band);
+                double r00 = data.getSampleDouble((int) i-0, (int) j-0, band);
+                double r01 = data.getSampleDouble((int) i-0, (int) j-1, band);
+                double r10 = data.getSampleDouble((int) i-1, (int) j-0, band);
+                double r11 = data.getSampleDouble((int) i-1, (int) j-1, band);
                 double r = (r00 + r01 + r10 + r11) / 4;
                 assertEquals(r, t, SAMPLE_TOLERANCE);
             }

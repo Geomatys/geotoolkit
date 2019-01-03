@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.concurrent.CancellationException;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -42,7 +43,6 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.storage.coverage.GeoReferencedGridCoverageReader;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -159,7 +159,7 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
     public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
         if (index != 0) throw new CoverageStoreException("Unvalid index "+index);
 
-        final GridEnvelope gridExtent;
+        final GridExtent gridExtent;
         final MathTransform gridToCRS;
         final CoordinateReferenceSystem crs;
         try {

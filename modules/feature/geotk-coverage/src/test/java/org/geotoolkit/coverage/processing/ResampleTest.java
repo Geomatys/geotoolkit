@@ -18,7 +18,6 @@
 package org.geotoolkit.coverage.processing;
 
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.RenderedImage;
@@ -26,14 +25,15 @@ import java.awt.image.renderable.ParameterBlock;
 import java.util.Collections;
 import java.util.Map;
 import javax.media.jai.JAI;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultProjectedCRS;
 import org.apache.sis.referencing.operation.DefaultConversion;
 import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.SampleCoverage;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -44,7 +44,6 @@ import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
 import org.junit.*;
 import org.opengis.coverage.Coverage;
-import org.geotoolkit.coverage.grid.GridGeometry;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -132,8 +131,8 @@ public final strictfp class ResampleTest extends GridProcessingTestBase {
     public void testCrop() {
         final GridGeometry2D g1,g2;
         final MathTransform gridToCRS = null;
-        g1 = new GridGeometry2D(new GeneralGridEnvelope(new Rectangle(50,50,100,100), 2), gridToCRS, null);
-        g2 = new GridGeometry2D(new GeneralGridEnvelope(new Rectangle(50,50,200,200), 2), gridToCRS, null);
+        g1 = new GridGeometry2D(new GridExtent(null, new long[]{50,50}, new long[]{150,150}, false), gridToCRS, null);
+        g2 = new GridGeometry2D(new GridExtent(null, new long[]{50,50}, new long[]{250, 250}, false), gridToCRS, null);
         loadSampleCoverage(SampleCoverage.SST);
         assertEquals("Crop",   showResampled(null, g2, null, false));
         assertEquals("Lookup", showResampled(null, g2, null, true ));

@@ -110,7 +110,7 @@ import org.opengis.util.FactoryException;
  *     <td>&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link #extent}&nbsp;</td>
- *     <td>&nbsp;{@linkplain #setExtent(GridEnvelope) Grid envelope instance} or
+ *     <td>&nbsp;{@linkplain #setExtent(GridExtent) Grid envelope instance} or
  *               {@linkplain #setExtent(int[]) spans}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #image Image} width and height&nbsp;</td>
  *   </tr><tr>
@@ -125,7 +125,7 @@ import org.opengis.util.FactoryException;
  *   </tr><tr>
  *     <td>&nbsp;{@link #gridGeometry}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setGridGeometry(GridGeometry) Grid geometry instance}&nbsp;</td>
- *     <td>&nbsp;{@linkplain GridGeometry2D#GridGeometry2D(GridEnvelope, PixelInCell, MathTransform, CoordinateReferenceSystem, Hints) Computed} from the above&nbsp;</td>
+ *     <td>&nbsp;{@linkplain GridGeometry2D#GridGeometry2D(GridExtent, PixelInCell, MathTransform, CoordinateReferenceSystem, Hints) Computed} from the above&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link #numBands}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setNumBands(int) Positive integer}&nbsp;</td>
@@ -309,11 +309,11 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
 
     /**
      * The grid extent, or {@code null} if unspecified. This field is non-null only if the extent
-     * has been {@linkplain #setExtent(GridEnvelope) explicitely specified} by the user. The values
+     * has been {@linkplain #setExtent(GridExtent) explicitely specified} by the user. The values
      * inferred from other attributes are not stored in this field.
      *
      * @see #getExtent()
-     * @see #setExtent(GridEnvelope)
+     * @see #setExtent(GridExtent)
      * @see #setExtent(int[])
      *
      * @since 3.20
@@ -930,7 +930,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * This method returns the first non-null value in the above choices, in preference order:
      * <p>
      * <ul>
-     *   <li>The value defined by the last call to {@link #setExtent(GridEnvelope)}.</li>
+     *   <li>The value defined by the last call to {@link #setExtent(GridExtent)}.</li>
      *   <li>The {@linkplain #gridGeometry grid geometry} extent.</li>
      *   <li>The {@linkplain #image} bounds (including {@linkplain RenderedImage#getMinX() minX}
      *       and {@linkplain RenderedImage#getMinY() minY} values).</li>
@@ -958,7 +958,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                 final int dimension = getGridDimension(envelope != null ? envelope.getDimension() : 2);
                 final long[] low = new long[dimension];
                 final long[] high = new long[dimension];
-                Arrays.fill(low, 1);
+                Arrays.fill(low, 0);
                 Arrays.fill(high, 1);
                 low[0] = image.getMinX();
                 low[1] = image.getMinY();
@@ -997,7 +997,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
 
     /**
      * Sets the grid extent to a grid envelope having the given span.
-     * The {@linkplain GridEnvelope#getLow() low ordinate values} are set to 0.
+     * The {@linkplain GridExtent#getLow() low ordinate values} are set to 0.
      * <p>
      * This method is typically invoked for defining image dimension as below:
      *
@@ -1005,7 +1005,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *     setExtent(width, height);
      * }
      *
-     * See {@link #setExtent(GridEnvelope)} for information about precedence.
+     * See {@link #setExtent(GridExtent)} for information about precedence.
      *
      * @param  span The span values for all dimensions, or {@code null}.
      * @throws MismatchedDimensionException If the arguments contain negative span values, or the
@@ -1247,7 +1247,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *         {@link PixelInCell#CELL_CENTER}.
      *
      * @see #pixelAnchor
-     * @see GeneralGridGeometry#GeneralGridGeometry(GridEnvelope, PixelInCell, MathTransform, CoordinateReferenceSystem)
+     * @see GeneralGridGeometry#GeneralGridGeometry(GridExtent, PixelInCell, MathTransform, CoordinateReferenceSystem)
      *
      * @since 3.20
      */
@@ -1291,7 +1291,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * </ul></td></tr></table>
      * <p>
      * Note that creation of grid geometries from the parameters listed in the right column use heuristic
-     * rules documented {@linkplain GeneralGridGeometry#GeneralGridGeometry(GridEnvelope,Envelope) here}.
+     * rules documented {@linkplain GeneralGridGeometry#GeneralGridGeometry(GridExtent,Envelope) here}.
      * In order to keep grid geometry creations more determinist, we recommend to specify the parameters
      * listed in the left column instead.
      *
@@ -1965,7 +1965,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * first time this method is invoked. Users can modify the pixel values in this image before
      * to create the grid coverage.
      * <p>
-     * In the common case of untiled image having a {@linkplain GridEnvelope#getLow() lower corner}
+     * In the common case of untiled image having a {@linkplain GridExtent#getLow() lower corner}
      * located at (0,0), this method returns an instance of {@link BufferedImage}. If the builder
      * settings do not allow the creation of a {@code BufferedImage} instance, then the default
      * implementation fallbacks on a {@link TiledImage} instance.
@@ -2195,7 +2195,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *   <li>{@link #setRenderedImage(RenderedImage)}</li>
      *   <li>{@link #setGridGeometry(GridGeometry)}</li>
      *   <li>{@link #setGridToCRS(MathTransform)}</li>
-     *   <li>{@link #setExtent(GridEnvelope)}</li>
+     *   <li>{@link #setExtent(GridExtent)}</li>
      *   <li>{@link #setCoordinateReferenceSystem(CoordinateReferenceSystem)}</li>
      *   <li>{@link #setSampleDimensions(SampleDimension[])}</li>
      *   <li>{@link #setSources(GridCoverage[])}</li>

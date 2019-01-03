@@ -24,6 +24,7 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
@@ -48,7 +49,6 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.coverage.Coverage;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.geotoolkit.coverage.grid.GridGeometry;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -191,7 +191,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
 
         //check the image size
         final GridGeometry gridGeom = reader.getGridGeometry(ref.getImageIndex());
-        final GridEnvelope gridEnv = gridGeom.getExtent();
+        final GridExtent gridEnv = gridGeom.getExtent();
         assertEquals( 3, gridEnv.getDimension());
         assertEquals( 0, gridEnv.getLow(0));
         assertEquals(39, gridEnv.getHigh(0));

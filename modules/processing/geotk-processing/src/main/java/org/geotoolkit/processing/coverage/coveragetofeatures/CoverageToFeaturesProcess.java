@@ -16,25 +16,22 @@
  */
 package org.geotoolkit.processing.coverage.coveragetofeatures;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
-
 import java.awt.geom.Point2D;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.parameter.Parameters;
-
+import org.geotoolkit.processing.AbstractProcess;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -158,7 +155,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
      * @throws CoverageStoreException
      * @throws TransformException
      */
-    static Feature convertToFeature(FeatureType type, int x, int y, GridCoverage2D coverage, GridCoverageReader reader,
+    static Feature convertToFeature(FeatureType type, long x, long y, GridCoverage2D coverage, GridCoverageReader reader,
             GeneralGridGeometry gridGeom) throws CoverageStoreException, TransformException {
 
         final GeometryFactory geomFac = new GeometryFactory();

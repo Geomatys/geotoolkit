@@ -26,32 +26,29 @@ import java.io.IOException;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.xml.bind.JAXBException;
-
-import org.opengis.geometry.Envelope;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.metadata.Metadata;
-import org.opengis.metadata.identification.Resolution;
-import org.opengis.metadata.identification.Identification;
-import org.opengis.metadata.identification.DataIdentification;
-
-import org.junit.*;
-
-import org.apache.sis.test.DependsOn;
-import org.geotoolkit.test.TestData;
-import org.geotoolkit.test.image.ImageTestBase;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelope2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.apache.sis.test.DependsOn;
+import static org.apache.sis.test.MetadataAssert.*;
+import static org.apache.sis.test.TestUtilities.getSingleton;
+import org.apache.sis.xml.XML;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
+import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReader;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageReaderTest;
-import org.geotoolkit.image.SampleModels;
-import org.apache.sis.xml.XML;
-
-import static org.apache.sis.test.MetadataAssert.*;
-import static org.apache.sis.test.TestUtilities.getSingleton;
+import org.geotoolkit.test.TestData;
+import org.geotoolkit.test.image.ImageTestBase;
+import org.junit.*;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
+import org.opengis.metadata.identification.DataIdentification;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.metadata.identification.Resolution;
+import org.opengis.metadata.spatial.PixelOrientation;
 
 
 /**
@@ -144,13 +141,13 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
          * Check the grid geometry before to attempt to read the image.
          */
         final GridGeometry2D gridGeometry = reader.getGridGeometry(0);
-        final GridEnvelope gridEnvelope = gridGeometry.getExtent();
+        final GridExtent gridEnvelope = gridGeometry.getExtent();
         assertEquals("Grid dimension", 2, gridEnvelope.getDimension());
         assertEquals("Image columns",  0, gridEnvelope.getLow(0));
         assertEquals("Image rows",     0, gridEnvelope.getLow(1));
         assertEquals("Image columns", 19, gridEnvelope.getHigh(0)); // Inclusive
         assertEquals("Image rows",    41, gridEnvelope.getHigh(1)); // Inclusive
-        assertTrue("Image bounds", new Rectangle(20,42).equals(gridGeometry.getExtent2D()));
+        assertTrue("Image bounds", new Rectangle(20,42).equals(GridGeometryIterator.toRectangle(gridGeometry.getExtent2D())));
         assertTrue("Grid to CRS (Java2D)", new AffineTransform(1000, 0, 0, -1000, -10000, 21000)
                 .equals(gridGeometry.getGridToCRS(PixelOrientation.UPPER_LEFT)));
         assertTrue("Grid to CRS (OGC)", new AffineTransform(1000, 0, 0, -1000, -9500, 20500)

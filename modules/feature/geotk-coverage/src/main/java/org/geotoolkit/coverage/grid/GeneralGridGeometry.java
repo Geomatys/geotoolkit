@@ -35,7 +35,6 @@ import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 import org.geotoolkit.resources.Errors;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -51,7 +50,7 @@ import org.opengis.referencing.operation.TransformException;
  * to real world coordinates. Grid geometries contains:
  * <p>
  * <ul>
- *   <li>An optional {@linkplain GridEnvelope grid envelope} (a.k.a. "<cite>grid range</cite>"),
+ *   <li>An optional {@linkplain GridExtent grid envelope} (a.k.a. "<cite>grid range</cite>"),
  *       usually inferred from the {@linkplain RenderedImage rendered image} size.</li>
  *   <li>An optional "<cite>grid to CRS</cite>" {@linkplain MathTransform transform}, which can
  *       be inferred from the grid envelope and the georeferenced envelope.</li>
@@ -65,7 +64,7 @@ import org.opengis.referencing.operation.TransformException;
  * All grid geometry attributes are optional because some of them may be inferred from a wider
  * context. For example a grid geometry know nothing about {@linkplain RenderedImage rendered
  * images}, but {@link GridCoverage2D} do. Consequently, the later may infer the {@linkplain
- * GridEnvelope grid envelope} by itself.
+ * GridExtent grid envelope} by itself.
  * <p>
  * By default, any request for an undefined attribute will thrown an
  * {@link IncompleteGridGeometryException}. In order to check if an attribute is defined,
@@ -284,7 +283,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
                 ensureDimensionMatch("crs", crs.getCoordinateSystem().getDimension(), gridToCRS.getTargetDimensions());
             }
         }
-        this.extent = clone(extent);
+        this.extent = extent;
         this.gridToCRS = PixelTranslation.translate(gridToCRS, anchor, PixelInCell.CELL_CENTER);
         if (PixelInCell.CELL_CORNER.equals(anchor)) {
             cornerToCRS = gridToCRS;
@@ -400,7 +399,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     {
         ensureNonNull("extent",   extent);
         ensureNonNull("envelope", envelope);
-        this.extent = clone(extent);
+        this.extent = extent;
         this.envelope = ImmutableEnvelope.castOrCopy(envelope);
         final GridToEnvelopeMapper mapper = new GridToEnvelopeMapper(extent, envelope);
         if (!automatic) {
@@ -408,16 +407,6 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
             mapper.setSwapXY(swapXY);
         }
         gridToCRS = mapper.createTransform();
-    }
-
-    /**
-     * Clones the given grid envelope if necessary. This is mostly a protection for {@link GridEnvelope2D}
-     * which is mutable, at the opposite of {@link GeneralGridEnvelope} which is immutable. We test
-     * for the {@link GridEnvelope2D} super-class which defines a {@code clone()} method, instead of
-     * {@link GridEnvelope2D} itself, for gaining some generality.
-     */
-    private static GridExtent clone(GridExtent extent) {
-        return extent;
     }
 
     /**
@@ -517,7 +506,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     public GridExtent getExtent() throws IncompleteGridGeometryException {
         if (extent != null) {
             assert isDefined(EXTENT);
-            return clone(extent);
+            return extent;
         }
         assert !isDefined(EXTENT);
         throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnspecifiedImageSize));

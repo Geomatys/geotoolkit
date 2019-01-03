@@ -8,12 +8,16 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
@@ -26,10 +30,6 @@ import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.junit.Assert;
 import org.junit.Test;
-import org.opengis.coverage.grid.GridCoordinates;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.geotoolkit.coverage.grid.GridGeometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
@@ -73,31 +73,31 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
 
 
         final GeneralGridGeometry gridGeomReader = ref1.acquireReader().getGridGeometry(0);
-        final GridEnvelope gridEnvReader = gridGeomReader.getExtent();
+        final GridExtent gridEnvReader = gridGeomReader.getExtent();
         final MathTransform gridToCrsReader = gridGeomReader.getGridToCRS();
 
         final GridCoverage result = ref1.acquireReader().read(0, null);
         Assert.assertEquals(crs,result.getCoordinateReferenceSystem());
 
         final GridGeometry gridGeom   = result.getGridGeometry();
-        final GridEnvelope gridEnv    = gridGeom.getExtent();
+        final GridExtent gridEnv    = gridGeom.getExtent();
         final MathTransform gridToCrs = gridGeom.getGridToCRS();
 
         //-- we must have the same grid grometry definition between the reader and the coverage
         Assert.assertEquals(gridEnvReader, gridEnv);
 
-        final GridCoordinates lowerCorner = gridEnv.getLow();
-        final GridCoordinates highCorner  = gridEnv.getHigh();
+        final long[] lowerCorner = GridGeometryIterator.getLow(gridEnv);
+        final long[] highCorner  = GridGeometryIterator.getHigh(gridEnv);
 
         //check grid envelope
-        Assert.assertEquals(0,  lowerCorner.getCoordinateValue(0));
-        Assert.assertEquals(0,  lowerCorner.getCoordinateValue(1));
-        Assert.assertEquals(0,  lowerCorner.getCoordinateValue(2));
-        Assert.assertEquals(0,  lowerCorner.getCoordinateValue(3));
-        Assert.assertEquals(111,highCorner.getCoordinateValue(0)); //28 * 4 -1
-        Assert.assertEquals(38, highCorner.getCoordinateValue(1)); //13 * 3 -1
-        Assert.assertEquals(1,  highCorner.getCoordinateValue(2)); // 2 slices
-        Assert.assertEquals(2,  highCorner.getCoordinateValue(3)); // 3 slices
+        Assert.assertEquals(0,  lowerCorner[0]);
+        Assert.assertEquals(0,  lowerCorner[1]);
+        Assert.assertEquals(0,  lowerCorner[2]);
+        Assert.assertEquals(0,  lowerCorner[3]);
+        Assert.assertEquals(111,highCorner[0]); //28 * 4 -1
+        Assert.assertEquals(38, highCorner[1]); //13 * 3 -1
+        Assert.assertEquals(1,  highCorner[2]); // 2 slices
+        Assert.assertEquals(2,  highCorner[3]); // 3 slices
 
         //check transform
         final double[] buffer = new double[4];

@@ -26,6 +26,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import org.geotoolkit.resources.Errors;
@@ -190,11 +191,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore implements Co
     {
         final GeneralEnvelope envinv = Envelopes.transform(destToExtractedGrid.inverse(), requestEnvelope);
         final GridExtent gridEnvelope = new GridGeometry(PixelInCell.CELL_CORNER,
-                null, requestEnvelope, GridRoundingMode.ENCLOSING).getExtent();
-        LAAAAAAAAAAAAAAAAAAA
-        final GridExtent gridEnvelope = new GridExtent(
-                Envelopes.transform(destToExtractedGrid.inverse(), requestEnvelope),
-                PixelInCell.CELL_CORNER, false);
+                MathTransforms.identity(2), envinv, GridRoundingMode.ENCLOSING).getExtent();
         for (int i=gridEnvelope.getDimension(); --i>=0;) {
             if (gridEnvelope.getSize(i) <= 0) {
                 String message = formatErrorMessage(Errors.Keys.ValueTendTowardInfinity);

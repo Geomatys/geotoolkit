@@ -209,4 +209,45 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
                 (int) extent.getSize(1));
     }
 
+    /**
+     * Note : logic copied from Rectangle class, long primitive type variant
+     * @param parent
+     * @param child
+     * @return
+     */
+    public static boolean isContained2D(GridExtent parent, GridExtent child) {
+
+        long X = child.getLow(0);
+        long Y = child.getLow(1);
+        long W = child.getSize(0);
+        long H = child.getSize(1);
+
+        long x = parent.getLow(0);
+        long y = parent.getLow(1);
+        long w = parent.getSize(0);
+        long h = parent.getSize(1);
+
+        if ((w | h | W | H) < 0) {
+            return false;
+        }
+        if (X < x || Y < y) {
+            return false;
+        }
+        w += x;
+        W += X;
+        if (W <= X) {
+            if (w >= x || W > w) return false;
+        } else {
+            if (w >= x && W > w) return false;
+        }
+        h += y;
+        H += Y;
+        if (H <= Y) {
+            if (h >= y || H > h) return false;
+        } else {
+            if (h >= y && H > h) return false;
+        }
+        return true;
+    }
+
 }

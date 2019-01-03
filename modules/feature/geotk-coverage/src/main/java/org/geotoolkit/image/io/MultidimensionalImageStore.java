@@ -21,6 +21,7 @@ import java.util.Set;
 import javax.imageio.IIOParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
+import org.apache.sis.coverage.grid.GridExtent;
 
 
 /**
@@ -105,7 +106,7 @@ public interface MultidimensionalImageStore {
      * The standard dimension index of pixel columns (<var>x</var> ordinates) in images,
      * which is {@value}. This is for example the standard dimension index of
      * {@linkplain java.awt.image.RenderedImage#getWidth() image width} in
-     * {@linkplain org.opengis.coverage.grid.GridEnvelope grid envelopes}.
+     * {@linkplain GridExtent grid envelopes}.
      * <p>
      * In theory, the {@code MultidimensionalImageStore} API allows some flexibility about
      * which dimension is the "image width". However in practice, the {@value} dimension is
@@ -123,7 +124,7 @@ public interface MultidimensionalImageStore {
      * The standard dimension index of pixel rows (<var>y</var> ordinates) in images,
      * which is {@value}. This is for example the standard dimension index of
      * {@linkplain java.awt.image.RenderedImage#getHeight() image height} in
-     * {@linkplain org.opengis.coverage.grid.GridEnvelope grid envelopes}.
+     * {@linkplain GridExtent grid envelopes}.
      * <p>
      * In theory, the {@code MultidimensionalImageStore} API allows some flexibility about
      * which dimension is the "image height". However in practice, the {@value} dimension is

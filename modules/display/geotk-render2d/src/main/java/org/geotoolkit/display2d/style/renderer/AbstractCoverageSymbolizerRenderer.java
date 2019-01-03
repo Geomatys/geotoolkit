@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
@@ -39,7 +40,6 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -617,7 +617,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         }
 
 
-        final GridGeometry2D gg = new GridGeometry2D(new GridEnvelope2D(0, 0, width, height), outputRenderingCoverageEnv2D);
+        final GridGeometry2D gg = new GridGeometry2D(new GridExtent(null, new long[]{0, 0}, new long[]{width, height}, false), outputRenderingCoverageEnv2D);
 
         //Temporary hack to avoid wrong interpolation on wrap around data
         if (!CoordinateOperations.wrapAroundChanges(inputCoverageCRS2D, gg.getCoordinateReferenceSystem().getCoordinateSystem()).isEmpty()) {

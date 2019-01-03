@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import org.locationtech.jts.geom.Geometry;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -38,9 +37,17 @@ import javax.media.jai.LookupTableJAI;
 import javax.media.jai.NullOpImage;
 import javax.media.jai.OpImage;
 import javax.media.jai.RenderedOp;
-
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -54,35 +61,46 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.interpolation.Rescaler;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
+import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.shadedrelief.ShadedReliefDescriptor;
+import org.geotoolkit.processing.coverage.statistics.StatisticOp;
+import org.geotoolkit.processing.coverage.statistics.Statistics;
 import org.geotoolkit.processing.image.bandselect.BandSelectDescriptor;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
 import org.geotoolkit.referencing.operation.transform.EarthGravitationalModel;
-import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
 import org.geotoolkit.style.function.CompatibleColorModel;
+import org.geotoolkit.style.function.DefaultInterpolate;
 import org.geotoolkit.style.function.DefaultInterpolationPoint;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
-import org.geotoolkit.image.BufferedImages;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.coverage.Coverage;
+import org.opengis.coverage.SampleDimension;
+import org.opengis.coverage.SampleDimensionType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -90,6 +108,7 @@ import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -107,25 +126,6 @@ import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.SelectedChannelType;
 import org.opengis.style.ShadedRelief;
 import org.opengis.util.FactoryException;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.image.palette.PaletteFactory;
-import org.geotoolkit.metadata.ImageStatistics;
-import org.geotoolkit.processing.coverage.statistics.StatisticOp;
-import org.geotoolkit.processing.coverage.statistics.Statistics;
-import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
-import org.geotoolkit.style.MutableStyleFactory;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
-import org.geotoolkit.style.function.DefaultInterpolate;
-import org.opengis.coverage.Coverage;
-import org.opengis.coverage.SampleDimension;
-import org.opengis.metadata.content.CoverageDescription;
-import org.opengis.coverage.SampleDimensionType;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Symbolizer renderer adapted for Raster.
@@ -924,7 +924,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
         // coverage attributs
         final GridGeometry2D covGridGeom       = coverage.getGridGeometry();
-        final GridEnvelope2D covExtend         = covGridGeom.getExtent2D();
+        final GridExtent covExtend             = covGridGeom.getExtent2D();
         final CoordinateReferenceSystem covCRS = coverage.getCoordinateReferenceSystem2D();
         final Envelope2D covEnv2d              = coverage.getGridGeometry().getEnvelope2D();
 
@@ -967,7 +967,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
         // coverage attributs
         final GridGeometry2D covGridGeom       = coverage.getGridGeometry();
-        final GridEnvelope2D covExtend         = covGridGeom.getExtent2D();
+        final GridExtent covExtend             = covGridGeom.getExtent2D();
         final GridGeometry2D demGridGeom       = dem.getGridGeometry();
 
         //CRS
@@ -996,7 +996,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final RenderedImage demImage = dem.getRenderedImage();
 
         // output mnt creation
-        final BufferedImage destMNT = BufferedImages.createImage(covExtend.width, covExtend.height, demImage);
+        final BufferedImage destMNT = BufferedImages.createImage(Math.toIntExact(covExtend.getSize(0)), Math.toIntExact(covExtend.getSize(1)), demImage);
         intersec = Envelopes.transform(covGridGeom.getGridToCRS(PixelInCell.CELL_CORNER).inverse(), intersec);
 
         final Rectangle areaIterate = new Rectangle((int) intersec.getMinimum(0), (int) intersec.getMinimum(1), (int) Math.ceil(intersec.getSpan(0)), (int) Math.ceil(intersec.getSpan(1)));

@@ -82,7 +82,7 @@ public class ImageGeometry implements GridGeometry, Serializable {
     public ImageGeometry(final Rectangle bounds, AffineTransform gridToCRS) {
         this.extent = new GridExtent(null,
                 new long[]{bounds.x,bounds.y},
-                new long[]{bounds.width, bounds.height}, 
+                new long[]{bounds.width, bounds.height},
                 false);
         if (gridToCRS.getClass() == AffineTransform2D.class) {
             // Cast only if this is exactly the AffineTransform2D class,
@@ -129,7 +129,7 @@ public class ImageGeometry implements GridGeometry, Serializable {
      * @since 3.00
      */
     public Rectangle2D getEnvelope(final PixelOrientation orientation) {
-        // Reminder: this algorithm must be consistent with GeneralEnvelope(GridEnvelope, ...).
+        // Reminder: this algorithm must be consistent with GeneralEnvelope(GridExtent, ...).
         final PixelTranslation pt = PixelTranslation.getPixelTranslation(orientation);
         final Rectangle gr = new Rectangle(
                 (int) extent.getLow(0),

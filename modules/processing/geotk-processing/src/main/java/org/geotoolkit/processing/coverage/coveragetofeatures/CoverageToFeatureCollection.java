@@ -16,14 +16,13 @@
  */
 package org.geotoolkit.processing.coverage.coveragetofeatures;
 
+import org.apache.sis.coverage.grid.GridExtent;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureIterator;
-
-import org.opengis.coverage.grid.GridEnvelope;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.operation.TransformException;
@@ -43,7 +42,7 @@ public class CoverageToFeatureCollection extends RasterFeatureCollection {
     /**
      * CoverageToFeatureCollection constructor connect the collection to the coverage.
      */
-    public CoverageToFeatureCollection(final GridCoverageReader reader, GridEnvelope range,
+    public CoverageToFeatureCollection(final GridCoverageReader reader, GridExtent range,
             GridCoverage2D coverage, GeneralGridGeometry gridGeom) throws CoverageStoreException {
         super(reader, range);
         this.reader = reader;
@@ -78,7 +77,7 @@ public class CoverageToFeatureCollection extends RasterFeatureCollection {
      * @return the Feature
      */
     @Override
-    protected Feature create(int x, int y) throws FeatureStoreRuntimeException {
+    protected Feature create(long x, long y) throws FeatureStoreRuntimeException {
         Feature feat = null;
         try {
             feat = CoverageToFeaturesProcess.convertToFeature(getFeatureType(), x, y, coverage, reader, gridGeom);

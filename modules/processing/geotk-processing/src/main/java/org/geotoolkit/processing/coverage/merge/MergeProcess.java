@@ -17,22 +17,22 @@
 package org.geotoolkit.processing.coverage.merge;
 
 import java.awt.image.DataBuffer;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.coverage.bandcombine.BandCombineDescriptor;
-import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.processing.coverage.merge.MergeDescriptor.*;
 import org.geotoolkit.processing.coverage.reformat.ReformatDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.opengis.coverage.Coverage;
 import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
@@ -96,7 +96,7 @@ public class MergeProcess extends AbstractProcess {
         final int sizeX = (int)(inputEnvelope.getSpan(0) / inputResolution);
         final int sizeY = (int)(inputEnvelope.getSpan(1) / inputResolution);
         final GridGeometry2D gridGeom = new GridGeometry2D(
-                new GridEnvelope2D(0, 0, sizeX, sizeY), inputEnvelope);
+                new GridExtent(null, new long[]{0, 0}, new long[]{sizeX, sizeY}, false), inputEnvelope);
 
         //force sample type and area of each coverage
         final Coverage[] fittedCoverages = new Coverage[inputCoverage.length];

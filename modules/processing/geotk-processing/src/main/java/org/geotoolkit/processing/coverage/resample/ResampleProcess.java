@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.processing.coverage.resample;
 
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
@@ -30,6 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.WritablePixelIterator;
@@ -39,8 +40,9 @@ import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.processing.AbstractCoverageProcessor;
@@ -59,9 +61,6 @@ import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.geotoolkit.coverage.grid.GridGeometry;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
@@ -402,8 +401,10 @@ public class ResampleProcess extends AbstractProcess {
                     Envelope gridEnvelope;
                     gridEnvelope = toEnvelope(sourceGG.getExtent());
                     gridEnvelope = Envelopes.transform(allSteps.inverse(), gridEnvelope);
-                    targetGG  = new GridGeometry2D(new GeneralGridEnvelope(gridEnvelope,
-                            PixelInCell.CELL_CORNER, false), step1, targetCRS);
+                    final GridExtent ext = new org.apache.sis.coverage.grid.GridGeometry(
+                            PixelInCell.CELL_CORNER, MathTransforms.identity(gridEnvelope.getDimension()),
+                            gridEnvelope, GridRoundingMode.ENCLOSING).getExtent();
+                    targetGG  = new GridGeometry2D(ext, step1, targetCRS);
                 }
             }
         } else {
@@ -439,8 +440,8 @@ public class ResampleProcess extends AbstractProcess {
              *   big enough to hold the result.
              */
             if (targetGG == null) {
-                final GridEnvelope targetGR;
-                targetGR = force2D ? new GeneralGridEnvelope(sourceGG.getExtent2D()) : sourceGG.getExtent();
+                final GridExtent targetGR;
+                targetGR = force2D ? sourceGG.getExtent2D() : sourceGG.getExtent();
                 targetGG = new GridGeometry2D(targetGR, targetEnvelope);
                 step1    = targetGG.getGridToCRS(PixelOrientation.CENTER);
             } else if (!targetGG.isDefined(GridGeometry2D.GRID_TO_CRS)) {
@@ -451,8 +452,10 @@ public class ResampleProcess extends AbstractProcess {
                 if (!targetGG.isDefined(GridGeometry2D.EXTENT)) {
                     final GeneralEnvelope gridEnvelope = Envelopes.transform(step1.inverse(), targetEnvelope);
                     // According OpenGIS specification, GridGeometry maps pixel's center.
-                    targetGG = new GridGeometry2D(new GeneralGridEnvelope(gridEnvelope,
-                            PixelInCell.CELL_CENTER, false), step1, targetCRS);
+                    final GridExtent ext = new org.apache.sis.coverage.grid.GridGeometry(
+                            PixelInCell.CELL_CENTER, MathTransforms.identity(gridEnvelope.getDimension()),
+                            gridEnvelope, GridRoundingMode.ENCLOSING).getExtent();
+                    targetGG = new GridGeometry2D(ext, step1, targetCRS);
                 }
             }
             /*
@@ -473,9 +476,9 @@ public class ResampleProcess extends AbstractProcess {
         ////////////////////////////////////////////////////////////////////////////////////////
 
 
-        final Rectangle sourceBB = sourceGG.getExtent2D();
-        final Rectangle targetBB = targetGG.getExtent2D();
-        final BufferedImage targetImage = BufferedImages.createImage(targetBB.width,targetBB.height, sourceImage);
+        final GridExtent sourceBB = sourceGG.getExtent2D();
+        final GridExtent targetBB = targetGG.getExtent2D();
+        final BufferedImage targetImage = BufferedImages.createImage((int) targetBB.getSize(0), (int)targetBB.getSize(1), sourceImage);
         final WritableRaster targetRaster = targetImage.getRaster();
         //fill target image with fill values
         if (fillValue != null) {
@@ -694,7 +697,7 @@ public class ResampleProcess extends AbstractProcess {
      * Casts the specified grid envelope into a georeferenced envelope. This is used before to
      * transform the envelope using {@link CRSUtilities#transform(MathTransform, Envelope)}.
      */
-    private static Envelope toEnvelope(final GridEnvelope gridEnvelope) {
+    private static Envelope toEnvelope(final GridExtent gridEnvelope) {
         final int dimension = gridEnvelope.getDimension();
         final double[] lower = new double[dimension];
         final double[] upper = new double[dimension];
@@ -899,7 +902,7 @@ public class ResampleProcess extends AbstractProcess {
              * target image should have the same size). Then create again a new grid geometry,
              * this time with the target envelope.
              */
-            GridEnvelope gridEnvelope;
+            GridExtent gridEnvelope;
             try {
                 final GeneralEnvelope transformed;
                 transformed = Envelopes.transform(CRS.getCoordinateOperationFactory(true)

@@ -500,7 +500,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
         final Rectangle rect = new Rectangle(
                 (int) gridExtent.getLow(0),
                 (int) gridExtent.getLow(1),
-                (int) gridExtent.getSize(0), 
+                (int) gridExtent.getSize(0),
                 (int) gridExtent.getSize(1));
         Shape shapeToRead = gridToCRS.createTransformedShape(rect); // Will be clipped later.
         Rectangle2D geodeticBounds = (shapeToRead instanceof Rectangle2D) ?

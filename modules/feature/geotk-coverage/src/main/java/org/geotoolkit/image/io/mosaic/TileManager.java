@@ -35,10 +35,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
-import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.internal.referencing.j2d.ImmutableAffineTransform;
 import org.apache.sis.util.collection.FrequencySortedSet;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;
@@ -211,8 +211,8 @@ public abstract class TileManager implements Serializable {
      * @throws IOException If it was necessary to fetch an image dimension from its
      *         {@linkplain Tile#getImageReader reader} and this operation failed.
      */
-    GridExtent getRegion() throws IOException {
-        return getGridGeometry().getExtent();
+    Rectangle getRegion() throws IOException {
+        return GridGeometryIterator.toRectangle(getGridGeometry().getExtent());
     }
 
     /**
@@ -315,7 +315,7 @@ public abstract class TileManager implements Serializable {
         if (geometry == null) {
             tile = new LargeTile(provider, input, imageIndex, getRegion());
         } else {
-            tile = new LargeTile(provider, input, imageIndex, geometry.getExtent());
+            tile = new LargeTile(provider, input, imageIndex, GridGeometryIterator.toRectangle(geometry.getExtent()));
             tile.setGridToCRS(geometry.getGridToCRS());
         }
         return tile;

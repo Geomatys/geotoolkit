@@ -18,12 +18,12 @@
 package org.geotoolkit.coverage.grid;
 
 import java.awt.geom.AffineTransform;
-import org.opengis.referencing.operation.MathTransform;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.junit.Test;
-
 import static org.junit.Assert.*;
+import org.junit.Test;
+import org.opengis.referencing.operation.MathTransform;
 
 
 /**
@@ -38,10 +38,10 @@ public final strictfp class GridGeometryTest extends org.geotoolkit.test.TestBas
      */
     @Test
     public void testIllegalArgument() {
-        final int[] lower = new int[] {0,     0, 2};
-        final int[] upper = new int[] {100, 200, 4};
+        final long[] lower = new long[] {0,     0, 2};
+        final long[] upper = new long[] {100, 200, 4};
         final MathTransform identity = MathTransforms.identity(3);
-        GeneralGridEnvelope extent = new GeneralGridEnvelope(lower, upper, false);
+        GridExtent extent = new GridExtent(null, lower, upper, false);
         try {
             new GridGeometry2D(extent, identity, null);
             fail();
@@ -55,12 +55,12 @@ public final strictfp class GridGeometryTest extends org.geotoolkit.test.TestBas
      */
     @Test
     public void testEnvelope() {
-        final int[]    lower   = new int[]    {   0,   0,  4};
-        final int[]    upper   = new int[]    {  90,  45,  5};
+        final long[] lower     = new long[]   {   0,   0,  4};
+        final long[] upper     = new long[]   {  90,  45,  5};
         final double[] minimum = new double[] {-180, -90,  9};
         final double[] maximum = new double[] {+180, +90, 10};
         final GridGeometry2D gg;
-        gg = new GridGeometry2D(new GeneralGridEnvelope(lower, upper, false),
+        gg = new GridGeometry2D(new GridExtent(null, lower, upper, false),
                                 new GeneralEnvelope(minimum, maximum));
         final AffineTransform tr = (AffineTransform) gg.getGridToCRS2D();
         assertEquals(AffineTransform.TYPE_UNIFORM_SCALE |

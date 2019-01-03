@@ -55,15 +55,19 @@ import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.util.Callback;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.filter.DefaultLiteral;
-import org.apache.sis.geometry.GeneralEnvelope;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getFilterFactory;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.gui.javafx.util.FXNumberSpinner;
@@ -74,9 +78,8 @@ import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.processing.coverage.statistics.StatisticOp;
-import org.apache.sis.geometry.Envelopes;
-import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.storage.coverage.CoverageUtilities;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.StyleConstants;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
@@ -89,8 +92,6 @@ import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.geotoolkit.style.interval.Palette;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.metadata.content.AttributeGroup;
@@ -100,7 +101,6 @@ import org.opengis.metadata.content.SampleDimension;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.ColorMap;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -267,7 +267,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
             if (gridGeometry.isDefined(GeneralGridGeometry.GRID_TO_CRS)
                     && gridGeometry.isDefined(GeneralGridGeometry.EXTENT)) {
                 MathTransform gridToCRS = gridGeometry.getGridToCRS();
-                GridEnvelope extent = gridGeometry.getExtent();
+                GridExtent extent = gridGeometry.getExtent();
                 int dim = extent.getDimension();
                 double[] low = new double[dim];
                 double[] high = new double[dim];
@@ -676,7 +676,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                 if (gridGeometry.isDefined(GeneralGridGeometry.GRID_TO_CRS)
                         && gridGeometry.isDefined(GeneralGridGeometry.EXTENT)) {
                     MathTransform gridToCRS = gridGeometry.getGridToCRS();
-                    GridEnvelope extent = gridGeometry.getExtent();
+                    GridExtent extent = gridGeometry.getExtent();
                     int dim = extent.getDimension();
                     double[] low = new double[dim];
                     double[] high = new double[dim];

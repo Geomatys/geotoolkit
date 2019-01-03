@@ -39,6 +39,8 @@ import javax.media.jai.RenderedOp;
 import javax.media.jai.Warp;
 import javax.media.jai.operator.MosaicDescriptor;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.AbstractEnvelope;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -50,6 +52,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.processing.AbstractCoverageProcessor;
 import org.geotoolkit.coverage.processing.CannotReprojectException;
@@ -338,8 +341,10 @@ final class Resampler2D extends GridCoverage2D {
                     Envelope gridEnvelope;
                     gridEnvelope = toEnvelope(sourceGG.getExtent());
                     gridEnvelope = Envelopes.transform(allSteps.inverse(), gridEnvelope);
-                    targetGG  = new GridGeometry2D(new GridExtent(gridEnvelope,
-                            PixelInCell.CELL_CORNER, false), step1, targetCRS);
+                    final GridExtent ext = new GridGeometry(
+                            PixelInCell.CELL_CORNER, MathTransforms.identity(gridEnvelope.getDimension()),
+                            gridEnvelope, GridRoundingMode.ENCLOSING).getExtent();
+                    targetGG  = new GridGeometry2D(ext, step1, targetCRS);
                 }
             }
         } else {
@@ -374,7 +379,7 @@ final class Resampler2D extends GridCoverage2D {
              */
             if (targetGG == null) {
                 final GridExtent targetGR;
-                targetGR = force2D ? new GridExtent(sourceGG.getExtent2D()) : sourceGG.getExtent();
+                targetGR = force2D ? sourceGG.getExtent2D() : sourceGG.getExtent();
                 targetGG = new GridGeometry2D(targetGR, targetEnvelope);
                 step1    = targetGG.getGridToCRS(CORNER);
             } else if (!targetGG.isDefined(GridGeometry2D.GRID_TO_CRS)) {
@@ -385,8 +390,10 @@ final class Resampler2D extends GridCoverage2D {
                 if (!targetGG.isDefined(GridGeometry2D.EXTENT)) {
                     final GeneralEnvelope gridEnvelope = Envelopes.transform(step1.inverse(), targetEnvelope);
                     // According OpenGIS specification, GridGeometry maps pixel's center.
-                    targetGG = new GridGeometry2D(new GridExtent(gridEnvelope,
-                            PixelInCell.CELL_CENTER, false), step1, targetCRS);
+                    final GridExtent ext = new GridGeometry(
+                            PixelInCell.CELL_CENTER, MathTransforms.identity(gridEnvelope.getDimension()),
+                            gridEnvelope, GridRoundingMode.ENCLOSING).getExtent();
+                    targetGG = new GridGeometry2D(ext, step1, targetCRS);
                 }
             }
             /*
@@ -516,12 +523,12 @@ final class Resampler2D extends GridCoverage2D {
                 sourceImage = PlanarImage.wrapRenderedImage(sourceCoverage.getRenderedImage());
                 return create(sourceCoverage, sourceImage, targetGG, ViewType.SAME, hints);
             }
-            if (sourceBB.contains(targetBB)) {
+            if (GridGeometryIterator.isContained2D(sourceBB, targetBB)) {
                 operation = "Crop";
-                paramBlk.add(Float.valueOf(targetBB.x))
-                        .add(Float.valueOf(targetBB.y))
-                        .add(Float.valueOf(targetBB.width))
-                        .add(Float.valueOf(targetBB.height));
+                paramBlk.add(Float.valueOf(targetBB.getLow(0)))
+                        .add(Float.valueOf(targetBB.getLow(1)))
+                        .add(Float.valueOf(targetBB.getSize(0)))
+                        .add(Float.valueOf(targetBB.getSize(1)));
             } else {
                 operation = "Mosaic";
                 paramBlk.add(MosaicDescriptor.MOSAIC_TYPE_OVERLAY)
@@ -601,22 +608,23 @@ final class Resampler2D extends GridCoverage2D {
                 final CharSequence name = sourceCoverage.getName();
                 operation = "Warp";
                 final Warp warp;
+                final Rectangle targetBBr = GridGeometryIterator.toRectangle(targetBB);
                 if (forceAdapter) {
                     // NOTE: last argument is targetBB rather than sourceBB because
                     // the transform is from the target image to the source image.
-                    warp = WarpFactory.DEFAULT.create(name, transform, targetBB);
+                    warp = WarpFactory.DEFAULT.create(name, transform, targetBBr);
                 } else {
                     final Rectangle imageBB;
-                    if (layout.getMinX  (sourceImage) == targetBB.x &&
-                        layout.getMinY  (sourceImage) == targetBB.y &&
-                        layout.getWidth (sourceImage) == targetBB.width &&
-                        layout.getHeight(sourceImage) == targetBB.height)
+                    if (layout.getMinX  (sourceImage) == targetBBr.x &&
+                        layout.getMinY  (sourceImage) == targetBBr.y &&
+                        layout.getWidth (sourceImage) == targetBBr.width &&
+                        layout.getHeight(sourceImage) == targetBBr.height)
                     {
-                        imageBB = targetBB;
+                        imageBB = targetBBr;
                     } else {
                         imageBB = null;
                     }
-                    warp = createWarp(name, sourceBB, imageBB, transform, mtFactory);
+                    warp = createWarp(name, GridGeometryIterator.toRectangle(sourceBB), imageBB, transform, mtFactory);
                 }
                 paramBlk.add(warp).add(interpolation).add(background);
             }
@@ -630,9 +638,9 @@ final class Resampler2D extends GridCoverage2D {
          * As a safety, we check the bounding box in any case. If it doesn't matches, then we will
          * reconstruct the target grid geometry.
          */
-        final GridEnvelope targetGR = targetGG.getExtent();
-        final int[] lower = targetGR.getLow().getCoordinateValues();
-        final int[] upper = targetGR.getHigh().getCoordinateValues();
+        final GridExtent targetGR = targetGG.getExtent();
+        final long[] lower = GridGeometryIterator.getLow(targetGR);
+        final long[] upper = GridGeometryIterator.getHigh(targetGR);
         for (int i=0; i<upper.length; i++) {
             upper[i]++; // Make them exclusive.
         }
@@ -640,7 +648,7 @@ final class Resampler2D extends GridCoverage2D {
         lower[targetGG.gridDimensionY] = targetImage.getMinY();
         upper[targetGG.gridDimensionX] = targetImage.getMaxX();
         upper[targetGG.gridDimensionY] = targetImage.getMaxY();
-        final GridEnvelope actualGR = new GeneralGridEnvelope(lower, upper, false);
+        final GridExtent actualGR = new GridExtent(null, lower, upper, false);
         if (!targetGR.equals(actualGR)) {
             final MathTransform gridToCRS = targetGG.getGridToCRS();
             targetGG = new GridGeometry2D(actualGR, gridToCRS, targetCRS);
@@ -661,7 +669,7 @@ final class Resampler2D extends GridCoverage2D {
          */
         targetCoverage = create(sourceCoverage, targetImage, targetGG, finalView, hints);
         assert debugEquals(targetCoverage.getCoordinateReferenceSystem(), targetCRS) : targetGG;
-        assert targetCoverage.getGridGeometry().getExtent2D().equals(targetImage.getBounds()) : targetGG;
+        assert GridGeometryIterator.toRectangle(targetCoverage.getGridGeometry().getExtent2D()).equals(targetImage.getBounds()) : targetGG;
         if (AbstractCoverageProcessor.LOGGER.isLoggable(LOGGING_LEVEL)) {
             final Comparable<?> backgroundText;
             if (background == null) {
@@ -836,7 +844,7 @@ final class Resampler2D extends GridCoverage2D {
      * Casts the specified grid envelope into a georeferenced envelope. This is used before to
      * transform the envelope using {@link CRSUtilities#transform(MathTransform, Envelope)}.
      */
-    private static Envelope toEnvelope(final GridEnvelope gridEnvelope) {
+    private static Envelope toEnvelope(final GridExtent gridEnvelope) {
         final int dimension = gridEnvelope.getDimension();
         final double[] lower = new double[dimension];
         final double[] upper = new double[dimension];

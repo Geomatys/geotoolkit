@@ -16,20 +16,19 @@
  */
 package org.geotoolkit.processing.coverage.straighten;
 
-import org.geotoolkit.process.Process;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcessTest;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.parameter.Parameters;
-import org.junit.Test;
 import static org.junit.Assert.*;
-import org.opengis.coverage.grid.GridEnvelope;
+import org.junit.Test;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -57,7 +56,7 @@ public class StraightenProcessTest extends AbstractProcessTest {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(matrix);
         final AffineTransform2D gridToCrs = new AffineTransform2D(1,0,0,-1,20,30);
-        final GridEnvelope gridEnv = new GridEnvelope2D(0, 0, 60, 40);
+        final GridExtent gridEnv = new GridExtent(null, new long[]{0, 0}, new long[]{60, 40}, false);
         final GridGeometry2D gridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, gridToCrs, CommonCRS.WGS84.normalizedGeographic(), null);
         gcb.setGridGeometry(gridGeom);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
@@ -95,7 +94,7 @@ public class StraightenProcessTest extends AbstractProcessTest {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(matrix);
         final AffineTransform2D gridToCrs = new AffineTransform2D(1,0,0,1,20,30);
-        final GridEnvelope gridEnv = new GridEnvelope2D(0, 0, 60, 40);
+        final GridExtent gridEnv = new GridExtent(null, new long[]{0, 0}, new long[]{60, 40}, false);
         final GridGeometry2D gridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, gridToCrs, CommonCRS.WGS84.normalizedGeographic(), null);
         gcb.setGridGeometry(gridGeom);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();

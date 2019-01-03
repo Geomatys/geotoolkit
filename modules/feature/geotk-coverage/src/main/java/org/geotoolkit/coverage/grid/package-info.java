@@ -25,7 +25,7 @@
  * which is a two-dimensional slice in a <var>n</var>-dimensional cube of data. Despite
  * its name, {@code GridCoverage2D} instances can be associated to <var>n</var>-dimensional
  * {@linkplain org.opengis.geometry.Envelope envelopes} providing that only two dimensions
- * have a {@link org.opengis.coverage.grid.GridEnvelope#getSpan(int) grid span} greater than 1.
+ * have a {@link org.opengis.coverage.grid.GridExtent#getSize(int) grid span} greater than 1.
  * <p>
  * The {@code GridCoverage2D} constructor is rather tedious. The
  * {@link org.geotoolkit.coverage.grid.GridCoverageBuilder} convenience class provides

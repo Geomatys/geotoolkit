@@ -30,6 +30,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
@@ -42,9 +43,9 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -58,8 +59,6 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.MathTransform;
@@ -174,7 +173,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
             //calculate the output grid geometry and image size
             final int sizeX = (int)(env.getSpan(0) / resolution[0]);
             final int sizeY = (int)(env.getSpan(1) / resolution[1]);
-            gridGeom = new GridGeometry2D(new GridEnvelope2D(0, 0, sizeX, sizeY), env);
+            gridGeom = new GridGeometry2D(new GridExtent(null, new long[]{0, 0}, new long[]{sizeX, sizeY}, false), env);
 
             return gridGeom;
         } catch (TransformException ex) {
@@ -247,12 +246,12 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
 
             final GeneralGridGeometry globalGridGeom = getGridGeometry(0);
             final GeneralGridGeometry gridGeom = GeoReferencedGridCoverageReader.getGridGeometry(globalGridGeom, areaLower, areaUpper, subsampling);
-            final GridEnvelope extent = gridGeom.getExtent();
-            final int sizeX = extent.getSpan(0);
-            final int sizeY = extent.getSpan(1);
+            final GridExtent extent = gridGeom.getExtent();
+            final long sizeX = extent.getSize(0);
+            final long sizeY = extent.getSize(1);
 
             try {
-                final BufferedImage targetImage = BufferedImages.createImage(sizeX, sizeY, coverages.get(0).getRenderedImage());
+                final BufferedImage targetImage = BufferedImages.createImage((int) sizeX, (int) sizeY, coverages.get(0).getRenderedImage());
 
                 //intermediate image for float and double images
                 BufferedImage tempImage = null;
@@ -261,7 +260,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
                                        && (targetImage.getRaster().getNumBands() == 1);
                 if (isNanable) {
                     ImageUtilities.fill(targetImage, Double.NaN);
-                    tempImage = BufferedImages.createImage(sizeX, sizeY, coverages.get(0).getRenderedImage());
+                    tempImage = BufferedImages.createImage((int) sizeX, (int) sizeY, coverages.get(0).getRenderedImage());
                 }
 
                 final MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);

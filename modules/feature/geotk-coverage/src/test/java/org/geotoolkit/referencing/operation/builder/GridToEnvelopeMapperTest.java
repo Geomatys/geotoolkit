@@ -17,26 +17,23 @@
  */
 package org.geotoolkit.referencing.operation.builder;
 
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
-import java.awt.geom.Point2D;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
-
-import org.opengis.geometry.MismatchedDimensionException;
-
-import org.opengis.referencing.IdentifiedObject;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.referencing.cs.Axes;
-import org.apache.sis.referencing.cs.DefaultEllipsoidalCS;
-import org.apache.sis.referencing.crs.DefaultGeographicCRS;
-import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralEnvelope;
-
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.cs.DefaultEllipsoidalCS;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
+import org.geotoolkit.referencing.cs.Axes;
 import org.junit.*;
 import static org.junit.Assert.*;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.IdentifiedObject;
 
 
 /**
@@ -95,9 +92,9 @@ public final strictfp class GridToEnvelopeMapperTest extends org.geotoolkit.test
         ///  Tests the setting of grid envelope and georeferenced envelope.
         ///
         Point2D.Double point = new Point2D.Double();
-        GeneralGridEnvelope gridEnvelope;
+        GridExtent gridEnvelope;
         GeneralEnvelope envelope;
-        gridEnvelope = new GeneralGridEnvelope(new int[] {10, 20}, new int[] {110, 220}, false);
+        gridEnvelope = new GridExtent(null, new long[] {10, 20}, new long[] {110, 220}, false);
         envelope  = new GeneralEnvelope(new double[] {1, 4, 6}, new double[] {11, 44, 66});
         mapper.setGridExtent(gridEnvelope);
         assertSame(gridEnvelope, mapper.getGridExtent());

@@ -19,7 +19,7 @@ import org.apache.sis.util.ArgumentChecks;
  * <pre>
  * {@code
  * // Your 3D envelope
- * final GridEnvelope grid3D = new GeneralGridEnvelope({0, 0, 0}, {2, 2, 2} true);
+ * final GridExtent grid3D = new GridExtent(null, new long[]{0, 0, 0}, new long[]{2, 2, 2}, true);
  * // This is an important structure. Each value represents the value to step by
  * // for each dimension on each move. Here, we specify that we want to move
  * // only on the third dimension, from lower to upper corner, with a step of 1

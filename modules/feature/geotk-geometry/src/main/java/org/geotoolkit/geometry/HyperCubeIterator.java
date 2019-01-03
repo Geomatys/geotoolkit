@@ -20,8 +20,8 @@ package org.geotoolkit.geometry;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.geotoolkit.geometry.HyperCubeIterator.HyperCube;
-import org.opengis.coverage.grid.GridEnvelope;
 
 /**
  * Iterator over an hypercube, will iterate on all dimensions of the hypercube
@@ -33,9 +33,9 @@ public class HyperCubeIterator implements Iterator<HyperCube>{
 
     private final int[] maxSize;
     private final int nbDim;
-    private final int[] corner;
-    private final int[] mins;
-    private final int[] maxs;
+    private final long[] corner;
+    private final long[] mins;
+    private final long[] maxs;
     private HyperCube next = null;
 
     /**
@@ -44,14 +44,14 @@ public class HyperCubeIterator implements Iterator<HyperCube>{
      * @param maxs hypercube upper corner, exclusive
      * @param maxSize maximum size of the iteration hypercube
      */
-    public HyperCubeIterator(int[] mins, int[] maxs, int[] maxSize) {
+    public HyperCubeIterator(long[] mins, long[] maxs, int[] maxSize) {
         this.maxSize = maxSize;
         this.nbDim = mins.length;
         this.mins = mins;
         this.maxs = maxs;
 
         //place corner on the minimum
-        this.corner = new int[nbDim];
+        this.corner = new long[nbDim];
         System.arraycopy(mins, 0, corner, 0, nbDim);
     }
 
@@ -85,8 +85,8 @@ public class HyperCubeIterator implements Iterator<HyperCube>{
              return;
         }
 
-        final int[] lower = new int[nbDim];
-        final int[] upper = new int[nbDim];
+        final long[] lower = new long[nbDim];
+        final long[] upper = new long[nbDim];
 
         for(int i=0;i<nbDim;i++){
             lower[i] = corner[i];
@@ -111,15 +111,15 @@ public class HyperCubeIterator implements Iterator<HyperCube>{
     }
 
     public static class HyperCube{
-        private final int[] lower;
-        private final int[] upper;
+        private final long[] lower;
+        private final long[] upper;
 
         /**
          *
          * @param lower corner, inclusive
          * @param upper corner, exclusive
          */
-        public HyperCube(int[] lower, int[] upper) {
+        public HyperCube(long[] lower, long[] upper) {
             this.lower = lower;
             this.upper = upper;
         }
@@ -128,7 +128,7 @@ public class HyperCubeIterator implements Iterator<HyperCube>{
          *
          * @return lower corner, inclusive
          */
-        public int[] getLower() {
+        public long[] getLower() {
             return lower;
         }
 
@@ -136,7 +136,7 @@ public class HyperCubeIterator implements Iterator<HyperCube>{
          *
          * @return upper corner, exclusive
          */
-        public int[] getUpper() {
+        public long[] getUpper() {
             return upper;
         }
 
@@ -172,10 +172,10 @@ public class HyperCubeIterator implements Iterator<HyperCube>{
      * @param maxSize maximum size of the iteration hypercube
      * @return HyperCubeIterator
      */
-    public static HyperCubeIterator create(GridEnvelope gridEnv, int[] maxSize) {
+    public static HyperCubeIterator create(GridExtent gridEnv, int[] maxSize) {
         final int nbDim = gridEnv.getDimension();
-        final int[] mins = new int[nbDim];
-        final int[] maxs = new int[nbDim];
+        final long[] mins = new long[nbDim];
+        final long[] maxs = new long[nbDim];
 
         for(int i=0;i<nbDim;i++){
             mins[i] = gridEnv.getLow(i);

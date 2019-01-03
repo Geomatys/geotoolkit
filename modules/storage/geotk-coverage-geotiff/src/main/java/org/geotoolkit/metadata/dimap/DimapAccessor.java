@@ -16,36 +16,30 @@
  */
 package org.geotoolkit.metadata.dimap;
 
-import org.opengis.coverage.SampleDimensionType;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.Geometry;
-import org.opengis.geometry.coordinate.GeometryFactory;
-import org.opengis.metadata.acquisition.AcquisitionInformation;
-import org.opengis.metadata.citation.DateType;
-import org.opengis.metadata.citation.Role;
-import org.opengis.metadata.constraint.Restriction;
-import org.opengis.metadata.content.ContentInformation;
-import org.opengis.metadata.content.RangeDimension;
-import org.opengis.metadata.content.TransferFunctionType;
-import org.opengis.metadata.extent.Extent;
-import org.opengis.metadata.identification.Identification;
-import org.opengis.metadata.lineage.Lineage;
-import org.opengis.metadata.lineage.ProcessStep;
-import org.opengis.metadata.quality.DataQuality;
-import org.opengis.metadata.spatial.Dimension;
-import org.opengis.metadata.spatial.DimensionNameType;
-import org.opengis.metadata.spatial.SpatialRepresentation;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
-import org.opengis.util.MemberName;
-import org.opengis.util.TypeName;
-
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.measure.Unit;
+import javax.media.jai.Warp;
+import javax.media.jai.WarpAffine;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.internal.jaxb.gmi.MI_Metadata;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.acquisition.DefaultAcquisitionInformation;
@@ -75,52 +69,53 @@ import org.apache.sis.metadata.iso.quality.DefaultDataQuality;
 import org.apache.sis.metadata.iso.spatial.AbstractSpatialRepresentation;
 import org.apache.sis.metadata.iso.spatial.DefaultDimension;
 import org.apache.sis.metadata.iso.spatial.DefaultGridSpatialRepresentation;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.util.iso.DefaultNameFactory;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
-
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.TypeMap;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.geometry.isoonjts.GeometryUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.lang.Static;
-import org.apache.sis.referencing.CRS;
+import static org.geotoolkit.metadata.dimap.DimapConstants.*;
+import org.geotoolkit.metadata.dimap.DimapConstants.DataType;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.temporal.object.ISODateParser;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import javax.measure.Unit;
-import javax.media.jai.Warp;
-import javax.media.jai.WarpAffine;
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.apache.sis.measure.Units;
-import static org.geotoolkit.metadata.dimap.DimapConstants.*;
 import static org.geotoolkit.util.DomUtilities.firstElement;
 import static org.geotoolkit.util.DomUtilities.getListElements;
 import static org.geotoolkit.util.DomUtilities.textAttributeValueSafe;
 import static org.geotoolkit.util.DomUtilities.textValueSafe;
+import org.opengis.coverage.SampleDimensionType;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Geometry;
+import org.opengis.geometry.coordinate.GeometryFactory;
+import org.opengis.metadata.acquisition.AcquisitionInformation;
+import org.opengis.metadata.citation.DateType;
+import org.opengis.metadata.citation.Role;
+import org.opengis.metadata.constraint.Restriction;
+import org.opengis.metadata.content.ContentInformation;
+import org.opengis.metadata.content.RangeDimension;
+import org.opengis.metadata.content.TransferFunctionType;
+import org.opengis.metadata.extent.Extent;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.metadata.lineage.Lineage;
+import org.opengis.metadata.lineage.ProcessStep;
+import org.opengis.metadata.quality.DataQuality;
+import org.opengis.metadata.spatial.Dimension;
+import org.opengis.metadata.spatial.DimensionNameType;
+import org.opengis.metadata.spatial.SpatialRepresentation;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
+import org.opengis.util.MemberName;
+import org.opengis.util.TypeName;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Utility class to access usable objects from a dimap file.
@@ -153,12 +148,12 @@ public final class DimapAccessor extends Static {
     }
 
 
-    public static GridEnvelope getGridExtent2D(Element doc) {
+    public static GridExtent getGridExtent2D(Element doc) {
         final Element datasetFrame = firstElement(doc, TAG_DATASET_FRAME);
         final List<Element> vertexs = getListElements(datasetFrame, TAG_VERTEX);
 
-        int[] low = new int[2];
-        int[] high = new int[2];
+        long[] low = new long[2];
+        long[] high = new long[2];
 
         for (final Element vertex : vertexs) {
             final Integer row = textValueSafe(vertex, TAG_FRAME_ROW, Integer.class);
@@ -170,7 +165,7 @@ public final class DimapAccessor extends Static {
             high[1] = Math.max(high[1], col);
         }
 
-        return new GeneralGridEnvelope(low, high, false);
+        return new GridExtent(null, low, high, false);
     }
 
     /**

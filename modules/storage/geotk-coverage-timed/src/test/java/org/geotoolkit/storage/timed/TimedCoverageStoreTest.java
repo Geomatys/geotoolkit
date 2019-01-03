@@ -22,36 +22,35 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
 import java.util.Collections;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.image.io.plugin.TiffImageWriter;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.apache.sis.storage.Resource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.TemporalCRS;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.junit.Assume;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -122,7 +121,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
         expectedEnvelope.setRange(0, -10, 1);
         expectedEnvelope.setRange(1, -10, 1);
         expectedEnvelope.setRange(2, timestamp, secondTimestamp + 1);
-        final GridEnvelope twoSlices = new GeneralGridEnvelope(new int[]{0, 0, 0}, new int[]{16, 16, 2}, false);
+        final GridExtent twoSlices = new GridExtent(null, new long[]{0, 0, 0}, new long[]{16, 16, 2}, false);
 
         try (final TimedCoverageStore store = create()) {
             final GridCoverageReader reader = acquireReader(store);
@@ -167,7 +166,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
             final long timestamp = toTimestamp(LocalDate.of(2017, Month.JANUARY, 1));
             // To avoid empty envelope, an offset of one milliseconds is added to the end of the interval.
             expectedEnvelope.setRange(2, timestamp, timestamp);
-            final GeneralGridEnvelope singleSlice = new GeneralGridEnvelope(new int[]{0, 0, 0}, new int[]{16, 16, 1}, false);
+            final GridExtent singleSlice = new GridExtent(null, new long[]{0, 0, 0}, new long[]{16, 16, 1}, false);
 
             final GridCoverageReader reader = acquireReader(store);
             checkReferencing(reader.getGridGeometry(0), singleSlice, expectedEnvelope);
@@ -197,7 +196,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
             */
             final long timeResolution = (secondTimestamp - timestamp) / 2;
             expectedEnvelope.setRange(2, timestamp - timeResolution, secondTimestamp + timeResolution);
-            final GridEnvelope twoSlices = new GeneralGridEnvelope(new int[]{0, 0, 0}, new int[]{16, 16, 2}, false);
+            final GridExtent twoSlices = new GridExtent(null, new long[]{0, 0, 0}, new long[]{16, 16, 2}, false);
             checkReferencing(reader.getGridGeometry(0), twoSlices, expectedEnvelope);
 
             // Secondly, we verify we can acquire our data slice by slice.
@@ -209,7 +208,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
             env2d.setRange(0, -2, 1);
             env2d.setRange(1, -2, 1);
             env2d.setCoordinateReferenceSystem(inputCRS);
-            final GeneralGridEnvelope slice2d = new GeneralGridEnvelope(new int[]{0, 0}, new int[]{16, 16}, false);
+            final GridExtent slice2d = new GridExtent(null, new long[]{0, 0}, new long[]{16, 16}, false);
             checkReferencing(((GridCoverage2D) secondSlice).getGridGeometry(), slice2d, env2d);
         }
     }
@@ -257,7 +256,8 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
      * @param expectedEnvelope The envelope we want to find in the tested geometry.
      * @throws CoverageStoreException
      */
-    private static void checkReferencing(final GeneralGridGeometry target, final GridEnvelope expectedExtent, final Envelope expectedEnvelope) throws CoverageStoreException {
+    private static void checkReferencing(final GeneralGridGeometry target,
+            final GridExtent expectedExtent, final Envelope expectedEnvelope) throws CoverageStoreException {
         CoordinateReferenceSystem targetCRS = target.getCoordinateReferenceSystem();
         final CoordinateReferenceSystem expectedCRS = expectedEnvelope.getCoordinateReferenceSystem();
         Assert.assertTrue(
@@ -277,7 +277,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
                 targetEnvelope.equals(expectedEnvelope, 1e-7, false)
         );
 
-        GridEnvelope targetExtent = target.getExtent();
+        GridExtent targetExtent = target.getExtent();
         Assert.assertEquals("Data grid extent has not been preserved.", expectedExtent, targetExtent);
     }
 

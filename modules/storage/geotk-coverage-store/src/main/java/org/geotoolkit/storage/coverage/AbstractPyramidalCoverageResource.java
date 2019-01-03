@@ -18,7 +18,6 @@
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -26,6 +25,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
@@ -35,7 +35,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -229,8 +228,14 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
         final CoordinateReferenceSystem tileCRS = pyramid.getCoordinateReferenceSystem();
         final MathTransform gridToCrs = Pyramids.getTileGridToCRS(mosaic,tile.getPosition());
 
-        final GeneralGridEnvelope ge = new GeneralGridEnvelope(
-                new Rectangle(image.getWidth(), image.getHeight()),tileCRS.getCoordinateSystem().getDimension());
+        final long[] low = new long[tileCRS.getCoordinateSystem().getDimension()];
+        final long[] high = new long[low.length];
+        Arrays.fill(low, 0);
+        Arrays.fill(high, 1);
+        high[0] = image.getWidth();
+        high[1] = image.getHeight();
+
+        final GridExtent ge = new GridExtent(null, low, high, false);
         final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelInCell.CELL_CORNER, gridToCrs, tileCRS, null);
         gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);

@@ -79,7 +79,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
     /**
      * The minimum grid values on all dimensions.
      *
-     * @see GridEnvelope#getLow()
+     * @see GridExtent#getLow()
      * @see GridCoordinates#getCoordinateValues()
      */
     private final long[] gridLow;
@@ -87,7 +87,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
     /**
      * The maximum grid values on all dimensions.
      *
-     * @see GridEnvelope#getHigh()
+     * @see GridExtent#getHigh()
      * @see GridCoordinates#getCoordinateValues()
      */
     private final long[] gridHigh;
@@ -118,10 +118,10 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
     private final int currentDimIndex;
 
     /**
-     * <p> Create an {@link Iterator} on each {@link GridEnvelope} dimensions,
+     * <p> Create an {@link Iterator} on each {@link GridExtent} dimensions,
      * which are not within the 2D part of the {@link CoordinateReferenceSystem}.<br>
      * Objects returned by {@link #next() } are {@link Envelope} type, which are built from iteration on each
-     * {@link GridEnvelope} dimensions and transformed into the outCrs by the {@linkplain MathTransform gridToCrs}.<br><br>
+     * {@link GridExtent} dimensions and transformed into the outCrs by the {@linkplain MathTransform gridToCrs}.<br><br>
      * <strong>
      * Moreover : the specified {@link MathTransform} must be from CORNER of source grid point to CORNER of destination envelope point.<br>
      * The used MathTransform is consider with {@link PixelInCell#CELL_CORNER} configuration.</strong></p>
@@ -186,10 +186,10 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
     }
 
     /**
-     * <p> Create an {@link Iterator} which travel a specified {@link GridEnvelope} dimension,
+     * <p> Create an {@link Iterator} which travel a specified {@link GridExtent} dimension,
      * which are not within the 2D part of the {@link CoordinateReferenceSystem}.<br>
      * Objects returned by {@link #next() } are {@link Envelope} type, which are built from iteration on the expected
-     * {@link GridEnvelope} dimension and transformed into the outCrs by the {@linkplain MathTransform gridToCrs}.<br><br>
+     * {@link GridExtent} dimension and transformed into the outCrs by the {@linkplain MathTransform gridToCrs}.<br><br>
      * <strong>
      * Moreover : the specified {@link MathTransform} must be from CORNER of source grid point to CORNER of destination envelope point.<br>
      * The used MathTransform is consider with {@link PixelInCell#CELL_CORNER} configuration.</strong></p>
@@ -376,7 +376,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
     }
 
     /**
-     * Returns all ordinates ranges from grid transformation of {@linkplain GridEnvelope extent}
+     * Returns all ordinates ranges from grid transformation of {@linkplain GridExtent extent}
      * by {@linkplain MathTransform gridtocrs} on axis specified by expected one dimensional {@link CoordinateReferenceSystem}.<br><br>
      * <strong>
      * Moreover : the specified {@link MathTransform} must be from CORNER of source grid point to CORNER of destination envelope point.<br>
@@ -418,7 +418,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
     }
 
     /**
-     * Returns all ordinates ranges from grid transformation of {@linkplain GridEnvelope extent}
+     * Returns all ordinates ranges from grid transformation of {@linkplain GridExtent extent}
      * by {@linkplain MathTransform gridtocrs} from {@link GeneralGridGeometry} on axis specified by expected dimension parameter.<br>
      * One range for each grid values on interested ordinate.<br><br>
      * <strong>
@@ -441,7 +441,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
     }
 
     /**
-     * Returns all ordinate ranges from grid transformation of {@linkplain GridEnvelope extent}
+     * Returns all ordinate ranges from grid transformation of {@linkplain GridExtent extent}
      * by {@linkplain MathTransform gridtocrs} on axis specified by expected dimension parameter.<br>
      * One range for each grid values on interested ordinate.<br><br>
      * <strong>
@@ -464,7 +464,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
     }
 
     /**
-     * Returns all ordinate ranges from grid transformation of {@linkplain GridEnvelope extent}
+     * Returns all ordinate ranges from grid transformation of {@linkplain GridExtent extent}
      * by {@linkplain MathTransform gridtocrs} on axis specified by expected dimension parameter.<br>
      * One range for each grid values on interested ordinate.<br><br>
      * <strong>

@@ -24,6 +24,7 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
@@ -31,7 +32,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -52,7 +52,6 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -155,11 +154,11 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         final Dimension tileSize = mosaic.getTileSize();
         final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
         final LinearTransform gridToCrsNd = Pyramids.getTileGridToCRS(mosaic, tileCoord, PixelInCell.CELL_CENTER);
-        final int[] low = new int[crs.getCoordinateSystem().getDimension()];
-        final int[] high = new int[low.length];
+        final long[] low = new long[crs.getCoordinateSystem().getDimension()];
+        final long[] high = new long[low.length];
         high[0] = tileSize.width-1; //inclusive
         high[1] = tileSize.height-1; //inclusive
-        final GridEnvelope extent = new GeneralGridEnvelope(low, high, true);
+        final GridExtent extent = new GridExtent(null, low, high, true);
         final GeneralGridGeometry gridGeomNd = new GeneralGridGeometry(extent, gridToCrsNd, crs);
 
         //extract resolution

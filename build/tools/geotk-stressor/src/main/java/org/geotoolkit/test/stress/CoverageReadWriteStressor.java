@@ -30,9 +30,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.Locale;
+import org.apache.sis.coverage.grid.GridExtent;
 
 import org.opengis.geometry.Envelope;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -42,8 +42,8 @@ import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -157,15 +157,15 @@ public class CoverageReadWriteStressor extends Stressor {
      */
     private static GeneralGridGeometry clip(GeneralGridGeometry geometry) {
         if (false) {
-            GridEnvelope range = geometry.getExtent();
-            final int[] lower = range.getLow().getCoordinateValues();
-            final int[] upper = range.getHigh().getCoordinateValues();
+            GridExtent range = geometry.getExtent();
+            final long[] lower = GridGeometryIterator.getLow(range);
+            final long[] upper = GridGeometryIterator.getHigh(range);
             for (int i=range.getDimension(); --i>=0;) {
-                final int hs = (upper[i] - lower[i] + 1) / 200;
+                final long hs = (upper[i] - lower[i] + 1) / 200;
                 lower[i] += hs;
                 upper[i] -= hs;
             }
-            range = new GeneralGridEnvelope(lower, upper, true);
+            range = new GridExtent(null, lower, upper, true);
             geometry = new GeneralGridGeometry(range, PixelInCell.CELL_CORNER,
                     geometry.getGridToCRS(PixelInCell.CELL_CORNER),
                     geometry.getCoordinateReferenceSystem());

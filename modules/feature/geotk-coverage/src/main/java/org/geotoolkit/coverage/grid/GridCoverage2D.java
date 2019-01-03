@@ -76,8 +76,8 @@ import org.opengis.referencing.operation.TransformException;
  * and <var>y</var>), and a third one for start time and end time (time extent along <var>t</var>).
  * </font></blockquote>
  *
- * However, the {@linkplain GeneralGridEnvelope grid envelope} for all extra-dimension
- * <strong>must</strong> have a {@linkplain GeneralGridEnvelope#getSpan span} not greater than 1.
+ * However, the {@linkplain GridExtent grid envelope} for all extra-dimension
+ * <strong>must</strong> have a {@linkplain GridExtent#getSize span} not greater than 1.
  * In other words, a {@code GridCoverage2D} can be a slice in a 3 dimensional grid coverage. Each
  * slice can have an arbitrary width and height (like any two-dimensional images), but only 1
  * voxel depth (a "voxel" is a three-dimensional pixel).
@@ -245,7 +245,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
         if (!gridGeometry.isDefined(GridGeometry2D.EXTENT)) {
             final long[] low = new long[dimension];
             final long[] high = new long[dimension];
-            Arrays.fill(low, 1);
+            Arrays.fill(low, 0);
             Arrays.fill(high, 1);
             low[0] = image.getMinX();
             low[1] = image.getMinY();
@@ -370,7 +370,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * Returns the two-dimensional part of this grid coverage CRS. If the
      * {@linkplain #getCoordinateReferenceSystem complete CRS} is two-dimensional, then this
      * method returns the same CRS. Otherwise it returns a CRS for the two first axis having
-     * a {@linkplain GridEnvelope#getSpan span} greater than 1 in the grid envelope. Note that
+     * a {@linkplain GridExtent#getSize span} greater than 1 in the grid envelope. Note that
      * those axis are guaranteed to appears in the same order than in the complete CRS.
      *
      * @return The two-dimensional part of the grid coverage CRS.

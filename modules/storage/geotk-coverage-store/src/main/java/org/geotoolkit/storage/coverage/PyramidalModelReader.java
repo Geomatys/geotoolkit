@@ -33,11 +33,11 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridCoverageStack;
@@ -56,8 +56,6 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.Cancellable;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -189,8 +187,8 @@ public class PyramidalModelReader extends GridCoverageReader{
         //-- size of internal pixel data recovered
         final Rectangle dataSize = mosaic.getDataExtent();
 
-        final int[] low   = new int[nbdim];
-        final int[] high  = new int[nbdim];
+        final long[] low   = new long[nbdim];
+        final long[] high  = new long[nbdim];
 
         for (int i = 0; i < cs.getDimension(); i++) {
             low[i] = 0; //-- on each dimension low begin at 0
@@ -206,7 +204,7 @@ public class PyramidalModelReader extends GridCoverageReader{
             }
         }
 
-        final GeneralGridEnvelope ge = new GeneralGridEnvelope(low, high, false);
+        final GridExtent ge = new GridExtent(null, low, high, false);
         gridGeom = new GeneralGridGeometry(ge, PixelInCell.CELL_CORNER, gridToCRSds, crs);
 
         return gridGeom;
@@ -508,7 +506,14 @@ public class PyramidalModelReader extends GridCoverageReader{
             gcb.setSampleDimensions(dimensions.toArray(new GridSampleDimension[dimensions.size()]));
         }
 
-        final GridEnvelope ge = new GeneralGridEnvelope(image, wantedCRS.getCoordinateSystem().getDimension());
+        final long[] low = new long[wantedCRS.getCoordinateSystem().getDimension()];
+        final long[] high = new long[low.length];
+        Arrays.fill(low, 0);
+        Arrays.fill(high, 1);
+        high[0] = image.getWidth();
+        high[1] = image.getHeight();
+
+        final GridExtent ge = new GridExtent(null, low, high, false);
         final MathTransform gtc = Pyramids.getTileGridToCRSND(mosaic,
                 new Point((int)tileMinCol,(int)tileMinRow),wantedCRS.getCoordinateSystem().getDimension());
         final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, gtc, wantedCRS, null);

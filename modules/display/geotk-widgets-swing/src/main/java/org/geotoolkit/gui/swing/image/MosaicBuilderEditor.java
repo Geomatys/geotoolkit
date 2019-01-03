@@ -17,52 +17,51 @@
  */
 package org.geotoolkit.gui.swing.image;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Locale;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Collections;
-import java.util.prefs.Preferences;
 import java.text.ParseException;
-import java.awt.Insets;
-import java.awt.Rectangle;
-import java.awt.Dimension;
-import java.awt.Component;
-import java.awt.GridLayout;
-import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Locale;
+import java.util.prefs.Preferences;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.jdesktop.swingx.JXTitledPanel;
-
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.grid.ImageGeometry;
-import org.geotoolkit.image.io.mosaic.TileManager;
-import org.geotoolkit.image.io.mosaic.MosaicBuilder;
-import org.geotoolkit.image.io.ImageReaderAdapter;
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.gui.swing.ListTableModel;
-import org.geotoolkit.internal.swing.SwingUtilities;
+import static org.geotoolkit.gui.swing.image.MosaicChooser.OUTPUT_DIRECTORY;
+import static org.geotoolkit.gui.swing.image.MosaicChooser.OUTPUT_FORMAT;
+import org.geotoolkit.image.io.ImageReaderAdapter;
+import org.geotoolkit.image.io.mosaic.MosaicBuilder;
+import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.internal.swing.FileField;
 import org.geotoolkit.internal.swing.SizeFields;
+import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.internal.swing.table.LabeledRenderer;
-
-import static org.geotoolkit.gui.swing.image.MosaicChooser.OUTPUT_FORMAT;
-import static org.geotoolkit.gui.swing.image.MosaicChooser.OUTPUT_DIRECTORY;
+import org.geotoolkit.resources.Vocabulary;
+import org.jdesktop.swingx.JXTitledPanel;
 
 
 /**
@@ -352,7 +351,7 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
         for (final TileManager manager : managers) {
             final ImageGeometry geom = manager.getGridGeometry();
             if (geom != null) {
-                final Rectangle candidate = geom.getExtent();
+                final Rectangle candidate = GridGeometryIterator.toRectangle(geom.getExtent());
                 if (bounds == null) {
                     bounds = candidate;
                 } else {

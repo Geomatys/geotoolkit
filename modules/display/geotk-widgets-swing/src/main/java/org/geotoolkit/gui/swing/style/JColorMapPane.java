@@ -69,6 +69,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 
 import org.apache.sis.storage.DataStoreException;
@@ -123,7 +124,6 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.feature.Property;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
@@ -560,7 +560,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                 if (gridGeometry.isDefined(GeneralGridGeometry.GRID_TO_CRS)
                         && gridGeometry.isDefined(GeneralGridGeometry.EXTENT)) {
                     MathTransform gridToCRS = gridGeometry.getGridToCRS();
-                    GridEnvelope extent = gridGeometry.getExtent();
+                    GridExtent extent = gridGeometry.getExtent();
                     int dim = extent.getDimension();
                     double[] low = new double[dim];
                     double[] high = new double[dim];
@@ -612,7 +612,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                 if (gridGeometry.isDefined(GeneralGridGeometry.GRID_TO_CRS)
                         && gridGeometry.isDefined(GeneralGridGeometry.EXTENT)) {
                     MathTransform gridToCRS = gridGeometry.getGridToCRS();
-                    GridEnvelope extent = gridGeometry.getExtent();
+                    GridExtent extent = gridGeometry.getExtent();
                     int dim = extent.getDimension();
                     double[] low = new double[dim];
                     double[] high = new double[dim];

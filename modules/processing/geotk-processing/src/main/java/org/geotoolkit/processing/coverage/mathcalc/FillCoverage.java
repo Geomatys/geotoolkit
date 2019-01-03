@@ -26,6 +26,7 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -47,7 +48,6 @@ import org.geotoolkit.geometry.HyperCubeIterator;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.storage.coverage.*;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.datum.PixelInCell;
@@ -90,18 +90,18 @@ public class FillCoverage {
 
 
         // prepare dynamic pick object
-        final GridEnvelope ge = gg.getExtent();
+        final GridExtent ge = gg.getExtent();
         final int nbDim = ge.getDimension();
         final DirectPosition positionGrid = new GeneralDirectPosition(gg.getCoordinateReferenceSystem());
         final DirectPosition positionGeo = new GeneralDirectPosition(gg.getCoordinateReferenceSystem());
 
         //calculate the hyper-cube where we will need to recalculate values
         final MathTransform gridToCrs = gg.getGridToCRS();
-        final int[] mins = new int[nbDim];
-        final int[] maxs = new int[nbDim];
+        final long[] mins = new long[nbDim];
+        final long[] maxs = new long[nbDim];
         for(int i=0;i<nbDim;i++){
-            mins[i] = ge.getLow(i);
-            maxs[i] = ge.getHigh(i)+1; //high value is inclusive in grid envelopes
+            mins[i] = Math.toIntExact(ge.getLow(i));
+            maxs[i] = Math.toIntExact(ge.getHigh(i)+1); //high value is inclusive in grid envelopes
         }
         //adjust the writing hyper-cube if an envelope is provided
         if(env!=null){
@@ -133,16 +133,16 @@ public class FillCoverage {
         final MathTransformFactory mathFactory = FactoryFinder.getMathTransformFactory(null);
         while(ite.hasNext()){
             final HyperCubeIterator.HyperCube cube = ite.next();
-            final int[] hcubeLower = cube.getLower();
-            final int[] hcubeUpper = cube.getUpper();
+            final long[] hcubeLower = cube.getLower();
+            final long[] hcubeUpper = cube.getUpper();
             for(int i=2;i<nbDim;i++){
                 positionGrid.setOrdinate(i, hcubeLower[i]);
             }
 
             //create the slice coverage
             final BufferedImage zoneImage = BufferedImages.createImage(
-                    hcubeUpper[0]-hcubeLower[0],
-                    hcubeUpper[1]-hcubeLower[1],
+                    Math.toIntExact(hcubeUpper[0]-hcubeLower[0]),
+                    Math.toIntExact(hcubeUpper[1]-hcubeLower[1]),
                     1, DataBuffer.TYPE_DOUBLE);
             final WritableRaster raster = zoneImage.getRaster();
 
@@ -150,13 +150,13 @@ public class FillCoverage {
             //loop on all pixels
             final double[] sampleData = new double[1];
             try{
-                for(int x=hcubeLower[0],xn=hcubeUpper[0];x<xn;x++){
-                    for(int y=hcubeLower[1],yn=hcubeUpper[1];y<yn;y++){
+                for(long x=hcubeLower[0],xn=hcubeUpper[0];x<xn;x++){
+                    for(long y=hcubeLower[1],yn=hcubeUpper[1];y<yn;y++){
                         positionGrid.setOrdinate(0, x);
                         positionGrid.setOrdinate(1, y);
                         gridToCrs.transform(positionGrid, positionGeo);
                         evaluator.evaluate(positionGeo, sampleData);
-                        raster.setSample(x-hcubeLower[0], y-hcubeLower[1], 0, sampleData[0]);
+                        raster.setSample(Math.toIntExact(x-hcubeLower[0]), Math.toIntExact(y-hcubeLower[1]), 0, sampleData[0]);
                     }
                 }
             }catch(TransformException ex){

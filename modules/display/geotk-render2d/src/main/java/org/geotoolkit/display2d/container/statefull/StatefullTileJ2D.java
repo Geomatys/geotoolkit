@@ -26,12 +26,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.vecmath.Point3d;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.data.multires.Mosaic;
@@ -239,7 +239,7 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
 
         //build the coverage
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        final GridEnvelope2D ge = new GridEnvelope2D(0, 0, image.getWidth(), image.getHeight());
+        final GridExtent ge = new GridExtent(null, new long[]{0,0}, new long[]{image.getWidth(), image.getHeight()}, false);
         final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, trs, tileCRS, null);
         gcb.setName("tile");
         gcb.setGridGeometry(gridgeo);

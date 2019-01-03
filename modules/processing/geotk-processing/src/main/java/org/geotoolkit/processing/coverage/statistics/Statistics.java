@@ -22,11 +22,13 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.util.Arrays;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -43,8 +45,6 @@ import static org.geotoolkit.processing.coverage.statistics.StatisticsDescriptor
 import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -155,7 +155,7 @@ public class Statistics extends AbstractProcess {
             reader = ref.acquireReader();
             final GeneralGridGeometry gridGeom = reader.getGridGeometry(ref.getImageIndex());
             final Envelope env = gridGeom.getEnvelope();
-            final GridEnvelope ext = gridGeom.getExtent();
+            final GridExtent ext = gridGeom.getExtent();
 
             final double[] res = new double[ext.getDimension()];
             double max = 0;
@@ -551,7 +551,7 @@ public class Statistics extends AbstractProcess {
             final GeneralGridGeometry gridGeometry = reader.getGridGeometry(imageIdx);
             CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
             final MathTransform gridToCRS = gridGeometry.getGridToCRS();
-            final GridEnvelope extent = gridGeometry.getExtent();
+            final GridExtent extent = gridGeometry.getExtent();
             final int dim = extent.getDimension();
 
             //TODO analyse CRS to find lat/lon dimension position in extent envelope.

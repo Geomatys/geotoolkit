@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.internal.feature;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Polygon;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.feature.AbstractAssociation;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -37,7 +35,9 @@ import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -48,12 +48,12 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.internal.feature.TypeConventions;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.geotoolkit.coverage.grid.GridGeometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociation;
@@ -72,7 +72,6 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -267,14 +266,14 @@ public final class CoverageFeature {
                     try {
                         final GridCoverageReader reader = res.acquireReader();
                         final GridGeometry gg = reader.getGridGeometry(res.getImageIndex());
-                        final GridEnvelope extent = gg.getExtent();
+                        final GridExtent extent = gg.getExtent();
                         final int dimension = extent.getDimension();
-                        int size = extent.getSpan(0);
+                        long size = extent.getSize(0);
                         for (int i=1;i<dimension;i++) {
-                            size *= extent.getSpan(i);
+                            size *= extent.getSize(i);
                         }
                         res.recycle(reader);
-                        count = size;
+                        count = (int) size;
                     } catch (DataStoreException ex) {
                         throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
                     }
@@ -312,13 +311,13 @@ public final class CoverageFeature {
         final FeatureType recordType = role.getValueType();
 
         final GridGeometry gg = coverage.getGridGeometry();
-        final GridEnvelope extent = gg.getExtent();
+        final GridExtent extent = gg.getExtent();
         final int dimension = extent.getDimension();
-        int size = extent.getSpan(0);
+        long size = extent.getSize(0);
         for (int i=1;i<dimension;i++) {
-            size *= extent.getSpan(i);
+            size *= extent.getSize(i);
         }
-        final int count = size;
+        final int count = (int) size;
 
         final Collection<Feature> pixels = new AbstractCollection<Feature>() {
             @Override

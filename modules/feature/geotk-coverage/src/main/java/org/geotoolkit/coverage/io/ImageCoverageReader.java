@@ -563,7 +563,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      * The default implementation performs the following:
      * <p>
      * <ul>
-     *   <li>The {@link GridEnvelope} is determined from the
+     *   <li>The {@link GridExtent} is determined from the
      *       {@linkplain SpatialImageReader#getGridEnvelope(int) spatial image reader}
      *       if possible, or from the image {@linkplain ImageReader#getWidth(int) width}
      *       and {@linkplain ImageReader#getHeight(int) height} otherwise.</li>

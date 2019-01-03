@@ -23,19 +23,17 @@ import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
-
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.DirectPosition2D;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.coverage.straighten.StraightenDescriptor;
-
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.AbstractProcess;
+import org.geotoolkit.processing.coverage.straighten.StraightenDescriptor;
 import org.opengis.coverage.Coverage;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
@@ -132,13 +130,13 @@ public class ReduceToDomainProcess extends AbstractProcess {
 
         //resample coverage, we want it to be 'straight', no rotation or different axe scale.
         final GridGeometry2D gridgeom = candidate.getGridGeometry();
-        final GridEnvelope2D gridenv = gridgeom.getExtent2D();
+        final GridExtent gridenv = gridgeom.getExtent2D();
         final MathTransform gridToCRS = gridgeom.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
 
         try{
             final double[] coords = new double[2 * 2];
-            coords[0] = gridenv.getMinX();      coords[1] = gridenv.getMinY();
-            coords[2] = gridenv.getMaxX();      coords[3] = gridenv.getMaxY();
+            coords[0] = gridenv.getLow(0);      coords[1] = gridenv.getLow(1);
+            coords[2] = gridenv.getHigh(0);     coords[3] = gridenv.getHigh(1);
             gridToCRS.transform(coords, 0, coords, 0, 2);
             double minX = coords[0];
             double maxX = coords[2];
@@ -146,8 +144,8 @@ public class ReduceToDomainProcess extends AbstractProcess {
             double maxY = coords[1];
             double spanX = maxX-minX;
             double spanY = maxY-minY;
-            double scaleX = spanX / gridenv.getWidth();
-            double scaleY = spanY / gridenv.getHeight();
+            double scaleX = spanX / gridenv.getSize(0);
+            double scaleY = spanY / gridenv.getSize(1);
             double scale = Math.min(scaleX, scaleY);
 
             final double axiXMinValue;

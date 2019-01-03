@@ -20,28 +20,24 @@ package org.geotoolkit.coverage;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
-
-import org.opengis.coverage.grid.GridEnvelope;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.PixelTranslation;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.Utilities;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.util.FactoryException;
-
-import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
-import org.apache.sis.referencing.CommonCRS;
-
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.apache.sis.coverage.grid.PixelTranslation;
-
-import org.apache.sis.util.Utilities;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * Test GridCoverageStack class.
@@ -70,7 +66,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
         assertNotNull(gridGeom);
 
         //check grid envelope
-        final GridEnvelope gridEnv = gridGeom.getExtent();
+        final GridExtent gridEnv = gridGeom.getExtent();
         assertNotNull(gridEnv);
         assertEquals(3,gridEnv.getDimension());
         assertEquals(0, gridEnv.getLow(0));
@@ -121,7 +117,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
         assertNotNull(gridGeom);
 
         //check grid envelope
-        final GridEnvelope gridEnv = gridGeom.getExtent();
+        final GridExtent gridEnv = gridGeom.getExtent();
         assertNotNull(gridEnv);
         assertEquals(4,gridEnv.getDimension());
         assertEquals(0, gridEnv.getLow(0));

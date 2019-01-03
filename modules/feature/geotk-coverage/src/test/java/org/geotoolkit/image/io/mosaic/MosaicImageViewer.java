@@ -29,14 +29,13 @@ import javax.swing.event.ChangeListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
 import java.util.Collection;
 import javax.imageio.ImageIO;
 
 import org.geotoolkit.util.Exceptions;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.GraphicsUtilities;
 import static java.lang.StrictMath.*;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
 
 
 /**
@@ -132,7 +131,7 @@ public final strictfp class MosaicImageViewer extends JPanel implements ChangeLi
      */
     protected MosaicImageViewer(final TileManager tiles) throws IOException {
         this.tiles = tiles;
-        bounds = tiles.getGridGeometry().getExtent();
+        bounds = GridGeometryIterator.toRectangle(tiles.getGridGeometry().getExtent());
         view   = new Rectangle(bounds);
         reader = new MosaicImageReader();
         reader.setInput(tiles);

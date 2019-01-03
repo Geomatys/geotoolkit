@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.processing.coverage.compose;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -27,6 +25,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.List;
 import java.util.Map.Entry;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -43,7 +42,6 @@ import static org.apache.sis.referencing.operation.transform.MathTransforms.conc
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.GeometricUtilities.WrapResolution;
@@ -53,8 +51,10 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.GridFactory;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.referencing.ReferencingUtilities;
 import static org.geotoolkit.processing.coverage.compose.ComposeDescriptor.*;
+import org.geotoolkit.referencing.ReferencingUtilities;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
@@ -163,8 +163,8 @@ public class Compose extends AbstractProcess {
         } catch (TransformException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-        final int outWidth = outGridGeom.getExtent().getSpan(0);
-        final int outHeight = outGridGeom.getExtent().getSpan(1);
+        final int outWidth = Math.toIntExact(outGridGeom.getExtent().getSize(0));
+        final int outHeight = Math.toIntExact(outGridGeom.getExtent().getSize(1));
 
         //convert and convert all geometries to output crs as a bit mask
         final WritableRaster[] clips = new WritableRaster[nbCoverage];
@@ -313,7 +313,7 @@ public class Compose extends AbstractProcess {
         );
         final LinearTransform gridToGeo = MathTransforms.linear(matrix);
 
-        final GridEnvelope2D extent = new GridEnvelope2D(0, 0, outWidth, outHeight);
+        final GridExtent extent = new GridExtent(null, new long[]{0,0}, new long[]{outWidth, outHeight}, false);
         return new GridGeometry2D(extent, PixelOrientation.UPPER_LEFT, gridToGeo, crs, null);
     }
 

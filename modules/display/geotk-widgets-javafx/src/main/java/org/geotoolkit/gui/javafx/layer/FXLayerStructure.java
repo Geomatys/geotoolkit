@@ -27,6 +27,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javax.measure.Unit;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.io.wkt.Colors;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
@@ -45,7 +46,6 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.resources.Vocabulary;
 import org.opengis.coverage.SampleDimensionType;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.content.AttributeGroup;
@@ -140,7 +140,7 @@ public class FXLayerStructure extends FXPropertyPane {
 
                 final CoordinateReferenceSystem crs = gridgeom.getCoordinateReferenceSystem();
                 final Envelope geoEnv = gridgeom.getEnvelope();
-                final GridEnvelope gridEnv = gridgeom.getExtent();
+                final GridExtent gridEnv = gridgeom.getExtent();
                 final MathTransform gridToCrs = gridgeom.getGridToCRS();
 
                 final double[] coordGrid = new double[gridEnv.getDimension()];

@@ -20,6 +20,7 @@ import java.awt.Image;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -36,7 +37,6 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -224,7 +224,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
         loadRefData(index);
         if(isGridGeometryOverriden()){
             if(refGridGeom instanceof GridGeometry2D){
-                final GridEnvelope extent = refGridGeom.getExtent();
+                final GridExtent extent = refGridGeom.getExtent();
                 return new GridGeometry2D(
                         extent,
                         overridePixelInCell!=null ? overridePixelInCell : PixelInCell.CELL_CENTER,
@@ -232,7 +232,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
                         overrideCRS!=null ? overrideCRS : refGridGeom.getCoordinateReferenceSystem(),
                         null);
             }else{
-                final GridEnvelope extent = refGridGeom.getExtent();
+                final GridExtent extent = refGridGeom.getExtent();
                 return new GeneralGridGeometry(
                         extent,
                         overridePixelInCell!=null ? overridePixelInCell : PixelInCell.CELL_CENTER,

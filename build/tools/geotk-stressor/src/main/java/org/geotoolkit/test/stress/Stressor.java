@@ -21,17 +21,15 @@ import java.awt.image.RenderedImage;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.logging.LogRecord;
-
-import org.opengis.coverage.grid.GridEnvelope;
-
+import java.util.logging.Logger;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.math.Statistics;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.util.logging.LogProducer;
 import org.apache.sis.util.logging.PerformanceLevel;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.util.logging.LogProducer;
 
 
 /**
@@ -185,13 +183,13 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
                 /*
                  * Format the grid envelope and the geographic bounding box.
                  */
-                final GridEnvelope envelope = geometry.getExtent();
+                final GridExtent envelope = geometry.getExtent();
                 final int dimension = envelope.getDimension();
                 for (int i=0; i<dimension; i++) {
                     if (i != 0) {
                         buffer.append(" \u00D7"); // Multiplication symbol
                     }
-                    insertSpaces(buffer.length(), buffer.append(envelope.getSpan(i)), GRID_SIZE_FIELD_LENGTH);
+                    insertSpaces(buffer.length(), buffer.append(envelope.getSize(i)), GRID_SIZE_FIELD_LENGTH);
                 }
                 buffer.append("), scale=").append((float) mean(getScale(geometry)));
                 buffer.append(", ").append(geometry.getEnvelope());
