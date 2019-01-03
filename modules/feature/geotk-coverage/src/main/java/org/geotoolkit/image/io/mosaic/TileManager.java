@@ -35,11 +35,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.referencing.j2d.ImmutableAffineTransform;
 import org.apache.sis.util.collection.FrequencySortedSet;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;
 import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
@@ -79,7 +82,7 @@ public abstract class TileManager implements Serializable {
      * mapping pixel {@linkplain PixelOrientation#UPPER_LEFT upper left} corner.
      * This is provided by {@link TileManagerFactory} when this information is available.
      */
-    private ImageGeometry geometry;
+    private GridGeometry geometry;
 
     /**
      * All image providers used as an unmodifiable set. Computed when first needed.
@@ -147,7 +150,7 @@ public abstract class TileManager implements Serializable {
      * @throws IllegalStateException if a transform was already assigned to at least one tile.
      * @throws IOException If an I/O operation was required and failed.
      */
-    public synchronized void setGridToCRS(final AffineTransform gridToCRS)
+    public synchronized void setGridToCRS(final AffineTransform2D gridToCRS)
             throws IllegalStateException, IOException
     {
         if (geometry != null) {
@@ -156,7 +159,13 @@ public abstract class TileManager implements Serializable {
         final Map<Dimension,AffineTransform> shared = new HashMap<>();
         AffineTransform at = new ImmutableAffineTransform(gridToCRS);
         shared.put(new Dimension(1,1), at);
-        geometry = new ImageGeometry(getRegion(), at);
+
+        final Rectangle region = getRegion();
+        geometry = new GridGeometry2D(new GridExtent(null,
+                                new long[]{region.x, region.y},
+                                new long[]{region.width+region.x, region.height+region.y},
+                                false),
+                new AffineTransform2D(at), null);
         for (final Tile tile : getInternalTiles()) {
             final Dimension subsampling = tile.getSubsampling();
             at = shared.get(subsampling);
@@ -175,7 +184,7 @@ public abstract class TileManager implements Serializable {
      * usage only, which will set the geometry computed by {@link RegionCalculator}. The given
      * geometry shall maps pixel upper left corner.
      */
-    synchronized void setGridGeometry(final ImageGeometry geometry) {
+    synchronized void setGridGeometry(final GridGeometry geometry) {
         if (this.geometry != null) {
             throw new IllegalStateException();
         }
@@ -198,7 +207,7 @@ public abstract class TileManager implements Serializable {
      *
      * @see Tile#getGridToCRS()
      */
-    public synchronized ImageGeometry getGridGeometry() throws IOException {
+    public synchronized GridGeometry getGridGeometry() throws IOException {
         return geometry;
     }
 
@@ -311,12 +320,12 @@ public abstract class TileManager implements Serializable {
             }
         }
         final Tile tile;
-        final ImageGeometry geometry = getGridGeometry();
+        final GridGeometry geometry = getGridGeometry();
         if (geometry == null) {
             tile = new LargeTile(provider, input, imageIndex, getRegion());
         } else {
             tile = new LargeTile(provider, input, imageIndex, GridGeometryIterator.toRectangle(geometry.getExtent()));
-            tile.setGridToCRS(geometry.getGridToCRS());
+            tile.setGridToCRS((AffineTransform2D) geometry.getGridToCRS());
         }
         return tile;
     }

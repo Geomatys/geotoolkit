@@ -22,33 +22,32 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.logging.Level;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
 import javax.imageio.ImageReader;
-import javax.imageio.ImageWriter;
 import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
-
-import org.apache.sis.math.MathFunctions;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.math.Fraction;
-import org.geotoolkit.lang.Builder;
-import org.geotoolkit.util.logging.LogProducer;
-import org.apache.sis.util.logging.PerformanceLevel;
+import org.apache.sis.math.MathFunctions;
+import static org.apache.sis.util.ArgumentChecks.ensureBetween;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.apache.sis.util.logging.PerformanceLevel;
+import org.geotoolkit.coverage.grid.GridGeometry;
+import org.geotoolkit.image.internal.ImageUtilities;
+import org.geotoolkit.image.io.plugin.WorldFileImageReader;
+import org.geotoolkit.image.palette.IIOListeners;
+import org.geotoolkit.internal.image.io.Formats;
+import org.geotoolkit.lang.Builder;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.coverage.grid.ImageGeometry;
-import org.geotoolkit.image.io.plugin.WorldFileImageReader;
-import org.geotoolkit.internal.image.io.Formats;
-
-import static org.apache.sis.util.ArgumentChecks.ensureBetween;
-import org.geotoolkit.image.internal.ImageUtilities;
-import org.geotoolkit.image.palette.IIOListeners;
+import org.geotoolkit.util.logging.LogProducer;
 
 
 /**
@@ -120,7 +119,7 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
      *
      * @since 3.16
      */
-    private AffineTransform gridToCRS;
+    private AffineTransform2D gridToCRS;
 
     /**
      * The mosaic bounding box in pixel coordinates. The initial value is {@code null}.
@@ -358,7 +357,7 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
      * @since 3.16
      */
     public synchronized void setGridToCRS(final AffineTransform tr) {
-        gridToCRS = (tr != null) ? new AffineTransform(tr) : null;
+        gridToCRS = (tr != null) ? new AffineTransform2D(tr) : null;
     }
 
     /**
@@ -693,9 +692,9 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
          * specified in the input tiles, inherit that transform.
          */
         if (gridToCRS == null && input != null) {
-            final ImageGeometry geometry = input.getGridGeometry();
+            final GridGeometry geometry = input.getGridGeometry();
             if (geometry != null) {
-                gridToCRS = geometry.getGridToCRS();
+                gridToCRS = (AffineTransform2D) geometry.getGridToCRS();
             }
         }
         if (gridToCRS != null) {
@@ -1112,9 +1111,9 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
         if (tiles.getGridGeometry() == null) {
             if (writer.inputTiles != null) {
                 for (final TileManager candidate : writer.inputTiles) {
-                    final ImageGeometry geometry = candidate.getGridGeometry();
+                    final GridGeometry geometry = candidate.getGridGeometry();
                     if (geometry != null) {
-                        tiles.setGridToCRS(geometry.getGridToCRS());
+                        tiles.setGridToCRS((AffineTransform2D) geometry.getGridToCRS());
                         break;
                     }
                 }

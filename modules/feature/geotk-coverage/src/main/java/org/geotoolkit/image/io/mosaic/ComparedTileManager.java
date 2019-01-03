@@ -17,19 +17,18 @@
  */
 package org.geotoolkit.image.io.mosaic;
 
-import java.util.Set;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
+import java.util.Set;
 import javax.imageio.spi.ImageReaderSpi;
-
-import org.geotoolkit.coverage.grid.ImageGeometry;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.geotoolkit.coverage.grid.GridGeometry;
 
 
 /**
@@ -130,7 +129,7 @@ final class ComparedTileManager extends TileManager {
      * {@inheritDoc}
      */
     @Override
-    public void setGridToCRS(AffineTransform gridToCRS) throws IllegalStateException, IOException {
+    public void setGridToCRS(AffineTransform2D gridToCRS) throws IllegalStateException, IOException {
         first .setGridToCRS(gridToCRS);
         second.setGridToCRS(gridToCRS);
     }
@@ -139,7 +138,7 @@ final class ComparedTileManager extends TileManager {
      * {@inheritDoc}
      */
     @Override
-    void setGridGeometry(final ImageGeometry geometry) {
+    void setGridGeometry(final GridGeometry geometry) {
         first .setGridGeometry(geometry);
         second.setGridGeometry(geometry);
     }
@@ -148,7 +147,7 @@ final class ComparedTileManager extends TileManager {
      * {@inheritDoc}
      */
     @Override
-    public ImageGeometry getGridGeometry() throws IOException {
+    public GridGeometry getGridGeometry() throws IOException {
         return assertEqual(first.getGridGeometry(), second.getGridGeometry());
     }
 

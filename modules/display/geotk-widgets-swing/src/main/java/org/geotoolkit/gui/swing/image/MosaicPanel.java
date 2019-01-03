@@ -29,14 +29,14 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 
-import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.gui.swing.ZoomPane;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.mosaic.TileManager;
-import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
+import org.geotoolkit.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
 
 
 /**
@@ -186,7 +186,7 @@ final class MosaicPanel extends ZoomPane {
                 if (manager == null) {
                     continue;
                 }
-                final ImageGeometry geometry;
+                final GridGeometry geometry;
                 try {
                     geometry = manager.getGridGeometry();
                 } catch (IOException e) {
@@ -195,7 +195,7 @@ final class MosaicPanel extends ZoomPane {
                     continue; // We will just ignore that tile manager.
                 }
                 if (geometry != null) {
-                    final Rectangle2D region = geometry.getEnvelope(PixelOrientation.UPPER_LEFT);
+                    final Rectangle2D region = GridGeometryIterator.toRectangle(geometry.getExtent());
                     if (area == null) {
                         area = region;
                     } else {

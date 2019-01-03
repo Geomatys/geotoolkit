@@ -25,19 +25,16 @@ import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.io.*; // We use a lot of those imports.
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.FileImageInputStream;
 import java.lang.reflect.Field;
 
 import org.geotoolkit.coverage.io.CoverageIO;
@@ -54,7 +51,6 @@ import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.image.io.ImageReaderAdapter;
 import org.geotoolkit.image.io.ImageWriterAdapter;
-import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 
 import static java.lang.Math.min;
 import static java.lang.Math.max;

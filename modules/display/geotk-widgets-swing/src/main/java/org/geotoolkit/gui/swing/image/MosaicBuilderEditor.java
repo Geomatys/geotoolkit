@@ -47,8 +47,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import org.apache.sis.util.ArraysExt;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.gui.swing.ListTableModel;
 import static org.geotoolkit.gui.swing.image.MosaicChooser.OUTPUT_DIRECTORY;
@@ -349,7 +349,7 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
     private static Rectangle bounds(final TileManager... managers) throws IOException {
         Rectangle bounds = null;
         for (final TileManager manager : managers) {
-            final ImageGeometry geom = manager.getGridGeometry();
+            final GridGeometry geom = manager.getGridGeometry();
             if (geom != null) {
                 final Rectangle candidate = GridGeometryIterator.toRectangle(geom.getExtent());
                 if (bounds == null) {

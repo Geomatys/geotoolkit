@@ -17,21 +17,22 @@
  */
 package org.geotoolkit.image.io.mosaic;
 
-import java.util.*;
-import java.awt.Point;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.ImageGeometry;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import java.util.*;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
-
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 
 /**
@@ -133,8 +134,8 @@ final class RegionCalculator {
      * is in the same state as if {@link #clear} has been invoked. This is because current
      * implementation modify its workspace directly for efficiency.
      */
-    public Map<ImageGeometry,Tile[]> tiles() {
-        final Map<ImageGeometry,Tile[]> results = new HashMap<>(4);
+    public Map<GridGeometry,Tile[]> tiles() {
+        final Map<GridGeometry,Tile[]> results = new HashMap<>(4);
         for (final Map<AffineTransform,Dimension> tilesAT : computePyramidLevels(tiles.keySet())) {
             /*
              * Picks an affine transform to be used as the reference one. We need the finest one.
@@ -257,8 +258,13 @@ final class RegionCalculator {
                     reference.translate(-dx, -dy);
                     groupBounds.translate(dx, dy);
                 }
-                final ImageGeometry geometry = new ImageGeometry(groupBounds, reference);
-                reference = geometry.getGridToCRS(); // Fetches the immutable instance.
+                final GridGeometry geometry = new GridGeometry2D(
+                        new GridExtent(null,
+                                new long[]{groupBounds.x, groupBounds.y},
+                                new long[]{groupBounds.width+groupBounds.x, groupBounds.height+groupBounds.y},
+                                false),
+                        new AffineTransform2D(reference), null);
+                reference = (AffineTransform2D) geometry.getGridToCRS(); // Fetches the immutable instance.
                 final Map<Dimension,TranslatedTransform> pool = new HashMap<>();
                 for (final Tile tile : tilesArray) {
                     final Dimension subsampling = tile.getSubsampling();

@@ -38,6 +38,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.io.TableAppender;
 import static org.apache.sis.util.ArgumentChecks.ensureValidIndex;
 import org.apache.sis.util.Classes;
@@ -45,8 +46,8 @@ import org.apache.sis.util.Disposable;
 import org.apache.sis.util.collection.FrequencySortedSet;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.logging.PerformanceLevel;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
@@ -906,11 +907,11 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
         }
         if (md == null) {
             final TileManager manager = getTileManager(imageIndex);
-            final ImageGeometry geom = manager.getGridGeometry();
+            final GridGeometry geom = manager.getGridGeometry();
             if (geom != null) {
                 final SpatialMetadata sp = new SpatialMetadata(false, this, null);
                 final GridDomainAccessor accessor = new GridDomainAccessor(sp);
-                accessor.setAll(geom.getGridToCRS(), GridGeometryIterator.toRectangle(geom.getExtent()), null, PixelOrientation.UPPER_LEFT);
+                accessor.setAll((AffineTransform2D) geom.getGridToCRS(), GridGeometryIterator.toRectangle(geom.getExtent()), null, PixelOrientation.UPPER_LEFT);
                 /*
                  * Add the CRS, if the tile manager has been created from a directory or a file
                  * is associated with a PRJ file.
