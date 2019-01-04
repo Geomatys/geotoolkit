@@ -42,10 +42,10 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -146,11 +146,11 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
                     if (env == null) {
                         //we use the first coverage crs as default
                         env = new GeneralEnvelope(envelope);
-                        resolution = gg.getResolution().clone();
+                        resolution = gg.getResolution(true).clone();
                     } else {
                         env.add(Envelopes.transform(envelope, env.getCoordinateReferenceSystem()));
                         //convert resolution to global crs
-                        double[] res = ReferencingUtilities.convertResolution(envelope, gg.getResolution(), env.getCoordinateReferenceSystem(), new double[2]);
+                        double[] res = ReferencingUtilities.convertResolution(envelope, gg.getResolution(true), env.getCoordinateReferenceSystem(), new double[2]);
                         if(res[0]<resolution[0]) resolution[0] = res[0];
                         if(res[1]<resolution[1]) resolution[1] = res[1];
                     }
@@ -159,11 +159,11 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
                     if (env==null) {
                         //we use the first coverage crs as default
                         env = new GeneralEnvelope(envelope);
-                        resolution = gg.getResolution().clone();
+                        resolution = gg.getResolution(true).clone();
                     } else {
                         env.add(Envelopes.transform(envelope, env.getCoordinateReferenceSystem()));
                         //convert resolution to global crs
-                        double[] res = ReferencingUtilities.convertResolution(envelope, gg.getResolution(), env.getCoordinateReferenceSystem(), new double[2]);
+                        double[] res = ReferencingUtilities.convertResolution(envelope, gg.getResolution(true), env.getCoordinateReferenceSystem(), new double[2]);
                         if(res[0]<resolution[0]) resolution[0] = res[0];
                         if(res[1]<resolution[1]) resolution[1] = res[1];
                     }

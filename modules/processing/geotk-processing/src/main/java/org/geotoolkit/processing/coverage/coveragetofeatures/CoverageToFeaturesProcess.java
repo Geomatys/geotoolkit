@@ -21,8 +21,8 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
@@ -188,8 +188,9 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
         double[] infoBand = new double[nbBand];
         coverage.evaluate(point2d, infoBand);
 
-        double gapX = gridGeom.getResolution()[0];
-        double gapY = gridGeom.getResolution()[1];
+        final double[] resolution = gridGeom.getResolution(true);
+        double gapX = resolution[0];
+        double gapY = resolution[1];
 
         //compute the cell geometry from transform coordinates
         Coordinate[] coord;

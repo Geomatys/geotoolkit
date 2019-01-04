@@ -22,6 +22,7 @@ import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.Parameters;
@@ -29,8 +30,8 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -219,7 +220,10 @@ public class ComputeVolumeProcess extends AbstractProcess {
                 if (destCS instanceof CartesianCS) {
 
                     //-- resolution
-                    final double[] resolution = gg2d.getResolution();
+                    double[] resolution = null;
+                    try {
+                        resolution = gg2d.getResolution(false);
+                    } catch (IncompleteGridGeometryException ex){}
 
                     final int dimDestCS                  = destCS.getDimension();
                     final int destDim                    = destCS.getDimension();

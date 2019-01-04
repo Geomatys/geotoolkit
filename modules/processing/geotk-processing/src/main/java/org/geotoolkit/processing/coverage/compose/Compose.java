@@ -26,6 +26,7 @@ import java.awt.image.WritableRaster;
 import java.util.List;
 import java.util.Map.Entry;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -292,7 +293,11 @@ public class Compose extends AbstractProcess {
 
         for (GridCoverage2D coverage : coverages) {
             final GridGeometry2D gridGeometry = coverage.getGridGeometry();
-            final double[] res = gridGeometry.getResolution();
+            double[] res = null;
+            try {
+                res = gridGeometry.getResolution(true);
+            } catch (IncompleteGridGeometryException ex) {
+            }
             final Envelope2D covEnv = gridGeometry.getEnvelope2D();
 
             final double[] cdtRes = ReferencingUtilities.convertResolution(covEnv, res, crs);

@@ -25,20 +25,20 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer;
 import org.geotoolkit.gui.javafx.style.FXStyleElementController;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
-import org.opengis.geometry.Envelope;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.opengis.geometry.Envelope;
 
 /**
  *
@@ -128,7 +128,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                     //read a very low resolution image to extract bands from it
                     final GridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
                     final Envelope env = gg.getEnvelope();
-                    final double[] res = gg.getResolution();
+                    final double[] res = gg.getResolution(false);
                     for(int i=0;i<res.length;i++){
                         res[i] = env.getSpan(i);
                     }
@@ -178,7 +178,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                     //read a very low resolution image to extract bands from it
                     final GridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
                     final Envelope env = gg.getEnvelope();
-                    final double[] res = gg.getResolution();
+                    final double[] res = gg.getResolution(false);
                     for(int i=0;i<res.length;i++){
                         res[i] = env.getSpan(i);
                     }

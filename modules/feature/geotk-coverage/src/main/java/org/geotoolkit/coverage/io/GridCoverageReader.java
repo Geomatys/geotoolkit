@@ -33,6 +33,7 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.measure.IncommensurableException;
 import javax.measure.Quantity;
 import javax.measure.Unit;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.Units;
@@ -464,8 +465,15 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
                      */
                     final GridGeometry gg = getGridGeometry(i);
                     if (computeResolutions && gg.isDefined(GridGeometry.CRS)) {
+
+                        double[] res = null;
+                        try {
+                            res = gg.getResolution(false);
+                        } catch (IncompleteGridGeometryException ex) {
+                        }
+
                         final Quantity<?> m = CRSUtilities.getHorizontalResolution(
-                                gg.getCoordinateReferenceSystem(), gg.getResolution());
+                                gg.getCoordinateReferenceSystem(), res);
                         if (m != null) {
                             double  measureValue = m.getValue().doubleValue();
                             final Unit<?>   unit = m.getUnit();

@@ -32,7 +32,6 @@ import org.apache.sis.math.MathFunctions;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 import org.geotoolkit.resources.Errors;
 import org.opengis.geometry.Envelope;
@@ -549,23 +548,25 @@ public class GridGeometry implements Serializable {
      * the length of the returned array is the number of CRS dimensions.
      * Resolutions that are not constant factors are set to {@link Double#NaN}.
      *
-     * <p>The default implementation invokes {@link #resolution(boolean)} when first needed,
+     * <p>The default implementation invokes {@link #getResolution(boolean)} when first needed,
      * then cache the value.</p>
      *
      * @return The grid resolution, or {@code null} if unknown.
      *
      * @since 3.10
      */
-    public synchronized double[] getResolution() {
+    public synchronized double[] getResolution(final boolean allowEstimates) {
         double[] resolution = this.resolution;
         if (resolution == null) try {
-            resolution = resolution(false);
+            resolution = getResolutionInternal(false);
             this.resolution = resolution;
         } catch (TransformException e) {
-            // TODO: we should let the exception propagate instead. We don't do that now for compatibility reasons.
-            Logging.recoverableException(AbstractGridCoverage.LOGGER, GridGeometry.class, "getResolution", e);
+            throw new IncompleteGridGeometryException();
         }
-        return (resolution != null) ? resolution.clone() : null;
+        if(resolution == null) {
+            throw new IncompleteGridGeometryException();
+        }
+        return resolution.clone();
     }
 
     /**
@@ -584,7 +585,7 @@ public class GridGeometry implements Serializable {
      * @return the grid resolution, or {@code null} if unknown.
      * @throws TransformException if an error occurred while computing the grid resolution.
      */
-    public double[] resolution(final boolean allowEstimates) throws TransformException {
+    private double[] getResolutionInternal(final boolean allowEstimates) throws TransformException {
         /*
          * If the gridToCRS transform is linear, we do not even need to check the grid extent;
          * it can be null. Otherwise (if the transform is non-linear) the extent is mandatory.

@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
@@ -38,8 +39,8 @@ import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -486,8 +487,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
             GeneralEnvelope readEnv = paramEnvelope;
             if (!interpolation.equals(InterpolationCase.NEIGHBOR)) {
-                final double[] gridResolution = gridGeometry.getResolution();
-                if (gridResolution != null) {
+                try {
+                    final double[] gridResolution = gridGeometry.getResolution(false);
                     /* Coverage has a finite resolution, we can expand the envelope using pixel sizes.
                      * This information may not be present on all coverages, like WMS and processed images.
                      *
@@ -513,8 +514,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                     geoExpand = pixelExpand * sourceResolution;
                     readEnv.setRange(yAxis, paramEnvelope.getMinimum(yAxis) - geoExpand, paramEnvelope.getMaximum(yAxis) + geoExpand);
                     readEnv.intersect(gridGeometry.getEnvelope()); // If expanded envelope is bigger than overall envelope, we just take overall envelope.
-
-                }
+                } catch (IncompleteGridGeometryException ex){}
             }
 
             ////////////////////////////////////////////////////////////////////////

@@ -20,11 +20,8 @@ import java.awt.Point;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.opengis.util.GenericName;
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.content.DefaultAttributeGroup;
@@ -33,10 +30,14 @@ import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
+import org.geotoolkit.coverage.io.CoverageReader;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.CoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -45,10 +46,10 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.storage.AbstractFeatureSet;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -124,15 +125,16 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
                     subsetResolution[geom2d.gridDimensionX] = geom2d.getEnvelope().getSpan(geom2d.axisDimensionX) / DEFAULT_SUBSET_SIZE;
                     subsetResolution[geom2d.gridDimensionY] = geom2d.getEnvelope().getSpan(geom2d.axisDimensionY) / DEFAULT_SUBSET_SIZE;
 
-                    final double[] nativeResolution = geom2d.getResolution();
-                    if (nativeResolution != null) {
+                    try {
+                        final double[] nativeResolution = geom2d.getResolution(false);
                         if (Double.isFinite(nativeResolution[geom2d.gridDimensionX])) {
                             subsetResolution[geom2d.gridDimensionX] = Math.max(subsetResolution[geom2d.gridDimensionX], nativeResolution[geom2d.gridDimensionX]);
                         }
                         if (Double.isFinite(nativeResolution[geom2d.gridDimensionY])) {
                             subsetResolution[geom2d.gridDimensionY] = Math.max(subsetResolution[geom2d.gridDimensionY], nativeResolution[geom2d.gridDimensionY]);
                         }
-                    }
+                    } catch(IncompleteGridGeometryException ex) {}
+
 
                     final GridCoverageReadParam param = new GridCoverageReadParam();
                     param.setResolution(subsetResolution);

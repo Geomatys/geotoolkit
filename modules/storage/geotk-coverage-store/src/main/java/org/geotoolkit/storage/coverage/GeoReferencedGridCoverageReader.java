@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -31,8 +32,8 @@ import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.GridCoverageStack;
-import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -173,19 +174,20 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
         final int[] subsampling = new int[dim];
         Arrays.fill(subsampling, 1);
         if (coverageRes != null) {
-            final double[] sourceResolution = gridGeom.getResolution();
-            /* If we cannot determine a source resolution, guessing subsampling
-             * will be very complicated, so we simplify workflow to return full
-             * resolution image.
-             * TODO : find an alternative method
-             */
-            if (sourceResolution != null) {
+            try {
+                final double[] sourceResolution = gridGeom.getResolution(false);
+                /* If we cannot determine a source resolution, guessing subsampling
+                 * will be very complicated, so we simplify workflow to return full
+                 * resolution image.
+                 * TODO : find an alternative method
+                 */
                 for (int i = 0; i < sourceResolution.length; i++) {
                     if (Double.isFinite(sourceResolution[i]) && sourceResolution[i] != 0) {
                         final double ratio = coverageRes[i] / sourceResolution[i];
                         subsampling[i] = Math.max(1, (int) ratio);
                     }
                 }
+            } catch (IncompleteGridGeometryException ex) {
             }
         }
 
@@ -342,19 +344,20 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
         final int[] subsampling = new int[dim];
         Arrays.fill(subsampling, 1);
         if (coverageRes != null) {
-            final double[] sourceResolution = gridGeom.getResolution();
-            /* If we cannot determine a source resolution, guessing subsampling
-             * will be very complicated, so we simplify workflow to return full
-             * resolution image.
-             * TODO : find an alternative method
-             */
-            if (sourceResolution != null) {
+            try {
+                final double[] sourceResolution = gridGeom.getResolution(false);
+                /* If we cannot determine a source resolution, guessing subsampling
+                 * will be very complicated, so we simplify workflow to return full
+                 * resolution image.
+                 * TODO : find an alternative method
+                 */
                 for (int i = 0; i < sourceResolution.length; i++) {
                     if (Double.isFinite(sourceResolution[i]) && sourceResolution[i] != 0) {
                         final double ratio = coverageRes[i] / sourceResolution[i];
                         subsampling[i] = Math.max(1, (int) ratio);
                     }
                 }
+            } catch (IncompleteGridGeometryException ex) {
             }
         }
 

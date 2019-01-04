@@ -22,6 +22,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -41,7 +42,6 @@ import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.geotoolkit.coverage.grid.GridGeometry;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -510,8 +510,10 @@ public final class Pyramids extends Static {
                 upperLeft.setOrdinate(d, v);
             }
 
-            final double[] allRes = slice.getResolution();
-            if (allRes == null) {
+            final double[] allRes;
+            try {
+                allRes = slice.getResolution(true);
+            } catch (IncompleteGridGeometryException ex) {
                 throw new DataStoreException("Mosaic resolution could not be computed");
             }
             if (Double.isNaN(allRes[horizontalOrdinate])) {
