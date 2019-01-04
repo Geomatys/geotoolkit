@@ -34,10 +34,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridCoverageStack;
@@ -135,13 +137,13 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         if (pyramid == null) {
             //-- empty pyramid set
-            return new GridGeometry(null, null, (Envelope)null);
+            return new GridGeometry(new GridExtent(null, ArraysExt.EMPTY_LONG, ArraysExt.EMPTY_LONG, true), PixelInCell.CELL_CENTER, null, null);
         }
 
         final List<Mosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
         if (mosaics.isEmpty()) {
             //no mosaics
-            return new GridGeometry(null, null, (Envelope)null);
+            return new GridGeometry(new GridExtent(null, ArraysExt.EMPTY_LONG, ArraysExt.EMPTY_LONG, true), PixelInCell.CELL_CENTER, null, null);
         }
 
         Collections.sort(mosaics, CoverageFinder.SCALE_COMPARATOR);

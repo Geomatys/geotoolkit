@@ -20,7 +20,7 @@ package org.geotoolkit.test.stress;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import static org.geotoolkit.referencing.crs.PredefinedCRS.CARTESIAN_2D;

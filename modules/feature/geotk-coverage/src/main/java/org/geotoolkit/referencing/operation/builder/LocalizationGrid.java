@@ -24,7 +24,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import java.util.Arrays;
 
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;

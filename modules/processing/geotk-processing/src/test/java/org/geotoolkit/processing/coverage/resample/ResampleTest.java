@@ -24,7 +24,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -71,7 +71,7 @@ public class ResampleTest extends AbstractProcessTest {
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
-        env.setRange(1, -90, +90);
+        env.setRange(1, -80, +80);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(matrix);
         gcb.setEnvelope(env);
@@ -98,7 +98,6 @@ public class ResampleTest extends AbstractProcessTest {
         GridCoverage2D toTest = (GridCoverage2D)res;
 
         assertEquals(toTest.getCoordinateReferenceSystem(), CRS.forCode("EPSG:3395"));
-
     }
 
     @Test
@@ -126,7 +125,7 @@ public class ResampleTest extends AbstractProcessTest {
         MathTransform gridToCrsOut = new AffineTransform2D(0.1,0,0,-0.1,20,60);
         gridToCrsOut = PixelTranslation.translate(gridToCrsOut, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
         final GridExtent gridenv = new GridExtent(null, new long[]{0, 0}, new long[]{60, 60}, false);
-        final GridGeometry outGridGeom = new GridGeometry(gridenv, gridToCrsOut, crs);
+        final GridGeometry outGridGeom = new GridGeometry(gridenv, PixelInCell.CELL_CENTER, gridToCrsOut, crs);
         GridCoverage2D result = new ResampleProcess(coverage, crs, new GridGeometry2D(outGridGeom), InterpolationCase.NEIGHBOR, new double[]{Double.NaN}).executeNow();
 
         RenderedImage res = result.getRenderedImage();
@@ -166,7 +165,7 @@ public class ResampleTest extends AbstractProcessTest {
         MathTransform gridToCrsOut = new AffineTransform2D(0.1,0,0,-0.1,19,61);
         gridToCrsOut = PixelTranslation.translate(gridToCrsOut, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
         final GridExtent gridenv = new GridExtent(null, new long[]{0,0}, new long[]{60, 60}, false);
-        final GridGeometry outGridGeom = new GridGeometry(gridenv, gridToCrsOut, crs);
+        final GridGeometry outGridGeom = new GridGeometry(gridenv, PixelInCell.CELL_CENTER, gridToCrsOut, crs);
 
         GridCoverage2D result = new ResampleProcess(coverage, crs, new GridGeometry2D(outGridGeom), InterpolationCase.NEIGHBOR, new double[]{Double.NaN}).executeNow();
 

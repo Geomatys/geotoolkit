@@ -29,7 +29,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;

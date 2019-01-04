@@ -19,7 +19,7 @@ package org.geotoolkit.processing.coverage.mathcalc;
 
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;

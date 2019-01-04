@@ -29,7 +29,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -100,7 +101,7 @@ public class WMSCoverageReader extends GridCoverageReader{
     public GridGeometry getGridGeometry(final int index) throws CoverageStoreException, CancellationException {
         final WMSCoverageResource ref = getInput();
         //we only know the envelope,
-        final GridGeometry gridGeom = new GridGeometry(null, null, ref.getBounds());
+        final GridGeometry gridGeom = new GridGeometry(PixelInCell.CELL_CENTER, null, ref.getBounds(), GridRoundingMode.ENCLOSING);
         return gridGeom;
     }
 

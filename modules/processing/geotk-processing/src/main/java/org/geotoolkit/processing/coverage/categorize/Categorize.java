@@ -15,7 +15,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.CoverageStack;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -131,7 +132,7 @@ public class Categorize extends AbstractProcess {
                     env = tmpEnv;
                 }
 
-                readGeom = new GridGeometry(PixelInCell.CELL_CORNER, gridToCRS, env);
+                readGeom = new GridGeometry(PixelInCell.CELL_CORNER, gridToCRS, env, GridRoundingMode.ENCLOSING);
             }
 
             final GridGeometryIterator it = new GridGeometryIterator(readGeom);

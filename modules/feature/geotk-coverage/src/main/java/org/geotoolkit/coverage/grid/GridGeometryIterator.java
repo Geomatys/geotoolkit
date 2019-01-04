@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.metadata.AxisDirections;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
@@ -116,7 +117,7 @@ public class GridGeometryIterator implements Iterator<GridGeometry> {
         if (fixed < 3) {
             generator = grid -> new GridGeometry2D(grid, source.getGridToCRS(PixelInCell.CELL_CENTER), crs);
         } else {
-            generator = grid -> new GridGeometry(grid, source.getGridToCRS(PixelInCell.CELL_CENTER), crs);
+            generator = grid -> new GridGeometry(grid, PixelInCell.CELL_CENTER, source.getGridToCRS(PixelInCell.CELL_CENTER), crs);
         }
     }
 

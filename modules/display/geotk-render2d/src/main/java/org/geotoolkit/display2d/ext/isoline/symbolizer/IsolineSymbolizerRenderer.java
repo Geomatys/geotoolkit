@@ -23,9 +23,8 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -54,6 +53,7 @@ import org.geotoolkit.style.function.Jenks;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.style.ColorMap;
 import org.opengis.style.LineSymbolizer;
@@ -138,7 +138,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                 final GridExtent gridEnv = new GridExtent(null, new long[]{rec.x,rec.y}, new long[]{rec.width,rec.height}, false);
                 final CoordinateReferenceSystem crs = renderingContext.getObjectiveCRS2D();
                 final MathTransform gridToCRS = renderingContext.getDisplayToObjective();
-                final GridGeometry inGridGeom = new GridGeometry(gridEnv, gridToCRS, crs);
+                final GridGeometry inGridGeom = new GridGeometry(gridEnv, PixelInCell.CELL_CENTER, gridToCRS, crs);
 
                 final Parameters resampleParams = Parameters.castOrWrap(ResampleDescriptor.INPUT_DESC.createValue());
                 resampleParams.getOrCreate(IN_COVERAGE).setValue(inCoverage);

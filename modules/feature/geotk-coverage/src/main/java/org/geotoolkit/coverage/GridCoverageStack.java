@@ -25,7 +25,7 @@ import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

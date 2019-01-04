@@ -23,7 +23,7 @@ import javax.media.jai.Interpolation;
 import org.opengis.geometry.Envelope;
 import org.opengis.coverage.Coverage;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.opengis.coverage.processing.Operation;
 import org.opengis.coverage.processing.OperationNotFoundException;
 import org.opengis.parameter.InvalidParameterNameException;

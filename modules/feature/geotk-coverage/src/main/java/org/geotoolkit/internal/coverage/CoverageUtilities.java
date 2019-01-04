@@ -36,7 +36,6 @@ import javax.media.jai.InterpolationBilinear;
 import javax.media.jai.InterpolationNearest;
 import javax.media.jai.PropertySource;
 import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -50,7 +49,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.factory.Hints;
@@ -554,58 +553,28 @@ public final class CoverageUtilities extends Static {
     }
 
     /**
-     * Converts a GeoAPI grid geometry (to be deprecated later) into an Apache SIS grid geometry.
+     * Shift lower coordinates to zero; this is what BufferedImage wants.
      */
-    public static org.apache.sis.coverage.grid.GridGeometry toSIS(final GridGeometry g) throws TransformException {
-        if (g == null) return null;
-        GridExtent                extent    = null;
-        Envelope                  envelope  = null;
-        MathTransform             gridToCRS = null;
-        CoordinateReferenceSystem crs       = null;
-        if (g instanceof GridGeometry) {
-            final GridGeometry gg = (GridGeometry) g;
-            if (gg.isDefined(GridGeometry.EXTENT))      extent    = gg.getExtent();
-            if (gg.isDefined(GridGeometry.ENVELOPE))    envelope  = gg.getEnvelope();
-            if (gg.isDefined(GridGeometry.GRID_TO_CRS)) gridToCRS = gg.getGridToCRS(PixelInCell.CELL_CENTER);
-            if (gg.isDefined(GridGeometry.CRS))         crs       = gg.getCoordinateReferenceSystem();
-        } else {
-            extent    = g.getExtent();
-            gridToCRS = g.getGridToCRS(PixelInCell.CELL_CENTER);
-        }
-        if (envelope != null && extent == null) {
-            return new org.apache.sis.coverage.grid.GridGeometry(PixelInCell.CELL_CENTER, gridToCRS, envelope, GridRoundingMode.NEAREST);
-        } else {
-            return new org.apache.sis.coverage.grid.GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCRS, crs);
-        }
-    }
-
-    /**
-     * Converts a SIS grid geometry into a Geotk grid geometry.
-     */
-    public static GridGeometry toGeotk(final org.apache.sis.coverage.grid.GridGeometry gg, final boolean forceLowerToZero) {
-        if (gg == null) return null;
-        GridExtent                extent    = null;
-        Envelope                  envelope  = null;
-        MathTransform             gridToCRS = null;
-        CoordinateReferenceSystem crs       = null;
-        if (gg.isDefined(org.apache.sis.coverage.grid.GridGeometry.EXTENT))      extent    = gg.getExtent();
-        if (gg.isDefined(org.apache.sis.coverage.grid.GridGeometry.ENVELOPE))    envelope  = gg.getEnvelope();
-        if (gg.isDefined(org.apache.sis.coverage.grid.GridGeometry.GRID_TO_CRS)) gridToCRS = gg.getGridToCRS(PixelInCell.CELL_CENTER);
-        if (gg.isDefined(org.apache.sis.coverage.grid.GridGeometry.CRS))         crs       = gg.getCoordinateReferenceSystem();
-        if (envelope != null && extent == null) {
-            return new GridGeometry(PixelInCell.CELL_CENTER, gridToCRS, envelope);
-        }
-        /*
-         * Shift lower coordinates to zero; this is what BufferedImage wants.
-         */
-        if (forceLowerToZero) {
-            final double[] vector = new double[extent.getDimension()];
-            for (int i=0; i<vector.length; i++) {
-                vector[i] = extent.getLow(i);
+    public static GridGeometry forceLowerToZero(final GridGeometry gg) {
+        if (gg != null && gg.isDefined(GridGeometry.EXTENT)) {
+            final GridExtent extent = gg.getExtent();
+            if (!extent.startsWithZero()) {
+                CoordinateReferenceSystem crs = null;
+                if (gg.isDefined(GridGeometry.CRS)) crs = gg.getCoordinateReferenceSystem();
+                final int dimension = extent.getDimension();
+                final double[] vector = new double[dimension];
+                final long[] high = new long[dimension];
+                for (int i=0; i<dimension; i++) {
+                    final long low = extent.getLow(i);
+                    high[i] = extent.getHigh(i) - low;
+                    vector[i] = low;
+                }
+                MathTransform gridToCRS = gg.getGridToCRS(PixelInCell.CELL_CENTER);
+                gridToCRS = MathTransforms.concatenate(MathTransforms.translation(vector), gridToCRS);
+                return new GridGeometry(new GridExtent(null, null, high, true), PixelInCell.CELL_CENTER, gridToCRS, crs);
             }
-            gridToCRS = MathTransforms.concatenate(MathTransforms.translation(vector), gridToCRS);
         }
-        return new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCRS, crs);
+        return gg;
     }
 
     /**
@@ -671,7 +640,7 @@ public final class CoverageUtilities extends Static {
     public static GridCoverage2D toGeotk(final org.apache.sis.coverage.grid.GridCoverage coverage) {
         if (coverage == null) return null;
         GridCoverageBuilder builder = new GridCoverageBuilder();
-        builder.setGridGeometry(toGeotk(coverage.getGridGeometry(), true));
+        builder.setGridGeometry(forceLowerToZero(coverage.getGridGeometry()));
         builder.setSampleDimensions(toGeotk(coverage.getSampleDimensions()));
         builder.setRenderedImage(coverage.render(null));        // TODO: choose a slice point.
         return builder.getGridCoverage2D();

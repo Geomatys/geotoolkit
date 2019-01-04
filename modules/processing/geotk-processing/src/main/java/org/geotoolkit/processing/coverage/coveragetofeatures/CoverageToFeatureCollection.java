@@ -17,7 +17,7 @@
 package org.geotoolkit.processing.coverage.coveragetofeatures;
 
 import org.apache.sis.coverage.grid.GridExtent;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;

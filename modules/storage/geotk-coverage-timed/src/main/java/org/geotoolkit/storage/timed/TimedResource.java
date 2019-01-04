@@ -20,7 +20,6 @@ import java.awt.Image;
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Spliterators;
@@ -35,7 +34,8 @@ import org.apache.sis.referencing.operation.matrix.Matrix3;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -133,12 +133,7 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
         }
 
         if (treeEnv.isEmpty() || treeEnv.isAllNaN() || index.isEmpty()) {
-            final long[] low = new long[treeEnv.getDimension()];
-            final long[] high = new long[low.length];
-            Arrays.fill(low, 0);
-            Arrays.fill(high, 1);
-
-            return new GridGeometry(new GridExtent(null, low, high, false), treeEnv);
+            return new GridGeometry(null, null, treeEnv, GridRoundingMode.NEAREST);
         }
 
         if (grid != null && treeEnv.equals(grid.getEnvelope())) {

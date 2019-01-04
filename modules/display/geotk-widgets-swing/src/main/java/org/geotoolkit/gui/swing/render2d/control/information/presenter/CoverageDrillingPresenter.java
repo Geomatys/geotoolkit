@@ -20,7 +20,7 @@ package org.geotoolkit.gui.swing.render2d.control.information.presenter;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.storage.coverage.CoverageExtractor;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;

@@ -22,7 +22,7 @@ import java.awt.Color;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.apache.sis.io.wkt.Colors;
 import org.apache.sis.io.wkt.Convention;

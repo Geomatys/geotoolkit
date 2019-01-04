@@ -42,7 +42,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.processing.AbstractCoverageProcessor;
@@ -129,8 +129,6 @@ public class ResampleProcess extends AbstractProcess {
      */
     @Override
     protected void execute() throws ProcessException {
-
-
         final GridCoverage2D source = inputParameters.getValue(IN_COVERAGE);
         final double[] background = inputParameters.getValue(IN_BACKGROUND);
         InterpolationCase interpolation = inputParameters.getValue(IN_INTERPOLATION_TYPE);
@@ -155,7 +153,6 @@ public class ResampleProcess extends AbstractProcess {
             throw new CannotReprojectException(Errors.format(
                     Errors.Keys.CantReprojectCoverage_1, source.getName()), exception);
         }
-
         outputParameters.getOrCreate(OUT_COVERAGE).setValue(target);
     }
 

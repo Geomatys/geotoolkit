@@ -33,7 +33,7 @@ import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -399,6 +399,6 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
         final MathTransform ssToGrid = MathTransforms.linear(matrix);
         final MathTransform ssToCrs = MathTransforms.concatenate(ssToGrid, gridGeom.getGridToCRS(PixelInCell.CELL_CENTER));
         final GridExtent extent = new GridExtent(null, new long[outExtent.length], outExtent, false);
-        return new GridGeometry(extent, ssToCrs, gridGeom.getCoordinateReferenceSystem());
+        return new GridGeometry(extent, PixelInCell.CELL_CENTER, ssToCrs, gridGeom.getCoordinateReferenceSystem());
     }
 }

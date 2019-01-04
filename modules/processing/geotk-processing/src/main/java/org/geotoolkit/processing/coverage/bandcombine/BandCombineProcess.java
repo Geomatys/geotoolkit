@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.sis.parameter.Parameters;
 
 import org.opengis.coverage.Coverage;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.parameter.ParameterValueGroup;
 

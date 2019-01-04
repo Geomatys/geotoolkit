@@ -37,7 +37,7 @@ import static org.opengis.annotation.Obligation.*;
 import static org.opengis.annotation.Specification.*;
 import org.opengis.annotation.UML;
 import org.opengis.coverage.Coverage;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 
 
 /**

@@ -95,7 +95,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.opengis.coverage.Coverage;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;

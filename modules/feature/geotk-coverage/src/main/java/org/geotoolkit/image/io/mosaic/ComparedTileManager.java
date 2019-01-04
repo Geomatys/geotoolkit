@@ -28,7 +28,7 @@ import java.util.Objects;
 import java.util.Set;
 import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 
 
 /**

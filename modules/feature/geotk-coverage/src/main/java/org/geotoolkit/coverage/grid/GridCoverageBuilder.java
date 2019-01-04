@@ -46,6 +46,7 @@ import javax.measure.Unit;
 import javax.media.jai.*;
 import javax.media.jai.operator.ImageFunctionDescriptor;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelopes;

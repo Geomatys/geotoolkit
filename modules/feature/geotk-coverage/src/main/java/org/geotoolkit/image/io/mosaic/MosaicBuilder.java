@@ -39,7 +39,7 @@ import org.apache.sis.math.MathFunctions;
 import static org.apache.sis.util.ArgumentChecks.ensureBetween;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.PerformanceLevel;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.palette.IIOListeners;

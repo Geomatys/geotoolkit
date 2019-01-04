@@ -24,7 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -80,7 +81,7 @@ public class PortrayalCoverageReader extends GridCoverageReader {
         //we only know the envelope
         final GridGeometry gridGeom;
         try {
-            gridGeom = new GridGeometry(null, null, scene.getContext().getBounds());
+            gridGeom = new GridGeometry(null, null, scene.getContext().getBounds(), GridRoundingMode.ENCLOSING);
         } catch (IOException ex) {
             throw new CoverageStoreException(ex.getMessage(),ex);
         }

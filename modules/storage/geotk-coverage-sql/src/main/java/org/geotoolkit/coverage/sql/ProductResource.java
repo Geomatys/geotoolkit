@@ -85,8 +85,8 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
         }
 
         @Override
-        public org.geotoolkit.coverage.grid.GridGeometry getGridGeometry(int index) throws CoverageStoreException {
-            return CoverageUtilities.toGeotk(product.getGridGeometry(), true);
+        public GridGeometry getGridGeometry(int index) throws CoverageStoreException {
+            return CoverageUtilities.forceLowerToZero(product.getGridGeometry());
         }
 
         @Override
@@ -98,9 +98,9 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
         protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, GridCoverageReadParam param)
                 throws CoverageStoreException, TransformException, CancellationException {
             try {
-                final org.geotoolkit.coverage.grid.GridGeometry gg = getGridGeometry(0);
-                final org.geotoolkit.coverage.grid.GridGeometry subg = GeoReferencedGridCoverageReader.getGridGeometry(gg, areaLower, areaUpper, subsampling);
-                return CoverageUtilities.toGeotk(product.read(CoverageUtilities.toSIS(subg), null));
+                final GridGeometry gg = getGridGeometry(0);
+                final GridGeometry subg = GeoReferencedGridCoverageReader.getGridGeometry(gg, areaLower, areaUpper, subsampling);
+                return CoverageUtilities.toGeotk(product.read(subg, null));
             } catch (DataStoreException ex) {
                 throw new CoverageStoreException(ex.getMessage(), ex);
             }

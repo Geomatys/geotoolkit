@@ -134,7 +134,7 @@ final class NewRaster {
             } else if (resource instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
                 r = new NewRaster(driver, file, index);
                 GridCoverageReader reader = ((org.geotoolkit.storage.coverage.GridCoverageResource) resource).acquireReader();
-                r.geometry = CoverageUtilities.toSIS(reader.getGridGeometry(r.imageIndex));
+                r.geometry = reader.getGridGeometry(r.imageIndex);
                 r.bands = CoverageUtilities.toSIS(reader.getSampleDimensions(r.imageIndex));
                 reader.dispose();
             } else {

@@ -28,7 +28,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -44,7 +44,6 @@ import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Resource to a coverage in the coverage store.
@@ -174,10 +173,7 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
     default org.apache.sis.coverage.grid.GridGeometry getGridGeometry() throws DataStoreException {
         final GridCoverageReader reader = acquireReader();
         try {
-            final GridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
-            return org.geotoolkit.internal.coverage.CoverageUtilities.toSIS(gridGeom);
-        } catch (TransformException ex) {
-            throw new DataStoreException(ex.getMessage(), ex);
+            return reader.getGridGeometry(getImageIndex());
         } finally {
             recycle(reader);
         }

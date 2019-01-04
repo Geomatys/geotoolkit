@@ -25,7 +25,7 @@ import javax.imageio.ImageIO;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.image.io.mosaic.MosaicReadWriteTest;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileTest;
