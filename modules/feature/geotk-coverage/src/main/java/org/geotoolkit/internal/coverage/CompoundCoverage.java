@@ -21,15 +21,17 @@ import java.awt.image.renderable.RenderContext;
 import java.awt.image.renderable.RenderableImage;
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.coverage.AbstractCoverage;
+import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.opengis.coverage.CannotEvaluateException;
-import org.opengis.coverage.Coverage;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.geometry.DirectPosition;
@@ -76,11 +78,14 @@ public class CompoundCoverage extends AbstractCoverage {
         this.coverage1 = coverage1;
         this.coverage2 = coverage2;
 
-        nbSamples1 = coverage1.getNumSampleDimensions();
-        final int nbSamples2 = coverage2.getNumSampleDimensions();
+        final List<? extends SampleDimension> samples1 = coverage1.getSampleDimensions();
+        final List<? extends SampleDimension> samples2 = coverage2.getSampleDimensions();
+
+        nbSamples1 = samples1.size();
+        final int nbSamples2 = samples2.size();
         sampleDimensions = new SampleDimension[nbSamples1 + nbSamples2];
-        for (int i=0; i<nbSamples1; i++) sampleDimensions[i] = coverage1.getSampleDimension(i);
-        for (int i=nbSamples1,k=0; i<sampleDimensions.length; i++,k++) sampleDimensions[i] = coverage2.getSampleDimension(k);
+        for (int i=0; i<nbSamples1; i++) sampleDimensions[i] = samples1.get(i);
+        for (int i=nbSamples1,k=0; i<sampleDimensions.length; i++,k++) sampleDimensions[i] = samples2.get(k);
     }
 
     @Override
@@ -169,13 +174,8 @@ public class CompoundCoverage extends AbstractCoverage {
     }
 
     @Override
-    public int getNumSampleDimensions() {
-        return sampleDimensions.length;
-    }
-
-    @Override
-    public SampleDimension getSampleDimension(int index) throws IndexOutOfBoundsException {
-        return sampleDimensions[index];
+    public List<? extends SampleDimension> getSampleDimensions() {
+        return UnmodifiableArrayList.wrap(sampleDimensions);
     }
 
     @Override

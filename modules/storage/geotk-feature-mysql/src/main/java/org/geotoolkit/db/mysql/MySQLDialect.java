@@ -65,7 +65,7 @@ import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
 import org.geotoolkit.filter.capability.DefaultTemporalCapabilities;
 import org.geotoolkit.filter.capability.DefaultTemporalOperators;
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 

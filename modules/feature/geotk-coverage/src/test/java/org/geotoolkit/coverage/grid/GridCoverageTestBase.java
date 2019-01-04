@@ -17,29 +17,26 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.util.Random;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.geotoolkit.factory.Hints;
+import java.util.Random;
+import org.apache.sis.geometry.GeneralEnvelope;
+import static org.apache.sis.measure.Units.*;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.test.image.ImageTestBase;
-import org.apache.sis.referencing.CommonCRS;
-
-import static org.apache.sis.measure.Units.*;
 import static org.junit.Assert.*;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -161,8 +158,8 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
         assertSame(coverage,      geophysics.view(ViewType.PACKED));
         assertSame(geophysics,    geophysics.view(ViewType.GEOPHYSICS));
         assertFalse( coverage.equals(geophysics));
-        assertFalse( coverage.getSampleDimension(0).getSampleToGeophysics().isIdentity());
-        assertTrue(geophysics.getSampleDimension(0).getSampleToGeophysics().isIdentity());
+        assertFalse( coverage.getSampleDimensions().get(0).getSampleToGeophysics().isIdentity());
+        assertTrue(geophysics.getSampleDimensions().get(0).getSampleToGeophysics().isIdentity());
         /*
          * Compares data.
          */

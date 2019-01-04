@@ -17,61 +17,59 @@
  */
 package org.geotoolkit.coverage.io;
 
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Iterator;
-import java.util.Collections;
-import java.util.logging.Level;
-import java.util.concurrent.CancellationException;
-import java.awt.Rectangle;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
-import javax.imageio.ImageIO;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.CancellationException;
+import java.util.logging.Level;
 import javax.imageio.IIOImage;
-import javax.imageio.ImageWriter;
-import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageIO;
 import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
-import javax.media.jai.JAI;
-import javax.media.jai.Warp;
-import javax.media.jai.PlanarImage;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.Interpolation;
+import javax.media.jai.JAI;
+import javax.media.jai.PlanarImage;
 import javax.media.jai.RenderedImageAdapter;
+import javax.media.jai.Warp;
 import javax.media.jai.operator.WarpDescriptor;
 import org.apache.sis.io.TableAppender;
-
-import org.opengis.util.InternationalString;
-import org.opengis.geometry.Envelope;
-import org.opengis.coverage.SampleDimension;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.coverage.InterpolationMethod;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.util.ArraysExt;
-
-import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.image.io.MultidimensionalImageStore;
-import org.geotoolkit.image.io.mosaic.MosaicImageWriter;
-import org.geotoolkit.image.io.metadata.ReferencingBuilder;
-import org.geotoolkit.referencing.operation.transform.WarpFactory;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.coverage.AbstractCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.image.io.MultidimensionalImageStore;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
+import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.image.io.metadata.ReferencingBuilder;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+import org.geotoolkit.image.io.mosaic.MosaicImageWriter;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.referencing.operation.transform.WarpFactory;
 import org.geotoolkit.resources.Errors;
-
-import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+import org.opengis.coverage.InterpolationMethod;
+import org.opengis.coverage.SampleDimension;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -778,10 +776,10 @@ public class ImageCoverageWriter extends GridCoverageWriter {
 
                 }
             }
-            final int n = coverage.getNumSampleDimensions();
+            final List<? extends SampleDimension> dims = coverage.getSampleDimensions();
             final DimensionAccessor accessor = new DimensionAccessor(imageMetadata);
-            for (int i=0; i<n; i++) {
-                final SampleDimension band = coverage.getSampleDimension(i);
+            for (int i=0,n=dims.size(); i<n; i++) {
+                final SampleDimension band = dims.get(i);
                 accessor.selectChild(accessor.appendChild());
                 if (band != null) {
                     accessor.setDimension(band, locale);

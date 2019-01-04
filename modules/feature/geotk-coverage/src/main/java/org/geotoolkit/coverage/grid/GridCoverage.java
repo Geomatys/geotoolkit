@@ -33,11 +33,11 @@ package org.geotoolkit.coverage.grid;
 
 import java.awt.image.RenderedImage;
 import java.util.List;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.Coverage;
 import static org.opengis.annotation.Obligation.*;
 import static org.opengis.annotation.Specification.*;
 import org.opengis.annotation.UML;
-import org.opengis.coverage.Coverage;
-import org.apache.sis.coverage.grid.GridGeometry;
 
 
 /**

@@ -21,7 +21,12 @@ import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
+import java.util.List;
 import java.util.logging.Level;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -35,14 +40,10 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.apache.sis.measure.MeasurementRange;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
-import org.apache.sis.util.Utilities;
 
 /**
  * Renderer for DimRange symbolizer.
@@ -117,9 +118,9 @@ public class DimRangeRenderer extends AbstractCoverageSymbolizerRenderer<CachedD
 
         MeasurementRange dimRange = symbol.getSource().getDimRange();
         if (dimRange != null) {
-            final GridSampleDimension[] samples = dataCoverage.getSampleDimensions();
-            if (samples != null && samples.length == 1 && samples[0] != null) {
-                if (samples[0].getSampleToGeophysics() != null) {
+            final List<GridSampleDimension> samples = dataCoverage.getSampleDimensions();
+            if (samples != null && samples.size() == 1 && samples.get(0) != null) {
+                if (samples.get(0).getSampleToGeophysics() != null) {
                     final ColorMap colorMap = new ColorMap();
                     colorMap.setGeophysicsRange(ColorMap.ANY_QUANTITATIVE_CATEGORY, dimRange);
                     try {

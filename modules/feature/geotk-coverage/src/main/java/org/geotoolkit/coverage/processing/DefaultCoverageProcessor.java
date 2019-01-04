@@ -32,7 +32,7 @@ import javax.media.jai.JAI;
 import javax.media.jai.TileCache;
 import javax.media.jai.Interpolation;
 
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.opengis.coverage.processing.Operation;
 import org.opengis.coverage.processing.OperationNotFoundException;
 import org.opengis.parameter.ParameterValue;

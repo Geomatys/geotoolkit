@@ -22,7 +22,7 @@ import java.lang.reflect.Array;
 import javax.media.jai.Interpolation;
 import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 

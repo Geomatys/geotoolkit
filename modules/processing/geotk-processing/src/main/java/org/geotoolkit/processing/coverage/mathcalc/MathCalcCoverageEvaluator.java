@@ -20,16 +20,15 @@ package org.geotoolkit.processing.coverage.mathcalc;
 import java.util.AbstractMap;
 import java.util.Set;
 import java.util.logging.Level;
-
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
-import org.opengis.coverage.Coverage;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.Coverage;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.FactoryException;
-import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -80,7 +79,7 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
             this.coverages = coverages;
             this.mapping = mapping;
             this.coord = coord;
-            this.sampleBuffer = new double[coverages[0].getNumSampleDimensions()];
+            this.sampleBuffer = new double[coverages[0].getSampleDimensions().size()];
             baseToCoverage = new MathTransform[coverages.length];
             coverageCoord = new GeneralDirectPosition[coverages.length];
             for(int i=0;i<coverages.length;i++){

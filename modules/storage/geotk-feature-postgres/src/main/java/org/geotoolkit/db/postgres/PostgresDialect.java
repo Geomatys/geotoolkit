@@ -78,7 +78,7 @@ import org.geotoolkit.filter.capability.DefaultTemporalOperators;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.ObjectConverters;
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsBetween;
 import org.opengis.filter.PropertyIsEqualTo;

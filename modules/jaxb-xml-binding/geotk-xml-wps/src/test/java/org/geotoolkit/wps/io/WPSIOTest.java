@@ -25,7 +25,7 @@ import org.geotoolkit.wps.xml.v200.Reference;
 import org.geotoolkit.wps.xml.v200.Data;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 
 /**
  *

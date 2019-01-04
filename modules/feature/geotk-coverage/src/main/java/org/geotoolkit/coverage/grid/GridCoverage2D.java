@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.DataBuffer;
@@ -30,6 +30,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -42,6 +43,7 @@ import javax.media.jai.RenderedImageAdapter;
 import javax.media.jai.remote.SerializableRenderedImage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -382,32 +384,13 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
     }
 
     /**
-     * Returns the number of bands in the grid coverage.
-     */
-    @Override
-    public int getNumSampleDimensions() {
-        return sampleDimensions.length;
-    }
-
-    /**
-     * Retrieve sample dimension information for the coverage.
-     * For a grid coverage, a sample dimension is a band. The sample dimension information
-     * include such things as description, data type of the value (bit, byte, integer...),
-     * the no data values, minimum and maximum values and a color table if one is associated
-     * with the dimension. A coverage must have at least one sample dimension.
-     */
-    @Override
-    public GridSampleDimension getSampleDimension(final int index) {
-        return sampleDimensions[index];
-    }
-
-    /**
      * Returns all sample dimensions for this grid coverage.
      *
      * @return All sample dimensions.
      */
-    public GridSampleDimension[] getSampleDimensions() {
-        return sampleDimensions.clone();
+    @Override
+    public List<GridSampleDimension> getSampleDimensions() {
+        return UnmodifiableArrayList.wrap(sampleDimensions);
     }
 
     /**
@@ -762,7 +745,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
         if (title == null || (title = title.trim()).isEmpty()) {
             final StringBuilder buffer = new StringBuilder(String.valueOf(getName()));
             final int visibleBandIndex = CoverageUtilities.getVisibleBand(this);
-            final SampleDimension visibleBand = getSampleDimension(visibleBandIndex);
+            final SampleDimension visibleBand = getSampleDimensions().get(visibleBandIndex);
             final Unit<?> unit = visibleBand.getUnits();
             buffer.append(" - ").append(String.valueOf(visibleBand.getDescription()));
             if (unit != null) {

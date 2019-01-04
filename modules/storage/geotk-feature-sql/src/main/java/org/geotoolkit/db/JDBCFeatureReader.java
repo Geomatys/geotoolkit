@@ -34,7 +34,7 @@ import org.geotoolkit.factory.Hints;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.geometry.jts.JTS;
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;

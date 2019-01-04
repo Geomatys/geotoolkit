@@ -173,11 +173,11 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             }
 
             //check if the reader honored the band request
-            final GridSampleDimension[] readDimensions = dataCoverage.getSampleDimensions();
+            final List<GridSampleDimension> readDimensions = dataCoverage.getSampleDimensions();
             final List<GridSampleDimension> sampleDimensions = covref.acquireReader().getSampleDimensions(covref.getImageIndex());
-            boolean bandReadHonored = (readDimensions.length == toRead.length);
+            boolean bandReadHonored = (readDimensions.size() == toRead.length);
             for (int i=0;bandReadHonored && i<toRead.length;i++) {
-                bandReadHonored &= Objects.equals(readDimensions[i].getDescription(), (sampleDimensions == null) ? null : sampleDimensions.get(toRead[i]).getDescription());
+                bandReadHonored &= Objects.equals(readDimensions.get(i).getDescription(), (sampleDimensions == null) ? null : sampleDimensions.get(toRead[i]).getDescription());
             }
 
             //swap new band indexes

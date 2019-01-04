@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.TreeMap;
 import java.util.Objects;
 
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.opengis.coverage.processing.Operation;
 import org.opengis.parameter.ParameterValueGroup;
 

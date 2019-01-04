@@ -29,7 +29,7 @@ import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.opengis.metadata.Metadata;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.coverage.GridCoverageResource;

@@ -20,26 +20,22 @@ import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.sis.parameter.Parameters;
-
-import org.opengis.coverage.Coverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.parameter.ParameterValueGroup;
-
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
-
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.storage.coverage.CoverageUtilities;
-
+import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.bandcombine.BandCombineDescriptor.*;
+import org.geotoolkit.storage.coverage.CoverageUtilities;
+import org.opengis.coverage.Coverage;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Combine each first slice of each {@link Coverage} given in parameters into one
@@ -102,7 +98,7 @@ public class BandCombineProcess extends AbstractProcess {
             for (int i = 0; i < inputCoverage.length; i++) {
                 final GridCoverage2D gridCoverage2D = CoverageUtilities.firstSlice((GridCoverage) inputCoverage[i]);
 
-                final GridSampleDimension[] gsd = gridCoverage2D.getSampleDimensions();
+                final GridSampleDimension[] gsd = gridCoverage2D.getSampleDimensions().toArray(new GridSampleDimension[0]);
                 if (gsd != null) sds.addAll(Arrays.asList(gsd));
 
                 images[i] = gridCoverage2D.getRenderedImage();

@@ -2211,11 +2211,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         setCoordinateReferenceSystem(coverage.getCoordinateReferenceSystem());
         final GridGeometry gridGeometry = coverage.getGridGeometry();
         setGridGeometry(gridGeometry);
-        final SampleDimension[] bands = new SampleDimension[coverage.getNumSampleDimensions()];
-        for (int i=0; i<bands.length; i++) {
-            bands[i] = coverage.getSampleDimension(i);
-        }
-        setSampleDimensions(bands);
+        setSampleDimensions(coverage.getSampleDimensions());
         final List<GridCoverage> sources = coverage.getSources();
         if (sources != null) {
             setSources(sources.toArray(new GridCoverage[sources.size()]));

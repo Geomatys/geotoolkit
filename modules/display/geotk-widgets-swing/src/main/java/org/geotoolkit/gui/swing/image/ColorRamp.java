@@ -17,31 +17,26 @@
  */
 package org.geotoolkit.gui.swing.image;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
-
 import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 import javax.swing.plaf.ComponentUI;
-
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.awt.image.IndexColorModel;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
-
-import java.util.Map;
-import java.util.Locale;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import org.opengis.coverage.Coverage;
-import org.opengis.coverage.SampleDimension;
-
+import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.display.axis.Graduation;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.opengis.coverage.SampleDimension;
 
 
 /**
@@ -272,7 +267,7 @@ public class ColorRamp extends JComponent {
     public boolean setColors(final Coverage coverage) {
         SampleDimension band = null;
         if (coverage != null) {
-            band = coverage.getSampleDimension(CoverageUtilities.getVisibleBand(band));
+            band = coverage.getSampleDimensions().get(CoverageUtilities.getVisibleBand(band));
         }
         return setColors(band);
     }

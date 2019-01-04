@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.AbstractAssociation;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -32,12 +33,11 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverage;
+import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -52,7 +52,6 @@ import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
-import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -125,10 +124,10 @@ public final class CoverageFeature {
         }
 
         //use existing sample dimensions
-        final int nbDim = coverage.getNumSampleDimensions();
-        if (nbDim>0) {
-            for (int i=0;i<nbDim;i++) {
-                final SampleDimension gsd = coverage.getSampleDimension(i);
+        final List<? extends SampleDimension> dims = coverage.getSampleDimensions();
+        if (dims != null && !dims.isEmpty()) {
+            for (int i=0,n=dims.size();i<n;i++) {
+                final SampleDimension gsd = dims.get(i);
                 final String name = gsd.getDescription() == null ? ""+i : gsd.getDescription().toString();
                 ftb.addAttribute(Double.class).setName(name).setMinimumOccurs(1).setMaximumOccurs(1);
             }

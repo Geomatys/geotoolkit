@@ -42,6 +42,7 @@ import org.apache.sis.util.Utilities;
 import org.apache.sis.util.iso.AbstractInternationalString;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
+import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -57,7 +58,6 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.resources.Errors;
-import org.opengis.coverage.Coverage;
 import org.opengis.coverage.processing.OperationNotFoundException;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -560,7 +560,7 @@ public class OperationJAI extends Operation2D {
          */
         final GridSampleDimension[][] list = new GridSampleDimension[sources.length][];
         for (int i=0; i<list.length; i++) {
-            list[i] = sources[i].getSampleDimensions();
+            list[i] = sources[i].getSampleDimensions().toArray(new GridSampleDimension[0]);
         }
         final GridSampleDimension[] sampleDims = deriveSampleDimension(list, parameters);
         int primarySourceIndex = -1;

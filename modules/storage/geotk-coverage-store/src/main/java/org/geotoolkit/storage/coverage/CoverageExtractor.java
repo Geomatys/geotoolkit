@@ -94,7 +94,7 @@ public class CoverageExtractor extends Static {
 
         if (coverage instanceof GridCoverage2D) {
             final GridCoverage2D coverage2D = (GridCoverage2D) coverage;
-            double[] values = new double[coverage2D.getSampleDimensions().length];
+            double[] values = new double[coverage2D.getSampleDimensions().size()];
 
             //place directPos to a pixel center
             GridGeometry2D gg2D = coverage2D.getGridGeometry();

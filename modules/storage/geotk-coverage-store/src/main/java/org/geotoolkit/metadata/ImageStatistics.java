@@ -21,7 +21,7 @@ import org.geotoolkit.image.internal.SampleType;
 import java.io.Serializable;
 import java.util.*;
 import org.apache.sis.util.ArgumentChecks;
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.opengis.metadata.content.AttributeGroup;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;

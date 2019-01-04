@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.io.Serializable;
 import java.awt.RenderingHints;
 
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.opengis.coverage.processing.Operation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;

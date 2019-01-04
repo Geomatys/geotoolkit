@@ -42,7 +42,7 @@ import org.opengis.referencing.operation.TransformException;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.apache.sis.util.Utilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;

@@ -140,7 +140,7 @@ public class Compose extends AbstractProcess {
             inSizes[i][1] = covImg.getHeight()-1;
             if (outImageReference == null) {
                 outImageReference = coverage.getRenderedImage();
-                sampleDimensions = coverage.getSampleDimensions();
+                sampleDimensions = coverage.getSampleDimensions().toArray(new GridSampleDimension[0]);
             }
 
             includeGeometries[i] = covParam.getValue(INCLUDE_PARAM);

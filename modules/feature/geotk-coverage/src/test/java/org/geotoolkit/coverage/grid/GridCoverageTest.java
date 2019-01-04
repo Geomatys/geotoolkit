@@ -18,9 +18,8 @@
 package org.geotoolkit.coverage.grid;
 
 import java.io.IOException;
-
-import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
+import org.junit.*;
 
 
 /**
@@ -56,8 +55,8 @@ public final strictfp class GridCoverageTest extends GridCoverageTestBase {
         assertSame(coverage,     geophysics.view(ViewType.PACKED));
         assertSame(geophysics,   geophysics.view(ViewType.GEOPHYSICS));
         assertFalse( coverage.equals(geophysics));
-        assertFalse( coverage.getSampleDimension(0).getSampleToGeophysics().isIdentity());
-        assertTrue(geophysics.getSampleDimension(0).getSampleToGeophysics().isIdentity());
+        assertFalse( coverage.getSampleDimensions().get(0).getSampleToGeophysics().isIdentity());
+        assertTrue(geophysics.getSampleDimensions().get(0).getSampleToGeophysics().isIdentity());
     }
 
     /**

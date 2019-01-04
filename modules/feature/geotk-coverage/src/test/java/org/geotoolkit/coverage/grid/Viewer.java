@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.util.Locale;
-import java.io.PrintWriter;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -26,18 +24,17 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
-
-import javax.swing.JPanel;
-import javax.swing.JFrame;
-import javax.swing.JComponent;
+import java.io.PrintWriter;
+import java.util.Locale;
 import javax.media.jai.GraphicsJAI;
 import javax.media.jai.PlanarImage;
-
-import org.opengis.util.InternationalString;
-
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.coverage.GridSampleDimension;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -92,7 +89,7 @@ public strictfp class Viewer extends JPanel {
      */
     public Viewer(final GridCoverage2D coverage) {
         this(coverage.getRenderedImage());
-        categories = coverage.getSampleDimension(0);
+        categories = coverage.getSampleDimensions().get(0);
     }
 
     /**

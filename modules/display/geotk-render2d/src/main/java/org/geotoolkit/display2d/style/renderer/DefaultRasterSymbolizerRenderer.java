@@ -49,6 +49,7 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.Category;
+import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -99,7 +100,6 @@ import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
@@ -180,7 +180,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
             //band select ----------------------------------------------------------
             //works as a JAI operation
-            final int nbDim = dataCoverage.getNumSampleDimensions();
+            final int nbDim = dataCoverage.getSampleDimensions().size();
             if (nbDim > 1) {
                 //we can change sample dimension only if we have more then one available.
                 final ChannelSelection selections = sourceSymbol.getChannelSelection();
@@ -282,10 +282,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      */
     @Override
     protected final GridCoverage2D prepareCoverageToResampling(final GridCoverage2D source, final CachedRasterSymbolizer symbolizer) {
-        final GridSampleDimension[] dims = source.getSampleDimensions();
+        final List<GridSampleDimension> dims = source.getSampleDimensions();
         final ColorMap cMap = symbolizer.getSource().getColorMap();
         if ((cMap != null && cMap.getFunction() != null) ||
-            (dims != null && dims.length != 0 && dims[0].getNoDataValues() != null) ||
+            (dims != null && dims.size() != 0 && dims.get(0).getNoDataValues() != null) ||
             source.getViewTypes().contains(ViewType.GEOPHYSICS)) {
             return source;
 
@@ -466,7 +466,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //cheat on the colormap if we have only one band and no colormap
         recolorCase:
         if ((recolor == null || recolor.getFunction() == null)) {
-            final GridSampleDimension[] sampleDims = coverage.getSampleDimensions();
+            final List<GridSampleDimension> sampleDims = coverage.getSampleDimensions();
             /* First, we check the coverage sample dimensions. We do so, because
              * not all coverages hold enough information into their metadata.
              * Even when it is the case, sometimes the coverage description
@@ -477,7 +477,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
              * building, so the result color map could be unfit to represent data
              * with sparse value distribution.
              */
-            if (sampleDims != null && sampleDims.length == 1)
+            if (sampleDims != null && sampleDims.size() == 1)
 
             //if there is no geophysic, the same coverage is returned
             coverage = hasQuantitativeCategory(coverage) ? coverage.view(ViewType.GEOPHYSICS) : coverage;
@@ -690,8 +690,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             return Integer.parseInt(name);
         }catch(NumberFormatException ex){
             //can be a name
-            for(int i=0,n=coverage.getNumSampleDimensions();i<n;i++){
-                final SampleDimension sampleDim = coverage.getSampleDimension(i);
+            final List<? extends SampleDimension> dims = coverage.getSampleDimensions();
+            for(int i=0,n=dims.size();i<n;i++){
+                final SampleDimension sampleDim = dims.get(i);
                 if (Objects.equals(String.valueOf(sampleDim.getDescription()), n)) {
                     return i;
                 }
@@ -1032,7 +1033,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @see BandSelectProcess
      */
     private static GridCoverage2D selectBand(final GridCoverage2D sourceCoverage, final int[] indices) throws ProcessException {
-        if (sourceCoverage.getNumSampleDimensions() < indices.length) {
+        if (sourceCoverage.getSampleDimensions().size() < indices.length) {
             //not enough bands in the image
             LOGGER.log(Level.WARNING, "Raster Style define more bands than the data");
             return sourceCoverage;

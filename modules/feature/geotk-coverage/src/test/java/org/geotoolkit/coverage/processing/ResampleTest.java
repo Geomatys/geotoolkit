@@ -43,7 +43,7 @@ import org.geotoolkit.referencing.operation.MathTransforms;
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
 import org.junit.*;
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;

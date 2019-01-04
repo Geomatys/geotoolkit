@@ -56,7 +56,7 @@ import org.geotoolkit.wps.converters.outputs.complex.JAXBToComplexConverter;
 import org.geotoolkit.wps.xml.TypeRegistration;
 import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.Reference;
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 

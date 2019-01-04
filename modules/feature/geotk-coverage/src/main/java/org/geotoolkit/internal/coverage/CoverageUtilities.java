@@ -45,6 +45,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.Category;
+import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -56,7 +57,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.OutOfDomainOfValidityException;
-import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -161,10 +161,11 @@ public final class CoverageUtilities extends Static {
          * value from one of "no data" categories. For geophysics images, it is
          * usually NaN. For non-geophysics images, it is usually 0.
          */
-        final int numBands = coverage.getNumSampleDimensions();
+        final List<? extends SampleDimension> dims = coverage.getSampleDimensions();
+        final int numBands = dims.size();
         final double[] background = new double[numBands];
         for (int i=0; i<numBands; i++) {
-            final SampleDimension band = coverage.getSampleDimension(i);
+            final SampleDimension band = dims.get(i);
             if (band instanceof GridSampleDimension) {
                 final NumberRange<?> range = ((GridSampleDimension) band).getBackground().getRange();
                 final double min = range.getMinDouble();
@@ -203,16 +204,12 @@ public final class CoverageUtilities extends Static {
      */
     public static boolean hasRenderingCategories(final GridCoverage gridCoverage) {
         // getting all the SampleDimensions of this coverage, if any exist
-        final int numSampleDimensions = gridCoverage.getNumSampleDimensions();
-        if (numSampleDimensions == 0) {
+        final List<? extends SampleDimension> dims = gridCoverage.getSampleDimensions();
+        if (dims == null || dims.isEmpty()) {
             return false;
         }
-        final SampleDimension[] sampleDimensions = new SampleDimension[numSampleDimensions];
-        for (int i=0; i<numSampleDimensions; i++) {
-            sampleDimensions[i] = gridCoverage.getSampleDimension(i);
-        }
         // do they have any transformation that is not the identity?
-        return hasTransform(sampleDimensions);
+        return hasTransform(dims.toArray(new SampleDimension[dims.size()]));
     }
 
     /**

@@ -178,7 +178,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             /*******************************************/
 
             final GridCoverage2D dem      = (GridCoverage2D) gcReader.read(bandIndex, gcrp);
-            final GridSampleDimension gsd = dem.getSampleDimension(bandIndex);
+            final GridSampleDimension gsd = dem.getSampleDimensions().get(bandIndex);
 
             final MathTransform1D zmt     = gsd.getSampleToGeophysics();
             if (zmt == null) {

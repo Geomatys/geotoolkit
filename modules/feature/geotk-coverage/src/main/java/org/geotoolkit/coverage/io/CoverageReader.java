@@ -20,7 +20,7 @@ package org.geotoolkit.coverage.io;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.opengis.util.GenericName;
 
 /**

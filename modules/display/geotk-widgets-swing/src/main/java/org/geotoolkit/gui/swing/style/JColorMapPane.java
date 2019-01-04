@@ -70,12 +70,12 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.Units;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -582,7 +582,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                     readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
                     readParam.setDeferred(true);
                     final GridCoverage coverage = reader.read(covRef.getImageIndex(), readParam);
-                    int nbBands = coverage.getNumSampleDimensions() - 1;
+                    int nbBands = coverage.getSampleDimensions().size() - 1;
                     guiBand.setModel(new SpinnerNumberModel(0, 0, nbBands, 1));
                 }
                 covRef.recycle(reader);

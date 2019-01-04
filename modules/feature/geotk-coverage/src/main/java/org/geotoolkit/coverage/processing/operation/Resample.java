@@ -42,7 +42,7 @@ import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;

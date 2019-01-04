@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.apache.sis.geometry.GeneralEnvelope;

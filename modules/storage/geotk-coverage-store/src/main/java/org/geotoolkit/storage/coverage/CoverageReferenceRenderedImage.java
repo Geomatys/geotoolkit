@@ -289,7 +289,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
             final GridCoverage2D coverage = getTileCoverage(idx, idy);
             final Envelope coverageEnvelope = coverage.getEnvelope2D();
             final RenderedImage image = coverage.getRenderedImage();
-            final GridSampleDimension[] sampleDimensions = coverage.getSampleDimensions();
+            final GridSampleDimension[] sampleDimensions = coverage.getSampleDimensions().toArray(new GridSampleDimension[0]);
             Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(image), InterpolationCase.NEIGHBOR, 2);
 
             //create an empty tile

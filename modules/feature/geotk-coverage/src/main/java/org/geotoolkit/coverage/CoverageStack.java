@@ -40,6 +40,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.util.ArraysExt;
@@ -60,7 +61,6 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.opengis.coverage.CannotEvaluateException;
-import org.opengis.coverage.Coverage;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.geometry.DirectPosition;
@@ -421,11 +421,7 @@ public class CoverageStack extends AbstractCoverage {
         @Override
         public SampleDimension[] getSampleDimensions() throws IOException {
             final Coverage coverage = getCoverage(null);
-            final SampleDimension[] sd = new SampleDimension[coverage.getNumSampleDimensions()];
-            for (int i=0; i<sd.length; i++) {
-                sd[i] = coverage.getSampleDimension(i);
-            }
-            return sd;
+            return coverage.getSampleDimensions().toArray(new SampleDimension[0]);
         }
 
         /**
@@ -1002,35 +998,9 @@ public class CoverageStack extends AbstractCoverage {
         return envelope.clone();
     }
 
-    /**
-     * Returns the number of sample dimension in this coverage.
-     */
     @Override
-    public int getNumSampleDimensions() {
-//        if (numSampleDimensions != 0) {
-            return numSampleDimensions; //-- allow multidimensionnal Coverage without any sample dimension.
-//        } else {
-//            // TODO: provides a localized message.
-//            throw new IllegalStateException("Sample dimensions are undetermined.");
-//        }
-    }
-
-    /**
-     * Retrieve sample dimension information for the coverage.
-     * For a grid coverage, a sample dimension is a band. The sample dimension information
-     * include such things as description, data type of the value (bit, byte, integer...),
-     * the no data values, minimum and maximum values and a color table if one is associated
-     * with the dimension.
-     */
-    @Override
-    public SampleDimension getSampleDimension(final int index) {
-        //if (sampleDimensions != null) //{
-            return (sampleDimensions != null) ? sampleDimensions[index] : null;
-
-//        } else {
-//            // TODO: provides a localized message.
-//            throw new IllegalStateException("Sample dimensions are undetermined.");
-//    }
+    public List<? extends SampleDimension> getSampleDimensions() {
+        return sampleDimensions == null ? Collections.EMPTY_LIST : UnmodifiableArrayList.wrap(sampleDimensions);
     }
 
     /**
@@ -1153,7 +1123,7 @@ public class CoverageStack extends AbstractCoverage {
         final CoordinateReferenceSystem sourceCRS;
         assert debugEquals((sourceCRS = coverage.getCoordinateReferenceSystem()),
                 CRS.getOrCreateSubCRS(crs, 0, sourceCRS.getCoordinateSystem().getDimension())) : sourceCRS;
-        assert coverage.getNumSampleDimensions() == numSampleDimensions : coverage;
+        assert coverage.getSampleDimensions().size() == numSampleDimensions : coverage;
         return coverage;
     }
 

@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -33,7 +34,6 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.coverage.CannotEvaluateException;
-import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -112,9 +112,7 @@ public class CoverageRasterizer {
 
     private GridCoverage buildSlice(GridGeometry sliceGridGeom) throws TransformException, FactoryException {
 
-        final int nbSample = source.getNumSampleDimensions();
-        final SampleDimension[] samples = new SampleDimension[nbSample];
-        for (int i=0; i<nbSample; i++) samples[i] = source.getSampleDimension(i);
+        final List<? extends SampleDimension> samples = source.getSampleDimensions();
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName("slice");

@@ -38,6 +38,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.Category;
+import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -70,7 +71,6 @@ import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
-import org.opengis.coverage.Coverage;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
@@ -564,7 +564,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
          */
         List<GridSampleDimension> sampleDimensions = null;
         try {
-            sampleDimensions = Arrays.asList(dataCoverage.getSampleDimensions());
+            sampleDimensions = dataCoverage.getSampleDimensions();
         } catch(Exception ex) {
             //-- do nothing
             //-- bilinear interpolation default choosen comportement if null sampleDimension.

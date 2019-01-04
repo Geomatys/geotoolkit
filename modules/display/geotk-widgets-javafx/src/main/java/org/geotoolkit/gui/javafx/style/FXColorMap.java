@@ -56,11 +56,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.util.Callback;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -704,7 +704,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                     } else {
                         final GridCoverage coverage = reader.read(covRef.getImageIndex(), readParam);
                         if(coverage != null) {
-                            nbBands = coverage.getNumSampleDimensions() - 1;
+                            nbBands = coverage.getSampleDimensions().size() - 1;
                         }
                     }
                     uiBand.getSpinner().setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, nbBands, 0, 1));

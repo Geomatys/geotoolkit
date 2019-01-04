@@ -23,11 +23,11 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.util.Arrays;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.coverage.*;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -260,7 +260,7 @@ public class Statistics extends AbstractProcess {
             final int nbBands = sm.getNumBands();
             sc = new ImageStatistics(nbBands, sampleType);
 
-            final GridSampleDimension[] sampleDimensions = candidate.getSampleDimensions();
+            final GridSampleDimension[] sampleDimensions = candidate.getSampleDimensions().toArray(new GridSampleDimension[0]);
             //add no data values and name on bands
             for (int i = 0; i < sampleDimensions.length; i++) {
                 sc.getBand(i).setNoData(sampleDimensions[i].getNoDataValues());

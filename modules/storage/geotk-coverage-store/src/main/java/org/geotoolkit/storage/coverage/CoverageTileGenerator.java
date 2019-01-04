@@ -22,17 +22,17 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -50,7 +50,6 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -83,11 +82,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                 final GridCoverageReadParam param = new GridCoverageReadParam();
                 param.setDeferred(true);
                 Coverage coverage = reader.read(0, param);
-                final int numSampleDimensions = coverage.getNumSampleDimensions();
-                sampleDimensions = new ArrayList<>(numSampleDimensions);
-                for (int i=0;i<numSampleDimensions;i++) {
-                    sampleDimensions.add((GridSampleDimension) coverage.getSampleDimension(i));
-                }
+                sampleDimensions = (List) coverage.getSampleDimensions();
             }
 
             empty = new double[sampleDimensions.size()];

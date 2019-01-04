@@ -16,17 +16,16 @@
  */
 package org.geotoolkit.coverage.memory;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
-import org.geotoolkit.coverage.GridSampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.util.GenericName;
 
 /**
@@ -48,7 +47,7 @@ public class MemoryCoverageReader extends GridCoverageReader {
 
     @Override
     public List<GridSampleDimension> getSampleDimensions(final int i) throws CoverageStoreException, CancellationException {
-        return Arrays.asList(coverage.getSampleDimensions());
+        return coverage.getSampleDimensions();
     }
 
     @Override

@@ -21,9 +21,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.coverage.AbstractCoverage;
+import org.geotoolkit.coverage.Coverage;
 import org.opengis.coverage.CannotEvaluateException;
-import org.opengis.coverage.Coverage;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.geometry.DirectPosition;
@@ -75,10 +76,7 @@ public final class CollectionCoverage extends AbstractCoverage {
         super(name, coverages.get(0).getCoordinateReferenceSystem(), null, properties);
         this.coverages = new ArrayList<>(coverages);
 
-        sampleDimensions = new SampleDimension[this.coverages.get(0).getNumSampleDimensions()];
-        for (int i=0; i<sampleDimensions.length ;i++) {
-            sampleDimensions[i] = this.coverages.get(0).getSampleDimension(i);
-        }
+        sampleDimensions = this.coverages.get(0).getSampleDimensions().toArray(new SampleDimension[0]);
 
         if (properties != null && properties.containsKey(PROPERTY_EVALUATION)) {
             evaluationMode = (Integer)properties.get(PROPERTY_EVALUATION);
@@ -141,20 +139,9 @@ public final class CollectionCoverage extends AbstractCoverage {
         return values;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public int getNumSampleDimensions() {
-        return sampleDimensions.length;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public SampleDimension getSampleDimension(int index) throws IndexOutOfBoundsException {
-        return sampleDimensions[index];
+    public List<? extends SampleDimension> getSampleDimensions() {
+        return UnmodifiableArrayList.wrap(sampleDimensions);
     }
 
 }

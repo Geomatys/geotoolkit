@@ -30,7 +30,7 @@ import org.geotoolkit.processing.coverage.bandcombine.BandCombineDescriptor;
 import static org.geotoolkit.processing.coverage.merge.MergeDescriptor.*;
 import org.geotoolkit.processing.coverage.reformat.ReformatDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 

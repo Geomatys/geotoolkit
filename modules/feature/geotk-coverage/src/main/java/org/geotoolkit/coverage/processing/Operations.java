@@ -21,7 +21,7 @@ import javax.media.jai.KernelJAI;
 import javax.media.jai.Interpolation;
 
 import org.opengis.geometry.Envelope;
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.opengis.coverage.processing.Operation;

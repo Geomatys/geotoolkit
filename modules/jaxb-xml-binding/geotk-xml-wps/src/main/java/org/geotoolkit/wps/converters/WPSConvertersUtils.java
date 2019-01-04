@@ -73,7 +73,7 @@ import org.geotoolkit.data.geojson.utils.GeometryUtils;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.wps.io.WPSIO;
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;

@@ -17,7 +17,6 @@
 package org.geotoolkit.storage.coverage;
 
 import java.awt.image.RenderedImage;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
@@ -144,7 +143,7 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
                 throw new DataStoreException("Read coverage is not a GridCoverage2D");
             }
             final GridCoverage2D cov2d = (GridCoverage2D) cov;
-            final List<GridSampleDimension> sampleDims = Arrays.asList(cov2d.getSampleDimensions());
+            final List<GridSampleDimension> sampleDims = cov2d.getSampleDimensions();
             final List<SampleDimension> bands = org.geotoolkit.internal.coverage.CoverageUtilities.toSIS(sampleDims);
 
             return new GridCoverage(domain, bands) {

@@ -177,7 +177,7 @@ public class ResampleProcess extends AbstractProcess {
                 break;
             }
             default: {
-                sampleDimensions = source.getSampleDimensions();
+                sampleDimensions = source.getSampleDimensions().toArray(new GridSampleDimension[0]);
                 break;
             }
         }
@@ -568,7 +568,7 @@ public class ResampleProcess extends AbstractProcess {
     }
 
     private static double[] getFillValue(GridCoverage2D gridCoverage2D){
-        final GridSampleDimension[] dimensions = gridCoverage2D.getSampleDimensions();
+        final GridSampleDimension[] dimensions = gridCoverage2D.getSampleDimensions().toArray(new GridSampleDimension[0]);
         final int nbBand = dimensions.length;
         final double[] fillValue = new double[nbBand];
         Arrays.fill(fillValue, Double.NaN);

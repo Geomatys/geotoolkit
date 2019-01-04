@@ -18,22 +18,19 @@
 package org.geotoolkit.coverage.processing.operation;
 
 import java.awt.image.ColorModel;
-import java.awt.image.RenderedImage;
 import java.awt.image.IndexColorModel;
+import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
-
-import javax.media.jai.JAI;
 import javax.media.jai.ImageLayout;
+import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
-
-import org.opengis.parameter.ParameterValueGroup;
-
-import org.geotoolkit.factory.Hints;
+import org.apache.sis.internal.raster.ColorModelFactory;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.processing.OperationJAI;
-import org.apache.sis.internal.raster.ColorModelFactory;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.opengis.parameter.ParameterValueGroup;
 
 
 /**
@@ -123,7 +120,7 @@ final class BandSelector2D extends GridCoverage2D {
         GridSampleDimension[] targetBands;
         RenderedImage sourceImage;
         while (true) {
-            sourceBands = source.getSampleDimensions();
+            sourceBands = source.getSampleDimensions().toArray(new GridSampleDimension[0]);
             targetBands = sourceBands;
             /*
              * Constructs an array of target bands.  If the 'bandIndices' parameter contains

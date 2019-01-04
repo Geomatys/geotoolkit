@@ -17,10 +17,12 @@
 package org.geotoolkit.processing.coverage.coveragetofeatures;
 
 import java.awt.geom.Point2D;
+import java.util.List;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.parameter.Parameters;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -119,7 +121,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
      */
     static FeatureType createFeatureType(final GridCoverage2D coverage, final GridCoverageReader reader) throws CoverageStoreException {
 
-        final int nbBand = coverage.getNumSampleDimensions();
+        final int nbBand = coverage.getSampleDimensions().size();
 
         final FeatureTypeBuilder typeBuilder = new FeatureTypeBuilder();
         typeBuilder.setName("FeatureCoverage");
@@ -129,9 +131,10 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
         typeBuilder.addAttribute(String.class).setName("orientation");
 
         int type = 1;
-        if (coverage.getSampleDimension(0).getSampleDimensionType() == SampleDimensionType.REAL_32BITS) {
+        final GridSampleDimension sd = coverage.getSampleDimensions().get(0);
+        if (sd.getSampleDimensionType() == SampleDimensionType.REAL_32BITS) {
             type = 1; //Float
-        } else if (coverage.getSampleDimension(0).getSampleDimensionType() == SampleDimensionType.REAL_64BITS) {
+        } else if (sd.getSampleDimensionType() == SampleDimensionType.REAL_64BITS) {
             type = 2; //Double
         } else {
             type = 3; //Int
@@ -160,7 +163,8 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
 
         final GeometryFactory geomFac = new GeometryFactory();
         //get the number of band contained in a cell
-        final int nbBand = coverage.getNumSampleDimensions();
+        final List<GridSampleDimension> dims = coverage.getSampleDimensions();
+        final int nbBand = dims.size();
 
         final Georectified rep = reader.getCoverageMetadata(0).getInstanceForType(Georectified.class);
 

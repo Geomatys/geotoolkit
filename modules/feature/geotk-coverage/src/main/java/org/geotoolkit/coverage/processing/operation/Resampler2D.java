@@ -161,7 +161,7 @@ final class Resampler2D extends GridCoverage2D {
                 break;
             }
             default: {
-                sampleDimensions = source.getSampleDimensions();
+                sampleDimensions = source.getSampleDimensions().toArray(new GridSampleDimension[0]);
                 break;
             }
         }

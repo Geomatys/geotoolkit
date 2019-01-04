@@ -26,6 +26,9 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -38,9 +41,6 @@ import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRendererService
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.measure.MeasurementRange;
-import org.apache.sis.measure.NumberRange;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
@@ -101,7 +101,7 @@ public class DimRangeRendererService extends AbstractSymbolizerRendererService<D
                 if(cm instanceof IndexColorModel){
                     final IndexColorModel icm = (IndexColorModel) cm;
 
-                    final GridSampleDimension sampleDim = cov.getSampleDimension(0);
+                    final GridSampleDimension sampleDim = cov.getSampleDimensions().get(0);
 
                     int size = icm.getMapSize();
                     ARGB = new int[size];

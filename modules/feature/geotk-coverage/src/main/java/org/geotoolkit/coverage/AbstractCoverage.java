@@ -50,7 +50,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-
 import javax.media.jai.ImageFunction;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
@@ -61,37 +60,34 @@ import javax.media.jai.TiledImage;
 import javax.media.jai.iterator.RectIterFactory;
 import javax.media.jai.iterator.WritableRectIter;
 import javax.media.jai.operator.ImageFunctionDescriptor;
-
-import org.opengis.coverage.*; // Numerous import, including many for javadoc.
-import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.internal.raster.ScaledColorSpace;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.Localized;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.iso.Types;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.image.internal.ImageUtilities;
+import org.geotoolkit.io.LineWriter;
+import org.geotoolkit.lang.Debug;
+import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
+import org.geotoolkit.resources.Errors;
+import org.opengis.coverage.*;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
-import org.opengis.temporal.Period;
 import org.opengis.metadata.extent.Extent;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.temporal.Period;
 import org.opengis.util.InternationalString;
 import org.opengis.util.Record;
 import org.opengis.util.RecordType;
-
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.apache.sis.util.logging.Logging;
-import org.apache.sis.util.iso.SimpleInternationalString;
-
-import org.geotoolkit.io.LineWriter;
-import org.apache.sis.util.Localized;
-import org.apache.sis.util.Classes;
-import org.apache.sis.internal.metadata.AxisDirections;
-import org.apache.sis.referencing.CRS;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.Debug;
-import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
-import org.apache.sis.util.iso.Types;
-import org.apache.sis.internal.raster.ScaledColorSpace;
-import org.geotoolkit.image.internal.ImageUtilities;
 
 
 /**
@@ -914,11 +910,11 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
              * Computes some properties of the image to be created.
              */
             final Dimension       tileSize = ImageUtilities.toTileSize(gridBounds.getSize());
-            SampleDimension sampleDimension = getSampleDimension(VISIBLE_BAND);
+            SampleDimension sampleDimension = getSampleDimensions().get(VISIBLE_BAND);
             if (sampleDimension == null)
                 throw new IllegalStateException("Sample dimensions are undetermined.");
             final GridSampleDimension band = GridSampleDimension.castOrCopy(sampleDimension);
-            final int nbBand = getNumSampleDimensions();
+            final int nbBand = getSampleDimensions().size();
             ColorModel colorModel = band.getColorModel(VISIBLE_BAND, nbBand);
             final SampleModel sampleModel;
             if (colorModel != null) {
@@ -1070,7 +1066,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
          */
         @Override
         public int getNumElements() {
-            return getNumSampleDimensions();
+            return getSampleDimensions().size();
         }
 
         /**
@@ -1290,11 +1286,12 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
         out.write(']');
         final String lineSeparator = System.lineSeparator();
         final LineWriter filter = new LineWriter(out, lineSeparator + "\u2502   ");
-        final int n = getNumSampleDimensions();
+        final List<? extends SampleDimension> dims = getSampleDimensions();
+        final int n = dims.size();
         try {
             filter.write(lineSeparator);
             for (int i=0; i<n; i++) {
-                filter.write(getSampleDimension(i).toString());
+                filter.write(dims.get(i).toString());
             }
             filter.flush();
         } catch (IOException exception) {

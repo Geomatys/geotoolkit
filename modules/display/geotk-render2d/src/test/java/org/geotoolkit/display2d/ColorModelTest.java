@@ -44,7 +44,7 @@ import java.util.HashSet;
 import java.util.List;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.coverage.Coverage;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.geometry.Envelope;

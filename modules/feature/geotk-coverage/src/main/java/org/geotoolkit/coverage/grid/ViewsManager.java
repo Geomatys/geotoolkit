@@ -19,46 +19,41 @@ package org.geotoolkit.coverage.grid;
 
 import java.awt.RenderingHints;
 import java.awt.color.ColorSpace;
-import java.awt.image.*; // Numerous imports here.
+import java.awt.image.*;
 import java.awt.image.renderable.ParameterBlock;
+import static java.lang.Double.NaN;
+import static java.lang.Double.doubleToRawLongBits;
+import static java.lang.Double.isNaN;
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.logging.LogRecord;
-import javax.media.jai.JAI;
-import javax.media.jai.ROI;
-import javax.media.jai.RenderedOp;
+import java.util.logging.Logger;
 import javax.media.jai.ImageLayout;
+import javax.media.jai.JAI;
+import javax.media.jai.LookupTableJAI;
 import javax.media.jai.NullOpImage;
 import javax.media.jai.PlanarImage;
-import javax.media.jai.LookupTableJAI;
+import javax.media.jai.ROI;
+import javax.media.jai.RenderedOp;
 import javax.media.jai.operator.FormatDescriptor;
 import javax.media.jai.operator.LookupDescriptor;
-
-import org.opengis.util.InternationalString;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.operation.NoninvertibleTransformException;
-
-import org.geotoolkit.factory.Hints;
-import org.apache.sis.util.ArraysExt;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.ArraysExt;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.processing.AbstractCoverageProcessor;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.image.color.ColorUtilities;
+import org.geotoolkit.image.internal.ImageUtilities;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
-
-import static java.lang.Double.NaN;
-import static java.lang.Double.isNaN;
-import static java.lang.Double.doubleToRawLongBits;
-
-import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
-import org.geotoolkit.image.color.ColorUtilities;
-import org.geotoolkit.image.internal.ImageUtilities;
+import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.NoninvertibleTransformException;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -104,9 +99,9 @@ final class ViewsManager {
         boolean geophysics   = true; // 'true' only if all bands are geophysics.
         boolean photographic = true; // 'true' only if no band have category.
         boolean rendered     = true; // 'true' only if all bands are on unsigned samples, and we are not in geophysics mode.
-        final int numBands = coverage.getNumSampleDimensions();
-scan:   for (int i=0; i<numBands; i++) {
-            final GridSampleDimension band = coverage.getSampleDimension(i);
+        final List<GridSampleDimension> dims = coverage.getSampleDimensions();
+scan:   for (int i=0,n=dims.size(); i<n; i++) {
+            final GridSampleDimension band = dims.get(i);
             if (band != null) {
                 if (isNullOrEmpty(band.getCategories())) {
                     // No category. The image is treated as photographic.

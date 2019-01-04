@@ -23,17 +23,17 @@ import java.awt.image.SampleModel;
 import java.util.Hashtable;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.processing.AbstractProcess;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.reformat.ReformatDescriptor.*;
-import org.geotoolkit.image.BufferedImages;
-import org.opengis.coverage.Coverage;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
@@ -100,7 +100,7 @@ public class ReformatProcess extends AbstractProcess {
         // BUILD A BETTER COLOR MODEL //////////////////////////////////////////
         //TODO try to reuse java colormodel if possible
         //extract grayscale min/max from sample dimension
-        final GridSampleDimension gridSample = inputCoverage.getSampleDimension(0);
+        final GridSampleDimension gridSample = inputCoverage.getSampleDimensions().get(0);
         final ColorModel graycm = BufferedImages.createGrayScaleColorModel(
                 resultImage.getSampleModel().getDataType(),
                 resultImage.getSampleModel().getNumBands(),0,
