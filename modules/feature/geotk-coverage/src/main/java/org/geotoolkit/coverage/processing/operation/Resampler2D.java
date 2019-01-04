@@ -46,6 +46,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -64,7 +65,6 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.referencing.operation.transform.WarpFactory;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
@@ -249,7 +249,7 @@ final class Resampler2D extends GridCoverage2D {
                         case 2:  gridToCRS = sourceGG.getGridToCRS2D(CORNER); break;
                         default: gridToCRS = sourceGG.getGridToCRS(CORNER);   break;
                     }
-                    targetGG = new GridGeometry2D(PixelInCell.CELL_CENTER, gridToCRS, envelope, null);
+                    targetGG = new GridGeometry2D(PixelInCell.CELL_CENTER, gridToCRS, envelope);
                     automaticGG = false;
                 } else {
                     targetGG = null;
@@ -792,7 +792,7 @@ final class Resampler2D extends GridCoverage2D {
                                                      final GridGeometry2D       sourceGG)
             throws FactoryException
     {
-        final DimensionFilter filter = new DimensionFilter(transform, mtFactory);
+        final TransformSeparator filter = new TransformSeparator(transform, mtFactory);
         filter.addSourceDimensions(sourceGG.axisDimensionX,
                                    sourceGG.axisDimensionY);
         MathTransform candidate = filter.separate();

@@ -264,7 +264,7 @@ public class Resample extends Operation2D {
             } else {
                 gridToCRS = GridGeometry2D.castOrCopy(gridGeometry).getGridToCRS2D();
             }
-            gridGeometry = new GridGeometry2D(PixelInCell.CELL_CENTER, gridToCRS, target, null);
+            gridGeometry = new GridGeometry2D(PixelInCell.CELL_CENTER, gridToCRS, target);
         } else {
             /*
              * Different CRS. We need to infer an image size, which may be the same than the
@@ -290,7 +290,7 @@ public class Resample extends Operation2D {
                     gridToCRS = GridGeometry2D.castOrCopy(gridGeometry).getGridToCRS2D();
                 }
                 transformed.intersect(reduced);
-                gridGeometry = new GridGeometry2D(PixelInCell.CELL_CENTER, gridToCRS, transformed, null);
+                gridGeometry = new GridGeometry2D(PixelInCell.CELL_CENTER, gridToCRS, transformed);
             } catch (FactoryException | TransformException exception) {
                 recoverableException("resample", exception);
                 // Will use the grid envelope from the original geometry,

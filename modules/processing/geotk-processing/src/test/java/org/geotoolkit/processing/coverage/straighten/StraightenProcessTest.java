@@ -57,7 +57,7 @@ public class StraightenProcessTest extends AbstractProcessTest {
         gcb.setRenderedImage(matrix);
         final AffineTransform2D gridToCrs = new AffineTransform2D(1,0,0,-1,20,30);
         final GridExtent gridEnv = new GridExtent(null, new long[]{0, 0}, new long[]{60, 40}, false);
-        final GridGeometry2D gridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, gridToCrs, CommonCRS.WGS84.normalizedGeographic(), null);
+        final GridGeometry2D gridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, gridToCrs, CommonCRS.WGS84.normalizedGeographic());
         gcb.setGridGeometry(gridGeom);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
 
@@ -95,7 +95,7 @@ public class StraightenProcessTest extends AbstractProcessTest {
         gcb.setRenderedImage(matrix);
         final AffineTransform2D gridToCrs = new AffineTransform2D(1,0,0,1,20,30);
         final GridExtent gridEnv = new GridExtent(null, new long[]{0, 0}, new long[]{60, 40}, false);
-        final GridGeometry2D gridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, gridToCrs, CommonCRS.WGS84.normalizedGeographic(), null);
+        final GridGeometry2D gridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, gridToCrs, CommonCRS.WGS84.normalizedGeographic());
         gcb.setGridGeometry(gridGeom);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
 

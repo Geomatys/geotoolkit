@@ -311,7 +311,7 @@ public class ResampleProcess extends AbstractProcess {
                         case 2:  gridToCRS = sourceGG.getGridToCRS2D(CORNER); break;
                         default: gridToCRS = sourceGG.getGridToCRS(CORNER);   break;
                     }
-                    targetGG = new GridGeometry2D(PixelInCell.CELL_CENTER, gridToCRS, envelope, null);
+                    targetGG = new GridGeometry2D(PixelInCell.CELL_CENTER, gridToCRS, envelope);
                     automaticGG = false;
                 } else {
                     targetGG = null;
@@ -888,7 +888,7 @@ public class ResampleProcess extends AbstractProcess {
             } else {
                 gridToCRS = GridGeometry2D.castOrCopy(gridGeometry).getGridToCRS2D();
             }
-            gridGeometry = new GridGeometry2D(PixelInCell.CELL_CENTER, gridToCRS, target, null);
+            gridGeometry = new GridGeometry2D(PixelInCell.CELL_CENTER, gridToCRS, target);
         } else {
             /*
              * Different CRS. We need to infer an image size, which may be the same than the
@@ -914,7 +914,7 @@ public class ResampleProcess extends AbstractProcess {
                     gridToCRS = GridGeometry2D.castOrCopy(gridGeometry).getGridToCRS2D();
                 }
                 transformed.intersect(reduced);
-                gridGeometry = new GridGeometry2D(PixelInCell.CELL_CENTER, gridToCRS, transformed, null);
+                gridGeometry = new GridGeometry2D(PixelInCell.CELL_CENTER, gridToCRS, transformed);
             } catch (FactoryException exception) {
                 recoverableException("resample", exception);
             } catch (TransformException exception) {

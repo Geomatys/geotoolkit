@@ -46,7 +46,7 @@ public final strictfp class RequestGeneratorTest {
     public void testGridDistribution() {
         final AffineTransform2D gridToCRS = new AffineTransform2D(0.02, 0, 0, 0.01, 0, 0);
         final GridExtent    range         = new GridExtent(null, new long[]{-1000, -2000}, new long[]{5000-1000, 7000-2000}, false);
-        final GridGeometry2D    geometry  = new GridGeometry2D(range, CELL_CORNER, gridToCRS, CARTESIAN_2D, null);
+        final GridGeometry2D    geometry  = new GridGeometry2D(range, CELL_CORNER, gridToCRS, CARTESIAN_2D);
         final GeneralEnvelope   envelope  = new GeneralEnvelope(geometry.getEnvelope());
         final RequestGenerator  generator = new RequestGenerator(geometry);
         final int[] minimalGridSize = generator.getMinimalGridSize();

@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.gui.swing.tree;
 
-import java.io.PrintWriter;
 import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
@@ -31,11 +30,9 @@ import javax.swing.tree.TreeModel;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.nio.IOUtilities;
 
 
 /**
@@ -327,41 +324,4 @@ public final class Trees extends Static {
         tf.format(node, buffer);
         return buffer.toString();
     }
-
-    /**
-     * Prints the specified tree model to the {@linkplain System#out standard output stream}.
-     * This method is mostly a convenience for debugging purpose.
-     *
-     * @param tree The tree to print.
-     *
-     * @since 2.4
-     */
-    @Debug
-    public static void print(final TreeModel tree) {
-        print(toString(tree));
-    }
-
-    /**
-     * Prints the specified tree to the {@linkplain System#out standard output stream}.
-     * This method is mostly a convenience for debugging purpose.
-     *
-     * @param  node The root node of the tree to print.
-     *
-     * @since 2.4
-     */
-    @Debug
-    public static void print(final TreeNode node) {
-        print(toString(node));
-    }
-
-    /**
-     * Prints the given text to the console.
-     */
-    @Debug
-    private static void print(final String text) {
-        final PrintWriter out = IOUtilities.standardPrintWriter();
-        out.println(text);
-        out.flush();
-    }
-
 }

@@ -1322,7 +1322,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                 final MathTransform gridToCRS;
                 if (useGridToCRS && (gridToCRS = getGridToCRS()) != null) {
                     geom = new GridGeometry2D(extent, getPixelAnchor(),
-                            gridToCRS, getCoordinateReferenceSystem(), hints);
+                            gridToCRS, getCoordinateReferenceSystem());
                 } else {
                     final Envelope envelope = getEnvelope();
                     if (extent != null || envelope != null) { // Its okay to have 1 null value.

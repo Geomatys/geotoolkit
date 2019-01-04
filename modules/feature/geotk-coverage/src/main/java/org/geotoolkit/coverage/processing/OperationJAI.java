@@ -36,6 +36,7 @@ import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.registry.RenderedRegistryMode;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Utilities;
@@ -56,7 +57,6 @@ import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.processing.OperationNotFoundException;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -350,7 +350,7 @@ public class OperationJAI extends Operation2D {
      * Ensures that the source and target dimensions are the same. This method is for internal
      * use by {@link #resampleToCommonGeometry}.
      */
-    private static void ensureStableDimensions(final DimensionFilter filter)
+    private static void ensureStableDimensions(final TransformSeparator filter)
             throws IncompleteGridGeometryException
     {
         final int[] source = filter.getSourceDimensions(); Arrays.sort(source);
@@ -495,7 +495,7 @@ public class OperationJAI extends Operation2D {
                     throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnsupportedTransform));
                 }
                 final MathTransformFactory factory = FactoryFinder.getMathTransformFactory(hints);
-                final DimensionFilter       filter = new DimensionFilter(toSource, factory);
+                final TransformSeparator   filter = new TransformSeparator(toSource, factory);
                 toTarget = gridToCrs2D;
                 try {
                     if (lowerDim != 0) {

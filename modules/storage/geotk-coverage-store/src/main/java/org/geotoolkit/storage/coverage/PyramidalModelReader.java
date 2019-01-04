@@ -518,7 +518,7 @@ public class PyramidalModelReader extends GridCoverageReader{
         final GridExtent ge = new GridExtent(null, low, high, false);
         final MathTransform gtc = Pyramids.getTileGridToCRSND(mosaic,
                 new Point((int)tileMinCol,(int)tileMinRow),wantedCRS.getCoordinateSystem().getDimension());
-        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, gtc, wantedCRS, null);
+        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, gtc, wantedCRS);
         gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);
 

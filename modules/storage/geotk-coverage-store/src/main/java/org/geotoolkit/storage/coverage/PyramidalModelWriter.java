@@ -38,6 +38,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
@@ -58,7 +59,6 @@ import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.opengis.coverage.InterpolationMethod;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.geometry.DirectPosition;
@@ -166,7 +166,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         final BlockingQueue<Runnable> tileQueue;
         try {
             //extract the 2D part of the gridtocrs transform
-            final DimensionFilter filter = new DimensionFilter(srcCRSToGrid);
+            final TransformSeparator filter = new TransformSeparator(srcCRSToGrid);
             filter.addSourceDimensionRange(0, 2);
             tileQueue = new ByTileQueue(pm, requestedEnvelope, crsCoverage2D, image, nbBand, filter.separate(), interpolation);
         } catch (DataStoreException ex) {

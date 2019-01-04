@@ -169,7 +169,7 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
         } catch (Exception ex) {
             throw new CoverageStoreException(ex);
         }
-        return new GridGeometry2D(gridExtent, PixelInCell.CELL_CORNER, gridToCRS, crs, null);
+        return new GridGeometry2D(gridExtent, PixelInCell.CELL_CORNER, gridToCRS, crs);
     }
 
     /**

@@ -304,7 +304,7 @@ public class ReduceToDomainProcess extends AbstractProcess {
 
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            final GridGeometry2D gg = new GridGeometry2D(null, PixelOrientation.UPPER_LEFT, gtc,crs,null);
+            final GridGeometry2D gg = new GridGeometry2D(null, PixelOrientation.UPPER_LEFT, gtc, crs);
             gcb.setGridCoverage(candidate);
             gcb.setGridGeometry(gg);
             gcb.setRenderedImage(resimg);

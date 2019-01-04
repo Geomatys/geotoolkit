@@ -55,7 +55,6 @@ import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.gui.swing.IconFactory;
 import org.geotoolkit.gui.swing.ParameterEditor;
-import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.TreeNode;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
@@ -197,32 +196,6 @@ public class OperationTreeBrowser extends JComponent implements Dialog {
     @Debug
     public static void show(final RenderableImage image) {
         new OperationTreeBrowser(image).showFrame(image);
-    }
-
-    /**
-     * Prints to the {@linkplain System#out standard output stream} the operation chain for
-     * the specified image. This convenience method is used mostly for debugging purpose.
-     *
-     * @param image The image for which to print its sources and parameters.
-     *
-     * @since 2.4
-     */
-    @Debug
-    public static void print(final RenderedImage image) {
-        Trees.print(getTree(image, Locale.getDefault(Locale.Category.DISPLAY)));
-    }
-
-    /**
-     * Prints to the {@linkplain System#out standard output stream} the operation chain for
-     * the specified image. This convenience method is used mostly for debugging purpose.
-     *
-     * @param image The image for which to print its sources and parameters.
-     *
-     * @since 2.4
-     */
-    @Debug
-    public static void print(final RenderableImage image) {
-        Trees.print(getTree(image, Locale.getDefault(Locale.Category.DISPLAY)));
     }
 
     /**

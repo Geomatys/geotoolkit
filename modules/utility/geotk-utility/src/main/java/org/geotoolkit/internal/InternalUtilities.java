@@ -17,22 +17,15 @@
  */
 package org.geotoolkit.internal;
 
-import java.util.Set;
-import java.util.Map;
-import java.util.HashMap;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
-import org.apache.sis.util.Classes;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
 
 import static java.lang.Math.*;
-import static org.apache.sis.util.collection.Containers.hashMapCapacity;
-import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -106,48 +99,6 @@ public final class InternalUtilities extends Static {
     }
 
     /**
-     * Returns an identity string for the given value. This method returns a string similar to
-     * the one returned by the default implementation of {@link Object#toString()}, except that
-     * a simple class name (without package name) is used instead than the fully-qualified name.
-     *
-     * @param  value The object for which to get the identity string, or {@code null}.
-     * @return The identity string for the given object.
-     *
-     * @since 3.17
-     */
-    public static String identity(final Object value) {
-        return Classes.getShortClassName(value) + '@' + Integer.toHexString(System.identityHashCode(value));
-    }
-
-    /**
-     * Returns {@code true} if {@code ymin} is the south pole and {@code ymax} is the north pole.
-     *
-     * @param ymin The minimal latitude to test.
-     * @param ymax The maximal latitude to test.
-     * @return {@code true} if the given latitudes are south pole to noth pole respectively.
-     *
-     * @since 3.20
-     */
-    public static boolean isPoleToPole(final double ymin, final double ymax) {
-        return abs(ymin + 90) <= ANGULAR_TOLERANCE && abs(ymax - 90) <= ANGULAR_TOLERANCE;
-    }
-
-    /**
-     * Returns {@code true} if the given values are approximatively equal.
-     * Two NaN values are considered equal.
-     *
-     * @param  v1 The first value to compare.
-     * @param  v2 The second value to compare.
-     * @param  epsilon The tolerance threshold, which must be positive.
-     * @return {@code true} If both values are approximatively equal.
-     *
-     * @since 3.20
-     */
-    public static boolean epsilonEqual(final double v1, final double v2, final double epsilon) {
-        return (abs(v1 - v2) <= epsilon) || Double.doubleToLongBits(v1) == Double.doubleToLongBits(v2);
-    }
-
-    /**
      * Returns {@code true} if the given values are approximatively equal given the
      * comparison mode.
      *
@@ -186,24 +137,6 @@ public final class InternalUtilities extends Static {
             return Double.doubleToLongBits(v1) == Double.doubleToLongBits(v2);
         }
         return abs(v1 - v2) <= threshold;
-    }
-
-    /**
-     * Returns {@code true} if the following objects are floating point numbers ({@link Float} or
-     * {@link Double} types) and approximatively equal. If the given object are not floating point
-     * numbers, then this method returns {@code false} unconditionally on the assumption that
-     * strict equality has already been checked before this method call.
-     *
-     * @param  v1 The first value to compare.
-     * @param  v2 The second value to compare.
-     * @return {@code true} If both values are real number and approximatively equal.
-     *
-     * @since 3.18
-     */
-    public static boolean floatEpsilonEqual(final Object v1, final Object v2) {
-        return (v1 instanceof Float || v1 instanceof Double) &&
-               (v2 instanceof Float || v2 instanceof Double) &&
-               epsilonEqual(((Number) v1).doubleValue(), ((Number) v2).doubleValue());
     }
 
     /**
@@ -251,124 +184,6 @@ public final class InternalUtilities extends Static {
      */
     public static double adjustForRoundingError(final double value) {
         return adjustForRoundingError(value, 360, ULP_TOLERANCE);
-    }
-
-    /**
-     * Converts a {@code float} value to {@code double} value while preserving the string
-     * representation in base 10. The result may be different from the value that we would
-     * get from a normal conversion - which preserve the value in base 2, but it may be
-     * closer to the user intend.
-     * <p>
-     * <b>Example:</b> {@code 99.99f} converted to {@code double} by the normal cast operation
-     * produces {@code 99.98999786376953}, while the user's intend was probably {@code 99.99}.
-     * <p>
-     * The current algorithm is inefficient, but we define this method so we have a single
-     * place where to improve it if needed.
-     *
-     * @param  value The value to convert.
-     * @return The converted value.
-     *
-     * @since 3.19
-     *
-     * @deprecated Replaced by {@link org.apache.sis.math.DecimalFunctions#floatToDouble(float)}.
-     */
-    @Deprecated
-    public static double convert10(final float value) {
-        return Double.parseDouble(Float.toString(value));
-    }
-
-    /**
-     * Returns a copy of the given array as a non-empty immutable set.
-     * If the given array is empty, then this method returns {@code null}.
-     * <p>
-     * This method is not provided in the public API because the recommended
-     * practice is usually to return an empty collection rather than {@code null}.
-     *
-     * @param  <T> The type of elements.
-     * @param  elements The elements to copy in a set.
-     * @return An unmodifiable set which contains all the given elements.
-     *
-     * @since 3.17
-     */
-    @SafeVarargs
-    public static <T> Set<T> nonEmptySet(final T... elements) {
-        final Set<T> asSet = XCollections.immutableSet(elements);
-        return (asSet != null && asSet.isEmpty()) ? null : asSet;
-    }
-
-    /**
-     * Returns an unmodifiable map which contains a copy of the given map, only for the given keys.
-     * The value for the given keys shall be of the given type. Other values can be of any types,
-     * since they will be ignored.
-     *
-     * @param  <K>  The type of keys in the map.
-     * @param  <V>  The type of values in the map.
-     * @param  map  The map to copy, or {@code null}.
-     * @param  valueType The base type of retained values.
-     * @param  keys The keys of values to retain.
-     * @return A copy of the given map containing only the given keys, or {@code null}
-     *         if the given map was null.
-     * @throws ClassCastException If at least one retained value is not of the expected type.
-     *
-     * @since 3.17
-     */
-    @SafeVarargs
-    public static <K,V> Map<K,V> subset(final Map<?,?> map, final Class<V> valueType, final K... keys)
-            throws ClassCastException
-    {
-        Map<K,V> copy = null;
-        if (map != null) {
-            copy = new HashMap<>(hashMapCapacity(Math.min(map.size(), keys.length)));
-            for (final K key : keys) {
-                final V value = valueType.cast(map.get(key));
-                if (value != null) {
-                    copy.put(key, value);
-                }
-            }
-            copy = unmodifiableOrCopy(copy);
-        }
-        return copy;
-    }
-
-    /**
-     * Returns the first non-null element in the given iterable, or {@code null} if none.
-     * This method makes sense only for collections having determinist iteration order like
-     * {@link List} and {@link SortedSet} interfaces, or {@link LinkedHashSet} implementation.
-     *
-     * @param  <E> The type of elements in the iterable.
-     * @param  collection Where to search for the first non-null element.
-     * @return The first non-null element, or {@code null} if none or if the given iterable is null.
-     *
-     * @since 3.20
-     */
-    public static <E> E firstNonNull(final Iterable<E> collection) {
-        if (collection != null) {
-            for (final E element : collection) {
-                if (element != null) {
-                    return element;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns the separator to use between numbers. Current implementation returns the coma
-     * character, unless the given number already use the coma as the decimal separator.
-     *
-     * @param  format The format used for formatting numbers.
-     * @return The character to use as a separator between numbers.
-     *
-     * @since 3.11
-     */
-    public static char getSeparator(final NumberFormat format) {
-        if (format instanceof DecimalFormat) {
-            final char c = ((DecimalFormat) format).getDecimalFormatSymbols().getDecimalSeparator();
-            if (c == ',') {
-                return ';';
-            }
-        }
-        return ',';
     }
 
     /**

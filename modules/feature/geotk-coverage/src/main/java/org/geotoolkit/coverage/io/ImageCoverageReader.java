@@ -642,7 +642,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             upper[X_DIMENSION] = width;
             upper[Y_DIMENSION] = height;
             final GridExtent gridExtent = new GridExtent(null, lower, upper, false);
-            gridGeometry = new GridGeometry2D(gridExtent, pointInPixel, gridToCRS, crs, null);
+            gridGeometry = new GridGeometry2D(gridExtent, pointInPixel, gridToCRS, crs);
             Map.Entry<Map<Integer,GridGeometry2D>,GridGeometry2D> entry = setCached(gridGeometry, gridGeometries, index);
             gridGeometries = entry.getKey();
             gridGeometry = entry.getValue();
@@ -1170,7 +1170,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             final GridExtent newGridRange = new GridExtent(null, low, high, true);
             if (newGridToCRS != gridToCRS || !newGridRange.equals(gridExtent)) {
                 gridGeometry = new GridGeometry2D(newGridRange, PixelInCell.CELL_CORNER,
-                        newGridToCRS, gridGeometry.getCoordinateReferenceSystem(), null);
+                        newGridToCRS, gridGeometry.getCoordinateReferenceSystem());
             }
         }
         final GridCoverage2D coverage;

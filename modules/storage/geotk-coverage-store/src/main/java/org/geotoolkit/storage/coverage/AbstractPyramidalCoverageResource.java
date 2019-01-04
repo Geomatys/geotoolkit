@@ -236,7 +236,7 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
         high[1] = image.getHeight();
 
         final GridExtent ge = new GridExtent(null, low, high, false);
-        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelInCell.CELL_CORNER, gridToCrs, tileCRS, null);
+        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelInCell.CELL_CORNER, gridToCrs, tileCRS);
         gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);
 

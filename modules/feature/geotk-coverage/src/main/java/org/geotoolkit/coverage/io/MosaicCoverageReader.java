@@ -269,7 +269,7 @@ final class MosaicCoverageReader extends ImageCoverageReader {
                 throw new CoverageStoreException(formatErrorMessage(e), e);
             }
             gridGeometry = (gg == null) ? super.getGridGeometry(index) :
-                    new GridGeometry2D(gg.getExtent(), PixelInCell.CELL_CORNER, gg.getGridToCRS(PixelInCell.CELL_CENTER), crs, null);
+                    new GridGeometry2D(gg.getExtent(), PixelInCell.CELL_CORNER, gg.getGridToCRS(PixelInCell.CELL_CENTER), crs);
         }
         return gridGeometry;
     }

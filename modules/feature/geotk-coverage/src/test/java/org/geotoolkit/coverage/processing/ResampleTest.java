@@ -235,7 +235,7 @@ public final strictfp class ResampleTest extends GridProcessingTestBase {
          */
         final AffineTransform at = AffineTransform.getScaleInstance(scaleX, scaleY);
         final MathTransform   tr = MathTransforms.linear(at);
-        final GridGeometry2D geometry = new GridGeometry2D(null, tr, null);
+        final GridGeometry2D geometry = new GridGeometry2D((GridExtent) null, tr, null);
         coverage = (GridCoverage2D) Operations.DEFAULT.resample(coverage,
                 coverage.getCoordinateReferenceSystem(), geometry, null);
         assertEquals(at, getAffineTransform(coverage));

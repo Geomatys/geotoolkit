@@ -26,7 +26,7 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.geotoolkit.referencing.operation.transform.DimensionFilter;
+import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -142,7 +142,7 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
          */
 
         //extract MT [0, zDim[
-        DimensionFilter df = new DimensionFilter(baseGridToCRS);
+        TransformSeparator df = new TransformSeparator(baseGridToCRS);
         df.addSourceDimensionRange(0, zDimension);
         MathTransform firstMT = df.separate();
         firstMT = PassThroughTransform.create(0, firstMT, nbDim - zDimension);
@@ -159,7 +159,7 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
         //extract MT [zDim+1, nbDim[
         MathTransform lastPart = null;
         if (remainingDimensions > 0) {
-            df = new DimensionFilter(baseGridToCRS);
+            df = new TransformSeparator(baseGridToCRS);
             df.addSourceDimensionRange(zDimension+1, nbDim);
             lastPart = df.separate();
             lastPart = PassThroughTransform.create(zDimension+1, lastPart, 0);

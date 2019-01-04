@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.internal;
 
-import java.util.Locale;
-import java.text.NumberFormat;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -35,27 +33,6 @@ import static org.geotoolkit.internal.InternalUtilities.*;
  * @since 3.18 (derived from 3.00)
  */
 public final strictfp class InternalUtilitiesTest extends org.geotoolkit.test.TestBase {
-    /**
-     * Tests the {@link InternalUtilities#getSeparator} method.
-     */
-    @Test
-    public void testGetSeparator() {
-        assertEquals(';', getSeparator(NumberFormat.getInstance(Locale.FRANCE)));
-    }
-
-    /**
-     * Tests the {@link InternalUtilities#convert10} method.
-     */
-    @Test
-    public void testConvert10() {
-        final double converted = InternalUtilities.convert10(99.99f);
-        assertFalse (99.99f == 99.99);
-        assertEquals("99.98999786376953", Double.toString(99.99f));
-        assertEquals("99.99", Double.toString(converted));
-        assertFalse (99.99f == converted);
-        assertTrue  (99.99f == (float) converted);
-    }
-
     /**
      * Tests the {@link InternalUtilities#parseColor(String)} method.
      *

@@ -229,8 +229,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
                         extent,
                         overridePixelInCell!=null ? overridePixelInCell : PixelInCell.CELL_CENTER,
                         overrideGridToCrs!=null ? overrideGridToCrs : refGridGeom.getGridToCRS(PixelInCell.CELL_CENTER),
-                        overrideCRS!=null ? overrideCRS : refGridGeom.getCoordinateReferenceSystem(),
-                        null);
+                        overrideCRS!=null ? overrideCRS : refGridGeom.getCoordinateReferenceSystem());
             }else{
                 final GridExtent extent = refGridGeom.getExtent();
                 return new GridGeometry(
