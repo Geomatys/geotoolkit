@@ -32,7 +32,7 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.opengis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimension;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;

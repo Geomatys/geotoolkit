@@ -19,7 +19,7 @@ package org.geotoolkit.image.io.plugin.yaml.internal;
 import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.opengis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimension;
 
 /**
  * Equivalent class of {@link YamlBuilder} use during Yaml binding.

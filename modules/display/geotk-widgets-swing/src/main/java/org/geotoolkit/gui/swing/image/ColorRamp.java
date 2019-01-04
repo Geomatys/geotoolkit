@@ -36,7 +36,7 @@ import javax.swing.plaf.ComponentUI;
 import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.display.axis.Graduation;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.opengis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimension;
 
 
 /**

@@ -62,7 +62,6 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
-import org.opengis.coverage.SampleDimension;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;

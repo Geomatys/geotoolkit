@@ -31,7 +31,7 @@ public interface Coverage extends org.opengis.coverage.Coverage {
      *
      * @return names, value ranges, fill values and transfer functions for all bands in this grid coverage.
      */
-    List<? extends org.opengis.coverage.SampleDimension> getSampleDimensions();
+    List<? extends SampleDimension> getSampleDimensions();
 
     /**
      * Deprecated, will be removed from GeoAPI.

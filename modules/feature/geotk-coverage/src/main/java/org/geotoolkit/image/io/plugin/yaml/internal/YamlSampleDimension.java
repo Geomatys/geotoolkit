@@ -22,7 +22,7 @@ import java.util.Locale;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.opengis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimension;
 
 /**
  * Equivalent class of {@link GridSampleDimension} use during Yaml binding.

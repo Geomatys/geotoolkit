@@ -42,7 +42,7 @@ import java.util.logging.LogRecord;
 import javax.measure.Unit;
 import org.apache.sis.measure.UnitFormat;
 
-import org.opengis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimension;
 import org.opengis.coverage.PaletteInterpretation;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.operation.MathTransform1D;

@@ -57,7 +57,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.OutOfDomainOfValidityException;
-import org.opengis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimension;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

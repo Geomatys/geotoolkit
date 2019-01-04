@@ -34,7 +34,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.coverage.CannotEvaluateException;
-import org.opengis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimension;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;

@@ -22,33 +22,29 @@ import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import javax.media.jai.JAI;
+import java.util.Objects;
 import javax.measure.Unit;
-
+import javax.media.jai.JAI;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.Numbers;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import org.apache.sis.util.iso.Types;
+import org.geotoolkit.image.color.ColorUtilities;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.Vocabulary;
 import org.opengis.coverage.ColorInterpretation;
 import org.opengis.coverage.PaletteInterpretation;
-import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
-
-import org.apache.sis.util.ArraysExt;
-import org.apache.sis.measure.NumberRange;
-import org.apache.sis.util.iso.Types;
-import org.apache.sis.util.Classes;
-import org.apache.sis.util.Numbers;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Vocabulary;
-
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
-import org.geotoolkit.image.color.ColorUtilities;
 
 
 /**

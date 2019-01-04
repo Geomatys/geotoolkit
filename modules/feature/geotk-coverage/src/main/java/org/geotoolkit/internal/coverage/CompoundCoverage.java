@@ -33,7 +33,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
-import org.opengis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimension;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValueGroup;
 

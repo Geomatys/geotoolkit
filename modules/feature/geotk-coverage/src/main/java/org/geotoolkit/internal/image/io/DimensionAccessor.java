@@ -28,7 +28,7 @@ import javax.media.jai.iterator.RectIterFactory;
 import javax.measure.Unit;
 
 import org.opengis.util.InternationalString;
-import org.opengis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimension;
 import org.opengis.metadata.content.TransferFunctionType;
 
 import org.apache.sis.util.ArraysExt;

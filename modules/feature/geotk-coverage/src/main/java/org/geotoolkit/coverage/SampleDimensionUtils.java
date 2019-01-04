@@ -22,7 +22,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.resources.Vocabulary;
-import org.opengis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimension;
 import org.opengis.util.InternationalString;
 
 /**

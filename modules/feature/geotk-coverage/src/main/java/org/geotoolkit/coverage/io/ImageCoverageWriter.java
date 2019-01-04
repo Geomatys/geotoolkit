@@ -63,7 +63,7 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.referencing.operation.transform.WarpFactory;
 import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.InterpolationMethod;
-import org.opengis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimension;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

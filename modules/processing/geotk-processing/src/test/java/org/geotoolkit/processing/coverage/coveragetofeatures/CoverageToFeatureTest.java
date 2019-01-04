@@ -31,6 +31,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;

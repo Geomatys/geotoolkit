@@ -100,7 +100,7 @@ import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimension;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsEqualTo;

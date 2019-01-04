@@ -17,7 +17,7 @@
 package org.geotoolkit.image.io.plugin.yaml.internal;
 
 import java.util.List;
-import org.opengis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimension;
 
 /**
  * Interpret and return some image informations read from yaml file.

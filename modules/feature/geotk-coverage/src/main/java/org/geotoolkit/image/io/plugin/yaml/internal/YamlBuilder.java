@@ -24,7 +24,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.opengis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimension;
 
 /**
  * Builder which aggregate all image information which will be write/read into/from Yaml format.

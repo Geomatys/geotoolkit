@@ -71,7 +71,7 @@ import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.lang.Builder;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Cloneable;
-import org.opengis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimension;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;

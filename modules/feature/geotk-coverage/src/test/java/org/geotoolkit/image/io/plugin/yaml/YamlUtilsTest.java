@@ -33,7 +33,7 @@ import org.geotoolkit.image.io.plugin.yaml.internal.YamlSampleDimension;
 import org.geotoolkit.image.io.plugin.yaml.internal.YamlWriterBuilder;
 import org.junit.Assert;
 import org.junit.Test;
-import org.opengis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimension;
 
 /**
  * Test reading / writing yaml image informations.
