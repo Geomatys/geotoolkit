@@ -26,7 +26,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.geometry.ImmutableEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Shapes2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
@@ -161,44 +161,6 @@ public class GridGeometry2D extends GridGeometry {
     private MathTransform2D cornerToCRS2D;
 
     /**
-     * Tests the validity of this grid geometry.
-     */
-    private boolean isValid() {
-        if (gridToCRS != null) {
-            final int sourceDim = gridToCRS.getSourceDimensions();
-            final int targetDim = gridToCRS.getTargetDimensions();
-            assert gridToCRS.equals(gridToCRS2D) == (sourceDim == 2 && targetDim == 2);
-            assert !gridToCRS2D.equals(cornerToCRS2D);
-            assert extent   == null || sourceDim == extent  .getDimension() : extent;
-            assert envelope == null || targetDim == envelope.getDimension() : envelope;
-            assert gridDimensionY < sourceDim : gridDimensionY;
-            assert axisDimensionY < targetDim : axisDimensionY;
-        }
-        assert gridDimensionX < gridDimensionY : gridDimensionX;
-        assert axisDimensionX < axisDimensionY : axisDimensionX;
-        return crs2D == null || crs2D.getCoordinateSystem().getDimension() == 2;
-    }
-
-    /**
-     * Constructs a new grid geometry identical to the specified one except for the CRS.
-     * Note that this constructor just defines the CRS; it does <strong>not</strong> reproject
-     * the envelope. For this reason, this constructor should not be public. It is for internal
-     * use by {@link GridCoverageFactory} only.
-     */
-    GridGeometry2D(final GridGeometry2D gm, final CoordinateReferenceSystem crs) {
-        super(gm, crs);
-        gridDimensionX = gm.gridDimensionX;
-        gridDimensionY = gm.gridDimensionY;
-        axisDimensionX = gm.axisDimensionX;
-        axisDimensionY = gm.axisDimensionY;
-        gridFromCRS2D  = gm.gridFromCRS2D;
-        gridToCRS2D    = gm.gridToCRS2D;
-        cornerToCRS2D  = gm.cornerToCRS2D;
-        crs2D          = createCRS2D();
-        assert isValid() : this;
-    }
-
-    /**
      * Creates a new grid geometry with the same values than the given grid geometry. This
      * is a copy constructor useful when the instance must be a {@code GridGeometry2D}.
      *
@@ -225,7 +187,9 @@ public class GridGeometry2D extends GridGeometry {
         } else {
             final int[] dimensions;
             dimensions     = new int[4];
-            gridToCRS2D    = getMathTransform2D(gridToCRS, extent, dimensions);
+            gridToCRS2D    = getMathTransform2D(
+                    isDefined(GRID_TO_CRS) ? getGridToCRS(PixelInCell.CELL_CENTER) : null,
+                    getExtent(), dimensions);
             gridFromCRS2D  = inverse(gridToCRS2D);
             gridDimensionX = dimensions[0];
             gridDimensionY = dimensions[1];
@@ -233,7 +197,6 @@ public class GridGeometry2D extends GridGeometry {
             axisDimensionY = dimensions[3];
             crs2D          = createCRS2D();
         }
-        assert isValid() : this;
     }
 
     /**
@@ -309,7 +272,9 @@ public class GridGeometry2D extends GridGeometry {
         super(extent, anchor, gridToCRS, crs);
         final int[] dimensions;
         dimensions     = new int[4];
-        gridToCRS2D    = getMathTransform2D(super.gridToCRS, extent, dimensions);
+        gridToCRS2D    = getMathTransform2D(
+                isDefined(GRID_TO_CRS) ? getGridToCRS(PixelInCell.CELL_CENTER) : null,
+                extent, dimensions);
         gridFromCRS2D  = inverse(gridToCRS2D);
         gridDimensionX = dimensions[0];
         gridDimensionY = dimensions[1];
@@ -319,7 +284,6 @@ public class GridGeometry2D extends GridGeometry {
         if (PixelInCell.CELL_CORNER.equals(anchor)) {
             cornerToCRS2D = getMathTransform2D(gridToCRS, extent, dimensions);
         }
-        assert isValid() : this;
     }
 
     /**
@@ -399,7 +363,7 @@ public class GridGeometry2D extends GridGeometry {
         axisDimensionY = dimensions[3];
         if (gridToCRS == gridToCRS2D) {
             // Recycles existing instance if we can (common case)
-            this.gridToCRS2D = (MathTransform2D) super.gridToCRS;
+            this.gridToCRS2D = (MathTransform2D) getGridToCRS(PixelInCell.CELL_CENTER);
         } else {
             final int xdim = (gridDimensionX < gridDimensionY) ? 0 : 1;
             this.gridToCRS2D = (MathTransform2D) PixelTranslation.translate(
@@ -407,7 +371,6 @@ public class GridGeometry2D extends GridGeometry {
         }
         gridFromCRS2D = inverse(this.gridToCRS2D);
         crs2D         = createCRS2D();
-        assert isValid() : this;
     }
 
     /**
@@ -443,7 +406,7 @@ public class GridGeometry2D extends GridGeometry {
         super(anchor, gridToCRS, envelope);
         final int[] dimensions;
         dimensions     = new int[4];
-        gridToCRS2D    = getMathTransform2D(this.gridToCRS, extent, dimensions);
+        gridToCRS2D    = getMathTransform2D(getGridToCRS(PixelInCell.CELL_CENTER), getExtent(), dimensions);
         gridFromCRS2D  = inverse(gridToCRS2D);
         gridDimensionX = dimensions[0];
         gridDimensionY = dimensions[1];
@@ -451,9 +414,8 @@ public class GridGeometry2D extends GridGeometry {
         axisDimensionY = dimensions[3];
         crs2D          = createCRS2D();
         if (PixelInCell.CELL_CORNER.equals(anchor)) {
-            cornerToCRS2D = getMathTransform2D(gridToCRS, extent, dimensions);
+            cornerToCRS2D = getMathTransform2D(gridToCRS, getExtent(), dimensions);
         }
-        assert isValid() : this;
     }
 
     /**
@@ -491,14 +453,13 @@ public class GridGeometry2D extends GridGeometry {
         super(extent, evelope, reverse, swapXY, automatic);
         final int[] dimensions;
         dimensions     = new int[4];
-        gridToCRS2D    = getMathTransform2D(gridToCRS, extent, dimensions);
+        gridToCRS2D    = getMathTransform2D(getGridToCRS(PixelInCell.CELL_CENTER), extent, dimensions);
         gridFromCRS2D  = inverse(gridToCRS2D);
         gridDimensionX = dimensions[0];
         gridDimensionY = dimensions[1];
         axisDimensionX = dimensions[2];
         axisDimensionY = dimensions[3];
         crs2D          = createCRS2D();
-        assert isValid() : this;
     }
 
     /**
@@ -777,19 +738,21 @@ public class GridGeometry2D extends GridGeometry {
      * @see #getEnvelope()
      */
     public Envelope2D getEnvelope2D() throws IncompleteGridGeometryException {
-        final ImmutableEnvelope envelope = this.envelope;
-        if (envelope != null && !envelope.isAllNaN()) {
-            assert isDefined(ENVELOPE);
-            return new Envelope2D(crs2D,
-                    envelope.getMinimum(axisDimensionX),
-                    envelope.getMinimum(axisDimensionY),
-                    envelope.getSpan   (axisDimensionX),
-                    envelope.getSpan   (axisDimensionY));
-            // Note: we didn't invoked reduce(Envelope) in order to make sure that
-            //       our privated 'envelope' field is not exposed to subclasses.
+        if (isDefined(ENVELOPE)) {
+            final GeneralEnvelope envelope = GeneralEnvelope.castOrCopy(getEnvelope());
+            if (!envelope.isAllNaN()) {
+                assert isDefined(ENVELOPE);
+                return new Envelope2D(crs2D,
+                        envelope.getMinimum(axisDimensionX),
+                        envelope.getMinimum(axisDimensionY),
+                        envelope.getSpan   (axisDimensionX),
+                        envelope.getSpan   (axisDimensionY));
+                // Note: we didn't invoked reduce(Envelope) in order to make sure that
+                //       our privated 'envelope' field is not exposed to subclasses.
+            }
         }
         assert !isDefined(ENVELOPE);
-        throw new IncompleteGridGeometryException(Errors.format(gridToCRS == null ?
+        throw new IncompleteGridGeometryException(Errors.format(!isDefined(GRID_TO_CRS) ?
                     Errors.Keys.UnspecifiedTransform : Errors.Keys.UnspecifiedImageSize));
     }
 
@@ -807,8 +770,8 @@ public class GridGeometry2D extends GridGeometry {
      * @since 3.20 (derived from 2.1)
      */
     public GridExtent getExtent2D() throws IncompleteGridGeometryException {
-        final GridExtent extent = this.extent;
-        if (extent != null) {
+        if (isDefined(EXTENT)) {
+            final GridExtent extent = getExtent();
             assert isDefined(EXTENT);
             return new GridExtent(
                     null,
@@ -871,6 +834,9 @@ public class GridGeometry2D extends GridGeometry {
                  * and caches a new instance. We cache only the UPPER_LEFT case since it is
                  * widely used; the other cases are rather unusual.
                  */
+                MathTransform gridToCRS = null;
+                if (isDefined(GRID_TO_CRS)) gridToCRS = getGridToCRS(PixelInCell.CELL_CENTER);
+
                 if (gridToCRS.getSourceDimensions() == 2 && gridToCRS.getTargetDimensions() == 2) {
                     cornerToCRS2D = (MathTransform2D) super.getGridToCRS(PixelInCell.CELL_CORNER);
                 } else {
@@ -909,6 +875,8 @@ public class GridGeometry2D extends GridGeometry {
      * @since 2.3
      */
     public MathTransform getGridToCRS(final PixelOrientation orientation) {
+        MathTransform gridToCRS = null;
+        if (isDefined(GRID_TO_CRS)) gridToCRS = getGridToCRS(PixelInCell.CELL_CENTER);
         if (gridToCRS == null) {
             throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnspecifiedTransform));
         }

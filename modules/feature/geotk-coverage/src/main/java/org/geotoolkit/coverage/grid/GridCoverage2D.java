@@ -285,8 +285,8 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
             throw new IllegalArgumentException(error);
         }
         if (dimension <= Math.max(gridGeometry.axisDimensionX,  gridGeometry.axisDimensionY)
-                             || !(gridGeometry.envelope.getSpan(gridGeometry.axisDimensionX) > 0)
-                             || !(gridGeometry.envelope.getSpan(gridGeometry.axisDimensionY) > 0))
+                             || !(gridGeometry.getEnvelope().getSpan(gridGeometry.axisDimensionX) > 0)
+                             || !(gridGeometry.getEnvelope().getSpan(gridGeometry.axisDimensionY) > 0))
         {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.EmptyEnvelope2d));
         }

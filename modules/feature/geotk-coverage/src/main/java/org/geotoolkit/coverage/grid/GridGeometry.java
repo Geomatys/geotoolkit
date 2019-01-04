@@ -134,7 +134,7 @@ public class GridGeometry implements Serializable {
      * @see RenderedImage#getWidth()
      * @see RenderedImage#getHeight()
      */
-    protected final GridExtent extent;
+    private final GridExtent extent;
 
     /**
      * The geodetic envelope, or {@code null} if none. If non-null, this envelope is usually the
@@ -144,7 +144,7 @@ public class GridGeometry implements Serializable {
      *
      * @since 3.20
      */
-    protected final ImmutableEnvelope envelope;
+    private final ImmutableEnvelope envelope;
 
     /**
      * The math transform from grid indices to "real world" coordinates, or {@code null} if none.
@@ -156,7 +156,7 @@ public class GridGeometry implements Serializable {
      *     DirectPosition aPixelCenter = gridToCRS.transform(pixels, aCellIndices);
      * }
      */
-    protected final MathTransform gridToCRS;
+    private final MathTransform gridToCRS;
 
     /**
      * Same as {@link #gridToCRS} but from {@linkplain PixelInCell#CELL_CORNER pixel corner}
@@ -171,19 +171,6 @@ public class GridGeometry implements Serializable {
      * Computed only when first needed.
      */
     private transient double[] resolution;
-
-    /**
-     * Constructs a new grid geometry identical to the specified one except for the CRS.
-     * Note that this constructor just defines the CRS; it does <strong>not</strong> reproject
-     * the envelope. For this reason, this constructor should not be public. It is for internal
-     * use by {@link GridCoverageFactory} only.
-     */
-    GridGeometry(final GridGeometry gm, final CoordinateReferenceSystem crs) {
-        extent       = gm.extent;  // Do not clone; we assume it is safe to share.
-        gridToCRS    = gm.gridToCRS;
-        cornerToCRS  = gm.cornerToCRS;
-        envelope     = new ImmutableEnvelope(crs, gm.envelope);
-    }
 
     /**
      * Creates a new grid geometry with the same values than the given grid geometry. This
