@@ -61,6 +61,7 @@ import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
@@ -264,7 +265,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
                 }
 
                 final MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
-                final MathTransform targetGridToCrs = gridGeom.getGridToCRS();
+                final MathTransform targetGridToCrs = gridGeom.getGridToCRS(PixelInCell.CELL_CENTER);
 
                 //resample all coverages in target image
                 for (GridCoverage2D coverage : coverages) {

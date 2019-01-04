@@ -16,6 +16,7 @@ import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -35,8 +36,8 @@ import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifier;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifierDescriptor;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.coverage.Coverage;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.parameter.ParameterValueGroup;
@@ -45,7 +46,6 @@ import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -363,7 +363,7 @@ public class Categorize extends AbstractProcess {
                 }
             }
 
-            flattenEnvelope = Envelopes.transform(source.getGridToCRS(), inGridEnv);
+            flattenEnvelope = Envelopes.transform(source.getGridToCRS(PixelInCell.CELL_CENTER), inGridEnv);
             flattenEnvelope.setCoordinateReferenceSystem(source.getCoordinateReferenceSystem());
         } else {
             flattenEnvelope = new GeneralEnvelope(source.getEnvelope());

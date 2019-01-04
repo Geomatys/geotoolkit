@@ -35,6 +35,7 @@ import org.geotoolkit.gui.javafx.crs.CRSButton;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 
 /**
@@ -149,7 +150,7 @@ public class FXCoverageDecoratorPane extends GridPane {
         uiGridToCrs.setSelected(overrideGridToCrs!=null);
         if(overrideGridToCrs==null){
             try {
-                overrideGridToCrs = decoratedRef.getGridGeometry(decoratedRef.getImageIndex()).getGridToCRS();
+                overrideGridToCrs = decoratedRef.getGridGeometry(decoratedRef.getImageIndex()).getGridToCRS(PixelInCell.CELL_CENTER);
             } catch (CoverageStoreException ex) {
                 Loggers.JAVAFX.log(Level.FINE, ex.getMessage(), ex);
             }
@@ -193,7 +194,7 @@ public class FXCoverageDecoratorPane extends GridPane {
         MathTransform overrideGridToCrs = null;
         uiGridToCrs.setSelected(false);
         try {
-            overrideGridToCrs = decoratedRef.getGridGeometry(decoratedRef.getImageIndex()).getGridToCRS();
+            overrideGridToCrs = decoratedRef.getGridGeometry(decoratedRef.getImageIndex()).getGridToCRS(PixelInCell.CELL_CENTER);
         } catch (CoverageStoreException ex) {
             Loggers.JAVAFX.log(Level.FINE, ex.getMessage(), ex);
         }

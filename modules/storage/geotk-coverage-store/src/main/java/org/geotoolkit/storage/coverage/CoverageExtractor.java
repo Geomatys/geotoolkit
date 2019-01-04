@@ -17,22 +17,22 @@
 
 package org.geotoolkit.storage.coverage;
 
+import java.util.*;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-
-import java.util.*;
 
 /**
  * A set of utility method to extract values, coverages or cube from a GridCoverage.
@@ -113,7 +113,7 @@ public class CoverageExtractor extends Static {
             int dimension = crs.getCoordinateSystem().getDimension();
 
             double[] point = new double[dimension];
-            final MathTransform cov2DGridToCRS = gg2D.getGridToCRS();
+            final MathTransform cov2DGridToCRS = gg2D.getGridToCRS(PixelInCell.CELL_CENTER);
             cov2DGridToCRS.transform(point, 0, point, 0, 1);
 
             final GeneralDirectPosition position = new GeneralDirectPosition(point);

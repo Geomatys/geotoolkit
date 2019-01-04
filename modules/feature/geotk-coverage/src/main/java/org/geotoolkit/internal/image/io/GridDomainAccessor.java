@@ -139,7 +139,7 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
                 lower[i] = (int) gridEnvelope.getLow (i);
                 upper[i] = (int) gridEnvelope.getHigh(i);
             }
-            final MathTransform gridToCRS = geometry.getGridToCRS(); // Really want pixel center.
+            final MathTransform gridToCRS = geometry.getGridToCRS(PixelInCell.CELL_CENTER); // Really want pixel center.
             if (gridToCRS != null) {
                 final int crsDimension = gridToCRS.getTargetDimensions();
                 double[] center = new double[Math.max(crsDimension, gridDimension)];
@@ -510,7 +510,7 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
             tr = ((GeneralGridGeometry) geometry).getGridToCRS(pixelInCell);
             pixelInCell = null; // Indicates that the offset is already applied.
         } else {
-            tr = geometry.getGridToCRS();
+            tr = geometry.getGridToCRS(PixelInCell.CELL_CENTER);
         }
         Matrix gridToCRS = MathTransforms.getMatrix(tr);
         /*

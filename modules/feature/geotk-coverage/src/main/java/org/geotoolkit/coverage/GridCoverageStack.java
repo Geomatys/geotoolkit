@@ -107,7 +107,7 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
             }
 
             //-- check baseGridToCRS pertinency
-            baseGridToCRS = gg.getGridToCRS();
+            baseGridToCRS = gg.getGridToCRS(PixelInCell.CELL_CENTER);
             assert baseGridToCRS != null;
 
             //-- pass gridToCRS into Corner

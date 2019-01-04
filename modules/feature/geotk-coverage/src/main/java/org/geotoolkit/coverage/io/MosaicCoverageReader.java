@@ -22,24 +22,21 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
+import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridGeometry;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.image.io.mosaic.MosaicBuilder;
+import org.geotoolkit.image.io.mosaic.MosaicImageWriteParam;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileManagerFactory;
-import org.geotoolkit.image.io.mosaic.MosaicBuilder;
 import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
-import org.geotoolkit.image.io.mosaic.MosaicImageWriteParam;
 import org.geotoolkit.internal.image.io.SupportFiles;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.io.wkt.PrjFiles;
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Debug;
-
-import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.resources.Errors;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 
 
 /**
@@ -272,7 +269,7 @@ final class MosaicCoverageReader extends ImageCoverageReader {
                 throw new CoverageStoreException(formatErrorMessage(e), e);
             }
             gridGeometry = (gg == null) ? super.getGridGeometry(index) :
-                    new GridGeometry2D(gg.getExtent(), PixelInCell.CELL_CORNER, gg.getGridToCRS(), crs, null);
+                    new GridGeometry2D(gg.getExtent(), PixelInCell.CELL_CORNER, gg.getGridToCRS(PixelInCell.CELL_CENTER), crs, null);
         }
         return gridGeometry;
     }

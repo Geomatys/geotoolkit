@@ -27,16 +27,17 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridGeometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -128,7 +129,7 @@ public class CoverageRasterizer {
         final double[] fillValues = new double[pixel.length];
         Arrays.fill(fillValues, Double.NaN);
 
-        final MathTransform gridToCRS = sliceGridGeom.getGridToCRS();
+        final MathTransform gridToCRS = sliceGridGeom.getGridToCRS(PixelInCell.CELL_CENTER);
         final MathTransform crsToSource = CRS.findOperation(coverage.getCoordinateReferenceSystem(), source.getCoordinateReferenceSystem(), null).getMathTransform();
         final MathTransform gridToSource = MathTransforms.concatenate(gridToCRS, crsToSource);
         final GeneralDirectPosition pos = new GeneralDirectPosition(source.getCoordinateReferenceSystem());

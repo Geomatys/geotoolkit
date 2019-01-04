@@ -17,62 +17,59 @@
  */
 package org.geotoolkit.coverage.processing;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Locale;
-import java.util.Collections;
-import java.io.Serializable;
 import java.awt.RenderingHints;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import javax.measure.Unit;
-
-import javax.media.jai.JAI;
 import javax.media.jai.ImageLayout;
-import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.OperationRegistry;
+import javax.media.jai.JAI;
 import javax.media.jai.OperationDescriptor;
+import javax.media.jai.OperationRegistry;
+import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.registry.RenderedRegistryMode;
-
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
+import org.apache.sis.measure.NumberRange;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.Utilities;
+import org.apache.sis.util.iso.AbstractInternationalString;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.Category;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.coverage.parameter.ImagingParameterDescriptors;
+import org.geotoolkit.coverage.parameter.ImagingParameters;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.image.internal.ImageUtilities;
+import org.geotoolkit.image.jai.Registry;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.operation.transform.DimensionFilter;
+import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.processing.OperationNotFoundException;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.util.InternationalString;
 import org.opengis.util.FactoryException;
-
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
-import org.geotoolkit.coverage.parameter.ImagingParameters;
-import org.geotoolkit.coverage.parameter.ImagingParameterDescriptors;
-import org.geotoolkit.referencing.operation.transform.DimensionFilter;
-import org.geotoolkit.image.jai.Registry;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.apache.sis.util.ArraysExt;
-import org.apache.sis.measure.NumberRange;
-import org.apache.sis.util.logging.Logging;
-import org.apache.sis.util.iso.AbstractInternationalString;
-import org.geotoolkit.resources.Errors;
-
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import org.geotoolkit.image.internal.ImageUtilities;
-import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -480,7 +477,7 @@ public class OperationJAI extends Operation2D {
              * leading and trailing dimensions (if any) are preserved.
              */
             final MathTransform toSource2D = geometry.getGridToCRS2D();
-            final MathTransform toSource   = geometry.getGridToCRS();
+            final MathTransform toSource   = geometry.getGridToCRS(PixelInCell.CELL_CENTER);
             MathTransform toTarget;
             if (Utilities.equalsIgnoreMetadata(gridToCrs2D, toSource2D)) {
                 toTarget  = toSource;
@@ -619,7 +616,7 @@ public class OperationJAI extends Operation2D {
          */
         final InternationalString      name = deriveName(sources, primarySourceIndex, parameters);
         final CoordinateReferenceSystem crs = primarySource.getCoordinateReferenceSystem();
-        final MathTransform           toCRS = primarySource.getGridGeometry().getGridToCRS();
+        final MathTransform           toCRS = primarySource.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER);
         final RenderedImage            data = createRenderedImage(parameters.parameters, hints);
         final Map<String,?>      properties = getProperties(data,crs,name,toCRS,sources,parameters);
 

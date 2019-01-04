@@ -70,26 +70,27 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import org.apache.sis.coverage.grid.GridExtent;
-import org.geotoolkit.feature.SingleAttributeTypeBuilder;
-
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.measure.Units;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.geotoolkit.filter.DefaultLiteral;
-import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.font.FontAwesomeIcons;
+import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.ArrayEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.PaletteCellRenderer;
-import org.geotoolkit.font.FontAwesomeIcons;
-import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.util.ColorCellEditor;
@@ -102,11 +103,12 @@ import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.processing.coverage.statistics.StatisticOp;
+import org.geotoolkit.storage.coverage.CoverageUtilities;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-
 import static org.geotoolkit.style.StyleConstants.*;
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.DefaultInterpolate;
@@ -123,12 +125,13 @@ import org.geotoolkit.style.interval.Palette;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
-import org.geotoolkit.coverage.grid.GridCoverage;
+import org.opengis.feature.AttributeType;
 import org.opengis.feature.Property;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.ChannelSelection;
@@ -141,10 +144,6 @@ import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.SelectedChannelType;
 import org.opengis.style.ShadedRelief;
 import org.opengis.style.Symbolizer;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.measure.Units;
-import org.opengis.feature.AttributeType;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Style editor which handle Raster colormap edition.
@@ -559,7 +558,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
 
                 if (gridGeometry.isDefined(GeneralGridGeometry.GRID_TO_CRS)
                         && gridGeometry.isDefined(GeneralGridGeometry.EXTENT)) {
-                    MathTransform gridToCRS = gridGeometry.getGridToCRS();
+                    MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
                     GridExtent extent = gridGeometry.getExtent();
                     int dim = extent.getDimension();
                     double[] low = new double[dim];
@@ -611,7 +610,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
 
                 if (gridGeometry.isDefined(GeneralGridGeometry.GRID_TO_CRS)
                         && gridGeometry.isDefined(GeneralGridGeometry.EXTENT)) {
-                    MathTransform gridToCRS = gridGeometry.getGridToCRS();
+                    MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
                     GridExtent extent = gridGeometry.getExtent();
                     int dim = extent.getDimension();
                     double[] low = new double[dim];

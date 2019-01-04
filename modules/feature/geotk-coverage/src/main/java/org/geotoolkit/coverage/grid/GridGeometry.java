@@ -78,18 +78,22 @@ public interface GridGeometry {
     GridExtent getExtent();
 
     /**
-     * Returns the conversion from grid coordinates to real world earth coordinates.
-     * The transform is often an affine transform. The coordinate reference system
-     * of the real world coordinates is given by the
-     * {@link org.opengis.coverage.Coverage#getCoordinateReferenceSystem()} method
-     * and maps to {@linkplain PixelInCell#CELL_CENTER pixel center}.
+     * Returns the transform from grid coordinates to real world earth coordinates.
+     * This is similar to {@link #getGridToCRS()} except that the transform may maps
+     * other parts than {@linkplain PixelInCell#CELL_CENTER pixel center}.
      *
-     * @return the conversion from grid coordinates to
-     *         {@linkplain org.opengis.coverage.Coverage#getCoordinateReferenceSystem
-     *         real world earth coordinates}.
+     * @param  anchor The pixel part to map.
+     * @return The transform (never {@code null}).
+     * @throws IncompleteGridGeometryException if this grid geometry has no transform (i.e.
+     *         <code>{@linkplain #isDefined(int) isDefined}({@linkplain #GRID_TO_CRS})</code>
+     *         returned {@code false}).
      *
-     * @since GeoAPI 2.1
+     * @see GridGeometry2D#getGridToCRS(PixelOrientation)
+     * @see org.geotoolkit.referencing.cs.DiscreteReferencingFactory#getAffineTransform(GridGeometry, PixelInCell)
+     * @see org.apache.sis.coverage.grid.PixelTranslation
+     *
+     * @since 2.3
      */
     @UML(identifier="gridToCoordinateSystem", obligation=MANDATORY, specification=OGC_01004)
-    MathTransform getGridToCRS();
+    MathTransform getGridToCRS(final PixelInCell anchor);
 }

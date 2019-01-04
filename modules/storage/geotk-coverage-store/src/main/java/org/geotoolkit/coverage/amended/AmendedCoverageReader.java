@@ -18,27 +18,27 @@ package org.geotoolkit.coverage.amended;
 
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.opengis.coverage.SampleDimension;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 /**
  * Decorate a coverage reader changing behavior to match overriden properties
@@ -171,8 +171,8 @@ public class AmendedCoverageReader extends GridCoverageReader{
             MathTransform originalToFixed = null;
             if(overrideGridToCrs!=null || overridePixelInCell!=null){
                 try {
-                    final MathTransform overrideCrsToGrid = overrideGridGeometry.getGridToCRS().inverse();
-                    fixedToOriginal = MathTransforms.concatenate(overrideCrsToGrid, originalGridGeometry.getGridToCRS());
+                    final MathTransform overrideCrsToGrid = overrideGridGeometry.getGridToCRS(PixelInCell.CELL_CENTER).inverse();
+                    fixedToOriginal = MathTransforms.concatenate(overrideCrsToGrid, originalGridGeometry.getGridToCRS(PixelInCell.CELL_CENTER));
                     originalToFixed = fixedToOriginal.inverse();
                     coverageEnv = Envelopes.transform(fixedToOriginal, coverageEnv);
                     coverageEnv = new GeneralEnvelope(coverageEnv);

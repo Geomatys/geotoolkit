@@ -11,6 +11,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.datum.PixelInCell;
 
 /**
  * Try to generate subsets of a grid. The aim is to create slices over specified
@@ -113,9 +114,9 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
         }
 
         if (fixed < 3) {
-            generator = grid -> new GridGeometry2D(grid, source.getGridToCRS(), crs);
+            generator = grid -> new GridGeometry2D(grid, source.getGridToCRS(PixelInCell.CELL_CENTER), crs);
         } else {
-            generator = grid -> new GeneralGridGeometry(grid, source.getGridToCRS(), crs);
+            generator = grid -> new GeneralGridGeometry(grid, source.getGridToCRS(PixelInCell.CELL_CENTER), crs);
         }
     }
 

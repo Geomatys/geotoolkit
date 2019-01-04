@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.processing.coverage.volume;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -26,32 +23,35 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
 import java.util.List;
 import java.util.concurrent.CancellationException;
-import org.apache.sis.measure.Units;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.process.ProcessException;
-import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.util.GenericName;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.datum.PixelInCell;
-import org.apache.sis.referencing.CommonCRS;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.GenericName;
 
 /**
  * Test {@link ComputeVolumeProcess process} to compute volume from DEM.
@@ -444,7 +444,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
                 readEnvelope                     = Envelopes.transform(paramToCoverageCrs, readEnvelope);
                 GeneralEnvelope readGenEnvelope  = new GeneralEnvelope(readEnvelope);
                 readGenEnvelope.intersects(coverage.getEnvelope(), true);
-                MathTransform crsToGrid          = coverage.getGridGeometry().getGridToCRS().inverse();
+                MathTransform crsToGrid          = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER).inverse();
                 GeneralEnvelope gridEnvelope     = Envelopes.transform(crsToGrid, readGenEnvelope);
 
                 final RenderedImage covImg       = coverage.getRenderedImage();

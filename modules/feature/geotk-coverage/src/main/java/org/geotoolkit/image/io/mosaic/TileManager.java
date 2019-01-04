@@ -47,6 +47,7 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;
 import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.datum.PixelInCell;
 
 
 /**
@@ -325,7 +326,7 @@ public abstract class TileManager implements Serializable {
             tile = new LargeTile(provider, input, imageIndex, getRegion());
         } else {
             tile = new LargeTile(provider, input, imageIndex, GridGeometryIterator.toRectangle(geometry.getExtent()));
-            tile.setGridToCRS((AffineTransform2D) geometry.getGridToCRS());
+            tile.setGridToCRS((AffineTransform2D) geometry.getGridToCRS(PixelInCell.CELL_CENTER));
         }
         return tile;
     }

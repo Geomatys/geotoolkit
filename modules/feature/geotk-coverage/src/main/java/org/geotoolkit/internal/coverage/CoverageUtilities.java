@@ -567,11 +567,11 @@ public final class CoverageUtilities extends Static {
             final GeneralGridGeometry gg = (GeneralGridGeometry) g;
             if (gg.isDefined(GeneralGridGeometry.EXTENT))      extent    = gg.getExtent();
             if (gg.isDefined(GeneralGridGeometry.ENVELOPE))    envelope  = gg.getEnvelope();
-            if (gg.isDefined(GeneralGridGeometry.GRID_TO_CRS)) gridToCRS = gg.getGridToCRS();
+            if (gg.isDefined(GeneralGridGeometry.GRID_TO_CRS)) gridToCRS = gg.getGridToCRS(PixelInCell.CELL_CENTER);
             if (gg.isDefined(GeneralGridGeometry.CRS))         crs       = gg.getCoordinateReferenceSystem();
         } else {
             extent    = g.getExtent();
-            gridToCRS = g.getGridToCRS();
+            gridToCRS = g.getGridToCRS(PixelInCell.CELL_CENTER);
         }
         if (envelope != null && extent == null) {
             return new org.apache.sis.coverage.grid.GridGeometry(PixelInCell.CELL_CENTER, gridToCRS, envelope, GridRoundingMode.NEAREST);

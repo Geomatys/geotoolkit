@@ -49,6 +49,7 @@ import org.opengis.metadata.identification.DataIdentification;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.identification.Resolution;
 import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.datum.PixelInCell;
 
 
 /**
@@ -151,7 +152,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
         assertTrue("Grid to CRS (Java2D)", new AffineTransform(1000, 0, 0, -1000, -10000, 21000)
                 .equals(gridGeometry.getGridToCRS(PixelOrientation.UPPER_LEFT)));
         assertTrue("Grid to CRS (OGC)", new AffineTransform(1000, 0, 0, -1000, -9500, 20500)
-                .equals(gridGeometry.getGridToCRS())); // Equivalent to PixelOrientation.CENTER
+                .equals(gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER))); // Equivalent to PixelOrientation.CENTER
         /*
          * Read the image and check again its grid geometry, this time directly on the
          * rendered image. The grid geometry should be equivalent to the one checked above.

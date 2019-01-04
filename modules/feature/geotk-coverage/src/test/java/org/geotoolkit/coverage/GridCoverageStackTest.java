@@ -78,7 +78,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
         assertEquals(2, gridEnv.getHigh(2));
 
         //check grid to crs
-        final MathTransform gridToCRS = PixelTranslation.translate(gridGeom.getGridToCRS(), PixelInCell.CELL_CENTER, PixelInCell.CELL_CORNER);
+        final MathTransform gridToCRS = PixelTranslation.translate(gridGeom.getGridToCRS(PixelInCell.CELL_CENTER), PixelInCell.CELL_CENTER, PixelInCell.CELL_CORNER);
         assertEquals(3, gridToCRS.getSourceDimensions());
         assertEquals(3, gridToCRS.getTargetDimensions());
         final double[] lower = new double[]{0,0,0};
@@ -132,7 +132,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
 
         //check grid to crs
         //-- in convention gridToCrs in PixelInCell.Center
-        final MathTransform gridToCRS = PixelTranslation.translate(gridGeom.getGridToCRS(), PixelInCell.CELL_CENTER, PixelInCell.CELL_CORNER);
+        final MathTransform gridToCRS = PixelTranslation.translate(gridGeom.getGridToCRS(PixelInCell.CELL_CENTER), PixelInCell.CELL_CENTER, PixelInCell.CELL_CORNER);
         assertEquals(4, gridToCRS.getSourceDimensions());
         assertEquals(4, gridToCRS.getTargetDimensions());
         final double[] lower = new double[]{0,0,0,0};

@@ -48,6 +48,7 @@ import org.geotoolkit.lang.Builder;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.LogProducer;
+import org.opengis.referencing.datum.PixelInCell;
 
 
 /**
@@ -694,7 +695,7 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
         if (gridToCRS == null && input != null) {
             final GridGeometry geometry = input.getGridGeometry();
             if (geometry != null) {
-                gridToCRS = (AffineTransform2D) geometry.getGridToCRS();
+                gridToCRS = (AffineTransform2D) geometry.getGridToCRS(PixelInCell.CELL_CENTER);
             }
         }
         if (gridToCRS != null) {
@@ -1113,7 +1114,7 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
                 for (final TileManager candidate : writer.inputTiles) {
                     final GridGeometry geometry = candidate.getGridGeometry();
                     if (geometry != null) {
-                        tiles.setGridToCRS((AffineTransform2D) geometry.getGridToCRS());
+                        tiles.setGridToCRS((AffineTransform2D) geometry.getGridToCRS(PixelInCell.CELL_CENTER));
                         break;
                     }
                 }

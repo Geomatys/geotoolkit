@@ -96,7 +96,7 @@ public class FillCoverage {
         final DirectPosition positionGeo = new GeneralDirectPosition(gg.getCoordinateReferenceSystem());
 
         //calculate the hyper-cube where we will need to recalculate values
-        final MathTransform gridToCrs = gg.getGridToCRS();
+        final MathTransform gridToCrs = gg.getGridToCRS(PixelInCell.CELL_CENTER);
         final long[] mins = new long[nbDim];
         final long[] maxs = new long[nbDim];
         for(int i=0;i<nbDim;i++){

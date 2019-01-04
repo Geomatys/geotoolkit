@@ -650,7 +650,7 @@ final class Resampler2D extends GridCoverage2D {
         upper[targetGG.gridDimensionY] = targetImage.getMaxY();
         final GridExtent actualGR = new GridExtent(null, lower, upper, false);
         if (!targetGR.equals(actualGR)) {
-            final MathTransform gridToCRS = targetGG.getGridToCRS();
+            final MathTransform gridToCRS = targetGG.getGridToCRS(PixelInCell.CELL_CENTER);
             targetGG = new GridGeometry2D(actualGR, gridToCRS, targetCRS);
             if (!automaticGR) {
                 final InternationalString name = sourceCoverage.getName();
@@ -833,7 +833,7 @@ final class Resampler2D extends GridCoverage2D {
         {
             // No needs to ask for a transform relative to a corner
             // since we will not apply a transformation here.
-            if (!targetGG.getGridToCRS().equals(sourceGG.getGridToCRS())) {
+            if (!targetGG.getGridToCRS(PixelInCell.CELL_CENTER).equals(sourceGG.getGridToCRS(PixelInCell.CELL_CENTER))) {
                 return false;
             }
         }

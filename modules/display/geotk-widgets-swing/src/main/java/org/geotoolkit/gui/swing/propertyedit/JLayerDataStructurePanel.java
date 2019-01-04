@@ -28,32 +28,33 @@ import javax.swing.JTextPane;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.StyleSheet;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.io.wkt.Colors;
+import org.apache.sis.io.wkt.Convention;
+import org.apache.sis.io.wkt.WKTFormat;
+import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.opengis.feature.FeatureType;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.apache.sis.io.wkt.Colors;
-import org.apache.sis.io.wkt.Convention;
-import org.apache.sis.io.wkt.WKTFormat;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.coverage.SampleDimensionType;
+import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.InternationalString;
-import org.apache.sis.io.wkt.Warnings;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -121,7 +122,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
                 final CoordinateReferenceSystem crs = gridgeom.getCoordinateReferenceSystem();
                 final Envelope geoEnv = gridgeom.getEnvelope();
                 final GridExtent gridEnv = gridgeom.getExtent();
-                final MathTransform gridToCrs = gridgeom.getGridToCRS();
+                final MathTransform gridToCrs = gridgeom.getGridToCRS(PixelInCell.CELL_CENTER);
 
                 final double[] coordGrid = new double[gridEnv.getDimension()];
                 final double[] coordGeo = new double[gridEnv.getDimension()];

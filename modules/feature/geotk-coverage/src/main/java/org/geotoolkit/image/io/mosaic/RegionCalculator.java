@@ -33,6 +33,7 @@ import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.opengis.referencing.datum.PixelInCell;
 
 
 /**
@@ -264,7 +265,7 @@ final class RegionCalculator {
                                 new long[]{groupBounds.width+groupBounds.x, groupBounds.height+groupBounds.y},
                                 false),
                         new AffineTransform2D(reference), null);
-                reference = (AffineTransform2D) geometry.getGridToCRS(); // Fetches the immutable instance.
+                reference = (AffineTransform2D) geometry.getGridToCRS(PixelInCell.CELL_CENTER); // Fetches the immutable instance.
                 final Map<Dimension,TranslatedTransform> pool = new HashMap<>();
                 for (final Tile tile : tilesArray) {
                     final Dimension subsampling = tile.getSubsampling();

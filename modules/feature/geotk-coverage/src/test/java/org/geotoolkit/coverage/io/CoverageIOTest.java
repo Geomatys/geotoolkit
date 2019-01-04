@@ -38,6 +38,7 @@ import org.junit.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import org.opengis.referencing.datum.PixelInCell;
 
 
 /**
@@ -109,7 +110,7 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
      *               upper-left corner.
      */
     private static void verify(final GridGeometry geom, final int width, final int height, final int ty) {
-        final AffineTransform gridToCRS = (AffineTransform) geom.getGridToCRS();
+        final AffineTransform gridToCRS = (AffineTransform) geom.getGridToCRS(PixelInCell.CELL_CENTER);
         assertEquals("scaleX",        1.0, gridToCRS.getScaleX(),     0);
         assertEquals("scaleY",       -1.0, gridToCRS.getScaleY(),     0);
         assertEquals("translateX", -179.5, gridToCRS.getTranslateX(), 0);

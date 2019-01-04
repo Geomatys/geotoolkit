@@ -24,6 +24,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -34,16 +35,15 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.CoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.geometry.Envelope;
-import org.opengis.metadata.Metadata;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Decorates a coverage reference adding possibility to override properties.
@@ -228,7 +228,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
                 return new GridGeometry2D(
                         extent,
                         overridePixelInCell!=null ? overridePixelInCell : PixelInCell.CELL_CENTER,
-                        overrideGridToCrs!=null ? overrideGridToCrs : refGridGeom.getGridToCRS(),
+                        overrideGridToCrs!=null ? overrideGridToCrs : refGridGeom.getGridToCRS(PixelInCell.CELL_CENTER),
                         overrideCRS!=null ? overrideCRS : refGridGeom.getCoordinateReferenceSystem(),
                         null);
             }else{
@@ -236,7 +236,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
                 return new GeneralGridGeometry(
                         extent,
                         overridePixelInCell!=null ? overridePixelInCell : PixelInCell.CELL_CENTER,
-                        overrideGridToCrs!=null ? overrideGridToCrs : refGridGeom.getGridToCRS(),
+                        overrideGridToCrs!=null ? overrideGridToCrs : refGridGeom.getGridToCRS(PixelInCell.CELL_CENTER),
                         overrideCRS!=null ? overrideCRS : refGridGeom.getCoordinateReferenceSystem());
             }
         }else{

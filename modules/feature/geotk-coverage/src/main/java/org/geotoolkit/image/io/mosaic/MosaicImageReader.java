@@ -60,6 +60,7 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.LogProducer;
 import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.datum.PixelInCell;
 
 
 /**
@@ -911,7 +912,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
             if (geom != null) {
                 final SpatialMetadata sp = new SpatialMetadata(false, this, null);
                 final GridDomainAccessor accessor = new GridDomainAccessor(sp);
-                accessor.setAll((AffineTransform2D) geom.getGridToCRS(), GridGeometryIterator.toRectangle(geom.getExtent()), null, PixelOrientation.UPPER_LEFT);
+                accessor.setAll((AffineTransform2D) geom.getGridToCRS(PixelInCell.CELL_CENTER), GridGeometryIterator.toRectangle(geom.getExtent()), null, PixelOrientation.UPPER_LEFT);
                 /*
                  * Add the CRS, if the tile manager has been created from a directory or a file
                  * is associated with a PRJ file.

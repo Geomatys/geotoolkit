@@ -887,7 +887,7 @@ public class ResampleProcess extends AbstractProcess {
              */
             final MathTransform gridToCRS;
             if (reducedCRS == sourceCRS) {
-                gridToCRS = gridGeometry.getGridToCRS();
+                gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
             } else {
                 gridToCRS = GridGeometry2D.castOrCopy(gridGeometry).getGridToCRS2D();
             }
@@ -911,7 +911,7 @@ public class ResampleProcess extends AbstractProcess {
                 final MathTransform gridToCRS;
                 if (reducedCRS == sourceCRS) {
                     reduced   = source.getEnvelope();
-                    gridToCRS = gridGeometry.getGridToCRS();
+                    gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
                 } else {
                     reduced   = CoverageUtilities.getEnvelope2D(source);
                     gridToCRS = GridGeometry2D.castOrCopy(gridGeometry).getGridToCRS2D();

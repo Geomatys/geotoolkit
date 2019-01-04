@@ -269,7 +269,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
              * Makes sure that the 'gridToCRS' transform is defined.
              * An exception will be thrown otherwise.
              */
-            gridGeometry.getGridToCRS();
+            gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
         }
         this.gridGeometry = gridGeometry;
         assert gridGeometry.isDefined(GridGeometry2D.CRS        |

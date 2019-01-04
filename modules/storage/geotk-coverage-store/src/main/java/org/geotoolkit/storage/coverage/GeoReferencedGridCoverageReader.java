@@ -394,7 +394,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
             matrix.setElement(i, dim, areaLower[i]);
         }
         final MathTransform ssToGrid = MathTransforms.linear(matrix);
-        final MathTransform ssToCrs = MathTransforms.concatenate(ssToGrid, gridGeom.getGridToCRS());
+        final MathTransform ssToCrs = MathTransforms.concatenate(ssToGrid, gridGeom.getGridToCRS(PixelInCell.CELL_CENTER));
         final GridExtent extent = new GridExtent(null, new long[outExtent.length], outExtent, false);
         return new GeneralGridGeometry(extent, ssToCrs, gridGeom.getCoordinateReferenceSystem());
     }

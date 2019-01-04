@@ -20,27 +20,24 @@ package org.geotoolkit.coverage.processing;
 import java.awt.color.ColorSpace;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
-import java.awt.image.RenderedImage;
 import java.awt.image.IndexColorModel;
-
-import javax.media.jai.OpImage;
+import java.awt.image.RenderedImage;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.NullOpImage;
-
-
-import org.opengis.coverage.Coverage;
-import org.opengis.parameter.ParameterValueGroup;
-
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.coverage.grid.ViewType;
+import javax.media.jai.OpImage;
+import org.apache.sis.internal.raster.ColorModelFactory;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.resources.Errors;
-import org.apache.sis.util.Classes;
-import org.apache.sis.internal.raster.ColorModelFactory;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.datum.PixelInCell;
 
 
 /**
@@ -173,7 +170,7 @@ public abstract class IndexColorOperation extends Operation2D {
         gcb.setName(source.getName());
         gcb.setRenderedImage(newImage);
         gcb.setCoordinateReferenceSystem(source.getCoordinateReferenceSystem());
-        gcb.setGridToCRS(source.getGridGeometry().getGridToCRS());
+        gcb.setGridToCRS(source.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER));
         gcb.setSampleDimensions(bands);
         gcb.setSources(source);
         return gcb.getGridCoverage2D().view(targetView);

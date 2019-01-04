@@ -98,6 +98,7 @@ import org.opengis.metadata.content.AttributeGroup;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
 import org.opengis.metadata.content.SampleDimension;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.ColorMap;
@@ -266,7 +267,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
 
             if (gridGeometry.isDefined(GeneralGridGeometry.GRID_TO_CRS)
                     && gridGeometry.isDefined(GeneralGridGeometry.EXTENT)) {
-                MathTransform gridToCRS = gridGeometry.getGridToCRS();
+                MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
                 GridExtent extent = gridGeometry.getExtent();
                 int dim = extent.getDimension();
                 double[] low = new double[dim];
@@ -675,7 +676,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
 
                 if (gridGeometry.isDefined(GeneralGridGeometry.GRID_TO_CRS)
                         && gridGeometry.isDefined(GeneralGridGeometry.EXTENT)) {
-                    MathTransform gridToCRS = gridGeometry.getGridToCRS();
+                    MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
                     GridExtent extent = gridGeometry.getExtent();
                     int dim = extent.getDimension();
                     double[] low = new double[dim];

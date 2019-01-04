@@ -48,6 +48,7 @@ import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
@@ -550,7 +551,7 @@ public class Statistics extends AbstractProcess {
         try {
             final GeneralGridGeometry gridGeometry = reader.getGridGeometry(imageIdx);
             CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
-            final MathTransform gridToCRS = gridGeometry.getGridToCRS();
+            final MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
             final GridExtent extent = gridGeometry.getExtent();
             final int dim = extent.getDimension();
 

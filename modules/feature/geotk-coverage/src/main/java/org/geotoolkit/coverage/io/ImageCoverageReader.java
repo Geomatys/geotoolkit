@@ -600,7 +600,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                         crs = PredefinedCRS.GRID_2D;
                     }
                     if (crs instanceof GridGeometry) { // Some formats (e.g. NetCDF) do that.
-                        gridToCRS = ((GridGeometry) crs).getGridToCRS();
+                        gridToCRS = ((GridGeometry) crs).getGridToCRS(PixelInCell.CELL_CENTER);
                     } else {
                         final RectifiedGrid grid = metadata.getInstanceForType(RectifiedGrid.class);
                         if (grid != null) {
@@ -1063,7 +1063,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                                 median[i] = envelope.getMedian(i);
                             }
                             final double[] indices = new double[gridDim];
-                            gridGeometry.getGridToCRS().inverse().transform(median, 0, indices, 0, 1);
+                            gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER).inverse().transform(median, 0, indices, 0, 1);
                             final GridExtent gridExtent;
                             if (crs instanceof GridGeometry) {
                                 gridExtent = ((GridGeometry) crs).getExtent();

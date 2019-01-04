@@ -311,7 +311,7 @@ public class RequestGenerator {
      * @return The resolution, in units of the envelope.
      */
     public static double[] getResolution(final GeneralGridGeometry request) {
-        final Matrix gridToCRS = ((LinearTransform) request.getGridToCRS()).getMatrix();
+        final Matrix gridToCRS = ((LinearTransform) request.getGridToCRS(PixelInCell.CELL_CENTER)).getMatrix();
         final double[] row = new double[gridToCRS.getNumCol() - 1];
         final double[] res = new double[gridToCRS.getNumRow() - 1];
         for (int j=0; j<res.length; j++) {

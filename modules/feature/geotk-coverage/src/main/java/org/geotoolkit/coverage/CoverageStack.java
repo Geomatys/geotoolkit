@@ -68,6 +68,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
@@ -1092,7 +1093,7 @@ public class CoverageStack extends AbstractCoverage {
         final GridGeometry geometry = element.getGridGeometry();
         if (geometry != null) {
             final GridExtent  range       = geometry.getExtent();
-            final MathTransform transform = geometry.getGridToCRS();
+            final MathTransform transform = geometry.getGridToCRS(PixelInCell.CELL_CENTER);
             final int           dimension = transform.getSourceDimensions();
             DirectPosition position = new GeneralDirectPosition(dimension);
             for (int i=dimension; --i>=0;) {

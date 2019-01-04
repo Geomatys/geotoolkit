@@ -755,7 +755,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
              */
             if (isDefined(GeneralGridGeometry.CRS)) {
                 if (gridToCRS == null) {
-                    this.gridToCRS = gridGeometry.getGridToCRS();
+                    this.gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
                     pixelAnchor = null;
                 }
                 if (extent == null) {
@@ -1036,7 +1036,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             if (gridGeometry instanceof GeneralGridGeometry) {
                 return ((GeneralGridGeometry) gridGeometry).getDimension();
             } else {
-                tr = gridGeometry.getGridToCRS();
+                tr = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
             }
         }
         if (tr == null) {
@@ -1130,7 +1130,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             if (gridGeometry != null) {
                 final PixelInCell pixelAnchor = this.pixelAnchor;
                 if (pixelAnchor == null) {
-                    return gridGeometry.getGridToCRS();
+                    return gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
                 } else if (gridGeometry instanceof GeneralGridGeometry) {
                     return ((GeneralGridGeometry) gridGeometry).getGridToCRS(pixelAnchor);
                 }
@@ -2247,7 +2247,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          */
         if (gridGeometry != null) {
             setExtent(gridGeometry.getExtent());
-            setGridToCRS(gridGeometry.getGridToCRS());
+            setGridToCRS(gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER));
             this.gridGeometry = null;
             cachedGridGeometry = gridGeometry;
         }

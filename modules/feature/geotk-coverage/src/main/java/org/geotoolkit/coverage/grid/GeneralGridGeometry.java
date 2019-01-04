@@ -205,7 +205,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
         } else {
             GeneralEnvelope env = null;
             extent    = other.getExtent();
-            gridToCRS = other.getGridToCRS();
+            gridToCRS = other.getGridToCRS(PixelInCell.CELL_CENTER);
             if (extent != null && gridToCRS != null) {
                 defineFromGrid(extent, gridToCRS, null);
             }
@@ -350,11 +350,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
                     gridToCRS.getClass()), exception);
         }
 
-        try {
-            extent = new org.apache.sis.coverage.grid.GridGeometry(anchor, gridToCRS, envelope, GridRoundingMode.ENCLOSING).getExtent();
-        } catch (TransformException ex) {
-            throw new IllegalArgumentException(ex.getMessage(), ex);
-        }
+        extent = new org.apache.sis.coverage.grid.GridGeometry(anchor, gridToCRS, transformed, GridRoundingMode.ENCLOSING).getExtent();
     }
 
     /**
@@ -514,35 +510,6 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
 
     /**
      * Returns the transform from grid coordinates to real world earth coordinates.
-     * The transform is often an affine transform. The coordinate reference system of the
-     * real world coordinates is given by
-     * {@link org.opengis.coverage.Coverage#getCoordinateReferenceSystem()}.
-     * <p>
-     * <strong>Note:</strong> OpenGIS requires that the transform maps <em>pixel centers</em>
-     * to real world coordinates. This is different from some other systems that map pixel's
-     * upper left corner.
-     *
-     * @return The transform (never {@code null}).
-     * @throws IncompleteGridGeometryException if this grid geometry has no transform (i.e.
-     *         <code>{@linkplain #isDefined(int) isDefined}({@linkplain #GRID_TO_CRS})</code>
-     *         returned {@code false}).
-     *
-     * @see GridGeometry2D#getGridToCRS2D()
-     *
-     * @since 2.3
-     */
-    @Override
-    public MathTransform getGridToCRS() throws IncompleteGridGeometryException {
-        if (gridToCRS != null) {
-            assert isDefined(GRID_TO_CRS);
-            return gridToCRS;
-        }
-        assert !isDefined(GRID_TO_CRS);
-        throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnspecifiedTransform));
-    }
-
-    /**
-     * Returns the transform from grid coordinates to real world earth coordinates.
      * This is similar to {@link #getGridToCRS()} except that the transform may maps
      * other parts than {@linkplain PixelInCell#CELL_CENTER pixel center}.
      *
@@ -558,6 +525,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      *
      * @since 2.3
      */
+    @Override
     public MathTransform getGridToCRS(final PixelInCell anchor) throws IncompleteGridGeometryException {
         if (gridToCRS == null) {
             throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnspecifiedTransform));

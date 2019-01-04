@@ -31,6 +31,7 @@ import org.geotoolkit.util.NamesExt;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 
 
@@ -74,14 +75,14 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
 
         final GeneralGridGeometry gridGeomReader = ref1.acquireReader().getGridGeometry(0);
         final GridExtent gridEnvReader = gridGeomReader.getExtent();
-        final MathTransform gridToCrsReader = gridGeomReader.getGridToCRS();
+        final MathTransform gridToCrsReader = gridGeomReader.getGridToCRS(PixelInCell.CELL_CENTER);
 
         final GridCoverage result = ref1.acquireReader().read(0, null);
         Assert.assertEquals(crs,result.getCoordinateReferenceSystem());
 
         final GridGeometry gridGeom   = result.getGridGeometry();
         final GridExtent gridEnv    = gridGeom.getExtent();
-        final MathTransform gridToCrs = gridGeom.getGridToCRS();
+        final MathTransform gridToCrs = gridGeom.getGridToCRS(PixelInCell.CELL_CENTER);
 
         //-- we must have the same grid grometry definition between the reader and the coverage
         Assert.assertEquals(gridEnvReader, gridEnv);

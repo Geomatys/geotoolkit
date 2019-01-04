@@ -48,6 +48,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.datum.Ellipsoid;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.util.FactoryException;
@@ -325,7 +326,7 @@ public final strictfp class ResampleTest extends GridProcessingTestBase {
         if (coverage instanceof GridCoverage) {
             final GridGeometry geometry = ((GridCoverage) coverage).getGridGeometry();
             if (geometry != null) {
-                final MathTransform gridToCRS = geometry.getGridToCRS();
+                final MathTransform gridToCRS = geometry.getGridToCRS(PixelInCell.CELL_CENTER);
                 if (gridToCRS instanceof AffineTransform) {
                     return (AffineTransform) gridToCRS;
                 }
