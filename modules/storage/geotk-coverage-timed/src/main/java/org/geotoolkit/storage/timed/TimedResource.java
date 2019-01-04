@@ -35,7 +35,7 @@ import org.apache.sis.referencing.operation.matrix.Matrix3;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -69,7 +69,7 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
      * The grid geometry of the total image set. Cached for faster accesses.
      * Note : the grid geometry is reset each time a new data is registered.
      */
-    GeneralGridGeometry grid;
+    GridGeometry grid;
 
     TimedResource(TimedCoverageStore store, Path directory, long delay) throws DataStoreException {
         super(store, Names.createLocalName(null, ":", directory.getFileName().toString()));
@@ -118,7 +118,7 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    GeneralGridGeometry getGridGeometryInternal() throws CoverageStoreException {
+    GridGeometry getGridGeometryInternal() throws CoverageStoreException {
         final GeneralEnvelope treeEnv;
         try {
             treeEnv = index.getEnvelope()
@@ -138,7 +138,7 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
             Arrays.fill(low, 0);
             Arrays.fill(high, 1);
 
-            return new GeneralGridGeometry(new GridExtent(null, low, high, false), treeEnv);
+            return new GridGeometry(new GridExtent(null, low, high, false), treeEnv);
         }
 
         if (grid != null && treeEnv.equals(grid.getEnvelope())) {
@@ -203,7 +203,7 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
         final MathTransform1D timeTransform = MathTransforms.interpolate(null, times);
         final MathTransform gridToCRS = MathTransforms.compound(geoTransform, timeTransform);
 
-        grid = new GeneralGridGeometry(extent, PixelInCell.CELL_CENTER, gridToCRS, treeEnv.getCoordinateReferenceSystem());
+        grid = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCRS, treeEnv.getCoordinateReferenceSystem());
 
         return grid;
     }

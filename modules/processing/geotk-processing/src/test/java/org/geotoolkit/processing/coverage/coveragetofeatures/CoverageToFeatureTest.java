@@ -37,7 +37,7 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -316,8 +316,8 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         }
 
         @Override
-        public GeneralGridGeometry getGridGeometry(final int i) throws CoverageStoreException, CancellationException {
-            return (GeneralGridGeometry) coverage.getGridGeometry();
+        public GridGeometry getGridGeometry(final int i) throws CoverageStoreException, CancellationException {
+            return (GridGeometry) coverage.getGridGeometry();
         }
 
         @Override

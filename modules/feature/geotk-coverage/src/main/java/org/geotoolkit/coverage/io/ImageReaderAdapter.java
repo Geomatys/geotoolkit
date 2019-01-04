@@ -44,7 +44,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import org.geotoolkit.image.io.SpatialImageReader;
@@ -255,7 +255,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
         final Integer key = imageIndex;
         Dimension size = imageSizes.get(key);
         if (size == null) {
-            final GeneralGridGeometry geometry;
+            final GridGeometry geometry;
             try {
                 geometry = reader.getGridGeometry(imageIndex);
             } catch (CoverageStoreException e) {
@@ -386,7 +386,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
             /*
              * Computes the geodetic envelope.
              */
-            final GeneralGridGeometry geometry;
+            final GridGeometry geometry;
             try {
                 geometry = reader.getGridGeometry(imageIndex);
             } catch (CoverageStoreException e) {

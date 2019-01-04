@@ -24,7 +24,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -126,7 +126,7 @@ public class ResampleTest extends AbstractProcessTest {
         MathTransform gridToCrsOut = new AffineTransform2D(0.1,0,0,-0.1,20,60);
         gridToCrsOut = PixelTranslation.translate(gridToCrsOut, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
         final GridExtent gridenv = new GridExtent(null, new long[]{0, 0}, new long[]{60, 60}, false);
-        final GeneralGridGeometry outGridGeom = new GeneralGridGeometry(gridenv, gridToCrsOut, crs);
+        final GridGeometry outGridGeom = new GridGeometry(gridenv, gridToCrsOut, crs);
         GridCoverage2D result = new ResampleProcess(coverage, crs, new GridGeometry2D(outGridGeom), InterpolationCase.NEIGHBOR, new double[]{Double.NaN}).executeNow();
 
         RenderedImage res = result.getRenderedImage();
@@ -166,7 +166,7 @@ public class ResampleTest extends AbstractProcessTest {
         MathTransform gridToCrsOut = new AffineTransform2D(0.1,0,0,-0.1,19,61);
         gridToCrsOut = PixelTranslation.translate(gridToCrsOut, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
         final GridExtent gridenv = new GridExtent(null, new long[]{0,0}, new long[]{60, 60}, false);
-        final GeneralGridGeometry outGridGeom = new GeneralGridGeometry(gridenv, gridToCrsOut, crs);
+        final GridGeometry outGridGeom = new GridGeometry(gridenv, gridToCrsOut, crs);
 
         GridCoverage2D result = new ResampleProcess(coverage, crs, new GridGeometry2D(outGridGeom), InterpolationCase.NEIGHBOR, new double[]{Double.NaN}).executeNow();
 

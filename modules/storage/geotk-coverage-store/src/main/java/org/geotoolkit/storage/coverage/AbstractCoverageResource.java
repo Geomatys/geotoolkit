@@ -33,7 +33,7 @@ import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
@@ -110,7 +110,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
             // Read a subset of the coverage, to compute approximative statistics
             GridCoverage coverage = null;
             try {
-                GeneralGridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
+                GridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
                 // For multi-dimensional data, we get the first 2D slice available
                 GridGeometryIterator geometryIterator = new GridGeometryIterator(gridGeom);
                 if (geometryIterator.hasNext()) {

@@ -75,7 +75,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.Units;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -554,10 +554,10 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             if (layer instanceof CoverageMapLayer) {
                 final GridCoverageResource covRef = ((CoverageMapLayer) layer).getCoverageReference();
                 final GridCoverageReader reader = covRef.acquireReader();
-                final GeneralGridGeometry gridGeometry = reader.getGridGeometry(covRef.getImageIndex());
+                final GridGeometry gridGeometry = reader.getGridGeometry(covRef.getImageIndex());
 
-                if (gridGeometry.isDefined(GeneralGridGeometry.GRID_TO_CRS)
-                        && gridGeometry.isDefined(GeneralGridGeometry.EXTENT)) {
+                if (gridGeometry.isDefined(GridGeometry.GRID_TO_CRS)
+                        && gridGeometry.isDefined(GridGeometry.EXTENT)) {
                     MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
                     GridExtent extent = gridGeometry.getExtent();
                     int dim = extent.getDimension();
@@ -599,7 +599,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             final CoverageMapLayer cml = (CoverageMapLayer)layer;
             final GridCoverageResource cref = cml.getCoverageReference();
             GridCoverageReader reader = null;
-            GeneralGridGeometry gridGeometry = null;
+            GridGeometry gridGeometry = null;
             GridCoverageReadParam readParam = null;
             GridCoverage coverage = null;
             GridCoverage2D coverage2D = null;
@@ -608,8 +608,8 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                 reader = cref.acquireReader();
                 gridGeometry = reader.getGridGeometry(cref.getImageIndex());
 
-                if (gridGeometry.isDefined(GeneralGridGeometry.GRID_TO_CRS)
-                        && gridGeometry.isDefined(GeneralGridGeometry.EXTENT)) {
+                if (gridGeometry.isDefined(GridGeometry.GRID_TO_CRS)
+                        && gridGeometry.isDefined(GridGeometry.EXTENT)) {
                     MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
                     GridExtent extent = gridGeometry.getExtent();
                     int dim = extent.getDimension();

@@ -22,14 +22,13 @@ import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -101,7 +100,7 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
 
         final GridCoverageReader reader = acquireReader();
         try {
-            final GeneralGridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
+            final GridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
             Envelope envelope = gridGeom.getEnvelope();
             if (envelope != null) {
                 Geometry geom = GeometricUtilities.toJTSGeometry(envelope, GeometricUtilities.WrapResolution.SPLIT);
@@ -124,13 +123,13 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
     }
 
     @Override
-    default GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+    default GridCoverage read(org.apache.sis.coverage.grid.GridGeometry domain, int... range) throws DataStoreException {
         final GridCoverageReader reader = acquireReader();
         try {
             final GridCoverageReadParam param = new GridCoverageReadParam();
             param.setSourceBands(range);
 
-            if (domain.isDefined(GridGeometry.ENVELOPE)) {
+            if (domain.isDefined(org.apache.sis.coverage.grid.GridGeometry.ENVELOPE)) {
                 param.setEnvelope(domain.getEnvelope());
                 final double[] resolution = domain.getResolution(true);
                 param.setResolution(resolution);
@@ -172,10 +171,10 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
     }
 
     @Override
-    default GridGeometry getGridGeometry() throws DataStoreException {
+    default org.apache.sis.coverage.grid.GridGeometry getGridGeometry() throws DataStoreException {
         final GridCoverageReader reader = acquireReader();
         try {
-            final GeneralGridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
+            final GridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
             return org.geotoolkit.internal.coverage.CoverageUtilities.toSIS(gridGeom);
         } catch (TransformException ex) {
             throw new DataStoreException(ex.getMessage(), ex);

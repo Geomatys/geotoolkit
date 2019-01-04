@@ -32,7 +32,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -159,7 +159,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         high[0] = tileSize.width-1; //inclusive
         high[1] = tileSize.height-1; //inclusive
         final GridExtent extent = new GridExtent(null, low, high, true);
-        final GeneralGridGeometry gridGeomNd = new GeneralGridGeometry(extent, gridToCrsNd, crs);
+        final GridGeometry gridGeomNd = new GridGeometry(extent, gridToCrsNd, crs);
 
         //extract resolution
         final Matrix matrix = gridToCrsNd.getMatrix();

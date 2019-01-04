@@ -31,7 +31,7 @@ import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.GridCoverageStack;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -78,7 +78,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
     public final GridCoverage read(int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
         if (index!=ref.getImageIndex()) throw new CoverageStoreException("Invalid image index "+index);
 
-        final GeneralGridGeometry gridGeometry = getGridGeometry(index);
+        final GridGeometry gridGeometry = getGridGeometry(index);
         final CoordinateReferenceSystem coverageCrs = gridGeometry.getCoordinateReferenceSystem();
 
         try {
@@ -152,7 +152,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
         final Envelope coverageEnv = param.getEnvelope();
         final double[] coverageRes = param.getResolution();
 
-        final GeneralGridGeometry gridGeom = getGridGeometry(ref.getImageIndex());
+        final GridGeometry gridGeom = getGridGeometry(ref.getImageIndex());
 
         final GeneralEnvelope imgEnv;
         try {
@@ -317,7 +317,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
      * @param param user param, in grid CRS
      * @return derivated grid geometry.
      */
-    public static GeneralGridGeometry getGridGeometry(GeneralGridGeometry gridGeom,
+    public static GridGeometry getGridGeometry(GridGeometry gridGeom,
             GridCoverageReadParam param) throws CoverageStoreException, TransformException {
 
         final Envelope coverageEnv = param.getEnvelope();
@@ -380,7 +380,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
      * @param subsampling image subsampling
      * @return derivated grid geometry.
      */
-    public static GeneralGridGeometry getGridGeometry(GeneralGridGeometry gridGeom,
+    public static GridGeometry getGridGeometry(GridGeometry gridGeom,
             int[] areaLower, int[] areaUpper, int[] subsampling) {
 
         //calculate output size
@@ -396,6 +396,6 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
         final MathTransform ssToGrid = MathTransforms.linear(matrix);
         final MathTransform ssToCrs = MathTransforms.concatenate(ssToGrid, gridGeom.getGridToCRS(PixelInCell.CELL_CENTER));
         final GridExtent extent = new GridExtent(null, new long[outExtent.length], outExtent, false);
-        return new GeneralGridGeometry(extent, ssToCrs, gridGeom.getCoordinateReferenceSystem());
+        return new GridGeometry(extent, ssToCrs, gridGeom.getCoordinateReferenceSystem());
     }
 }

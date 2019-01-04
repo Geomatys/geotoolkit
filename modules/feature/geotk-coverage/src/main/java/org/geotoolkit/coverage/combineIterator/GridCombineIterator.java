@@ -26,7 +26,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.coverage.grid.GridCoordinates;
@@ -39,7 +39,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- * {@link Iterator} to iterate on each {@link Envelope} dimensions from {@link GeneralGridGeometry}.<br>
+ * {@link Iterator} to iterate on each {@link Envelope} dimensions from {@link GridGeometry}.<br>
  * For each steps it return a slice part of the source envelope.<br>
  * The right way to use this iterator is into a while loop, like follow : <br><br>
  * {@code
@@ -263,12 +263,12 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
     }
 
     /**
-     * Create an {@link Iterator} on each {@link Envelope} dimensions from {@link GeneralGridGeometry#getEnvelope() },
-     * which are not within the 2D part of the {@link CoordinateReferenceSystem} from {@link GeneralGridGeometry#getCoordinateReferenceSystem() }.
+     * Create an {@link Iterator} on each {@link Envelope} dimensions from {@link GridGeometry#getEnvelope() },
+     * which are not within the 2D part of the {@link CoordinateReferenceSystem} from {@link GridGeometry#getCoordinateReferenceSystem() }.
      *
      * @param gridGeom the grid Geometry which contain all needed informations to iterate on its envelope dimension.
      */
-    public GridCombineIterator(final GeneralGridGeometry gridGeom) {
+    public GridCombineIterator(final GridGeometry gridGeom) {
         this(gridGeom.getExtent(), gridGeom.getCoordinateReferenceSystem(), gridGeom.getGridToCRS(PixelInCell.CELL_CORNER));
     }
 
@@ -382,8 +382,8 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
      * Moreover : the specified {@link MathTransform} must be from CORNER of source grid point to CORNER of destination envelope point.<br>
      * The used MathTransform is consider with {@link PixelInCell#CELL_CORNER} configuration.</strong>
      *
-     * @param gridGeometry {@link GeneralGridGeometry} which contain {@linkplain GeneralGridGeometry#getExtent() extent}
-     *                     and {@linkplain GeneralGridGeometry#getGridToCRS() gridToCrs} necessary to find all expected ordinate values.
+     * @param gridGeometry {@link GridGeometry} which contain {@link GridGeometry#getExtent() extent}
+     *                     and {@link GridGeometry#getGridToCRS() gridToCrs} necessary to find all expected ordinate values.
      * @param crs 1 Dimensional {@link CoordinateReferenceSystem} which represent expected interested ordinate index.
      * @return an array which contain all MINIMUM destination ordinates values from interested dimension (axis).
      *
@@ -392,7 +392,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
      * @throws MismatchedDimensionException if the parameter crs have a dimension upper than 1.
      * @see #extractAxisRanges(org.geotoolkit.coverage.grid.GeneralGridGeometry, int)
      */
-    public static NumberRange<Double>[] extractAxisRanges(final GeneralGridGeometry gridGeometry, final CoordinateReferenceSystem crs) {
+    public static NumberRange<Double>[] extractAxisRanges(final GridGeometry gridGeometry, final CoordinateReferenceSystem crs) {
         ArgumentChecks.ensureNonNull("gridGeometry", gridGeometry);
         ArgumentChecks.ensureNonNull("crs", crs);
 
@@ -419,14 +419,14 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
 
     /**
      * Returns all ordinates ranges from grid transformation of {@linkplain GridExtent extent}
-     * by {@linkplain MathTransform gridtocrs} from {@link GeneralGridGeometry} on axis specified by expected dimension parameter.<br>
+     * by {@linkplain MathTransform gridtocrs} from {@link GridGeometry} on axis specified by expected dimension parameter.<br>
      * One range for each grid values on interested ordinate.<br><br>
      * <strong>
      * Moreover : the specified {@link MathTransform} must be from CORNER of source grid point to CORNER of destination envelope point.<br>
      * The used MathTransform is consider with {@link PixelInCell#CELL_CORNER} configuration.</strong>
      *
-     * @param gridGeometry {@link GeneralGridGeometry} which contain {@linkplain GeneralGridGeometry#getExtent() extent}
-     *                     and {@linkplain GeneralGridGeometry#getGridToCRS() gridToCrs} necessary to find all expected ordinate values.
+     * @param gridGeometry {@link GridGeometry} which contain {@link GridGeometry#getExtent() extent}
+     *                     and {@link GridGeometry#getGridToCRS() gridToCrs} necessary to find all expected ordinate values.
      * @param interestedOrdinateIndex expected interested ordinate index.
      * @return an array which contain all destination ordinate values from interested dimension.
      *
@@ -436,7 +436,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
      * {@linkplain MathTransform#getSourceDimensions() gridToCrs.getSourceDimensions()} mismatch.
      * @throws IndexOutOfBoundsException if interestedOrdinateIndex is upper than extent or gridtocrs dimension.
      */
-    public static NumberRange<Double>[] extractAxisRanges(final GeneralGridGeometry gridGeometry, final int interestedOrdinateIndex) {
+    public static NumberRange<Double>[] extractAxisRanges(final GridGeometry gridGeometry, final int interestedOrdinateIndex) {
         return GridCombineIterator.extractAxisRanges(gridGeometry.getExtent(), gridGeometry.getGridToCRS(PixelInCell.CELL_CORNER), gridGeometry.getCoordinateReferenceSystem(), interestedOrdinateIndex);
     }
 

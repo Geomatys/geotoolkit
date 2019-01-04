@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -42,8 +42,8 @@ public class MemoryCoverageReader extends GridCoverageReader {
     }
 
     @Override
-    public GeneralGridGeometry getGridGeometry(final int i) throws CoverageStoreException, CancellationException {
-        return (GeneralGridGeometry) coverage.getGridGeometry();
+    public GridGeometry getGridGeometry(final int i) throws CoverageStoreException, CancellationException {
+        return (GridGeometry) coverage.getGridGeometry();
     }
 
     @Override

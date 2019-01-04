@@ -41,7 +41,7 @@ import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.data.GenericNameIndex;
@@ -113,7 +113,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         final DefaultMetadata rootMd = new DefaultMetadata();
 
         // Queries data specific information
-        final Map<GenericName, GeneralGridGeometry> geometries = new HashMap<>();
+        final Map<GenericName, GridGeometry> geometries = new HashMap<>();
         final List<GridCoverageResource> refs = DataStores.flatten(this,true).stream()
                 .filter(node -> node instanceof GridCoverageResource)
                 .map(node -> ((GridCoverageResource) node))
@@ -122,7 +122,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         for (final GridCoverageResource ref : refs) {
             final GridCoverageReader reader = ref.acquireReader();
             final SpatialMetadata md;
-            final GeneralGridGeometry gg;
+            final GridGeometry gg;
             try {
                 md = reader.getCoverageMetadata(ref.getImageIndex());
                 gg = reader.getGridGeometry(ref.getImageIndex());
@@ -171,7 +171,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
      * @param geometries The grid geometries of each store's reference, grouped
      * by reference name.
      */
-    protected void setSpatialInfo(final Metadata md, final Map<GenericName, GeneralGridGeometry> geometries) {
+    protected void setSpatialInfo(final Metadata md, final Map<GenericName, GridGeometry> geometries) {
         if (geometries == null || geometries.isEmpty())
             return;
 
@@ -185,14 +185,14 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
         final Set<CoordinateReferenceSystem> crss = new HashSet<>();
         geometries.forEach((name, gg) -> {
-            if (gg.isDefined(GeneralGridGeometry.ENVELOPE)) {
+            if (gg.isDefined(GridGeometry.ENVELOPE)) {
                 try {
                     extent.addElements(gg.getEnvelope());
                 } catch (TransformException | IncompleteGridGeometryException ex) {
                     LOGGER.log(Level.WARNING, "Extent cannot be computed for reference " + name, ex);
                 }
             }
-            if (gg.isDefined(GeneralGridGeometry.CRS)) {
+            if (gg.isDefined(GridGeometry.CRS)) {
                 try {
                     crss.add(gg.getCoordinateReferenceSystem());
                 } catch (IncompleteGridGeometryException ex) {

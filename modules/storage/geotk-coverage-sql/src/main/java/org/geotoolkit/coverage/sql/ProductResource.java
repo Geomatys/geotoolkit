@@ -26,7 +26,7 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -34,7 +34,6 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.storage.coverage.GeoReferencedGridCoverageReader;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 
@@ -86,7 +85,7 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
         }
 
         @Override
-        public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException {
+        public org.geotoolkit.coverage.grid.GridGeometry getGridGeometry(int index) throws CoverageStoreException {
             return CoverageUtilities.toGeotk(product.getGridGeometry(), true);
         }
 
@@ -99,8 +98,8 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
         protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, GridCoverageReadParam param)
                 throws CoverageStoreException, TransformException, CancellationException {
             try {
-                final GeneralGridGeometry gg = getGridGeometry(0);
-                final GeneralGridGeometry subg = GeoReferencedGridCoverageReader.getGridGeometry(gg, areaLower, areaUpper, subsampling);
+                final org.geotoolkit.coverage.grid.GridGeometry gg = getGridGeometry(0);
+                final org.geotoolkit.coverage.grid.GridGeometry subg = GeoReferencedGridCoverageReader.getGridGeometry(gg, areaLower, areaUpper, subsampling);
                 return CoverageUtilities.toGeotk(product.read(CoverageUtilities.toSIS(subg), null));
             } catch (DataStoreException ex) {
                 throw new CoverageStoreException(ex.getMessage(), ex);

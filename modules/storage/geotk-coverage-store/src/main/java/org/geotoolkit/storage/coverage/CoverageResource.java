@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.CoverageWriter;
@@ -129,7 +129,7 @@ public interface CoverageResource extends FeatureSet {
         if (reader instanceof GridCoverageReader) {
             final GridCoverageReader gcr = (GridCoverageReader) reader;
             try {
-                final GeneralGridGeometry gridGeom = gcr.getGridGeometry(getImageIndex());
+                final GridGeometry gridGeom = gcr.getGridGeometry(getImageIndex());
                 Envelope envelope = gridGeom.getEnvelope();
                 if (envelope != null) {
                     Geometry geom = GeometricUtilities.toJTSGeometry(envelope, GeometricUtilities.WrapResolution.SPLIT);

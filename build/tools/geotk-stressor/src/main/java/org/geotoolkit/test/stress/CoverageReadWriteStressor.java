@@ -42,7 +42,7 @@ import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -155,7 +155,7 @@ public class CoverageReadWriteStressor extends Stressor {
      * A future version may detect automatically whatever a clip is desired or not
      * depending on the source coordinate system axes.
      */
-    private static GeneralGridGeometry clip(GeneralGridGeometry geometry) {
+    private static GridGeometry clip(GridGeometry geometry) {
         if (false) {
             GridExtent range = geometry.getExtent();
             final long[] lower = GridGeometryIterator.getLow(range);
@@ -166,7 +166,7 @@ public class CoverageReadWriteStressor extends Stressor {
                 upper[i] -= hs;
             }
             range = new GridExtent(null, lower, upper, true);
-            geometry = new GeneralGridGeometry(range, PixelInCell.CELL_CORNER,
+            geometry = new GridGeometry(range, PixelInCell.CELL_CORNER,
                     geometry.getGridToCRS(PixelInCell.CELL_CORNER),
                     geometry.getCoordinateReferenceSystem());
         }
@@ -266,7 +266,7 @@ public class CoverageReadWriteStressor extends Stressor {
      * @throws TransformException If an error occurred while projecting the source envelope.
      */
     @Override
-    protected RenderedImage executeQuery(final GeneralGridGeometry request)
+    protected RenderedImage executeQuery(final GridGeometry request)
             throws CoverageStoreException, IOException, TransformException
     {
         /*

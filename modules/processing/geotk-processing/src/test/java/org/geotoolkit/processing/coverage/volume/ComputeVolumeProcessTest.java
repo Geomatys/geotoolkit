@@ -30,7 +30,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -427,7 +427,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
         }
 
         @Override
-        public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
+        public GridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
             return coverage.getGridGeometry();
         }
 

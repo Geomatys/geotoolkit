@@ -19,7 +19,7 @@ package org.geotoolkit.processing.coverage.mathcalc;
 
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
@@ -69,7 +69,7 @@ public class MathCalcProcess extends AbstractProcess {
         final String[] inMapping = inputParameters.getValue(MathCalcDescriptor.IN_MAPPING);
         final GridCoverageResource outRef = inputParameters.getValue(MathCalcDescriptor.IN_RESULT_COVERAGE);
 
-        final GeneralGridGeometry gg;
+        final GridGeometry gg;
         final GridCoverageReader outReader;
         try {
             outReader = outRef.acquireReader();

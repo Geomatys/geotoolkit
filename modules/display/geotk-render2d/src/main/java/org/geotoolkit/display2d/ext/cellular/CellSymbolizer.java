@@ -40,7 +40,7 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -215,7 +215,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
 
     public static FeatureType buildCellType(GridCoverageReader reader, int imageIndex) throws DataStoreException{
         final List<GridSampleDimension> lst = reader.getSampleDimensions(imageIndex);
-        final GeneralGridGeometry gg = reader.getGridGeometry(imageIndex);
+        final GridGeometry gg = reader.getGridGeometry(imageIndex);
         final CoordinateReferenceSystem crs = gg.getCoordinateReferenceSystem();
         if(lst!=null){
             final String[] names = new String[lst.size()];

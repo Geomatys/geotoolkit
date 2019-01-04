@@ -21,7 +21,7 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -98,7 +98,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
         try {
             final GridCoverageReader reader = inputParameters.getValue(CoverageToFeaturesDescriptor.READER_IN);
             final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
-            final GeneralGridGeometry gridGeom = reader.getGridGeometry(0);
+            final GridGeometry gridGeom = reader.getGridGeometry(0);
 
             final CoverageToFeatureCollection resultFeatureList =
                     new CoverageToFeatureCollection(reader, gridGeom.getExtent(), coverage, gridGeom);
@@ -156,7 +156,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
      * @throws TransformException
      */
     static Feature convertToFeature(FeatureType type, long x, long y, GridCoverage2D coverage, GridCoverageReader reader,
-            GeneralGridGeometry gridGeom) throws CoverageStoreException, TransformException {
+            GridGeometry gridGeom) throws CoverageStoreException, TransformException {
 
         final GeometryFactory geomFac = new GeometryFactory();
         //get the number of band contained in a cell

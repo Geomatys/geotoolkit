@@ -29,7 +29,7 @@ import java.util.List;
 import javax.measure.IncommensurableException;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -63,7 +63,7 @@ import org.geotoolkit.storage.coverage.GridCoverageResource;
 public class DefaultElevationLoader extends AbstractElevationLoader {
 
     private final GridCoverageResource coverageRef;
-    private final GeneralGridGeometry gridGeom;
+    private final GridGeometry gridGeom;
     private final double minElevation;
     private final double maxElevation;
 

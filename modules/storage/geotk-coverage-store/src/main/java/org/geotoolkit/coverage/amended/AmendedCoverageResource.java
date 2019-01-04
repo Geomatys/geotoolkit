@@ -28,7 +28,7 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -66,7 +66,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
     protected final DataStore store;
 
     //source unmodified informations
-    protected GeneralGridGeometry refGridGeom;
+    protected GridGeometry refGridGeom;
     protected List<GridSampleDimension> refDims;
 
     //overrided informations
@@ -130,7 +130,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      * @return
      * @throws CoverageStoreException
      */
-    public GeneralGridGeometry getOriginalGridGeometry(int index) throws CoverageStoreException{
+    public GridGeometry getOriginalGridGeometry(int index) throws CoverageStoreException{
         loadRefData(index);
         return refGridGeom;
     }
@@ -220,7 +220,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      * @return overridden grid geometry or original one is there are no overrides.
      * @throws CoverageStoreException
      */
-    public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException{
+    public GridGeometry getGridGeometry(int index) throws CoverageStoreException{
         loadRefData(index);
         if(isGridGeometryOverriden()){
             if(refGridGeom instanceof GridGeometry2D){
@@ -233,7 +233,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
                         null);
             }else{
                 final GridExtent extent = refGridGeom.getExtent();
-                return new GeneralGridGeometry(
+                return new GridGeometry(
                         extent,
                         overridePixelInCell!=null ? overridePixelInCell : PixelInCell.CELL_CENTER,
                         overrideGridToCrs!=null ? overrideGridToCrs : refGridGeom.getGridToCRS(PixelInCell.CELL_CENTER),

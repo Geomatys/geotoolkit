@@ -31,7 +31,7 @@ import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -72,7 +72,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
 
             final GridCoverageReader reader = acquireReader(store);
 
-            final GeneralGridGeometry gg = reader.getGridGeometry(0);
+            final GridGeometry gg = reader.getGridGeometry(0);
             Assert.assertNotNull("No grid geometry available", gg);
 
             final CoordinateReferenceSystem crs = gg.getCoordinateReferenceSystem();
@@ -256,7 +256,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
      * @param expectedEnvelope The envelope we want to find in the tested geometry.
      * @throws CoverageStoreException
      */
-    private static void checkReferencing(final GeneralGridGeometry target,
+    private static void checkReferencing(final GridGeometry target,
             final GridExtent expectedExtent, final Envelope expectedEnvelope) throws CoverageStoreException {
         CoordinateReferenceSystem targetCRS = target.getCoordinateReferenceSystem();
         final CoordinateReferenceSystem expectedCRS = expectedEnvelope.getCoordinateReferenceSystem();

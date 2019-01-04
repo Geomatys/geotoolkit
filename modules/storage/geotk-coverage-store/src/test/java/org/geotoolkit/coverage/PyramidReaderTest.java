@@ -14,7 +14,7 @@ import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
@@ -73,7 +73,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         });
 
 
-        final GeneralGridGeometry gridGeomReader = ref1.acquireReader().getGridGeometry(0);
+        final GridGeometry gridGeomReader = ref1.acquireReader().getGridGeometry(0);
         final GridExtent gridEnvReader = gridGeomReader.getExtent();
         final MathTransform gridToCrsReader = gridGeomReader.getGridToCRS(PixelInCell.CELL_CENTER);
 

@@ -37,7 +37,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.amended.AmendedCoverageResource;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
@@ -132,7 +132,7 @@ public class FXLayerStructure extends FXPropertyPane {
             final GridCoverageResource ref = cml.getCoverageReference();
             try {
                 final GridCoverageReader reader = ref.acquireReader();
-                final GeneralGridGeometry gridgeom = reader.getGridGeometry(0);
+                final GridGeometry gridgeom = reader.getGridGeometry(0);
                 final List<GridSampleDimension> dimensions = reader.getSampleDimensions(0);
                 ref.recycle(reader);
 

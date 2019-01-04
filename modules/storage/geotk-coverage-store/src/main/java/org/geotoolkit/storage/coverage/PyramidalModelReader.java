@@ -114,7 +114,7 @@ public class PyramidalModelReader extends GridCoverageReader{
     }
 
     @Override
-    public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
+    public GridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
         final Collection<? extends MultiResolutionModel> models;
 
         try {
@@ -135,17 +135,17 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         if (pyramid == null) {
             //-- empty pyramid set
-            return new GeneralGridGeometry(null, null, (Envelope)null);
+            return new GridGeometry(null, null, (Envelope)null);
         }
 
         final List<Mosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
         if (mosaics.isEmpty()) {
             //no mosaics
-            return new GeneralGridGeometry(null, null, (Envelope)null);
+            return new GridGeometry(null, null, (Envelope)null);
         }
 
         Collections.sort(mosaics, CoverageFinder.SCALE_COMPARATOR);
-        final GeneralGridGeometry gridGeom;
+        final GridGeometry gridGeom;
 
         final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
         final CoordinateSystem cs           = crs.getCoordinateSystem();
@@ -205,7 +205,7 @@ public class PyramidalModelReader extends GridCoverageReader{
         }
 
         final GridExtent ge = new GridExtent(null, low, high, false);
-        gridGeom = new GeneralGridGeometry(ge, PixelInCell.CELL_CORNER, gridToCRSds, crs);
+        gridGeom = new GridGeometry(ge, PixelInCell.CELL_CORNER, gridToCRSds, crs);
 
         return gridGeom;
     }

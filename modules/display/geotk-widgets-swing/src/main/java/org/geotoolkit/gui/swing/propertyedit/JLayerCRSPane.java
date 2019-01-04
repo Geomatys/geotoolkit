@@ -22,7 +22,7 @@ import java.awt.Color;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.apache.sis.io.wkt.Colors;
 import org.apache.sis.io.wkt.Convention;
@@ -81,7 +81,7 @@ public class JLayerCRSPane extends AbstractPropertyPane {
             final GridCoverageResource ref = ((CoverageMapLayer)layer).getCoverageReference();
             try{
                 final GridCoverageReader reader = ref.acquireReader();
-                final GeneralGridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
+                final GridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
                 crs = gg.getCoordinateReferenceSystem();
                 ref.recycle(reader);
             }catch(Exception ex){

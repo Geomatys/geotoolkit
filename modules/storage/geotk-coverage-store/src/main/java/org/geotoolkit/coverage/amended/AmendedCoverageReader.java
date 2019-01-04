@@ -23,7 +23,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -81,7 +81,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
      * @throws CancellationException
      */
     @Override
-    public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
+    public GridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
         return ref.getGridGeometry(index);
     }
 
@@ -118,8 +118,8 @@ public class AmendedCoverageReader extends GridCoverageReader{
             final CoordinateReferenceSystem overrideCRS = ref.getOverrideCRS();
             final MathTransform overrideGridToCrs = ref.getOverrideGridToCrs();
             final PixelInCell overridePixelInCell = ref.getOverridePixelInCell();
-            final GeneralGridGeometry overrideGridGeometry = ref.getGridGeometry(index);
-            final GeneralGridGeometry originalGridGeometry = ref.getOriginalGridGeometry(index);
+            final GridGeometry overrideGridGeometry = ref.getGridGeometry(index);
+            final GridGeometry originalGridGeometry = ref.getOriginalGridGeometry(index);
 
             //convert parameters to fit overrides
             double[] queryRes = param==null ? null : param.getResolution();

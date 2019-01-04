@@ -17,7 +17,7 @@
 package org.geotoolkit.processing.coverage.coveragetofeatures;
 
 import org.apache.sis.coverage.grid.GridExtent;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -37,13 +37,13 @@ public class CoverageToFeatureCollection extends RasterFeatureCollection {
     private final FeatureType newFeatureType;
     private final GridCoverageReader reader;
     private final GridCoverage2D coverage;
-    private final GeneralGridGeometry gridGeom;
+    private final GridGeometry gridGeom;
 
     /**
      * CoverageToFeatureCollection constructor connect the collection to the coverage.
      */
     public CoverageToFeatureCollection(final GridCoverageReader reader, GridExtent range,
-            GridCoverage2D coverage, GeneralGridGeometry gridGeom) throws CoverageStoreException {
+            GridCoverage2D coverage, GridGeometry gridGeom) throws CoverageStoreException {
         super(reader, range);
         this.reader = reader;
         this.coverage = coverage;

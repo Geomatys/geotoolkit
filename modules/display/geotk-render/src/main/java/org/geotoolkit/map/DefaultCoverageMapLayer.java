@@ -23,7 +23,7 @@ import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.data.query.Query;
@@ -112,7 +112,7 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
         final GridCoverageResource ref = getCoverageReference();
         try {
             GridCoverageReader reader = ref.acquireReader();
-            final GeneralGridGeometry geom = reader.getGridGeometry(getCoverageReference().getImageIndex());
+            final GridGeometry geom = reader.getGridGeometry(getCoverageReference().getImageIndex());
             ref.recycle(reader);
             if (geom == null) {
                 LOGGER.log(Level.WARNING, "Could not access envelope of layer {0}", getCoverageReference().getIdentifier());

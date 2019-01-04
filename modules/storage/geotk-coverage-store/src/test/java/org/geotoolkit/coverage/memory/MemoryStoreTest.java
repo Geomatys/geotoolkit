@@ -10,7 +10,7 @@ import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.storage.DataStores;
@@ -60,7 +60,7 @@ public class MemoryStoreTest {
         for (final GridCoverageResource ref : refs) {
             final GridCoverageReader reader = ref.acquireReader();
             try {
-                final GeneralGridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
+                final GridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
                 expectedExtent.addElements(gg.getEnvelope());
                 crss.add(gg.getCoordinateReferenceSystem());
                 ref.recycle(reader);

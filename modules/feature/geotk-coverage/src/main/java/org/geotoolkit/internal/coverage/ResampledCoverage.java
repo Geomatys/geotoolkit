@@ -18,7 +18,7 @@ package org.geotoolkit.internal.coverage;
 
 import java.util.Map;
 import org.geotoolkit.coverage.grid.AbstractGridCoverage;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.opengis.coverage.CannotEvaluateException;
@@ -90,10 +90,10 @@ public class ResampledCoverage extends AbstractGridCoverage {
 
     @Override
     public Envelope getEnvelope() {
-        if (gridGeometry instanceof GeneralGridGeometry) {
+        if (gridGeometry instanceof GridGeometry) {
             return ((GridGeometry2D)gridGeometry).getEnvelope();
         } else {
-            return new GeneralGridGeometry(gridGeometry).getEnvelope();
+            return new GridGeometry(gridGeometry).getEnvelope();
         }
     }
 

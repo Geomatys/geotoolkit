@@ -38,7 +38,7 @@ import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -286,7 +286,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final CoverageMapLayer coverageLayer               = projectedCoverage.getLayer();
         final GridCoverageResource ref                         = coverageLayer.getCoverageReference();
         final GridCoverageReader reader                    = ref.acquireReader();
-        final GeneralGridGeometry gridGeometry             = reader.getGridGeometry(ref.getImageIndex());
+        final GridGeometry gridGeometry             = reader.getGridGeometry(ref.getImageIndex());
         final Envelope inputCoverageEnvelope               = gridGeometry.getEnvelope();
         final CoordinateReferenceSystem inputCoverageCRS   = inputCoverageEnvelope.getCoordinateReferenceSystem();
         final CoordinateReferenceSystem inputCoverageCRS2D = CRSUtilities.getCRS2D(inputCoverageCRS);

@@ -17,8 +17,9 @@
  */
 package org.geotoolkit.coverage.io;
 
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -26,55 +27,50 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
-import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
-import javax.measure.Unit;
 import javax.measure.IncommensurableException;
 import javax.measure.Quantity;
+import javax.measure.Unit;
 import org.apache.sis.internal.storage.MetadataBuilder;
-
-import org.w3c.dom.Node;
-
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.measure.Units;
+import org.apache.sis.metadata.ModifiableMetadata;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.metadata.iso.identification.DefaultResolution;
+import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.collection.BackingStoreException;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import org.apache.sis.util.iso.Names;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridGeometry;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.resources.Vocabulary;
+import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
-import org.opengis.metadata.content.ImageDescription;
 import org.opengis.metadata.content.ContentInformation;
+import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.metadata.content.ImageDescription;
+import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.identification.DataIdentification;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.identification.Resolution;
 import org.opengis.metadata.quality.DataQuality;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.SpatialRepresentation;
-import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.operation.TransformException;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.util.GenericName;
-import org.apache.sis.util.ArraysExt;
-
-import org.apache.sis.measure.Units;
-import org.apache.sis.measure.MeasurementRange;
-import org.apache.sis.metadata.ModifiableMetadata;
-import org.apache.sis.util.collection.BackingStoreException;
-import org.apache.sis.util.logging.Logging;
-import org.apache.sis.metadata.iso.DefaultMetadata;
-import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
-import org.apache.sis.metadata.iso.extent.DefaultExtent;
-import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
-import org.apache.sis.metadata.iso.identification.DefaultResolution;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.resources.Vocabulary;
-
-import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
-import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
-import org.apache.sis.util.iso.Names;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
-import org.opengis.metadata.content.CoverageDescription;
+import org.w3c.dom.Node;
 
 
 /**
@@ -212,7 +208,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      * @see ImageReader#getWidth(int)
      * @see ImageReader#getHeight(int)
      */
-    public abstract GeneralGridGeometry getGridGeometry(int index)
+    public abstract GridGeometry getGridGeometry(int index)
             throws CoverageStoreException, CancellationException;
 
     /**
@@ -466,8 +462,8 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
                      * axis), and more accurate for mid-latitude (the numbers are differents close to equator or
                      * to the poles).
                      */
-                    final GeneralGridGeometry gg = getGridGeometry(i);
-                    if (computeResolutions && gg.isDefined(GeneralGridGeometry.CRS)) {
+                    final GridGeometry gg = getGridGeometry(i);
+                    if (computeResolutions && gg.isDefined(GridGeometry.CRS)) {
                         final Quantity<?> m = CRSUtilities.getHorizontalResolution(
                                 gg.getCoordinateReferenceSystem(), gg.getResolution());
                         if (m != null) {
@@ -499,7 +495,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
                     * Horizontal, vertical and temporal extents. The horizontal extents is
                     * represented as a geographic bounding box, which may require a reprojection.
                     */
-                    if (computeExtents && gg.isDefined(GeneralGridGeometry.ENVELOPE)) {
+                    if (computeExtents && gg.isDefined(GridGeometry.ENVELOPE)) {
                         if (extent == null) {
                             extent = new UniqueExtents();
                         }

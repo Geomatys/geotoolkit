@@ -31,7 +31,7 @@ import javax.imageio.ImageReader;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -156,7 +156,7 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
      * @throws CancellationException
      */
     @Override
-    public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
+    public GridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
         if (index != 0) throw new CoverageStoreException("Unvalid index "+index);
 
         final GridExtent gridExtent;
@@ -216,7 +216,7 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
     protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, GridCoverageReadParam param)
             throws CoverageStoreException, TransformException, CancellationException {
 
-        GeneralGridGeometry geometry = GeoReferencedGridCoverageReader.getGridGeometry(getGridGeometry(0), areaLower, areaUpper, subsampling);
+        GridGeometry geometry = GeoReferencedGridCoverageReader.getGridGeometry(getGridGeometry(0), areaLower, areaUpper, subsampling);
 
         //-- get all needed band to build coverage (see Landsat spec)
         final int[] bandId = group.bands;

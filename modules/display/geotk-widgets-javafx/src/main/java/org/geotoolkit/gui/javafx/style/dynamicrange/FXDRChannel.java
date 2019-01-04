@@ -26,7 +26,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -126,7 +126,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                 final int nbdim;
                 if(dims==null){
                     //read a very low resolution image to extract bands from it
-                    final GeneralGridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
+                    final GridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
                     final Envelope env = gg.getEnvelope();
                     final double[] res = gg.getResolution();
                     for(int i=0;i<res.length;i++){
@@ -176,7 +176,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                 final int nbdim;
                 if(dims==null){
                     //read a very low resolution image to extract bands from it
-                    final GeneralGridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
+                    final GridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
                     final Envelope env = gg.getEnvelope();
                     final double[] res = gg.getResolution();
                     for(int i=0;i<res.length;i++){

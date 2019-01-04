@@ -20,7 +20,7 @@ package org.geotoolkit.gui.swing.render2d.control.information.presenter;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.storage.coverage.CoverageExtractor;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
@@ -72,7 +72,7 @@ public class CoverageDrillingPresenter extends AbstractInformationPresenter {
             GridCoverageReader reader = null;
             try {
                 reader = covRef.acquireReader();
-                final GeneralGridGeometry gridGeo = reader.getGridGeometry(covRef.getImageIndex());
+                final GridGeometry gridGeo = reader.getGridGeometry(covRef.getImageIndex());
                 final CoordinateReferenceSystem crs = gridGeo.getCoordinateReferenceSystem();
                 final int dimension = crs.getCoordinateSystem().getDimension();
                 if (dimension > 2) {
@@ -107,7 +107,7 @@ public class CoverageDrillingPresenter extends AbstractInformationPresenter {
                     final CoverageMapLayer layer = projectedCoverage.getLayer();
                     final GridCoverageResource covRef = layer.getCoverageReference();
                     final GridCoverageReader reader = covRef.acquireReader();
-                    final GeneralGridGeometry gridGeo = reader.getGridGeometry(covRef.getImageIndex());
+                    final GridGeometry gridGeo = reader.getGridGeometry(covRef.getImageIndex());
                     crs = gridGeo.getCoordinateReferenceSystem();
                     covRef.recycle(reader);
 

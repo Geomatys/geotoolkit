@@ -27,7 +27,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.coverage.*;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -154,7 +154,7 @@ public class Statistics extends AbstractProcess {
         GridCoverageReader reader = null;
         try {
             reader = ref.acquireReader();
-            final GeneralGridGeometry gridGeom = reader.getGridGeometry(ref.getImageIndex());
+            final GridGeometry gridGeom = reader.getGridGeometry(ref.getImageIndex());
             final Envelope env = gridGeom.getEnvelope();
             final GridExtent ext = gridGeom.getExtent();
 
@@ -549,7 +549,7 @@ public class Statistics extends AbstractProcess {
      */
     private GridCoverage2D getCoverage(GridCoverageReader reader, int imageIdx) throws ProcessException {
         try {
-            final GeneralGridGeometry gridGeometry = reader.getGridGeometry(imageIdx);
+            final GridGeometry gridGeometry = reader.getGridGeometry(imageIdx);
             CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
             final MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
             final GridExtent extent = gridGeometry.getExtent();

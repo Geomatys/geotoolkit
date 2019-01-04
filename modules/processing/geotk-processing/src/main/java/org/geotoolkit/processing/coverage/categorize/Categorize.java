@@ -15,7 +15,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.CoverageStack;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -86,9 +86,9 @@ public class Categorize extends AbstractProcess {
 
         try (final UncheckedCloseable inClose = () -> source.recycle(reader);
                 final UncheckedCloseable outClose = () -> destination.recycle(writer)) {
-            final GeneralGridGeometry inputGG = reader.getGridGeometry(source.getImageIndex());
+            final GridGeometry inputGG = reader.getGridGeometry(source.getImageIndex());
 
-            final GeneralGridGeometry readGeom;
+            final GridGeometry readGeom;
             Envelope env = getEnvelope();
             if (env == null) {
                 env = inputGG.getEnvelope();
@@ -131,13 +131,13 @@ public class Categorize extends AbstractProcess {
                     env = tmpEnv;
                 }
 
-                readGeom = new GeneralGridGeometry(PixelInCell.CELL_CORNER, gridToCRS, env);
+                readGeom = new GridGeometry(PixelInCell.CELL_CORNER, gridToCRS, env);
             }
 
             final GridGeometryIterator it = new GridGeometryIterator(readGeom);
             while (it.hasNext()) {
                 final GridCoverageReadParam readParam = new GridCoverageReadParam();
-                final GeneralGridGeometry sliceGeom = it.next();
+                final GridGeometry sliceGeom = it.next();
                 final GeneralEnvelope expectedSliceEnvelope = GeneralEnvelope.castOrCopy(sliceGeom.getEnvelope());
                 readParam.setEnvelope(expectedSliceEnvelope);
                 GridCoverage sourceCvg = reader.read(source.getImageIndex(), readParam);
@@ -239,7 +239,7 @@ public class Categorize extends AbstractProcess {
      * @return The resampled data, never null.
      * @throws ProcessException
      */
-    private GridCoverage2D resample(final GridCoverage2D source, final GeneralGridGeometry target) throws ProcessException, TransformException {
+    private GridCoverage2D resample(final GridCoverage2D source, final GridGeometry target) throws ProcessException, TransformException {
         if (!(target instanceof GridGeometry2D)) {
             throw new ProcessException("Subset cannot be done. Incompatible grid geometry.", this);
         }

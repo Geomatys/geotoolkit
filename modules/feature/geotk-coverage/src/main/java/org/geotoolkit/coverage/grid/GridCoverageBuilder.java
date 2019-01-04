@@ -666,11 +666,11 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
 
     /**
      * Returns {@code true} if the property identified by the given flag is defined in the
-     * grid geometry. If the grid geometry is not an instance of {@link GeneralGridGeometry},
+     * grid geometry. If the grid geometry is not an instance of {@link GridGeometry},
      * then only the {@code EXTENT} and {@code GRID_TO_CRS} properties are assumed defined.
      *
      * @param  gridGeometry The grid geometry to test, or {@code null}.
-     * @param  flag One of the {@link GeneralGridGeometry} constants.
+     * @param  flag One of the {@link GridGeometry} constants.
      * @return {@code true} if the given property is defined.
      */
     private boolean isDefined(final int flag) {
@@ -678,10 +678,10 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         if (gridGeometry == null) {
             return false;
         }
-        if (gridGeometry instanceof GeneralGridGeometry) {
-            return ((GeneralGridGeometry) gridGeometry).isDefined(flag);
+        if (gridGeometry instanceof GridGeometry) {
+            return ((GridGeometry) gridGeometry).isDefined(flag);
         } else {
-            return (flag & (GeneralGridGeometry.EXTENT | GeneralGridGeometry.GRID_TO_CRS)) == flag;
+            return (flag & (GridGeometry.EXTENT | GridGeometry.GRID_TO_CRS)) == flag;
         }
     }
 
@@ -712,8 +712,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             if (envelope != null) {
                 return envelope.getCoordinateReferenceSystem();
             }
-            if (isDefined(GeneralGridGeometry.CRS)) {
-                return ((GeneralGridGeometry) gridGeometry).getCoordinateReferenceSystem();
+            if (isDefined(GridGeometry.CRS)) {
+                return ((GridGeometry) gridGeometry).getCoordinateReferenceSystem();
             }
             if (hints != null) {
                 return (CoordinateReferenceSystem) hints.get(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM);
@@ -729,7 +729,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * {@section Precedence}
      * If a grid geometry has been {@linkplain #setGridGeometry(GridGeometry) explicitely set}
-     * and {@linkplain GeneralGridGeometry#getCoordinateReferenceSystem() contains a CRS}, then
+     * and {@link GridGeometry#getCoordinateReferenceSystem() contains a CRS}, then
      * that later CRS will have precedence for the creation of {@link GridCoverage2D} instances.
      *
      * @param  crs The new CRS to use, or {@code null}.
@@ -753,7 +753,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
              * its main fields (namely GridToCRS and extent) before to clear the geometry in
              * order to rebuild later a new instance with the new CRS.
              */
-            if (isDefined(GeneralGridGeometry.CRS)) {
+            if (isDefined(GridGeometry.CRS)) {
                 if (gridToCRS == null) {
                     this.gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
                     pixelAnchor = null;
@@ -762,7 +762,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                     extent = gridGeometry.getExtent();
                 }
                 gridGeometry = null;
-            } else if (isDefined(GeneralGridGeometry.ENVELOPE)) {
+            } else if (isDefined(GridGeometry.ENVELOPE)) {
                 gridGeometry = null;
             }
             /*
@@ -837,8 +837,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                 return (Envelope) ((Cloneable) envelope).clone();
             }
         } else {
-            if (isDefined(GeneralGridGeometry.ENVELOPE)) {
-                return ((GeneralGridGeometry) gridGeometry).getEnvelope();
+            if (isDefined(GridGeometry.ENVELOPE)) {
+                return ((GridGeometry) gridGeometry).getEnvelope();
             }
         }
         return envelope;
@@ -858,7 +858,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * {@section Precedence}
      * If a grid geometry has been {@linkplain #setGridGeometry(GridGeometry) explicitely set}
-     * and {@linkplain GeneralGridGeometry#getEnvelope() contains an envelope}, then that later
+     * and {@link GridGeometry#getEnvelope() contains an envelope}, then that later
      * envelope will have precedence for the creation of {@link GridCoverage2D} instances.
      *
      * @param  envelope The new envelope to use, or {@code null}.
@@ -949,7 +949,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         if (extent != null) {
             return extent;
         } else {
-            if (isDefined(GeneralGridGeometry.EXTENT)) {
+            if (isDefined(GridGeometry.EXTENT)) {
                 return gridGeometry.getExtent();
             }
             final RenderedImage image = this.image;
@@ -975,7 +975,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * {@section Precedence}
      * If a grid geometry has been {@linkplain #setGridGeometry(GridGeometry) explicitely set}
-     * and {@linkplain GeneralGridGeometry#getExtent() contains an extent}, then that later extent
+     * and {@link GridGeometry#getExtent() contains an extent}, then that later extent
      * will have precedence for the creation of {@link GridCoverage2D} instances.
      *
      * @param  extent The new grid extent to use, or {@code null}.
@@ -1033,8 +1033,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         MathTransform tr = null;
         final GridGeometry gridGeometry = this.gridGeometry;
         if (gridGeometry != null) {
-            if (gridGeometry instanceof GeneralGridGeometry) {
-                return ((GeneralGridGeometry) gridGeometry).getDimension();
+            if (gridGeometry instanceof GridGeometry) {
+                return ((GridGeometry) gridGeometry).getDimension();
             } else {
                 tr = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
             }
@@ -1131,8 +1131,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                 final PixelInCell pixelAnchor = this.pixelAnchor;
                 if (pixelAnchor == null) {
                     return gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
-                } else if (gridGeometry instanceof GeneralGridGeometry) {
-                    return ((GeneralGridGeometry) gridGeometry).getGridToCRS(pixelAnchor);
+                } else if (gridGeometry instanceof GridGeometry) {
+                    return ((GridGeometry) gridGeometry).getGridToCRS(pixelAnchor);
                 }
             }
         }
@@ -1153,7 +1153,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * {@section Precedence}
      * If a grid geometry has been {@linkplain #setGridGeometry(GridGeometry) explicitely set}
-     * and {@linkplain GeneralGridGeometry#getGridToCRS() contains a transform}, then that later
+     * and {@link GridGeometry#getGridToCRS() contains a transform}, then that later
      * transform will have precedence for the creation of {@link GridCoverage2D} instances.
      *
      * @param  gridToCRS The new <cite>grid to CRS</cite> transform, or {@code null}.
@@ -1247,7 +1247,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *         {@link PixelInCell#CELL_CENTER}.
      *
      * @see #pixelAnchor
-     * @see GeneralGridGeometry#GeneralGridGeometry(GridExtent, PixelInCell, MathTransform, CoordinateReferenceSystem)
+     * @see GridGeometry#GeneralGridGeometry(GridExtent, PixelInCell, MathTransform, CoordinateReferenceSystem)
      *
      * @since 3.20
      */
@@ -1291,7 +1291,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * </ul></td></tr></table>
      * <p>
      * Note that creation of grid geometries from the parameters listed in the right column use heuristic
-     * rules documented {@linkplain GeneralGridGeometry#GeneralGridGeometry(GridExtent,Envelope) here}.
+     * rules documented {@link GridGeometry#GeneralGridGeometry(GridExtent, Envelope) here}.
      * In order to keep grid geometry creations more determinist, we recommend to specify the parameters
      * listed in the left column instead.
      *

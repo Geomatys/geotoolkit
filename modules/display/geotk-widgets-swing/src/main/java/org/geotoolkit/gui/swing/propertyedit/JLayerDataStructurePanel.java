@@ -36,7 +36,7 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -112,7 +112,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
             final GridCoverageResource ref = cml.getCoverageReference();
             try {
                 final GridCoverageReader reader = ref.acquireReader();
-                final GeneralGridGeometry gridgeom = reader.getGridGeometry(0);
+                final GridGeometry gridgeom = reader.getGridGeometry(0);
                 final List<GridSampleDimension> dimensions = reader.getSampleDimensions(0);
                 ref.recycle(reader);
 

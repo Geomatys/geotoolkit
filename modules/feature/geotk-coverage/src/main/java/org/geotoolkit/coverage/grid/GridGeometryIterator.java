@@ -19,7 +19,7 @@ import org.opengis.referencing.datum.PixelInCell;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
+public class GridGeometryIterator implements Iterator<GridGeometry> {
 
     /**
      * Source grid. It defines the entire space this iterator will move into.
@@ -31,7 +31,7 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
      */
     private final GridIterator gridIterator;
 
-    private final Function<GridExtent, GeneralGridGeometry> generator;
+    private final Function<GridExtent, GridGeometry> generator;
 
     /**
      * Create an iterator which will try to split given geometry as a series of
@@ -45,7 +45,7 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
      * which won't make any analysis of the geometry, and just iterate over
      * specified dimensions.
      */
-    public GridGeometryIterator(final GeneralGridGeometry source) throws IllegalArgumentException {
+    public GridGeometryIterator(final GridGeometry source) throws IllegalArgumentException {
         this(source, source.getCoordinateReferenceSystem());
     }
 
@@ -76,7 +76,7 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
      * @param source The geometry to split.
      * @param movableIndices indices for the dimensions to split and move along.
      */
-    public GridGeometryIterator(final GeneralGridGeometry source, final int... movableIndices) {
+    public GridGeometryIterator(final GridGeometry source, final int... movableIndices) {
         this(source, source.getCoordinateReferenceSystem(), movableIndices);
     }
 
@@ -116,7 +116,7 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
         if (fixed < 3) {
             generator = grid -> new GridGeometry2D(grid, source.getGridToCRS(PixelInCell.CELL_CENTER), crs);
         } else {
-            generator = grid -> new GeneralGridGeometry(grid, source.getGridToCRS(PixelInCell.CELL_CENTER), crs);
+            generator = grid -> new GridGeometry(grid, source.getGridToCRS(PixelInCell.CELL_CENTER), crs);
         }
     }
 
@@ -126,7 +126,7 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
     }
 
     @Override
-    public GeneralGridGeometry next() {
+    public GridGeometry next() {
         if (hasNext()) {
             return generator.apply(gridIterator.next());
         }

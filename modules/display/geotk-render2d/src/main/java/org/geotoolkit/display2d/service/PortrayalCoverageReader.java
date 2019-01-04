@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -76,11 +76,11 @@ public class PortrayalCoverageReader extends GridCoverageReader {
     }
 
     @Override
-    public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
+    public GridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
         //we only know the envelope
-        final GeneralGridGeometry gridGeom;
+        final GridGeometry gridGeom;
         try {
-            gridGeom = new GeneralGridGeometry(null, null, scene.getContext().getBounds());
+            gridGeom = new GridGeometry(null, null, scene.getContext().getBounds());
         } catch (IOException ex) {
             throw new CoverageStoreException(ex.getMessage(),ex);
         }

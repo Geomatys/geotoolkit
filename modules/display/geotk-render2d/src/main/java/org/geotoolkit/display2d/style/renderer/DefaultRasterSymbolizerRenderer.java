@@ -100,7 +100,6 @@ import org.geotoolkit.style.function.Mode;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
-import org.opengis.coverage.SampleDimensionType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -477,49 +476,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
              * building, so the result color map could be unfit to represent data
              * with sparse value distribution.
              */
-            if (sampleDims != null && sampleDims.length == 1) {
-                final GridSampleDimension packedDim = sampleDims[0].geophysics(false);
-                final double sampleMin, sampleMax;
-                final int sampleType = packedDim.getSampleDimensionType().ordinal();
-                if (sampleType == SampleDimensionType.REAL_32BITS.ordinal()) {
-                    sampleMin = -Float.MAX_VALUE;
-                    sampleMax = Float.MAX_VALUE;
-                } else if (sampleType == SampleDimensionType.REAL_64BITS.ordinal()) {
-                    sampleMin = -Double.MAX_VALUE;
-                    sampleMax = Double.MAX_VALUE;
-                } else if (sampleType == SampleDimensionType.SIGNED_16BITS.ordinal()) {
-                    sampleMin = Short.MIN_VALUE;
-                    sampleMax = Short.MAX_VALUE;
-                } else if (sampleType == SampleDimensionType.SIGNED_32BITS.ordinal()) {
-                    sampleMin = Integer.MIN_VALUE;
-                    sampleMax = Integer.MAX_VALUE;
-                } else if (sampleType == SampleDimensionType.SIGNED_8BITS.ordinal()) {
-                    sampleMin = Byte.MIN_VALUE;
-                    sampleMax = Byte.MAX_VALUE;
-                } else if (sampleType == SampleDimensionType.UNSIGNED_16BITS.ordinal()) {
-                    sampleMin = 0;
-                    sampleMax = 0xFFFF;
-                } else if (sampleType == SampleDimensionType.UNSIGNED_32BITS.ordinal()) {
-                    sampleMin = 0;
-                    sampleMax = 0xFFFFFFFF;
-                } else if (sampleType == SampleDimensionType.UNSIGNED_4BITS.ordinal()) {
-                    sampleMin = 0;
-                    sampleMax = 0xF;
-                } else if (sampleType == SampleDimensionType.UNSIGNED_8BITS.ordinal()) {
-                    sampleMin = 0;
-                    sampleMax = 0xFF;
-                } else {
-                    // If we cannot determine the sample type, it means we're not able to manage the sample dimension information.
-                    sampleMin = sampleMax = Double.NaN;
-                }
-
-                final boolean coherentSampleDimensions = packedDim.getMinimumValue() > sampleMin && packedDim.getMaximumValue() < sampleMax;
-
-                if (coherentSampleDimensions) {
-                    recolor = create(PaletteFactory.getDefault().getColors("grayscale"), sampleDims[0].getNoDataValues(), sampleDims[0].getMinimumValue(), sampleDims[0].getMaximumValue());
-                    break recolorCase;
-                }
-            }
+            if (sampleDims != null && sampleDims.length == 1)
 
             //if there is no geophysic, the same coverage is returned
             coverage = hasQuantitativeCategory(coverage) ? coverage.view(ViewType.GEOPHYSICS) : coverage;
@@ -929,7 +886,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final Envelope2D covEnv2d              = coverage.getGridGeometry().getEnvelope2D();
 
         final GridCoverageReader elevationReader = elevationModel.getCoverageReader();
-        final GeneralGridGeometry elevGridGeom   = elevationReader.getGridGeometry(0);
+        final GridGeometry elevGridGeom          = elevationReader.getGridGeometry(0);
         if (!(elevGridGeom instanceof GridGeometry2D)) {
             throw new IllegalArgumentException("the Digital Elevation Model should be instance of gridcoverage2D."+elevGridGeom);
         }

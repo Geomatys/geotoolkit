@@ -35,7 +35,7 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -106,7 +106,7 @@ public class Isoline2 extends AbstractProcess {
         try {
             final int imgIndex = coverageRef.getImageIndex();
             final GridCoverageReader reader  = coverageRef.acquireReader();
-            final GeneralGridGeometry gridgeom = reader.getGridGeometry(imgIndex);
+            final GridGeometry gridgeom = reader.getGridGeometry(imgIndex);
             crs = gridgeom.getCoordinateReferenceSystem();
             type = getOrCreateIsoType(featureStore, featureTypeName, crs);
             col = featureStore.createSession(false).getFeatureCollection(QueryBuilder.all(type.getName()));

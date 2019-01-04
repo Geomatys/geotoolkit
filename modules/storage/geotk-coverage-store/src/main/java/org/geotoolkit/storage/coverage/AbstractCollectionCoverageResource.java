@@ -42,7 +42,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -84,7 +84,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
 
     protected final List<Resource> resources = new CopyOnWriteArrayList<Resource>();
 
-    private GeneralGridGeometry gridGeom;
+    private GridGeometry gridGeom;
     private List<GridSampleDimension> sampleDimensions;
 
     public AbstractCollectionCoverageResource(DataStore store, GenericName name) {
@@ -128,7 +128,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
      * @return
      * @throws CoverageStoreException
      */
-    private synchronized GeneralGridGeometry getGridGeometryInternal() throws CoverageStoreException {
+    private synchronized GridGeometry getGridGeometryInternal() throws CoverageStoreException {
         if (gridGeom != null) return gridGeom;
 
         try {
@@ -137,7 +137,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
             double[] resolution = null;
             for (GridCoverageResource ref : getCoverages(null)) {
                 final GridCoverageReader reader = ref.acquireReader();
-                final GeneralGridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
+                final GridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
                 ref.recycle(reader);
 
                 if (gg instanceof GridGeometry2D) {
@@ -212,7 +212,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
         }
 
         @Override
-        public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
+        public GridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
             return AbstractCollectionCoverageResource.this.getGridGeometryInternal();
         }
 
@@ -245,8 +245,8 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
                 throw new DisjointCoverageDomainException("No coverage match parameters");
             }
 
-            final GeneralGridGeometry globalGridGeom = getGridGeometry(0);
-            final GeneralGridGeometry gridGeom = GeoReferencedGridCoverageReader.getGridGeometry(globalGridGeom, areaLower, areaUpper, subsampling);
+            final GridGeometry globalGridGeom = getGridGeometry(0);
+            final GridGeometry gridGeom = GeoReferencedGridCoverageReader.getGridGeometry(globalGridGeom, areaLower, areaUpper, subsampling);
             final GridExtent extent = gridGeom.getExtent();
             final long sizeX = extent.getSize(0);
             final long sizeY = extent.getSize(1);

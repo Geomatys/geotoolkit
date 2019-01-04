@@ -26,7 +26,6 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.GridCoverageStack;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -80,7 +79,7 @@ public class CoverageRasterizer {
 
         if (dimension == 2) {
             //single slice
-            return buildSlice((GeneralGridGeometry) gridGeometry);
+            return buildSlice((GridGeometry) gridGeometry);
         } else {
             //cube
             return build(gridGeometry, 2);
@@ -95,7 +94,7 @@ public class CoverageRasterizer {
             //last dimension
             final List<GridCoverage> slices = new ArrayList<>();
             while (ite.hasNext()) {
-                final GeneralGridGeometry sliceGridGeom = ite.next();
+                final GridGeometry sliceGridGeom = ite.next();
                 final GridCoverage slice = buildSlice(sliceGridGeom);
                 slices.add(slice);
             }
@@ -111,7 +110,7 @@ public class CoverageRasterizer {
         }
     }
 
-    private GridCoverage buildSlice(GeneralGridGeometry sliceGridGeom) throws TransformException, FactoryException {
+    private GridCoverage buildSlice(GridGeometry sliceGridGeom) throws TransformException, FactoryException {
 
         final int nbSample = source.getNumSampleDimensions();
         final SampleDimension[] samples = new SampleDimension[nbSample];

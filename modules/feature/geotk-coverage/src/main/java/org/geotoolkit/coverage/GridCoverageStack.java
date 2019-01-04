@@ -24,7 +24,6 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
@@ -176,7 +175,7 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
 
         //build gridGeometry
         final GridExtent gridEnv = new GridExtent(null, gridLower, gridUpper, true);
-        gridGeometry = new GeneralGridGeometry(gridEnv, PixelInCell.CELL_CORNER, gridToCRS, crs);
+        gridGeometry = new GridGeometry(gridEnv, PixelInCell.CELL_CORNER, gridToCRS, crs);
     }
 
     @Override

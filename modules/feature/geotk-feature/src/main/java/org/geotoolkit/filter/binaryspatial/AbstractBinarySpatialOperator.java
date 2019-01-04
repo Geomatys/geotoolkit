@@ -49,7 +49,7 @@ import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -124,7 +124,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
             //use the coverage envelope
             final GridCoverageReader reader = (GridCoverageReader) value;
             try{
-                GeneralGridGeometry gg = reader.getGridGeometry(0);
+                GridGeometry gg = reader.getGridGeometry(0);
                 candidate = JTS.toGeometry(gg.getEnvelope());
                 candidate.setUserData(gg.getCoordinateReferenceSystem());
             }catch(CoverageStoreException ex){

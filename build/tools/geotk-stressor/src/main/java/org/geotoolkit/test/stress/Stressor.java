@@ -28,7 +28,7 @@ import org.apache.sis.math.Statistics;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.logging.PerformanceLevel;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.util.logging.LogProducer;
 
 
@@ -93,7 +93,7 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
      *
      * @param domain Contains the maximal extent of the random envelopes to be generated.
      */
-    protected Stressor(final GeneralGridGeometry domain) {
+    protected Stressor(final GridGeometry domain) {
         super(domain);
     }
 
@@ -156,7 +156,7 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
             /*
              * Execute the method to stress.
              */
-            final GeneralGridGeometry geometry = getRandomGrid();
+            final GridGeometry geometry = getRandomGrid();
             long time = System.nanoTime();
             final RenderedImage image = executeQuery(geometry);
             time = System.nanoTime() - time;
@@ -232,7 +232,7 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
      * @return An image which represent the result of the request, or {@code null} if none.
      * @throws Exception If an error occurred during the test.
      */
-    protected abstract RenderedImage executeQuery(GeneralGridGeometry request) throws Exception;
+    protected abstract RenderedImage executeQuery(GridGeometry request) throws Exception;
 
     /**
      * Invoked when the test is done. The default implementation does nothing.

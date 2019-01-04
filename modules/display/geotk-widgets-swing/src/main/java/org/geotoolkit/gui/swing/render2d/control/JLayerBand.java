@@ -39,7 +39,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
@@ -177,7 +177,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
                 return;
             }
 
-            GeneralGridGeometry gridGeometry;
+            GridGeometry gridGeometry;
             try {
                 final GridCoverageResource covRef = coverageLayer.getCoverageReference();
                 final GridCoverageReader reader = covRef.acquireReader();

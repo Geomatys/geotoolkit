@@ -29,7 +29,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -156,7 +156,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
                 geomCRS = JTS.findCoordinateReferenceSystem(jtsGeom);
             }
 
-            final GeneralGridGeometry covGridGeom = gcReader.getGridGeometry(bandIndex);
+            final GridGeometry covGridGeom = gcReader.getGridGeometry(bandIndex);
 
             /*
              * If we have no CRS informations from geometry we consider that geometry is defined in same crs as Coverage.

@@ -22,7 +22,7 @@ import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.junit.Assert;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class PyramidsTest {
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
         final GridExtent extent = new GridExtent(null, new long[]{0,0}, new long[]{1000, 512}, false);
         final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -50, 40);
-        final GeneralGridGeometry gg = new GridGeometry2D(extent, gridToCrs, crs);
+        final GridGeometry gg = new GridGeometry2D(extent, gridToCrs, crs);
 
         final DefiningPyramid pyramid = Pyramids.createTemplate(gg, new Dimension(256, 256));
         Assert.assertEquals(crs, pyramid.getCoordinateReferenceSystem());

@@ -45,7 +45,7 @@ import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -345,7 +345,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
 
         final GridCoverageReader reader = inRef.acquireReader();
         final int imageIndex = inRef.getImageIndex();
-        final GeneralGridGeometry globalGeom = reader.getGridGeometry(imageIndex);
+        final GridGeometry globalGeom = reader.getGridGeometry(imageIndex);
         final CoordinateReferenceSystem crs = globalGeom.getCoordinateReferenceSystem();
 
         final GenericName name = inRef.getIdentifier();

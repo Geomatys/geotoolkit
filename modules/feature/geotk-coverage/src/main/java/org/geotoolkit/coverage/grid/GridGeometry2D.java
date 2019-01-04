@@ -47,7 +47,7 @@ import org.opengis.util.FactoryException;
 
 
 /**
- * A {@link GeneralGridGeometry} where only 2 dimensions have more than 1 cell.
+ * A {@link GridGeometry} where only 2 dimensions have more than 1 cell.
  * For example a grid size of 512&times;512&times;1 pixels can be represented by this
  * {@code GridGeometry2D} class (some peoples said 2.5D) because a two-dimensional grid
  * coordinate is enough for referencing a pixel without ambiguity. But a grid size of
@@ -90,12 +90,12 @@ import org.opengis.util.FactoryException;
  * @version 3.20
  *
  * @see ImageGeometry
- * @see GeneralGridGeometry
+ * @see GridGeometry
  *
  * @since 2.1
  * @module
  */
-public class GridGeometry2D extends GeneralGridGeometry {
+public class GridGeometry2D extends GridGeometry {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -238,8 +238,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
 
     /**
      * Constructs a new grid geometry from a grid envelope and a math transform. The arguments are
-     * passed unchanged to the {@linkplain GeneralGridGeometry#GeneralGridGeometry(GridExtent,
-     * MathTransform, CoordinateReferenceSystem) super-class constructor}. However, they must
+     * passed unchanged to the {@link GridGeometry#GeneralGridGeometry(GridExtent, MathTransform, CoordinateReferenceSystem) super-class constructor}. However, they must
      * obey to the additional constraints documented in the class javadoc.
      *
      * @param  extent The extent of grid coordinates in a grid coverage, or {@code null} if none.
@@ -459,8 +458,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
 
     /**
      * Constructs a new grid geometry from an envelope. This constructors applies the same heuristic
-     * rules than the {@linkplain GeneralGridGeometry#GeneralGridGeometry(GridExtent,Envelope)
-     * super-class constructor}. However, they must obey to the same additional constraints than
+     * rules than the {@link GridGeometry#GeneralGridGeometry(GridExtent, Envelope) super-class constructor}. However, they must obey to the same additional constraints than
      * the {@linkplain #GridGeometry2D(GridExtent, MathTransform, CoordinateReferenceSystem) main
      * constructor}.
      *

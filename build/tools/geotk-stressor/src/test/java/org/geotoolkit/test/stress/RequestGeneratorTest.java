@@ -20,7 +20,7 @@ package org.geotoolkit.test.stress;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import static org.geotoolkit.referencing.crs.PredefinedCRS.CARTESIAN_2D;
@@ -68,7 +68,7 @@ public final strictfp class RequestGeneratorTest {
         final double distributionScale = distribution.length / generator.getMaximumScale();
 
         for (int t=0; t<5000; t++) {
-            final GeneralGridGeometry sg = generator.getRandomGrid();
+            final GridGeometry sg = generator.getRandomGrid();
             final GridExtent          sr = sg.getExtent();
             final Envelope            se = sg.getEnvelope();
             assertTrue("Grid envelope out of bounds.", GridGeometryIterator.toRectangle(range)

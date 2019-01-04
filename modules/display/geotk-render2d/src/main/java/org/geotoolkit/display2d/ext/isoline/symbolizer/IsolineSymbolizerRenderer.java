@@ -23,7 +23,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -138,7 +138,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                 final GridExtent gridEnv = new GridExtent(null, new long[]{rec.x,rec.y}, new long[]{rec.width,rec.height}, false);
                 final CoordinateReferenceSystem crs = renderingContext.getObjectiveCRS2D();
                 final MathTransform gridToCRS = renderingContext.getDisplayToObjective();
-                final GridGeometry inGridGeom = new GeneralGridGeometry(gridEnv, gridToCRS, crs);
+                final GridGeometry inGridGeom = new GridGeometry(gridEnv, gridToCRS, crs);
 
                 final Parameters resampleParams = Parameters.castOrWrap(ResampleDescriptor.INPUT_DESC.createValue());
                 resampleParams.getOrCreate(IN_COVERAGE).setValue(inCoverage);

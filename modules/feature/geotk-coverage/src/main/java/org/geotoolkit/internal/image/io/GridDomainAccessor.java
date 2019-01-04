@@ -26,7 +26,7 @@ import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
@@ -152,8 +152,8 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
                     for (int i=0; i<center.length; i++) {
                         if (Double.isNaN(center[i])) {
                             CoordinateReferenceSystem crs;
-                            if (geometry instanceof GeneralGridGeometry) {
-                                crs = ((GeneralGridGeometry) geometry).getCoordinateReferenceSystem();
+                            if (geometry instanceof GridGeometry) {
+                                crs = ((GridGeometry) geometry).getCoordinateReferenceSystem();
                             } else if (geometry instanceof CoordinateReferenceSystem) {
                                 crs = (CoordinateReferenceSystem) geometry;
                             } else {
@@ -506,8 +506,8 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
 
     private static Matrix getAffineTransform(final GridGeometry geometry, PixelInCell pixelInCell) {
         MathTransform tr;
-        if (pixelInCell != null && geometry instanceof GeneralGridGeometry) {
-            tr = ((GeneralGridGeometry) geometry).getGridToCRS(pixelInCell);
+        if (pixelInCell != null && geometry instanceof GridGeometry) {
+            tr = ((GridGeometry) geometry).getGridToCRS(pixelInCell);
             pixelInCell = null; // Indicates that the offset is already applied.
         } else {
             tr = geometry.getGridToCRS(PixelInCell.CELL_CENTER);

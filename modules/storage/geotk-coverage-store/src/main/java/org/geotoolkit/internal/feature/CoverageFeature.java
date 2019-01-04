@@ -34,7 +34,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry;
@@ -96,7 +96,7 @@ public final class CoverageFeature {
     public static FeatureType createCoverageType(GridCoverageReader reader) throws CoverageStoreException {
         final int imageIndex = 0;
 
-        final GeneralGridGeometry gridGeometry = reader.getGridGeometry(imageIndex);
+        final GridGeometry gridGeometry = reader.getGridGeometry(imageIndex);
         final CoordinateReferenceSystem crs = CRS.getHorizontalComponent(gridGeometry.getCoordinateReferenceSystem());
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -155,7 +155,7 @@ public final class CoverageFeature {
     public static FeatureType createRecordType(GridCoverageReader reader) throws CoverageStoreException {
         final int imageIndex = 0;
 
-        final GeneralGridGeometry gridGeometry = reader.getGridGeometry(imageIndex);
+        final GridGeometry gridGeometry = reader.getGridGeometry(imageIndex);
         final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
         final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(crs);
 
@@ -213,7 +213,7 @@ public final class CoverageFeature {
         }
 
         //read a single pixel coverage
-        final GeneralGridGeometry gridGeom = reader.getGridGeometry(imageIndex);
+        final GridGeometry gridGeom = reader.getGridGeometry(imageIndex);
         final Envelope env = gridGeom.getEnvelope();
 
         final GridCoverageReadParam param = new GridCoverageReadParam();
