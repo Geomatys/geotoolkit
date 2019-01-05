@@ -555,7 +555,7 @@ public final class CoverageUtilities extends Static {
     public static GridGeometry forceLowerToZero(final GridGeometry gg) {
         if (gg != null && gg.isDefined(GridGeometry.EXTENT)) {
             final GridExtent extent = gg.getExtent();
-            if (!extent.startsWithZero()) {
+            if (!extent.startsAtZero()) {
                 CoordinateReferenceSystem crs = null;
                 if (gg.isDefined(GridGeometry.CRS)) crs = gg.getCoordinateReferenceSystem();
                 final int dimension = extent.getDimension();
