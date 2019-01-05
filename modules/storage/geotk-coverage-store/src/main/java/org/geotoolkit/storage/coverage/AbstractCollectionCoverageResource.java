@@ -174,7 +174,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
             //calculate the output grid geometry and image size
             final int sizeX = (int)(env.getSpan(0) / resolution[0]);
             final int sizeY = (int)(env.getSpan(1) / resolution[1]);
-            gridGeom = new GridGeometry2D(new GridExtent(null, new long[]{0, 0}, new long[]{sizeX, sizeY}, false), env);
+            gridGeom = new GridGeometry2D(new GridExtent(sizeX, sizeY), env);
 
             return gridGeom;
         } catch (TransformException ex) {

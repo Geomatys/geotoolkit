@@ -239,7 +239,7 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
 
         //build the coverage
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        final GridExtent ge = new GridExtent(null, new long[]{0,0}, new long[]{image.getWidth(), image.getHeight()}, false);
+        final GridExtent ge = new GridExtent(image.getWidth(), image.getHeight());
         final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, trs, tileCRS);
         gcb.setName("tile");
         gcb.setGridGeometry(gridgeo);

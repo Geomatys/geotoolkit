@@ -40,7 +40,7 @@ public class PyramidsTest {
     public void testGridGeometry2DTemplate() throws DataStoreException {
 
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
-        final GridExtent extent = new GridExtent(null, new long[]{0,0}, new long[]{1000, 512}, false);
+        final GridExtent extent = new GridExtent(1000, 512);
         final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -50, 40);
         final GridGeometry gg = new GridGeometry2D(extent, gridToCrs, crs);
 

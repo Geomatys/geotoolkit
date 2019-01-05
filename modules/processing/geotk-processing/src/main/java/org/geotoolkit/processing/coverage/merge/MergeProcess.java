@@ -95,8 +95,7 @@ public class MergeProcess extends AbstractProcess {
         //calculate the output grid geometry and image size
         final int sizeX = (int)(inputEnvelope.getSpan(0) / inputResolution);
         final int sizeY = (int)(inputEnvelope.getSpan(1) / inputResolution);
-        final GridGeometry2D gridGeom = new GridGeometry2D(
-                new GridExtent(null, new long[]{0, 0}, new long[]{sizeX, sizeY}, false), inputEnvelope);
+        final GridGeometry2D gridGeom = new GridGeometry2D(new GridExtent(sizeX, sizeY), inputEnvelope);
 
         //force sample type and area of each coverage
         final Coverage[] fittedCoverages = new Coverage[inputCoverage.length];

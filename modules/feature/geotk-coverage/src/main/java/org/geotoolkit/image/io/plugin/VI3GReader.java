@@ -197,10 +197,7 @@ public class VI3GReader extends SpatialImageReader {
             // HACK : a problem has been detected with Geotk rendering of latitude first data.
             // As a warkaround, we define the image as longitude first, and then roll it
             // using sheer.
-            final GridExtent gridEnv = new GridExtent(null,
-                    new long[]{0, 0},
-                    new long[]{getWidth(imageIndex), getHeight(imageIndex)},
-                    false);
+            final GridExtent gridEnv = new GridExtent(getWidth(imageIndex), getHeight(imageIndex));
             AffineTransform2D tr = new AffineTransform2D(-180.0 / WIDTH, 0, 0, 360.0 / HEIGHT, 90.0, -180.0);
 
             accessor.setGridGeometry(new GridGeometry(gridEnv, PixelInCell.CELL_CORNER, tr, geographicCRS),

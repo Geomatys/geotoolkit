@@ -116,7 +116,7 @@ public class StraightenProcess extends AbstractProcess {
             }
 
             final AffineTransform2D outGridToCRS = new AffineTransform2D(scale, 0, 0, -scale, minX, maxY);
-            final GridExtent gridEnv = new GridExtent(null, new long[]{0, 0}, new long[]{(int)(spanX/scale), (int)(spanY/scale)}, false);
+            final GridExtent gridEnv = new GridExtent((long)(spanX/scale), (long)(spanY/scale));
             final GridGeometry2D outgridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, outGridToCRS, crs);
             final GridCoverage2D outCoverage = (GridCoverage2D) Operations.DEFAULT.resample(candidate, crs, outgridGeom, null);
             outputParameters.getOrCreate(StraightenDescriptor.COVERAGE_OUT).setValue(outCoverage);

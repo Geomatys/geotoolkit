@@ -617,7 +617,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         }
 
 
-        final GridGeometry2D gg = new GridGeometry2D(new GridExtent(null, new long[]{0, 0}, new long[]{width, height}, false), outputRenderingCoverageEnv2D);
+        final GridGeometry2D gg = new GridGeometry2D(new GridExtent(width, height), outputRenderingCoverageEnv2D);
 
         //Temporary hack to avoid wrong interpolation on wrap around data
         if (!CoordinateOperations.wrapAroundChanges(inputCoverageCRS2D, gg.getCoordinateReferenceSystem().getCoordinateSystem()).isEmpty()) {

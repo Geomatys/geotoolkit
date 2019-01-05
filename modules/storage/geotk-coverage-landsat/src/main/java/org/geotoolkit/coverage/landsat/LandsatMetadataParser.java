@@ -765,7 +765,7 @@ public class LandsatMetadataParser {
         upper[0] = Integer.valueOf(width);
         upper[1] = Integer.valueOf(height);
 
-        return new GridExtent(null, new long[dim], upper, false);
+        return new GridExtent(null, null, upper, false);
     }
 
     /**

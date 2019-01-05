@@ -121,7 +121,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
         expectedEnvelope.setRange(0, -10, 1);
         expectedEnvelope.setRange(1, -10, 1);
         expectedEnvelope.setRange(2, timestamp, secondTimestamp + 1);
-        final GridExtent twoSlices = new GridExtent(null, new long[]{0, 0, 0}, new long[]{16, 16, 2}, false);
+        final GridExtent twoSlices = new GridExtent(null, null, new long[]{16, 16, 2}, false);
 
         try (final TimedCoverageStore store = create()) {
             final GridCoverageReader reader = acquireReader(store);
@@ -166,7 +166,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
             final long timestamp = toTimestamp(LocalDate.of(2017, Month.JANUARY, 1));
             // To avoid empty envelope, an offset of one milliseconds is added to the end of the interval.
             expectedEnvelope.setRange(2, timestamp, timestamp);
-            final GridExtent singleSlice = new GridExtent(null, new long[]{0, 0, 0}, new long[]{16, 16, 1}, false);
+            final GridExtent singleSlice = new GridExtent(null, null, new long[]{16, 16, 1}, false);
 
             final GridCoverageReader reader = acquireReader(store);
             checkReferencing(reader.getGridGeometry(0), singleSlice, expectedEnvelope);
@@ -196,7 +196,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
             */
             final long timeResolution = (secondTimestamp - timestamp) / 2;
             expectedEnvelope.setRange(2, timestamp - timeResolution, secondTimestamp + timeResolution);
-            final GridExtent twoSlices = new GridExtent(null, new long[]{0, 0, 0}, new long[]{16, 16, 2}, false);
+            final GridExtent twoSlices = new GridExtent(null, null, new long[]{16, 16, 2}, false);
             checkReferencing(reader.getGridGeometry(0), twoSlices, expectedEnvelope);
 
             // Secondly, we verify we can acquire our data slice by slice.
@@ -208,7 +208,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
             env2d.setRange(0, -2, 1);
             env2d.setRange(1, -2, 1);
             env2d.setCoordinateReferenceSystem(inputCRS);
-            final GridExtent slice2d = new GridExtent(null, new long[]{0, 0}, new long[]{16, 16}, false);
+            final GridExtent slice2d = new GridExtent(16, 16);
             checkReferencing(((GridCoverage2D) secondSlice).getGridGeometry(), slice2d, env2d);
         }
     }

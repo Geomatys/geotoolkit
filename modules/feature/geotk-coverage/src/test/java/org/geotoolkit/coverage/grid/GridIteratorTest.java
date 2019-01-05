@@ -42,7 +42,7 @@ public class GridIteratorTest {
 
     @Test
     public void test3D() {
-        final GridExtent grid = new GridExtent(null, new long[]{0, 0, 0}, new long[]{100, 100, 2}, true);
+        final GridExtent grid = new GridExtent(null, null, new long[]{100, 100, 2}, true);
         GridIterator it = new GridIterator(grid, new int[]{0, 0, 1});
         Assert.assertTrue("Iterator should have at least one element", it.hasNext());
         Assert.assertEquals(new GridExtent(null, new long[]{0, 0, 0}, new long[]{100, 100, 0}, true), it.next());

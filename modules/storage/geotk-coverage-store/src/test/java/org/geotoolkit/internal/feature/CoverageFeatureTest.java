@@ -172,7 +172,7 @@ public class CoverageFeatureTest {
                     0, 0, 1, 100,
                     0, 0, 0, 1);
             final MathTransform gridToCrs = MathTransforms.linear(matrix);
-            final GridGeometry2D gg = new GridGeometry2D(new GridExtent(null, new long[]{0,0,0}, new long[]{2,2,1}, false), gridToCrs, crs3d);
+            final GridGeometry2D gg = new GridGeometry2D(new GridExtent(null, null, new long[]{2,2,1}, false), gridToCrs, crs3d);
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setName("Slice1");
@@ -197,7 +197,7 @@ public class CoverageFeatureTest {
                     0, 0, 1, 101,
                     0, 0, 0, 1);
             final MathTransform gridToCrs = MathTransforms.linear(matrix);
-            final GridGeometry2D gg = new GridGeometry2D(new GridExtent(null, new long[]{0,0,0}, new long[]{2,2,1}, false), gridToCrs, crs3d);
+            final GridGeometry2D gg = new GridGeometry2D(new GridExtent(null, null, new long[]{2,2,1}, false), gridToCrs, crs3d);
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setName("Slice2");

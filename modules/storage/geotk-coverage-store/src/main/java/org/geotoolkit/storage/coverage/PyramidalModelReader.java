@@ -39,7 +39,6 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridCoverageStack;
@@ -137,13 +136,13 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         if (pyramid == null) {
             //-- empty pyramid set
-            return new GridGeometry(new GridExtent(null, ArraysExt.EMPTY_LONG, ArraysExt.EMPTY_LONG, true), PixelInCell.CELL_CENTER, null, null);
+            return GridGeometry.UNDEFINED;
         }
 
         final List<Mosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
         if (mosaics.isEmpty()) {
             //no mosaics
-            return new GridGeometry(new GridExtent(null, ArraysExt.EMPTY_LONG, ArraysExt.EMPTY_LONG, true), PixelInCell.CELL_CENTER, null, null);
+            return GridGeometry.UNDEFINED;
         }
 
         Collections.sort(mosaics, CoverageFinder.SCALE_COMPARATOR);
@@ -189,11 +188,9 @@ public class PyramidalModelReader extends GridCoverageReader{
         //-- size of internal pixel data recovered
         final Rectangle dataSize = mosaic.getDataExtent();
 
-        final long[] low   = new long[nbdim];
         final long[] high  = new long[nbdim];
 
         for (int i = 0; i < cs.getDimension(); i++) {
-            low[i] = 0; //-- on each dimension low begin at 0
             if (i == minordi) {
                 high[i] = dataSize.width; //-- X horizontal 2D part
             } else if (i == minordi + 1) {
@@ -206,7 +203,7 @@ public class PyramidalModelReader extends GridCoverageReader{
             }
         }
 
-        final GridExtent ge = new GridExtent(null, low, high, false);
+        final GridExtent ge = new GridExtent(null, null, high, false);
         gridGeom = new GridGeometry(ge, PixelInCell.CELL_CORNER, gridToCRSds, crs);
 
         return gridGeom;
@@ -508,14 +505,12 @@ public class PyramidalModelReader extends GridCoverageReader{
             gcb.setSampleDimensions(dimensions.toArray(new GridSampleDimension[dimensions.size()]));
         }
 
-        final long[] low = new long[wantedCRS.getCoordinateSystem().getDimension()];
-        final long[] high = new long[low.length];
-        Arrays.fill(low, 0);
+        final long[] high = new long[wantedCRS.getCoordinateSystem().getDimension()];
         Arrays.fill(high, 1);
         high[0] = image.getWidth();
         high[1] = image.getHeight();
 
-        final GridExtent ge = new GridExtent(null, low, high, false);
+        final GridExtent ge = new GridExtent(null, null, high, false);
         final MathTransform gtc = Pyramids.getTileGridToCRSND(mosaic,
                 new Point((int)tileMinCol,(int)tileMinRow),wantedCRS.getCoordinateSystem().getDimension());
         final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, gtc, wantedCRS);

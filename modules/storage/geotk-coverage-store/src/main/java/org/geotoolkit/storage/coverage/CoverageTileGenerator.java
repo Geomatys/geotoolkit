@@ -149,16 +149,15 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         final Dimension tileSize = mosaic.getTileSize();
         final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
         final LinearTransform gridToCrsNd = Pyramids.getTileGridToCRS(mosaic, tileCoord, PixelInCell.CELL_CENTER);
-        final long[] low = new long[crs.getCoordinateSystem().getDimension()];
-        final long[] high = new long[low.length];
+        final long[] high = new long[crs.getCoordinateSystem().getDimension()];
         high[0] = tileSize.width-1; //inclusive
         high[1] = tileSize.height-1; //inclusive
-        final GridExtent extent = new GridExtent(null, low, high, true);
+        final GridExtent extent = new GridExtent(null, null, high, true);
         final GridGeometry gridGeomNd = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCrsNd, crs);
 
         //extract resolution
         final Matrix matrix = gridToCrsNd.getMatrix();
-        final double[] resolution = new double[low.length];
+        final double[] resolution = new double[high.length];
         for (int i=0;i<resolution.length;i++) {
             resolution[i] = Math.abs(matrix.getElement(i, i));
         }

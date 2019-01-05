@@ -192,10 +192,7 @@ public class HGTReader extends SpatialImageReader {
                 final ReferencingBuilder builder = new ReferencingBuilder(md);
                 builder.setCoordinateReferenceSystem(geographicCRS);
 
-                final GridExtent gridEnv = new GridExtent(null,
-                        new long[]{0, 0},
-                        new long[]{getWidth(imageIndex), getHeight(imageIndex)},
-                        false);
+                final GridExtent gridEnv = new GridExtent(getWidth(imageIndex), getHeight(imageIndex));
                 final GeneralEnvelope envelope = new GeneralEnvelope(geographicCRS);
                 final int latitude = matcher.group(1).toLowerCase().startsWith("n")?
                         Integer.parseInt(matcher.group(2)) : -Integer.parseInt(matcher.group(2));

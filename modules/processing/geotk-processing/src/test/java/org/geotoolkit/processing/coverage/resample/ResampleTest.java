@@ -124,7 +124,7 @@ public class ResampleTest extends AbstractProcessTest {
         //output layout
         MathTransform gridToCrsOut = new AffineTransform2D(0.1,0,0,-0.1,20,60);
         gridToCrsOut = PixelTranslation.translate(gridToCrsOut, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
-        final GridExtent gridenv = new GridExtent(null, new long[]{0, 0}, new long[]{60, 60}, false);
+        final GridExtent gridenv = new GridExtent(60, 60);
         final GridGeometry outGridGeom = new GridGeometry(gridenv, PixelInCell.CELL_CENTER, gridToCrsOut, crs);
         GridCoverage2D result = new ResampleProcess(coverage, crs, new GridGeometry2D(outGridGeom), InterpolationCase.NEIGHBOR, new double[]{Double.NaN}).executeNow();
 
@@ -164,7 +164,7 @@ public class ResampleTest extends AbstractProcessTest {
         //output layout
         MathTransform gridToCrsOut = new AffineTransform2D(0.1,0,0,-0.1,19,61);
         gridToCrsOut = PixelTranslation.translate(gridToCrsOut, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
-        final GridExtent gridenv = new GridExtent(null, new long[]{0,0}, new long[]{60, 60}, false);
+        final GridExtent gridenv = new GridExtent(60, 60);
         final GridGeometry outGridGeom = new GridGeometry(gridenv, PixelInCell.CELL_CENTER, gridToCrsOut, crs);
 
         GridCoverage2D result = new ResampleProcess(coverage, crs, new GridGeometry2D(outGridGeom), InterpolationCase.NEIGHBOR, new double[]{Double.NaN}).executeNow();

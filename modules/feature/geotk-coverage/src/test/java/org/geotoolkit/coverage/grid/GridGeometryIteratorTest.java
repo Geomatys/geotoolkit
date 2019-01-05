@@ -49,7 +49,7 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
     @Test
     public void test2D() {
         // Most simple case : identity transform
-        GridExtent extent = new GridExtent(null, new long[]{0, 0}, new long[]{2, 2}, true);
+        GridExtent extent = new GridExtent(null, null, new long[]{2, 2}, true);
         GridGeometry sourceGeom = new GridGeometry2D(extent, PixelInCell.CELL_CORNER, new AffineTransform2D(1, 0, 0, 1, 0, 0), CommonCRS.defaultGeographic());
         GridGeometryIterator it = new GridGeometryIterator(sourceGeom);
         assertTrue(it.hasNext());
@@ -89,7 +89,7 @@ public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestB
 
         GridGeometryIterator it = new GridGeometryIterator(new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs3d));
         final GeneralEnvelope expectedEnvelope = new GeneralEnvelope(crs3d);
-        GridExtent expectedGrid = new GridExtent(null, new long[]{0, 0, 0}, new long[]{1, 1, 0}, true);
+        GridExtent expectedGrid = new GridExtent(null, null, new long[]{1, 1, 0}, true);
 
         expectedEnvelope.setEnvelope(7, 8, 3, 13, 18, 5);
         GridGeometry expectedGeom = new GridGeometry2D(expectedGrid, PixelInCell.CELL_CORNER, gridToCrs, crs3d);

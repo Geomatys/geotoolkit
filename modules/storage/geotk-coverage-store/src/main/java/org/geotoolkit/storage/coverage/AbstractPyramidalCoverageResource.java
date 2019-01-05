@@ -228,14 +228,12 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
         final CoordinateReferenceSystem tileCRS = pyramid.getCoordinateReferenceSystem();
         final MathTransform gridToCrs = Pyramids.getTileGridToCRS(mosaic,tile.getPosition());
 
-        final long[] low = new long[tileCRS.getCoordinateSystem().getDimension()];
-        final long[] high = new long[low.length];
-        Arrays.fill(low, 0);
+        final long[] high = new long[tileCRS.getCoordinateSystem().getDimension()];
         Arrays.fill(high, 1);
         high[0] = image.getWidth();
         high[1] = image.getHeight();
 
-        final GridExtent ge = new GridExtent(null, low, high, false);
+        final GridExtent ge = new GridExtent(null, null, high, false);
         final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelInCell.CELL_CORNER, gridToCrs, tileCRS);
         gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);

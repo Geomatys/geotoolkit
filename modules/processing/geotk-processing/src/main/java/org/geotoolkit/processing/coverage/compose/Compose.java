@@ -318,7 +318,7 @@ public class Compose extends AbstractProcess {
         );
         final LinearTransform gridToGeo = MathTransforms.linear(matrix);
 
-        final GridExtent extent = new GridExtent(null, new long[]{0,0}, new long[]{outWidth, outHeight}, false);
+        final GridExtent extent = new GridExtent(outWidth, outHeight);
         return new GridGeometry2D(extent, PixelOrientation.UPPER_LEFT, gridToGeo, crs);
     }
 
