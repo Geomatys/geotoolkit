@@ -31,6 +31,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
@@ -45,7 +46,6 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -128,7 +128,8 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
      * @return
      * @throws CoverageStoreException
      */
-    private synchronized GridGeometry getGridGeometryInternal() throws CoverageStoreException {
+    @Override
+    public GridGeometry getGridGeometry() throws CoverageStoreException {
         if (gridGeom != null) return gridGeom;
 
         try {
@@ -213,7 +214,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
 
         @Override
         public GridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
-            return AbstractCollectionCoverageResource.this.getGridGeometryInternal();
+            return AbstractCollectionCoverageResource.this.getGridGeometry();
         }
 
         @Override

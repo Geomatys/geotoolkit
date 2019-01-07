@@ -36,6 +36,7 @@ import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import javax.measure.Unit;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Units;
@@ -45,6 +46,7 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.postgresql.epsg.PGEPSGWriter;
 import org.geotoolkit.coverage.wkb.WKBRasterConstants;
@@ -87,6 +89,16 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
 
     void mustUpdate(){
         updated = false;
+    }
+
+    @Override
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        final GridCoverageReader reader = acquireReader();
+        try {
+            return reader.getGridGeometry(getImageIndex());
+        } finally {
+            recycle(reader);
+        }
     }
 
     public synchronized Collection<Pyramid> getPyramids() {

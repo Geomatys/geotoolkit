@@ -17,6 +17,7 @@
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Image;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -68,6 +69,11 @@ public class DefaultCoverageResource extends AbstractCoverageResource{
     @Override
     public boolean isWritable() throws DataStoreException {
         return false;
+    }
+
+    @Override
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        return coverage.getGridGeometry();
     }
 
     @Override

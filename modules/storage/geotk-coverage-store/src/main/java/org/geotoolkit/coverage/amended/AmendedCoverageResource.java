@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -28,7 +29,6 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -92,7 +92,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
 
     @Override
     public Envelope getEnvelope() throws DataStoreException {
-        return getGridGeometry(0).getEnvelope();
+        return getGridGeometry().getEnvelope();
     }
 
     private void loadRefData(int index) throws CoverageStoreException {
@@ -216,12 +216,12 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
     /**
      * Get overriden grid geometry.
      *
-     * @param index image index in reader
      * @return overridden grid geometry or original one is there are no overrides.
      * @throws CoverageStoreException
      */
-    public GridGeometry getGridGeometry(int index) throws CoverageStoreException{
-        loadRefData(index);
+    @Override
+    public GridGeometry getGridGeometry() throws CoverageStoreException{
+        loadRefData(0);
         if(isGridGeometryOverriden()){
             if(refGridGeom instanceof GridGeometry2D){
                 final GridExtent extent = refGridGeom.getExtent();

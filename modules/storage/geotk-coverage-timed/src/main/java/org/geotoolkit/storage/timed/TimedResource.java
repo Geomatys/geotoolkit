@@ -26,6 +26,8 @@ import java.util.Spliterators;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
@@ -34,8 +36,6 @@ import org.apache.sis.referencing.operation.matrix.Matrix3;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -118,7 +118,8 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    GridGeometry getGridGeometryInternal() throws CoverageStoreException {
+    @Override
+    public GridGeometry getGridGeometry() throws CoverageStoreException {
         final GeneralEnvelope treeEnv;
         try {
             treeEnv = index.getEnvelope()

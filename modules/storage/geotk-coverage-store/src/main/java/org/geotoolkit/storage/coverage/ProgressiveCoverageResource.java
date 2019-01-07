@@ -22,6 +22,7 @@ import java.awt.image.SampleModel;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
@@ -55,6 +56,11 @@ public final class ProgressiveCoverageResource<T extends GridCoverageResource & 
     @Override
     public Collection<Pyramid> getModels() throws DataStoreException {
         return (Collection<Pyramid>) super.getModels();
+    }
+
+    @Override
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        return base.getGridGeometry();
     }
 
     @Override

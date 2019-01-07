@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -72,6 +73,16 @@ public class FileCoverageResource extends AbstractCoverageResource {
             LOGGER.log(Level.FINER, "No writer found for file : "+file.toAbsolutePath().toString());
         }
         return false;
+    }
+
+    @Override
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        final GridCoverageReader reader = acquireReader();
+        try {
+            return reader.getGridGeometry(getImageIndex());
+        } finally {
+            recycle(reader);
+        }
     }
 
     @Override

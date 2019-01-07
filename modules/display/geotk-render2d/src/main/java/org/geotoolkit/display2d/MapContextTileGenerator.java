@@ -38,11 +38,13 @@ import java.util.function.LongConsumer;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import javax.media.jai.RasterFactory;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.AbstractTileGenerator;
 import org.geotoolkit.data.multires.DefaultPyramid;
 import org.geotoolkit.data.multires.Mosaic;
@@ -296,6 +298,16 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                         @Override
                         public void removeModel(String identifier) throws DataStoreException {
                             throw new DataStoreException("Not supported.");
+                        }
+
+                        @Override
+                        public GridGeometry getGridGeometry() throws DataStoreException {
+                            final GridCoverageReader reader = acquireReader();
+                            try {
+                                return reader.getGridGeometry(getImageIndex());
+                            } finally {
+                                recycle(reader);
+                            }
                         }
                     };
                     final MapContext mc = MapBuilder.createContext();

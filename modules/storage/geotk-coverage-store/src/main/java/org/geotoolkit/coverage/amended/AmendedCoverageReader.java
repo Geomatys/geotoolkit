@@ -18,12 +18,13 @@ package org.geotoolkit.coverage.amended;
 
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.apache.sis.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -32,7 +33,6 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.coverage.SampleDimension;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -82,7 +82,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
      */
     @Override
     public GridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
-        return ref.getGridGeometry(index);
+        return ref.getGridGeometry();
     }
 
     /**
@@ -95,7 +95,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
      */
     @Override
     public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException, CancellationException {
-        return ref.getSampleDimensions(index);
+        return ref.getSampleDimensions(0);
     }
 
     /**
@@ -118,7 +118,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
             final CoordinateReferenceSystem overrideCRS = ref.getOverrideCRS();
             final MathTransform overrideGridToCrs = ref.getOverrideGridToCrs();
             final PixelInCell overridePixelInCell = ref.getOverridePixelInCell();
-            final GridGeometry overrideGridGeometry = ref.getGridGeometry(index);
+            final GridGeometry overrideGridGeometry = ref.getGridGeometry();
             final GridGeometry originalGridGeometry = ref.getOriginalGridGeometry(index);
 
             //convert parameters to fit overrides

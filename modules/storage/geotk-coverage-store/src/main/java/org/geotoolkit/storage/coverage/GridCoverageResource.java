@@ -21,13 +21,13 @@ import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -168,13 +168,4 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
         }
     }
 
-    @Override
-    default org.apache.sis.coverage.grid.GridGeometry getGridGeometry() throws DataStoreException {
-        final GridCoverageReader reader = acquireReader();
-        try {
-            return reader.getGridGeometry(getImageIndex());
-        } finally {
-            recycle(reader);
-        }
-    }
 }

@@ -41,6 +41,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.raster.ScaledColorSpace;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
@@ -50,6 +51,7 @@ import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.MultiResolutionModel;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
@@ -292,6 +294,15 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
         return set;
     }
 
+    @Override
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        final GridCoverageReader reader = acquireReader();
+        try {
+            return reader.getGridGeometry(getImageIndex());
+        } finally {
+            recycle(reader);
+        }
+    }
 
     @Override
     public Collection<Pyramid> getModels() throws DataStoreException {

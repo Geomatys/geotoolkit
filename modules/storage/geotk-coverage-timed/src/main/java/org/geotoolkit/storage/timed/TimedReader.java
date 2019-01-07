@@ -21,14 +21,14 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.apache.sis.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
@@ -59,7 +59,7 @@ public class TimedReader extends GridCoverageReader {
 
     @Override
     public GridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
-        return parent.getGridGeometryInternal();
+        return parent.getGridGeometry();
     }
 
     @Override
@@ -76,7 +76,7 @@ public class TimedReader extends GridCoverageReader {
         Envelope envelope = param.getEnvelope();
         if (envelope == null) {
             // We'll try to read the most recent data.
-            final GeneralEnvelope totalEnv = new GeneralEnvelope(parent.getGridGeometryInternal().getEnvelope());
+            final GeneralEnvelope totalEnv = new GeneralEnvelope(parent.getGridGeometry().getEnvelope());
             final double lastTime = totalEnv.getMaximum(parent.index.timeIndex);
             totalEnv.setRange(parent.index.timeIndex, lastTime, lastTime);
             envelope = totalEnv;

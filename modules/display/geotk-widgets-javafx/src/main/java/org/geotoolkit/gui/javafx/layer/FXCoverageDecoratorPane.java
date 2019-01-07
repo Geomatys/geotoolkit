@@ -139,7 +139,7 @@ public class FXCoverageDecoratorPane extends GridPane {
         uiCrs.setSelected(crs!=null);
         if(crs==null){
             try {
-                crs = decoratedRef.getGridGeometry(decoratedRef.getImageIndex()).getCoordinateReferenceSystem();
+                crs = decoratedRef.getGridGeometry().getCoordinateReferenceSystem();
             } catch (CoverageStoreException ex) {
                 Loggers.JAVAFX.log(Level.FINE, ex.getMessage(), ex);
             }
@@ -150,7 +150,7 @@ public class FXCoverageDecoratorPane extends GridPane {
         uiGridToCrs.setSelected(overrideGridToCrs!=null);
         if(overrideGridToCrs==null){
             try {
-                overrideGridToCrs = decoratedRef.getGridGeometry(decoratedRef.getImageIndex()).getGridToCRS(PixelInCell.CELL_CENTER);
+                overrideGridToCrs = decoratedRef.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER);
             } catch (CoverageStoreException ex) {
                 Loggers.JAVAFX.log(Level.FINE, ex.getMessage(), ex);
             }
@@ -181,7 +181,7 @@ public class FXCoverageDecoratorPane extends GridPane {
         CoordinateReferenceSystem crs = null;
         uiCrs.setSelected(false);
         try {
-            crs = decoratedRef.getGridGeometry(decoratedRef.getImageIndex()).getCoordinateReferenceSystem();
+            crs = decoratedRef.getGridGeometry().getCoordinateReferenceSystem();
         } catch (CoverageStoreException ex) {
             Loggers.JAVAFX.log(Level.FINE, ex.getMessage(), ex);
         }
@@ -194,7 +194,7 @@ public class FXCoverageDecoratorPane extends GridPane {
         MathTransform overrideGridToCrs = null;
         uiGridToCrs.setSelected(false);
         try {
-            overrideGridToCrs = decoratedRef.getGridGeometry(decoratedRef.getImageIndex()).getGridToCRS(PixelInCell.CELL_CENTER);
+            overrideGridToCrs = decoratedRef.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER);
         } catch (CoverageStoreException ex) {
             Loggers.JAVAFX.log(Level.FINE, ex.getMessage(), ex);
         }
