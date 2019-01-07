@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.NamedIdentifier;
@@ -41,7 +42,6 @@ import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -148,7 +148,7 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
 
             return new GridCoverage(domain, bands) {
                 @Override
-                public RenderedImage render(DirectPosition slicePoint) throws CannotEvaluateException {
+                public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
                     return cov2d.getRenderedImage();
                 }
             };

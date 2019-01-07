@@ -18,8 +18,8 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.List;
 import java.awt.image.RenderedImage;
-import org.opengis.geometry.DirectPosition;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.collection.BackingStoreException;
@@ -51,9 +51,9 @@ final class ProductCoverage extends GridCoverage {
     }
 
     @Override
-    public RenderedImage render(DirectPosition slicePoint) {
+    public RenderedImage render(GridExtent sliceExtent) {
         try {
-            return entries.get(0).coverage(null, null).render(slicePoint);
+            return entries.get(0).coverage(null, null).render(sliceExtent);
         } catch (DataStoreException e) {
             throw new BackingStoreException(e);
         }
