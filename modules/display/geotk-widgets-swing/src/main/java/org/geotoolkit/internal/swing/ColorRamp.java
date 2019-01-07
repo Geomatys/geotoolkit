@@ -43,7 +43,6 @@ import javax.measure.Unit;
 import org.apache.sis.measure.UnitFormat;
 
 import org.geotoolkit.coverage.SampleDimension;
-import org.opengis.coverage.PaletteInterpretation;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
@@ -381,7 +380,7 @@ public class ColorRamp implements Serializable {
             if (band instanceof GridSampleDimension) {
                 band = ((GridSampleDimension) band).geophysics(false);
             }
-            final int[][] palette = band.getPalette();
+            final int[][] palette = null;   // TODO band.getPalette();
             if (palette != null) {
                 int lower = 0; // Will be inclusive
                 int upper = 0; // Will be exclusive
@@ -408,21 +407,19 @@ public class ColorRamp implements Serializable {
                  * the palette. Only palette using RGB colors are understood at this time, but the
                  * graduation (after this block) is still created for all kind of palette.
                  */
-                if (PaletteInterpretation.RGB.equals(band.getPaletteInterpretation())) {
-                    colors = new Color[upper - lower];
-                    for (int i=0; i<colors.length; i++) {
-                        int r=0, g=0, b=0, a=255;
-                        final int[] c = palette[i+lower];
-                        if (c != null) switch (c.length) {
-                            default:        // Fall through
-                            case 4: a=c[3]; // Fall through
-                            case 3: b=c[2]; // Fall through
-                            case 2: g=c[1]; // Fall through
-                            case 1: r=c[0]; // Fall through
-                            case 0: break;
-                        }
-                        colors[i] = new Color(r,g,b,a);
+                colors = new Color[upper - lower];
+                for (int i=0; i<colors.length; i++) {
+                    int r=0, g=0, b=0, a=255;
+                    final int[] c = palette[i+lower];
+                    if (c != null) switch (c.length) {
+                        default:        // Fall through
+                        case 4: a=c[3]; // Fall through
+                        case 3: b=c[2]; // Fall through
+                        case 2: g=c[1]; // Fall through
+                        case 1: r=c[0]; // Fall through
+                        case 0: break;
                     }
+                    colors[i] = new Color(r,g,b,a);
                 }
                 /*
                  * Transforms the lower and upper sample values into minimum and maximum geophysics

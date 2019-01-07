@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.internal.wizard;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,7 +32,6 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gui.swing.LoggingPanel;
 import org.geotoolkit.gui.swing.image.MosaicChooser;
 import org.geotoolkit.gui.swing.image.MosaicBuilderEditor;
-import org.geotoolkit.gui.swing.image.MultiColorChooser;
 import org.geotoolkit.internal.swing.ExceptionMonitor;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.MosaicBuilder;
@@ -77,11 +75,7 @@ final class MosaicCreator extends DeferredWizardResult implements IIOWriteProgre
         try {
             final TileManager[] inputs  = ((MosaicChooser)       settings.get(MosaicWizard.SELECT)).getSelectedTiles();
             final MosaicBuilder builder = ((MosaicBuilderEditor) settings.get(MosaicWizard.LAYOUT)).getMosaicBuilder();
-            final Color[]       colors  = ((MultiColorChooser)   settings.get(MosaicWizard.COLORS)).getSelectedColors();
             final MosaicImageWriteParam param = new MosaicImageWriteParam();
-            if (colors.length != 0) {
-                param.setOpaqueBorderFilter(colors);
-            }
             param.setTileWritingPolicy(TileWritingPolicy.WRITE_NEWS_NONEMPTY);
             Logging.getLogger("org.geotoolkit.image.io.mosaic").setLevel(Level.FINE);
             builder.setLogLevel(Level.INFO);

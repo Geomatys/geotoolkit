@@ -25,11 +25,8 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import javax.measure.Unit;
-import javax.media.jai.iterator.RectIter;
-import javax.media.jai.iterator.RectIterFactory;
 
 import org.opengis.coverage.SampleDimensionType;
-import org.opengis.coverage.ColorInterpretation;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.TypeMap;
@@ -409,14 +406,6 @@ final class RenderedSampleDimension extends GridSampleDimension {
     @Override
     public SampleDimensionType getSampleDimensionType() {
         return type;
-    }
-
-    /**
-     * Returns the color interpretation of the sample dimension.
-     */
-    @Override
-    public ColorInterpretation getColorInterpretation() {
-        return TypeMap.getColorInterpretation(getColorModel(), band);
     }
 
     /**

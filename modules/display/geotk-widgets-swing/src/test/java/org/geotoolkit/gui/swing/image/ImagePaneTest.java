@@ -53,7 +53,7 @@ public final strictfp class ImagePaneTest extends SwingTestBase<ImagePane> {
     protected ImagePane create(final int index) throws IOException {
         final ImagePane test = new ImagePane();
         try {
-            test.setImage(ImageIO.read(TestData.url(org.geotoolkit.image.ImageInspector.class, "QL95209.png")));
+            test.setImage(ImageIO.read(TestData.url(org.geotoolkit.image.BufferedImages.class, "QL95209.png")));
         } catch (IOException e) {
             test.setError(e);
         }

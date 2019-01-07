@@ -69,6 +69,8 @@ public final class MosaicWizard extends AbstractWizard {
 
     /**
      * The ID for the panel selecting the colors to make transparent.
+     *
+     * @todo currently ignored.
      */
     static final String COLORS = "COLORS";
 

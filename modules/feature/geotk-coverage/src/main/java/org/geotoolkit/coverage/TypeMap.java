@@ -20,20 +20,16 @@ package org.geotoolkit.coverage;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Locale;
-import java.awt.color.ColorSpace;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
-import java.awt.image.IndexColorModel;
 import java.awt.image.SampleModel;
 
 import org.opengis.util.InternationalString;
-import org.opengis.coverage.ColorInterpretation;
 import org.opengis.coverage.SampleDimensionType;
 import static org.opengis.coverage.SampleDimensionType.*;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.apache.sis.internal.raster.ColorModelFactory;
 import org.apache.sis.util.iso.AbstractInternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.measure.NumberRange;
@@ -549,61 +545,5 @@ public final class TypeMap extends Static {
             }
         }
         throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalArgument_2, "value", value));
-    }
-
-    /**
-     * Returns the color interpretation code for the specified color model and band number.
-     *
-     * @param  model The color model.
-     * @param  band  The band to query.
-     * @return The code for the specified color model and band number.
-     * @throws IllegalArgumentException if the band number is not in the valid range.
-     */
-    @SuppressWarnings("deprecation")
-    public static ColorInterpretation getColorInterpretation(final ColorModel model, final int band)
-            throws IllegalArgumentException
-    {
-        if (band < 0 || band >= ColorModelFactory.getNumBands(model)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalBandNumber_1, band));
-        }
-        if (model instanceof IndexColorModel) {
-            return ColorInterpretation.PALETTE_INDEX;
-        }
-        switch (model.getColorSpace().getType()) {
-            case ColorSpace.TYPE_GRAY: {
-                switch (band) {
-                    case  0: return ColorInterpretation.GRAY_INDEX;
-                    default: return ColorInterpretation.UNDEFINED;
-                }
-            }
-            case ColorSpace.TYPE_RGB: {
-                switch (band) {
-                    case  0: return ColorInterpretation.RED_BAND;
-                    case  1: return ColorInterpretation.GREEN_BAND;
-                    case  2: return ColorInterpretation.BLUE_BAND;
-                    case  3: return ColorInterpretation.ALPHA_BAND;
-                    default: return ColorInterpretation.UNDEFINED;
-                }
-            }
-            case ColorSpace.TYPE_HSV: {
-                switch (band) {
-                    case  0: return ColorInterpretation.HUE_BAND;
-                    case  1: return ColorInterpretation.SATURATION_BAND;
-                    case  2: return ColorInterpretation.LIGHTNESS_BAND;
-                    default: return ColorInterpretation.UNDEFINED;
-                }
-            }
-            case ColorSpace.TYPE_CMY:
-            case ColorSpace.TYPE_CMYK: {
-                switch (band) {
-                    case  0: return ColorInterpretation.CYAN_BAND;
-                    case  1: return ColorInterpretation.MAGENTA_BAND;
-                    case  2: return ColorInterpretation.YELLOW_BAND;
-                    case  3: return ColorInterpretation.BLACK_BAND;
-                    default: return ColorInterpretation.UNDEFINED;
-                }
-            }
-            default: return ColorInterpretation.UNDEFINED;
-        }
     }
 }

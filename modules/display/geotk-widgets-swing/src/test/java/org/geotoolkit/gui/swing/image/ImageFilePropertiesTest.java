@@ -52,7 +52,7 @@ public final strictfp class ImageFilePropertiesTest extends SwingTestBase<ImageF
         final ImageFileProperties test = new ImageFileProperties();
         final File file;
         try {
-            file = TestData.file(org.geotoolkit.image.ImageInspector.class, "QL95209.png");
+            file = TestData.file(org.geotoolkit.image.BufferedImages.class, "QL95209.png");
         } catch (IOException e) {
             return test;
         }

@@ -39,8 +39,6 @@ import org.apache.sis.util.iso.Types;
 import org.geotoolkit.image.color.ColorUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.opengis.coverage.ColorInterpretation;
-import org.opengis.coverage.PaletteInterpretation;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
@@ -259,7 +257,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * <p>
      * This constructor allows the construction of a {@code GridSampleDimension} without explicit
      * construction of {@link Category} objects. An heuristic approach is used for dispatching the
-     * informations into a set of {@link Category} objects. However, this constructor still less
+     * information into a set of {@link Category} objects. However, this constructor still less
      * general and provides less fine-grain control than the constructor expecting an array of
      * {@link Category} objects.
      * <p>
@@ -281,11 +279,6 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      *     <td nowrap>&nbsp;{@code type}&nbsp;</td>
      *     <td nowrap>&nbsp;{@link #getSampleDimensionType()}&nbsp;</td>
      *     <td nowrap>&nbsp;Computed automatically from the {@code [minimum..maximum]} range.&nbsp;</td>
-     *   </tr>
-     *   <tr>
-     *     <td nowrap>&nbsp;{@code color}&nbsp;</td>
-     *     <td nowrap>&nbsp;{@link #getColorInterpretation()}&nbsp;</td>
-     *     <td nowrap>&nbsp;Usually {@link ColorInterpretation#PALETTE_INDEX}.&nbsp;</td>
      *   </tr>
      *   <tr>
      *     <td nowrap>&nbsp;{@code palette}&nbsp;</td>
@@ -332,8 +325,6 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      *          The sample dimension title or description.
      * @param type
      *          The grid value data type (which indicate the number of bits for the data type).
-     * @param color
-     *          The color interpretation.
      * @param palette
      *          The color palette associated with the sample dimension. If {@code categories} is
      *          non-null, then both arrays usually have the same length. However, this constructor
@@ -361,7 +352,6 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      */
     public GridSampleDimension(final CharSequence  description,
                                final SampleDimensionType  type,
-                               final ColorInterpretation color,
                                final Color[]           palette,
                                final CharSequence[] categories,
                                final double[]           nodata,
@@ -373,14 +363,13 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     {
         // 'list(...)' should be inlined there if only Sun was to fix RFE #4093999
         // ("Relax constraint on placement of this()/super() call in constructors").
-        this(description, list(description, type, color, palette, categories, nodata,
+        this(description, list(description, type, palette, categories, nodata,
                                minimum, maximum, scale, offset, unit));
     }
 
     /** Constructs a list of categories. Used by constructors only. */
     private static CategoryList list(CharSequence  description,
                                      SampleDimensionType  type,
-                                     ColorInterpretation color,
                                final Color[]           palette,
                                final CharSequence[] categories,
                                final double[]           nodata,
@@ -404,9 +393,6 @@ public class GridSampleDimension implements SampleDimension, Serializable {
         }
         if (type == null) {
             type = TypeMap.getSampleDimensionType(minimum, maximum);
-        }
-        if (color == null) {
-            color = ColorInterpretation.PALETTE_INDEX;
         }
         final int  nameCount    = (categories != null) ? categories.length : 0;
         final int  nodataCount  = (nodata     != null) ?     nodata.length : 0;
@@ -570,12 +556,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
          *          sample dimension appropriate for the type of palette used.
          */
         final Category[] cl = categoryList.toArray(new Category[categoryList.size()]);
-        if (ColorInterpretation.PALETTE_INDEX.equals(color) ||
-            ColorInterpretation.GRAY_INDEX.equals(color))
-        {
-            return list(cl, unit);
-        }
-        throw new UnsupportedOperationException("Not yet implemented");
+        return list(cl, unit);
     }
 
     /**
@@ -719,23 +700,10 @@ public class GridSampleDimension implements SampleDimension, Serializable {
         if (sd instanceof GridSampleDimension) {
             return (GridSampleDimension) sd;
         }
-        final int[][] palette = sd.getPalette();
-        final Color[] colors;
-        if (palette != null) {
-            final int length = palette.length;
-            colors = new Color[length];
-            for (int i = 0; i < length; i++) {
-                // Assuming RGB. It will be checked in the constructor.
-                final int[] color = palette[i];
-                colors[i] = new Color(color[0], color[1], color[2]);
-            }
-        } else {
-            colors = null;
-        }
         return new GridSampleDimension(
                 sd.getDescription(),
                 sd.getSampleDimensionType(),
-                sd.getColorInterpretation(), colors,
+                null, //colors,
                 sd.getCategoryNames(),
                 sd.getNoDataValues(),
                 sd.getMinimumValue(),
@@ -1263,69 +1231,6 @@ public class GridSampleDimension implements SampleDimension, Serializable {
             }
         }
         return inverse;
-    }
-
-    /**
-     * Color palette associated with the sample dimension. A color palette can have any number of
-     * colors. See palette interpretation for meaning of the palette entries. If the grid coverage
-     * has no color palette, {@code null} will be returned.
-     *
-     * @return The color palette associated with the sample dimension.
-     *
-     * @see #getPaletteInterpretation
-     * @see #getColorInterpretation
-     * @see IndexColorModel
-     *
-     * @deprecated No replacement.
-     */
-    @Override
-    @Deprecated
-    public int[][] getPalette() {
-        final ColorModel color = getColorModel();
-        if (color instanceof IndexColorModel) {
-            final IndexColorModel cm = (IndexColorModel) color;
-            final int[][] colors = new int[cm.getMapSize()][];
-            for (int i=0; i<colors.length; i++) {
-                colors[i] = new int[] {cm.getRed(i), cm.getGreen(i), cm.getBlue(i)};
-            }
-            return colors;
-        }
-        return null;
-    }
-
-    /**
-     * Indicates the type of color palette entry for sample dimensions which have a
-     * palette. If a sample dimension has a palette, the color interpretation must
-     * be {@link ColorInterpretation#GRAY_INDEX GRAY_INDEX}
-     * or {@link ColorInterpretation#PALETTE_INDEX PALETTE_INDEX}.
-     * A palette entry type can be Gray, RGB, CMYK or HLS.
-     *
-     * @return The type of color palette entry for sample dimensions which have a palette.
-     *
-     * @deprecated No replacement.
-     */
-    @Override
-    @Deprecated
-    public PaletteInterpretation getPaletteInterpretation() {
-        return PaletteInterpretation.RGB;
-    }
-
-    /**
-     * Returns the color interpretation of the sample dimension.
-     * A sample dimension can be an index into a color palette or be a color model
-     * component. If the sample dimension is not assigned a color interpretation
-     * the value is {@link ColorInterpretation#UNDEFINED}.
-     *
-     * @deprecated No replacement.
-     */
-    @Override
-    @Deprecated
-    public ColorInterpretation getColorInterpretation() {
-        // The 'Grid2DSampleDimension' class overrides this method
-        // with better values for 'band' and 'numBands' constants.
-        final int band     = 0;
-        final int numBands = 1;
-        return TypeMap.getColorInterpretation(getColorModel(band, numBands), band);
     }
 
     /**

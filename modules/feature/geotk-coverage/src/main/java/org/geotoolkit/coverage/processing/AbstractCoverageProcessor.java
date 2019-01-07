@@ -27,7 +27,6 @@ import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 
 import org.geotoolkit.coverage.Coverage;
-import org.opengis.coverage.SampleDimensionType;
 import org.opengis.coverage.processing.Operation;
 import org.opengis.coverage.processing.OperationNotFoundException;
 import org.opengis.coverage.processing.GridCoverageProcessor;
@@ -52,9 +51,7 @@ import org.geotoolkit.image.internal.ImageUtilities;
  * <p>
  * These processing operations will transform values within a single sample dimension, and
  * leave the values in other sample dimensions unaffected. The modified sample dimension may
- * also change its type (e.g. from {@link SampleDimensionType#UNSIGNED_4BITS UNSIGNED_4BITS} to
- * {@link SampleDimensionType#UNSIGNED_1BIT UNSIGNED_1BIT}). The actual underlying grid data
- * remains unchanged.
+ * also change its type. The actual underlying grid data remains unchanged.
  * <p>
  * The class has been designed to allow the adaptations to be done in a "pipe-lined" manner.
  * The class operates on {@link Coverage} to create new a {@link Coverage}. The class does not

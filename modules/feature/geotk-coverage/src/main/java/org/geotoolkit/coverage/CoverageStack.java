@@ -1274,8 +1274,7 @@ public class CoverageStack extends AbstractCoverage {
         } else {
             Zp = Z;
         }
-        throw new OrdinateOutsideCoverageException(Errors.format(
-                  Errors.Keys.ZvalueOutsideCoverage_2, getName(), Zp), zDimension, getEnvelope());
+        throw new PointOutsideCoverageException(Errors.format(Errors.Keys.ZvalueOutsideCoverage_2, getName(), Zp));
     }
 
     /**
