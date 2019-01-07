@@ -36,7 +36,7 @@ import org.opengis.util.GenericName;
 public class OSMTMSCoverageResource extends AbstractPyramidalCoverageResource {
 
     OSMTMSCoverageResource(OSMTileMapClient server, GenericName name){
-        super(server,name,0);
+        super(server,name);
     }
 
     public OSMTMSPyramidSet getPyramidSet() {
@@ -47,7 +47,7 @@ public class OSMTMSCoverageResource extends AbstractPyramidalCoverageResource {
     public GridGeometry getGridGeometry() throws DataStoreException {
         final GridCoverageReader reader = acquireReader();
         try {
-            return reader.getGridGeometry(getImageIndex());
+            return reader.getGridGeometry();
         } finally {
             recycle(reader);
         }

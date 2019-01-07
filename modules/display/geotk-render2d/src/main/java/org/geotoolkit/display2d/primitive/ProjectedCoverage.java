@@ -16,10 +16,12 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import org.locationtech.jts.geom.Geometry;
 import java.util.logging.Level;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.collection.Cache;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridCoverageStack;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -28,16 +30,13 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
+import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
-import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.geometry.GeometricUtilities;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Convenient representation of a coverage for rendering.
@@ -101,7 +100,7 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
                     final GridCoverageResource ref = layer.getCoverageReference();
                     final GridCoverageReader reader = ref.acquireReader();
                     try {
-                        GridCoverage result = reader.read(layer.getCoverageReference().getImageIndex(), param);
+                        GridCoverage result = reader.read(param);
                         if (result instanceof GridCoverageStack) {
                             Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, "Coverage reader return more than one slice.");
                         }
@@ -157,7 +156,7 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
         }
 
         if(elevationModel != null){
-            return (GridCoverage2D) elevationModel.getCoverageReader().read(0,param);
+            return (GridCoverage2D) elevationModel.getCoverageReader().read(param);
         }else{
             return null;
         }

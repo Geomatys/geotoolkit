@@ -94,11 +94,6 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
     }
 
     @Override
-    public int getImageIndex() {
-        return 0;
-    }
-
-    @Override
     public boolean isWritable() throws DataStoreException {
         return false;
     }
@@ -160,7 +155,7 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
         GridExtent extent;
         try (TimedUtils.CloseableCoverageReader reader = new TimedUtils.CloseableCoverageReader()) {
             reader.setInput(input.toFile());
-            extent = reader.getGridGeometry(0).getExtent2D();
+            extent = reader.getGridGeometry().getExtent2D();
         }
 
         // Adapt image dimension to contain time

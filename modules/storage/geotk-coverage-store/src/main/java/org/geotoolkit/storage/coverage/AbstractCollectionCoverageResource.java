@@ -97,11 +97,6 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
     }
 
     @Override
-    public int getImageIndex() {
-        return 0;
-    }
-
-    @Override
     public boolean isWritable() throws DataStoreException {
         return false;
     }
@@ -138,7 +133,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
             double[] resolution = null;
             for (GridCoverageResource ref : getCoverages(null)) {
                 final GridCoverageReader reader = ref.acquireReader();
-                final GridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
+                final GridGeometry gg = reader.getGridGeometry();
                 ref.recycle(reader);
 
                 if (gg instanceof GridGeometry2D) {
@@ -199,7 +194,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
         if (!references.isEmpty()) {
             final GridCoverageResource ref = references.iterator().next();
             GridCoverageReader reader = ref.acquireReader();
-            sampleDimensions = reader.getSampleDimensions(ref.getImageIndex());
+            sampleDimensions = reader.getSampleDimensions();
             ref.recycle(reader);
         }
 
@@ -213,12 +208,12 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
         }
 
         @Override
-        public GridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
+        public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
             return AbstractCollectionCoverageResource.this.getGridGeometry();
         }
 
         @Override
-        public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException, CancellationException {
+        public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
             return AbstractCollectionCoverageResource.this.getSampleDimensionsInternal();
         }
 
@@ -233,7 +228,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
                     GridCoverageReadParam subParam = new GridCoverageReadParam();
                     subParam.setDeferred(true);
                     subParam.setEnvelope(param.getEnvelope());
-                    coverages.add((GridCoverage2D) reader.read(ref.getImageIndex(), subParam));
+                    coverages.add((GridCoverage2D) reader.read(subParam));
                 } catch(DisjointCoverageDomainException ex) {
                     //continue, no log, normal it can happen
                 } catch(CoverageStoreException ex) {
@@ -246,7 +241,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
                 throw new DisjointCoverageDomainException("No coverage match parameters");
             }
 
-            final GridGeometry globalGridGeom = getGridGeometry(0);
+            final GridGeometry globalGridGeom = getGridGeometry();
             final GridGeometry gridGeom = GeoReferencedGridCoverageReader.getGridGeometry(globalGridGeom, areaLower, areaUpper, subsampling);
             final GridExtent extent = gridGeom.getExtent();
             final long sizeX = extent.getSize(0);

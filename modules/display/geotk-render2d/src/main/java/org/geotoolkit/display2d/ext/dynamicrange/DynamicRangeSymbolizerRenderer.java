@@ -174,7 +174,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
 
             //check if the reader honored the band request
             final List<GridSampleDimension> readDimensions = dataCoverage.getSampleDimensions();
-            final List<GridSampleDimension> sampleDimensions = covref.acquireReader().getSampleDimensions(covref.getImageIndex());
+            final List<GridSampleDimension> sampleDimensions = covref.acquireReader().getSampleDimensions();
             boolean bandReadHonored = (readDimensions.size() == toRead.length);
             for (int i=0;bandReadHonored && i<toRead.length;i++) {
                 bandReadHonored &= Objects.equals(readDimensions.get(i).getDescription(), (sampleDimensions == null) ? null : sampleDimensions.get(toRead[i]).getDescription());

@@ -17,33 +17,25 @@
  */
 package org.geotoolkit.test.stress;
 
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.awt.image.RenderedImage;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Locale;
+import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageInputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.logging.Level;
-import java.util.Locale;
 import org.apache.sis.coverage.grid.GridExtent;
-
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.apache.sis.geometry.Envelopes;
-import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.image.jai.Registry;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.Envelopes;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -52,8 +44,14 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.coverage.processing.Operations;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileManagerFactory;
+import org.geotoolkit.image.jai.Registry;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -77,11 +75,6 @@ public class CoverageReadWriteStressor extends Stressor {
      * Will be created when first needed.
      */
     private transient GridCoverageWriter writer;
-
-    /**
-     * The index of the image to read (usually 0).
-     */
-    protected final int imageIndex;
 
     /**
      * If specified, reproject the request result in the given CRS.
@@ -117,7 +110,7 @@ public class CoverageReadWriteStressor extends Stressor {
      * @throws CoverageStoreException If an error occurred while reading the input.
      */
     public CoverageReadWriteStressor(final Object input) throws CoverageStoreException {
-        this(createReader(input), 0);
+        this(createReader(input));
     }
 
     /**
@@ -126,15 +119,13 @@ public class CoverageReadWriteStressor extends Stressor {
      * before to invoke this method.
      *
      * @param  reader The coverage reader to stress.
-     * @param  imageIndex The index of the image to read (usually 0).
      * @throws CoverageStoreException If an error occurred while reading the input.
      */
-    private CoverageReadWriteStressor(final GridCoverageReader reader, final int imageIndex)
+    private CoverageReadWriteStressor(final GridCoverageReader reader)
             throws CoverageStoreException
     {
-        super(clip(reader.getGridGeometry(imageIndex)));
+        super(clip(reader.getGridGeometry()));
         this.reader     = reader;
-        this.imageIndex = imageIndex;
     }
 
     /**
@@ -275,7 +266,7 @@ public class CoverageReadWriteStressor extends Stressor {
         final GridCoverageReadParam readParam = new GridCoverageReadParam();
         readParam.setEnvelope(request.getEnvelope());
         readParam.setResolution(getResolution(request));
-        GridCoverage2D coverage = (GridCoverage2D) reader.read(imageIndex, readParam);
+        GridCoverage2D coverage = (GridCoverage2D) reader.read(readParam);
         if (outputFormat != null) {
             /*
              * Tests write operation.

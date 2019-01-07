@@ -25,12 +25,14 @@ import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -47,9 +49,6 @@ import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.geotoolkit.coverage.Coverage;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
@@ -190,7 +189,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
         final GridCoverageReader reader = (GridCoverageReader) ref.acquireReader();
 
         //check the image size
-        final GridGeometry gridGeom = reader.getGridGeometry(ref.getImageIndex());
+        final GridGeometry gridGeom = reader.getGridGeometry();
         final GridExtent gridEnv = gridGeom.getExtent();
         assertEquals( 3, gridEnv.getDimension());
         assertEquals( 0, gridEnv.getLow(0));
@@ -220,7 +219,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
         final CoverageReader reader = ref.acquireReader();
 
         //we expect a 3D coverage, with all slices
-        final GridCoverage coverage = (GridCoverage) reader.read(ref.getImageIndex(), null);
+        final GridCoverage coverage = (GridCoverage) reader.read(null);
         final Envelope env = coverage.getEnvelope();
         assertTrue(Utilities.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()));
         assertEquals(CORNER_LONG,  env.getMinimum(0), DELTA);//-- -180
@@ -265,7 +264,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
                             0.5,
                             1);
 
-        GridCoverage2D coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), param);
+        GridCoverage2D coverage = (GridCoverage2D) reader.read(param);
         checkCoverage(coverage, 40, 30, colors[0][1], CORNER_LONG, -160,
                                                                75, CORNER_LAT,
                                                       CORNER_V[0], -14); //-- -14 = corner_v[0] - 1 unity.
@@ -276,7 +275,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
                                                  -90, CORNER_LAT,
                                          CORNER_V[0], CORNER_V[0]));
         param.setResolution(1,1,1);
-        coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), param);
+        coverage = (GridCoverage2D) reader.read(param);
         checkCoverage(coverage, 20, 20, colors[0][0], CORNER_LONG, -160,
                                                                70, CORNER_LAT,
                                                       CORNER_V[0], -14);
@@ -287,7 +286,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
                                                  -90, CORNER_LAT,
                                          CORNER_V[1], CORNER_V[1]));
         param.setResolution(0.5,0.5,1);
-        coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), param);
+        coverage = (GridCoverage2D) reader.read(param);
         checkCoverage(coverage, 40, 30, colors[1][1], CORNER_LONG, -160,
                                                                75, CORNER_LAT,
                                                       CORNER_V[1], 47.58);
@@ -298,7 +297,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
                                                  -90, CORNER_LAT,
                                          CORNER_V[1], CORNER_V[1]));
         param.setResolution(1,1,1);
-        coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), param);
+        coverage = (GridCoverage2D) reader.read(param);
         checkCoverage(coverage, 20, 20, colors[1][0], CORNER_LONG, -160,
                                                                70, CORNER_LAT,
                                                       CORNER_V[1], 47.58);

@@ -19,10 +19,10 @@ package org.geotoolkit.storage.coverage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -33,7 +33,6 @@ import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -65,8 +64,8 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
     }
 
     @Override
-    public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-        return Collections.singletonList(ref.getIdentifier());
+    public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
+        return ref.getIdentifier();
     }
 
     /**
@@ -76,10 +75,9 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
      * this coverage CRS.
      */
     @Override
-    public final GridCoverage read(int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
-        if (index!=ref.getImageIndex()) throw new CoverageStoreException("Invalid image index "+index);
+    public final GridCoverage read(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
 
-        final GridGeometry gridGeometry = getGridGeometry(index);
+        final GridGeometry gridGeometry = getGridGeometry();
         final CoordinateReferenceSystem coverageCrs = gridGeometry.getCoordinateReferenceSystem();
 
         try {
@@ -153,7 +151,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
         final Envelope coverageEnv = param.getEnvelope();
         final double[] coverageRes = param.getResolution();
 
-        final GridGeometry gridGeom = getGridGeometry(ref.getImageIndex());
+        final GridGeometry gridGeom = getGridGeometry();
 
         final GeneralEnvelope imgEnv;
         try {

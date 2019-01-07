@@ -228,11 +228,11 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
     private List<GridSampleDimension> cacheDimensions = null;
 
     public XMLCoverageResource() {
-        super(null, DEFAULT_NAME, 0);
+        super(null, DEFAULT_NAME);
     }
 
     public XMLCoverageResource(XMLCoverageStore store, GenericName name, XMLPyramidSet set) {
-        super(store,name,0);
+        super(store,name);
         id = new NamedIdentifier(name);
         this.set = set;
         this.set.setRef(this);
@@ -298,7 +298,7 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
     public GridGeometry getGridGeometry() throws DataStoreException {
         final GridCoverageReader reader = acquireReader();
         try {
-            return reader.getGridGeometry(getImageIndex());
+            return reader.getGridGeometry();
         } finally {
             recycle(reader);
         }

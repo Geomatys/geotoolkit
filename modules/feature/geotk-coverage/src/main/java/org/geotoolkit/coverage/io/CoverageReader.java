@@ -19,8 +19,8 @@ package org.geotoolkit.coverage.io;
 
 import java.util.List;
 import java.util.concurrent.CancellationException;
-import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.Coverage;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.opengis.util.GenericName;
 
 /**
@@ -32,29 +32,21 @@ import org.opengis.util.GenericName;
 public interface CoverageReader {
 
     /**
-     * Returns the list of coverage names available from the current input source. The length
-     * of the returned list is the number of coverages found in the current input source. The
-     * elements in the returned list are the names of each coverage.
-     * <p>
-     * The returned list may be backed by this {@code CoverageReader}: it should be used
-     * only as long as this reader and its input source are valid. Iterating over the list
-     * may be costly and the operation performed on the list may throw a
-     * {@link BackingStoreException}.
+     * Returns the list of coverage names available from the current input source.
      *
-     * @return The names of the coverages.
+     * @return The name of the coverage.
      * @throws IllegalStateException If the input source has not been set.
      * @throws CoverageStoreException If an error occurs while reading the information from the input source.
      * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
      *         the execution of this method.
      */
-    List<? extends GenericName> getCoverageNames()
+    GenericName getCoverageName()
             throws CoverageStoreException, CancellationException;
 
     /**
      * Returns the sample dimensions for each band of the {@link Coverage} to be read.
      * If sample dimensions are not known, then this method returns {@code null}.
      *
-     * @param  index The index of the coverage to be queried.
      * @return The list of sample dimensions for the {@link GridCoverage} at the specified index,
      *         or {@code null} if none. This list length is equals to the number of bands in the
      *         {@link GridCoverage}.
@@ -64,13 +56,12 @@ public interface CoverageReader {
      * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
      *         the execution of this method.
      */
-    List<GridSampleDimension> getSampleDimensions(int index)
+    List<GridSampleDimension> getSampleDimensions()
             throws CoverageStoreException, CancellationException;
 
     /**
      * Reads the coverage.
      *
-     * @param  index The index of the coverage to be queried.
      * @param  param Optional parameters used to control the reading process, or {@code null}.
      * @return The {@link Coverage} at the specified index.
      * @throws IllegalStateException if the input source has not been set.
@@ -79,7 +70,7 @@ public interface CoverageReader {
      * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
      *         the execution of this method.
      */
-    Coverage read(int index, GridCoverageReadParam param)
+    Coverage read(GridCoverageReadParam param)
             throws CoverageStoreException, CancellationException;
 
     /**

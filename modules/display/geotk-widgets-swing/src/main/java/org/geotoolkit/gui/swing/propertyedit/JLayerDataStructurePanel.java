@@ -28,6 +28,7 @@ import javax.swing.JTextPane;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.StyleSheet;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.io.wkt.Colors;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
@@ -36,7 +37,6 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -112,8 +112,8 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
             final GridCoverageResource ref = cml.getCoverageReference();
             try {
                 final GridCoverageReader reader = ref.acquireReader();
-                final GridGeometry gridgeom = reader.getGridGeometry(0);
-                final List<GridSampleDimension> dimensions = reader.getSampleDimensions(0);
+                final GridGeometry gridgeom = reader.getGridGeometry();
+                final List<GridSampleDimension> dimensions = reader.getSampleDimensions();
                 ref.recycle(reader);
 
                 // GRID GEOMETRY PART //////////////////////////////////////////

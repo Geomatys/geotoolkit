@@ -9,14 +9,13 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.data.multires.DefiningMosaic;
@@ -73,11 +72,11 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         });
 
 
-        final GridGeometry gridGeomReader = ref1.acquireReader().getGridGeometry(0);
+        final GridGeometry gridGeomReader = ref1.acquireReader().getGridGeometry();
         final GridExtent gridEnvReader = gridGeomReader.getExtent();
         final MathTransform gridToCrsReader = gridGeomReader.getGridToCRS(PixelInCell.CELL_CENTER);
 
-        final GridCoverage result = ref1.acquireReader().read(0, null);
+        final GridCoverage result = ref1.acquireReader().read(null);
         Assert.assertEquals(crs,result.getCoordinateReferenceSystem());
 
         final GridGeometry gridGeom   = result.getGridGeometry();

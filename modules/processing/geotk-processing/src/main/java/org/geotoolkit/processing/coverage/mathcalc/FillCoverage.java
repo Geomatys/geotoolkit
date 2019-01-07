@@ -27,13 +27,13 @@ import java.awt.image.WritableRaster;
 import java.util.Arrays;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -85,7 +85,7 @@ public class FillCoverage {
         final GridCoverageReader outReader;
         outReader = outRef.acquireReader();
         outWriter = outRef.acquireWriter();
-        gg = outReader.getGridGeometry(outRef.getImageIndex());
+        gg = outReader.getGridGeometry();
         outRef.recycle(outReader);
 
 

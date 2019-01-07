@@ -554,7 +554,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             if (layer instanceof CoverageMapLayer) {
                 final GridCoverageResource covRef = ((CoverageMapLayer) layer).getCoverageReference();
                 final GridCoverageReader reader = covRef.acquireReader();
-                final GridGeometry gridGeometry = reader.getGridGeometry(covRef.getImageIndex());
+                final GridGeometry gridGeometry = reader.getGridGeometry();
 
                 if (gridGeometry.isDefined(GridGeometry.GRID_TO_CRS)
                         && gridGeometry.isDefined(GridGeometry.EXTENT)) {
@@ -581,7 +581,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                     readParam.setResolution(res);
                     readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
                     readParam.setDeferred(true);
-                    final GridCoverage coverage = reader.read(covRef.getImageIndex(), readParam);
+                    final GridCoverage coverage = reader.read(readParam);
                     int nbBands = coverage.getSampleDimensions().size() - 1;
                     guiBand.setModel(new SpinnerNumberModel(0, 0, nbBands, 1));
                 }
@@ -606,7 +606,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             RenderedImage image = null;
             try {
                 reader = cref.acquireReader();
-                gridGeometry = reader.getGridGeometry(cref.getImageIndex());
+                gridGeometry = reader.getGridGeometry();
 
                 if (gridGeometry.isDefined(GridGeometry.GRID_TO_CRS)
                         && gridGeometry.isDefined(GridGeometry.EXTENT)) {
@@ -628,7 +628,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                     readParam.setEnvelope(Envelopes.transform(gridToCRS, sliceExtent));
                     readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
 
-                    coverage = reader.read(cref.getImageIndex(), readParam);
+                    coverage = reader.read(readParam);
                     coverage2D = CoverageUtilities.firstSlice(coverage);
                     image = coverage2D.getRenderedImage();
                     final Map<String, Object> an = StatisticOp.analyze(image);

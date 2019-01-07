@@ -1,12 +1,14 @@
 
 package org.geotoolkit.pending.demo.mapmodel;
 
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -17,12 +19,9 @@ import org.geotoolkit.pending.demo.Demos;
 import static org.geotoolkit.pending.demo.mapmodel.MapContextDemo.openWorldFile;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.vector.buffer.BufferDescriptor;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -76,7 +75,7 @@ public class ProcessedLayerDemo {
         final GridCoverageReader baseData = openWorldFile();
 
         final Parameters parameters = Parameters.castOrWrap(ResampleDescriptor.INSTANCE.getInputDescriptor().createValue());
-        parameters.getOrCreate(ResampleDescriptor.IN_COVERAGE).setValue(baseData.read(0, null));
+        parameters.getOrCreate(ResampleDescriptor.IN_COVERAGE).setValue(baseData.read(null));
         parameters.getOrCreate(ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM).setValue(env.getCoordinateReferenceSystem());
 
         final ProcessedCoverageResource processed = new ProcessedCoverageResource();

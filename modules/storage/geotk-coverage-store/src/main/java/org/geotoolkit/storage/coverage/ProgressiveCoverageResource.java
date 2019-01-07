@@ -76,11 +76,6 @@ public final class ProgressiveCoverageResource<T extends GridCoverageResource & 
     }
 
     @Override
-    public int getImageIndex() {
-        return base.getImageIndex();
-    }
-
-    @Override
     public CoverageDescription getCoverageDescription() {
         return base.getCoverageDescription();
     }

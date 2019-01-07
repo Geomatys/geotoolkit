@@ -25,10 +25,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -121,12 +121,12 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
             GridCoverageReader reader = null;
             try {
                 reader = ref.acquireReader();
-                final List<GridSampleDimension> dims = reader.getSampleDimensions(ref.getImageIndex());
+                final List<GridSampleDimension> dims = reader.getSampleDimensions();
 
                 final int nbdim;
                 if(dims==null){
                     //read a very low resolution image to extract bands from it
-                    final GridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
+                    final GridGeometry gg = reader.getGridGeometry();
                     final Envelope env = gg.getEnvelope();
                     final double[] res = gg.getResolution(false);
                     for(int i=0;i<res.length;i++){
@@ -136,7 +136,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                     params.setEnvelope(env);
                     params.setResolution(res);
 
-                    final GridCoverage2D cov = (GridCoverage2D) reader.read(ref.getImageIndex(), params);
+                    final GridCoverage2D cov = (GridCoverage2D) reader.read(params);
                     final RenderedImage ri = cov.getRenderedImage();
                     nbdim = ri.getSampleModel().getNumBands();
                 }else{
@@ -171,12 +171,12 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
             GridCoverageReader reader = null;
             try {
                 reader = ref.acquireReader();
-                List<GridSampleDimension> dims = reader.getSampleDimensions(ref.getImageIndex());
+                List<GridSampleDimension> dims = reader.getSampleDimensions();
 
                 final int nbdim;
                 if(dims==null){
                     //read a very low resolution image to extract bands from it
-                    final GridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
+                    final GridGeometry gg = reader.getGridGeometry();
                     final Envelope env = gg.getEnvelope();
                     final double[] res = gg.getResolution(false);
                     for(int i=0;i<res.length;i++){
@@ -186,7 +186,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                     params.setEnvelope(env);
                     params.setResolution(res);
 
-                    final GridCoverage2D cov = (GridCoverage2D) reader.read(ref.getImageIndex(), params);
+                    final GridCoverage2D cov = (GridCoverage2D) reader.read(params);
                     final RenderedImage ri = cov.getRenderedImage();
                     nbdim = ri.getSampleModel().getNumBands();
                 }else{

@@ -82,7 +82,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
     final Version version;
 
     public PGCoverageResource(final PGCoverageStore store, final GenericName name, Version version) {
-        super(store,name,0);
+        super(store,name);
         this.pgstore = store;
         this.version = version;
     }
@@ -95,7 +95,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
     public GridGeometry getGridGeometry() throws DataStoreException {
         final GridCoverageReader reader = acquireReader();
         try {
-            return reader.getGridGeometry(getImageIndex());
+            return reader.getGridGeometry();
         } finally {
             recycle(reader);
         }

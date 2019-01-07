@@ -216,11 +216,6 @@ public class WMSCoverageResource extends AbstractCoverageResource{
     }
 
     @Override
-    public int getImageIndex() {
-        return 0;
-    }
-
-    @Override
     public GridCoverageWriter acquireWriter() throws CoverageStoreException {
         throw new CoverageStoreException("WMS coverage are not writable.");
     }
@@ -431,7 +426,7 @@ public class WMSCoverageResource extends AbstractCoverageResource{
     public GridGeometry getGridGeometry() throws DataStoreException {
         final GridCoverageReader reader = acquireReader();
         try {
-            return reader.getGridGeometry(getImageIndex());
+            return reader.getGridGeometry();
         } finally {
             recycle(reader);
         }

@@ -20,7 +20,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CancellationException;
@@ -30,6 +29,7 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -307,27 +307,27 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         }
 
         @Override
-        public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-            return Collections.emptyList();
+        public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
+            return Names.createLocalName(null, null, coverage.getName() == null ? "" : coverage.getName());
         }
 
         @Override
-        public GridGeometry getGridGeometry(final int i) throws CoverageStoreException, CancellationException {
+        public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
             return (GridGeometry) coverage.getGridGeometry();
         }
 
         @Override
-        public List<GridSampleDimension> getSampleDimensions(final int i) throws CoverageStoreException, CancellationException {
-            return Collections.singletonList(coverage.getSampleDimensions().get(i));
+        public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+            return coverage.getSampleDimensions();
         }
 
         @Override
-        public GridCoverage read(final int i, final GridCoverageReadParam gcrp) throws CoverageStoreException, CancellationException {
+        public GridCoverage read(final GridCoverageReadParam gcrp) throws CoverageStoreException, CancellationException {
             return coverage;
         }
 
         @Override
-        public SpatialMetadata getCoverageMetadata(int i) throws CoverageStoreException {
+        public SpatialMetadata getCoverageMetadata() throws CoverageStoreException {
             SpatialMetadata meta = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(SpatialMetadataFormat.GEOTK_FORMAT_NAME));
             GridDomainAccessor grid = new GridDomainAccessor(meta);
             grid.setGridGeometry(coverage.getGridGeometry(), pixPos, CellGeometry.POINT, -1);

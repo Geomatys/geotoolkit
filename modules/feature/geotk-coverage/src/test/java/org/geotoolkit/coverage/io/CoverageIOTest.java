@@ -23,9 +23,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.image.io.mosaic.MosaicReadWriteTest;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileTest;
@@ -125,9 +125,8 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
      * Verifies the metadata provided by the given reader.
      */
     private void verify(final GridCoverageReader reader) throws CoverageStoreException {
-        assertEquals("Number of expected images.", 1, reader.getCoverageNames().size());
-        verify(reader.getGridGeometry(0), 360, 180, 90);
-        image = reader.read(0, null).getRenderableImage(0, 1).createDefaultRendering();
+        verify(reader.getGridGeometry(), 360, 180, 90);
+        image = reader.read(null).getRenderableImage(0, 1).createDefaultRendering();
         assertCurrentChecksumEquals("verify", MosaicReadWriteTest.IMAGE_CHECKSUMS);
     }
 

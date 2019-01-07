@@ -67,15 +67,10 @@ public class QueryableAggregate extends WMSAggregate implements GridCoverageReso
     public GridGeometry getGridGeometry() throws DataStoreException {
         final GridCoverageReader reader = acquireReader();
         try {
-            return reader.getGridGeometry(getImageIndex());
+            return reader.getGridGeometry();
         } finally {
             recycle(reader);
         }
-    }
-
-    @Override
-    public int getImageIndex() {
-        return queryableResource.getImageIndex();
     }
 
     @Override

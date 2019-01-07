@@ -31,20 +31,20 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
-import org.opengis.util.GenericName;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.feature.FeatureType;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.opengis.feature.FeatureType;
+import org.opengis.util.GenericName;
 
 /**
  * Export selected layer.
@@ -105,7 +105,7 @@ public class ExportCoverageItem extends TreeMenuItem {
                             final GenericName baseName = baseType.getName();
 
                             reader = base.acquireReader();
-                            final GridCoverage coverage = reader.read(base.getImageIndex(), null);
+                            final GridCoverage coverage = reader.read(null);
                             base.recycle(reader);
                             reader = null;
 

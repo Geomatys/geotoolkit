@@ -38,33 +38,25 @@ public class DefaultCoverageResource extends AbstractCoverageResource{
 
     private final GridCoverage2D coverage;
     private final Object input;
-    private final int imageIndex;
 
     public DefaultCoverageResource(final DataStore store, final GridCoverage2D coverage, GenericName name) {
         super(store,name);
         this.coverage = coverage;
         this.input = null;
-        this.imageIndex = 0;
     }
 
     public DefaultCoverageResource(final GridCoverage2D coverage, GenericName name) {
         super(null,name);
         this.coverage = coverage;
         this.input = null;
-        this.imageIndex = 0;
     }
 
     public DefaultCoverageResource(final Object input, GenericName name) {
         super(null,name);
         this.coverage = null;
         this.input = input;
-        this.imageIndex = 0;
     }
 
-    @Override
-    public int getImageIndex() {
-        return imageIndex;
-    }
 
     @Override
     public boolean isWritable() throws DataStoreException {

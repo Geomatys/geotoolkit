@@ -16,16 +16,6 @@
  */
 package org.geotoolkit.display2d;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -51,13 +41,24 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
-import javax.measure.Unit;
-import org.geotoolkit.feature.FeatureExt;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.measure.Units;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.util.ArgumentChecks;
+import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.util.NullArgumentException;
+import org.apache.sis.util.Utilities;
+import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.Coverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -65,44 +66,52 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.processing.CoverageProcessingException;
 import org.geotoolkit.coverage.processing.Operations;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
-import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.iso.ISOGeometryJ2D;
-import org.geotoolkit.geometry.jts.awt.DecimateJTSGeometryJ2D;
-import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
+import org.geotoolkit.geometry.jts.awt.DecimateJTSGeometryJ2D;
+import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.image.jai.FloodFill;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.CRS;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.style.visitor.PrepareStyleVisitor;
-import static org.apache.sis.util.ArgumentChecks.*;
-import org.apache.sis.util.NullArgumentException;
-import org.apache.sis.util.collection.Cache;
+import org.geotoolkit.math.XMath;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
-import org.geotoolkit.coverage.Coverage;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.util.GenericName;
-import org.geotoolkit.math.XMath;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.renderer.style.WKMMarkFactory;
+import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.style.visitor.PrepareStyleVisitor;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
@@ -129,16 +138,7 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Style;
 import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.util.Utilities;
-import org.apache.sis.measure.Units;
-import org.apache.sis.parameter.Parameters;
-import org.opengis.feature.AttributeType;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyNotFoundException;
-import org.opengis.feature.PropertyType;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -782,7 +782,7 @@ public final class GO2Utilities {
 
     public static GridCoverage reCalculate(final GridCoverageReader reader, final GridCoverageReadParam params,
             final RenderingContext2D context) throws CoverageStoreException, TransformException{
-        final CoordinateReferenceSystem sourceCRS = reader.getGridGeometry(0).getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem sourceCRS = reader.getGridGeometry().getCoordinateReferenceSystem();
         final CoordinateReferenceSystem targetCRS = params.getEnvelope().getCoordinateReferenceSystem();
 
 
@@ -795,14 +795,14 @@ public final class GO2Utilities {
             newParams.setEnvelope(newEnv);
             newParams.setResolution(newRes);
 
-            GridCoverage2D cov = (GridCoverage2D) reader.read(0, newParams);
+            GridCoverage2D cov = (GridCoverage2D) reader.read(newParams);
             cov = (GridCoverage2D) Operations.DEFAULT.resample(cov.view(ViewType.NATIVE), targetCRS);
             cov = cov.view(ViewType.RENDERED);
 
             return cov;
         }
 
-        return reader.read(0, params);
+        return reader.read(params);
     }
 
     public static GridCoverage2D resample(final Coverage dataCoverage, final CoordinateReferenceSystem targetCRS) throws ProcessException{

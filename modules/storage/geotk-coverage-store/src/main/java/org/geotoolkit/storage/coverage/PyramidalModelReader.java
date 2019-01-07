@@ -110,12 +110,12 @@ public class PyramidalModelReader extends GridCoverageReader{
     }
 
     @Override
-    public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-        return Collections.singletonList(getInput().getIdentifier());
+    public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
+        return getInput().getIdentifier();
     }
 
     @Override
-    public GridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
+    public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
         final Collection<? extends MultiResolutionModel> models;
 
         try {
@@ -210,7 +210,7 @@ public class PyramidalModelReader extends GridCoverageReader{
     }
 
     @Override
-    public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException, CancellationException {
+    public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
         try {
             return getPyramidalModel().getGridSampleDimensions();
         } catch (DataStoreException ex) {
@@ -219,10 +219,7 @@ public class PyramidalModelReader extends GridCoverageReader{
     }
 
     @Override
-    public GridCoverage read(int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
-        if (index != 0)
-            throw new CoverageStoreException("Invalid Image index.");
-
+    public GridCoverage read(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
         if (param == null)
             param = new GridCoverageReadParam();
 
@@ -239,7 +236,7 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         // Build proper envelope and CRS from parameters. If null, they're set from the queried coverage information.
         if (paramEnv == null)
-            paramEnv = getGridGeometry(index).getEnvelope();
+            paramEnv = getGridGeometry().getEnvelope();
 
         if (crs == null) {
             crs = paramEnv.getCoordinateReferenceSystem();
@@ -500,7 +497,7 @@ public class PyramidalModelReader extends GridCoverageReader{
         //build the coverage ---------------------------------------------------
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName(ref.getIdentifier().tip().toString());
-        final List<GridSampleDimension> dimensions = getSampleDimensions(ref.getImageIndex());
+        final List<GridSampleDimension> dimensions = getSampleDimensions();
         if (dimensions != null) {
             gcb.setSampleDimensions(dimensions.toArray(new GridSampleDimension[dimensions.size()]));
         }

@@ -25,6 +25,9 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -49,16 +52,13 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Portrayal data, caches the Java2D canvas for further reuse.
@@ -255,7 +255,7 @@ public final class Portrayer {
             readParam.setEnvelope(viewDef.getEnvelope());
             readParam.setResolution(resolution);
 
-            GridCoverage2D coverage = (GridCoverage2D)reader.read(cml.getCoverageReference().getImageIndex(), readParam);
+            GridCoverage2D coverage = (GridCoverage2D)reader.read(readParam);
             final RenderedImage image = coverage.getRenderedImage();
             ref.recycle(reader);
 

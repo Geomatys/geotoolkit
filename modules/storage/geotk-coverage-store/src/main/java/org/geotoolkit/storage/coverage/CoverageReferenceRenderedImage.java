@@ -78,7 +78,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
 
 
         final GridCoverageReader reader = ref.acquireReader();
-        dataEnv = reader.getGridGeometry(ref.getImageIndex()).getEnvelope();
+        dataEnv = reader.getGridGeometry().getEnvelope();
         ref.recycle(reader);
 
         final RenderedImage prototype = getTileCoverage(0, 0).getRenderedImage();
@@ -278,7 +278,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
         rparam.setEnvelope(tenv);
 
         final CoverageReader reader = ref.acquireReader();
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, rparam);
+        final GridCoverage2D coverage = (GridCoverage2D) reader.read(rparam);
         ref.recycle(reader);
         return coverage;
     }

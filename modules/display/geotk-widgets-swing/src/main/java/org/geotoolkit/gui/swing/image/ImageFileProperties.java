@@ -17,50 +17,47 @@
  */
 package org.geotoolkit.gui.swing.image;
 
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.Locale;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.imageio.IIOException;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.event.IIOReadWarningListener;
 import javax.imageio.event.IIOReadProgressListener;
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.awt.EventQueue;
-import java.awt.Dimension;
-import javax.swing.JList;
-import javax.swing.JComponent;
-import javax.swing.JScrollPane;
-import javax.swing.JFileChooser;
-import javax.swing.SwingWorker;
+import javax.imageio.event.IIOReadWarningListener;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.spi.ImageReaderSpi;
 import javax.swing.DefaultListModel;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import org.geotoolkit.nio.IOUtilities;
-import org.opengis.coverage.grid.RectifiedGrid;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.geotoolkit.image.io.NamedImageStore;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.SwingWorker;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.apache.sis.measure.NumberRange;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.internal.swing.ExceptionMonitor;
-import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.lang.Debug;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.resources.Vocabulary;
+import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -270,8 +267,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
          * are available. Note that the list of metadata may contains null elements, which are
          * necessary in order to have metadata for image 'i' stored in the list at index 'i'.
          */
-        final List<String> imageNames = (reader instanceof NamedImageStore) ?
-                ((NamedImageStore) reader).getImageNames() : null;
+        final List<String> imageNames = null;
         final IIOMetadata streamMetadata = reader.getStreamMetadata();
         final List<IIOMetadata> imageMetadata = new ArrayList<>();
         for (int i=0; i<imageIndex; i++) {

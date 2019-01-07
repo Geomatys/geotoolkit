@@ -38,37 +38,36 @@ import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
-
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.measure.Range;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
 import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
 import org.geotoolkit.gui.swing.navigator.NavigatorModel;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.util.SwingEventPassThrough;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.FeatureMapLayer.DimensionDef;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.RandomStyleBuilder;
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.ObjectConverters;
-import org.apache.sis.measure.NumberRange;
-import org.apache.sis.measure.Range;
-import org.geotoolkit.gui.swing.util.SwingEventPassThrough;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
-
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
@@ -77,7 +76,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Description;
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -181,7 +179,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
             try {
                 final GridCoverageResource covRef = coverageLayer.getCoverageReference();
                 final GridCoverageReader reader = covRef.acquireReader();
-                gridGeometry = reader.getGridGeometry(covRef.getImageIndex());
+                gridGeometry = reader.getGridGeometry();
                 covRef.recycle(reader);
             } catch (CoverageStoreException ex) {
                 LOGGER.log(Level.FINE, ex.getMessage(), ex);

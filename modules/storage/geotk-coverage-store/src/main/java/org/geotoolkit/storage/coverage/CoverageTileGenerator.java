@@ -33,6 +33,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -50,7 +51,6 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.coverage.SampleDimension;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -76,12 +76,12 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
         final CoverageReader reader = resource.acquireReader();
         try {
-            List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(resource.getImageIndex());
+            List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions();
 
             if (sampleDimensions == null) {
                 final GridCoverageReadParam param = new GridCoverageReadParam();
                 param.setDeferred(true);
-                Coverage coverage = reader.read(0, param);
+                Coverage coverage = reader.read(param);
                 sampleDimensions = (List) coverage.getSampleDimensions();
             }
 
@@ -168,7 +168,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             final GridCoverageReadParam param = new GridCoverageReadParam();
             param.setEnvelope(gridGeomNd.getEnvelope());
             param.setResolution(resolution);
-            coverage = reader.read(resource.getImageIndex(), param);
+            coverage = reader.read(param);
             resource.recycle(reader);
         } catch (DisjointCoverageDomainException ex) {
             resource.recycle(reader);

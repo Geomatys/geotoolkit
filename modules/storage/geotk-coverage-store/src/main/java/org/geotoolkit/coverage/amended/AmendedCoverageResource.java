@@ -95,11 +95,11 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
         return getGridGeometry().getEnvelope();
     }
 
-    private void loadRefData(int index) throws CoverageStoreException {
+    private void loadRefData() throws CoverageStoreException {
         if(refGridGeom==null){
             final GridCoverageReader reader = ref.acquireReader();
-            refGridGeom = reader.getGridGeometry(index);
-            refDims = reader.getSampleDimensions(index);
+            refGridGeom = reader.getGridGeometry();
+            refDims = reader.getSampleDimensions();
             ref.recycle(reader);
         }
     }
@@ -130,8 +130,8 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      * @return
      * @throws CoverageStoreException
      */
-    public GridGeometry getOriginalGridGeometry(int index) throws CoverageStoreException{
-        loadRefData(index);
+    public GridGeometry getOriginalGridGeometry() throws CoverageStoreException{
+        loadRefData();
         return refGridGeom;
     }
 
@@ -221,7 +221,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      */
     @Override
     public GridGeometry getGridGeometry() throws CoverageStoreException{
-        loadRefData(0);
+        loadRefData();
         if(isGridGeometryOverriden()){
             if(refGridGeom instanceof GridGeometry2D){
                 final GridExtent extent = refGridGeom.getExtent();
@@ -246,25 +246,16 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
     /**
      * Get overriden sample dimensions
      *
-     * @param index image index in reader
      * @return overridden sample dimensions or original ones is there are no overrides.
      * @throws CoverageStoreException
      */
     public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException{
-        loadRefData(index);
+        loadRefData();
         if(overrideDims!=null){
             return overrideDims;
         }else{
             return refDims;
         }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public int getImageIndex() {
-        return ref.getImageIndex();
     }
 
     /**

@@ -28,6 +28,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javax.measure.Unit;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.io.wkt.Colors;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
@@ -37,7 +38,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.amended.AmendedCoverageResource;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
@@ -132,8 +132,8 @@ public class FXLayerStructure extends FXPropertyPane {
             final GridCoverageResource ref = cml.getCoverageReference();
             try {
                 final GridCoverageReader reader = ref.acquireReader();
-                final GridGeometry gridgeom = reader.getGridGeometry(0);
-                final List<GridSampleDimension> dimensions = reader.getSampleDimensions(0);
+                final GridGeometry gridgeom = reader.getGridGeometry();
+                final List<GridSampleDimension> dimensions = reader.getSampleDimensions();
                 ref.recycle(reader);
 
                 // GRID GEOMETRY PART //////////////////////////////////////////

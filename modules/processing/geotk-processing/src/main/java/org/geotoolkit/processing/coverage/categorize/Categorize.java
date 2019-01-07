@@ -6,6 +6,8 @@ import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
@@ -14,9 +16,8 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.CoverageStack;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -38,7 +39,6 @@ import org.geotoolkit.processing.image.sampleclassifier.SampleClassifier;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifierDescriptor;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
-import org.geotoolkit.coverage.Coverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.parameter.ParameterValueGroup;
@@ -87,7 +87,7 @@ public class Categorize extends AbstractProcess {
 
         try (final UncheckedCloseable inClose = () -> source.recycle(reader);
                 final UncheckedCloseable outClose = () -> destination.recycle(writer)) {
-            final GridGeometry inputGG = reader.getGridGeometry(source.getImageIndex());
+            final GridGeometry inputGG = reader.getGridGeometry();
 
             final GridGeometry readGeom;
             Envelope env = getEnvelope();
@@ -141,7 +141,7 @@ public class Categorize extends AbstractProcess {
                 final GridGeometry sliceGeom = it.next();
                 final GeneralEnvelope expectedSliceEnvelope = GeneralEnvelope.castOrCopy(sliceGeom.getEnvelope());
                 readParam.setEnvelope(expectedSliceEnvelope);
-                GridCoverage sourceCvg = reader.read(source.getImageIndex(), readParam);
+                GridCoverage sourceCvg = reader.read(readParam);
                 if (sourceCvg instanceof CoverageStack) {
                     // Try to unravel expected slice
                     final Optional<GridCoverage2D> slice = extractSlice((CoverageStack) sourceCvg, sliceGeom.getEnvelope());

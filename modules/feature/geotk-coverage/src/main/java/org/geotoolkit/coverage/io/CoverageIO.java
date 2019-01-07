@@ -17,28 +17,24 @@
  */
 package org.geotoolkit.coverage.io;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.io.File;
 import java.nio.file.Path;
 import java.util.Collections;
-
-import org.geotoolkit.internal.image.io.CheckedImageInputStream;
-import org.geotoolkit.internal.image.io.CheckedImageOutputStream;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.geotoolkit.lang.Static;
-
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.internal.image.io.CheckedImageInputStream;
+import org.geotoolkit.internal.image.io.CheckedImageOutputStream;
+import org.geotoolkit.lang.Static;
+import org.geotoolkit.resources.Errors;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -85,7 +81,7 @@ public final class CoverageIO extends Static {
     public static GridCoverage read(final Object input) throws CoverageStoreException {
         final GridCoverageReader reader = createSimpleReader(input);
         try {
-            return reader.read(0, null);
+            return reader.read(null);
         } finally {
             reader.dispose();
         }

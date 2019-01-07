@@ -16,23 +16,23 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.util.Map;
-import java.util.List;
-import java.util.LinkedHashMap;
-import java.util.ArrayList;
 import java.nio.file.Path;
-import org.opengis.util.GenericName;
-import org.opengis.referencing.operation.TransformException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.GenericName;
 
 
 /**
@@ -134,8 +134,8 @@ final class NewRaster {
             } else if (resource instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
                 r = new NewRaster(driver, file, index);
                 GridCoverageReader reader = ((org.geotoolkit.storage.coverage.GridCoverageResource) resource).acquireReader();
-                r.geometry = reader.getGridGeometry(r.imageIndex);
-                r.bands = CoverageUtilities.toSIS(reader.getSampleDimensions(r.imageIndex));
+                r.geometry = reader.getGridGeometry();
+                r.bands = CoverageUtilities.toSIS(reader.getSampleDimensions());
                 reader.dispose();
             } else {
                 return;

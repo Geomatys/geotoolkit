@@ -21,22 +21,22 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.apache.sis.io.wkt.Colors;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
+import org.apache.sis.io.wkt.Warnings;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.io.wkt.Warnings;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Display a WKT of the layer coordinate reference system.
@@ -81,7 +81,7 @@ public class JLayerCRSPane extends AbstractPropertyPane {
             final GridCoverageResource ref = ((CoverageMapLayer)layer).getCoverageReference();
             try{
                 final GridCoverageReader reader = ref.acquireReader();
-                final GridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
+                final GridGeometry gg = reader.getGridGeometry();
                 crs = gg.getCoordinateReferenceSystem();
                 ref.recycle(reader);
             }catch(Exception ex){

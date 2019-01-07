@@ -141,7 +141,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
         /*
          * Check the grid geometry before to attempt to read the image.
          */
-        final GridGeometry2D gridGeometry = reader.getGridGeometry(0);
+        final GridGeometry2D gridGeometry = reader.getGridGeometry();
         final GridExtent gridEnvelope = gridGeometry.getExtent();
         assertEquals("Grid dimension", 2, gridEnvelope.getDimension());
         assertEquals("Image columns",  0, gridEnvelope.getLow(0));
@@ -157,7 +157,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
          * Read the image and check again its grid geometry, this time directly on the
          * rendered image. The grid geometry should be equivalent to the one checked above.
          */
-        final GridCoverage2D gridCoverage = reader.read(0, null);
+        final GridCoverage2D gridCoverage = reader.read(null);
         if (out != null) {
             out.println(reader);
         }
@@ -204,7 +204,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
          */
         final GridCoverageReadParam param = new GridCoverageReadParam();
         param.setEnvelope(new Envelope2D(null, -1000, -2000, 8000 - -1000, 12000 - -2000));
-        final GridCoverage2D gridCoverage = reader.read(0, param);
+        final GridCoverage2D gridCoverage = reader.read(param);
         if (out != null) {
             out.println(reader);
         }
@@ -253,7 +253,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
         final GridCoverageReadParam param = new GridCoverageReadParam();
         param.setEnvelope(new Envelope2D(null, -1000, -2000, 8000 - -1000, 12000 - -2000));
         param.setResolution(2000, 3000);
-        final GridCoverage2D gridCoverage = reader.read(0, param);
+        final GridCoverage2D gridCoverage = reader.read(param);
         if (out != null) {
             out.println(reader);
         }
@@ -297,13 +297,13 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
         final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readTwice");
         final File file = TestData.file(SampleModels.class, "Contour.png");
         reader.setInput(file);
-        assertNotNull(reader.read(0, null));
+        assertNotNull(reader.read(null));
         if (out != null) {
             out.println(reader);
         }
         reader.reset();
         reader.setInput(file);
-        assertNotNull(reader.read(0, null));
+        assertNotNull(reader.read(null));
         if (out != null) {
             out.println(reader);
         }

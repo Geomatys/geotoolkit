@@ -39,12 +39,12 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.RenderedImageAdapter;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import org.geotoolkit.image.io.SpatialImageReader;
@@ -183,11 +183,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
      */
     @Override
     public int getNumImages(final boolean allowSearch) throws IOException {
-        if (numImages == 0) try {
-            numImages = reader.getCoverageNames().size();
-        } catch (CoverageStoreException e) {
-            throw convert(e);
-        }
+        if (numImages == 0) numImages = 1;
         return numImages;
     }
 
@@ -201,7 +197,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
     public int getNumBands(final int imageIndex) throws IOException {
         final List<GridSampleDimension> sampleDimensions;
         try {
-            sampleDimensions = reader.getSampleDimensions(imageIndex);
+            sampleDimensions = reader.getSampleDimensions();
         } catch (CoverageStoreException e) {
             throw convert(e);
         }
@@ -218,7 +214,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
     @Override
     public int getDimension(final int imageIndex) throws IOException {
         try {
-            return reader.getGridGeometry(imageIndex).getDimension();
+            return reader.getGridGeometry().getDimension();
         } catch (CoverageStoreException e) {
             throw convert(e);
         }
@@ -236,7 +232,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
     @Override
     public GridExtent getGridEnvelope(final int imageIndex) throws IOException {
         try {
-            return reader.getGridGeometry(imageIndex).getExtent();
+            return reader.getGridGeometry().getExtent();
         } catch (CoverageStoreException e) {
             throw convert(e);
         }
@@ -257,7 +253,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
         if (size == null) {
             final GridGeometry geometry;
             try {
-                geometry = reader.getGridGeometry(imageIndex);
+                geometry = reader.getGridGeometry();
             } catch (CoverageStoreException e) {
                 throw convert(e);
             }
@@ -316,7 +312,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
         if (type == null) {
             final List<GridSampleDimension> bands;
             try {
-                bands = reader.getSampleDimensions(imageIndex);
+                bands = reader.getSampleDimensions();
             } catch (CoverageStoreException e) {
                 throw convert(e);
             }
@@ -362,7 +358,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
     @Override
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
         try {
-            return (imageIndex < 0) ? reader.getStreamMetadata() : reader.getCoverageMetadata(imageIndex);
+            return (imageIndex < 0) ? reader.getStreamMetadata() : reader.getCoverageMetadata();
         } catch (CoverageStoreException e) {
             throw convert(e);
         }
@@ -388,7 +384,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
              */
             final GridGeometry geometry;
             try {
-                geometry = reader.getGridGeometry(imageIndex);
+                geometry = reader.getGridGeometry();
             } catch (CoverageStoreException e) {
                 throw convert(e);
             }
@@ -424,7 +420,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
                 gp.setResolution(resolution);
             }
         }
-        final GridCoverage coverage = read(imageIndex, gp);
+        final GridCoverage coverage = read(gp);
         return (coverage == null) ? null :
                 coverage.getRenderableImage(X_DIMENSION, Y_DIMENSION).createDefaultRendering();
     }
@@ -468,9 +464,9 @@ public class ImageReaderAdapter extends SpatialImageReader {
      *         has been invoked in an other thread during the execution of this method.
      * @throws IOException If the coverage can not be read.
      */
-    protected GridCoverage read(final int index, final GridCoverageReadParam param) throws IOException {
+    protected GridCoverage read(final GridCoverageReadParam param) throws IOException {
         try {
-            return reader.read(index, param);
+            return reader.read(param);
         } catch (CoverageStoreException e) {
             throw convert(e);
         } catch (CancellationException e) {

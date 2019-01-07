@@ -61,16 +61,8 @@ import org.opengis.util.GenericName;
 @XmlTransient
 public abstract class AbstractPyramidalCoverageResource extends AbstractCoverageResource implements PyramidalCoverageResource {
 
-    protected final int imageIndex;
-
-    public AbstractPyramidalCoverageResource(DataStore store, GenericName name,int imageIndex) {
+    public AbstractPyramidalCoverageResource(DataStore store, GenericName name) {
         super(store, name);
-        this.imageIndex = imageIndex;
-    }
-
-    @Override
-    public int getImageIndex() {
-        return imageIndex;
     }
 
     @Override

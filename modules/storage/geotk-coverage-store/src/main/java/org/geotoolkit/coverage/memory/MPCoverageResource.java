@@ -50,7 +50,7 @@ public class MPCoverageResource extends AbstractPyramidalCoverageResource {
     private ColorModel colorModel;
 
     public MPCoverageResource(final MPCoverageStore store, final GenericName name) {
-        super(store,name,0);
+        super(store,name);
         this.pyramidSet = new DefaultPyramidSet();
     }
 
@@ -58,7 +58,7 @@ public class MPCoverageResource extends AbstractPyramidalCoverageResource {
     public GridGeometry getGridGeometry() throws DataStoreException {
         final GridCoverageReader reader = acquireReader();
         try {
-            return reader.getGridGeometry(getImageIndex());
+            return reader.getGridGeometry();
         } finally {
             recycle(reader);
         }

@@ -16,17 +16,16 @@
  */
 package org.geotoolkit.processing.coverage.statistics;
 
-import org.geotoolkit.metadata.ImageStatistics;
+import java.awt.image.RenderedImage;
+import java.util.HashMap;
+import java.util.Map;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.ProcessException;
-
-import java.awt.image.RenderedImage;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -49,9 +48,9 @@ public class StatisticOp extends Static {
      * @throws CoverageStoreException
      * @deprecated use {@link Statistics#analyse(org.geotoolkit.coverage.io.GridCoverageReader, int, boolean)}
      */
-    public static Map<String,Object> analyze(CoverageReader reader, int imageIndex) throws CoverageStoreException {
+    public static Map<String,Object> analyze(CoverageReader reader) throws CoverageStoreException {
         if (reader instanceof GridCoverageReader) {
-            return analyze((GridCoverageReader)reader, imageIndex);
+            return analyze((GridCoverageReader)reader);
         } else {
             throw new UnsupportedOperationException("Support GridCoverageReader only.");
         }
@@ -66,8 +65,8 @@ public class StatisticOp extends Static {
      * @throws CoverageStoreException
      * @deprecated use {@link Statistics#analyse(org.geotoolkit.coverage.io.GridCoverageReader, int, boolean)}
      */
-    public static Map<String,Object> analyze(GridCoverageReader reader, int imageIndex) throws CoverageStoreException {
-        return analyze(reader, imageIndex, ViewType.GEOPHYSICS);
+    public static Map<String,Object> analyze(GridCoverageReader reader) throws CoverageStoreException {
+        return analyze(reader, ViewType.GEOPHYSICS);
     }
 
     /**
@@ -79,9 +78,9 @@ public class StatisticOp extends Static {
      * @throws CoverageStoreException
      * @deprecated use {@link Statistics#analyse(org.geotoolkit.coverage.io.GridCoverageReader, int, boolean)}
      */
-    public static Map<String,Object> analyze(GridCoverageReader reader, int imageIndex, ViewType viewType) throws CoverageStoreException {
+    public static Map<String,Object> analyze(GridCoverageReader reader, ViewType viewType) throws CoverageStoreException {
         try {
-            final ImageStatistics analyse = Statistics.analyse(reader, imageIndex, true);
+            final ImageStatistics analyse = Statistics.analyse(reader, true);
             return toMap(analyse);
         } catch (ProcessException e) {
             throw new CoverageStoreException(e.getMessage(), e);

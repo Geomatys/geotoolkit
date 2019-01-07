@@ -263,7 +263,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         RenderedImage image = null;
         try {
             reader = cref.acquireReader();
-            gridGeometry = reader.getGridGeometry(cref.getImageIndex());
+            gridGeometry = reader.getGridGeometry();
 
             if (gridGeometry.isDefined(GridGeometry.GRID_TO_CRS)
                     && gridGeometry.isDefined(GridGeometry.EXTENT)) {
@@ -286,7 +286,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                 readParam.setResolution(high[0]-low[0], high[1]-low[1]);
                 readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
 
-                coverage = reader.read(cref.getImageIndex(), readParam);
+                coverage = reader.read(readParam);
                 coverage2D = CoverageUtilities.firstSlice(coverage);
                 image = coverage2D.getRenderedImage();
                 final Map<String, Object> an = StatisticOp.analyze(image);
@@ -672,7 +672,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
             if (layer instanceof CoverageMapLayer) {
                 final GridCoverageResource covRef = ((CoverageMapLayer) layer).getCoverageReference();
                 final GridCoverageReader reader = covRef.acquireReader();
-                final GridGeometry gridGeometry = reader.getGridGeometry(covRef.getImageIndex());
+                final GridGeometry gridGeometry = reader.getGridGeometry();
 
                 if (gridGeometry.isDefined(GridGeometry.GRID_TO_CRS)
                         && gridGeometry.isDefined(GridGeometry.EXTENT)) {
@@ -697,12 +697,12 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                     readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
                     readParam.setResolution(res);
 
-                    final List<GridSampleDimension> sd = reader.getSampleDimensions(covRef.getImageIndex());
+                    final List<GridSampleDimension> sd = reader.getSampleDimensions();
                     int nbBands = 10;
                     if (sd != null && !sd.isEmpty()) {
                         nbBands = sd.size();
                     } else {
-                        final GridCoverage coverage = reader.read(covRef.getImageIndex(), readParam);
+                        final GridCoverage coverage = reader.read(readParam);
                         if(coverage != null) {
                             nbBands = coverage.getSampleDimensions().size() - 1;
                         }

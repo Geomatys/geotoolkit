@@ -17,32 +17,6 @@
 
 package org.geotoolkit.gui.swing.render2d.control.information.presenter;
 
-import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.storage.coverage.CoverageExtractor;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
-import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.ReferencingUtilities;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.TemporalCRS;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
-
-import javax.measure.Unit;
-import javax.swing.*;
-import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.text.DateFormat;
@@ -51,7 +25,32 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
+import javax.measure.Unit;
+import javax.swing.*;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.StyleSheet;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.ProjectedCoverage;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.storage.coverage.CoverageExtractor;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.TemporalCRS;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -72,7 +71,7 @@ public class CoverageDrillingPresenter extends AbstractInformationPresenter {
             GridCoverageReader reader = null;
             try {
                 reader = covRef.acquireReader();
-                final GridGeometry gridGeo = reader.getGridGeometry(covRef.getImageIndex());
+                final GridGeometry gridGeo = reader.getGridGeometry();
                 final CoordinateReferenceSystem crs = gridGeo.getCoordinateReferenceSystem();
                 final int dimension = crs.getCoordinateSystem().getDimension();
                 if (dimension > 2) {
@@ -107,7 +106,7 @@ public class CoverageDrillingPresenter extends AbstractInformationPresenter {
                     final CoverageMapLayer layer = projectedCoverage.getLayer();
                     final GridCoverageResource covRef = layer.getCoverageReference();
                     final GridCoverageReader reader = covRef.acquireReader();
-                    final GridGeometry gridGeo = reader.getGridGeometry(covRef.getImageIndex());
+                    final GridGeometry gridGeo = reader.getGridGeometry();
                     crs = gridGeo.getCoordinateReferenceSystem();
                     covRef.recycle(reader);
 

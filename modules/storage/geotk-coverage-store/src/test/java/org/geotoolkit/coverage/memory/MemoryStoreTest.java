@@ -4,16 +4,18 @@ import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.metadata.Metadata;
@@ -22,8 +24,6 @@ import org.opengis.metadata.extent.TemporalExtent;
 import org.opengis.metadata.extent.VerticalExtent;
 import org.opengis.metadata.identification.DataIdentification;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.geotoolkit.storage.coverage.DefiningCoverageResource;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -60,7 +60,7 @@ public class MemoryStoreTest {
         for (final GridCoverageResource ref : refs) {
             final GridCoverageReader reader = ref.acquireReader();
             try {
-                final GridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
+                final GridGeometry gg = reader.getGridGeometry();
                 expectedExtent.addElements(gg.getEnvelope());
                 crss.add(gg.getCoordinateReferenceSystem());
                 ref.recycle(reader);

@@ -21,26 +21,29 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import org.geotoolkit.coverage.GridSampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.util.Utilities;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
-import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -48,10 +51,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.util.Utilities;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 
 /**
  *
@@ -86,7 +85,7 @@ public class WMSCoverageReader extends GridCoverageReader{
     }
 
     @Override
-    public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
+    public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
         final NameFactory dnf = FactoryFinder.getNameFactory(null);
         final GenericName name = getInput().getIdentifier();
         NameSpace ns = null;
@@ -94,11 +93,11 @@ public class WMSCoverageReader extends GridCoverageReader{
             ns = dnf.createNameSpace(dnf.createGenericName(null, NamesExt.getNamespace(name)), null);
         }
         final GenericName gn = dnf.createLocalName(ns, name.tip().toString());
-        return Collections.singletonList(gn);
+        return gn;
     }
 
     @Override
-    public GridGeometry getGridGeometry(final int index) throws CoverageStoreException, CancellationException {
+    public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
         final WMSCoverageResource ref = getInput();
         //we only know the envelope,
         final GridGeometry gridGeom = new GridGeometry(PixelInCell.CELL_CENTER, null, ref.getBounds(), GridRoundingMode.ENCLOSING);
@@ -106,16 +105,13 @@ public class WMSCoverageReader extends GridCoverageReader{
     }
 
     @Override
-    public List<GridSampleDimension> getSampleDimensions(final int index) throws CoverageStoreException, CancellationException {
+    public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
         //unknowned
         return null;
     }
 
     @Override
-    public GridCoverage read(final int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
-        if(index != 0){
-            throw new CoverageStoreException("Invalid Image index.");
-        }
+    public GridCoverage read(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
 
         if(param == null){
             param = new GridCoverageReadParam();

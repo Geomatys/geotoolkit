@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -33,7 +34,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -111,7 +111,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
             // Read a subset of the coverage, to compute approximative statistics
             GridCoverage coverage = null;
             try {
-                GridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
+                GridGeometry gridGeom = reader.getGridGeometry();
                 // For multi-dimensional data, we get the first 2D slice available
                 GridGeometryIterator geometryIterator = new GridGeometryIterator(gridGeom);
                 if (geometryIterator.hasNext()) {
@@ -138,7 +138,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
 
                     final GridCoverageReadParam param = new GridCoverageReadParam();
                     param.setResolution(subsetResolution);
-                    coverage = reader.read(getImageIndex(), param);
+                    coverage = reader.read(param);
                 }
 
                 recycle(reader);

@@ -98,7 +98,7 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
 
         final GridCoverageReader reader = acquireReader();
         try {
-            final GridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
+            final GridGeometry gridGeom = reader.getGridGeometry();
             Envelope envelope = gridGeom.getEnvelope();
             if (envelope != null) {
                 Geometry geom = GeometricUtilities.toJTSGeometry(envelope, GeometricUtilities.WrapResolution.SPLIT);
@@ -133,7 +133,7 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
                 param.setResolution(resolution);
             }
 
-            org.geotoolkit.coverage.grid.GridCoverage cov = reader.read(getImageIndex(), param);
+            org.geotoolkit.coverage.grid.GridCoverage cov = reader.read(param);
             while (cov instanceof GridCoverageStack) {
                 //pick the first slice
                 cov = (org.geotoolkit.coverage.grid.GridCoverage) ((GridCoverageStack) cov).coverageAtIndex(0);
@@ -161,7 +161,7 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
     default List<SampleDimension> getSampleDimensions() throws DataStoreException {
         final GridCoverageReader reader = acquireReader();
         try {
-            final List<GridSampleDimension> dims = reader.getSampleDimensions(getImageIndex());
+            final List<GridSampleDimension> dims = reader.getSampleDimensions();
             return org.geotoolkit.internal.coverage.CoverageUtilities.toSIS(dims);
         } finally {
             recycle(reader);

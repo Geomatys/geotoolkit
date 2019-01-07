@@ -53,22 +53,22 @@ public class TimedReader extends GridCoverageReader {
     }
 
     @Override
-    public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-        return Collections.singletonList(parent.getIdentifier());
+    public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
+        return parent.getIdentifier();
     }
 
     @Override
-    public GridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
+    public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
         return parent.getGridGeometry();
     }
 
     @Override
-    public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException, CancellationException {
+    public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
         return Collections.EMPTY_LIST;
     }
 
     @Override
-    public GridCoverage read(int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
+    public GridCoverage read(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
         if (param == null) {
             param = new GridCoverageReadParam();
         }
@@ -93,7 +93,7 @@ public class TimedReader extends GridCoverageReader {
 
         try (TimedUtils.CloseableCoverageReader reader = new TimedUtils.CloseableCoverageReader()) {
             reader.setInput(imageFile.toFile());
-            return reader.read(0, param);
+            return reader.read(param);
         }
     }
 }

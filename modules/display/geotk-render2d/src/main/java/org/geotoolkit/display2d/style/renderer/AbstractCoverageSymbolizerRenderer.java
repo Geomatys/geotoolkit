@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -41,7 +42,6 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -287,7 +287,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final CoverageMapLayer coverageLayer               = projectedCoverage.getLayer();
         final GridCoverageResource ref                         = coverageLayer.getCoverageReference();
         final GridCoverageReader reader                    = ref.acquireReader();
-        final GridGeometry gridGeometry             = reader.getGridGeometry(ref.getImageIndex());
+        final GridGeometry gridGeometry             = reader.getGridGeometry();
         final Envelope inputCoverageEnvelope               = gridGeometry.getEnvelope();
         final CoordinateReferenceSystem inputCoverageCRS   = inputCoverageEnvelope.getCoordinateReferenceSystem();
         final CoordinateReferenceSystem inputCoverageCRS2D = CRSUtilities.getCRS2D(inputCoverageCRS);
@@ -469,7 +469,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             //-- find most appropriate interpolation
             List<GridSampleDimension> sampleDimensions= null;
             try {
-                sampleDimensions = reader.getSampleDimensions(ref.getImageIndex());
+                sampleDimensions = reader.getSampleDimensions();
             } catch(Exception ex) {
                 //-- do nothing
                 //-- bilinear interpolation default choosen comportement if null sampleDimension.

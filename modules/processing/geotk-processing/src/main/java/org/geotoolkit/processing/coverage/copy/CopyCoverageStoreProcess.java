@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import javax.imageio.ImageReader;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -45,7 +46,6 @@ import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -344,8 +344,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         if(reduce == null) reduce = Boolean.TRUE;
 
         final GridCoverageReader reader = inRef.acquireReader();
-        final int imageIndex = inRef.getImageIndex();
-        final GridGeometry globalGeom = reader.getGridGeometry(imageIndex);
+        final GridGeometry globalGeom = reader.getGridGeometry();
         final CoordinateReferenceSystem crs = globalGeom.getCoordinateReferenceSystem();
 
         final GenericName name = inRef.getIdentifier();
@@ -357,7 +356,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         }
 
         //create sampleDimensions bands
-        final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(imageIndex);
+        final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions();
         outPM.setGridSampleDimensions(sampleDimensions);
 
         final Pyramid pyramid = (Pyramid) outPM.createModel(new DefiningPyramid(crs));
@@ -366,7 +365,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         final GridCombineIterator gridCIte = new GridCombineIterator(globalGeom);
         while (gridCIte.hasNext()) {
             GeneralEnvelope env = GeneralEnvelope.castOrCopy(gridCIte.next());
-            saveMosaic(outPM, pyramid, reader, imageIndex, env, reduce);
+            saveMosaic(outPM, pyramid, reader, env, reduce);
         }
 
         inRef.recycle(reader);
@@ -384,16 +383,16 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      * @throws TransformException
      */
     private void saveMosaic(final PyramidalCoverageResource pm, final Pyramid pyramid, final GridCoverageReader reader,
-            final int imageIndex, Envelope env, boolean reduce) throws DataStoreException, TransformException, ProcessException {
+            Envelope env, boolean reduce) throws DataStoreException, TransformException, ProcessException {
         final GridCoverageReadParam params = new GridCoverageReadParam();
         if (env != null) {
             params.setEnvelope(env);
         }else{
-            env = reader.getGridGeometry(imageIndex).getEnvelope();
+            env = reader.getGridGeometry().getEnvelope();
         }
 
         final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
-        GridCoverage2D coverage = (GridCoverage2D) reader.read(imageIndex, params);
+        GridCoverage2D coverage = (GridCoverage2D) reader.read(params);
 
         //straighten coverage
         final Parameters subParams = Parameters.castOrWrap(StraightenDescriptor.INPUT_DESC.createValue());

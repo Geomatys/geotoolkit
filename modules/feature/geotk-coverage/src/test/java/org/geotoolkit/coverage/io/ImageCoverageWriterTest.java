@@ -17,28 +17,26 @@
  */
 package org.geotoolkit.coverage.io;
 
-import java.io.File;
-import java.io.LineNumberReader;
 import java.io.ByteArrayOutputStream;
-import java.util.Locale;
-import java.text.ParseException;
+import java.io.File;
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.io.StringWriter;
+import java.text.ParseException;
+import java.util.Locale;
 import javax.imageio.ImageWriter;
-
-import org.apache.sis.test.DependsOn;
+import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.internal.system.OS;
-import org.geotoolkit.test.TestData;
+import org.apache.sis.test.DependsOn;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.image.SampleModels;
+import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.io.LineReader;
 import org.geotoolkit.io.LineReaders;
-import org.geotoolkit.image.SampleModels;
-import org.apache.sis.geometry.Envelope2D;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
 import org.geotoolkit.test.PlatformDependentTest;
+import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.image.ImageTestBase;
-
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
@@ -91,7 +89,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
     private static GridCoverage2D read(final String file) throws IOException, CoverageStoreException {
         final ImageCoverageReader reader = new ImageCoverageReader();
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, file));
-        final GridCoverage2D coverage = reader.read(0, null);
+        final GridCoverage2D coverage = reader.read(null);
         reader.dispose();
         return coverage;
     }
@@ -383,7 +381,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
     public void writeTwice() throws IOException, CoverageStoreException {
         final ImageCoverageReader reader = new ImageCoverageReader();
         reader.setInput(TestData.file(SampleModels.class, "Contour.png"));
-        final GridCoverage2D coverage = reader.read(0, null);
+        final GridCoverage2D coverage = reader.read(null);
         reader.dispose();
         try (ByteArrayOutputStream buffer = new ByteArrayOutputStream(8192)) {
             assertEquals("Expected an initially empty stream.", 0, buffer.size());

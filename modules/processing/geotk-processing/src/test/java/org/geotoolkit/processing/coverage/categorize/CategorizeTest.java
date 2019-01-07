@@ -92,7 +92,7 @@ public class CategorizeTest {
         final GridCoverage outCvg;
         final GridCoverageReader outReader = output.acquireReader();
         try {
-            outCvg = outReader.read(0, new GridCoverageReadParam());
+            outCvg = outReader.read(new GridCoverageReadParam());
         } finally {
             output.recycle(outReader);
         }
@@ -180,7 +180,7 @@ public class CategorizeTest {
             readEnv.setRange(1, -10, 10);
             for (int i = 0; i < expectedClassifs.length; i++) {
                 readEnv.setRange(2, i, i);
-                final GridCoverage outCvg = outReader.read(0, param);
+                final GridCoverage outCvg = outReader.read(param);
                 Assert.assertEquals("Output envelope is not conform to source data.", readEnv, outCvg.getEnvelope());
                 final RenderedImage outImage = outCvg.getRenderableImage(0, 1).createDefaultRendering();
                 final int[] pixels = outImage.getData().getPixels(0, 0, outImage.getWidth(), outImage.getHeight(), (int[]) null);

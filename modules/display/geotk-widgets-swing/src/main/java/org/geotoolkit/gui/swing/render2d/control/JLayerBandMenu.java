@@ -34,14 +34,15 @@ import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
-
 import javax.swing.SwingConstants;
-import org.geotoolkit.feature.FeatureExt;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.geotoolkit.gui.swing.render2d.JMap2D;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
 import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
+import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -49,16 +50,13 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.referencing.CRS;
-import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
-
 import org.opengis.style.Description;
 import org.opengis.util.InternationalString;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -142,7 +140,7 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
                     final GridCoverageResource ref = cml.getCoverageReference();
                     try {
                         final GridCoverageReader reader = ref.acquireReader();
-                        crs = reader.getGridGeometry(ref.getImageIndex()).getCoordinateReferenceSystem();
+                        crs = reader.getGridGeometry().getCoordinateReferenceSystem();
                         ref.recycle(reader);
                     } catch (Exception ex) {
                         //we tryed ...

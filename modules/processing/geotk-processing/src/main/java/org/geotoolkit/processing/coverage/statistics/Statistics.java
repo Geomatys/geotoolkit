@@ -68,19 +68,19 @@ import org.opengis.referencing.operation.TransformException;
 public class Statistics extends AbstractProcess {
 
     public Statistics(final RenderedImage image, boolean excludeNoData){
-        this(toParameters(image, null, null, null, 0, excludeNoData));
+        this(toParameters(image, null, null, null, excludeNoData));
     }
 
     public Statistics(final GridCoverage2D coverage, boolean excludeNoData){
-        this(toParameters(null, coverage, null, null, 0, excludeNoData));
+        this(toParameters(null, coverage, null, null, excludeNoData));
     }
 
     public Statistics(final GridCoverageResource ref, boolean excludeNoData){
-        this(toParameters(null, null, ref, null, 0, excludeNoData));
+        this(toParameters(null, null, ref, null, excludeNoData));
     }
 
-    public Statistics(final GridCoverageReader reader, final int imageIdx, boolean excludeNoData){
-        this(toParameters(null, null, null, reader, imageIdx, excludeNoData));
+    public Statistics(final GridCoverageReader reader, boolean excludeNoData){
+        this(toParameters(null, null, null, reader, excludeNoData));
     }
 
     public Statistics(final ParameterValueGroup input) {
@@ -88,13 +88,12 @@ public class Statistics extends AbstractProcess {
     }
 
     private static ParameterValueGroup toParameters(final RenderedImage image, final GridCoverage2D coverage, final GridCoverageResource ref,
-                                                    final GridCoverageReader reader,  final int imageIdx, boolean excludeNoData) {
+                                                    final GridCoverageReader reader, boolean excludeNoData) {
         final Parameters params = Parameters.castOrWrap(StatisticsDescriptor.INSTANCE.getInputDescriptor().createValue());
         params.getOrCreate(IMAGE).setValue(image);
         params.getOrCreate(REF).setValue(ref);
         params.getOrCreate(COVERAGE).setValue(coverage);
         params.getOrCreate(READER).setValue(reader);
-        params.getOrCreate(IMAGE_IDX).setValue(imageIdx);
         params.getOrCreate(EXCLUDE_NO_DATA).setValue(excludeNoData);
         return params;
     }
@@ -154,7 +153,7 @@ public class Statistics extends AbstractProcess {
         GridCoverageReader reader = null;
         try {
             reader = ref.acquireReader();
-            final GridGeometry gridGeom = reader.getGridGeometry(ref.getImageIndex());
+            final GridGeometry gridGeom = reader.getGridGeometry();
             final Envelope env = gridGeom.getEnvelope();
             final GridExtent ext = gridGeom.getExtent();
 
@@ -170,7 +169,7 @@ public class Statistics extends AbstractProcess {
             final GridCoverageReadParam param = new GridCoverageReadParam();
             param.setEnvelope(env);
             param.setResolution(res);
-            GridCoverage coverage = reader.read(ref.getImageIndex(), param);
+            GridCoverage coverage = reader.read(param);
             if(coverage instanceof GridCoverage2D){
                 //we want the statistics on the real data values
                 coverage = ((GridCoverage2D)coverage).view(ViewType.GEOPHYSICS);
@@ -196,9 +195,9 @@ public class Statistics extends AbstractProcess {
      * @return ImageStatistics
      * @throws ProcessException
      */
-    public static ImageStatistics analyse(GridCoverageReader reader, int imageIdx, boolean excludeNoData)
+    public static ImageStatistics analyse(GridCoverageReader reader, boolean excludeNoData)
             throws ProcessException {
-        org.geotoolkit.process.Process process = new Statistics(reader, imageIdx, excludeNoData);
+        org.geotoolkit.process.Process process = new Statistics(reader, excludeNoData);
         Parameters out = Parameters.castOrWrap(process.call());
         return out.getValue(OUTCOVERAGE);
     }
@@ -230,10 +229,9 @@ public class Statistics extends AbstractProcess {
                 candidate = inCoverage;
             } else {
                 final GridCoverageReader reader = inputParameters.getValue(READER);
-                final Integer imageIdx = inputParameters.getValue(IMAGE_IDX);
 
-                if (reader != null && imageIdx != null) {
-                    candidate = getCoverage(reader, imageIdx);
+                if (reader != null) {
+                    candidate = getCoverage(reader);
                 } else {
                     final GridCoverageResource ref = inputParameters.getValue(REF);
                     if (ref != null) {
@@ -531,7 +529,7 @@ public class Statistics extends AbstractProcess {
     private GridCoverage2D getCoverage(GridCoverageResource ref) throws ProcessException {
         try {
             final GridCoverageReader reader = ref.acquireReader();
-            GridCoverage2D coverage = getCoverage(reader, ref.getImageIndex());
+            GridCoverage2D coverage = getCoverage(reader);
             ref.recycle(reader);
             return coverage;
 
@@ -547,9 +545,9 @@ public class Statistics extends AbstractProcess {
      * @return
      * @throws ProcessException
      */
-    private GridCoverage2D getCoverage(GridCoverageReader reader, int imageIdx) throws ProcessException {
+    private GridCoverage2D getCoverage(GridCoverageReader reader) throws ProcessException {
         try {
-            final GridGeometry gridGeometry = reader.getGridGeometry(imageIdx);
+            final GridGeometry gridGeometry = reader.getGridGeometry();
             CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
             final MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
             final GridExtent extent = gridGeometry.getExtent();
@@ -573,7 +571,7 @@ public class Statistics extends AbstractProcess {
             readParam.setDeferred(true);
             readParam.setCoordinateReferenceSystem(crs);
 
-            final GridCoverage coverage = reader.read(imageIdx, readParam);
+            final GridCoverage coverage = reader.read(readParam);
             return  CoverageUtilities.firstSlice(coverage);
         } catch (CoverageStoreException | TransformException e) {
             throw new ProcessException(e.getMessage(), this, e);

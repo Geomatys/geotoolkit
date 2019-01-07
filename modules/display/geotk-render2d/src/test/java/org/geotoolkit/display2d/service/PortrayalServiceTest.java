@@ -528,12 +528,10 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         final SceneDef sceneDef = new SceneDef(context);
         final GridCoverageReader reader = DefaultPortrayalService.asCoverageReader(sceneDef);
 
-        assertEquals(1, reader.getCoverageNames().size());
-
-        final GridGeometry gridGeom = reader.getGridGeometry(0);
+        final GridGeometry gridGeom = reader.getGridGeometry();
         assertNotNull(gridGeom);
 
-        final GridCoverage2D result = (GridCoverage2D) reader.read(0, null);
+        final GridCoverage2D result = (GridCoverage2D) reader.read(null);
         final RenderedImage image = result.getRenderedImage();
         assertEquals(1000, image.getWidth());
     }

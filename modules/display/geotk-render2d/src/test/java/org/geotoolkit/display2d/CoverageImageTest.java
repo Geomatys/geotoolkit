@@ -208,7 +208,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
         final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
 
         final BufferedImage img = ImageIO.read(input);
-        final GridCoverage2D gridcov = (GridCoverage2D) reader.read(0, null);
+        final GridCoverage2D gridcov = (GridCoverage2D) reader.read(null);
 
         proportionalityCoefficient = 2;
 

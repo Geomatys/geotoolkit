@@ -23,6 +23,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.Units;
@@ -30,7 +31,6 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -422,22 +422,22 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
         }
 
         @Override
-        public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
-        public GridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
+        public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
             return coverage.getGridGeometry();
         }
 
         @Override
-        public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException, CancellationException {
+        public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
         @Override
-        public GridCoverage read(int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
+        public GridCoverage read(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
             try {
                 Envelope readEnvelope            = param.getEnvelope();
                 MathTransform paramToCoverageCrs = CRS.findOperation(param.getCoordinateReferenceSystem(), coverage.getCoordinateReferenceSystem(), null).getMathTransform();

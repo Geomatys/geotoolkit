@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
@@ -41,7 +42,6 @@ import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.data.GenericNameIndex;
@@ -124,8 +124,8 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
             final SpatialMetadata md;
             final GridGeometry gg;
             try {
-                md = reader.getCoverageMetadata(ref.getImageIndex());
-                gg = reader.getGridGeometry(ref.getImageIndex());
+                md = reader.getCoverageMetadata();
+                gg = reader.getGridGeometry();
                 ref.recycle(reader);
             } catch (Exception e) {
                 // If something turned wrong, we definitively get rid of the reader.

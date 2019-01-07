@@ -37,7 +37,7 @@ public class WMTSCoverageResource extends AbstractPyramidalCoverageResource {
     private final WMTSPyramidSet set;
 
     WMTSCoverageResource(WebMapTileClient server, GenericName name, boolean cacheImage){
-        super(server,name,0);
+        super(server,name);
         set = new WMTSPyramidSet(server, name.tip().toString(), cacheImage);
     }
 
@@ -45,7 +45,7 @@ public class WMTSCoverageResource extends AbstractPyramidalCoverageResource {
     public GridGeometry getGridGeometry() throws DataStoreException {
         final GridCoverageReader reader = acquireReader();
         try {
-            return reader.getGridGeometry(getImageIndex());
+            return reader.getGridGeometry();
         } finally {
             recycle(reader);
         }

@@ -284,7 +284,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     //modify context
                     final DefaultPyramid pm = new DefaultPyramid(pyramid.getCoordinateReferenceSystem());
                     pm.getMosaicsInternal().add(mosaic);
-                    final PyramidalCoverageResource r = new AbstractPyramidalCoverageResource(null, Names.createGenericName(null, null, "test"), 0) {
+                    final PyramidalCoverageResource r = new AbstractPyramidalCoverageResource(null, Names.createGenericName(null, null, "test")) {
                         @Override
                         public Collection<Pyramid> getModels() throws DataStoreException {
                             return Arrays.asList(pm);
@@ -304,7 +304,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                         public GridGeometry getGridGeometry() throws DataStoreException {
                             final GridCoverageReader reader = acquireReader();
                             try {
-                                return reader.getGridGeometry(getImageIndex());
+                                return reader.getGridGeometry();
                             } finally {
                                 recycle(reader);
                             }

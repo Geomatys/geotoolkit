@@ -92,7 +92,7 @@ public class DimRangeRendererService extends AbstractSymbolizerRendererService<D
                 final GridCoverageReader reader = ref.acquireReader();
                 final GridCoverageReadParam param = new GridCoverageReadParam();
                 param.setResolution(1,1);
-                GridCoverage2D cov = (GridCoverage2D) reader.read(0, param);
+                GridCoverage2D cov = (GridCoverage2D) reader.read(param);
                 ref.recycle(reader);
                 cov = cov.view(ViewType.NATIVE);
                 RenderedImage img = cov.getRenderedImage();

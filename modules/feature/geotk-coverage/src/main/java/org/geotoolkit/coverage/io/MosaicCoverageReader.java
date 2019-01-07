@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import org.apache.sis.coverage.grid.GridGeometry;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.image.io.mosaic.MosaicBuilder;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriteParam;
@@ -249,14 +249,7 @@ final class MosaicCoverageReader extends ImageCoverageReader {
      * Returns the grid geometry computed from the tile manager.
      */
     @Override
-    public GridGeometry2D getGridGeometry(final int index) throws CoverageStoreException {
-        /*
-         * There is typically only one coverage. If the user asks for an other coverage,
-         * delegates to the super-class (which will typically thrown an exception).
-         */
-        if (index != 0) {
-            return super.getGridGeometry(index);
-        }
+    public GridGeometry2D getGridGeometry() throws CoverageStoreException {
         if (gridGeometry == null) {
             final TileManager input = getInput();
             if (input == null) {
@@ -268,7 +261,7 @@ final class MosaicCoverageReader extends ImageCoverageReader {
             } catch (IOException e) {
                 throw new CoverageStoreException(formatErrorMessage(e), e);
             }
-            gridGeometry = (gg == null) ? super.getGridGeometry(index) :
+            gridGeometry = (gg == null) ? super.getGridGeometry() :
                     new GridGeometry2D(gg.getExtent(), PixelInCell.CELL_CORNER, gg.getGridToCRS(PixelInCell.CELL_CENTER), crs);
         }
         return gridGeometry;

@@ -208,14 +208,14 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
 
     public static FeatureType buildCellType(GridCoverageResource ref) throws DataStoreException{
         final GridCoverageReader reader = ref.acquireReader();
-        final FeatureType sft = buildCellType(reader, ref.getImageIndex());
+        final FeatureType sft = buildCellType(reader);
         ref.recycle(reader);
         return sft;
     }
 
-    public static FeatureType buildCellType(GridCoverageReader reader, int imageIndex) throws DataStoreException{
-        final List<GridSampleDimension> lst = reader.getSampleDimensions(imageIndex);
-        final GridGeometry gg = reader.getGridGeometry(imageIndex);
+    public static FeatureType buildCellType(GridCoverageReader reader) throws DataStoreException{
+        final List<GridSampleDimension> lst = reader.getSampleDimensions();
+        final GridGeometry gg = reader.getGridGeometry();
         final CoordinateReferenceSystem crs = gg.getCoordinateReferenceSystem();
         if(lst!=null){
             final String[] names = new String[lst.size()];
@@ -227,7 +227,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
             //we need to find the number of bands by some other way
             final GridCoverageReadParam param = new GridCoverageReadParam();
             param.setResolution(gg.getEnvelope().getSpan(0),gg.getEnvelope().getSpan(1));
-            final GridCoverage2D cov = (GridCoverage2D) reader.read(0, param);
+            final GridCoverage2D cov = (GridCoverage2D) reader.read(param);
             final int nbBands = cov.getRenderedImage().getSampleModel().getNumBands();
             return buildCellType(nbBands, null, crs);
         }

@@ -41,8 +41,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Spliterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -61,6 +61,7 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -76,6 +77,7 @@ import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
+import static org.geotoolkit.display2d.GO2Utilities.*;
 import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
@@ -99,10 +101,10 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -112,8 +114,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.portrayal.PortrayalService;
-import static org.geotoolkit.display2d.GO2Utilities.*;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Default implementation of portrayal service.
@@ -574,7 +574,7 @@ public final class DefaultPortrayalService implements PortrayalService{
             readParam.setEnvelope(viewDef.getEnvelope());
             readParam.setResolution(resolution);
 
-            GridCoverage2D coverage = (GridCoverage2D)reader.read(cml.getCoverageReference().getImageIndex(), readParam);
+            GridCoverage2D coverage = (GridCoverage2D)reader.read(readParam);
             final RenderedImage image = coverage.getRenderedImage();
             ref.recycle(reader);
 

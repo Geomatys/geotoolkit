@@ -87,7 +87,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
 
         //sanity check
         CoverageReader reader = ref.acquireReader();
-        RenderedImage candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        RenderedImage candidate = ((GridCoverage2D)reader.read(null)).getRenderedImage();
         ref.recycle(reader);
         testImage(candidate, 360, 180, Color.BLACK);
 
@@ -108,7 +108,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
 
         //image should be red
         reader = ref.acquireReader();
-        candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        candidate = ((GridCoverage2D)reader.read(null)).getRenderedImage();
         ref.recycle(reader);
         testImage(candidate, 360, 180, Color.RED);
     }
@@ -131,7 +131,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
 
         //sanity check
         CoverageReader reader = ref.acquireReader();
-        RenderedImage candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        RenderedImage candidate = ((GridCoverage2D)reader.read(null)).getRenderedImage();
         ref.recycle(reader);
         testImage(candidate, 36, 18, Color.BLACK);
 
@@ -152,7 +152,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
 
         //image should be red
         reader = ref.acquireReader();
-        candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        candidate = ((GridCoverage2D)reader.read(null)).getRenderedImage();
         ref.recycle(reader);
         testImage(candidate, 36, 18, Color.RED);
     }
@@ -175,7 +175,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
 
         //sanity check
         CoverageReader reader = ref.acquireReader();
-        RenderedImage candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        RenderedImage candidate = ((GridCoverage2D)reader.read(null)).getRenderedImage();
         ref.recycle(reader);
         testImage(candidate, 36, 18, Color.BLACK);
 
@@ -196,7 +196,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
 
         //image should be black/red
         reader = ref.acquireReader();
-        candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        candidate = ((GridCoverage2D)reader.read(null)).getRenderedImage();
         ref.recycle(reader);
         final Raster data = candidate.getData();
 
@@ -241,7 +241,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
 
         //sanity check
         CoverageReader reader = ref.acquireReader();
-        RenderedImage candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        RenderedImage candidate = ((GridCoverage2D)reader.read(null)).getRenderedImage();
         ref.recycle(reader);
         testImage(candidate, 36, 18, Color.BLACK);
 
@@ -262,7 +262,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
 
         //lower image should be black/red---------------------------------------
         reader = ref.acquireReader();
-        candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        candidate = ((GridCoverage2D)reader.read(null)).getRenderedImage();
         ref.recycle(reader);
         Raster data = candidate.getData();
 
@@ -337,7 +337,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
 
         //sanity check
         CoverageReader reader = ref.acquireReader();
-        RenderedImage candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        RenderedImage candidate = ((GridCoverage2D)reader.read(null)).getRenderedImage();
         ref.recycle(reader);
         testImage(candidate, 18, 36, Color.BLACK);
 
@@ -358,7 +358,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
 
         //lower image should be black/red---------------------------------------
         reader = ref.acquireReader();
-        candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        candidate = ((GridCoverage2D)reader.read(null)).getRenderedImage();
         ref.recycle(reader);
         Raster data = candidate.getData();
 
@@ -433,7 +433,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
 
         //sanity check
         CoverageReader reader = ref.acquireReader();
-        RenderedImage candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        RenderedImage candidate = ((GridCoverage2D)reader.read(null)).getRenderedImage();
         ref.recycle(reader);
         testImage(candidate, 36, 18, Color.BLACK);
 
@@ -454,7 +454,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
 
         //lower image should be black/red---------------------------------------
         reader = ref.acquireReader();
-        candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        candidate = ((GridCoverage2D)reader.read(null)).getRenderedImage();
         ref.recycle(reader);
         Raster data = candidate.getData();
 

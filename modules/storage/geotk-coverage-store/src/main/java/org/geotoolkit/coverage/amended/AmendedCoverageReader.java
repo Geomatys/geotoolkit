@@ -68,8 +68,8 @@ public class AmendedCoverageReader extends GridCoverageReader{
      * @throws CancellationException
      */
     @Override
-    public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-        return reader.getCoverageNames();
+    public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
+        return reader.getCoverageName();
     }
 
     /**
@@ -81,7 +81,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
      * @throws CancellationException
      */
     @Override
-    public GridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
+    public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
         return ref.getGridGeometry();
     }
 
@@ -94,7 +94,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
      * @throws CancellationException
      */
     @Override
-    public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException, CancellationException {
+    public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
         return ref.getSampleDimensions(0);
     }
 
@@ -110,7 +110,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
      * @throws CancellationException
      */
     @Override
-    public GridCoverage read(int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
+    public GridCoverage read(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
 
         GridCoverage coverage;
         if(ref.isGridGeometryOverriden()){
@@ -119,7 +119,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
             final MathTransform overrideGridToCrs = ref.getOverrideGridToCrs();
             final PixelInCell overridePixelInCell = ref.getOverridePixelInCell();
             final GridGeometry overrideGridGeometry = ref.getGridGeometry();
-            final GridGeometry originalGridGeometry = ref.getOriginalGridGeometry(index);
+            final GridGeometry originalGridGeometry = ref.getOriginalGridGeometry();
 
             //convert parameters to fit overrides
             double[] queryRes = param==null ? null : param.getResolution();
@@ -199,7 +199,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
                 refParam.setCoordinateReferenceSystem(coverageEnv.getCoordinateReferenceSystem());
                 refParam.setEnvelope(coverageEnv);
             }
-            coverage = reader.read(index, refParam);
+            coverage = reader.read(refParam);
 
             //fix coverage transform and crs
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
@@ -216,7 +216,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
             coverage = gcb.build();
 
         }else{
-            coverage = reader.read(index, param);
+            coverage = reader.read(param);
         }
 
         //override sample dimensions

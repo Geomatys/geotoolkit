@@ -51,6 +51,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -100,7 +101,6 @@ import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.locationtech.jts.geom.Geometry;
-import org.geotoolkit.coverage.SampleDimension;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -725,7 +725,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                         try{
                             final GridCoverageResource ref = projectedCoverage.getLayer().getCoverageReference();
                             final GridCoverageReader reader = ref.acquireReader();
-                            final Map<String,Object> analyze = StatisticOp.analyze(reader,ref.getImageIndex());
+                            final Map<String,Object> analyze = StatisticOp.analyze(reader);
                             ref.recycle(reader);
                             final double[] minArray = (double[])analyze.get(StatisticOp.MINIMUM);
                             final double[] maxArray = (double[])analyze.get(StatisticOp.MAXIMUM);
@@ -888,7 +888,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final Envelope2D covEnv2d              = coverage.getGridGeometry().getEnvelope2D();
 
         final GridCoverageReader elevationReader = elevationModel.getCoverageReader();
-        final GridGeometry elevGridGeom          = elevationReader.getGridGeometry(0);
+        final GridGeometry elevGridGeom          = elevationReader.getGridGeometry();
         if (!(elevGridGeom instanceof GridGeometry2D)) {
             throw new IllegalArgumentException("the Digital Elevation Model should be instance of gridcoverage2D."+elevGridGeom);
         }
@@ -899,7 +899,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final MathTransform demCRSToCov        = CRS.findOperation(demCRS, covCRS, null).getMathTransform(); // dem -> cov
 
         if (elevGridGeom2D.getEnvelope2D().equals(coverage.getGridGeometry().getEnvelope2D())
-         && covExtend.equals(elevGridGeom2D.getExtent2D())) return (GridCoverage2D) elevationReader.read(0, null);
+         && covExtend.equals(elevGridGeom2D.getExtent2D())) return (GridCoverage2D) elevationReader.read(null);
 
         final GeneralEnvelope readParamEnv = Envelopes.transform(demCRSToCov.inverse(), covEnv2d);
 
@@ -908,7 +908,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         gcrp.setEnvelope(readParamEnv);
         // TODO : set resolution
 
-        final GridCoverage2D dem = (GridCoverage2D) elevationReader.read(0, gcrp);
+        final GridCoverage2D dem = (GridCoverage2D) elevationReader.read(gcrp);
         return getDEMCoverage(coverage, dem);
 
     }

@@ -37,7 +37,7 @@ public class GoogleCoverageResource extends AbstractPyramidalCoverageResource {
     private final GoogleMapsPyramidSet set;
 
     GoogleCoverageResource(final StaticGoogleMapsClient server, final GenericName name, boolean cacheImage) throws DataStoreException{
-        super(server,name,0);
+        super(server,name);
         this.set = new GoogleMapsPyramidSet(this,cacheImage);
     }
 
@@ -53,7 +53,7 @@ public class GoogleCoverageResource extends AbstractPyramidalCoverageResource {
     public GridGeometry getGridGeometry() throws DataStoreException {
         final GridCoverageReader reader = acquireReader();
         try {
-            return reader.getGridGeometry(getImageIndex());
+            return reader.getGridGeometry();
         } finally {
             recycle(reader);
         }

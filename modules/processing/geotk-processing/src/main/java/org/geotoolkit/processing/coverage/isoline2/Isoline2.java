@@ -29,13 +29,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -104,9 +104,8 @@ public class Isoline2 extends AbstractProcess {
         }
 
         try {
-            final int imgIndex = coverageRef.getImageIndex();
             final GridCoverageReader reader  = coverageRef.acquireReader();
-            final GridGeometry gridgeom = reader.getGridGeometry(imgIndex);
+            final GridGeometry gridgeom = reader.getGridGeometry();
             crs = gridgeom.getCoordinateReferenceSystem();
             type = getOrCreateIsoType(featureStore, featureTypeName, crs);
             col = featureStore.createSession(false).getFeatureCollection(QueryBuilder.all(type.getName()));
@@ -124,15 +123,15 @@ public class Isoline2 extends AbstractProcess {
                     if (obj instanceof RenderedImage) {
                         image = (RenderedImage) obj;
                     } else if (obj instanceof ImageReader) {
-                        image = ((ImageReader) obj).read(imgIndex);
+                        image = ((ImageReader) obj).read(0);
                     } else if (obj instanceof ImageInputStream) {
                         final ImageReader imgReader = XImageIO.getReader(obj, false, false);
-                        image = imgReader.read(imgIndex);
+                        image = imgReader.read(0);
                     }
                 }
 
                 if (image == null) {
-                    GridCoverage2D coverage = (GridCoverage2D) reader.read(coverageRef.getImageIndex(), readParam);
+                    GridCoverage2D coverage = (GridCoverage2D) reader.read(readParam);
                     coverage = coverage = coverage.view(ViewType.GEOPHYSICS);
                     image = coverage.getRenderedImage();
                 }

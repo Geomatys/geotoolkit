@@ -17,13 +17,13 @@
 package org.geotoolkit.map;
 
 import java.util.logging.Level;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.ImmutableEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.data.query.Query;
@@ -112,7 +112,7 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
         final GridCoverageResource ref = getCoverageReference();
         try {
             GridCoverageReader reader = ref.acquireReader();
-            final GridGeometry geom = reader.getGridGeometry(getCoverageReference().getImageIndex());
+            final GridGeometry geom = reader.getGridGeometry();
             ref.recycle(reader);
             if (geom == null) {
                 LOGGER.log(Level.WARNING, "Could not access envelope of layer {0}", getCoverageReference().getIdentifier());

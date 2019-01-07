@@ -23,6 +23,7 @@ import java.time.Month;
 import java.time.ZoneId;
 import java.util.Collections;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
@@ -31,7 +32,6 @@ import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -72,7 +72,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
 
             final GridCoverageReader reader = acquireReader(store);
 
-            final GridGeometry gg = reader.getGridGeometry(0);
+            final GridGeometry gg = reader.getGridGeometry();
             Assert.assertNotNull("No grid geometry available", gg);
 
             final CoordinateReferenceSystem crs = gg.getCoordinateReferenceSystem();
@@ -125,13 +125,13 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
 
         try (final TimedCoverageStore store = create()) {
             final GridCoverageReader reader = acquireReader(store);
-            checkReferencing(reader.getGridGeometry(0), twoSlices, expectedEnvelope);
+            checkReferencing(reader.getGridGeometry(), twoSlices, expectedEnvelope);
         }
 
         // We try a second time to ensure indexed data is consistent after reboot
         try (final TimedCoverageStore store = create()) {
             final GridCoverageReader reader = acquireReader(store);
-            checkReferencing(reader.getGridGeometry(0), twoSlices, expectedEnvelope);
+            checkReferencing(reader.getGridGeometry(), twoSlices, expectedEnvelope);
         }
     }
 
@@ -169,7 +169,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
             final GridExtent singleSlice = new GridExtent(null, null, new long[]{16, 16, 1}, false);
 
             final GridCoverageReader reader = acquireReader(store);
-            checkReferencing(reader.getGridGeometry(0), singleSlice, expectedEnvelope);
+            checkReferencing(reader.getGridGeometry(), singleSlice, expectedEnvelope);
 
             /* We check another image to ensure the available data grows and we can
          * select the two images separately.
@@ -197,18 +197,18 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
             final long timeResolution = (secondTimestamp - timestamp) / 2;
             expectedEnvelope.setRange(2, timestamp - timeResolution, secondTimestamp + timeResolution);
             final GridExtent twoSlices = new GridExtent(null, null, new long[]{16, 16, 2}, false);
-            checkReferencing(reader.getGridGeometry(0), twoSlices, expectedEnvelope);
+            checkReferencing(reader.getGridGeometry(), twoSlices, expectedEnvelope);
 
             // Secondly, we verify we can acquire our data slice by slice.
             final GridCoverageReadParam param = new GridCoverageReadParam();
             param.setEnvelope(expectedEnvelope);
-            final GridCoverage secondSlice = reader.read(0, param);
+            final GridCoverage secondSlice = reader.read(param);
             Assert.assertTrue("Read coverage should be 2D slice of the data.", secondSlice instanceof GridCoverage2D);
             final GeneralEnvelope env2d = expectedEnvelope.subEnvelope(0, 2).clone();
             env2d.setRange(0, -2, 1);
             env2d.setRange(1, -2, 1);
             env2d.setCoordinateReferenceSystem(inputCRS);
-            final GridExtent slice2d = new GridExtent(16, 16);
+            final GridExtent slice2d = new GridExtent(null, new long[]{0,0}, new long[]{16, 16}, false);
             checkReferencing(((GridCoverage2D) secondSlice).getGridGeometry(), slice2d, env2d);
         }
     }

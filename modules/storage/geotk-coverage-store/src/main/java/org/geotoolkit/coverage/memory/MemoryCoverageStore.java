@@ -176,23 +176,23 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
         }
 
         @Override
-        public GridGeometry getGridGeometry(final int i) throws CoverageStoreException, CancellationException {
+        public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
             return (GridGeometry) ref.coverage.getGridGeometry();
         }
 
         @Override
-        public List<GridSampleDimension> getSampleDimensions(final int i) throws CoverageStoreException, CancellationException {
+        public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
             return ref.coverage.getSampleDimensions();
         }
 
         @Override
-        public GridCoverage read(final int i, final GridCoverageReadParam gcrp) throws CoverageStoreException, CancellationException {
+        public GridCoverage read(final GridCoverageReadParam gcrp) throws CoverageStoreException, CancellationException {
             return ref.coverage;
         }
 
         @Override
-        public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-            return Collections.singletonList(ref.getIdentifier());
+        public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
+            return ref.getIdentifier();
         }
     }
 

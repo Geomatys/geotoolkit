@@ -18,13 +18,13 @@ package org.geotoolkit.processing.coverage.coveragetofeatures;
 
 import java.awt.geom.Point2D;
 import java.util.List;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
@@ -99,8 +99,8 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
     protected void execute() throws ProcessException{
         try {
             final GridCoverageReader reader = inputParameters.getValue(CoverageToFeaturesDescriptor.READER_IN);
-            final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
-            final GridGeometry gridGeom = reader.getGridGeometry(0);
+            final GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
+            final GridGeometry gridGeom = reader.getGridGeometry();
 
             final CoverageToFeatureCollection resultFeatureList =
                     new CoverageToFeatureCollection(reader, gridGeom.getExtent(), coverage, gridGeom);
@@ -126,8 +126,8 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
         final FeatureTypeBuilder typeBuilder = new FeatureTypeBuilder();
         typeBuilder.setName("FeatureCoverage");
         typeBuilder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
-        typeBuilder.addAttribute(Point.class).setName("position").setCRS(reader.getGridGeometry(0).getCoordinateReferenceSystem()).addRole(AttributeRole.DEFAULT_GEOMETRY);
-        typeBuilder.addAttribute(Polygon.class).setName("cellgeom").setCRS(reader.getGridGeometry(0).getCoordinateReferenceSystem());
+        typeBuilder.addAttribute(Point.class).setName("position").setCRS(reader.getGridGeometry().getCoordinateReferenceSystem()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        typeBuilder.addAttribute(Polygon.class).setName("cellgeom").setCRS(reader.getGridGeometry().getCoordinateReferenceSystem());
         typeBuilder.addAttribute(String.class).setName("orientation");
 
         int type = 1;
@@ -166,7 +166,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
         final List<GridSampleDimension> dims = coverage.getSampleDimensions();
         final int nbBand = dims.size();
 
-        final Georectified rep = reader.getCoverageMetadata(0).getInstanceForType(Georectified.class);
+        final Georectified rep = reader.getCoverageMetadata().getInstanceForType(Georectified.class);
 
         //Define the pixel position in cells
         PixelInCell posPix = PixelInCell.CELL_CENTER;

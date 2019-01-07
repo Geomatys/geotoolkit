@@ -247,7 +247,7 @@ public class Index implements Closeable {
             final CoordinateReferenceSystem imageCRS;
             try (final TimedUtils.CloseableCoverageReader reader = new TimedUtils.CloseableCoverageReader()) {
                 reader.setInput(imageFile);
-                imageCRS = reader.getGridGeometry(0).getCoordinateReferenceSystem();
+                imageCRS = reader.getGridGeometry().getCoordinateReferenceSystem();
             }
 
             if (imageCRS instanceof ImageCRS) {
@@ -276,7 +276,7 @@ public class Index implements Closeable {
 
         try (final TimedUtils.CloseableCoverageReader cvgReader = new TimedUtils.CloseableCoverageReader()) {
             cvgReader.setInput(imageFile.toFile());
-            final Envelope tmpEnvelope = cvgReader.getGridGeometry(0).getEnvelope();
+            final Envelope tmpEnvelope = cvgReader.getGridGeometry().getEnvelope();
             if (tmpEnvelope.getCoordinateReferenceSystem() == null
                     || (tmpEnvelope.getCoordinateReferenceSystem() instanceof ImageCRS)) {
                 throw new CoverageStoreException("No spatial information found in "+imageFile);

@@ -17,17 +17,20 @@
 
 package org.geotoolkit.processing.coverage.mathcalc;
 
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.util.Utilities;
+import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.WrapFilterFactory2;
-import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.coverage.Coverage;
+import org.geotoolkit.processing.AbstractProcess;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
@@ -35,9 +38,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.util.Utilities;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -73,7 +73,7 @@ public class MathCalcProcess extends AbstractProcess {
         final GridCoverageReader outReader;
         try {
             outReader = outRef.acquireReader();
-            gg = outReader.getGridGeometry(outRef.getImageIndex());
+            gg = outReader.getGridGeometry();
             outRef.recycle(outReader);
         } catch (DataStoreException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

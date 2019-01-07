@@ -22,6 +22,7 @@ import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.measure.Units;
@@ -31,7 +32,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -157,7 +157,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
                 geomCRS = JTS.findCoordinateReferenceSystem(jtsGeom);
             }
 
-            final GridGeometry covGridGeom = gcReader.getGridGeometry(bandIndex);
+            final GridGeometry covGridGeom = gcReader.getGridGeometry();
 
             /*
              * If we have no CRS informations from geometry we consider that geometry is defined in same crs as Coverage.
@@ -177,7 +177,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             gcrp.setEnvelope(envGeom2D, geomCRS);
             /*******************************************/
 
-            final GridCoverage2D dem      = (GridCoverage2D) gcReader.read(bandIndex, gcrp);
+            final GridCoverage2D dem      = (GridCoverage2D) gcReader.read(gcrp);
             final GridSampleDimension gsd = dem.getSampleDimensions().get(bandIndex);
 
             final MathTransform1D zmt     = gsd.getSampleToGeophysics();

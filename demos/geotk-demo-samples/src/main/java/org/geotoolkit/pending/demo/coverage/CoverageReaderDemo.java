@@ -1,7 +1,12 @@
 
 package org.geotoolkit.pending.demo.coverage;
 
+import java.awt.image.RenderedImage;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -16,12 +21,6 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.coverage.grid.GridCoverage;
-
-import java.awt.image.RenderedImage;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 
 public class CoverageReaderDemo {
@@ -45,7 +44,7 @@ public class CoverageReaderDemo {
         readParam.setDeferred(true);
 
         final GridCoverageReader reader = CoverageIO.createSimpleReader(tempData);
-        final GridCoverage coverage = reader.read(0, readParam);
+        final GridCoverage coverage = reader.read(readParam);
 
         // Ok, so how to use it now ?
 

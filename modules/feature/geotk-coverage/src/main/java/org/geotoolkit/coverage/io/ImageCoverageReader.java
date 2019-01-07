@@ -38,6 +38,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -47,7 +48,6 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.factory.FactoryFinder;
@@ -55,7 +55,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.ImageMetadataException;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
-import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.SampleConversionType;
 import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.SpatialImageReader;
@@ -525,7 +524,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      * {@inheritDoc}
      */
     @Override
-    public List<? extends GenericName> getCoverageNames() throws CoverageStoreException {
+    public GenericName getCoverageName() throws CoverageStoreException {
         if (coverageNames == null) {
             final ImageReader imageReader = this.imageReader; // Protect from changes.
             if (imageReader == null) {
@@ -533,9 +532,6 @@ public class ImageCoverageReader extends GridCoverageReader {
             }
             try {
                 List<String> imageNames = null;
-                if (imageReader instanceof NamedImageStore) {
-                    imageNames = ((NamedImageStore) imageReader).getImageNames();
-                }
                 if (imageNames != null) {
                     coverageNames = new NameList(nameFactory, imageNames);
                 } else {
@@ -545,7 +541,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                 throw new CoverageStoreException(formatErrorMessage(e), e);
             }
         }
-        return coverageNames;
+        return coverageNames.get(0);
     }
 
     /**
@@ -572,7 +568,8 @@ public class ImageCoverageReader extends GridCoverageReader {
      * </ul>
      */
     @Override
-    public GridGeometry2D getGridGeometry(final int index) throws CoverageStoreException {
+    public GridGeometry2D getGridGeometry() throws CoverageStoreException {
+        final int index = 0;
         GridGeometry2D gridGeometry = getCached(gridGeometries, index);
         if (gridGeometry == null) {
             final ImageReader imageReader = this.imageReader; // Protect from changes.
@@ -709,6 +706,10 @@ public class ImageCoverageReader extends GridCoverageReader {
      * {@inheritDoc}
      */
     @Override
+    public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException {
+        return getSampleDimensions(0);
+    }
+
     public List<GridSampleDimension> getSampleDimensions(final int index) throws CoverageStoreException {
         List<GridSampleDimension> sd = getCached(sampleDimensions, index);
         if (sd == null) {
@@ -742,7 +743,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                 throw new CoverageStoreException(formatErrorMessage(e), e);
             }
             Map.Entry<Map<Integer,List<GridSampleDimension>>,List<GridSampleDimension>> entry =
-                    setCached(sd, sampleDimensions, index);
+                    setCached(sd, sampleDimensions, 0);
             sampleDimensions = entry.getKey();
             sd = entry.getValue();
         }
@@ -841,14 +842,14 @@ public class ImageCoverageReader extends GridCoverageReader {
      * The default implementation delegates to the {@linkplain #imageReader image reader},
      * wrapping the {@link IIOMetadata} in a {@code SpatialMetadata} if necessary.
      *
-     * @param  index The index of the coverage to be queried.
      * @return The metadata associated with the given coverage, or {@code null}.
      * @throws CoverageStoreException if an error occurs reading the information from the input source.
      *
      * @since 3.14
      */
     @Override
-    public SpatialMetadata getCoverageMetadata(final int index) throws CoverageStoreException {
+    public SpatialMetadata getCoverageMetadata() throws CoverageStoreException {
+        final int index = 0;
         final ImageReader imageReader = this.imageReader; // Protect from changes.
         if (imageReader == null) {
             throw new IllegalStateException(formatErrorMessage(Errors.Keys.NoImageInput));
@@ -930,9 +931,10 @@ public class ImageCoverageReader extends GridCoverageReader {
      * reader while your using the resulting coverage.
      */
     @Override
-    public GridCoverage2D read(final int index, final GridCoverageReadParam param)
+    public GridCoverage2D read(final GridCoverageReadParam param)
             throws CoverageStoreException, CancellationException
     {
+        final int index = 0;
         final boolean loggingEnabled = isLoggable();
         long fullTime = (loggingEnabled) ? System.nanoTime() : 0;
         ignoreGridTransforms = !loggingEnabled;
@@ -944,11 +946,11 @@ public class ImageCoverageReader extends GridCoverageReader {
         if (imageReader == null) {
             throw new IllegalStateException(formatErrorMessage(Errors.Keys.NoImageInput));
         }
-        GridGeometry2D gridGeometry = getGridGeometry(index);
+        GridGeometry2D gridGeometry = getGridGeometry();
         checkAbortState();
         final ImageReadParam imageParam;
         try {
-            imageParam = createImageReadParam(index);
+            imageParam = createImageReadParam(0);
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(e), e);
         }
@@ -1093,7 +1095,6 @@ public class ImageCoverageReader extends GridCoverageReader {
                 }
             }
         }
-        final Map<?,?> properties = getProperties(index);
         checkAbortState();
         /*
          * Read the image using the ImageReader.read(...) method.  We could have used
@@ -1104,10 +1105,9 @@ public class ImageCoverageReader extends GridCoverageReader {
         final String name;
         RenderedImage image;
         try {
-            final List<? extends GenericName> names = getCoverageNames();
+            final GenericName gname = getCoverageName();
             try {
-                final GenericName gc = (index < names.size()) ? names.get(index) : null;
-                name = (gc != null) ? gc.toString() : null;
+                name = (gname != null) ? gname.toString() : null;
             } catch (BackingStoreException e) {
                 throw e.unwrapOrRethrow(IOException.class);
             }
@@ -1180,7 +1180,6 @@ public class ImageCoverageReader extends GridCoverageReader {
             builder.setRenderedImage(image);
             builder.setSampleDimensions(bands);
             builder.setGridGeometry(gridGeometry);
-            builder.setProperties(properties);
             coverage = builder.getGridCoverage2D();
         } finally {
             builder.reset();

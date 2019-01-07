@@ -16,12 +16,6 @@
  */
 package org.geotoolkit.data.kml;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Polygon;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -30,15 +24,19 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import static java.nio.file.StandardOpenOption.*;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
-
-import org.geotoolkit.nio.ZipUtilities;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.processing.Operations;
@@ -53,16 +51,26 @@ import org.geotoolkit.data.kml.model.LatLonBox;
 import org.geotoolkit.data.kml.model.LineStyle;
 import org.geotoolkit.data.kml.model.PolyStyle;
 import org.geotoolkit.data.kml.model.Style;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.nio.ZipUtilities;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Polygon;
+import org.opengis.feature.Feature;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.ExtensionSymbolizer;
@@ -73,17 +81,6 @@ import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
-
-import static java.nio.file.StandardOpenOption.*;
-import static java.nio.file.StandardOpenOption.CREATE;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.FeatureSet;
-import org.opengis.feature.Feature;
-import org.opengis.feature.PropertyType;
-import org.geotoolkit.data.kml.xml.KmlConstants;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -379,7 +376,7 @@ public class KmzContextInterpreter {
 
         final GridCoverageResource ref = coverageMapLayer.getCoverageReference();
         final CoverageReader reader = ref.acquireReader();
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), null);
+        final GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
         ref.recycle(reader);
 
         final GridCoverage2D targetCoverage =

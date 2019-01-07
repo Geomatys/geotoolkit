@@ -38,7 +38,7 @@ public class WMSCCoverageResource extends AbstractPyramidalCoverageResource {
 
     public WMSCCoverageResource(final WebMapClientCached server,
             final GenericName name) throws CapabilitiesException{
-        super(server, name, 0);
+        super(server, name);
         set = new WMSCPyramidSet(server, name.tip().toString());
     }
 
@@ -50,7 +50,7 @@ public class WMSCCoverageResource extends AbstractPyramidalCoverageResource {
     public GridGeometry getGridGeometry() throws DataStoreException {
         final GridCoverageReader reader = acquireReader();
         try {
-            return reader.getGridGeometry(getImageIndex());
+            return reader.getGridGeometry();
         } finally {
             recycle(reader);
         }

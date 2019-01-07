@@ -203,7 +203,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
         //load the coverage store
         getCoverageStore();
         final CoverageReader reader = rgbaCoverageRef.acquireReader();
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
+        final GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
         rgbaCoverageRef.recycle(reader);
 
         //check defined color model
@@ -251,7 +251,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
         //load the coverage store
         getCoverageStore();
         final CoverageReader reader = float1bCoverageRef.acquireReader();
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
+        final GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
         float1bCoverageRef.recycle(reader);
 
         //check defined color model, do not test the colorspace
@@ -312,7 +312,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
         param.setResolution(1.2,1.2);
         param.setEnvelope(paramEnv);
 
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, param);
+        final GridCoverage2D coverage = (GridCoverage2D) reader.read(param);
         rgbaCoverageRef.recycle(reader);
 
         //check coverage informations

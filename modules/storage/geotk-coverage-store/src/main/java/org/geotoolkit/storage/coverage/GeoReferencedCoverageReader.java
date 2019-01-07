@@ -10,12 +10,12 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.coverage.Coverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.Matrix;
@@ -54,8 +54,7 @@ public abstract class GeoReferencedCoverageReader implements CoverageReader {
 
 
     @Override
-    public final Coverage read(int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
-        if (index!=resource.getImageIndex()) throw new CoverageStoreException("Invalid image index "+index);
+    public final Coverage read(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
 
         final CoordinateReferenceSystem coverageCrs = getCoordinateReferenceSystem();
 

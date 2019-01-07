@@ -18,25 +18,25 @@ package org.geotoolkit.storage.coverage;
 
 import java.awt.Image;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.CoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.internal.feature.CoverageFeature;
-import org.geotoolkit.internal.feature.TypeConventions;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureAssociationRole;
-import org.opengis.feature.FeatureType;
-import org.opengis.metadata.content.CoverageDescription;
 import org.geotoolkit.data.FeatureSet;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.internal.feature.CoverageFeature;
+import org.geotoolkit.internal.feature.TypeConventions;
 import org.locationtech.jts.geom.Geometry;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureAssociationRole;
+import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.content.CoverageDescription;
 
 /**
  * Resource to a coverage in the coverage store.
@@ -45,10 +45,6 @@ import org.opengis.geometry.Envelope;
  * @module
  */
 public interface CoverageResource extends FeatureSet {
-    /**
-     * @return int image index in reader/writer.
-     */
-    int getImageIndex();
 
     /**
      * Get the coverage description and statistics.
@@ -129,7 +125,7 @@ public interface CoverageResource extends FeatureSet {
         if (reader instanceof GridCoverageReader) {
             final GridCoverageReader gcr = (GridCoverageReader) reader;
             try {
-                final GridGeometry gridGeom = gcr.getGridGeometry(getImageIndex());
+                final GridGeometry gridGeom = gcr.getGridGeometry();
                 Envelope envelope = gridGeom.getEnvelope();
                 if (envelope != null) {
                     Geometry geom = GeometricUtilities.toJTSGeometry(envelope, GeometricUtilities.WrapResolution.SPLIT);

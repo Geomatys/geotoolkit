@@ -19,12 +19,10 @@ package org.geotoolkit.coverage.io;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import javax.imageio.ImageReader;
@@ -33,9 +31,9 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.measure.IncommensurableException;
 import javax.measure.Quantity;
 import javax.measure.Unit;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.internal.storage.MetadataBuilder;
-import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.ModifiableMetadata;
 import org.apache.sis.metadata.iso.DefaultMetadata;
@@ -50,7 +48,6 @@ import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -192,13 +189,12 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      * @see ImageReader#getNumImages(boolean)
      */
     @Override
-    public abstract List<? extends GenericName> getCoverageNames()
+    public abstract GenericName getCoverageName()
             throws CoverageStoreException, CancellationException;
 
     /**
      * Returns the grid geometry for the {@link GridCoverage} to be read at the given index.
      *
-     * @param  index The index of the coverage to be queried.
      * @return The grid geometry for the {@link GridCoverage} at the specified index.
      * @throws IllegalStateException If the input source has not been set.
      * @throws IndexOutOfBoundsException If the supplied index is out of bounds.
@@ -209,14 +205,13 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      * @see ImageReader#getWidth(int)
      * @see ImageReader#getHeight(int)
      */
-    public abstract GridGeometry getGridGeometry(int index)
+    public abstract GridGeometry getGridGeometry()
             throws CoverageStoreException, CancellationException;
 
     /**
      * Returns the sample dimensions for each band of the {@link GridCoverage} to be read.
      * If sample dimensions are not known, then this method returns {@code null}.
      *
-     * @param  index The index of the coverage to be queried.
      * @return The list of sample dimensions for the {@link GridCoverage} at the specified index,
      *         or {@code null} if none. This list length is equals to the number of bands in the
      *         {@link GridCoverage}.
@@ -227,47 +222,8 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      *         the execution of this method.
      */
     @Override
-    public abstract List<GridSampleDimension> getSampleDimensions(int index)
+    public abstract List<GridSampleDimension> getSampleDimensions()
             throws CoverageStoreException, CancellationException;
-
-    /**
-     * Returns the ranges of valid sample values for each band in this format.
-     * The ranges are always expressed in <cite>geophysics</cite> units.
-     * <p>
-     * The default implementation computes the ranges from the information returned
-     * by {@link #getSampleDimensions(int)}, if any.
-     *
-     * @param  index The index of the coverage to be queried.
-     * @return The ranges of values for each band, or {@code null} if none.
-     * @throws CoverageStoreException If an error occurs while reading the information from the input source.
-     * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
-     *         the execution of this method.
-     *
-     * @since 3.10
-     *
-     * @deprecated Not used in practice. Could be a convenience static method working on any
-     * sample dimensions.
-     */
-    @Deprecated
-    public List<MeasurementRange<?>> getSampleValueRanges(final int index)
-            throws CoverageStoreException, CancellationException
-    {
-        final List<GridSampleDimension> sampleDimensions = getSampleDimensions(index);
-        if (sampleDimensions == null) {
-            return null;
-        }
-        @SuppressWarnings({"unchecked","rawtypes"})  // Generic array creation.
-        final MeasurementRange<?>[] ranges = new MeasurementRange[sampleDimensions.size()];
-        for (int i=0; i<ranges.length; i++) {
-            GridSampleDimension sd = sampleDimensions.get(i);
-            if (sd != null) {
-                sd = sd.geophysics(true);
-                ranges[i] = MeasurementRange.createBestFit(
-                        sd.getMinimumValue(), true, sd.getMaximumValue(), true, sd.getUnits());
-            }
-        }
-        return Arrays.asList(ranges);
-    }
 
     /**
      * If the given metadata is non-null, supports the ISO-19115 format and contains a
@@ -389,132 +345,129 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
         final boolean computeContent = (contentInfo != null) && contentInfo.isEmpty();
         final boolean computeSpatial = (spatialInfo != null) && spatialInfo.isEmpty();
         if (computeContent || computeSpatial || computeResolutions || computeExtents) {
-            final List<? extends GenericName> coverageNames = getCoverageNames();
-            final int numCoverages = coverageNames.size();
-            for (int i=0; i<numCoverages; i++) {
-                if (computeContent || computeSpatial) {
+            final GenericName coverageName = getCoverageName();
+            if (computeContent || computeSpatial) {
 
-                    CoverageDescription ci = null;
-                    final SpatialMetadata coverageMetadata = getCoverageMetadata(i);
-                    if (coverageMetadata != null) {
-                        if (computeContent) {
-                            ci = coverageMetadata.getInstanceForType(ImageDescription.class);
-                            if (ci != null) {
-                                contentInfo.add(ci);
-                            }
-                        }
-                        if (computeSpatial) {
-                            final Georectified rectified = coverageMetadata.getInstanceForType(Georectified.class);
-                            if (rectified != null) {
-                                metadata.getSpatialRepresentationInfo().add(rectified);
-                            }
-                        }
-                    }
-
-                    /*
-                     * Get or create the content info to store sample dimensions
-                     */
-                    if (ci==null) {
-                        //get or create it
-                        if (contentInfo.size()>i) {
-                            CoverageDescription cd = contentInfo.stream().skip(i-1).limit(1)
-                                    .filter(CoverageDescription.class::isInstance)
-                                    .map(CoverageDescription.class::cast)
-                                    .findFirst().orElse(null);
-                            if (cd instanceof ModifiableMetadata && ((ModifiableMetadata)cd).isModifiable()) {
-                                ci = cd;
-                            }
-                        } else {
-                            ci = new DefaultCoverageDescription();
+                CoverageDescription ci = null;
+                final SpatialMetadata coverageMetadata = getCoverageMetadata();
+                if (coverageMetadata != null) {
+                    if (computeContent) {
+                        ci = coverageMetadata.getInstanceForType(ImageDescription.class);
+                        if (ci != null) {
                             contentInfo.add(ci);
                         }
                     }
-
-                    if (ci!=null && ci.getAttributeGroups()!=null && ci.getAttributeGroups().isEmpty() && ci.getDimensions().isEmpty()) {
-                        final List<GridSampleDimension> sampleDimensions = getSampleDimensions(i);
-                        if (sampleDimensions!=null) {
-                            final MetadataBuilder mb = new MetadataBuilder();
-                            for (int idx=0,n=sampleDimensions.size();idx<n;idx++) {
-                                GridSampleDimension gsd = sampleDimensions.get(idx).geophysics(true);
-                                final Unit<? extends Quantity<?>> units = gsd.getUnits();
-                                mb.newSampleDimension();
-                                mb.setBandIdentifier(Names.createMemberName(null, null, ""+idx, Integer.class));
-                                mb.addBandDescription(gsd.getDescription());
-                                if(units!=null) mb.setSampleUnits(units);
-                                mb.addMinimumSampleValue(gsd.getMinimumValue());
-                                mb.addMaximumSampleValue(gsd.getMaximumValue());
-                                gsd = gsd.geophysics(false);
-                                mb.setTransferFunction(gsd.getScale(), gsd.getOffset());
-                            }
-                            final DefaultMetadata meta = mb.build(false);
-                            final CoverageDescription imgDesc = (CoverageDescription) meta.getContentInfo().iterator().next();
-                            ci.getAttributeGroups().addAll((Collection)imgDesc.getAttributeGroups());
+                    if (computeSpatial) {
+                        final Georectified rectified = coverageMetadata.getInstanceForType(Georectified.class);
+                        if (rectified != null) {
+                            metadata.getSpatialRepresentationInfo().add(rectified);
                         }
                     }
-
                 }
-                if (computeResolutions || computeExtents) {
-                    /*
-                     * Resolution along the horizontal axes only, ignoring all other axes. For linear units (feet,
-                     * kilometres, etc.), we convert the units to metres for compliance with a current limitation
-                     * of Apache SIS, which can handle only metres. For angular resolution (typically in degrees),
-                     * we perform an APPROXIMATIVE conversion to metres using the nautical mile definition. This
-                     * conversion is only valid along the latitudes axis (the number is wrong along the longitude
-                     * axis), and more accurate for mid-latitude (the numbers are differents close to equator or
-                     * to the poles).
-                     */
-                    final GridGeometry gg = getGridGeometry(i);
-                    if (computeResolutions && gg.isDefined(GridGeometry.CRS)) {
 
-                        double[] res = null;
-                        try {
-                            res = gg.getResolution(false);
-                        } catch (IncompleteGridGeometryException ex) {
+                /*
+                 * Get or create the content info to store sample dimensions
+                 */
+                if (ci==null) {
+                    //get or create it
+                    if (contentInfo.size()>0) {
+                        CoverageDescription cd = contentInfo.stream().limit(1)
+                                .filter(CoverageDescription.class::isInstance)
+                                .map(CoverageDescription.class::cast)
+                                .findFirst().orElse(null);
+                        if (cd instanceof ModifiableMetadata && ((ModifiableMetadata)cd).isModifiable()) {
+                            ci = cd;
                         }
+                    } else {
+                        ci = new DefaultCoverageDescription();
+                        contentInfo.add(ci);
+                    }
+                }
 
-                        final Quantity<?> m = CRSUtilities.getHorizontalResolution(
-                                gg.getCoordinateReferenceSystem(), res);
-                        if (m != null) {
-                            double  measureValue = m.getValue().doubleValue();
-                            final Unit<?>   unit = m.getUnit();
-                            Unit<?> standardUnit = null;
-                            double  scaleFactor = 1;
-                            if (Units.isAngular(unit)) {
-                                standardUnit = Units.DEGREE;
-                                scaleFactor  = (1852*60); // From definition of nautical miles.
-                            } else if (Units.isLinear(unit)) {
-                                standardUnit = Units.METRE;
+                if (ci!=null && ci.getAttributeGroups()!=null && ci.getAttributeGroups().isEmpty() && ci.getDimensions().isEmpty()) {
+                    final List<GridSampleDimension> sampleDimensions = getSampleDimensions();
+                    if (sampleDimensions!=null) {
+                        final MetadataBuilder mb = new MetadataBuilder();
+                        for (int idx=0,n=sampleDimensions.size();idx<n;idx++) {
+                            GridSampleDimension gsd = sampleDimensions.get(idx).geophysics(true);
+                            final Unit<? extends Quantity<?>> units = gsd.getUnits();
+                            mb.newSampleDimension();
+                            mb.setBandIdentifier(Names.createMemberName(null, null, ""+idx, Integer.class));
+                            mb.addBandDescription(gsd.getDescription());
+                            if(units!=null) mb.setSampleUnits(units);
+                            mb.addMinimumSampleValue(gsd.getMinimumValue());
+                            mb.addMaximumSampleValue(gsd.getMaximumValue());
+                            gsd = gsd.geophysics(false);
+                            mb.setTransferFunction(gsd.getScale(), gsd.getOffset());
+                        }
+                        final DefaultMetadata meta = mb.build(false);
+                        final CoverageDescription imgDesc = (CoverageDescription) meta.getContentInfo().iterator().next();
+                        ci.getAttributeGroups().addAll((Collection)imgDesc.getAttributeGroups());
+                    }
+                }
+
+            }
+            if (computeResolutions || computeExtents) {
+                /*
+                 * Resolution along the horizontal axes only, ignoring all other axes. For linear units (feet,
+                 * kilometres, etc.), we convert the units to metres for compliance with a current limitation
+                 * of Apache SIS, which can handle only metres. For angular resolution (typically in degrees),
+                 * we perform an APPROXIMATIVE conversion to metres using the nautical mile definition. This
+                 * conversion is only valid along the latitudes axis (the number is wrong along the longitude
+                 * axis), and more accurate for mid-latitude (the numbers are differents close to equator or
+                 * to the poles).
+                 */
+                final GridGeometry gg = getGridGeometry();
+                if (computeResolutions && gg.isDefined(GridGeometry.CRS)) {
+
+                    double[] res = null;
+                    try {
+                        res = gg.getResolution(false);
+                    } catch (IncompleteGridGeometryException ex) {
+                    }
+
+                    final Quantity<?> m = CRSUtilities.getHorizontalResolution(
+                            gg.getCoordinateReferenceSystem(), res);
+                    if (m != null) {
+                        double  measureValue = m.getValue().doubleValue();
+                        final Unit<?>   unit = m.getUnit();
+                        Unit<?> standardUnit = null;
+                        double  scaleFactor = 1;
+                        if (Units.isAngular(unit)) {
+                            standardUnit = Units.DEGREE;
+                            scaleFactor  = (1852*60); // From definition of nautical miles.
+                        } else if (Units.isLinear(unit)) {
+                            standardUnit = Units.METRE;
+                        }
+                        if (standardUnit != null) try {
+                            measureValue = unit.getConverterToAny(standardUnit).convert(measureValue) * scaleFactor;
+                            final DefaultResolution resolution = new DefaultResolution();
+                            resolution.setDistance(measureValue);
+                            if (resolutions == null) {
+                                resolutions = new LinkedHashSet<>();
                             }
-                            if (standardUnit != null) try {
-                                measureValue = unit.getConverterToAny(standardUnit).convert(measureValue) * scaleFactor;
-                                final DefaultResolution resolution = new DefaultResolution();
-                                resolution.setDistance(measureValue);
-                                if (resolutions == null) {
-                                    resolutions = new LinkedHashSet<>();
-                                }
-                                resolutions.add(resolution);
-                            } catch (IncommensurableException e) {
-                                // In case of failure, do not create a Resolution object.
-                                Logging.recoverableException(LOGGER, GridCoverageReader.class, "getMetadata", e);
-                            }
+                            resolutions.add(resolution);
+                        } catch (IncommensurableException e) {
+                            // In case of failure, do not create a Resolution object.
+                            Logging.recoverableException(LOGGER, GridCoverageReader.class, "getMetadata", e);
                         }
                     }
-                    /*
-                    * Horizontal, vertical and temporal extents. The horizontal extents is
-                    * represented as a geographic bounding box, which may require a reprojection.
-                    */
-                    if (computeExtents && gg.isDefined(GridGeometry.ENVELOPE)) {
-                        if (extent == null) {
-                            extent = new UniqueExtents();
-                        }
-                        try {
-                            extent.addElements(gg.getEnvelope());
-                        } catch (TransformException e) {
-                            // Not a big deal if we fail. We will just let the identification section unchanged.
-                            if (!failed) {
-                                failed = true; // Log only once.
-                                Logging.recoverableException(LOGGER, GridCoverageReader.class, "getMetadata", e);
-                            }
+                }
+                /*
+                * Horizontal, vertical and temporal extents. The horizontal extents is
+                * represented as a geographic bounding box, which may require a reprojection.
+                */
+                if (computeExtents && gg.isDefined(GridGeometry.ENVELOPE)) {
+                    if (extent == null) {
+                        extent = new UniqueExtents();
+                    }
+                    try {
+                        extent.addElements(gg.getEnvelope());
+                    } catch (TransformException e) {
+                        // Not a big deal if we fail. We will just let the identification section unchanged.
+                        if (!failed) {
+                            failed = true; // Log only once.
+                            Logging.recoverableException(LOGGER, GridCoverageReader.class, "getMetadata", e);
                         }
                     }
                 }
@@ -566,7 +519,6 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      * Returns the metadata associated with the given coverage, or {@code null} if none.
      * The default implementation returns {@code null} in every cases.
      *
-     * @param  index The index of the coverage to be queried.
      * @return The metadata associated with the given coverage, or {@code null}.
      * @throws CoverageStoreException If an error occurs while reading the information from the input source.
      *
@@ -574,33 +526,13 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      *
      * @since 3.14
      */
-    public SpatialMetadata getCoverageMetadata(final int index) throws CoverageStoreException {
-        return null;
-    }
-
-    /**
-     * Returns an optional map of properties associated with the coverage at the given index, or
-     * {@code null} if none. The properties are implementation-specific; they are available to
-     * subclasses for any use. The {@code GridCoverageReader} class will simply gives those
-     * properties to the {@link javax.media.jai.PropertySource} object to be created by the
-     * {@link #read read} method, without any processing.
-     * <p>
-     * The default implementation returns {@code null} in every cases.
-     *
-     * @param  index The index of the coverage to be queried.
-     * @return The properties, or {@code null} if none.
-     * @throws CoverageStoreException If an error occurs while reading the information from the input source.
-     * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
-     *         the execution of this method.
-     */
-    public Map<?,?> getProperties(int index) throws CoverageStoreException, CancellationException {
+    public SpatialMetadata getCoverageMetadata() throws CoverageStoreException {
         return null;
     }
 
     /**
      * Reads the grid coverage.
      *
-     * @param  index The index of the coverage to be queried.
      * @param  param Optional parameters used to control the reading process, or {@code null}.
      * @return The {@link GridCoverage} at the specified index.
      * @throws IllegalStateException if the input source has not been set.
@@ -612,7 +544,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      * @see ImageReader#read(int)
      */
     @Override
-    public abstract GridCoverage read(int index, GridCoverageReadParam param)
+    public abstract GridCoverage read(GridCoverageReadParam param)
             throws CoverageStoreException, CancellationException;
 
     /**

@@ -63,18 +63,17 @@ public class CoverageExtractor extends Static {
      *
      * @param point position given to evaluate function.
      * @param reader GridCoverageReader not disposed or released
-     * @param imageIndex index given to read.
      * @param param GridCoverageReadParam. Deferred parameter will be forced at true.
      * @return Ray bean object.
      * @throws CoverageStoreException
      * @throws TransformException
      */
-    public static Ray rayExtraction(GeneralDirectPosition point, GridCoverageReader reader, int imageIndex,
+    public static Ray rayExtraction(GeneralDirectPosition point, GridCoverageReader reader,
                                                               GridCoverageReadParam param) throws CoverageStoreException, TransformException {
         param.setDeferred(true); //force deferred
-        final GridCoverage coverage = reader.read(imageIndex, param);
+        final GridCoverage coverage = reader.read(param);
         Ray result = new Ray();
-        result.getSampleDimensions().addAll(reader.getSampleDimensions(imageIndex));
+        result.getSampleDimensions().addAll(reader.getSampleDimensions());
         evaluateAllSlices(point, coverage, result);
         return result;
     }
