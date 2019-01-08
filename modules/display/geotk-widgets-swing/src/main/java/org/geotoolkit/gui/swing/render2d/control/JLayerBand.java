@@ -46,7 +46,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
@@ -192,12 +192,13 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
             final CoordinateReferenceSystem dataCRS = env.getCoordinateReferenceSystem();
             final int axisIdx = CRSUtilities.getDimensionOf(dataCRS, axis.getClass());
             if (axisIdx != -1) {
-                final NumberRange[] axisValues = GridCombineIterator.extractAxisRanges(gridGeometry, axisIdx);
 
-                for (NumberRange axisRange : axisValues) {
-                    ponctuals.add(axisRange.getMinDouble());
-                    min = StrictMath.min(min, axisRange.getMinDouble());//-- getMin because begin of the slice is comform.
-                    max = StrictMath.max(max, axisRange.getMinDouble());
+                final GridGeometryIterator ite = new GridGeometryIterator(gridGeometry, axisIdx);
+                while (ite.hasNext()) {
+                    final Envelope slice = ite.next().getEnvelope();
+                    ponctuals.add(slice.getMinimum(axisIdx));
+                    min = StrictMath.min(min, slice.getMinimum(axisIdx));//-- getMin because begin of the slice is comform.
+                    max = StrictMath.max(max, slice.getMinimum(axisIdx));
                 }
             }
 

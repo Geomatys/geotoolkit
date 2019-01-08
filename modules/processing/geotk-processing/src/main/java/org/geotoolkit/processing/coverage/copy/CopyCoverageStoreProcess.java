@@ -45,9 +45,9 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.DefiningMosaic;
@@ -362,9 +362,9 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         final Pyramid pyramid = (Pyramid) outPM.createModel(new DefiningPyramid(crs));
 
         // save all possible envelope slice combinations in a separate mosaic.
-        final GridCombineIterator gridCIte = new GridCombineIterator(globalGeom);
+        final GridGeometryIterator gridCIte = new GridGeometryIterator(globalGeom);
         while (gridCIte.hasNext()) {
-            GeneralEnvelope env = GeneralEnvelope.castOrCopy(gridCIte.next());
+            GeneralEnvelope env = GeneralEnvelope.castOrCopy(gridCIte.next().getEnvelope());
             saveMosaic(outPM, pyramid, reader, env, reduce);
         }
 
