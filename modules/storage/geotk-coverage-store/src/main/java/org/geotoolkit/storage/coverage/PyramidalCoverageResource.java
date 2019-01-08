@@ -21,7 +21,7 @@ import java.awt.image.SampleModel;
 import java.util.Collection;
 import java.util.List;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.data.multires.MultiResolutionResource;
@@ -66,7 +66,7 @@ public interface PyramidalCoverageResource extends GridCoverageResource, MultiRe
      * @return can be null
      * @throws DataStoreException
      */
-    List<GridSampleDimension> getGridSampleDimensions() throws DataStoreException;
+    List<SampleDimension> getSampleDimensions() throws DataStoreException;
 
     /**
      * Set sample dimensions.
@@ -74,7 +74,7 @@ public interface PyramidalCoverageResource extends GridCoverageResource, MultiRe
      * @param dimensions
      * @throws org.apache.sis.storage.DataStoreException
      */
-    void setGridSampleDimensions(final List<GridSampleDimension> dimensions) throws DataStoreException;
+    void setSampleDimensions(final List<SampleDimension> dimensions) throws DataStoreException;
 
     /**
      * Get default color model.

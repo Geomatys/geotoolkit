@@ -1056,7 +1056,6 @@
             <link>http://download.java.net/media/jai-imageio/javadoc/1.1</link>
             <link>http://download.java.net/media/java3d/javadoc/1.5.2</link>
             <link>http://jcip.net/annotations/doc</link>
-            <link>http://www.unidata.ucar.edu/software/netcdf-java/v4.3/javadoc</link>
             <link>http://javadoc.geotoolkit.org/external/swingx</link>
             <link>http://jscience.org/api</link>
           </links>
@@ -1097,14 +1096,6 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-    <!--repository>
-      <id>unidata</id>
-      <name>unidata</name>
-      <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository-->
   </repositories>
 
   <pluginRepositories>

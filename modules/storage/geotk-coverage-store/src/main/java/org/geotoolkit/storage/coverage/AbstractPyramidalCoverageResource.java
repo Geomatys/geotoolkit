@@ -34,7 +34,7 @@ import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -132,12 +132,12 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
     }
 
     @Override
-    public List<GridSampleDimension> getGridSampleDimensions() throws DataStoreException {
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
         return null;
     }
 
     @Override
-    public void setGridSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
+    public void setSampleDimensions(List<SampleDimension> dimensions) throws DataStoreException {
         throw new DataStoreException("Pyramid writing not supported.");
     }
 
@@ -230,9 +230,9 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
         gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);
 
-        final List<GridSampleDimension> dimensions = covRef.getGridSampleDimensions();
+        final List<SampleDimension> dimensions = covRef.getSampleDimensions();
         if(dimensions!=null){
-            gcb.setSampleDimensions(dimensions.toArray(new GridSampleDimension[0]));
+            gcb.setSampleDimensions(dimensions.toArray(new SampleDimension[0]));
         }
         return (GridCoverage2D) gcb.build();
     }

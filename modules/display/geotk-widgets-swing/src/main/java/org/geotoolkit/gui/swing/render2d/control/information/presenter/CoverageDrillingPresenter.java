@@ -32,7 +32,7 @@ import javax.swing.text.html.StyleSheet;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
@@ -201,7 +201,7 @@ public class CoverageDrillingPresenter extends AbstractInformationPresenter {
             this.timeIdx = timeIdx;
             this.times = times;
 
-            final java.util.List<GridSampleDimension> dimensions = result.getSampleDimensions();
+            final java.util.List<SampleDimension> dimensions = result.getSampleDimensions();
             final Map.Entry<DirectPosition, double[]> firstEntry = allValues.entrySet().iterator().next();
             final DirectPosition firstPos = firstEntry.getKey();
             int nbBand = firstEntry.getValue().length;
@@ -261,8 +261,8 @@ public class CoverageDrillingPresenter extends AbstractInformationPresenter {
 
             //band columns
             for (int j = 0; j < nbBand; j++) {
-                GridSampleDimension dim = dimensions.get(j);
-                Unit<?> units = dim.getUnits();
+                SampleDimension dim = dimensions.get(j);
+                Unit<?> units = dim.getUnits().orElse(null);
                 if (j == 0) {
                     sb.append("<th class=\"separator\"></th>");
                 }

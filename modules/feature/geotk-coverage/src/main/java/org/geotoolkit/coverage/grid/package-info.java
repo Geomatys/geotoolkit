@@ -41,11 +41,5 @@
  * {@link org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper}. Those rules are
  * somewhat arbitrary and are not guaranteed to produce the expected result. On the other hand,
  * the <cite>grid to CRS</cite> affine transform is fully determinist.
- *
- * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
- *
- * @since 2.1
- * @module
  */
 package org.geotoolkit.coverage.grid;

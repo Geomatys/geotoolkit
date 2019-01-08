@@ -30,7 +30,6 @@ import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 
@@ -135,7 +134,7 @@ final class NewRaster {
                 r = new NewRaster(driver, file, index);
                 GridCoverageReader reader = ((org.geotoolkit.storage.coverage.GridCoverageResource) resource).acquireReader();
                 r.geometry = reader.getGridGeometry();
-                r.bands = CoverageUtilities.toSIS(reader.getSampleDimensions());
+                r.bands = reader.getSampleDimensions();
                 reader.dispose();
             } else {
                 return;

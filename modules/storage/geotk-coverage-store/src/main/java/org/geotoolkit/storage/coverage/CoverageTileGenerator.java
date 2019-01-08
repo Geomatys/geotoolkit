@@ -32,8 +32,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.CoverageStack;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.SampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -76,7 +76,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
         final CoverageReader reader = resource.acquireReader();
         try {
-            List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions();
+            List<SampleDimension> sampleDimensions = reader.getSampleDimensions();
 
             if (sampleDimensions == null) {
                 final GridCoverageReadParam param = new GridCoverageReadParam();
@@ -120,12 +120,9 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
     }
 
     private static double getEmptyValue(SampleDimension dim){
-        if (dim instanceof GridSampleDimension) {
-            dim = ((GridSampleDimension) dim).geophysics(true);
-        }
-
+        dim = dim.forConvertedValues(true);
         double fillValue = Double.NaN;
-        final double[] nodata = dim.getNoDataValues();
+        final double[] nodata = SampleDimensionUtils.getNoDataValues(dim);
         if (nodata!=null && nodata.length>0) {
             fillValue = nodata[0];
         }

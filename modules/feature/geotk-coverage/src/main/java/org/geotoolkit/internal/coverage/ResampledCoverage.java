@@ -24,7 +24,7 @@ import org.geotoolkit.coverage.grid.AbstractGridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
-import org.geotoolkit.coverage.SampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 

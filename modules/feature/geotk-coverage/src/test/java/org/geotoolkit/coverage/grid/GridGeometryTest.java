@@ -30,7 +30,6 @@ import org.opengis.referencing.operation.MathTransform;
  * Test the {@link GridGeometry} implementation.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @since 2.1
  */
 public final strictfp class GridGeometryTest extends org.geotoolkit.test.TestBase {
     /**

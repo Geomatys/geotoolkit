@@ -66,6 +66,7 @@ import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Tile;
 import org.geotoolkit.image.BufferedImages;
@@ -258,7 +259,7 @@ public class XMLMosaic implements Mosaic {
                     Arrays.fill(nodataExists, false);
                     final double[] nodatas = new double[dimsSize];
                     for (int i = 0; i < dimsSize; i++) {
-                        final double[] nodat = dims.get(i).buildSampleDimension().getNoDataValues();
+                        final double[] nodat = SampleDimensionUtils.getNoDataValues(dims.get(i).buildSampleDimension());
                         if (nodat != null) {
                             nodataExists[i] = true;
                             nodatas[i] = nodat[0];//-- only one value by band is supported

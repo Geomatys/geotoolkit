@@ -63,7 +63,7 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.referencing.operation.transform.WarpFactory;
 import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.InterpolationMethod;
-import org.geotoolkit.coverage.SampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -96,10 +96,6 @@ import org.opengis.util.InternationalString;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.20
- *
- * @since 3.14
- * @module
  */
 public class ImageCoverageWriter extends GridCoverageWriter {
     /**

@@ -28,9 +28,6 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
  * reading process.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
- *
- * @since 3.14
  */
 final strictfp class ImageCoverageReaderInspector extends ImageCoverageReader {
     /**

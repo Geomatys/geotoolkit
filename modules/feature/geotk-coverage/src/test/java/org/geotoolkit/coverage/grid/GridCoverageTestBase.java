@@ -31,8 +31,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import static org.apache.sis.measure.Units.*;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.test.image.ImageTestBase;
 import static org.junit.Assert.*;
@@ -111,16 +110,17 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
          * left corner at 10°W 30°N.
          */
         final GridCoverage2D  coverage;  // The final grid coverage.
-        final BufferedImage      image;  // The GridCoverage's data.
-        final WritableRaster    raster;  // The image's data as a raster.
-        final Rectangle2D       bounds;  // The GridCoverage's envelope.
-        final GridSampleDimension band;  // The only image's band.
-        band = new GridSampleDimension("Temperature", new Category[] {
-            new Category("No data",     null, 0),
-            new Category("Land",        null, 1),
-            new Category("Cloud",       null, 2),
-            new Category("Temperature", null, BEGIN_VALID, 256, SCALE, OFFSET)
-        }, CELSIUS);
+        final BufferedImage   image;     // The GridCoverage's data.
+        final WritableRaster  raster;    // The image's data as a raster.
+        final Rectangle2D     bounds;    // The GridCoverage's envelope.
+        final SampleDimension band;      // The only image's band.
+        band = new SampleDimension.Builder()
+                .setName        ("Temperature")
+                .addQualitative ("No data", 0)
+                .addQualitative ("Land",    1)
+                .addQualitative ("Cloud",   2)
+                .addQuantitative("Temperature", BEGIN_VALID, 256, SCALE, OFFSET, CELSIUS)
+                .build();
         image  = new BufferedImage(120, 80, BufferedImage.TYPE_BYTE_INDEXED);
         raster = image.getRaster();
         for (int i=raster.getWidth(); --i>=0;) {
@@ -158,8 +158,8 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
         assertSame(coverage,      geophysics.view(ViewType.PACKED));
         assertSame(geophysics,    geophysics.view(ViewType.GEOPHYSICS));
         assertFalse( coverage.equals(geophysics));
-        assertFalse( coverage.getSampleDimensions().get(0).getSampleToGeophysics().isIdentity());
-        assertTrue(geophysics.getSampleDimensions().get(0).getSampleToGeophysics().isIdentity());
+        assertFalse( coverage.getSampleDimensions().get(0).getTransferFunction().get().isIdentity());
+        assertTrue(geophysics.getSampleDimensions().get(0).getTransferFunction().get().isIdentity());
         /*
          * Compares data.
          */

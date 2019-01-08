@@ -17,20 +17,15 @@
  */
 package org.geotoolkit.internal.coverage;
 
-import java.awt.Color;
 import java.awt.RenderingHints;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-import javax.measure.Unit;
 import javax.media.jai.Interpolation;
 import javax.media.jai.InterpolationBilinear;
 import javax.media.jai.InterpolationNearest;
@@ -43,10 +38,8 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.Category;
+import org.apache.sis.coverage.Category;
 import org.geotoolkit.coverage.Coverage;
-import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -57,7 +50,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.OutOfDomainOfValidityException;
-import org.geotoolkit.coverage.SampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -67,7 +60,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.opengis.util.InternationalString;
 
 
 /**
@@ -152,31 +144,18 @@ public final class CoverageUtilities extends Static {
      * @param coverage to use for guessing background values.
      * @return an array of double values to use as a background.
      *
-     * @deprecated Replaced by {@link GridSampleDimension#getNoDataValues()}.
+     * @deprecated Replaced by {@link SampleDimension#getNoDataValues()}.
      */
     @Deprecated
     public static double[] getBackgroundValues(final GridCoverage coverage) {
-        /*
-         * Get the sample value to use for background. We will try to fetch this
-         * value from one of "no data" categories. For geophysics images, it is
-         * usually NaN. For non-geophysics images, it is usually 0.
-         */
         final List<? extends SampleDimension> dims = coverage.getSampleDimensions();
         final int numBands = dims.size();
         final double[] background = new double[numBands];
         for (int i=0; i<numBands; i++) {
             final SampleDimension band = dims.get(i);
-            if (band instanceof GridSampleDimension) {
-                final NumberRange<?> range = ((GridSampleDimension) band).getBackground().getRange();
-                final double min = range.getMinDouble();
-                final double max = range.getMaxDouble();
-                if (range.isMinIncluded()) {
-                    background[i] = min;
-                } else if (range.isMaxIncluded()) {
-                    background[i] = max;
-                } else {
-                    background[i] = 0.5 * (min + max);
-                }
+            if (band != null) {
+                final int j = i;
+                band.getBackground().ifPresent((n) -> background[j] = n.doubleValue());
             }
         }
         return background;
@@ -223,10 +202,10 @@ public final class CoverageUtilities extends Static {
     public static boolean hasTransform(final SampleDimension[] sampleDimensions) {
         for (int i=sampleDimensions.length; --i>=0;) {
             SampleDimension sd = sampleDimensions[i];
-            if (sd instanceof GridSampleDimension) {
-                sd = ((GridSampleDimension) sd).geophysics(false);
+            if (sd != null) {
+                sd = sd.forConvertedValues(false);
             }
-            MathTransform1D tr = sd.getSampleToGeophysics();
+            MathTransform1D tr = sd.getTransferFunction().orElse(null);
             if (tr!=null && !tr.isIdentity()) {
                 return true;
             }
@@ -575,70 +554,13 @@ public final class CoverageUtilities extends Static {
     }
 
     /**
-     * Converts a Geotk sample dimension to a SIS one.
-     */
-    public static org.apache.sis.coverage.SampleDimension toSIS(final GridSampleDimension sd) {
-        if (sd == null) return null;
-        List<Category> categories = sd.getCategories();
-        List<org.apache.sis.coverage.Category> copied = new ArrayList<>();
-        if (categories != null) {
-            final Set<Integer> padValues = new HashSet<>();
-            for (final Category c : categories) {
-                InternationalString name = c.getName();
-                NumberRange<?> range = c.getRange();
-                MathTransform1D tr = c.getSampleToGeophysics();
-                Unit<?> units = (tr != null) ? sd.getUnits() : null;
-                copied.add(new ColoredCategory(name, c.getColors(), range, tr, units, (v) -> Math.round((float) v)));
-            }
-        }
-        return new org.apache.sis.coverage.SampleDimension(Names.createMemberName(null, null, sd.getDescription(), String.class), null, copied);
-    }
-
-    /**
-     * Converts Geotk sample dimensions to SIS ones.
-     */
-    public static List<org.apache.sis.coverage.SampleDimension> toSIS(final List<? extends GridSampleDimension> sd) {
-        if (sd == null) return null;
-        return sd.stream().map(CoverageUtilities::toSIS).collect(Collectors.toList());
-    }
-
-    /**
-     * Converts a SIS category to a Geotk one.
-     */
-    public static Category toGeotk(final org.apache.sis.coverage.Category c) {
-        if (c == null) return null;
-        Color[] colors = null;
-        if (c instanceof ColoredCategory) {
-            colors = ((ColoredCategory) c).colors;
-        }
-        return new Category(c.getName(), colors, c.getSampleRange(), c.getTransferFunction().orElse(null));
-    }
-
-    /**
-     * Converts a SIS sample dimension to a Geotk one.
-     */
-    public static GridSampleDimension toGeotk(final org.apache.sis.coverage.SampleDimension sd) {
-        if (sd == null) return null;
-        List<Category> categories = sd.getCategories().stream().map(CoverageUtilities::toGeotk).collect(Collectors.toList());
-        return new GridSampleDimension(null, categories.toArray(new Category[categories.size()]), sd.getUnits().orElse(null));
-    }
-
-    /**
-     * Converts SIS sample dimensions to Geotk ones.
-     */
-    public static List<GridSampleDimension> toGeotk(final List<? extends org.apache.sis.coverage.SampleDimension> sd) {
-        if (sd == null) return null;
-        return sd.stream().map(CoverageUtilities::toGeotk).collect(Collectors.toList());
-    }
-
-    /**
      * Converts SIS grid coverage to Geotk one.
      */
     public static GridCoverage2D toGeotk(final org.apache.sis.coverage.grid.GridCoverage coverage) {
         if (coverage == null) return null;
         GridCoverageBuilder builder = new GridCoverageBuilder();
         builder.setGridGeometry(forceLowerToZero(coverage.getGridGeometry()));
-        builder.setSampleDimensions(toGeotk(coverage.getSampleDimensions()));
+        builder.setSampleDimensions(coverage.getSampleDimensions());
         builder.setRenderedImage(coverage.render(null));        // TODO: choose a slice point.
         return builder.getGridCoverage2D();
     }

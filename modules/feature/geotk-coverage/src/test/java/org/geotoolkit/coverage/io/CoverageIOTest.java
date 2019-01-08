@@ -45,9 +45,6 @@ import org.opengis.referencing.datum.PixelInCell;
  * Tests the {@link CoverageIO} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
- *
- * @since 3.18
  */
 @DependsOn(MosaicReadWriteTest.class)
 public final strictfp class CoverageIOTest extends ImageTestBase {

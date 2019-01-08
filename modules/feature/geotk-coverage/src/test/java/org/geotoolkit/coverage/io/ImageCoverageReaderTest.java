@@ -58,9 +58,6 @@ import org.opengis.referencing.datum.PixelInCell;
  * is the easiest one to debug.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
- *
- * @since 3.09
  */
 @DependsOn({TextMatrixImageReaderTest.class, WorldFileImageReaderTest.class})
 public final strictfp class ImageCoverageReaderTest extends ImageTestBase {

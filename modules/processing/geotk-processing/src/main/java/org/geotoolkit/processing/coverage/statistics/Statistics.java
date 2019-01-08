@@ -22,6 +22,7 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.util.Arrays;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
@@ -258,11 +259,11 @@ public class Statistics extends AbstractProcess {
             final int nbBands = sm.getNumBands();
             sc = new ImageStatistics(nbBands, sampleType);
 
-            final GridSampleDimension[] sampleDimensions = candidate.getSampleDimensions().toArray(new GridSampleDimension[0]);
+            final SampleDimension[] sampleDimensions = candidate.getSampleDimensions().toArray(new SampleDimension[0]);
             //add no data values and name on bands
             for (int i = 0; i < sampleDimensions.length; i++) {
-                sc.getBand(i).setNoData(sampleDimensions[i].getNoDataValues());
-                sc.getBand(i).setName(sampleDimensions[i].getDescription().toString());
+                sc.getBand(i).setNoData(SampleDimensionUtils.getNoDataValues(sampleDimensions[i]));
+                sc.getBand(i).setName(sampleDimensions[i].getName().toString());
             }
 
             outputParameters.getOrCreate(OUTCOVERAGE).setValue(sc);

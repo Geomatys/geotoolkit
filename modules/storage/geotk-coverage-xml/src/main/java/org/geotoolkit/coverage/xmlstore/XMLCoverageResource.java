@@ -48,7 +48,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -225,7 +226,7 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
     private NamedIdentifier id;
     private Path mainfile;
     //caches
-    private List<GridSampleDimension> cacheDimensions = null;
+    private List<SampleDimension> cacheDimensions = null;
 
     public XMLCoverageResource() {
         super(null, DEFAULT_NAME);
@@ -424,7 +425,7 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
      * {@inheritDoc }.
      */
     @Override
-    public synchronized List<GridSampleDimension> getGridSampleDimensions() throws DataStoreException {
+    public synchronized List<SampleDimension> getSampleDimensions() throws DataStoreException {
         if (cacheDimensions == null) {
             if (sampleDimensions == null) return null;
             assert !sampleDimensions.isEmpty() : "XmlCoverageReference.getSampleDimension : sampleDimension should not be empty.";
@@ -440,15 +441,15 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
      * {@inheritDoc }.
      */
     @Override
-    public void setGridSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
+    public void setSampleDimensions(List<SampleDimension> dimensions) throws DataStoreException {
         if (dimensions == null || dimensions.isEmpty()) return;
         this.cacheDimensions = null; //clear cache
 
         if (sampleDimensions == null) sampleDimensions = new CopyOnWriteArrayList<>();
         sampleDimensions.clear();
-        for (GridSampleDimension dimension : dimensions) {
-            dimension = dimension.geophysics(false);
-            final SampleDimensionType sdt = dimension.getSampleDimensionType();
+        for (SampleDimension dimension : dimensions) {
+            dimension = dimension.forConvertedValues(false);
+            final SampleDimensionType sdt = SampleDimensionUtils.getSampleDimensionType(dimension);
             final XMLSampleDimension dim  = new XMLSampleDimension();
             dim.fill(dimension);
             dim.setSampleType(sdt);

@@ -23,7 +23,7 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -34,7 +34,6 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-import org.opengis.coverage.SampleDimensionType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.metadata.spatial.Georectified;
@@ -83,9 +82,6 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
 
     /**
      * Execute process now.
-     *
-     * @return features
-     * @throws ProcessException
      */
     public FeatureCollection executeNow() throws ProcessException {
         execute();
@@ -114,10 +110,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
     /**
      * Create the new FeatureType from the coverage and the reader.
      *
-     * @param coverage
-     * @param reader
      * @return the FeatureType of Features
-     * @throws CoverageStoreException
      */
     static FeatureType createFeatureType(final GridCoverage2D coverage, final GridCoverageReader reader) throws CoverageStoreException {
 
@@ -130,15 +123,6 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
         typeBuilder.addAttribute(Polygon.class).setName("cellgeom").setCRS(reader.getGridGeometry().getCoordinateReferenceSystem());
         typeBuilder.addAttribute(String.class).setName("orientation");
 
-        int type = 1;
-        final GridSampleDimension sd = coverage.getSampleDimensions().get(0);
-        if (sd.getSampleDimensionType() == SampleDimensionType.REAL_32BITS) {
-            type = 1; //Float
-        } else if (sd.getSampleDimensionType() == SampleDimensionType.REAL_64BITS) {
-            type = 2; //Double
-        } else {
-            type = 3; //Int
-        }
         for (int i = 0; i < nbBand; i++) {
             typeBuilder.addAttribute(Double.class).setName("band-" + i);
         }
@@ -163,7 +147,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
 
         final GeometryFactory geomFac = new GeometryFactory();
         //get the number of band contained in a cell
-        final List<GridSampleDimension> dims = coverage.getSampleDimensions();
+        final List<SampleDimension> dims = coverage.getSampleDimensions();
         final int nbBand = dims.size();
 
         final Georectified rep = reader.getCoverageMetadata().getInstanceForType(Georectified.class);

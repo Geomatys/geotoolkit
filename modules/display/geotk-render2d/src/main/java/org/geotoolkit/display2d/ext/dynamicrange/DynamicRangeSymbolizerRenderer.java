@@ -28,7 +28,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -48,7 +48,6 @@ import org.opengis.filter.expression.Literal;
 import org.opengis.metadata.content.AttributeGroup;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
-import org.opengis.metadata.content.SampleDimension;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.MathTransform2D;
 
@@ -111,10 +110,10 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                     search:
                     for(AttributeGroup attg : covdesc.getAttributeGroups()){
                         for(RangeDimension rd : attg.getAttributes()){
-                            if(!(rd instanceof SampleDimension)) continue;
+                            if(!(rd instanceof org.opengis.metadata.content.SampleDimension)) continue;
                             final int i = Integer.parseInt(rd.getSequenceIdentifier().tip().toString());
                             if(i==bandIdx){
-                                final SampleDimension sd = (SampleDimension) rd;
+                                final org.opengis.metadata.content.SampleDimension sd = (org.opengis.metadata.content.SampleDimension) rd;
                                 stats.put(DynamicRangeSymbolizer.PROPERTY_MIN, sd.getMinValue());
                                 stats.put(DynamicRangeSymbolizer.PROPERTY_MAX, sd.getMaxValue());
                                 stats.put(DynamicRangeSymbolizer.PROPERTY_MEAN, sd.getMeanValue());
@@ -173,11 +172,11 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             }
 
             //check if the reader honored the band request
-            final List<GridSampleDimension> readDimensions = dataCoverage.getSampleDimensions();
-            final List<GridSampleDimension> sampleDimensions = covref.acquireReader().getSampleDimensions();
+            final List<SampleDimension> readDimensions = dataCoverage.getSampleDimensions();
+            final List<SampleDimension> sampleDimensions = covref.acquireReader().getSampleDimensions();
             boolean bandReadHonored = (readDimensions.size() == toRead.length);
             for (int i=0;bandReadHonored && i<toRead.length;i++) {
-                bandReadHonored &= Objects.equals(readDimensions.get(i).getDescription(), (sampleDimensions == null) ? null : sampleDimensions.get(toRead[i]).getDescription());
+                bandReadHonored &= Objects.equals(readDimensions.get(i).getName(), (sampleDimensions == null) ? null : sampleDimensions.get(toRead[i]).getName());
             }
 
             //swap new band indexes

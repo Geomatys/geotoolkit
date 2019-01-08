@@ -27,7 +27,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -121,7 +122,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
             GridCoverageReader reader = null;
             try {
                 reader = ref.acquireReader();
-                final List<GridSampleDimension> dims = reader.getSampleDimensions();
+                final List<SampleDimension> dims = reader.getSampleDimensions();
 
                 final int nbdim;
                 if(dims==null){
@@ -171,7 +172,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
             GridCoverageReader reader = null;
             try {
                 reader = ref.acquireReader();
-                List<GridSampleDimension> dims = reader.getSampleDimensions();
+                List<SampleDimension> dims = reader.getSampleDimensions();
 
                 final int nbdim;
                 if(dims==null){
@@ -210,10 +211,10 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                 //extract band min/max
                 double min = 0;
                 double max = 255;
-                if(dims!=null){
-                    final GridSampleDimension sd = dims.get(index);
-                    min = sd.getMinimumValue();
-                    max = sd.getMaximumValue();
+                if (dims!=null) {
+                    final SampleDimension sd = dims.get(index);
+                    min = SampleDimensionUtils.getMinimumValue(sd);
+                    max = SampleDimensionUtils.getMaximumValue(sd);
                 }
 
                 final DynamicRangeSymbolizer.DRBound boundMin = new DynamicRangeSymbolizer.DRBound();

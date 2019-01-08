@@ -74,11 +74,13 @@ import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.util.iso.DefaultNameFactory;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.TypeMap;
 import org.geotoolkit.geometry.isoonjts.GeometryUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
+import org.geotoolkit.internal.coverage.ColoredCategory;
 import org.geotoolkit.lang.Static;
 import static org.geotoolkit.metadata.dimap.DimapConstants.*;
 import org.geotoolkit.metadata.dimap.DimapConstants.DataType;
@@ -267,7 +269,7 @@ public final class DimapAccessor extends Static {
      * Those informations are provided by the Image_display tag.
      *
      * @param parent
-     * @return GridSampleDimension
+     * @return SampleDimension
      */
     public static int[] readColorBandMapping(final Element parent) {
         final Element ele = firstElement(parent, TAG_IMAGE_DISPLAY);
@@ -295,9 +297,9 @@ public final class DimapAccessor extends Static {
      * - Raster_Encoding for sample model bytes encoding
      *
      * @param doc
-     * @return GridSampleDimension
+     * @return SampleDimension
      */
-    public static GridSampleDimension[] readSampleDimensions(final Element doc) {
+    public static SampleDimension[] readSampleDimensions(final Element doc) {
 
         // read raster encoding informations -----------------------------------
         final Element nodeEncoding = firstElement(doc, TAG_RASTER_ENCODING);
@@ -345,7 +347,7 @@ public final class DimapAccessor extends Static {
         // read dimensions -----------------------------------------------------
         final Element nodeInterpretation = firstElement(doc, TAG_IMAGE_INTERPRETATION);
         final NodeList spectrals = nodeInterpretation.getElementsByTagName(TAG_SPECTRAL_BAND_INFO);
-        final Map<Integer, GridSampleDimension> dimensions = new HashMap<>();
+        final Map<Integer, SampleDimension> dimensions = new HashMap<>();
 
         for (int i = 0, n = spectrals.getLength(); i < n; i++) {
             final Element spectre = (Element) spectrals.item(i);
@@ -399,7 +401,7 @@ public final class DimapAccessor extends Static {
             double min = range.getMinDouble();
             double max = range.getMaxDouble();
             for (Map.Entry<String, Integer> entry : specialValues.entrySet()) {
-                cats.add(new Category(entry.getKey(), new Color(0,0,0,0), entry.getValue()));
+                cats.add(new ColoredCategory(entry.getKey(), new Color(0,0,0,0), entry.getValue()));
 
                 if (entry.getValue().doubleValue() == min) {
                     min++;
@@ -408,18 +410,18 @@ public final class DimapAccessor extends Static {
                 }
             }
             range = new NumberRange(Double.class, min, true, max, true);
-            cats.add(new Category("data", null, range, sampleToGeo));
+            cats.add(new ColoredCategory("data", null, range, sampleToGeo));
 
-            final GridSampleDimension dim = new GridSampleDimension(bandDesc, cats.toArray(new Category[cats.size()]), unit);
+            final SampleDimension dim = new SampleDimension(Names.createLocalName(null, null, bandDesc), null, cats);
             dimensions.put(bandIndex, dim);
         }
 
-        final GridSampleDimension[] dims = new GridSampleDimension[dimensions.size()];
+        final SampleDimension[] dims = new SampleDimension[dimensions.size()];
         for (int i = 0; i < dimensions.size(); i++) {
-            GridSampleDimension dim = dimensions.get(i + 1);
+            SampleDimension dim = dimensions.get(i + 1);
             if (dim == null) {
                 //no information on this band, create an empty one
-                dim = new GridSampleDimension(String.valueOf(i + 1));
+                dim = new SampleDimension(Names.createLocalName(null, null, String.valueOf(i + 1)), null, Collections.emptyList());
             }
             dims[i] = dim;
         }

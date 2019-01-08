@@ -55,8 +55,8 @@ public final strictfp class GridCoverageTest extends GridCoverageTestBase {
         assertSame(coverage,     geophysics.view(ViewType.PACKED));
         assertSame(geophysics,   geophysics.view(ViewType.GEOPHYSICS));
         assertFalse( coverage.equals(geophysics));
-        assertFalse( coverage.getSampleDimensions().get(0).getSampleToGeophysics().isIdentity());
-        assertTrue(geophysics.getSampleDimensions().get(0).getSampleToGeophysics().isIdentity());
+        assertFalse( coverage.getSampleDimensions().get(0).getTransferFunction().get().isIdentity());
+        assertTrue(geophysics.getSampleDimensions().get(0).getTransferFunction().get().isIdentity());
     }
 
     /**

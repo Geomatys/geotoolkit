@@ -19,13 +19,12 @@ package org.geotoolkit.image.io.plugin.yaml.internal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.SampleDimension;
 
 /**
- * Equivalent class of {@link GridSampleDimension} use during Yaml binding.
+ * Equivalent class of {@link SampleDimension} use during Yaml binding.
  *
  * @author Remi Marechal (Geomatys).
  * @since 4.0
@@ -35,14 +34,14 @@ public class YamlSampleDimension {
     /**
      * Description or "name" of this current {@link YamlSampleDimension}.
      *
-     * @see GridSampleDimension#getDescription()
+     * @see SampleDimension#getDescription()
      */
     private String description;
 
     /**
      * Internal {@link YamlCategory} which compose this {@link SampleDimension}.
      *
-     * @see GridSampleDimension#getCategories()
+     * @see SampleDimension#getCategories()
      */
     private List<YamlCategory> categories;
 
@@ -53,12 +52,12 @@ public class YamlSampleDimension {
     }
 
     /**
-     * Build a {@link YamlSampleDimension} from geotk {@link GridSampleDimension}.
+     * Build a {@link YamlSampleDimension} from geotk {@link SampleDimension}.
      *
-     * @param sampleDimension {@link GridSampleDimension} which will be serialized into Yaml format.
+     * @param sampleDimension {@link SampleDimension} which will be serialized into Yaml format.
      */
-    public YamlSampleDimension(final GridSampleDimension sampleDimension) {
-        description = sampleDimension.getDescription().toString(Locale.ENGLISH);
+    public YamlSampleDimension(final SampleDimension sampleDimension) {
+        description = sampleDimension.getName().toString();
 
         categories  = new ArrayList<YamlCategory>();
         for (final Category cat : sampleDimension.getCategories()) {

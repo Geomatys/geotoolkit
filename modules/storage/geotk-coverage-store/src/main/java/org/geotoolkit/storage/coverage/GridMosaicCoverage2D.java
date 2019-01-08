@@ -19,12 +19,12 @@ package org.geotoolkit.storage.coverage;
 import java.awt.Point;
 import java.util.List;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramids;
-import org.geotoolkit.coverage.SampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 
@@ -49,7 +49,7 @@ public final class GridMosaicCoverage2D {
         gcb.setGridToCRS((MathTransform)Pyramids.getTileGridToCRS(mosaic, new Point(0, 0)));
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(new GridMosaicRenderedImage(mosaic));
-        final List<GridSampleDimension> dims = ref.getGridSampleDimensions();
+        final List<SampleDimension> dims = ref.getSampleDimensions();
         gcb.setSampleDimensions(dims.toArray(new SampleDimension[0]));
         return gcb.getGridCoverage2D();
     }

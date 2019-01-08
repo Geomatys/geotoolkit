@@ -45,7 +45,8 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.collection.BackingStoreException;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -61,7 +62,6 @@ import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.large.LargeRenderedImage;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
-import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
@@ -128,10 +128,6 @@ import org.w3c.dom.NodeList;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.21
- *
- * @since 3.09 (derived from 2.2)
- * @module
  */
 public class ImageCoverageReader extends GridCoverageReader {
     /**
@@ -214,7 +210,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      * shall returns {@code null}. We use this convention because a coverage having zero bands
      * should not be valid.
      */
-    private transient Map<Integer,List<GridSampleDimension>> sampleDimensions;
+    private transient Map<Integer,List<SampleDimension>> sampleDimensions;
 
     /**
      * The metadata for the image at index {@link #imageMetadataIndex}, cached for avoiding to
@@ -706,12 +702,12 @@ public class ImageCoverageReader extends GridCoverageReader {
      * {@inheritDoc}
      */
     @Override
-    public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException {
+    public List<SampleDimension> getSampleDimensions() throws CoverageStoreException {
         return getSampleDimensions(0);
     }
 
-    public List<GridSampleDimension> getSampleDimensions(final int index) throws CoverageStoreException {
-        List<GridSampleDimension> sd = getCached(sampleDimensions, index);
+    public List<SampleDimension> getSampleDimensions(final int index) throws CoverageStoreException {
+        List<SampleDimension> sd = getCached(sampleDimensions, index);
         if (sd == null) {
             final ImageReader imageReader = this.imageReader; // Protect from changes.
             if (imageReader == null) {
@@ -721,14 +717,14 @@ public class ImageCoverageReader extends GridCoverageReader {
              * Get the required information from the SpatialMetadata, if any.
              * Here we just collect them - they will be processed by MetadataHelper.
              */
-            List<SampleDimension> bands = null;
+            List<org.geotoolkit.image.io.metadata.SampleDimension> bands = null;
             try {
                 final SpatialMetadata metadata = getImageMetadata(imageReader, index);
                 if (metadata != null && hasDimensionMetadata(metadata)) {
                     DimensionAccessor accessor = new DimensionAccessor(metadata);
-                    sd = accessor.getGridSampleDimensions();
+                    sd = accessor.getSampleDimensions();
                     if (sd != null) return sd;
-                    bands = metadata.getListForType(SampleDimension.class);
+                    bands = metadata.getListForType(org.geotoolkit.image.io.metadata.SampleDimension.class);
                 }
             } catch (IOException e) {
                 throw new CoverageStoreException(formatErrorMessage(e), e);
@@ -738,11 +734,11 @@ public class ImageCoverageReader extends GridCoverageReader {
                 sd = Collections.emptyList();
             } else try {
                 // MetadataHelper default implementation returns an unmodifiable list.
-                sd = getMetadataHelper().getGridSampleDimensions(bands);
+                sd = getMetadataHelper().getSampleDimensions(bands);
             } catch (ImageMetadataException e) {
                 throw new CoverageStoreException(formatErrorMessage(e), e);
             }
-            Map.Entry<Map<Integer,List<GridSampleDimension>>,List<GridSampleDimension>> entry =
+            Map.Entry<Map<Integer,List<SampleDimension>>,List<SampleDimension>> entry =
                     setCached(sd, sampleDimensions, 0);
             sampleDimensions = entry.getKey();
             sd = entry.getValue();
@@ -768,18 +764,18 @@ public class ImageCoverageReader extends GridCoverageReader {
      *         return an empty array, because {@link GridCoverageFactory} interprets that as
      *         "no band" (as opposed to {@code null} which means "unspecified bands").
      */
-    private GridSampleDimension[] getSampleDimensions(final int index, final int[] srcBands, final int[] dstBands)
+    private SampleDimension[] getSampleDimensions(final int index, final int[] srcBands, final int[] dstBands)
             throws CoverageStoreException
     {
-        final List<GridSampleDimension> bands = getSampleDimensions(index);
+        final List<SampleDimension> bands = getSampleDimensions(index);
         if (bands != null) {
             int bandCount = bands.size();
             if (bandCount != 0) {
                 if (srcBands != null && srcBands.length < bandCount) bandCount = srcBands.length;
                 if (dstBands != null && dstBands.length < bandCount) bandCount = dstBands.length;
-                final GridSampleDimension[] selectedBands = new GridSampleDimension[bandCount];
+                final SampleDimension[] selectedBands = new SampleDimension[bandCount];
                 /*
-                 * Searches for 'GridSampleDimension' from the given source band index and
+                 * Searches for 'SampleDimension' from the given source band index and
                  * stores their reference at the position given by destination band index.
                  */
                 for (int j=0; j<bandCount; j++) {
@@ -796,10 +792,10 @@ public class ImageCoverageReader extends GridCoverageReader {
     /**
      * Returns {@code true} if the given sample dimensions contain at least one signed range.
      */
-    private static boolean isRangeSigned(final GridSampleDimension[] bands) {
+    private static boolean isRangeSigned(final SampleDimension[] bands) {
         if (bands != null) {
-            for (final GridSampleDimension band : bands) {
-                if (band != null && band.isRangeSigned()) {
+            for (final SampleDimension band : bands) {
+                if (band != null && SampleDimensionUtils.isRangeSigned(band)) {
                     return true;
                 }
             }
@@ -1021,7 +1017,7 @@ public class ImageCoverageReader extends GridCoverageReader {
          * declare unsigned range of sample values.
          */
         boolean usePaletteFactory = false;
-        final GridSampleDimension[] bands = getSampleDimensions(index,
+        final SampleDimension[] bands = getSampleDimensions(index,
                 supportBandSelection ? srcBands : null,
                 supportBandSelection ? dstBands : null);
         if (imageParam instanceof SpatialImageReadParam) {
@@ -1032,7 +1028,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             sp.setSampleConversionAllowed(SampleConversionType.REPLACE_FILL_VALUES, true);
             /*
              * If the image does not have its own color palette, provides a palette factory
-             * which will create the IndexColorModel (if needed) from the GridSampleDimension.
+             * which will create the IndexColorModel (if needed) from the SampleDimension.
              */
             if (bands != null && imageReader instanceof SpatialImageReader) try {
                 usePaletteFactory = !((SpatialImageReader) imageReader).hasColors(index);

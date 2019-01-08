@@ -31,9 +31,6 @@ import org.opengis.geometry.Envelope;
  * Tests the {@link Interpolator2D} implementation.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.02
- *
- * @since 2.1
  */
 public final strictfp class InterpolatorTest extends GridCoverageTestBase {
     /**

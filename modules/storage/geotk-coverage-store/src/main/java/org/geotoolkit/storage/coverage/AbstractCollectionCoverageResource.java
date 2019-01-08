@@ -42,7 +42,7 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -85,7 +85,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
     protected final List<Resource> resources = new CopyOnWriteArrayList<Resource>();
 
     private GridGeometry gridGeom;
-    private List<GridSampleDimension> sampleDimensions;
+    private List<SampleDimension> sampleDimensions;
 
     public AbstractCollectionCoverageResource(DataStore store, GenericName name) {
         super(store,name);
@@ -187,7 +187,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
      * @return
      * @throws CoverageStoreException
      */
-    private synchronized List<GridSampleDimension> getSampleDimensionsInternal() throws CoverageStoreException {
+    private synchronized List<SampleDimension> getSampleDimensionsInternal() throws CoverageStoreException {
         if (sampleDimensions != null) return sampleDimensions;
 
         final Collection<GridCoverageResource> references = getCoverages(null);
@@ -213,7 +213,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
         }
 
         @Override
-        public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+        public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
             return AbstractCollectionCoverageResource.this.getSampleDimensionsInternal();
         }
 

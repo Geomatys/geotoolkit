@@ -32,6 +32,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -41,12 +42,12 @@ import javax.media.jai.OperationNode;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.RenderedImageAdapter;
 import javax.media.jai.remote.SerializableRenderedImage;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.coverage.AbstractCoverage;
-import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.TransformedDirectPosition;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
@@ -55,7 +56,6 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
-import org.geotoolkit.coverage.SampleDimension;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -66,7 +66,7 @@ import org.opengis.referencing.operation.TransformException;
 /**
  * Basic access to grid data values backed by a two-dimensional
  * {@linkplain RenderedImage rendered image}. Each band in an image is represented as a
- * {@linkplain GridSampleDimension sample dimension}.
+ * {@linkplain SampleDimension sample dimension}.
  *
  * {@section Two-dimensional slice in a <var>n</var>-dimensional space}
  * Grid coverages are usually two-dimensional. However, {@linkplain #getEnvelope their envelope}
@@ -92,14 +92,10 @@ import org.opengis.referencing.operation.TransformException;
  * class.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
  *
  * @see GridGeometry2D
- * @see GridSampleDimension
+ * @see SampleDimension
  * @see GridCoverageBuilder
- *
- * @since 1.2
- * @module
  */
 public class GridCoverage2D extends AbstractGridCoverage implements RenderedCoverage {
     /**
@@ -139,7 +135,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * <p>
      * The content of this array should never be modified.
      */
-    final GridSampleDimension[] sampleDimensions;
+    final RenderedSampleDimension[] sampleDimensions;
 
     /**
      * The views returned by {@link #views}. Constructed when first needed.
@@ -181,7 +177,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
 
     /**
      * Constructs a grid coverage with the specified {@linkplain GridGeometry2D grid geometry} and
-     * {@linkplain GridSampleDimension sample dimensions}. The {@linkplain Envelope envelope}
+     * {@linkplain SampleDimension sample dimensions}. The {@linkplain Envelope envelope}
      * (including the {@linkplain CoordinateReferenceSystem coordinate reference system}) is
      * inferred from the grid geometry.
      * <p>
@@ -220,7 +216,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
     public GridCoverage2D(final CharSequence             name,
                           final RenderedImage           image,
                                 GridGeometry2D   gridGeometry,
-                          final GridSampleDimension[]   bands,
+                          final SampleDimension[]       bands,
                           final GridCoverage[]        sources,
                           final Map<?,?>           properties,
                           final Hints                   hints)
@@ -235,7 +231,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
          * an inconsistency is found in user-supplied sample dimensions, an IllegalArgumentException
          * is thrown.
          */
-        sampleDimensions = new GridSampleDimension[image.getSampleModel().getNumBands()];
+        sampleDimensions = new RenderedSampleDimension[image.getSampleModel().getNumBands()];
         RenderedSampleDimension.create(name, image, bands, sampleDimensions);
         /*
          * Computes the grid envelope if it was not explicitly provided. The range will be inferred
@@ -389,8 +385,12 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * @return All sample dimensions.
      */
     @Override
-    public List<GridSampleDimension> getSampleDimensions() {
-        return UnmodifiableArrayList.wrap(sampleDimensions);
+    public List<SampleDimension> getSampleDimensions() {
+        final SampleDimension[] sd = new SampleDimension[sampleDimensions.length];
+        for (int i=0; i<sd.length; i++) {
+            sd[i] = sampleDimensions[i].dimension;
+        }
+        return UnmodifiableArrayList.wrap(sd);
     }
 
     /**
@@ -659,7 +659,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                     case DataBuffer.TYPE_FLOAT : buffer.append((float) sample); break;
                     default                    : buffer.append(  (int) sample); break;
                 }
-                final String formatted = sampleDimensions[band].getLabel(sample, null);
+                final String formatted = null; // TODO sampleDimensions[band].getLabel(sample, null);
                 if (formatted != null) {
                     buffer.append("\u00A0(").append(formatted).append(')');
                 }
@@ -746,9 +746,9 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
             final StringBuilder buffer = new StringBuilder(String.valueOf(getName()));
             final int visibleBandIndex = CoverageUtilities.getVisibleBand(this);
             final SampleDimension visibleBand = getSampleDimensions().get(visibleBandIndex);
-            final Unit<?> unit = visibleBand.getUnits();
-            buffer.append(" - ").append(String.valueOf(visibleBand.getDescription()));
-            if (unit != null) {
+            final Optional<Unit<?>> unit = visibleBand.getUnits();
+            buffer.append(" - ").append(String.valueOf(visibleBand.getName()));
+            if (unit.isPresent()) {
                 buffer.append(" (").append(unit).append(')');
             }
             title = buffer.toString();
@@ -867,7 +867,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * @param  type The kind of view wanted.
      * @return The grid coverage. Never {@code null}, but may be {@code this}.
      *
-     * @see GridSampleDimension#geophysics
+     * @see SampleDimension#geophysics
      * @see org.geotoolkit.coverage.Category#geophysics
      * @see javax.media.jai.operator.LookupDescriptor
      * @see javax.media.jai.operator.RescaleDescriptor

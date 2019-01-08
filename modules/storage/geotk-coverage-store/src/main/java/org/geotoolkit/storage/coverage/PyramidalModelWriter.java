@@ -43,7 +43,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -497,20 +497,19 @@ public class PyramidalModelWriter extends GridCoverageWriter {
 
                     }else{
                         //todo not exact
-                        final List<GridSampleDimension> dims = pm.getGridSampleDimensions();
+                        final List<SampleDimension> dims = pm.getSampleDimensions();
                         if(nbBand==3){
                             currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_RGB);
                         }else if(nbBand==4){
                             currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_ARGB);
                         }else{
                             currentlyTile = BufferedImages.createImage(tileWidth, tileHeight, dims.size(),
-                                    CoverageUtilities.getDataType(dims.get(0).getSampleDimensionType()));
+                                    pm.getSampleModel().getDataType());
                         }
                     }
                 } catch (DataStoreException ex) {
                     throw new RuntimeException(ex);
                 }
-
             }
 
             // define tile translation from bufferedImage min pixel position to mosaic pixel position.
@@ -538,7 +537,5 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                 throw new RuntimeException(ex);
             }
         }
-
     }
-
 }

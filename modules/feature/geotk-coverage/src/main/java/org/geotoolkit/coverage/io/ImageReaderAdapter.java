@@ -44,7 +44,8 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import org.geotoolkit.image.io.SpatialImageReader;
@@ -74,10 +75,6 @@ import org.opengis.referencing.operation.TransformException;
  * by the wrapped <code>GridCoverageReader</code>.}
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
- *
- * @since 3.14
- * @module
  */
 public class ImageReaderAdapter extends SpatialImageReader {
     /**
@@ -195,7 +192,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
      */
     @Override
     public int getNumBands(final int imageIndex) throws IOException {
-        final List<GridSampleDimension> sampleDimensions;
+        final List<SampleDimension> sampleDimensions;
         try {
             sampleDimensions = reader.getSampleDimensions();
         } catch (CoverageStoreException e) {
@@ -310,7 +307,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
         final Integer key = imageIndex;
         ImageTypeSpecifier type = imageTypes.get(key);
         if (type == null) {
-            final List<GridSampleDimension> bands;
+            final List<SampleDimension> bands;
             try {
                 bands = reader.getSampleDimensions();
             } catch (CoverageStoreException e) {
@@ -320,7 +317,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
                 final int numBands = bands.size();
                 if (numBands > VISIBLE_BAND) {
                     final Dimension size = getSize(imageIndex);
-                    final ColorModel cm = bands.get(VISIBLE_BAND).getColorModel(VISIBLE_BAND, bands.size());
+                    final ColorModel cm = SampleDimensionUtils.getColorModel(bands.get(VISIBLE_BAND), VISIBLE_BAND, bands.size());
                     final SampleModel sm = cm.createCompatibleSampleModel(size.width, size.height);
                     type = new ImageTypeSpecifier(cm, sm);
                 }

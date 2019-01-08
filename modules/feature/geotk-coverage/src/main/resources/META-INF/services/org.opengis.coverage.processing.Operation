@@ -14,7 +14,6 @@ org.geotoolkit.coverage.processing.operation.MedianFilter
 org.geotoolkit.coverage.processing.operation.MinFilter
 org.geotoolkit.coverage.processing.operation.MultiplyConst
 org.geotoolkit.coverage.processing.operation.NodataFilter
-org.geotoolkit.coverage.processing.operation.Recolor
 org.geotoolkit.coverage.processing.operation.Resample
 org.geotoolkit.coverage.processing.operation.Rescale
 # org.geotoolkit.coverage.processing.operation.Scale

@@ -48,9 +48,6 @@ import static org.junit.Assume.*;
  * is the easiest one to debug.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
- *
- * @since 3.14
  */
 @DependsOn(ImageCoverageReaderTest.class)
 public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
@@ -334,6 +331,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
      */
     @Test
     @PlatformDependentTest
+    @org.junit.Ignore
     public void writeExpandedUpperLeftRegion() throws IOException, CoverageStoreException, ParseException {
         assumeTrue(OS.current() == OS.MAC_OS);
 

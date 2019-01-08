@@ -37,7 +37,8 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.GridCoverageStack;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -89,7 +90,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         final MPCoverageStore store = new MPCoverageStore();
         final PyramidalCoverageResource outRef = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(n));
         outRef.setPackMode(ViewType.GEOPHYSICS);
-        outRef.setGridSampleDimensions(Collections.singletonList(new GridSampleDimension("data")));
+        outRef.setSampleDimensions(Collections.singletonList(new SampleDimension(Names.createLocalName(null, null, "data"), null, Collections.emptyList())));
         outRef.setSampleModel(baseCoverage.getRenderedImage().getSampleModel());
         outRef.setColorModel(baseCoverage.getRenderedImage().getColorModel());
         final Pyramid pyramid = (Pyramid) outRef.createModel(new DefiningPyramid(crs));
@@ -142,7 +143,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         final MPCoverageStore store = new MPCoverageStore();
         final PyramidalCoverageResource outRef = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(n));
         outRef.setPackMode(ViewType.GEOPHYSICS);
-        outRef.setGridSampleDimensions(Collections.singletonList(new GridSampleDimension("data")));
+        outRef.setSampleDimensions(Collections.singletonList(new SampleDimension(Names.createLocalName(null, null, "data"), null, Collections.emptyList())));
         outRef.setSampleModel(baseCoverage.getRenderedImage().getSampleModel());
         outRef.setColorModel(baseCoverage.getRenderedImage().getColorModel());
         final Pyramid pyramid = (Pyramid) outRef.createModel(new DefiningPyramid(crs));
@@ -196,7 +197,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         final MPCoverageStore store = new MPCoverageStore();
         final PyramidalCoverageResource outRef = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(n));
         outRef.setPackMode(ViewType.GEOPHYSICS);
-        outRef.setGridSampleDimensions(Collections.singletonList(new GridSampleDimension("data")));
+        outRef.setSampleDimensions(Collections.singletonList(new SampleDimension(Names.createLocalName(null, null, "data"), null, Collections.emptyList())));
         outRef.setSampleModel(baseCoverage1.getRenderedImage().getSampleModel());
         outRef.setColorModel(baseCoverage1.getRenderedImage().getColorModel());
         final Pyramid pyramid = (Pyramid) outRef.createModel(new DefiningPyramid(crs));
@@ -229,7 +230,6 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
 
     /**
      * 4D calc test
-     * @throws Exception
      */
     @Test
     public void coverage4DTest() throws Exception{
@@ -323,19 +323,17 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
 
     /**
      *
-     * @param ref
-     * @param crs
      * @param geovalues [0...n slices][Z coord, T coord, sample value]
      */
     private static void create4DPyramid(PyramidalCoverageResource ref, CoordinateReferenceSystem crs,
                                         int width, int height, double[][] geovalues) throws DataStoreException {
 
-        final List<GridSampleDimension> dimensions = new ArrayList<>();
-        final GridSampleDimension dim = new GridSampleDimension("samples");
+        final List<SampleDimension> dimensions = new ArrayList<>();
+        final SampleDimension dim = new SampleDimension(Names.createLocalName(null, null, "samples"), null, Collections.emptyList());
         dimensions.add(dim);
 
         final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(crs));
-        ref.setGridSampleDimensions(dimensions);
+        ref.setSampleDimensions(dimensions);
 
         final Dimension gridSize = new Dimension(4, 3);
         final Dimension tilePixelSize = new Dimension(width, height);
@@ -361,12 +359,8 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
 
     /**
      *
-     * @param env
-     * @param width
-     * @param height
      * @param fillValue1 value used in first vertical half of the image
      * @param fillValue2 value used in secong vertical half of the image
-     * @return
      */
     private static GridCoverage2D createCoverage2D(Envelope env, int width, int height, float fillValue1, float fillValue2){
         final BufferedImage baseImage = createRenderedImage(width, height, fillValue1, fillValue2);

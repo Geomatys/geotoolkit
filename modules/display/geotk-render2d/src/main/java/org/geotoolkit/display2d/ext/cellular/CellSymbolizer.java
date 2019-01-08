@@ -37,7 +37,7 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.measure.Units;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -214,13 +214,13 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
     }
 
     public static FeatureType buildCellType(GridCoverageReader reader) throws DataStoreException{
-        final List<GridSampleDimension> lst = reader.getSampleDimensions();
+        final List<SampleDimension> lst = reader.getSampleDimensions();
         final GridGeometry gg = reader.getGridGeometry();
         final CoordinateReferenceSystem crs = gg.getCoordinateReferenceSystem();
         if(lst!=null){
             final String[] names = new String[lst.size()];
             for(int i=0;i<names.length;i++){
-                names[i] = lst.get(i).getDescription().toString();
+                names[i] = lst.get(i).getName().toString();
             }
             return buildCellType(lst.size(), names, crs);
         }else{
@@ -234,10 +234,10 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
     }
 
     public static FeatureType buildCellType(GridCoverage2D coverage){
-        final List<GridSampleDimension> dims = coverage.getSampleDimensions();
+        final List<SampleDimension> dims = coverage.getSampleDimensions();
         final String[] names = new String[dims.size()];
         for(int i=0;i<names.length;i++){
-            names[i] = dims.get(i).getDescription().toString();
+            names[i] = dims.get(i).getName().toString();
         }
         return buildCellType(dims.size(), names, coverage.getCoordinateReferenceSystem2D());
     }

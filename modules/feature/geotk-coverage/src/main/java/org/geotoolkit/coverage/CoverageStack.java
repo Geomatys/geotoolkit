@@ -36,6 +36,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.event.IIOReadProgressListener;
 import javax.imageio.event.IIOReadWarningListener;
 import javax.media.jai.InterpolationNearest;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -120,10 +121,6 @@ import org.opengis.util.FactoryException;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.16
- *
- * @since 2.1
- * @module
  */
 public class CoverageStack extends AbstractCoverage {
     /**

@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import javax.imageio.ImageReader;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -44,7 +45,6 @@ import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
@@ -187,9 +187,9 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      */
     private void savePMtoPM(final PyramidalCoverageResource inPM, final PyramidalCoverageResource outPM) throws DataStoreException{
 
-        final List<GridSampleDimension> sampleDimensions = inPM.getGridSampleDimensions();
+        final List<SampleDimension> sampleDimensions = inPM.getSampleDimensions();
         if(sampleDimensions != null){
-            outPM.setGridSampleDimensions(sampleDimensions);
+            outPM.setSampleDimensions(sampleDimensions);
         }
 
         //count total number of tiles
@@ -356,8 +356,8 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         }
 
         //create sampleDimensions bands
-        final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions();
-        outPM.setGridSampleDimensions(sampleDimensions);
+        final List<SampleDimension> sampleDimensions = reader.getSampleDimensions();
+        outPM.setSampleDimensions(sampleDimensions);
 
         final Pyramid pyramid = (Pyramid) outPM.createModel(new DefiningPyramid(crs));
 

@@ -35,11 +35,13 @@ import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.internal.coverage.ColoredCategory;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
@@ -113,7 +115,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
             try {
                 final GridCoverageReader reader = ref.acquireReader();
                 final GridGeometry gridgeom = reader.getGridGeometry();
-                final List<GridSampleDimension> dimensions = reader.getSampleDimensions();
+                final List<SampleDimension> dimensions = reader.getSampleDimensions();
                 ref.recycle(reader);
 
                 // GRID GEOMETRY PART //////////////////////////////////////////
@@ -177,11 +179,11 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
 
 
                 if(dimensions!=null){
-                    for(GridSampleDimension dim : dimensions){
-                        final SampleDimensionType st = dim.getSampleDimensionType();
-                        final MathTransform1D sampletoGeo = dim.getSampleToGeophysics();
-                        final Unit unit = dim.getUnits();
-                        final InternationalString desc = dim.getDescription();
+                    for(SampleDimension dim : dimensions){
+                        final SampleDimensionType st = SampleDimensionUtils.getSampleDimensionType(dim);
+                        final MathTransform1D sampletoGeo = dim.getTransferFunction().orElse(null);
+                        final Unit unit = dim.getUnits().orElse(null);
+                        final InternationalString desc = dim.getName().toInternationalString();
 
                         sb.append("<b>").append(desc).append("</b><br/>");
                         sb.append("Unit : ").append(unit).append("<br/>");
@@ -201,10 +203,10 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
                             sb.append("</td></tr>");
                             for(Category cat : categories){
                                 final InternationalString name = cat.getName();
-                                final NumberRange range = cat.getRange();
-                                final MathTransform1D trs = cat.getSampleToGeophysics();
+                                final NumberRange range = cat.getSampleRange();
+                                final MathTransform1D trs = cat.getTransferFunction().orElse(null);
                                 final boolean isQuant = cat.isQuantitative();
-                                final Color[] colors = cat.getColors();
+                                final Color[] colors = ColoredCategory.getColors(cat);
                                 sb.append("<tr><td>");
                                 sb.append(name);
                                 sb.append("</td><td>");

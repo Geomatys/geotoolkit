@@ -32,9 +32,6 @@ import org.opengis.referencing.datum.PixelInCell;
  * Tests the {@link GridCoverageBuilder} class.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.20
- *
- * @since 2.1
  */
 public final strictfp class GridCoverageBuilderTest extends GridCoverageTestBase {
     /**
@@ -110,8 +107,6 @@ public final strictfp class GridCoverageBuilderTest extends GridCoverageTestBase
      * Tests a change of CRS.
      *
      * @see <a href="http://www.geotoolkit.org/modules/coverage/faq.html#changeCRS">How do I change the CRS of an existing GridCoverage2D?</a>
-     *
-     * @since 3.20
      */
     @Test
     public void testChangeCRS() {

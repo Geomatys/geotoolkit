@@ -20,7 +20,7 @@ package org.geotoolkit.storage.coverage;
 import java.util.*;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.coverage.GridCoverageStack;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -45,10 +45,10 @@ public class CoverageExtractor extends Static {
      * Simple Pojo that keep rayExtraction values.
      */
     public static class Ray {
-        private List<GridSampleDimension> sampleDimensions = new ArrayList<GridSampleDimension>();
+        private List<SampleDimension> sampleDimensions = new ArrayList<SampleDimension>();
         private Map<DirectPosition, double[]> values = new TreeMap<>(new SliceComparator());
 
-        public List<GridSampleDimension> getSampleDimensions() {
+        public List<SampleDimension> getSampleDimensions() {
             return sampleDimensions;
         }
 

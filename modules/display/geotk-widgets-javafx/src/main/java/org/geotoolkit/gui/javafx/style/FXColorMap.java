@@ -60,7 +60,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -97,7 +97,6 @@ import org.opengis.filter.expression.Literal;
 import org.opengis.metadata.content.AttributeGroup;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
-import org.opengis.metadata.content.SampleDimension;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -323,11 +322,11 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         //search for band statistics
         search:
         for(AttributeGroup attg : covdesc.getAttributeGroups()){
-            for(RangeDimension rd : attg.getAttributes()){
-                if(!(rd instanceof SampleDimension)) continue;
+            for (RangeDimension rd : attg.getAttributes()) {
+                if (!(rd instanceof org.opengis.metadata.content.SampleDimension)) continue;
                 final int i = Integer.parseInt(rd.getSequenceIdentifier().tip().toString());
-                if(i==index){
-                    final SampleDimension sd = (SampleDimension) rd;
+                if (i == index) {
+                    final org.opengis.metadata.content.SampleDimension sd = (org.opengis.metadata.content.SampleDimension) rd;
                     return new Double[]{sd.getMinValue(),sd.getMaxValue()};
                 }
             }
@@ -697,7 +696,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                     readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
                     readParam.setResolution(res);
 
-                    final List<GridSampleDimension> sd = reader.getSampleDimensions();
+                    final List<SampleDimension> sd = reader.getSampleDimensions();
                     int nbBands = 10;
                     if (sd != null && !sd.isEmpty()) {
                         nbBands = sd.size();

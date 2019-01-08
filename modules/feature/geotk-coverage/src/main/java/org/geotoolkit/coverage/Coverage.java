@@ -17,6 +17,8 @@
 package org.geotoolkit.coverage;
 
 import java.util.List;
+import org.apache.sis.coverage.SampleDimension;
+
 
 /**
  * Temporary class while moving classes to Apache SIS.

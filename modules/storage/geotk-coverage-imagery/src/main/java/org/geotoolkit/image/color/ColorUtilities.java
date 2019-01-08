@@ -130,7 +130,7 @@ public final class ColorUtilities extends Static {
      * will be clamb into the {@code palette} range. If they are completely out of range, or if
      * they would result in an empty array, then {@code null} is returned.
      * <p>
-     * This method is used by {@link org.geotoolkit.coverage.GridSampleDimension} as an
+     * This method is used by {@link org.geotoolkit.coverage.SampleDimension} as an
      * heuristic approach for distributing palette colors into a list of categories.
      *
      * @param  palette The color array (may be {@code null}).

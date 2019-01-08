@@ -48,10 +48,9 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.Category;
+import org.apache.sis.coverage.Category;
 import org.geotoolkit.coverage.Coverage;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.SampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -282,7 +281,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      */
     @Override
     protected final GridCoverage2D prepareCoverageToResampling(final GridCoverage2D source, final CachedRasterSymbolizer symbolizer) {
-        final List<GridSampleDimension> dims = source.getSampleDimensions();
+        final List<SampleDimension> dims = source.getSampleDimensions();
         final ColorMap cMap = symbolizer.getSource().getColorMap();
         if ((cMap != null && cMap.getFunction() != null) ||
             (dims != null && dims.size() != 0 && dims.get(0).getNoDataValues() != null) ||
@@ -466,7 +465,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //cheat on the colormap if we have only one band and no colormap
         recolorCase:
         if ((recolor == null || recolor.getFunction() == null)) {
-            final List<GridSampleDimension> sampleDims = coverage.getSampleDimensions();
+            final List<SampleDimension> sampleDims = coverage.getSampleDimensions();
             /* First, we check the coverage sample dimensions. We do so, because
              * not all coverages hold enough information into their metadata.
              * Even when it is the case, sometimes the coverage description
@@ -635,7 +634,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      */
     private static boolean  hasQuantitativeCategory(final GridCoverage2D coverage) {
         ArgumentChecks.ensureNonNull("GridCoverage2D", coverage);
-        for (GridSampleDimension gs : coverage.getSampleDimensions()) {
+        for (SampleDimension gs : coverage.getSampleDimensions()) {
             final List<Category> categories = gs.getCategories();
             if (categories != null)
                 for (Category cat : categories) {
@@ -693,7 +692,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final List<? extends SampleDimension> dims = coverage.getSampleDimensions();
             for(int i=0,n=dims.size();i<n;i++){
                 final SampleDimension sampleDim = dims.get(i);
-                if (Objects.equals(String.valueOf(sampleDim.getDescription()), n)) {
+                if (Objects.equals(String.valueOf(sampleDim.getName()), n)) {
                     return i;
                 }
             }

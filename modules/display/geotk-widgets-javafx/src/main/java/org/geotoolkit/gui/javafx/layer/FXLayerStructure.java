@@ -35,12 +35,14 @@ import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.amended.AmendedCoverageResource;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
+import org.geotoolkit.internal.coverage.ColoredCategory;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
@@ -53,7 +55,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.content.AttributeGroup;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
-import org.opengis.metadata.content.SampleDimension;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -133,7 +134,7 @@ public class FXLayerStructure extends FXPropertyPane {
             try {
                 final GridCoverageReader reader = ref.acquireReader();
                 final GridGeometry gridgeom = reader.getGridGeometry();
-                final List<GridSampleDimension> dimensions = reader.getSampleDimensions();
+                final List<SampleDimension> dimensions = reader.getSampleDimensions();
                 ref.recycle(reader);
 
                 // GRID GEOMETRY PART //////////////////////////////////////////
@@ -194,14 +195,12 @@ public class FXLayerStructure extends FXPropertyPane {
                 // SAMPLE DIMENSIONS PART //////////////////////////////////////
                 sb.append("<h1>").append("Sample dimensions").append("</h1><br/>");
 
-
-
-                if(dimensions!=null){
-                    for(GridSampleDimension dim : dimensions){
-                        final SampleDimensionType st = dim.getSampleDimensionType();
-                        final MathTransform1D sampletoGeo = dim.getSampleToGeophysics();
-                        final Unit unit = dim.getUnits();
-                        final InternationalString desc = dim.getDescription();
+                if (dimensions!=null) {
+                    for (SampleDimension dim : dimensions) {
+                        final SampleDimensionType st = SampleDimensionUtils.getSampleDimensionType(dim);
+                        final MathTransform1D sampletoGeo = dim.getTransferFunction().orElse(null);
+                        final Unit unit = dim.getUnits().orElse(null);
+                        final InternationalString desc = dim.getName().toInternationalString();
 
                         sb.append("<b>").append(desc).append("</b><br/>");
                         sb.append("Unit : ").append(unit).append("<br/>");
@@ -221,10 +220,10 @@ public class FXLayerStructure extends FXPropertyPane {
                             sb.append("</td></tr>");
                             for(Category cat : categories){
                                 final InternationalString name = cat.getName();
-                                final NumberRange range = cat.getRange();
-                                final MathTransform1D trs = cat.getSampleToGeophysics();
+                                final NumberRange range = cat.getSampleRange();
+                                final MathTransform1D trs = cat.getTransferFunction().orElse(null);
                                 final boolean isQuant = cat.isQuantitative();
-                                final Color[] colors = cat.getColors();
+                                final Color[] colors = ColoredCategory.getColors(cat);
                                 sb.append("<tr><td>");
                                 sb.append(name);
                                 sb.append("</td><td>");
@@ -273,10 +272,10 @@ public class FXLayerStructure extends FXPropertyPane {
                 tabbands.setContent(scroll);
 
                 final AttributeGroup attg = desc.getAttributeGroups().iterator().next();
-                for(RangeDimension rd : attg.getAttributes()){
-                    if(rd instanceof SampleDimension){
+                for (RangeDimension rd : attg.getAttributes()){
+                    if (rd instanceof org.opengis.metadata.content.SampleDimension) {
                         final FXCoverageBand fxcb = new FXCoverageBand();
-                        fxcb.init((SampleDimension) rd);
+                        fxcb.init((org.opengis.metadata.content.SampleDimension) rd);
                         vbox.getChildren().add(fxcb);
                     }
                 }

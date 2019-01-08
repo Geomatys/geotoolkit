@@ -30,7 +30,7 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -71,7 +71,6 @@ import org.opengis.referencing.operation.TransformException;
  * @author Remi Marechal (Geomatys).
  */
 public class ComputeVolumeProcess extends AbstractProcess {
-
     /**
      * Default measure unit use to compute volume (Meter).
      */
@@ -117,7 +116,6 @@ public class ComputeVolumeProcess extends AbstractProcess {
      * Execute process now.
      *
      * @return result volume
-     * @throws ProcessException
      */
     public Geometry[] executeNow() throws ProcessException {
         execute();
@@ -148,7 +146,6 @@ public class ComputeVolumeProcess extends AbstractProcess {
         }
 
         try {
-
             /*
              * geomCRS attribut should be null, we looking for find another way to define geometry CoordinateReferenceSystem.
              * It may be already stipulate in JTS geometry.
@@ -156,9 +153,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             if (geomCRS == null) {
                 geomCRS = JTS.findCoordinateReferenceSystem(jtsGeom);
             }
-
             final GridGeometry covGridGeom = gcReader.getGridGeometry();
-
             /*
              * If we have no CRS informations from geometry we consider that geometry is defined in same crs as Coverage.
              */
@@ -178,9 +173,9 @@ public class ComputeVolumeProcess extends AbstractProcess {
             /*******************************************/
 
             final GridCoverage2D dem      = (GridCoverage2D) gcReader.read(gcrp);
-            final GridSampleDimension gsd = dem.getSampleDimensions().get(bandIndex);
+            final SampleDimension gsd = dem.getSampleDimensions().get(bandIndex);
 
-            final MathTransform1D zmt     = gsd.getSampleToGeophysics();
+            final MathTransform1D zmt     = gsd.getTransferFunction().orElse(null);
             if (zmt == null) {
                 throw new ProcessException("you should stipulate MathTransform1D from sampleDimension to geophysic.", this, null);
             }
@@ -259,11 +254,11 @@ public class ComputeVolumeProcess extends AbstractProcess {
             double volume = 0;
 
             final UnitConverter hconverter;
-            if(gsd.getUnits() == null || Units.UNITY.equals(gsd.getUnits())){
+            if (!gsd.getUnits().isPresent() || Units.UNITY.equals(gsd.getUnits().get())) {
                 //-- unit unknowed, assume it's meters already
                 hconverter = METER.getConverterTo(METER);
-            }else{
-                hconverter = gsd.getUnits().getConverterToAny(METER);
+            } else {
+                hconverter = gsd.getUnits().get().getConverterToAny(METER);
             }
 
             while (pixPoint[1] < maxy) {

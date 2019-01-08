@@ -18,18 +18,19 @@ package org.geotoolkit.coverage.xmlstore;
 
 import java.awt.image.DataBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.measure.Unit;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.geotoolkit.coverage.Category;
+import org.apache.sis.coverage.Category;
 import org.geotoolkit.storage.coverage.CoverageUtilities;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.SampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.opengis.coverage.SampleDimensionType;
 import org.apache.sis.measure.Units;
+import org.apache.sis.util.iso.Names;
 
 /**
  * Permit to marshall / unmarshall {@link SampleDimension}.
@@ -40,7 +41,6 @@ import org.apache.sis.measure.Units;
 @XmlRootElement(name="SampleDimension")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLSampleDimension {
-
     /**
      * Name of this {@link XMLSampleDimension}.
      */
@@ -93,7 +93,6 @@ public class XMLSampleDimension {
     /**
      * Set type of this sample dimension.
      *
-     * @param sdt
      * @see SampleDimensionType
      */
     public void setSampleType(SampleDimensionType sdt) {
@@ -132,38 +131,36 @@ public class XMLSampleDimension {
     }
 
     /**
-     * Returns {@link GridSampleDimension} from internal marshalled values.
+     * Returns {@link SampleDimension} from internal marshalled values.
      *
-     * @return GridSampleDimension.
      * @see #categories
      * @see #name
      * @see #type
      * @see #unit
      */
-    public GridSampleDimension buildSampleDimension() {
-        Category[] cats = null;
+    public SampleDimension buildSampleDimension() {
+        List<Category> cats = Collections.emptyList();
         if (categories != null) {
-            cats = new Category[categories.size()];
-            for(int i = 0; i < cats.length; i++) {
-                cats[i] = categories.get(i).buildCategory(getDataType());
+            cats = new ArrayList<>(categories.size());
+            for (XMLCategory c : categories) {
+                cats.add(c.buildCategory(getDataType()));
             }
         }
-        //-- gridSampleDimension constructor accept cats null.
-        return new GridSampleDimension(name, cats, getUnit());
+        return new SampleDimension(Names.createLocalName(null, null, name), null, cats);
     }
 
     /**
-     * Copy and fill informations from given {@link GridSampleDimension}.
+     * Copy and fill information from given {@link SampleDimension}.
      *
-     * @param gsd {@link GridSampleDimension} reference.
+     * @param gsd {@link SampleDimension} reference.
      */
-    public void fill(final GridSampleDimension gsd) {
+    public void fill(final SampleDimension gsd) {
         if (categories == null) categories = new ArrayList<>();
         categories.clear();
-        name = gsd.getDescription().toString();
-        setUnit(gsd.getUnits());
-        if(gsd.getCategories()!=null){
-            for(Category cat : gsd.getCategories()){
+        name = gsd.getName().toString();
+        setUnit(gsd.getUnits().orElse(null));
+        if (gsd.getCategories() != null) {
+            for (Category cat : gsd.getCategories()) {
                 final XMLCategory xcat = new XMLCategory();
                 xcat.fill(cat);
                 categories.add(xcat);

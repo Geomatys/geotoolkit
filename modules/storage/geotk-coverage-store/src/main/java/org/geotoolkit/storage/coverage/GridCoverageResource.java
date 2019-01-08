@@ -19,7 +19,6 @@ package org.geotoolkit.storage.coverage;
 import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.stream.Stream;
-import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -27,7 +26,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.GridCoverageStack;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -143,9 +142,7 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
                 throw new DataStoreException("Read coverage is not a GridCoverage2D");
             }
             final GridCoverage2D cov2d = (GridCoverage2D) cov;
-            final List<GridSampleDimension> sampleDims = cov2d.getSampleDimensions();
-            final List<SampleDimension> bands = org.geotoolkit.internal.coverage.CoverageUtilities.toSIS(sampleDims);
-
+            final List<SampleDimension> bands = cov2d.getSampleDimensions();
             return new GridCoverage(domain, bands) {
                 @Override
                 public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
@@ -161,8 +158,7 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
     default List<SampleDimension> getSampleDimensions() throws DataStoreException {
         final GridCoverageReader reader = acquireReader();
         try {
-            final List<GridSampleDimension> dims = reader.getSampleDimensions();
-            return org.geotoolkit.internal.coverage.CoverageUtilities.toSIS(dims);
+            return reader.getSampleDimensions();
         } finally {
             recycle(reader);
         }

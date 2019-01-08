@@ -235,10 +235,7 @@ final class CategoryTable extends Table implements DoubleToIntFunction {
                     statement.setNull(7, Types.DOUBLE);
                     statement.setNull(8, Types.VARCHAR);
                 }
-                String paletteName = null;
-                if (category instanceof ColoredCategory) {
-                    paletteName = getPaletteName(((ColoredCategory) category).getColors());
-                }
+                String paletteName = getPaletteName(ColoredCategory.getColors(category));
                 if (paletteName != null) {
                     statement.setString(9, paletteName);
                 } else {

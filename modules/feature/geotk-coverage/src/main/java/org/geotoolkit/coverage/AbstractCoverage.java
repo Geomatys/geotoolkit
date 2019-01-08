@@ -60,6 +60,7 @@ import javax.media.jai.TiledImage;
 import javax.media.jai.iterator.RectIterFactory;
 import javax.media.jai.iterator.WritableRectIter;
 import javax.media.jai.operator.ImageFunctionDescriptor;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.metadata.AxisDirections;
@@ -116,12 +117,6 @@ import org.opengis.util.RecordType;
  *       may be represented by a combination of mathematical functions valid over a
  *       set of polynomials.</li>
  * </ul>
- *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
- *
- * @since 1.2
- * @module
  */
 public abstract class AbstractCoverage extends PropertySourceImpl implements Coverage, Localized {
     /**
@@ -914,13 +909,12 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
             /*
              * Computes some properties of the image to be created.
              */
-            final Dimension       tileSize = ImageUtilities.toTileSize(gridBounds.getSize());
-            SampleDimension sampleDimension = getSampleDimensions().get(VISIBLE_BAND);
-            if (sampleDimension == null)
+            final Dimension tileSize = ImageUtilities.toTileSize(gridBounds.getSize());
+            SampleDimension band = getSampleDimensions().get(VISIBLE_BAND);
+            if (band == null)
                 throw new IllegalStateException("Sample dimensions are undetermined.");
-            final GridSampleDimension band = GridSampleDimension.castOrCopy(sampleDimension);
             final int nbBand = getSampleDimensions().size();
-            ColorModel colorModel = band.getColorModel(VISIBLE_BAND, nbBand);
+            ColorModel colorModel = SampleDimensionUtils.getColorModel(band, VISIBLE_BAND, nbBand);
             final SampleModel sampleModel;
             if (colorModel != null) {
                 sampleModel = colorModel.createCompatibleSampleModel(tileSize.width, tileSize.height);
@@ -1344,5 +1338,9 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
      */
     public boolean dispose(boolean force) {
         return true;
+    }
+
+    static {
+        SampleTranscoder.register(JAI.getDefaultInstance());
     }
 }

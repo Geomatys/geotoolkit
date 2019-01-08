@@ -32,7 +32,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.opengis.referencing.operation.TransformException;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 
 
 /**
@@ -145,7 +145,7 @@ final class GridCoverageEntry extends Entry {
     /**
      * Returns the coverage sample dimensions, or {@code null} if unknown.
      * This method returns always the <cite>geophysics</cite> version of sample dimensions
-     * (<code>{@linkplain GridSampleDimension#geophysics geophysics}(true)</code>), which is
+     * (<code>{@linkplain SampleDimension#geophysics geophysics}(true)</code>), which is
      * consistent with the coverage returned by {@link #getCoverage getCoverage(...)}.
      *
      * @return the sample dimensions, or {@code null} if unknown.

@@ -42,9 +42,10 @@ import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.iso.AbstractInternationalString;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.Category;
+import org.apache.sis.coverage.Category;
 import org.geotoolkit.coverage.Coverage;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -533,7 +534,7 @@ public class OperationJAI extends Operation2D {
      * following steps:
      * <p>
      * <ul>
-     *   <li>Gets the {@linkplain GridSampleDimension Sample Dimensions} for the target images
+     *   <li>Gets the {@linkplain SampleDimension Sample Dimensions} for the target images
      *       by invoking the {@link #deriveSampleDimension deriveSampleDimension} method.</li>
      *   <li>Applies the JAI operation using {@link #createRenderedImage createRenderedImage}.</li>
      *   <li>Wraps the result in a {@link GridCoverage2D} object.</li>
@@ -558,11 +559,11 @@ public class OperationJAI extends Operation2D {
          * a new color model will be constructed from the new SampleDimensions, taking in
          * account the visible band.
          */
-        final GridSampleDimension[][] list = new GridSampleDimension[sources.length][];
+        final SampleDimension[][] list = new SampleDimension[sources.length][];
         for (int i=0; i<list.length; i++) {
-            list[i] = sources[i].getSampleDimensions().toArray(new GridSampleDimension[0]);
+            list[i] = sources[i].getSampleDimensions().toArray(new SampleDimension[0]);
         }
-        final GridSampleDimension[] sampleDims = deriveSampleDimension(list, parameters);
+        final SampleDimension[] sampleDims = deriveSampleDimension(list, parameters);
         int primarySourceIndex = -1;
         for (int i=0; i<list.length; i++) {
             if (Arrays.equals(sampleDims, list[i])) {
@@ -585,7 +586,7 @@ public class OperationJAI extends Operation2D {
                     visibleBand = 0;
                 }
                 final ColorModel colors;
-                colors = sampleDims[visibleBand].getColorModel(visibleBand, sampleDims.length);
+                colors = SampleDimensionUtils.getColorModel(sampleDims[visibleBand], visibleBand, sampleDims.length);
                 if (colors != null) {
                     if (layout == null) {
                         layout = new ImageLayout();
@@ -681,7 +682,7 @@ public class OperationJAI extends Operation2D {
     }
 
     /**
-     * Returns the {@linkplain GridSampleDimension sample dimensions} for the target
+     * Returns the {@linkplain SampleDimension sample dimensions} for the target
      * {@linkplain GridCoverage2D grid coverage}. This method is invoked automatically by
      * {@link #deriveGridCoverage deriveGridCoverage} with a {@code bandLists} argument
      * initialized as below:
@@ -711,8 +712,8 @@ public class OperationJAI extends Operation2D {
      * @see #deriveCategory
      * @see #deriveUnit
      */
-    protected GridSampleDimension[] deriveSampleDimension(
-            final GridSampleDimension[][] bandLists, final Parameters parameters)
+    protected SampleDimension[] deriveSampleDimension(
+            final SampleDimension[][] bandLists, final Parameters parameters)
     {
         /*
          * Computes the number of bands. Sources with only 1 band are treated as a special case:
@@ -735,11 +736,11 @@ public class OperationJAI extends Operation2D {
          * during the iteration for each individual band. The 'XS' suffix designates temporary
          * arrays of categories and units accross all sources for one particular band.
          */
-        final GridSampleDimension[] result = new GridSampleDimension[numBands];
+        final SampleDimension[] result = new SampleDimension[numBands];
         final Category[]        categoryXS = new Category[bandLists.length];
         final Unit<?>[]             unitXS = new Unit<?>[bandLists.length];
         while (--numBands >= 0) {
-            GridSampleDimension sampleDim = null;
+            SampleDimension sampleDim = null;
             Category[]      categoryArray = null;
             int       indexOfQuantitative = 0;
             assert PRIMARY_SOURCE_INDEX == 0; // See comment below.
@@ -751,27 +752,27 @@ public class OperationJAI extends Operation2D {
                  * 'sampleDim', 'categoryArray' and 'indexOfQuantitative' after the
                  * loop.
                  */
-                final GridSampleDimension[] allBands = bandLists[i];
+                final SampleDimension[] allBands = bandLists[i];
                 sampleDim = allBands[allBands.length == 1 ? 0 : numBands];
                 final List<Category> categories = sampleDim.getCategories();
-                // GridSampleDimension may contain no categories
+                // SampleDimension may contain no categories
                 if (categories == null) {
                     result[numBands] = sampleDim;
                     continue;
                 }
-                categoryArray       = (Category[]) categories.toArray(); // NOSONAR
+                categoryArray = categories.toArray(new Category[categories.size()]);
                 indexOfQuantitative = getQuantitative(categoryArray);
                 if (indexOfQuantitative < 0) {
                     return null;
                 }
-                unitXS    [i] = sampleDim.getUnits();
+                unitXS    [i] = sampleDim.getUnits().orElse(null);
                 categoryXS[i] = categoryArray[indexOfQuantitative];
             }
             if (categoryArray == null) {
                 continue;
             }
             final Category oldCategory = categoryArray[indexOfQuantitative];
-            final Unit<?>  oldUnit     = sampleDim.getUnits();
+            final Unit<?>  oldUnit     = sampleDim.getUnits().orElse(null);
             final Category newCategory = deriveCategory(categoryXS, parameters);
             final Unit<?>  newUnit     = deriveUnit(unitXS, parameters);
             if (newCategory == null) {
@@ -783,12 +784,12 @@ public class OperationJAI extends Operation2D {
                  * title than the original sample dimension, because the new sample dimension
                  * may be quite different. For example the original sample dimension may be
                  * about "Temperature" in °C units, and the new one about "Gradient magnitude
-                 * of Temperature" in °C/km units. The GridSampleDimension constructor will
+                 * of Temperature" in °C/km units. The SampleDimension constructor will
                  * infers the title from what looks like the "main" category.
                  */
                 final CharSequence title = null;
                 categoryArray[indexOfQuantitative] = newCategory;
-                result[numBands] = new GridSampleDimension(title, categoryArray, newUnit);
+                result[numBands] = sampleDim;   // TODO: new SampleDimension(title, categoryArray, newUnit);
             } else {
                 // Reuse the category list from the primary source.
                 result[numBands] = sampleDim;
@@ -798,7 +799,7 @@ public class OperationJAI extends Operation2D {
     }
 
     /**
-     * Returns the quantitative category for a single {@linkplain GridSampleDimension sample dimension}
+     * Returns the quantitative category for a single {@linkplain SampleDimension sample dimension}
      * in the target {@linkplain GridCoverage2D grid coverage}. This method is invoked automatically
      * by the {@link #deriveSampleDimension deriveSampleDimension} method for each band in the
      * target image. The default implementation creates a default category from the target range
@@ -813,19 +814,20 @@ public class OperationJAI extends Operation2D {
     protected Category deriveCategory(final Category[] categories, final Parameters parameters) {
         final NumberRange<?>[] ranges = new NumberRange<?>[categories.length];
         for (int i=0; i<ranges.length; i++) {
-            ranges[i] = categories[i].getRange();
+            ranges[i] = categories[i].getSampleRange();
         }
         final NumberRange<?> range = deriveRange(ranges, parameters);
         if (range != null) {
             final Category category = categories[PRIMARY_SOURCE_INDEX];
-            return new Category(category.getName(), category.getColors(),
-                    category.geophysics(false).getRange(), range).geophysics(true);
+            return category;
+//          return new ColoredCategory(category.getName(), category.getColors(),
+//                  category.forConvertedValues(false).getSampleRange(), range).forConvertedValues(true);
         }
         return null;
     }
 
     /**
-     * Returns the range of value for a single {@linkplain GridSampleDimension sample dimension}
+     * Returns the range of value for a single {@linkplain SampleDimension sample dimension}
      * in the target {@linkplain GridCoverage2D grid coverage}. This method is invoked automatically
      * by the {@link #deriveCategory deriveCategory} method for each band in the target image.
      * Subclasses should override this method in order to compute the target range of values.
@@ -848,7 +850,7 @@ public class OperationJAI extends Operation2D {
     }
 
     /**
-     * Returns the unit of data for a single {@linkplain GridSampleDimension sample dimension} in the
+     * Returns the unit of data for a single {@linkplain SampleDimension sample dimension} in the
      * target {@linkplain GridCoverage2D grid coverage}. This method is invoked automatically by
      * the {@link #deriveSampleDimension deriveSampleDimension} method for each band in the target
      * image. Subclasses should override this method in order to compute the target units from the

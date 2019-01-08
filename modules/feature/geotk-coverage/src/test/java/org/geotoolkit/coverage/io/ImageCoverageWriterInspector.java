@@ -44,9 +44,6 @@ import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
  * writing process.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
- *
- * @since 3.14
  */
 final strictfp class ImageCoverageWriterInspector extends ImageCoverageWriter {
     /**

@@ -36,7 +36,7 @@ import javax.swing.plaf.ComponentUI;
 import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.display.axis.Graduation;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.coverage.SampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 
 
 /**
@@ -400,8 +400,8 @@ public class ColorRamp extends JComponent {
     protected Graduation createGraduation(final Graduation reuse, final SampleDimension band,
                                           final double minimum, final double maximum)
     {
-        return Painter.createDefaultGraduation(reuse, band.getSampleToGeophysics(),
-                minimum, maximum, band.getUnits(), getLocale());
+        return Painter.createDefaultGraduation(reuse, band.getTransferFunction().orElse(null),
+                minimum, maximum, band.getUnits().orElse(null), getLocale());
     }
 
     /**

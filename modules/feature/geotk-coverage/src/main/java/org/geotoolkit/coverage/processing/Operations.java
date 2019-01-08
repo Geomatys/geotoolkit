@@ -343,25 +343,7 @@ public class Operations {
     }
 
     /**
-     * Recolors a coverage to the specified color maps.
-     *
-     * @param  source    The source coverage.
-     * @param  colorMaps The color maps to apply.
-     * @return The result of the operation.
-     * @throws CoverageProcessingException if the operation can't be applied.
-     *
-     * @see org.geotoolkit.coverage.processing.operation.Recolor
-     *
-     * @since 2.4
-     */
-    public GridCoverage recolor(final GridCoverage source, final ColorMap... colorMaps)
-            throws CoverageProcessingException
-    {
-        return (GridCoverage) doOperation("Recolor", source, "ColorMaps", colorMaps);
-    }
-
-    /**
-     * Chooses <var>N</var> {@linkplain org.geotoolkit.coverage.GridSampleDimension sample dimensions}
+     * Chooses <var>N</var> {@linkplain org.geotoolkit.coverage.SampleDimension sample dimensions}
      * from a coverage and copies their sample data to the destination grid coverage in the order
      * specified.
      *

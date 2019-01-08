@@ -29,7 +29,7 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -181,7 +181,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
         }
 
         @Override
-        public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+        public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
             return ref.coverage.getSampleDimensions();
         }
 

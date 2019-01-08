@@ -25,6 +25,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.renderable.ParameterBlock;
 import java.util.Vector;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
@@ -40,10 +41,18 @@ import javax.media.jai.iterator.RectIterFactory;
 import javax.media.jai.iterator.WritableRectIter;
 import javax.media.jai.registry.RenderedRegistryMode;
 
+import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.TransformException;
+
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.TransfertRectIter;
+
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.Classes;
+
 
 
 /**
@@ -53,12 +62,9 @@ import org.geotoolkit.image.TransfertRectIter;
  * {@link java.awt.image.renderable.ContextualRenderedImageFactory}. The image
  * operation name is {@code "org.geotoolkit.SampleTranscode"}.
  *
- * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.11
- *
- * @since 2.1
- * @module
+ * @deprecated To be removed.
  */
+@Deprecated
 final class SampleTranscoder extends PointOpImage {
     /**
      * The operation name.
@@ -71,7 +77,7 @@ final class SampleTranscoder extends PointOpImage {
      * Category lists for each bands.
      * The array length must matches the number of bands in source image.
      */
-    private final CategoryList[] categories;
+    private final SampleDimension[] categories;
 
     /**
      * {@code true} if the buffer is of kind {@code TYPE_USHORT} and the sample values
@@ -89,7 +95,7 @@ final class SampleTranscoder extends PointOpImage {
      * @param hints      The rendering hints.
      */
     private SampleTranscoder(final RenderedImage  image,
-                             final CategoryList[] categories,
+                             final SampleDimension[] categories,
                              final RenderingHints hints)
     {
         super(image, (ImageLayout) hints.get(JAI.KEY_IMAGE_LAYOUT), hints, false);
@@ -100,8 +106,9 @@ final class SampleTranscoder extends PointOpImage {
         }
         boolean forceSigned = false;
         if (image.getSampleModel().getDataType() == DataBuffer.TYPE_USHORT) {
-            for (final CategoryList list : categories) {
-                if (list.isRangeSigned()) {
+            for (final SampleDimension list : categories) {
+                Optional<NumberRange<?>> range = list.getSampleRange();
+                if (range.isPresent() && range.get().getMinDouble() < 0) {
                     forceSigned = true;
                     break;
                 }
@@ -149,10 +156,40 @@ final class SampleTranscoder extends PointOpImage {
         }
         int band = 0;
         if (!iterator.finishedBands()) do {
-            categories[band++].transform(iterator);
+            categories[band++].getTransferFunction().ifPresent((t) -> transform(t, iterator));
         }
         while (!iterator.nextBandDone());
         assert band == categories.length : band;
+    }
+
+    /**
+     * Transforms a raster. Only the current band in {@code iterator} will be transformed.
+     * The transformed value are written back in the {@code iterator}. If a different
+     * destination raster is wanted, a {@link org.geotoolkit.image.TransfertRectIter}
+     * may be used.
+     *
+     * @param  iterator An iterator to iterate among the samples to transform.
+     * @throws RasterFormatException if a problem occurs during the transformation.
+     */
+    private static void transform(final MathTransform1D tf, final WritableRectIter iterator) {
+        try {
+            iterator.startLines();
+            if (!iterator.finishedLines()) do {
+                iterator.startPixels();
+                if (!iterator.finishedPixels()) do {
+                    double value = iterator.getSampleDouble();
+                    value = tf.transform(value);
+                    iterator.setSample(value);
+                }
+                while (!iterator.nextPixelDone());
+            }
+            while (!iterator.nextLineDone());
+        } catch (TransformException cause) {
+            RasterFormatException exception = new RasterFormatException(Errors.format(
+                    Errors.Keys.IllegalTransformForType_1, Classes.getClass(tf)));
+            exception.initCause(cause);
+            throw exception;
+        }
     }
 
 
@@ -165,13 +202,13 @@ final class SampleTranscoder extends PointOpImage {
     /////////////////////////////////////////////////////////////////////////////////
     /**
      * The operation descriptor for the "SampleTranscode" operation. This operation can apply the
-     * {@link GridSampleDimension#getSampleToGeophysics sampleToGeophysics} transform on all pixels
+     * {@link SampleDimension#getSampleToGeophysics sampleToGeophysics} transform on all pixels
      * in all bands of an image. The transformations are supplied as a list of
-     * {@link GridSampleDimension}s, one for each band. The supplied {@code GridSampleDimension}
+     * {@link SampleDimension}s, one for each band. The supplied {@code SampleDimension}
      * objects describe the categories in the <strong>source</strong> image. The target image
      * will matches sample dimension
      *
-     *     <code>{@link GridSampleDimension#geophysics geophysics}(!isGeophysics)</code>,
+     *     <code>{@link SampleDimension#geophysics geophysics}(!isGeophysics)</code>,
      *
      * where {@code isGeophysics} is the previous state of the sample dimension.
      */
@@ -193,14 +230,14 @@ final class SampleTranscoder extends PointOpImage {
                                  {"Version",     "1.0"}},
                   new String[]   {RenderedRegistryMode.MODE_NAME}, 1,
                   new String[]   {"sampleDimensions"},          // Argument names
-                  new Class<?>[] {GridSampleDimension[].class}, // Argument classes
+                  new Class<?>[] {SampleDimension[].class},     // Argument classes
                   new Object[]   {NO_PARAMETER_DEFAULT},        // Default values for parameters,
                   null // No restriction on valid parameter values.
             );
         }
 
         /**
-         * Returns {@code true} if the parameters are valids. This implementation check
+         * Returns {@code true} if the parameters are valid. This implementation check
          * that the number of bands in the source image is equals to the number of supplied
          * sample dimensions, and that all sample dimensions has categories.
          *
@@ -216,7 +253,7 @@ final class SampleTranscoder extends PointOpImage {
                 return false;
             }
             final RenderedImage source = (RenderedImage) param.getSource(0);
-            final GridSampleDimension[] bands = (GridSampleDimension[]) param.getObjectParameter(0);
+            final SampleDimension[] bands = (SampleDimension[]) param.getObjectParameter(0);
             final int numBands = source.getSampleModel().getNumBands();
             if (numBands != bands.length) {
                 message.append(Errors.format(Errors.Keys.MismatchedNumberOfBands_3,
@@ -224,7 +261,7 @@ final class SampleTranscoder extends PointOpImage {
                 return false;
             }
             for (int i=0; i<numBands; i++) {
-                if (bands[i].categories == null) {
+                if (bands[i].getCategories() == null) {
                     message.append(Errors.format(Errors.Keys.IllegalParameterValue_2,
                             "sampleDimensions["+i+"].categories", null));
                     return false;
@@ -246,32 +283,29 @@ final class SampleTranscoder extends PointOpImage {
         @Override
         public RenderedImage create(final ParameterBlock param, final RenderingHints hints) {
             final RenderedImage image = (RenderedImage) param.getSource(0);
-            final GridSampleDimension[] bands = (GridSampleDimension[]) param.getObjectParameter(0);
-            final CategoryList[] categories = new CategoryList[bands.length];
-            for (int i=0; i<categories.length; i++) {
-                categories[i] = bands[i].categories;
-            }
+            final SampleDimension[] bands = (SampleDimension[]) param.getObjectParameter(0);
             if (image instanceof SampleTranscoder) {
                 final SampleTranscoder other = (SampleTranscoder) image;
-                if (isInverse(categories, other.categories)) {
+                if (isInverse(bands, other.categories)) {
                     return other.getSourceImage(0);
                 }
             }
-            return new SampleTranscoder(image, categories, hints);
+            return new SampleTranscoder(image, bands, hints);
         }
 
         /**
          * Checks if all categories in {@code categories1} are
          * equals to the inverse of {@code categories2}.
          */
-        private static boolean isInverse(final CategoryList[] categories1,
-                                         final CategoryList[] categories2)
+        private static boolean isInverse(final SampleDimension[] categories1,
+                                         final SampleDimension[] categories2)
         {
             if (categories1.length != categories2.length) {
                 return false;
             }
             for (int i=0; i<categories1.length; i++) {
-                if (!categories1[i].equals(categories2[i].inverse)) {
+                // TODO: this is not a good check.
+                if (!categories1[i].forConvertedValues(false).equals(categories2[i].forConvertedValues(false))) {
                     return false;
                 }
             }
@@ -282,7 +316,7 @@ final class SampleTranscoder extends PointOpImage {
     /**
      * Register the "SampleTranscode" image operation to the operation registry of
      * the specified JAI instance. This method is invoked by the static initializer
-     * of {@link GridSampleDimension}.
+     * of {@link SampleDimension}.
      */
     public static void register(final JAI jai) {
         final OperationRegistry registry = jai.getOperationRegistry();
@@ -293,8 +327,8 @@ final class SampleTranscoder extends PointOpImage {
         } catch (IllegalArgumentException exception) {
             final LogRecord record = Loggings.format(Level.SEVERE,
                    Loggings.Keys.CantRegisterJaiOperation_1, OPERATION_NAME);
-            // Note: GridSampleDimension is the public class that use this transcoder.
-            record.setSourceClassName(GridSampleDimension.class.getName());
+            // Note: SampleDimension is the public class that use this transcoder.
+            record.setSourceClassName(SampleDimension.class.getName());
             record.setSourceMethodName("<classinit>");
             record.setThrown(exception);
             final Logger logger = Logging.getLogger("org.geotoolkit.coverage");

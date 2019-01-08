@@ -28,7 +28,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -67,13 +67,13 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
 
     //source unmodified informations
     protected GridGeometry refGridGeom;
-    protected List<GridSampleDimension> refDims;
+    protected List<SampleDimension> refDims;
 
     //overrided informations
     protected CoordinateReferenceSystem overrideCRS;
     protected PixelInCell overridePixelInCell;
     protected MathTransform overrideGridToCrs;
-    protected List<GridSampleDimension> overrideDims;
+    protected List<SampleDimension> overrideDims;
 
     public AmendedCoverageResource(GridCoverageResource ref, DataStore store) {
         this.store = store;
@@ -200,7 +200,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      *
      * @return List, can be null
      */
-    public List<GridSampleDimension> getOverrideDims() {
+    public List<SampleDimension> getOverrideDims() {
         return overrideDims;
     }
 
@@ -209,7 +209,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      *
      * @param overrideDims , can be null
      */
-    public void setOverrideDims(List<GridSampleDimension> overrideDims) {
+    public void setOverrideDims(List<SampleDimension> overrideDims) {
         this.overrideDims = overrideDims;
     }
 
@@ -249,7 +249,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      * @return overridden sample dimensions or original ones is there are no overrides.
      * @throws CoverageStoreException
      */
-    public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException{
+    public List<SampleDimension> getSampleDimensions(int index) throws CoverageStoreException{
         loadRefData();
         if(overrideDims!=null){
             return overrideDims;

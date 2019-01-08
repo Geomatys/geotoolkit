@@ -27,7 +27,7 @@ import javax.measure.Unit;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
@@ -53,18 +53,18 @@ public class CoveragePresenter extends AbstractInformationPresenter{
     }
 
     private JComponent createComponent(final ProjectedCoverage coverage, final RenderingContext2D context, final SearchAreaJ2D area){
-        final List<Entry<GridSampleDimension,Object>> results = Bridge.readCoverageValues(coverage, context, area);
+        final List<Entry<SampleDimension,Object>> results = Bridge.readCoverageValues(coverage, context, area);
 
         final StringBuilder builder = new StringBuilder();
         int band = 0;
         if(results != null){
-            for (Entry<GridSampleDimension,Object> entry : results) {
+            for (Entry<SampleDimension,Object> entry : results) {
                 final Object value = entry.getValue();
                 if (value == null) {
                     continue;
                 }
                 builder.append(band++).append(" : ").append(value).append("<br>");
-                final Unit unit = entry.getKey().getUnits();
+                final Unit unit = entry.getKey().getUnits().orElse(null);
                 if (unit != null) {
                     builder.append(' ').append(unit.toString());
                 }
@@ -87,12 +87,12 @@ public class CoveragePresenter extends AbstractInformationPresenter{
         return scroll;
     }
 
-    protected List<Entry<GridSampleDimension,Object>> visit(final ProjectedCoverage projectedCoverage, final RenderingContext2D context, final SearchAreaJ2D queryArea) {
+    protected List<Entry<SampleDimension,Object>> visit(final ProjectedCoverage projectedCoverage, final RenderingContext2D context, final SearchAreaJ2D queryArea) {
         return Bridge.readCoverageValues(projectedCoverage, context, queryArea);
     }
 
     private abstract static class Bridge extends AbstractGraphicVisitor{
-        public static List<Entry<GridSampleDimension,Object>> readCoverageValues(final ProjectedCoverage projectedCoverage,
+        public static List<Entry<SampleDimension,Object>> readCoverageValues(final ProjectedCoverage projectedCoverage,
                             final RenderingContext2D context, final SearchAreaJ2D queryArea){
             return getCoverageValues(projectedCoverage, context, queryArea);
         }

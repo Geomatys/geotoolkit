@@ -42,7 +42,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridCoverageStack;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
 import org.geotoolkit.coverage.grid.*;
@@ -210,9 +210,9 @@ public class PyramidalModelReader extends GridCoverageReader{
     }
 
     @Override
-    public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+    public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
         try {
-            return getPyramidalModel().getGridSampleDimensions();
+            return getPyramidalModel().getSampleDimensions();
         } catch (DataStoreException ex) {
             throw new CoverageStoreException(ex.getMessage(), ex);
         }
@@ -497,9 +497,9 @@ public class PyramidalModelReader extends GridCoverageReader{
         //build the coverage ---------------------------------------------------
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName(ref.getIdentifier().tip().toString());
-        final List<GridSampleDimension> dimensions = getSampleDimensions();
+        final List<SampleDimension> dimensions = getSampleDimensions();
         if (dimensions != null) {
-            gcb.setSampleDimensions(dimensions.toArray(new GridSampleDimension[dimensions.size()]));
+            gcb.setSampleDimensions(dimensions.toArray(new SampleDimension[dimensions.size()]));
         }
 
         final long[] high = new long[wantedCRS.getCoordinateSystem().getDimension()];

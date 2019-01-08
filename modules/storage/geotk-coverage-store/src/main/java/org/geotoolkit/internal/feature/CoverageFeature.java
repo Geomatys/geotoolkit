@@ -35,8 +35,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.CoverageStack;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.SampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -125,7 +124,7 @@ public final class CoverageFeature {
         if (dims != null && !dims.isEmpty()) {
             for (int i=0,n=dims.size();i<n;i++) {
                 final SampleDimension gsd = dims.get(i);
-                final String name = gsd.getDescription() == null ? ""+i : gsd.getDescription().toString();
+                final String name = gsd.getName() == null ? ""+i : gsd.getName().toString();
                 ftb.addAttribute(Double.class).setName(name).setMinimumOccurs(1).setMaximumOccurs(1);
             }
             return ftb.build();
@@ -166,11 +165,11 @@ public final class CoverageFeature {
         }
 
         //use existing sample dimensions
-        final List<GridSampleDimension> samples = reader.getSampleDimensions();
+        final List<SampleDimension> samples = reader.getSampleDimensions();
         if (samples!=null) {
             for (int i=0,n=samples.size();i<n;i++) {
-                final GridSampleDimension gsd = samples.get(i);
-                final String name = gsd.getDescription() == null ? ""+i : gsd.getDescription().toString();
+                final SampleDimension gsd = samples.get(i);
+                final String name = gsd.getName() == null ? ""+i : gsd.getName().toString();
                 ftb.addAttribute(Double.class).setName(name).setMinimumOccurs(1).setMaximumOccurs(1);
             }
             return ftb.build();

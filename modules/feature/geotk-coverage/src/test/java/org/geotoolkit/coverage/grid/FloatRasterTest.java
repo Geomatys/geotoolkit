@@ -22,7 +22,6 @@ import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
 import javax.media.jai.RasterFactory;
 
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -36,9 +35,6 @@ import org.junit.*;
  * Tests the creation of a grid coverage using floating point value.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.02
- *
- * @since 2.1
  */
 public final strictfp class FloatRasterTest extends GridCoverageTestBase {
     /**

@@ -21,16 +21,16 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -39,6 +39,7 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.geotoolkit.internal.coverage.ColoredCategory;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import static org.junit.Assert.*;
@@ -432,7 +433,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
         }
 
         @Override
-        public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+        public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
@@ -467,8 +468,8 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
                 gcb.setRenderedImage(newImage);
                 gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
 
-                Category cat = new Category("val", new Color[]{Color.WHITE,Color.BLACK}, -128, 128, 1, 0);
-                GridSampleDimension gsd = new GridSampleDimension("dim0", new Category[]{cat}, Units.METRE);
+                ColoredCategory cat = new ColoredCategory("val", new Color[]{Color.WHITE,Color.BLACK}, -128, 128, 1, 0);
+                SampleDimension gsd = new SampleDimension(Names.createLocalName(null, null, "dim0"), null, Collections.singletonList(cat));
 
                 gcb.setSampleDimensions(gsd);
                 return gcb.getGridCoverage2D();

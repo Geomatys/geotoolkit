@@ -20,7 +20,7 @@ package org.geotoolkit.coverage.io;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.geotoolkit.coverage.Coverage;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.opengis.util.GenericName;
 
 /**
@@ -56,7 +56,7 @@ public interface CoverageReader {
      * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
      *         the execution of this method.
      */
-    List<GridSampleDimension> getSampleDimensions()
+    List<SampleDimension> getSampleDimensions()
             throws CoverageStoreException, CancellationException;
 
     /**

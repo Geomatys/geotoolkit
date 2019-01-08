@@ -30,7 +30,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -317,7 +317,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         }
 
         @Override
-        public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+        public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
             return coverage.getSampleDimensions();
         }
 

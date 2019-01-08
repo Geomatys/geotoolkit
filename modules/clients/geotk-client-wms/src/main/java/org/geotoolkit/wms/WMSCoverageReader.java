@@ -34,7 +34,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -105,7 +105,7 @@ public class WMSCoverageReader extends GridCoverageReader{
     }
 
     @Override
-    public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+    public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
         //unknowned
         return null;
     }

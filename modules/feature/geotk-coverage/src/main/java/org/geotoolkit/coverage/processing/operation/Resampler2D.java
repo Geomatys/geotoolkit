@@ -49,7 +49,7 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -133,7 +133,7 @@ final class Resampler2D extends GridCoverage2D {
     private Resampler2D(final GridCoverage2D        source,
                         final PlanarImage           image,
                         final GridGeometry2D        geometry,
-                        final GridSampleDimension[] sampleDimensions,
+                        final SampleDimension[] sampleDimensions,
                         final Hints                 hints)
     {
         super(source.getName(), image, geometry, sampleDimensions,
@@ -154,14 +154,14 @@ final class Resampler2D extends GridCoverage2D {
                                          final ViewType       finalView,
                                          final Hints          hints)
     {
-        final GridSampleDimension[] sampleDimensions;
+        final SampleDimension[] sampleDimensions;
         switch (finalView) {
             case PHOTOGRAPHIC: {
                 sampleDimensions = null;
                 break;
             }
             default: {
-                sampleDimensions = source.getSampleDimensions().toArray(new GridSampleDimension[0]);
+                sampleDimensions = source.getSampleDimensions().toArray(new SampleDimension[0]);
                 break;
             }
         }

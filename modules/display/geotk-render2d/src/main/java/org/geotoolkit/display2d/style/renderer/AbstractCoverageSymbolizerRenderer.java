@@ -38,9 +38,10 @@ import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.Category;
+import org.apache.sis.coverage.Category;
 import org.geotoolkit.coverage.Coverage;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -467,7 +468,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             }
 
             //-- find most appropriate interpolation
-            List<GridSampleDimension> sampleDimensions= null;
+            List<SampleDimension> sampleDimensions= null;
             try {
                 sampleDimensions = reader.getSampleDimensions();
             } catch(Exception ex) {
@@ -562,7 +563,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
          * 1 : Normally all NODATA for all gridSampleDimension for a same coverage are equals.
          * 2 : Normally all NODATA for each coverage internally samples are equals.
          */
-        List<GridSampleDimension> sampleDimensions = null;
+        List<SampleDimension> sampleDimensions = null;
         try {
             sampleDimensions = dataCoverage.getSampleDimensions();
         } catch(Exception ex) {
@@ -571,7 +572,14 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         }
         double[] nodata = null;
         if (sampleDimensions != null && !sampleDimensions.isEmpty()) {
-            nodata = sampleDimensions.get(0).getNoDataValues();
+            nodata = new double[sampleDimensions.size()];
+            Arrays.fill(nodata, Double.NaN);
+            for (int i=0,n=sampleDimensions.size();i<n;i++) {
+                double[] cdts = SampleDimensionUtils.getNoDataValues(sampleDimensions.get(i));
+                if (cdts != null && cdts.length > 0) {
+                    nodata[i] = cdts[0];
+                }
+            }
         }
 
         /*
@@ -762,10 +770,10 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * Detect the most appropriate interpolation type based on coverage sample dimensions.
      * Interpolation is possible only when data do not contain qualitative informations.
      */
-    private static InterpolationCase findInterpolationCase(List<GridSampleDimension> sampleDimensions) throws CoverageStoreException{
+    private static InterpolationCase findInterpolationCase(List<SampleDimension> sampleDimensions) throws CoverageStoreException{
 
         if (sampleDimensions != null) {
-            for (GridSampleDimension sd : sampleDimensions) {
+            for (SampleDimension sd : sampleDimensions) {
                 final List<Category> categories = sd.getCategories();
                 if (categories != null) {
                     for (Category cat : categories) {

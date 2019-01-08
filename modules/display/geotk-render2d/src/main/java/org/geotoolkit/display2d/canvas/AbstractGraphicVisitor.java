@@ -32,7 +32,7 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -113,7 +113,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
      *
      * @return list : each entry contain a gridsampledimension and value associated.
      */
-    protected static List<Entry<GridSampleDimension,Object>> getCoverageValues(final ProjectedCoverage gra, final RenderingContext2D context, final SearchAreaJ2D queryArea) {
+    protected static List<Entry<SampleDimension,Object>> getCoverageValues(final ProjectedCoverage gra, final RenderingContext2D context, final SearchAreaJ2D queryArea) {
 
         final CoverageMapLayer layer = gra.getLayer();
         Envelope objBounds = context.getCanvasObjectiveBounds();
@@ -188,7 +188,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         dp.setOrdinate(0, bounds2D.getCenterX());
         dp.setOrdinate(1, bounds2D.getCenterY());
 
-        final List<GridSampleDimension> dims = coverage.getSampleDimensions();
+        final List<SampleDimension> dims = coverage.getSampleDimensions();
         float[] values = null;
 
         try{
@@ -199,10 +199,10 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
             Arrays.fill(values, Float.NaN);
         }
 
-        final List<Entry<GridSampleDimension,Object>> results = new ArrayList<>();
+        final List<Entry<SampleDimension,Object>> results = new ArrayList<>();
         for (int i=0; i<values.length; i++){
-            final GridSampleDimension sample = dims.get(i);
-            results.add(new SimpleImmutableEntry<GridSampleDimension, Object>(sample, values[i]));
+            final SampleDimension sample = dims.get(i);
+            results.add(new SimpleImmutableEntry<SampleDimension, Object>(sample, values[i]));
         }
         return results;
     }

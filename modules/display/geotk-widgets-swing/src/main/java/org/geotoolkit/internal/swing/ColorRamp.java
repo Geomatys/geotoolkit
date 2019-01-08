@@ -42,7 +42,6 @@ import java.util.logging.LogRecord;
 import javax.measure.Unit;
 import org.apache.sis.measure.UnitFormat;
 
-import org.geotoolkit.coverage.SampleDimension;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
@@ -57,10 +56,11 @@ import org.geotoolkit.display.axis.NumberGraduation;
 import org.geotoolkit.display.axis.AbstractGraduation;
 import org.geotoolkit.display.axis.LogarithmicNumberGraduation;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 
 
 /**
@@ -377,14 +377,12 @@ public class ColorRamp implements Serializable {
          * algorithm only as a fallback (i.e. use categories when available)?
          */
         if (band != null) {
-            if (band instanceof GridSampleDimension) {
-                band = ((GridSampleDimension) band).geophysics(false);
-            }
+            band = band.forConvertedValues(false);
             final int[][] palette = null;   // TODO band.getPalette();
             if (palette != null) {
                 int lower = 0; // Will be inclusive
                 int upper = 0; // Will be exclusive
-                final double[] nodata = band.getNoDataValues();
+                final double[] nodata = SampleDimensionUtils.getNoDataValues(band);
                 final double[] sorted = new double[nodata!=null ? nodata.length + 2 : 2];
                 sorted[0] = -1;
                 sorted[sorted.length - 1] = palette.length;
@@ -431,7 +429,7 @@ public class ColorRamp implements Serializable {
                 }
                 double min, max;
                 try {
-                    final MathTransform1D tr = band.getSampleToGeophysics();
+                    final MathTransform1D tr = band.getTransferFunction().orElse(null);
                     min = tr.transform(lower);
                     max = tr.transform(upper);
                 } catch (TransformException cause) {
@@ -710,8 +708,8 @@ public class ColorRamp implements Serializable {
     protected Graduation createGraduation(final Graduation reuse, final SampleDimension band,
                                           final double minimum, final double maximum)
     {
-        return createDefaultGraduation(reuse, band.getSampleToGeophysics(),
-                minimum, maximum, band.getUnits(), getLocale());
+        return createDefaultGraduation(reuse, band.getTransferFunction().orElse(null),
+                minimum, maximum, band.getUnits().orElse(null), getLocale());
     }
 
     /**

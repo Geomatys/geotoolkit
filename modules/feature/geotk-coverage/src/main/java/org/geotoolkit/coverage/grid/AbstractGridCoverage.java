@@ -39,10 +39,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Base class for Geotk implementation of grid coverage.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
- *
- * @since 2.1
- * @module
  */
 public abstract class AbstractGridCoverage extends AbstractCoverage implements GridCoverage {
     /**

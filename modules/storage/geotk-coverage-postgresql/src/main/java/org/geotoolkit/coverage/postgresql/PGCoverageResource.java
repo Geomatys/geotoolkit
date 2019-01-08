@@ -42,8 +42,10 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionBuilder;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -54,6 +56,7 @@ import org.geotoolkit.data.multires.MultiResolutionModel;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.internal.InternalUtilities;
+import org.geotoolkit.internal.coverage.ColoredCategory;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
@@ -391,8 +394,8 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
     }
 
     @Override
-    public List<GridSampleDimension> getGridSampleDimensions() throws DataStoreException{
-        final List<GridSampleDimension> dimensions = new LinkedList<>();
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException{
+        final List<SampleDimension> dimensions = new LinkedList<>();
 
         boolean versionSupport = isVersionColumnExist();
 
@@ -451,6 +454,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
                 catQuery.append("\"band\"=").append(Integer.valueOf(sid));
                 stmt = cnx.createStatement();
                 final ResultSet catrs = stmt.executeQuery(catQuery.toString());
+                final SampleDimensionBuilder b = new SampleDimensionBuilder();
                 while(catrs.next()){
                     final String name = catrs.getString("name");
                     final double lower = catrs.getDouble("lower");
@@ -476,18 +480,16 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
                     for(int i=0;i<cols.length;i++){
                         cols[i] = new java.awt.Color(InternalUtilities.parseColor(colors[i]), true);
                     }
-
-                    final Category cat;
                     if(Double.isNaN(lower) || lower == upper){
-                        cat = new Category(name, cols[0], lower);
+                        b.addQualitative(name, lower);
+                        b.setLastCategoryColors(cols[0]);
                     }else{
                         final NumberRange range = NumberRange.create(lower, true, upper, false);
-                        cat = new Category(name, cols, range, sampleToGeophysics);
+                        b.addQuantitative(name, range, sampleToGeophysics, unit);
+                        b.setLastCategoryColors(cols);
                     }
-                    categories.add(cat);
                 }
-
-                final GridSampleDimension dim = new GridSampleDimension(description, categories.toArray(new Category[categories.size()]), unit);
+                final SampleDimension dim = b.setName(description).build();
                 dimensions.add(indice, dim);
             }
 
@@ -533,7 +535,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
     }
 
     @Override
-    public void setGridSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
+    public void setSampleDimensions(List<SampleDimension> dimensions) throws DataStoreException {
 
         boolean versionSupport = isVersionColumnExist();
 
@@ -559,7 +561,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
                 final int layerId = pgstore.getLayerId(cnx,getIdentifier().tip().toString());
                 for (int i = 0; i < dimensions.size(); i++) {
 
-                    final GridSampleDimension dim = dimensions.get(i);
+                    final SampleDimension dim = dimensions.get(i);
                     String versionStr;
                     if (version != null && !version.getLabel().equals(PGVersionControl.UNSET)) {
                         versionStr = TemporalUtilities.toISO8601Z(version.getDate(), TimeZone.getTimeZone("GMT+0"));
@@ -567,7 +569,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
                         versionStr = PGVersionControl.UNSET;
                     }
 
-                    final String description = dim.getDescription() != null ? dim.getDescription().toString() : "";
+                    final String description = dim.getName() != null ? dim.getName().toString() : "";
                     final String unit = dim.getUnits() != null ? dim.getUnits().toString() : "";
 
                     final StringBuilder query = new StringBuilder();
@@ -583,7 +585,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
                         pstmt.setString(2, versionStr);
                         pstmt.setInt(3, i);
                         pstmt.setString(4, description);
-                        pstmt.setInt(5, (WKBRasterConstants.getPixelType(dim.getSampleDimensionType())));
+                        pstmt.setInt(5, (WKBRasterConstants.getPixelType(SampleDimensionType.REAL_32BITS /* dim.getSampleDimensionType() */)));
                         pstmt.setString(6, unit);
 
                     } else {
@@ -597,7 +599,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
                         pstmt.setInt(1, layerId);
                         pstmt.setInt(2, i);
                         pstmt.setString(3, description);
-                        pstmt.setInt(4, (WKBRasterConstants.getPixelType(dim.getSampleDimensionType())));
+                        pstmt.setInt(4, (WKBRasterConstants.getPixelType(SampleDimensionType.REAL_32BITS /* dim.getSampleDimensionType() */)));
                         pstmt.setString(5, unit);
                     }
                     pstmt.executeUpdate();
@@ -613,7 +615,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
                     if (categories == null || categories.isEmpty()) {
                         //use the statistic analyze to build categories.
                         categories = new ArrayList<>();
-                        final double[] pNoData = dim.getNoDataValues();
+                        final double[] pNoData = SampleDimensionUtils.getNoDataValues(dim);
                         Double[] noData;
                         if (pNoData != null) {
                             noData = new Double[pNoData.length];
@@ -622,36 +624,34 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
                             }
                         }
 
-                        double min = Double.isInfinite(dim.getMinimumValue()) ? minDimValues[i] : dim.getMinimumValue();
-                        double max = Double.isInfinite(dim.getMaximumValue()) ? maxDimValues[i] : dim.getMaximumValue();
+                        double min = Double.isInfinite(SampleDimensionUtils.getMinimumValue(dim)) ? minDimValues[i] : SampleDimensionUtils.getMinimumValue(dim);
+                        double max = Double.isInfinite(SampleDimensionUtils.getMaximumValue(dim)) ? maxDimValues[i] : SampleDimensionUtils.getMaximumValue(dim);
 
-                        categories.add(new Category("data", Color.BLACK, NumberRange.create(min, true, max, true)));
+                        categories.add(new ColoredCategory("data", Color.BLACK, NumberRange.create(min, true, max, true)));
                         if (pNoData != null && pNoData.length > 0) {
                             for (int k = 0; k < pNoData.length; k++) {
-                                categories.add(new Category(Vocabulary.formatInternational(Vocabulary.Keys.Nodata) + String.valueOf(k), new Color(0,0,0,0), pNoData[k]));
+                                categories.add(new ColoredCategory(Vocabulary.formatInternational(Vocabulary.Keys.Nodata) + String.valueOf(k), new Color(0,0,0,0), pNoData[k]));
                             }
                         }
                     }
 
-
                     for (Category category : categories) {
-
                         final double c0;
                         final double c1;
                         final String function;
                         final String[] colors;
-                        double min = category.getRange().getMinDouble();
-                        double max = category.getRange().getMaxDouble();
+                        double min = category.getSampleRange().getMinDouble();
+                        double max = category.getSampleRange().getMaxDouble();
                         min = fixCloseToZero(min);
                         max = fixCloseToZero(max);
 
-                        final Color[] cols = category.getColors();
+                        final Color[] cols = ColoredCategory.getColors(category);
                         colors = new String[cols.length];
-                        for(int k=0;k<cols.length;k++){
+                        for (int k=0; k < cols.length; k++){
                             colors[k] = colorToString(cols[k]);
                         }
 
-                        final MathTransform1D trs = category.getSampleToGeophysics();
+                        final MathTransform1D trs = category.getTransferFunction().orElse(null);
                         if (trs == null) {
                             function = TransferFunctionType.LINEAR.name();
                             c0 = 0;
@@ -750,6 +750,4 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
     public CoverageStoreContentEvent fireTileUpdated(String pyramidId, String mosaicId, List<Point> tiles) {
         return super.fireTileUpdated(pyramidId, mosaicId, tiles);
     }
-
-
 }

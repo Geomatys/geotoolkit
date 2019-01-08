@@ -31,8 +31,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.opengis.referencing.operation.MathTransform1D;
 import org.geotoolkit.image.SampleImage;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
@@ -42,6 +41,7 @@ import org.apache.sis.referencing.operation.transform.TransferFunction;
 import static java.awt.Color.decode;
 import static org.apache.sis.measure.Units.*;
 import static org.apache.sis.measure.NumberRange.create;
+import org.geotoolkit.coverage.SampleDimensionBuilder;
 import static org.junit.Assert.*;
 
 
@@ -49,9 +49,6 @@ import static org.junit.Assert.*;
  * Enumeration of sample grid coverages.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 3.02
  */
 public strictfp enum SampleCoverage {
     /**
@@ -70,16 +67,7 @@ public strictfp enum SampleCoverage {
      *   Image size         :  (450 x 460) pixels
      * }
      */
-    SST(SampleImage.INDEXED, CommonCRS.WGS84.normalizedGeographic(), new Rectangle(35, -41, 45, 46),
-            new GridSampleDimension("Measure", new Category[] {
-                new Category("Coast line", decode("#000000"), create(  0, true,   0, true)),
-                new Category("Cloud",      decode("#C3C3C3"), create(  1, true,   9, true)),
-                new Category("Unused",     decode("#822382"), create( 10, true,  29, true)),
-                new Category("Sea Surface Temperature", null, create( 30, true, 219, true), 0.1, 10.0),
-                new Category("Unused",     decode("#A0505C"), create(220, true, 239, true)),
-                new Category("Land",       decode("#D2C8A0"), create(240, true, 254, true)),
-                new Category("No data",    decode("#FFFFFF"), create(255, true, 255, true)),
-            }, CELSIUS)),
+    SST(SampleImage.INDEXED, CommonCRS.WGS84.normalizedGeographic(), new Rectangle(35, -41, 45, 46), sampleDimension(true)),
 
     /**
      * Chlorophyl-a concentration.
@@ -96,15 +84,7 @@ public strictfp enum SampleCoverage {
      *   Image size         :  (300 x 175) pixels
      * }
      */
-    CHL(SampleImage.INDEXED_LOGARITHMIC, CommonCRS.WGS84.normalizedGeographic(), new Rectangle(-7, 34, 19, 11),
-            new GridSampleDimension("Measure", new Category[] {
-                new Category("Land",    decode("#000000"), create(255, true, 255, true)),
-                new Category("No data", decode("#FFFFFF"), create(  0, true,   0, true)),
-                new Category("Chl-a",   null,              create(  1, true, 254, true),
-                        MathTransforms.concatenate(
-                        (MathTransform1D) MathTransforms.linear(0.015, -1.985),
-                        exp()))
-        }, KILOGRAM.divide(1E6).divide(CUBIC_METRE))),
+    CHL(SampleImage.INDEXED_LOGARITHMIC, CommonCRS.WGS84.normalizedGeographic(), new Rectangle(-7, 34, 19, 11), sampleDimension(false)),
 
     /**
      * A float coverage. Because we use only one tile with one band, the code below
@@ -139,10 +119,26 @@ public strictfp enum SampleCoverage {
         }
     };
 
-    private static MathTransform1D exp() {
-        final TransferFunction f = new TransferFunction();
-        f.setType(TransferFunctionType.EXPONENTIAL);
-        return f.getTransform();
+    private static SampleDimension sampleDimension(final boolean sst) {
+        final SampleDimensionBuilder b = new SampleDimensionBuilder();
+        if (sst) {
+            b.addQualitative ("Coast line",              create(  0, true,   0, true)); b.setLastCategoryColors(decode("#000000"));
+            b.addQualitative ("Cloud",                   create(  1, true,   9, true)); b.setLastCategoryColors(decode("#C3C3C3"));
+            b.addQualitative ("Unused",                  create( 10, true,  29, true)); b.setLastCategoryColors(decode("#822382"));
+            b.addQuantitative("Sea Surface Temperature", create( 30, true, 219, true), (MathTransform1D) MathTransforms.linear(0.1, 10.0), CELSIUS);
+            b.addQualitative ("Unused",                  create(220, true, 239, true)); b.setLastCategoryColors(decode("#A0505C"));
+            b.addQualitative ("Land",                    create(240, true, 254, true)); b.setLastCategoryColors(decode("#D2C8A0"));
+            b.addQualitative ("No data",                 create(255, true, 255, true)); b.setLastCategoryColors(decode("#FFFFFF"));
+        } else {
+            final TransferFunction f = new TransferFunction();
+            f.setType(TransferFunctionType.EXPONENTIAL);
+            final MathTransform1D exp = f.getTransform();
+            b.addQualitative ("Land",    create(255, true, 255, true)); b.setLastCategoryColors(decode("#000000"));
+            b.addQualitative ("No data", create(  0, true,   0, true)); b.setLastCategoryColors(decode("#FFFFFF"));
+            b.addQuantitative("Chl-a",   create(  1, true, 254, true), MathTransforms.concatenate(
+                        (MathTransform1D) MathTransforms.linear(0.015, -1.985), exp), KILOGRAM.divide(1E6).divide(CUBIC_METRE));
+        }
+        return b.setName("Measure").build();
     }
 
     /**
@@ -164,13 +160,13 @@ public strictfp enum SampleCoverage {
     /**
      * The sample dimensions to be given to the coverage.
      */
-    private final GridSampleDimension[] bands;
+    private final SampleDimension[] bands;
 
     /**
      * Creates a new enum loading the given image.
      */
     private SampleCoverage(final SampleImage image, CoordinateReferenceSystem crs,
-            final Rectangle2D bounds, GridSampleDimension... bands)
+            final Rectangle2D bounds, SampleDimension... bands)
     {
         this.image  = image;
         this.crs    = crs;

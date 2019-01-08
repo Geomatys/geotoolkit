@@ -17,7 +17,7 @@
 package org.geotoolkit.image.io.plugin.yaml.internal;
 
 import java.util.List;
-import org.geotoolkit.coverage.SampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 
 /**
  * Contains all attributs which will be shortly written into yaml format.

@@ -26,7 +26,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.finder.StrictlyCoverageFinder;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -124,13 +124,13 @@ public final class ProgressiveCoverageResource<T extends GridCoverageResource & 
     }
 
     @Override
-    public List<GridSampleDimension> getGridSampleDimensions() throws DataStoreException {
-        return base.getGridSampleDimensions();
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
+        return base.getSampleDimensions();
     }
 
     @Override
-    public void setGridSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
-        base.setGridSampleDimensions(dimensions);
+    public void setSampleDimensions(List<SampleDimension> dimensions) throws DataStoreException {
+        base.setSampleDimensions(dimensions);
     }
 
     @Override

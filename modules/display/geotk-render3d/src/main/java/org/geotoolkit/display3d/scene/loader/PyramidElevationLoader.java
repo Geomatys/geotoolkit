@@ -32,7 +32,8 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
@@ -79,9 +80,9 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
 
         ArgumentChecks.ensureNonNull("pyramid", dataSource);
 
-        final GridSampleDimension elevationDim = ref.getGridSampleDimensions().get(0).geophysics(true);
-        this.minElevation = elevationDim.getMinimumValue();
-        this.maxElevation = elevationDim.getMaximumValue();
+        final SampleDimension elevationDim = ref.getSampleDimensions().get(0).forConvertedValues(true);
+        this.minElevation = SampleDimensionUtils.getMinimumValue(elevationDim);
+        this.maxElevation = SampleDimensionUtils.getMaximumValue(elevationDim);
     }
 
     @Override

@@ -33,10 +33,10 @@ import org.geotoolkit.coverage.parameter.ImagingParameterDescriptors;
 
 
 /**
- * Chooses <var>N</var> {@linkplain org.geotoolkit.coverage.GridSampleDimension sample dimensions}
+ * Chooses <var>N</var> {@linkplain org.geotoolkit.coverage.SampleDimension sample dimensions}
  * from a grid coverage and copies their sample data to the destination grid coverage in the order
  * specified. The {@code "SampleDimensions"} parameter specifies the source
- * {@link org.geotoolkit.coverage.GridSampleDimension} indices, and its size
+ * {@link org.geotoolkit.coverage.SampleDimension} indices, and its size
  * ({@code SampleDimensions.length}) determines the number of sample dimensions of the destination
  * grid coverage. The destination coverage may have any number of sample dimensions, and a particular
  * sample dimension of the source coverage may be repeated in the destination coverage by specifying

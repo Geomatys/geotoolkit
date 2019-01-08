@@ -46,7 +46,8 @@ import org.apache.sis.util.collection.BackingStoreException;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
@@ -95,12 +96,8 @@ import org.w3c.dom.Node;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.20
  *
  * @see ImageReader
- *
- * @since 3.09 (derived from 2.4)
- * @module
  */
 public abstract class GridCoverageReader extends GridCoverageStore implements CoverageReader {
     /**
@@ -222,7 +219,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      *         the execution of this method.
      */
     @Override
-    public abstract List<GridSampleDimension> getSampleDimensions()
+    public abstract List<SampleDimension> getSampleDimensions()
             throws CoverageStoreException, CancellationException;
 
     /**
@@ -385,20 +382,22 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
                 }
 
                 if (ci!=null && ci.getAttributeGroups()!=null && ci.getAttributeGroups().isEmpty() && ci.getDimensions().isEmpty()) {
-                    final List<GridSampleDimension> sampleDimensions = getSampleDimensions();
+                    final List<SampleDimension> sampleDimensions = getSampleDimensions();
                     if (sampleDimensions!=null) {
                         final MetadataBuilder mb = new MetadataBuilder();
                         for (int idx=0,n=sampleDimensions.size();idx<n;idx++) {
-                            GridSampleDimension gsd = sampleDimensions.get(idx).geophysics(true);
-                            final Unit<? extends Quantity<?>> units = gsd.getUnits();
+                            SampleDimension gsd = sampleDimensions.get(idx).forConvertedValues(true);
+                            final Unit<? extends Quantity<?>> units = gsd.getUnits().orElse(null);
                             mb.newSampleDimension();
                             mb.setBandIdentifier(Names.createMemberName(null, null, ""+idx, Integer.class));
-                            mb.addBandDescription(gsd.getDescription());
+                            mb.addBandDescription(gsd.getName().toString());
                             if(units!=null) mb.setSampleUnits(units);
-                            mb.addMinimumSampleValue(gsd.getMinimumValue());
-                            mb.addMaximumSampleValue(gsd.getMaximumValue());
-                            gsd = gsd.geophysics(false);
-                            mb.setTransferFunction(gsd.getScale(), gsd.getOffset());
+                            mb.addMinimumSampleValue(SampleDimensionUtils.getMinimumValue(gsd));
+                            mb.addMaximumSampleValue(SampleDimensionUtils.getMaximumValue(gsd));
+                            gsd = gsd.forConvertedValues(false);
+                            gsd.getTransferFunctionFormula().ifPresent((f) -> {
+                                mb.setTransferFunction(f.getScale(), f.getOffset());
+                            });
                         }
                         final DefaultMetadata meta = mb.build(false);
                         final CoverageDescription imgDesc = (CoverageDescription) meta.getContentInfo().iterator().next();

@@ -70,9 +70,5 @@
  * {@code OperationJAI} class is designed for handling those common pre- and post-processing.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
- *
- * @since 2.1
- * @module
  */
 package org.geotoolkit.coverage.processing;

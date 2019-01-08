@@ -66,9 +66,7 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import static org.geotoolkit.style.StyleConstants.*;
-import org.junit.AfterClass;
 import static org.junit.Assert.*;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -79,7 +77,6 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
@@ -105,9 +102,6 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  */
 public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
-
-    private static final double EPS = 0.000000001d;
-
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     private static final GeometryFactory GF = new GeometryFactory();
     private static final GridCoverageBuilder GCF = new GridCoverageBuilder();
@@ -230,9 +224,9 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
                                                                                       CommonCRS.Vertical.ELLIPSOIDAL.crs(),
                                                                                       CommonCRS.Temporal.JAVA.crs());
 
-        List<Coverage> temps = new ArrayList<Coverage>();
+        List<Coverage> temps = new ArrayList<>();
         for(int i=0; i<10; i++){
-            final List<Coverage> eles = new ArrayList<Coverage>();
+            final List<Coverage> eles = new ArrayList<>();
             for(int k=0;k<10;k++){
                 env = new GeneralEnvelope(crs);
                 env.setRange(0,  0,  10);
@@ -251,16 +245,8 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         coverage4D = new CoverageStack("4D", coverages);
     }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
     @Test
-    public void testEnvelopeNotNull() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
+    public void testEnvelopeNotNull() throws FactoryException, PortrayalException {
         MapContext context = MapBuilder.createContext(CommonCRS.WGS84.geographic());
         GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
@@ -283,12 +269,10 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
                 new CanvasDef(new Dimension(800, 600), null),
                 new SceneDef(context),
                 new ViewDef(env));
-
-
     }
 
     @Test
-    public void testFeatureRendering() throws Exception{
+    public void testFeatureRendering() throws Exception {
         for(FeatureCollection col : featureColls){
             final MapLayer layer = MapBuilder.createFeatureLayer(col, SF.style(SF.pointSymbolizer()));
             testRendering(layer);
@@ -299,7 +283,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
      * Test rendering of a coverage inside a feature property.
      */
     @Test
-    public void testCoveragePropertyRendering() throws Exception{
+    public void testCoveragePropertyRendering() throws Exception {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
         ftb.addAttribute(GridCoverage2D.class).setName("coverage");
@@ -422,7 +406,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void testLongitudeFirst() throws Exception{
+    public void testLongitudeFirst() throws Exception {
 
         final int[] pixel = new int[4];
         final int[] red = new int[]{255,0,0,255};
@@ -495,16 +479,13 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         raster.getPixel(180, 359, pixel);   assertArrayEquals(white, pixel);
         raster.getPixel(0, 180, pixel);     assertArrayEquals(red, pixel);
         raster.getPixel(359, 180, pixel);   assertArrayEquals(red, pixel);
-
-
-
     }
 
     /**
      * Test the CoverageReader view of a scene.
      */
     @Test
-    public void testPortrayalCoverageReader() throws CoverageStoreException{
+    public void testPortrayalCoverageReader() throws CoverageStoreException {
 
         //create a test coverage
         final BufferedImage img = new BufferedImage(360, 180, BufferedImage.TYPE_INT_ARGB);
@@ -538,10 +519,9 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Test that a large graphic outside the map area is still rendered.
-     *
      */
     @Test
-    public void testMarginRendering() throws Exception{
+    public void testMarginRendering() throws Exception {
         final List<GraphicalSymbol> symbols = new ArrayList<>();
         final Stroke stroke = SF.stroke(Color.BLACK, 0);
         final Fill fill = SF.fill(Color.BLACK);
@@ -583,7 +563,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
     }
 
 
-    private void testRendering(final MapLayer layer) throws TransformException, PortrayalException{
+    private void testRendering(final MapLayer layer) throws TransformException, PortrayalException {
         final StopOnErrorMonitor monitor = new StopOnErrorMonitor();
 
         final MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());

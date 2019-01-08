@@ -21,7 +21,8 @@ import java.awt.image.ColorModel;
 import java.util.Hashtable;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.image.BufferedImages;
@@ -87,11 +88,12 @@ public class BandSelectProcess extends AbstractProcess {
         // BUILD A BETTER COLOR MODEL //////////////////////////////////////////
         //TODO try to reuse java colormodel if possible
         //extract grayscale min/max from sample dimension
-        final GridSampleDimension gridSample = inputCoverage.getSampleDimensions().get(0);
+        final SampleDimension gridSample = inputCoverage.getSampleDimensions().get(0);
         final ColorModel graycm = BufferedImages.createGrayScaleColorModel(
                 resultImage.getSampleModel().getDataType(),
                 resultImage.getSampleModel().getNumBands(),0,
-                gridSample.getMinimumValue(), gridSample.getMaximumValue());
+                SampleDimensionUtils.getMinimumValue(gridSample),
+                SampleDimensionUtils.getMaximumValue(gridSample));
         resultImage = new BufferedImage(graycm, resultImage.getRaster(), false, new Hashtable<Object, Object>());
 
 
@@ -103,5 +105,4 @@ public class BandSelectProcess extends AbstractProcess {
 
         outputParameters.getOrCreate(BandSelectDescriptor.OUT_COVERAGE).setValue(resultCoverage);
     }
-
 }

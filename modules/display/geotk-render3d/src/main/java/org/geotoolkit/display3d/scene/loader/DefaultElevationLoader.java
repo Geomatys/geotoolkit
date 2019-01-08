@@ -32,7 +32,8 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -75,11 +76,11 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
 
         final GridCoverageReader reader = coverageRef.acquireReader();
         this.gridGeom = reader.getGridGeometry();
-        final List<GridSampleDimension> dimensions = reader.getSampleDimensions();
+        final List<SampleDimension> dimensions = reader.getSampleDimensions();
         if(dimensions!=null && !dimensions.isEmpty()){
-            final GridSampleDimension elevationDim = dimensions.get(0).geophysics(true);
-            this.minElevation = elevationDim.getMinimumValue();
-            this.maxElevation = elevationDim.getMaximumValue();
+            final SampleDimension elevationDim = dimensions.get(0).forConvertedValues(true);
+            this.minElevation = SampleDimensionUtils.getMinimumValue(elevationDim);
+            this.maxElevation = SampleDimensionUtils.getMaximumValue(elevationDim);
         }else{
             this.minElevation = 0;
             this.maxElevation = 1000;

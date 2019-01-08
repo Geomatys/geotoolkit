@@ -25,7 +25,8 @@ import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 import org.apache.sis.internal.raster.ColorModelFactory;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.processing.OperationJAI;
 import org.geotoolkit.factory.Hints;
@@ -75,7 +76,7 @@ final class BandSelector2D extends GridCoverage2D {
      */
     private BandSelector2D(final GridCoverage2D source,
                            final PlanarImage image,
-                           final GridSampleDimension[] bands,
+                           final SampleDimension[] bands,
                            final int[] bandIndices,
                            final Hints hints)
     {
@@ -116,11 +117,11 @@ final class BandSelector2D extends GridCoverage2D {
          */
         int visibleSourceBand;
         int visibleTargetBand;
-        GridSampleDimension[] sourceBands;
-        GridSampleDimension[] targetBands;
+        SampleDimension[] sourceBands;
+        SampleDimension[] targetBands;
         RenderedImage sourceImage;
         while (true) {
-            sourceBands = source.getSampleDimensions().toArray(new GridSampleDimension[0]);
+            sourceBands = source.getSampleDimensions().toArray(new SampleDimension[0]);
             targetBands = sourceBands;
             /*
              * Constructs an array of target bands.  If the 'bandIndices' parameter contains
@@ -130,7 +131,7 @@ final class BandSelector2D extends GridCoverage2D {
              */
             if (bandIndices != null) {
                 if (bandIndices.length != sourceBands.length || !isIdentity(bandIndices)) {
-                    targetBands = new GridSampleDimension[bandIndices.length];
+                    targetBands = new SampleDimension[bandIndices.length];
                     for (int i=0; i<bandIndices.length; i++) {
                         targetBands[i] = sourceBands[bandIndices[i]];
                     }
@@ -209,8 +210,7 @@ final class BandSelector2D extends GridCoverage2D {
                 indexed.getRGBs(ARGB);
                 colors = ColorModelFactory.createIndexColorModel(ARGB, targetBands.length, visibleTargetBand, -1);
             } else {
-                colors = targetBands[visibleTargetBand]
-                      .getColorModel(visibleTargetBand, targetBands.length);
+                colors = SampleDimensionUtils.getColorModel(targetBands[visibleTargetBand], visibleTargetBand, targetBands.length);
             }
             /*
              * If we are not able to provide a color model because our sample dimensions

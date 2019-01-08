@@ -31,7 +31,8 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -289,7 +290,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
             final GridCoverage2D coverage = getTileCoverage(idx, idy);
             final Envelope coverageEnvelope = coverage.getEnvelope2D();
             final RenderedImage image = coverage.getRenderedImage();
-            final GridSampleDimension[] sampleDimensions = coverage.getSampleDimensions().toArray(new GridSampleDimension[0]);
+            final SampleDimension[] sampleDimensions = coverage.getSampleDimensions().toArray(new SampleDimension[0]);
             Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(image), InterpolationCase.NEIGHBOR, 2);
 
             //create an empty tile
@@ -300,16 +301,15 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
             final double[] fillValue = new double[nbBand];
             Arrays.fill(fillValue,Double.NaN);
             final double res = mosaic.getScale();
-            if(sampleDimensions.length>0){
-                workTile = BufferedImages.createImage(tileWidth, tileHeight, sampleDimensions.length,
-                        CoverageUtilities.getDataType(sampleDimensions[0].getSampleDimensionType()));
-                for(int i=0;i<nbBand;i++){
-                    final double[] nodata = sampleDimensions[i].geophysics(true).getNoDataValues();
-                    if(nodata!=null && nodata.length>0){
+            if (sampleDimensions.length > 0) {
+                workTile = BufferedImages.createImage(tileWidth, tileHeight, sampleDimensions.length, CoverageUtilities.getDataType(coverage));
+                for (int i=0; i<nbBand; i++) {
+                    final double[] nodata = SampleDimensionUtils.getNoDataValues(sampleDimensions[i].forConvertedValues(true));
+                    if (nodata != null && nodata.length > 0) {
                         fillValue[i] = nodata[0];
                     }
                 }
-            }else{
+            } else {
                 workTile = new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
             }
 

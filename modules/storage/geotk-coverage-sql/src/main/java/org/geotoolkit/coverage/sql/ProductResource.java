@@ -19,12 +19,11 @@ package org.geotoolkit.coverage.sql;
 import java.awt.Image;
 import java.util.List;
 import java.util.concurrent.CancellationException;
-import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -84,8 +83,8 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
         }
 
         @Override
-        public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException {
-            return CoverageUtilities.toGeotk(product.getSampleDimensions());
+        public List<SampleDimension> getSampleDimensions() throws CoverageStoreException {
+            return product.getSampleDimensions();
         }
 
         @Override

@@ -225,6 +225,11 @@ public final class CoverageUtilities {
         }
     }
 
+    public static int getDataType(final GridCoverage2D coverage) {
+        return coverage.getRenderedImage().getSampleModel().getDataType();
+    }
+
+    @Deprecated
     public static int getDataType(SampleDimensionType sdt) {
         if (SampleDimensionType.REAL_32BITS.equals(sdt)) {
             return DataBuffer.TYPE_FLOAT;

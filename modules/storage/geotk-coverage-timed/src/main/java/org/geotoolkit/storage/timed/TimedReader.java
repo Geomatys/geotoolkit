@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -63,7 +63,7 @@ public class TimedReader extends GridCoverageReader {
     }
 
     @Override
-    public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+    public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
         return Collections.EMPTY_LIST;
     }
 

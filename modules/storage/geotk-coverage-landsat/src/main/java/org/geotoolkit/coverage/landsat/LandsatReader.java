@@ -30,7 +30,7 @@ import javax.imageio.ImageReader;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -181,14 +181,14 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
      * @throws CancellationException
      */
     @Override
-    public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+    public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
 
         if (gsdLandsat != null)
             return gsdLandsat;
 
         final int[] bandId = group.bands;
 
-        final List<GridSampleDimension> gList = new ArrayList<>();
+        final List<SampleDimension> gList = new ArrayList<>();
         for (int i : bandId) {
             final String bandName = metaParse.getValue(true, BAND_NAME_LABEL + i);
             final Path resolve = parenPath.resolve(bandName);
@@ -197,7 +197,7 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
                 final ImageReader tiffReader = TIFF_SPI.createReaderInstance();
                 tiffReader.setInput(resolve);
                 imageCoverageReader.setInput(tiffReader);
-                final List<GridSampleDimension> candidates = imageCoverageReader.getSampleDimensions();
+                final List<SampleDimension> candidates = imageCoverageReader.getSampleDimensions();
                 if (candidates != null) gList.addAll(candidates);
             } catch (IOException ex) {
                 throw new CoverageStoreException(ex);

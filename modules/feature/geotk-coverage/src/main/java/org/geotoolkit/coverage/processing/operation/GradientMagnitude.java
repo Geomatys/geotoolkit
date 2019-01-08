@@ -28,8 +28,6 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.lang.Debug;
-import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.processing.OperationJAI;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
@@ -344,41 +342,41 @@ public class GradientMagnitude extends OperationJAI {
      * This implementation computes the expected gradient range from the two
      * masks and the value range in the source grid coverage.
      */
-    @Override
-    protected Category deriveCategory(final Category[] categories, final Parameters parameters) {
-        NumberRange<?> range = null;
-        Category category = categories[0];
-        final NumberRange<?> samples = category.geophysics(false).getRange();
-        final boolean isGeophysics = (category == category.geophysics(true));
-        /*
-         * Computes a default range of output values one from the normalized kernels.
-         * The normalization has been done by 'deriveGridCoverage' before this method
-         * is invoked. The algorithm is as below:
-         *
-         * - Computes the value produced by the kernels for an artificial gradient of 1 unit/pixel.
-         * - Transforms into a lower gradient of 1 unit/(kernel size).
-         * - Transforms into a gradient of (maximal range)/(kernel size).
-         * - Applies an arbitrary correction factor for more convenient range in most cases.
-         */
-        final ParameterList block = parameters.parameters;
-        final KernelJAI mask1 = (KernelJAI) block.getObjectParameter("Mask1");
-        final KernelJAI mask2 = (KernelJAI) block.getObjectParameter("Mask2");
-        final double size = (mask1.getWidth() + mask1.getHeight() +
-                             mask2.getWidth() + mask2.getHeight()) / 4.0;
-        double factor = getNormalizationFactor(mask1, mask2) / (size-1);
-        if (factor>0 && !Double.isInfinite(factor)) {
-            range = category.geophysics(true).getRange();
-            final double minimum = range.getMinDouble();
-            final double maximum = range.getMaxDouble();
-            factor *= (maximum - minimum) * DEFAULT_RANGE_SCALE;
-            range = NumberRange.create(0, true, factor, true);
-        }
-        if (range != null) {
-            category = new Category(category.getName(), DEFAULT_COLOR_PALETTE, samples, range);
-            return category.geophysics(isGeophysics);
-        }
-        return super.deriveCategory(categories, parameters);
-    }
+//  @Override
+//  protected Category deriveCategory(final Category[] categories, final Parameters parameters) {
+//      NumberRange<?> range = null;
+//      Category category = categories[0];
+//      final NumberRange<?> samples = category.geophysics(false).getRange();
+//      final boolean isGeophysics = (category == category.geophysics(true));
+//      /*
+//       * Computes a default range of output values one from the normalized kernels.
+//       * The normalization has been done by 'deriveGridCoverage' before this method
+//       * is invoked. The algorithm is as below:
+//       *
+//       * - Computes the value produced by the kernels for an artificial gradient of 1 unit/pixel.
+//       * - Transforms into a lower gradient of 1 unit/(kernel size).
+//       * - Transforms into a gradient of (maximal range)/(kernel size).
+//       * - Applies an arbitrary correction factor for more convenient range in most cases.
+//       */
+//      final ParameterList block = parameters.parameters;
+//      final KernelJAI mask1 = (KernelJAI) block.getObjectParameter("Mask1");
+//      final KernelJAI mask2 = (KernelJAI) block.getObjectParameter("Mask2");
+//      final double size = (mask1.getWidth() + mask1.getHeight() +
+//                           mask2.getWidth() + mask2.getHeight()) / 4.0;
+//      double factor = getNormalizationFactor(mask1, mask2) / (size-1);
+//      if (factor>0 && !Double.isInfinite(factor)) {
+//          range = category.geophysics(true).getRange();
+//          final double minimum = range.getMinDouble();
+//          final double maximum = range.getMaxDouble();
+//          factor *= (maximum - minimum) * DEFAULT_RANGE_SCALE;
+//          range = NumberRange.create(0, true, factor, true);
+//      }
+//      if (range != null) {
+//          category = new ColoredCategory(category.getName(), DEFAULT_COLOR_PALETTE, samples, range);
+//          return category.geophysics(isGeophysics);
+//      }
+//      return super.deriveCategory(categories, parameters);
+//  }
 
     /**
      * Derives the unit of data for a band in the destination image.

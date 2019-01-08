@@ -18,7 +18,7 @@
 package org.geotoolkit.coverage.processing;
 
 import org.opengis.coverage.processing.OperationNotFoundException;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 
 
 /**
@@ -74,8 +74,8 @@ public class FilterOperation extends OperationJAI {
      * values, this method returns the same sample dimension than the first source.
      */
     @Override
-    protected GridSampleDimension[] deriveSampleDimension(
-            final GridSampleDimension[][] bandLists, final Parameters parameters)
+    protected SampleDimension[] deriveSampleDimension(
+            final SampleDimension[][] bandLists, final Parameters parameters)
     {
         return bandLists[PRIMARY_SOURCE_INDEX];
     }

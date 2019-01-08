@@ -39,10 +39,11 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.processing.AbstractCoverageProcessor;
@@ -170,14 +171,14 @@ public class ResampleProcess extends AbstractProcess {
                                          final ViewType       finalView,
                                          final Hints          hints)
     {
-        final GridSampleDimension[] sampleDimensions;
+        final SampleDimension[] sampleDimensions;
         switch (finalView) {
             case PHOTOGRAPHIC: {
                 sampleDimensions = null;
                 break;
             }
             default: {
-                sampleDimensions = source.getSampleDimensions().toArray(new GridSampleDimension[0]);
+                sampleDimensions = source.getSampleDimensions().toArray(new SampleDimension[0]);
                 break;
             }
         }
@@ -568,13 +569,13 @@ public class ResampleProcess extends AbstractProcess {
     }
 
     private static double[] getFillValue(GridCoverage2D gridCoverage2D){
-        final GridSampleDimension[] dimensions = gridCoverage2D.getSampleDimensions().toArray(new GridSampleDimension[0]);
+        final SampleDimension[] dimensions = gridCoverage2D.getSampleDimensions().toArray(new SampleDimension[0]);
         final int nbBand = dimensions.length;
         final double[] fillValue = new double[nbBand];
         Arrays.fill(fillValue, Double.NaN);
         for(int i=0;i<nbBand;i++){
-            final double[] nodata = dimensions[i].geophysics(true).getNoDataValues();
-            if(nodata!=null && nodata.length>0){
+            final double[] nodata = SampleDimensionUtils.getNoDataValues(dimensions[i].forConvertedValues(true));
+            if (nodata != null && nodata.length > 0){
                 fillValue[i] = nodata[0];
             }
         }

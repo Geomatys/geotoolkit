@@ -32,7 +32,7 @@ import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.operation.matrix.Matrix4;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.GridCoverageStack;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.SampleDimensionBuilder;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -48,6 +48,7 @@ import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -76,15 +77,14 @@ public class CoverageFeatureTest {
         raster.setPixel(0, 1, new int[]{50,6});
         raster.setPixel(1, 1, new int[]{70,8});
 
-        SampleDimensionBuilder sdb = new SampleDimensionBuilder(DataBuffer.TYPE_INT);
-        sdb.setDescription("values");
-        sdb.add("valuesCat", null, NumberRange.create(0, true, 1000, true), 10, -5);
-        final GridSampleDimension sdim1 = sdb.build();
-        sdb = new SampleDimensionBuilder(DataBuffer.TYPE_INT);
-        sdb.setDescription("quality");
-        sdb.add("qualityCat", null, NumberRange.create(0, true, 100, true), 1, 0);
-        final GridSampleDimension sdim2 = sdb.build();
-
+        SampleDimensionBuilder sdb = new SampleDimensionBuilder();
+        sdb.setName("values");
+        sdb.addQuantitative("valuesCat", NumberRange.create(0, true, 1000, true), (MathTransform1D) MathTransforms.linear(10, -5), null);
+        final SampleDimension sdim1 = sdb.build();
+        sdb.clear();
+        sdb.setName("quality");
+        sdb.addQuantitative("qualityCat", NumberRange.create(0, true, 100, true), (MathTransform1D) MathTransforms.linear(1, 0), null);
+        final SampleDimension sdim2 = sdb.build();
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName("MyCoverage");
@@ -148,14 +148,14 @@ public class CoverageFeatureTest {
                 CommonCRS.Vertical.DEPTH.crs());
 
         //create sample dimensions
-        SampleDimensionBuilder sdb = new SampleDimensionBuilder(DataBuffer.TYPE_INT);
-        sdb.setDescription("values");
-        sdb.add("valuesCat", null, NumberRange.create(0, true, 1000, true), 10, -5);
-        final GridSampleDimension sdim1 = sdb.build();
-        sdb = new SampleDimensionBuilder(DataBuffer.TYPE_INT);
-        sdb.setDescription("quality");
-        sdb.add("qualityCat", null, NumberRange.create(0, true, 100, true), 1, 0);
-        final GridSampleDimension sdim2 = sdb.build();
+        SampleDimensionBuilder sdb = new SampleDimensionBuilder();
+        sdb.setName("values");
+        sdb.addQuantitative("valuesCat", NumberRange.create(0, true, 1000, true), (MathTransform1D) MathTransforms.linear(10, -5), null);
+        final SampleDimension sdim1 = sdb.build();
+        sdb.clear();
+        sdb.setName("quality");
+        sdb.addQuantitative("qualityCat", NumberRange.create(0, true, 100, true), (MathTransform1D) MathTransforms.linear(1, 0), null);
+        final SampleDimension sdim2 = sdb.build();
 
         final GridCoverage slice1;
         {//create first slice

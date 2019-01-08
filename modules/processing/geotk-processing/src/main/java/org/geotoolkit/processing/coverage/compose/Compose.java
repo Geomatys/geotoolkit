@@ -40,7 +40,7 @@ import org.apache.sis.referencing.operation.matrix.Matrix3;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import static org.apache.sis.referencing.operation.transform.MathTransforms.concatenate;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -118,7 +118,7 @@ public class Compose extends AbstractProcess {
         final List<ParameterValueGroup> imageParams = inputParameters.groups(LAYER_PARAM.getName().getCode());
 
         RenderedImage outImageReference = null;
-        GridSampleDimension[] sampleDimensions = null;
+        SampleDimension[] sampleDimensions = null;
 
         final int nbCoverage = imageParams.size();
         final GridCoverage2D[] inGridCoverages = new GridCoverage2D[nbCoverage];
@@ -140,7 +140,7 @@ public class Compose extends AbstractProcess {
             inSizes[i][1] = covImg.getHeight()-1;
             if (outImageReference == null) {
                 outImageReference = coverage.getRenderedImage();
-                sampleDimensions = coverage.getSampleDimensions().toArray(new GridSampleDimension[0]);
+                sampleDimensions = coverage.getSampleDimensions().toArray(new SampleDimension[0]);
             }
 
             includeGeometries[i] = covParam.getValue(INCLUDE_PARAM);

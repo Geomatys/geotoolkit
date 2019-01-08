@@ -23,8 +23,8 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.SampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -94,7 +94,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
      * @throws CancellationException
      */
     @Override
-    public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+    public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
         return ref.getSampleDimensions(0);
     }
 
@@ -220,7 +220,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
         }
 
         //override sample dimensions
-        final List<GridSampleDimension> overrideDims = ref.getOverrideDims();
+        final List<SampleDimension> overrideDims = ref.getOverrideDims();
         if(overrideDims!=null){
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setGridCoverage(coverage);

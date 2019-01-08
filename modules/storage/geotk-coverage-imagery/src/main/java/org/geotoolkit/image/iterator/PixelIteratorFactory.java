@@ -272,17 +272,6 @@ public final class PixelIteratorFactory {
     }
 
     /**
-     * Verify bandOffset table conformity.
-     *
-     * @param bandOffset band offset table.
-     * @return true if bandOffset table is conform else false.
-     */
-    private static boolean checkBandOffset(int[] bandOffset) {
-        for (int i = 0, l = bandOffset.length; i<l; i++) if (bandOffset[i] != i) return false;
-        return true;
-    }
-
-    /**
      * Check image samples are stored in a single bank. It's a needed condition for {@link org.geotoolkit.image.iterator.DefaultDirectIterator}
      *
      * @param bankIndices bank indice table retrieved from input image (see {@link java.awt.image.ComponentSampleModel#getBankIndices()}.
@@ -297,5 +286,4 @@ public final class PixelIteratorFactory {
     private static boolean isSingleRaster(final RenderedImage renderedImage){
         return renderedImage.getNumXTiles()==1 && renderedImage.getNumYTiles()==1;
     }
-
 }
