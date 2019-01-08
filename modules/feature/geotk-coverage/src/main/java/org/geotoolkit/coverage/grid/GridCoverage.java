@@ -52,15 +52,12 @@ import org.opengis.annotation.UML;
  * compatibility as possible, but no migration plan has been determined yet.
  * </div>
  *
- * @version <A HREF="http://www.opengis.org/docs/01-004.pdf">Grid Coverage specification 1.0</A>
  * @author  Martin Desruisseaux (IRD)
- * @since   GeoAPI 1.0
  *
  * @see RenderedImage
  */
 @UML(identifier="CV_GridCoverage", specification=OGC_01004)
 public interface GridCoverage extends Coverage {
-
     /**
      * Information for the grid coverage geometry.
      * Grid geometry includes the valid range of grid coordinates and the georeferencing.
@@ -75,7 +72,7 @@ public interface GridCoverage extends Coverage {
      * produced from an underlying dataset, this method should returns an empty list.
      *
      * If the {@code GridCoverage} was produced using
-     * {link org.opengis.coverage.processing.GridCoverageProcessor} then it should return the
+     * {@code GridCoverageProcessor} then it should return the
      * source grid coverages of the one used as input to {@code GridCoverageProcessor}.
      * In general this method is intended to return the original {@code GridCoverage}
      * on which it depends.
@@ -86,5 +83,4 @@ public interface GridCoverage extends Coverage {
      * @return the sources data for a grid coverage.
      */
     List<GridCoverage> getSources();
-
 }

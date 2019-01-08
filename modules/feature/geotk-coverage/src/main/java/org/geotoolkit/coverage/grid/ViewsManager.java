@@ -639,7 +639,7 @@ testLinear: for (int i=0; i<numBands; i++) {
      * not produce zero value. In case of doubt, this method conservatively returns {@code false}.
      * <p>
      * <b>Why this method exists</b><br>
-     * When a {@link org.opengis.coverage.SampleDimension} describes exactly one linear relationship with one NaN value
+     * When a {@link org.geotoolkit.coverage.SampleDimension} describes exactly one linear relationship with one NaN value
      * mapping exactly to the index value 0, then the "<cite>geophysics to native</cite>" transform
      * can be optimized to the {@code "Rescale"} operation because {@link Float#NaN} casted to the
      * {@code int} primitive type equals 0. This case is very common, which make this optimization

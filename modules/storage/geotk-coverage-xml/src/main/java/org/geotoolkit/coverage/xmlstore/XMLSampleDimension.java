@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.sis.coverage.Category;
 import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.apache.sis.coverage.SampleDimension;
-import org.opengis.coverage.SampleDimensionType;
+import org.geotoolkit.coverage.SampleDimensionType;
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.iso.Names;
 
@@ -106,7 +106,7 @@ public class XMLSampleDimension {
      * @throws IllegalArgumentException if {@link XMLSampleDimension#type} is not known.
      */
     public SampleDimensionType getSampleType() {
-        for (SampleDimensionType sdt : SampleDimensionType.values()) {
+        for (SampleDimensionType sdt : SampleDimensionType.REAL_32BITS.family()) {
             if (sdt.name().equals(type)) return sdt;
             //keep for retro-compatibility with old pyramids
             if (sdt.identifier().equals(type)) return sdt;

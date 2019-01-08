@@ -17,11 +17,7 @@
  */
 
 /**
- * {@linkplain org.geotoolkit.coverage.processing.AbstractCoverageProcessor Coverage processor}
- * implementations. An explanation for this package is provided in the
- * {@linkplain org.opengis.coverage.processing OpenGIS&reg; javadoc}.
- * The remaining discussion on this page is specific to the Geotk implementation.
- * <p>
+ * Coverage processor implementations.
  * If the operation to apply is know at compile time, then the easiest way to use this package
  * is to use the {@link org.geotoolkit.coverage.processing.Operations} convenience class. For
  * example a {@linkplain org.geotoolkit.coverage.grid.GridCoverage grid coverage} can be resampled

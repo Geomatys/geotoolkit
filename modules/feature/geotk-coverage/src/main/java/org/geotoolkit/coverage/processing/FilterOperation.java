@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.coverage.processing;
 
-import org.opengis.coverage.processing.OperationNotFoundException;
 import org.apache.sis.coverage.SampleDimension;
 
 

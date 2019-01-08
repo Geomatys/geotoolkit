@@ -90,7 +90,7 @@ import static org.geotoolkit.util.DomUtilities.firstElement;
 import static org.geotoolkit.util.DomUtilities.getListElements;
 import static org.geotoolkit.util.DomUtilities.textAttributeValueSafe;
 import static org.geotoolkit.util.DomUtilities.textValueSafe;
-import org.opengis.coverage.SampleDimensionType;
+import org.geotoolkit.coverage.SampleDimensionType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.coordinate.GeometryFactory;

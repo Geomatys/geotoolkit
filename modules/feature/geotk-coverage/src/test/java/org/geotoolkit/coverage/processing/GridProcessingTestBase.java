@@ -46,9 +46,6 @@ import org.opengis.referencing.operation.MathTransform;
  * methods performing some operations on {@link GridCoverage2D}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.02
- *
- * @since 2.1
  */
 public abstract strictfp class GridProcessingTestBase extends GridCoverageTestBase {
     /**
@@ -90,7 +87,7 @@ public abstract strictfp class GridProcessingTestBase extends GridCoverageTestBa
                                   final Hints                     hints,
                                   final boolean                   useGeophysics)
     {
-        final AbstractCoverageProcessor processor = AbstractOperation.getProcessor(hints);
+        final AbstractCoverageProcessor processor = CachingCoverageProcessor.INSTANCE;
         final String arg1, arg2;
         final Object value1, value2;
         if (targetCRS != null) {

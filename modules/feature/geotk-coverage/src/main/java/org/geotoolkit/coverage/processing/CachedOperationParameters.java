@@ -24,7 +24,6 @@ import java.util.TreeMap;
 import java.util.Objects;
 
 import org.geotoolkit.coverage.Coverage;
-import org.opengis.coverage.processing.Operation;
 import org.opengis.parameter.ParameterValueGroup;
 
 import org.apache.sis.util.Utilities;
@@ -33,21 +32,17 @@ import org.geotoolkit.coverage.CoverageReferences;
 
 
 /**
- * An {@link Operation}-{@link ParameterValueGroup} pair, used by
+ * An {@code Operation}-{@link ParameterValueGroup} pair, used by
  * {@link DefaultOperation#doOperation} for caching the result of
  * operations.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
- *
- * @since 2.1
- * @module
  */
 final class CachedOperationParameters {
     /**
      * The operation to apply on grid coverages.
      */
-    private final Operation operation;
+    private final AbstractOperation operation;
 
     /**
      * The parameters names in alphabetical order, including source coverages.
@@ -70,7 +65,7 @@ final class CachedOperationParameters {
      * @param operation  The operation to apply on grid coverages.
      * @param parameters The parameters, including source grid coverages.
      */
-    CachedOperationParameters(final Operation operation, final ParameterValueGroup parameters) {
+    CachedOperationParameters(final AbstractOperation operation, final ParameterValueGroup parameters) {
         final Map<String,Object> param = new TreeMap<>();
         Parameters.copy(parameters, param);
         this.operation = operation;

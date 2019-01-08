@@ -442,17 +442,7 @@ public class Hints extends RenderingHints {
     public static final Key TILE_ENCODING = new Key(String.class);
 
     /**
-     * The {@link org.opengis.coverage.processing.GridCoverageProcessor} instance to use.
-     *
-     * @see org.geotoolkit.coverage.CoverageFactoryFinder#getCoverageProcessor(Hints)
-     *
-     * @category Coverage
-     */
-    public static final ClassKey GRID_COVERAGE_PROCESSOR = new ClassKey("org.opengis.coverage.processing.GridCoverageProcessor");
-
-    /**
-     * Forces the {@linkplain org.opengis.coverage.processing.GridCoverageProcessor grid coverage
-     * processor} to perform operations on the specified view.
+     * Forces the grid coverage processor to perform operations on the specified view.
      * <p>
      * Some operation when called on a {@linkplain org.geotoolkit.coverage.grid.GridCoverage2D grid
      * coverage} tries to converts to {@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS
@@ -465,7 +455,7 @@ public class Hints extends RenderingHints {
      * operations to work on {@linkplain org.geotoolkit.coverage.grid.ViewType#PHOTOGRAPHIC
      * photographic} view directly, even performing color expansions as needed. This can be
      * accomplished by setting this hint to the desired view. Be aware that interpolations
-     * after color expansions may produce colors that do not accuratly represent the geophysical
+     * after color expansions may produce colors that do not accurately represent the geophysical
      * value.
      *
      * @since 2.5
@@ -474,11 +464,11 @@ public class Hints extends RenderingHints {
     public static final Key COVERAGE_PROCESSING_VIEW = new Key("org.geotoolkit.coverage.grid.ViewType");
 
     /**
-     * The {@link org.opengis.coverage.SampleDimensionType} to use.
+     * The {@link org.geotoolkit.coverage.SampleDimensionType} to use.
      *
      * @category Coverage
      */
-    public static final Key SAMPLE_DIMENSION_TYPE = new Key("org.opengis.coverage.SampleDimensionType");
+    public static final Key SAMPLE_DIMENSION_TYPE = new Key("org.geotoolkit.coverage.SampleDimensionType");
 
 
 

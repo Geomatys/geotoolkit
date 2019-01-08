@@ -25,8 +25,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.SampleModel;
 
 import org.opengis.util.InternationalString;
-import org.opengis.coverage.SampleDimensionType;
-import static org.opengis.coverage.SampleDimensionType.*;
+import static org.geotoolkit.coverage.SampleDimensionType.*;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -55,7 +54,7 @@ public final class TypeMap extends Static {
      * The mapping of {@link SampleDimensionType} to {@link DataBuffer} types.
      * Must be sorted in increasing number of bits.
      */
-    private static final TypeMap[] MAP = new TypeMap[SampleDimensionType.values().length];
+    private static final TypeMap[] MAP = new TypeMap[SampleDimensionType.REAL_32BITS.family().length];
     static {
         final Map<Number,Number> pool = new HashMap<>(32);
         final Float  M1 = -Float .MAX_VALUE;

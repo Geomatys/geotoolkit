@@ -65,7 +65,7 @@ import org.geotoolkit.storage.coverage.PyramidalModelWriter;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.version.Version;
-import org.opengis.coverage.SampleDimensionType;
+import org.geotoolkit.coverage.SampleDimensionType;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform1D;

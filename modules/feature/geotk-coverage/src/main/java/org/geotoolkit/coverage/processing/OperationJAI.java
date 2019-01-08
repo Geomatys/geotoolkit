@@ -59,7 +59,6 @@ import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
-import org.opengis.coverage.processing.OperationNotFoundException;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.IdentifiedObject;
@@ -108,10 +107,6 @@ import org.opengis.util.InternationalString;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.00
- *
- * @since 1.2
- * @module
  *
  * @deprecated The API of this class will change in a future Geotk release. Do not rely on it.
  */
@@ -433,7 +428,7 @@ public class OperationJAI extends Operation2D {
          * dimensions. For example it may have a time or a depth axis. In such case, their "head"
          * and "tail" CRS will be preserved before and after 'crs2D'.
          */
-        final AbstractCoverageProcessor processor = getProcessor(hints);
+        final AbstractCoverageProcessor processor = CachingCoverageProcessor.INSTANCE;
         for (int i=0; i<sources.length; i++) {
             final GridCoverage2D            source    = sources[i];
             final GridGeometry2D            geometry  = source.getGridGeometry();

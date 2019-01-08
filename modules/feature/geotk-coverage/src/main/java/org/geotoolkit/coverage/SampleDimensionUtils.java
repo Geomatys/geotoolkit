@@ -32,7 +32,6 @@ import org.apache.sis.util.collection.Containers;
 import org.geotoolkit.internal.coverage.ColoredCategory;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.opengis.coverage.SampleDimensionType;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.InternationalString;
 

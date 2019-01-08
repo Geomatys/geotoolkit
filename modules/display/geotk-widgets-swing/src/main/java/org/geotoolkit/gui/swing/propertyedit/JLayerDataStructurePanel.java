@@ -48,7 +48,7 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.util.StringUtilities;
-import org.opengis.coverage.SampleDimensionType;
+import org.geotoolkit.coverage.SampleDimensionType;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.IdentifiedObject;

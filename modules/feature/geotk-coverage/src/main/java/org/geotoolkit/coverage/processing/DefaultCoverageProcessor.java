@@ -33,8 +33,6 @@ import javax.media.jai.TileCache;
 import javax.media.jai.Interpolation;
 
 import org.geotoolkit.coverage.Coverage;
-import org.opengis.coverage.processing.Operation;
-import org.opengis.coverage.processing.OperationNotFoundException;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.GeneralParameterValue;
@@ -52,31 +50,15 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 /**
  * Default implementation of a {@linkplain Coverage} processor.
- * This default implementation makes the following assumptions:
- * <p>
- * <ul>
- *   <li>Operations are declared in the
- *       {@code META-INF/services/org.opengis.coverage.processing.Operation} file.</li>
- *   <li>Operations are actually instances of {@link AbstractOperation} (note: this
- *       constraint may be relaxed in a future version after GeoAPI interfaces for grid
- *       coverage will be redesigned).</li>
- *   <li>Operation parameter names are case-insensitive.</li>
- *   <li>Most operations are backed by <cite>Java Advanced Imaging</cite>.</li>
- * </ul>
- * <p>
- * <strong>Note:</strong> This implementation does not cache produced coverages.
+ * This implementation does not cache produced coverages.
  * Since coverages may be big, consider wrapping {@code DefaultCoverageProcessor}
  * instances in {@link CachingCoverageProcessor}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.02
- *
- * @since 1.2
- * @module
  */
 public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
     /**
-     * Augments the amout of memory allocated for the JAI tile cache.
+     * Augments the amount of memory allocated for the JAI tile cache.
      */
     static {
         final long targetCapacity = 0x4000000; // 64 Mo.
@@ -119,10 +101,10 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
      * keys are {@link String} objects, the operation name are actually case-insensitive
      * because of the comparator used in the sorted map.
      */
-    private final Map<String,Operation> operations = new TreeMap<>(COMPARATOR);
+    private final Map<String,AbstractOperation> operations = new TreeMap<>(COMPARATOR);
 
     /**
-     * The service registry for finding {@link Operation} implementations.
+     * The service registry for finding operation implementations.
      */
     private final FactoryRegistry registry;
 
@@ -154,7 +136,7 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
      */
     DefaultCoverageProcessor(final Hints userHints, AbstractCoverageProcessor declaredProcessor) {
         registry = new FactoryRegistry(Arrays.asList(new Class<?>[] {
-            Operation.class
+            AbstractOperation.class
         }));
         final Map<RenderingHints.Key, Object> hints = this.hints;
         hints.put(JAI.KEY_REPLACE_INDEX_COLOR_MODEL, Boolean.FALSE);
@@ -169,7 +151,6 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
         hints.put(Hints.LENIENT_DATUM_SHIFT, null);
         hints.put(Hints.DATUM_SHIFT_METHOD, null);
         FactoryUtilities.addImplementationHints(userHints, hints);
-        hints.remove(Hints.GRID_COVERAGE_PROCESSOR); // Must erase user setting.
         if (declaredProcessor == null) {
             declaredProcessor = this;
         }
@@ -183,7 +164,7 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
      * @param  operation The operation to add.
      * @throws IllegalStateException if an operation already exists with the same name.
      */
-    protected synchronized void addOperation(final Operation operation) throws IllegalStateException {
+    protected synchronized void addOperation(final AbstractOperation operation) throws IllegalStateException {
         ensureNonNull("operation", operation);
         if (operations.isEmpty()) {
             scanForPlugins();
@@ -195,9 +176,9 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
      * Implementation of {@link #addOperation} method. Also used by {@link #scanForPlugins}
      * instead of the public method in order to avoid never-ending loop.
      */
-    private void addOperationImpl(final Operation operation) throws IllegalStateException {
+    private void addOperationImpl(final AbstractOperation operation) throws IllegalStateException {
         final String name = operation.getName().trim();
-        final Operation old = operations.put(name, operation);
+        final AbstractOperation old = operations.put(name, operation);
         if (old!=null && !old.equals(operation)) {
             operations.put(old.getName().trim(), old);
             throw new IllegalStateException(Errors.getResources(getLocale()).getString(
@@ -210,7 +191,7 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
      * the name of the operation as well as a list of its parameters.
      */
     @Override
-    public synchronized Collection<Operation> getOperations() {
+    public synchronized Collection<AbstractOperation> getOperations() {
         if (operations.isEmpty()) {
             scanForPlugins();
         }
@@ -225,13 +206,13 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
      * @throws OperationNotFoundException if there is no operation for the specified name.
      */
     @Override
-    public synchronized Operation getOperation(String name) throws OperationNotFoundException {
+    public synchronized AbstractOperation getOperation(String name) throws OperationNotFoundException {
         ensureNonNull("name", name);
         name = name.trim();
         if (operations.isEmpty()) {
             scanForPlugins();
         }
-        final Operation operation = operations.get(name);
+        final AbstractOperation operation = operations.get(name);
         if (operation != null) {
             return operation;
         }
@@ -257,7 +238,7 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
      * to the resulting coverage (except if the resulting coverage has already an interpolation).
      *
      * @param  parameters Parameters required for the operation. The easiest way to construct them
-     *         is to invoke <code>operation.{@link Operation#getParameters getParameters}()</code>
+     *         is to invoke <code>operation.{@linkplain AbstractOperation#getParameters getParameters}()</code>
      *         and to modify the returned group.
      * @return The result as a coverage.
      * @throws OperationNotFoundException if there is no operation for the parameter group name.
@@ -269,7 +250,7 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
     {
         Coverage source = getPrimarySource(parameters);
         final String operationName = getOperationName(parameters);
-        final Operation  operation = getOperation(operationName);
+        final AbstractOperation operation = getOperation(operationName);
         /*
          * Detects the interpolation type for the source grid coverage.
          * The same interpolation will be applied on the result.
@@ -303,7 +284,6 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
          */
         final Hints hints = EMPTY_HINTS.clone();
         FactoryUtilities.addValidEntries(this.hints, hints, true);
-        hints.put(Hints.GRID_COVERAGE_PROCESSOR, declaredProcessor);
         /*
          * Applies the operation, applies the same interpolation and log a message.
          * Note: we don't use "if (operation instanceof AbstractOperation)" below
@@ -333,9 +313,9 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
      * dynamically make new plug-ins available at runtime.
      */
     public synchronized void scanForPlugins() {
-        final Iterator<Operation> it = registry.getServiceProviders(Operation.class, null, null, null);
+        final Iterator<AbstractOperation> it = registry.getServiceProviders(AbstractOperation.class, null, null, null);
         while (it.hasNext()) {
-            final Operation operation = it.next();
+            final AbstractOperation operation = it.next();
             final String name = operation.getName().trim();
             if (!operations.containsKey(name)) {
                 addOperationImpl(operation);

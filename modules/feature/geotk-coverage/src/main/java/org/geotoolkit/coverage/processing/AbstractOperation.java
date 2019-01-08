@@ -22,10 +22,8 @@ package org.geotoolkit.coverage.processing;
 
 import java.util.Objects;
 import java.io.Serializable;
-import java.awt.RenderingHints;
 
 import org.geotoolkit.coverage.Coverage;
-import org.opengis.coverage.processing.Operation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -43,7 +41,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * The descriptive information includes such information as the name of the operation,
  * operation description, and number of source grid coverages required for the operation.
  * <p>
- * This base class implements all methods from the {@link Operation} interface. Those methods get
+ * This base class implements all methods from the {@code Operation} interface. Those methods get
  * the information they need from a {@link ParameterDescriptorGroup} object which must be supplied
  * at construction time. Every {@linkplain ParameterDescriptor#getValueClass() value class} that
  * are {@linkplain Class#isAssignableFrom(Class) assignable} to {@link Coverage} are considered as
@@ -58,12 +56,8 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * have.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
- *
- * @since 2.2
- * @module
  */
-public abstract class AbstractOperation implements Operation, Serializable {
+public abstract class AbstractOperation implements Serializable {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -91,7 +85,6 @@ public abstract class AbstractOperation implements Operation, Serializable {
      *
      * @todo The return type will be changed from {@link String} to {@code Identifier}.
      */
-    @Override
     public String getName() {
         return descriptor.getName().getCode();
     }
@@ -103,7 +96,6 @@ public abstract class AbstractOperation implements Operation, Serializable {
      *
      * @deprecated Return type need to be changed, maybe to {@link InternationalString}.
      */
-    @Override
     @Deprecated
     public String getDescription() {
         final InternationalString remarks = descriptor.getRemarks();
@@ -116,7 +108,6 @@ public abstract class AbstractOperation implements Operation, Serializable {
      *
      * @deprecated To be replaced by a method returning a {@code Citation}.
      */
-    @Override
     @Deprecated
     public String getDocURL() {
         return null;
@@ -127,7 +118,6 @@ public abstract class AbstractOperation implements Operation, Serializable {
      *
      * @deprecated Replacement to be determined.
      */
-    @Override
     @Deprecated
     public String getVersion() {
         return descriptor.getName().getVersion();
@@ -139,7 +129,6 @@ public abstract class AbstractOperation implements Operation, Serializable {
      *
      * @deprecated To be replaced by {@code getName().getAuthority()}.
      */
-    @Override
     @Deprecated
     public String getVendor() {
         return "Geotoolkit.org";
@@ -148,7 +137,6 @@ public abstract class AbstractOperation implements Operation, Serializable {
     /**
      * Returns the number of source coverages required for the operation.
      */
-    @Override
     public int getNumSources() {
         return getNumSources(descriptor);
     }
@@ -176,7 +164,6 @@ public abstract class AbstractOperation implements Operation, Serializable {
     /**
      * Returns an initially empty set of parameters.
      */
-    @Override
     public ParameterValueGroup getParameters() {
         return descriptor.createValue();
     }
@@ -196,24 +183,6 @@ public abstract class AbstractOperation implements Operation, Serializable {
      */
     protected abstract Coverage doOperation(final ParameterValueGroup parameters, final Hints hints)
             throws IllegalArgumentException, CoverageProcessingException;
-
-    /**
-     * Returns the {@code CoverageProcessor} instance used for an operation. The instance is
-     * fetch from the rendering hints given to the {@link #doOperation} method. If no processor
-     * is specified, then a default one is returned.
-     *
-     * @param  hints The rendering hints, or {@code null} if none.
-     * @return The {@code CoverageProcessor} instance in use (never {@code null}).
-     */
-    static AbstractCoverageProcessor getProcessor(final RenderingHints hints) {
-        if (hints != null) {
-            final Object value = hints.get(Hints.GRID_COVERAGE_PROCESSOR);
-            if (value instanceof AbstractCoverageProcessor) {
-                return (AbstractCoverageProcessor) value;
-            }
-        }
-        return CachingCoverageProcessor.INSTANCE;
-    }
 
     /**
      * Returns a hash value for this operation. This value need not remain consistent between

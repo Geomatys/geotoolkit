@@ -26,7 +26,6 @@ import org.apache.sis.coverage.SampleDimension;
  * @author Johann Sorel (Geomatys)
  */
 public interface Coverage extends org.opengis.coverage.Coverage {
-
     /**
      * Returns information about the <cite>range</cite> of this grid coverage.
      * Information include names, sample value ranges, fill values and transfer functions for all bands in this grid coverage.
@@ -34,23 +33,4 @@ public interface Coverage extends org.opengis.coverage.Coverage {
      * @return names, value ranges, fill values and transfer functions for all bands in this grid coverage.
      */
     List<? extends SampleDimension> getSampleDimensions();
-
-    /**
-     * Deprecated, will be removed from GeoAPI.
-     */
-    @Deprecated
-    @Override
-    public default int getNumSampleDimensions() {
-        throw new UnsupportedOperationException("Deprecated");
-    }
-
-    /**
-     * Deprecated, will be removed from GeoAPI.
-     */
-    @Deprecated
-    @Override
-    public default org.opengis.coverage.SampleDimension getSampleDimension(int index) throws IndexOutOfBoundsException {
-        throw new UnsupportedOperationException("Deprecated");
-    }
-
 }

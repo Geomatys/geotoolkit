@@ -17,7 +17,7 @@
 package org.geotoolkit.coverage.wkb;
 
 import java.awt.image.DataBuffer;
-import org.opengis.coverage.SampleDimensionType;
+import org.geotoolkit.coverage.SampleDimensionType;
 
 /**
  * WKB raster constants, used in postGIS 2 but can be used elsewhere.

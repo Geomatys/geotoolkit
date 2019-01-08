@@ -23,8 +23,6 @@ import javax.media.jai.PlanarImage;
 
 import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.coverage.processing.Operation;
-import org.opengis.coverage.processing.OperationNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.factory.Hints;
@@ -38,15 +36,11 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 /**
  * A coverage processor that cache the result of operations. Given that {@linkplain GridCoverage
  * grid coverages} may be expensive to compute and consume a lot of memory, we can save a lot of
- * resources by returning cached instances every time the same {@linkplain Operation operation}
+ * resources by returning cached instances every time the same operation
  * with the same {@linkplain ParameterValueGroup parameters} is applied on the same coverage.
  * Coverages are cached using {@linkplain java.lang.ref.WeakReference weak references}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
- *
- * @since 2.2
- * @module
  */
 @Decorator(AbstractCoverageProcessor.class)
 public class CachingCoverageProcessor extends AbstractCoverageProcessor {
@@ -85,18 +79,7 @@ public class CachingCoverageProcessor extends AbstractCoverageProcessor {
      * @param userHints An optional set of hints, or {@code null} if none.
      */
     public CachingCoverageProcessor(final Hints userHints) {
-        AbstractCoverageProcessor processor = null;
-        if (userHints != null) {
-            Object candidate = userHints.get(Hints.GRID_COVERAGE_PROCESSOR);
-            if (candidate instanceof AbstractCoverageProcessor) {
-                processor = (AbstractCoverageProcessor) candidate;
-            }
-        }
-        if (processor == null) {
-            processor = new DefaultCoverageProcessor(userHints, this);
-        }
-        this.processor = processor;
-        hints.put(Hints.GRID_COVERAGE_PROCESSOR, processor);
+        processor = new DefaultCoverageProcessor(userHints, this);
     }
 
     /**
@@ -107,7 +90,6 @@ public class CachingCoverageProcessor extends AbstractCoverageProcessor {
     public CachingCoverageProcessor(final AbstractCoverageProcessor processor) {
         ensureNonNull("processor", processor);
         this.processor = processor;
-        hints.put(Hints.GRID_COVERAGE_PROCESSOR, processor);
     }
 
     /**
@@ -115,7 +97,7 @@ public class CachingCoverageProcessor extends AbstractCoverageProcessor {
      * the call directly to the {@linkplain #processor underlying processor}.
      */
     @Override
-    public Collection<Operation> getOperations() {
+    public Collection<AbstractOperation> getOperations() {
         return processor.getOperations();
     }
 
@@ -128,7 +110,7 @@ public class CachingCoverageProcessor extends AbstractCoverageProcessor {
      * @throws OperationNotFoundException if there is no operation for the specified name.
      */
     @Override
-    public Operation getOperation(final String name) throws OperationNotFoundException {
+    public AbstractOperation getOperation(final String name) throws OperationNotFoundException {
         return processor.getOperation(name);
     }
 
@@ -148,7 +130,7 @@ public class CachingCoverageProcessor extends AbstractCoverageProcessor {
             throws OperationNotFoundException, CoverageProcessingException
     {
         final String operationName = getOperationName(parameters);
-        final Operation  operation = processor.getOperation(operationName);
+        final AbstractOperation operation = processor.getOperation(operationName);
         final CachedOperationParameters key = new CachedOperationParameters(operation, parameters);
         Coverage coverage = cache.peek(key);
         if (coverage != null) {

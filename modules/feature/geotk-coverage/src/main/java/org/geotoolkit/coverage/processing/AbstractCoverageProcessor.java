@@ -27,9 +27,6 @@ import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 
 import org.geotoolkit.coverage.Coverage;
-import org.opengis.coverage.processing.Operation;
-import org.opengis.coverage.processing.OperationNotFoundException;
-import org.opengis.coverage.processing.GridCoverageProcessor;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
@@ -75,12 +72,8 @@ import org.geotoolkit.image.internal.ImageUtilities;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
- *
- * @since 2.2
- * @module
  */
-public abstract class AbstractCoverageProcessor extends Factory implements GridCoverageProcessor, Localized {
+public abstract class AbstractCoverageProcessor extends Factory implements Localized {
     /**
      * The logger for coverage processing operations.
      */
@@ -115,8 +108,7 @@ public abstract class AbstractCoverageProcessor extends Factory implements GridC
      *
      * @return The available processing operations
      */
-    @Override
-    public abstract Collection<Operation> getOperations();
+    public abstract Collection<AbstractOperation> getOperations();
 
     /**
      * Returns the operation for the specified name.
@@ -125,7 +117,7 @@ public abstract class AbstractCoverageProcessor extends Factory implements GridC
      * @return The operation for the given name.
      * @throws OperationNotFoundException if there is no operation for the specified name.
      */
-    public abstract Operation getOperation(String name) throws OperationNotFoundException;
+    public abstract AbstractOperation getOperation(String name) throws OperationNotFoundException;
 
     /**
      * Applies an operation.

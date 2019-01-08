@@ -44,7 +44,6 @@ import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -221,7 +220,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
      * math transform.
      * <p>
      * Grid coverage can be accessed (re-projected) with new coordinate reference system
-     * with the {@link org.opengis.coverage.processing.GridCoverageProcessor} component.
+     * with the {@code GridCoverageProcessor} component.
      * In this case, a new instance of a grid coverage is created.
      *
      * @return The coordinate reference system used when accessing a coverage or
@@ -1239,14 +1238,6 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
     @Debug
     public void show() {
         show(null);
-    }
-
-    /**
-     * Returns the source data for a coverage. The default implementation returns an empty list.
-     */
-    @Override
-    public List<? extends Coverage> getSources() {
-        return Collections.emptyList();
     }
 
     /**

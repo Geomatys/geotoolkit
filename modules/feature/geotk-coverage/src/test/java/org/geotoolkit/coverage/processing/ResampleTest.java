@@ -50,7 +50,6 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
 

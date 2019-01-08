@@ -24,15 +24,12 @@ import org.opengis.geometry.Envelope;
 import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.opengis.coverage.processing.Operation;
-import org.opengis.coverage.processing.OperationNotFoundException;
 import org.opengis.parameter.InvalidParameterNameException;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.processing.operation.Resample;
 
@@ -47,18 +44,14 @@ import org.geotoolkit.coverage.processing.operation.Resample;
  * selected by users in some widget), use {@link AbstractCoverageProcessor} directly.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.02
  *
  * @see org.geotoolkit.coverage.processing.operation
- *
- * @since 2.2
- * @module
  */
 public class Operations {
     /**
      * The default instance.
      */
-    public static final Operations DEFAULT = new Operations(null);
+    public static final Operations DEFAULT = new Operations(CachingCoverageProcessor.INSTANCE);
 
     /**
      * The processor to use for applying operations.
@@ -67,26 +60,9 @@ public class Operations {
 
     /**
      * Creates a new instance using the specified hints.
-     *
-     * @param hints The hints, or {@code null} if none.
      */
-    public Operations(Hints hints) {
-        if (hints == null) {
-            processor = CachingCoverageProcessor.INSTANCE;
-        } else {
-            Object candidate = hints.get(Hints.GRID_COVERAGE_PROCESSOR);
-            if (AbstractCoverageProcessor.class.isInstance(candidate)) {
-                processor = (AbstractCoverageProcessor) candidate;
-            } else {
-                if (!(candidate instanceof Class<?>) ||
-                        !AbstractCoverageProcessor.class.isAssignableFrom((Class<?>) candidate))
-                {
-                    hints = hints.clone();
-                    hints.put(Hints.GRID_COVERAGE_PROCESSOR, AbstractCoverageProcessor.class);
-                }
-                processor = CachingCoverageProcessor.INSTANCE;
-            }
-        }
+    public Operations(final AbstractCoverageProcessor processor) {
+        this.processor = (processor != null) ? processor : CachingCoverageProcessor.INSTANCE;
     }
 
 
@@ -674,7 +650,7 @@ public class Operations {
     protected final Coverage doOperation(final String operationName, final Coverage source)
             throws OperationNotFoundException, CoverageProcessingException
     {
-        final Operation operation = processor.getOperation(operationName);
+        final AbstractOperation operation = processor.getOperation(operationName);
         final ParameterValueGroup parameters = operation.getParameters();
         parameters.parameter("Source").setValue(source);
         return processor.doOperation(parameters);
@@ -698,7 +674,7 @@ public class Operations {
             throws OperationNotFoundException, InvalidParameterNameException,
                    CoverageProcessingException
     {
-        final Operation operation = processor.getOperation(operationName);
+        final AbstractOperation operation = processor.getOperation(operationName);
         final ParameterValueGroup parameters = operation.getParameters();
         parameters.parameter("Source").setValue(source);
         setParameterValue(parameters, argumentName1, argumentValue1);
@@ -726,7 +702,7 @@ public class Operations {
             throws OperationNotFoundException, InvalidParameterNameException,
                    CoverageProcessingException
     {
-        final Operation operation = processor.getOperation(operationName);
+        final AbstractOperation operation = processor.getOperation(operationName);
         final ParameterValueGroup parameters = operation.getParameters();
         parameters.parameter("Source").setValue(source);
         setParameterValue(parameters, argumentName1, argumentValue1);
@@ -758,7 +734,7 @@ public class Operations {
             throws OperationNotFoundException, InvalidParameterNameException,
                    CoverageProcessingException
     {
-        final Operation operation = processor.getOperation(operationName);
+        final AbstractOperation operation = processor.getOperation(operationName);
         final ParameterValueGroup parameters = operation.getParameters();
         parameters.parameter("Source").setValue(source);
         setParameterValue(parameters, argumentName1, argumentValue1);
@@ -796,7 +772,7 @@ public class Operations {
             throws OperationNotFoundException, InvalidParameterNameException,
                    CoverageProcessingException
     {
-        final Operation operation = processor.getOperation(operationName);
+        final AbstractOperation operation = processor.getOperation(operationName);
         final ParameterValueGroup parameters = operation.getParameters();
         parameters.parameter("Source").setValue(source);
         setParameterValue(parameters, argumentName1, argumentValue1);
@@ -838,7 +814,7 @@ public class Operations {
             throws OperationNotFoundException, InvalidParameterNameException,
                    CoverageProcessingException
     {
-        final Operation operation = processor.getOperation(operationName);
+        final AbstractOperation operation = processor.getOperation(operationName);
         final ParameterValueGroup parameters = operation.getParameters();
         parameters.parameter("Source").setValue(source);
         setParameterValue(parameters, argumentName1, argumentValue1);
@@ -884,7 +860,7 @@ public class Operations {
             throws OperationNotFoundException, InvalidParameterNameException,
                    CoverageProcessingException
     {
-        final Operation operation = processor.getOperation(operationName);
+        final AbstractOperation operation = processor.getOperation(operationName);
         final ParameterValueGroup parameters = operation.getParameters();
         parameters.parameter("Source").setValue(source);
         setParameterValue(parameters, argumentName1, argumentValue1);
