@@ -143,7 +143,7 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
             }
             final GridCoverage2D cov2d = (GridCoverage2D) cov;
             final List<SampleDimension> bands = cov2d.getSampleDimensions();
-            return new GridCoverage(domain, bands) {
+            return new GridCoverage(cov2d.getGridGeometry(), bands) {
                 @Override
                 public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
                     return cov2d.getRenderedImage();
