@@ -55,11 +55,6 @@ final class FormatEntry extends Entry {
     final List<SampleDimension> sampleDimensions;
 
     /**
-     * The name of the color palette, or {@code null} if unspecified.
-     */
-    private final String paletteName;
-
-    /**
      * Reference to an entry in the {@code metadata.Format} table, or {@code null}.
      */
     private final String metadata;
@@ -67,16 +62,14 @@ final class FormatEntry extends Entry {
     /**
      * Creates a new entry for this format.
      *
-     * @param driver       the format name (i.e. the plugin to use).
-     * @param paletteName  the name of the color palette, or {@code null} if unspecified.
-     * @param bands        sample dimensions for coverages encoded with this format, or {@code null}.
-     *                     The bands given to this constructor shall <strong>not</strong> be geophysics.
-     * @param metadata     reference to an entry in the {@code metadata.Format} table, or {@code null}.
+     * @param driver    the format name (i.e. the plugin to use).
+     * @param bands     sample dimensions for coverages encoded with this format, or {@code null}.
+     *                  The bands given to this constructor shall <strong>not</strong> be geophysics.
+     * @param metadata  reference to an entry in the {@code metadata.Format} table, or {@code null}.
      */
-    FormatEntry(String driver, final String paletteName, final List<SampleDimension> bands, final String metadata) {
+    FormatEntry(String driver, final List<SampleDimension> bands, final String metadata) {
         driver = driver.trim();
         sampleDimensions = bands;
-        this.paletteName = paletteName;
         this.metadata    = metadata;
         for (DataStoreProvider provider : DataStores.providers()) {
             if (driver.equalsIgnoreCase(provider.getShortName())) {

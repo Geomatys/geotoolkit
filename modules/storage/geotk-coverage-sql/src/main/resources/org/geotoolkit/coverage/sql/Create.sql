@@ -176,7 +176,6 @@ INSERT INTO rasters."Formats" ("name", "driver", "metadata") VALUES
 --
 -- Description of the bands for each format. This table duplicates the information provided in rich formats
 -- like netCDF. But we declare them in the database for supporting non-geospatial formats like PNG.
--- Note that the "units" column duplicates metadata."SampleDimension"."units".
 --
 CREATE TABLE rasters."SampleDimensions" (
     "format"     VARCHAR(120) NOT NULL,
@@ -184,16 +183,12 @@ CREATE TABLE rasters."SampleDimensions" (
     "identifier" VARCHAR(120),
     "units"      VARCHAR(20),
     "isPacked"   BOOLEAN      NOT NULL DEFAULT TRUE,
-    "metadata"   VARCHAR(15),
+    "background" INTEGER,
     PRIMARY KEY ("format", "band"),
     CONSTRAINT "Reference to enclosing format" FOREIGN KEY ("format")
         REFERENCES rasters."Formats" ("name")
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    CONSTRAINT "Reference to ISO metadata" FOREIGN KEY ("metadata")
-        REFERENCES metadata."SampleDimension" ("ID")
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
     CONSTRAINT "Restriction on band number" CHECK ("band" >= 1)
 );
 
@@ -201,9 +196,9 @@ COMMENT ON TABLE  rasters."SampleDimensions"              IS 'Descriptions of ba
 COMMENT ON COLUMN rasters."SampleDimensions"."format"     IS 'Format having this band.';
 COMMENT ON COLUMN rasters."SampleDimensions"."band"       IS 'Band sequence number (starting at 1).';
 COMMENT ON COLUMN rasters."SampleDimensions"."identifier" IS 'If the raster format requires an identifier for accessing data (for example a variable name in a netCDF file), that identifier. Otherwise can be used as a label.';
-COMMENT ON COLUMN rasters."SampleDimensions"."units"      IS 'Units of measurement. May be left blank if not applicable. Should be consistent with units declared in metadata.';
+COMMENT ON COLUMN rasters."SampleDimensions"."units"      IS 'Units of measurement. May be left blank if not applicable.';
 COMMENT ON COLUMN rasters."SampleDimensions"."isPacked"   IS 'Whether values are stored using a smaller data type, to be converted using an offset and scale factor.';
-COMMENT ON COLUMN rasters."SampleDimensions"."metadata"   IS 'Reference to additional information about the band, including offset, scale factor and units of measurement.';
+COMMENT ON COLUMN rasters."SampleDimensions"."background" IS 'Sample value used for the background. This is often 0 but not always.';
 COMMENT ON CONSTRAINT "Reference to enclosing format" ON rasters."SampleDimensions" IS 'Each band is part of the description of the raster format.';
 COMMENT ON CONSTRAINT "Restriction on band number"    ON rasters."SampleDimensions" IS 'The band number shall be strictly positive.';
 
@@ -225,7 +220,6 @@ CREATE TABLE rasters."Categories" (
     "scale"    DOUBLE PRECISION,
     "offset"   DOUBLE PRECISION,
     "function" metadata."TransferFunctionTypeCode",
-    "colors"   VARCHAR(80),
     PRIMARY KEY ("format", "band", "lower"),
     CONSTRAINT "Reference to enclosing sample dimension" FOREIGN KEY ("band", "format")
         REFERENCES rasters."SampleDimensions" ("band", "format")
@@ -247,7 +241,6 @@ COMMENT ON COLUMN rasters."Categories"."upper"    IS 'Maximum cell value (inclus
 COMMENT ON COLUMN rasters."Categories"."scale"    IS 'Coefficient C1 of the equation y=C0+C1*x, where x is the cell value and y is the value of the geophysical measurement. May be left blank if not applicable.';
 COMMENT ON COLUMN rasters."Categories"."offset"   IS 'Coefficient C0 of the equation y=C0+C1*x, where x is the cell value and y is the value of the geophysical measurement. May be left blank if not applicable.';
 COMMENT ON COLUMN rasters."Categories"."function" IS 'Transform function to be used when scaling a physical value: "linear" (or omitted) for y=C0+C1*x, or "exponentional" for y=10^(C0+C1*x).';
-COMMENT ON COLUMN rasters."Categories"."colors"   IS 'This field can be either a color code or the name of a color pallet.';
 COMMENT ON CONSTRAINT "Reference to enclosing sample dimension" ON rasters."Categories" IS 'Each category is an element of the band description.';
 COMMENT ON CONSTRAINT "Restriction on transfer function"        ON rasters."Categories" IS 'Both coefficients C0 and C1 must be either null or non-null.';
 COMMENT ON CONSTRAINT "Restriction on sample value range"       ON rasters."Categories" IS 'Lower value shall not be greater than upper value.';
@@ -454,27 +447,3 @@ CREATE VIEW rasters."DomainOfProducts" AS
 
 COMMENT ON VIEW rasters."DomainOfSeries"   IS 'List of geographical areas used by each sub-series.';
 COMMENT ON VIEW rasters."DomainOfProducts" IS 'Number of rasters and geographical area for each product used.';
-
-
-
-
---
--- Get an estimation of the number of rows in a table.
--- Adapted from https://wiki.postgresql.org/wiki/Count_estimate
---
-CREATE FUNCTION rasters.count_estimate("series" INTEGER) RETURNS INTEGER AS
-$BODY$
-DECLARE
-    rec   record;
-    ROWS  INTEGER;
-BEGIN
-    FOR rec IN EXECUTE 'EXPLAIN SELECT * FROM rasters."GridCoverages" WHERE "series"=' || "series" LOOP
-        ROWS := SUBSTRING(rec."QUERY PLAN" FROM ' rows=([[:digit:]]+)');
-        EXIT WHEN ROWS IS NOT NULL;
-    END LOOP;
-    RETURN ROWS;
-END
-$BODY$ LANGUAGE plpgsql;
-
-COMMENT ON FUNCTION rasters.count_estimate(INTEGER)
-    IS 'Returns an estimate of the number of grid coverages in a given series.';

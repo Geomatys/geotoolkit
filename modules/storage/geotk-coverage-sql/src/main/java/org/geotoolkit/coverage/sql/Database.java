@@ -42,7 +42,6 @@ import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.internal.metadata.AxisDirections;
 
-import org.geotoolkit.image.palette.PaletteFactory;
 
 
 /**
@@ -107,11 +106,6 @@ final class Database {
     final MathTransformFactory mtFactory;
 
     /**
-     * The factory for color palettes.
-     */
-    final PaletteFactory paletteFactory;
-
-    /**
      * The unit format for parsing and formatting unit symbols.
      * Thread safe if the configuration is not changed after {@code Database} construction.
      */
@@ -144,8 +138,6 @@ final class Database {
         nameFactory       = DefaultFactories.forBuildin(NameFactory.class);
         crsFactory        = DefaultFactories.forBuildin(CRSFactory.class);
         mtFactory         = DefaultFactories.forBuildin(MathTransformFactory.class);
-        paletteFactory    = PaletteFactory.getDefault();
-        paletteFactory.setWarningLocale(locale);
         unitFormat        = new UnitFormat(locale);
         caches            = new EnumMap<>(CachedTable.Target.class);
     }

@@ -28,6 +28,7 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 
 /**
@@ -80,17 +81,8 @@ final class FormatTable extends CachedTable<String,FormatEntry> {
     FormatEntry createEntry(final ResultSet results, final String identifier) throws SQLException, CatalogException {
         final String  format   = results.getString(1);
         final String  metadata = results.getString(2);
-        SampleDimensionEntries categories = sampleDimensions.query(identifier);
-        final List<SampleDimension> sampleDimensions;
-        final String paletteName;
-        if (categories != null) {
-            sampleDimensions = categories.getSampleDimensions();
-            paletteName = categories.paletteName;
-        } else {
-            sampleDimensions = null;
-            paletteName = null;
-        }
-        return new FormatEntry(format, paletteName, sampleDimensions, metadata);
+        final SampleDimension[] categories = sampleDimensions.query(identifier);
+        return new FormatEntry(format, UnmodifiableArrayList.wrap(categories), metadata);
     }
 
     /**

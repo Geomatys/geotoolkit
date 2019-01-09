@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import javax.measure.Unit;
 import javax.measure.format.ParserException;
+import org.opengis.util.FactoryException;
 import org.apache.sis.measure.Units;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
@@ -80,25 +81,24 @@ final class SampleDimensionTable extends Table {
      * @return an entry containing the sample dimensions for the given format, or {@code null} if none.
      * @throws SQLException if an error occurred while reading the database.
      */
-    final SampleDimensionEntries query(final String format) throws SQLException, CatalogException {
+    final SampleDimension[] query(final String format) throws SQLException, CatalogException {
         String[]  names = new String [8];
         Unit<?>[] units = new Unit<?>[8];
         boolean[] packs = new boolean[8];
-        String[]  mdDim = new String [8];       // TODO: replace by a data structure.
-        boolean hasMetadata = false;
+        Integer[] backs = new Integer[8];
         int numSampleDimensions = 0;
         final PreparedStatement statement = prepareStatement("SELECT "
-                + "\"band\", \"identifier\", \"units\", \"isPacked\", \"metadata\""
+                + "\"band\", \"identifier\", \"units\", \"isPacked\", \"background\""
                 + " FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"format\" = ? ORDER BY \"band\"");
         statement.setString(1, format);
         try (ResultSet results = statement.executeQuery()) {
             while (results.next()) {
-                final int    band = results.getInt    (1);          // First band is 1.
-                final String name = results.getString (2);
-                String unitSymbol = results.getString (3);
-                boolean  isPacked = results.getBoolean(4);
-                String   metadata = results.getString (5);
-                hasMetadata      |= !results.wasNull();
+                final int     band = results.getInt    (1);          // First band is 1.
+                final String  name = results.getString (2);
+                String  unitSymbol = results.getString (3);
+                boolean   isPacked = results.getBoolean(4);
+                Integer background = results.getInt    (5);
+                if (results.wasNull()) background = null;
                 Unit<?> unit = null;
                 if (unitSymbol != null) {
                     unitSymbol = unitSymbol.trim();
@@ -116,12 +116,12 @@ final class SampleDimensionTable extends Table {
                     names = Arrays.copyOf(names, names.length*2);
                     units = Arrays.copyOf(units, units.length*2);
                     packs = Arrays.copyOf(packs, packs.length*2);
-                    mdDim = Arrays.copyOf(mdDim, mdDim.length*2);
+                    backs = Arrays.copyOf(backs, backs.length*2);
                 }
                 names[numSampleDimensions] = name;
                 units[numSampleDimensions] = unit;
                 packs[numSampleDimensions] = isPacked;
-                mdDim[numSampleDimensions] = metadata;
+                backs[numSampleDimensions] = background;
                 if (band != ++numSampleDimensions) {
                     throw new IllegalRecordException(errors().getString(
                             Errors.Keys.NonConsecutiveBands_2, numSampleDimensions, band),
@@ -137,13 +137,11 @@ final class SampleDimensionTable extends Table {
         if (numSampleDimensions == 0) {
             return null;
         }
-        final SampleDimensionEntries entries = getCategoryTable().query(format, units);
         try {
-            entries.complete(transaction.database.nameFactory, names, packs, hasMetadata ? mdDim : null, numSampleDimensions);
-        } catch (IllegalArgumentException exception) {
+            return getCategoryTable().query(format, names, units, packs, backs);
+        } catch (IllegalArgumentException | FactoryException exception) {
             throw new IllegalRecordException(exception, null, 0, format);
         }
-        return entries;
     }
 
     /**
@@ -155,7 +153,7 @@ final class SampleDimensionTable extends Table {
      */
     final void insert(final String format, final List<SampleDimension> bands) throws SQLException, IllegalUpdateException {
         final PreparedStatement statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\" ("
-                + "\"format\", \"band\", \"identifier\", \"units\", \"isPacked\") VALUES (?,?,?,?,?)");
+                + "\"format\", \"band\", \"identifier\", \"units\", \"isPacked\", \"background\") VALUES (?,?,?,?,?,?)");
         statement.setString(1, format);
         final List<List<Category>> categories = new ArrayList<>(bands.size());
         boolean areAllEmpty = true;
@@ -171,6 +169,12 @@ final class SampleDimensionTable extends Table {
                 statement.setNull(4, Types.VARCHAR);
             }
             statement.setBoolean(5, isPacked);
+            final Optional<Number> background = band.getBackground();
+            if (background.isPresent()) {
+                statement.setInt(6, background.get().intValue());
+            } else {
+                statement.setNull(6, Types.INTEGER);
+            }
             final int count = statement.executeUpdate();
             if (count != 1) {
                 throw new IllegalUpdateException(transaction.database.locale, count);

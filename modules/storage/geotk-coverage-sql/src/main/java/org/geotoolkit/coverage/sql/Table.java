@@ -30,8 +30,7 @@ import org.geotoolkit.resources.Errors;
 
 /**
  * Base class for a table in a raster database. This class is not thread-safe.
- * For usage in multi-threads environment, the copy constructor shall be used
- * for creating a different instance of the {@code Table} subclass for each thread.
+ * For usage in multi-threads environment, different instances shall be created for each thread.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  */

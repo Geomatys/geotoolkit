@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.gui.swing.image;
 
 import java.awt.Color;
 import java.io.IOException;
