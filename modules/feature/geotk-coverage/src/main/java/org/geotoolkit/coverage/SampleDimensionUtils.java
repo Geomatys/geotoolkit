@@ -162,23 +162,25 @@ public final strictfp class SampleDimensionUtils {
     public static ColorModel getColorModel(final SampleDimension band, final int visibleBand, final int numBands) {
         final List<Category> categories = band.getCategories();
         int type = DataBuffer.TYPE_FLOAT;
-        final NumberRange<?> range = categories.get(0).getSampleRange();
-        final Class<?> rt = range.getElementType();
-        if (rt == Byte.class || rt == Short.class || rt == Integer.class) {
-            final int min = range.getMinValue().intValue();
-            final int max = (int) getMaximumValue(band);
-            if (min >= 0) {
-                if (max < 0x100) {
-                    type = DataBuffer.TYPE_BYTE;
-                } else if (max < 0x10000) {
-                    type = DataBuffer.TYPE_USHORT;
+        if (!categories.isEmpty()) {
+            final NumberRange<?> range = categories.get(0).getSampleRange();
+            final Class<?> rt = range.getElementType();
+            if (rt == Byte.class || rt == Short.class || rt == Integer.class) {
+                final int min = range.getMinValue().intValue();
+                final int max = (int) getMaximumValue(band);
+                if (min >= 0) {
+                    if (max < 0x100) {
+                        type = DataBuffer.TYPE_BYTE;
+                    } else if (max < 0x10000) {
+                        type = DataBuffer.TYPE_USHORT;
+                    } else {
+                        type = DataBuffer.TYPE_INT;
+                    }
+                } else if (min >= Short.MIN_VALUE && max <= Short.MAX_VALUE) {
+                    type = DataBuffer.TYPE_SHORT;
                 } else {
                     type = DataBuffer.TYPE_INT;
                 }
-            } else if (min >= Short.MIN_VALUE && max <= Short.MAX_VALUE) {
-                type = DataBuffer.TYPE_SHORT;
-            } else {
-                type = DataBuffer.TYPE_INT;
             }
         }
         return getColorModel(band, visibleBand, numBands, type);
