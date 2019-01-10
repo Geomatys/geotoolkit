@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -160,10 +160,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             GridCoverage2D dataCoverage;
             try {
                 dataCoverage = getObjectiveCoverage(projectedCoverage,
-                        renderingContext.getCanvasObjectiveBounds(),
-                        renderingContext.getResolution(),
-                        renderingContext.getObjectiveToDisplay(),
-                        false,toRead);
+                        renderingContext.getGridGeometry(), false, toRead);
             } catch (DisjointCoverageDomainException ex) {
                 return false;
             }

@@ -16,10 +16,6 @@
  */
 package org.geotoolkit.display2d.ext.cellular;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Polygon;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -28,9 +24,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.math.Statistics;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.DefaultCachedRule;
@@ -44,9 +47,18 @@ import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRendere
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.util.ObjectConverters;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -54,18 +66,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.opengis.feature.AttributeType;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyType;
 
 /**
  * TODO : For features, compute statistics only if input symbolizer needs
@@ -272,8 +272,8 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
         GridCoverage2D coverage;
         try {
-            coverage = getObjectiveCoverage(projectedCoverage,env,renderingContext.getResolution(),
-                    renderingContext.getObjectiveToDisplay(),false);
+            coverage = getObjectiveCoverage(projectedCoverage,
+                    renderingContext.getGridGeometry(),false);
         } catch (Exception ex) {
             throw new PortrayalException(ex);
         }

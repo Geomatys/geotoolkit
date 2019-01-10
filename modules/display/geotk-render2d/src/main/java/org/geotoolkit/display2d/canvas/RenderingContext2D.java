@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.display2d.canvas;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -35,11 +33,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.quantity.Length;
 import javax.measure.Unit;
+import javax.measure.quantity.Length;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.display.canvas.CanvasUtilities;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -51,8 +55,9 @@ import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.resources.Errors;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -61,9 +66,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.util.Utilities;
-import org.apache.sis.measure.Units;
-import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 
 
 /**
@@ -684,7 +686,13 @@ public class RenderingContext2D implements RenderingContext{
         return monitor;
     }
 
-
+    public GridGeometry2D getGridGeometry() {
+        final AffineTransform2D dispToObj = getDisplayToObjective();
+        final Rectangle bounds = getCanvasDisplayBounds();
+        final CoordinateReferenceSystem crs2d = getObjectiveCRS2D();
+        final GridExtent extent = new GridExtent(bounds.width, bounds.height);
+        return new GridGeometry2D(extent, dispToObj, crs2d);
+    }
 
     // Informations related to scale datas -------------------------------------
 
