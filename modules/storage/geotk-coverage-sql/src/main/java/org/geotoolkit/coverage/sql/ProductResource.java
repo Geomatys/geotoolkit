@@ -32,6 +32,7 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.storage.coverage.GeoReferencedGridCoverageReader;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 
@@ -54,6 +55,9 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
 
     @Override
     public GridCoverageReader acquireReader() throws CatalogException {
+        if (product.isImplementedBySIS()) {
+            return new DirectReader();
+        }
         return new Reader();
     }
 
@@ -96,6 +100,47 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
                 return CoverageUtilities.toGeotk(product.read(subg, null));
             } catch (DataStoreException ex) {
                 throw new CoverageStoreException(ex.getMessage(), ex);
+            }
+        }
+    }
+
+    private final class DirectReader extends GridCoverageReader {
+        DirectReader() {
+        }
+
+        @Override
+        public GenericName getCoverageName() throws CoverageStoreException {
+            return ProductResource.this.getIdentifier();
+        }
+
+        @Override
+        public GridGeometry getGridGeometry() throws CoverageStoreException {
+            return CoverageUtilities.forceLowerToZero(product.getGridGeometry());
+        }
+
+        @Override
+        public List<SampleDimension> getSampleDimensions() throws CoverageStoreException {
+            return product.getSampleDimensions();
+        }
+
+        @Override
+        public GridCoverage read(final GridCoverageReadParam param) throws CoverageStoreException {
+            Envelope envelope = null;
+            double[] resolution = null;
+            if (param != null) {
+                envelope = param.getEnvelope();
+                resolution = param.getResolution();
+            }
+            try {
+                GridGeometry gg = product.getGridGeometry();
+                if (envelope != null) {
+                    gg = gg.subgrid(envelope, resolution);
+                }
+                return CoverageUtilities.toGeotk(product.read(gg, null));
+            } catch (CoverageStoreException e) {
+                throw e;
+            } catch (DataStoreException e) {
+                throw new CatalogException(e);
             }
         }
     }

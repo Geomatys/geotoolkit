@@ -28,9 +28,12 @@ import java.sql.PreparedStatement;
 import javax.measure.Unit;
 import javax.measure.format.ParserException;
 import org.opengis.util.FactoryException;
+import org.opengis.util.InternationalString;
+import org.opengis.referencing.operation.MathTransform1D;
 import org.apache.sis.measure.Units;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.measure.MeasurementRange;
 import org.geotoolkit.resources.Errors;
 
 
@@ -46,6 +49,13 @@ final class SampleDimensionTable extends Table {
      * Name of this table in the database.
      */
     private static final String TABLE = "SampleDimensions";
+
+    /**
+     * Default range of values used if the sample dimensions does not define any packed storage.
+     * "Packed storage" are values stored as integers with a transfer function from integer values
+     * to real values.
+     */
+    private static final int DEFAULT_RANGE = 0xFFFF;
 
     /**
      * The {@linkplain Category categories} table, created only when first needed.
@@ -154,12 +164,27 @@ final class SampleDimensionTable extends Table {
     final void insert(final String format, final List<SampleDimension> bands) throws SQLException, IllegalUpdateException {
         final PreparedStatement statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\" ("
                 + "\"format\", \"band\", \"identifier\", \"units\", \"isPacked\", \"background\") VALUES (?,?,?,?,?,?)");
-        statement.setString(1, format);
+
+        statement.setString(1, format);             // Constant for all bands.
         final List<List<Category>> categories = new ArrayList<>(bands.size());
         boolean areAllEmpty = true;
         int bandNumber = 0;
-        for (SampleDimension band : bands) {
-            final boolean isPacked = (band == (band = band.forConvertedValues(false)));
+        for (final SampleDimension band : bands) {
+            // Whether to consider the sample values as already converted.
+            final boolean isReal = isReal(band);
+            final SampleDimension packed = band.forConvertedValues(false);
+            List<Category> bandCategories = packed.getCategories();
+            if (isReal && band == packed) {
+                /*
+                 * If the SampleDimension describes values that are already converted and does not describe
+                 * any way to encode the data as integer, we have to invent or own packaging here because
+                 * this is the way we encode the information in the database.
+                 */
+                final Optional<MeasurementRange<?>> range = band.getMeasurementRange();
+                if (range.isPresent()) {
+                    bandCategories = defaultCategories(bandCategories, range.get());
+                }
+            }
             statement.setInt(2, ++bandNumber);
             statement.setString(3, String.valueOf(band.getName()));
             final Optional<Unit<?>> unit = band.getUnits();
@@ -168,8 +193,8 @@ final class SampleDimensionTable extends Table {
             } else {
                 statement.setNull(4, Types.VARCHAR);
             }
-            statement.setBoolean(5, isPacked);
-            final Optional<Number> background = band.getBackground();
+            statement.setBoolean(5, !isReal);
+            final Optional<Number> background = packed.getBackground();
             if (background.isPresent()) {
                 statement.setInt(6, background.get().intValue());
             } else {
@@ -179,13 +204,45 @@ final class SampleDimensionTable extends Table {
             if (count != 1) {
                 throw new IllegalUpdateException(transaction.database.locale, count);
             }
-            final List<Category> bandCategories = band.getCategories();
             areAllEmpty &= bandCategories.isEmpty();
             categories.add(bandCategories);
         }
         if (!areAllEmpty) {
             getCategoryTable().insert(format, categories);
         }
+    }
+
+    /**
+     * Returns {@code true} if the following sample dimension is considered packed or for real values.
+     */
+    static boolean isReal(final SampleDimension band) {
+        return band.getTransferFunction().map(MathTransform1D::isIdentity).orElse(true);
+    }
+
+    /**
+     * Creates a new list of categories for real values in the given range.
+     * The returned categories use an arbitrary packing.
+     */
+    static List<Category> defaultCategories(final List<Category> original, final MeasurementRange<?> range) {
+        final SampleDimension.Builder b = new SampleDimension.Builder();
+        InternationalString name = null;
+        int padValue = 0;
+        for (final Category c : original) {
+            if (!c.getTransferFunction().isPresent()) {
+                b.addQualitative(c.getName(), padValue++);
+            } else if (name == null) {
+                name = c.getName();
+            }
+        }
+        if (padValue == 0) {
+            b.setBackground(null, padValue++);
+        }
+        double min    = range.getMinDouble();
+        double max    = range.getMaxDouble();
+        double scale  = (max - min) / (DEFAULT_RANGE - padValue);
+        double offset = min - scale * padValue;
+        b.addQuantitative(name, padValue, DEFAULT_RANGE + 1, scale, offset, range.unit());
+        return b.build().getCategories();
     }
 
     /**

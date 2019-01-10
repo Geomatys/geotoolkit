@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,6 +30,7 @@ import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.measure.MeasurementRange;
 
 
 /**
@@ -146,14 +148,25 @@ next:           while (results.next()) {
                     for (int i=0; i<numBands; i++) {
                         SampleDimension band1 = bands.get(i);
                         SampleDimension band2 = current.get(i);
-                        final boolean isPacked1 = (band1 == (band1 = band1.forConvertedValues(false)));
-                        final boolean isPacked2 = (band2 == (band2 = band2.forConvertedValues(false)));
-                        if (isPacked1 != isPacked2 || !Objects.equals(band1.getUnits(), band2.getUnits())) {
+                        final boolean isReal1 = SampleDimensionTable.isReal(band1);
+                        final boolean isReal2 = SampleDimensionTable.isReal(band2);
+                        if (isReal1 != isReal2 || !Objects.equals(band1.getUnits(), band2.getUnits())) {
                             // Units don't match for at least one band: look for an other format.
                             continue next;
                         }
-                        final List<Category> categories1 = band1.getCategories();
-                        final List<Category> categories2 = band2.getCategories();
+                        final SampleDimension supplied = band1;
+                        band1 = band1.forConvertedValues(false);
+                        band2 = band2.forConvertedValues(false);
+                        List<Category> categories1 = band1.getCategories();
+                        List<Category> categories2 = band2.getCategories();
+                        if (isReal1 && band1 == supplied) {
+                            final Optional<MeasurementRange<?>> range = band1.getMeasurementRange();
+                            if (range.isPresent()) {
+                                // Use the range that would be written in the database.
+                                categories1 = SampleDimensionTable.defaultCategories(categories1, range.get());
+                                // TODO: opportunistically replace the SampleDimension in the 'bands' list?
+                            }
+                        }
                         final int numCategories = size(categories1);
                         if (size(categories2) != numCategories) {
                             // Number of category don't match in at least one band: look for an other format.

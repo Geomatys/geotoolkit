@@ -90,4 +90,8 @@ final class FormatEntry extends Entry {
             return DataStores.open(path);
         }
     }
+
+    final boolean isImplementedBySIS() {
+        return (provider != null) && provider.getClass().getName().startsWith("org.apache.");
+    }
 }

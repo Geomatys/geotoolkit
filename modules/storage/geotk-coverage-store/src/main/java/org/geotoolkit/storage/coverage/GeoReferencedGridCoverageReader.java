@@ -196,6 +196,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
             max = extent.getHigh(i)+1;//+1 for upper exclusive
             areaLower[i] = Math.toIntExact(XMath.clamp((int)Math.floor(imgEnv.getMinimum(i)), min, max));
             areaUpper[i] = Math.toIntExact(XMath.clamp((int)Math.ceil(imgEnv.getMaximum(i)),  min, max));
+            if (areaLower[i] == areaUpper[i]) areaUpper[i]++;
         }
 
         return readInGridCRS(areaLower,areaUpper,subsampling, param);
@@ -215,29 +216,33 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
 
         //ensure we readInGridCRS at least 3x3 pixels otherwise the gridgeometry won't be
         //able to identify the 2D composant of the grid to crs transform.
-        for(int i=0;i<2;i++){
-            int width = (areaUpper[i]-areaLower[i]+subsampling[i]-1) / subsampling[i];
-            if(width<2){
+        for (int i=0; i<2; i++) {
+            int width = (areaUpper[i] - areaLower[i] + subsampling[i] - 1) / subsampling[i];
+            if (width < 2) {
                 subsampling[i] = 1;
-                if(areaLower[i]==0) areaUpper[i]=3;
-                else {areaLower[i]--;areaUpper[i]++;}
+                if (areaLower[i] == 0) {
+                    areaUpper[i] = 3;
+                } else {
+                    areaLower[i]--;
+                    areaUpper[i]++;
+                }
             }
         }
 
         // find if we need to readInGridCRS more then one slice
         int cubeDim = -1;
-        for(int i=0;i<subsampling.length;i++){
-            final int width = (areaUpper[i]-areaLower[i]+subsampling[i]-1) / subsampling[i];
-            if(i>1 && width>1){
+        for (int i=0; i<subsampling.length; i++) {
+            final int width = (areaUpper[i] - areaLower[i] + subsampling[i] - 1) / subsampling[i];
+            if (i>1 && width>1) {
                 cubeDim = i;
                 break;
             }
         }
 
-        if(cubeDim == -1){
+        if (cubeDim == -1) {
             //read a single slice
             return readGridSlice(areaLower, areaUpper, subsampling, param);
-        }else{
+        } else {
             //read an Nd cube
             final List<GridCoverage> coverages = new ArrayList<>();
             final int lower = areaLower[cubeDim];

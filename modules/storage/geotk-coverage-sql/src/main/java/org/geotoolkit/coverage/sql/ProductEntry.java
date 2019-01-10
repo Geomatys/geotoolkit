@@ -290,6 +290,10 @@ final class ProductEntry extends Entry {
         }
     }
 
+    final boolean isImplementedBySIS() {
+        return (format != null) && format.isImplementedBySIS();
+    }
+
     public GridCoverage read(GridGeometry areaOfInterest, int... bands) throws DataStoreException {
         return subset(getGridGeometry().getEnvelope(), getGridGeometry().getResolution(true)).read(areaOfInterest, bands);
     }
