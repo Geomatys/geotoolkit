@@ -24,6 +24,7 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -134,7 +135,7 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
             try {
                 GridGeometry gg = product.getGridGeometry();
                 if (envelope != null) {
-                    gg = gg.subgrid(envelope, resolution);
+                    gg = gg.subgrid(envelope, GridRoundingMode.ENCLOSING, resolution);
                 }
                 return CoverageUtilities.toGeotk(product.read(gg, null));
             } catch (CoverageStoreException e) {

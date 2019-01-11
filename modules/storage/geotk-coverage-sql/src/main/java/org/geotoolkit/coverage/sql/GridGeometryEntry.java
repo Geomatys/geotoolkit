@@ -40,6 +40,7 @@ import org.opengis.metadata.spatial.DimensionNameType;
 import org.apache.sis.geometry.ImmutableEnvelope;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.metadata.AxisDirections;
 import org.apache.sis.referencing.CRS;
@@ -313,6 +314,6 @@ final class GridGeometryEntry extends Entry {
                 resolution = res;
             }
         }
-        return dataGrid.subgrid(aoi, resolution);
+        return dataGrid.subgrid(aoi, GridRoundingMode.NEAREST, resolution);
     }
 }
