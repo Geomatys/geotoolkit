@@ -33,7 +33,6 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
@@ -278,7 +277,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             // latest data slice
             final GridExtent extent = gridGeometry.getExtent();
             final MathTransform gridToCrs = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
-            final GeneralDirectPosition dp = new GeneralDirectPosition(gridGeometry.getCoordinateReferenceSystem());
 
             final long[] low = new long[extent.getDimension()];
             final long[] high = new long[extent.getDimension()];
@@ -355,7 +353,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         if (Utilities.equalsIgnoreMetadata(gridCrs, areaCrs)) return null;
 
         // find area horizontal crs and it's index.
-        List<SingleCRS> areaCrsComponents = new ArrayList(CRS.getSingleComponents(areaCrs));
+        List<SingleCRS> areaCrsComponents = CRS.getSingleComponents(areaCrs);
         int areaHorizontalIndex = 0;
         int areaHorizontalOffset = 0;
         SingleCRS areaHorizontalCrs = null;
@@ -431,7 +429,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         //compute new resolution
         if (resolution != null && resolution.length != 0) {
-            final GridGeometry gridHorizontal = grid.reduce(offsetGrid, offsetGrid+1);
             operation = CRS.findOperation(areaHorizontalCrs, gridGeographicCrs, null);
 
             double[] horizontalResolution = new double[]{

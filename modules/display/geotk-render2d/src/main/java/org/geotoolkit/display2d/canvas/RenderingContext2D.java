@@ -62,6 +62,7 @@ import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -691,7 +692,7 @@ public class RenderingContext2D implements RenderingContext{
         final Rectangle bounds = getCanvasDisplayBounds();
         final CoordinateReferenceSystem crs2d = getObjectiveCRS2D();
         final GridExtent extent = new GridExtent(bounds.width, bounds.height);
-        return new GridGeometry2D(extent, dispToObj, crs2d);
+        return new GridGeometry2D(extent, PixelInCell.CELL_CORNER, dispToObj, crs2d);
     }
 
     // Informations related to scale datas -------------------------------------

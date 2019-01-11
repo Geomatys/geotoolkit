@@ -65,7 +65,16 @@ public class DefaultCoverageResource extends AbstractCoverageResource{
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        return coverage.getGridGeometry();
+        if (coverage == null) {
+            final GridCoverageReader reader = acquireReader();
+            try {
+                return reader.getGridGeometry();
+            } finally {
+                recycle(reader);
+            }
+        } else {
+            return coverage.getGridGeometry();
+        }
     }
 
     @Override
