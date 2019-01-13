@@ -301,7 +301,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 resolution = entry.getValue();
             }
             /////// HACK FOR 0/360 /////////////////////////////////////////////
-            slice = slice.subgrid(canvasEnv, GridRoundingMode.ENCLOSING, resolution);
+            slice = slice.derive().rounding(GridRoundingMode.ENCLOSING).subgrid(canvasEnv, resolution).build();
 
             // with a  3pixel margin for resampling interpolations
             slice = new GridChange(slice, gridGeometry, GridRoundingMode.ENCLOSING, 3, 3)
@@ -319,7 +319,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
                 /////// HACK FOR 0/360 /////////////////////////////////////////
                 Envelope ge = Envelopes.transform(coverage.getEnvelope2D(), CommonCRS.WGS84.normalizedGeographic());
-                GridGeometry resampleGrid = canvasGrid.subgrid(ge, GridRoundingMode.ENCLOSING);
+                GridGeometry resampleGrid = canvasGrid.derive().rounding(GridRoundingMode.ENCLOSING).subgrid(ge).build();
                 resampleGrid = CoverageUtilities.forceLowerToZero(resampleGrid);
                 /////// HACK FOR 0/360 /////////////////////////////////////////
 //                GridGeometry resampleGrid = canvasGrid;

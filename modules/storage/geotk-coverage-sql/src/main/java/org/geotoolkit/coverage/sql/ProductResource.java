@@ -135,7 +135,7 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
             try {
                 GridGeometry gg = product.getGridGeometry();
                 if (envelope != null) {
-                    gg = gg.subgrid(envelope, GridRoundingMode.ENCLOSING, resolution);
+                    gg = gg.derive().rounding(GridRoundingMode.ENCLOSING).subgrid(envelope, resolution).build();
                 }
                 return CoverageUtilities.toGeotk(product.read(gg, null));
             } catch (CoverageStoreException e) {
