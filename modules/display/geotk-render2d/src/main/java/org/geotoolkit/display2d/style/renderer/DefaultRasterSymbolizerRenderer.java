@@ -158,7 +158,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         boolean dataRendered = false;
         try {
             GridCoverage2D dataCoverage = getObjectiveCoverage(projectedCoverage);
-            GridCoverage2D elevationCoverage = getObjectiveElevationCoverage(projectedCoverage);
+            GridCoverage2D elevationCoverage = null;//getObjectiveElevationCoverage(projectedCoverage);
             final CoverageMapLayer coverageLayer = projectedCoverage.getLayer();
             final GridCoverageResource ref = coverageLayer.getCoverageReference();
 
