@@ -34,6 +34,7 @@ import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Envelopes;
+import org.geotoolkit.referencing.CRS;
 
 
 /**
@@ -123,6 +124,9 @@ final class GridCoverageTable extends Table {
          * with EXPLAIN on PostgreSQL 10.5 suggests that >= and <= make better use of index.
          */
         final Envelope normalized = Envelopes.transform(areaOfInterest, transaction.database.spatioTemporalCRS);
+        final GeneralEnvelope subEnv = GeneralEnvelope.castOrCopy(normalized).subEnvelope(0, 2);
+        //set sub envelope crs, CRS is needed for the envelope to properly handle wrap around axis
+        subEnv.setCoordinateReferenceSystem(CRS.getOrCreateSubCRS(normalized.getCoordinateReferenceSystem(), 0, 2));
         final DefaultTemporalCRS temporalCRS = transaction.database.temporalCRS;
         final long tMin = temporalCRS.toInstant(normalized.getMinimum(2)).toEpochMilli();
         final long tMax = temporalCRS.toInstant(normalized.getMaximum(2)).toEpochMilli();
@@ -130,7 +134,8 @@ final class GridCoverageTable extends Table {
         statement.setString   (1, product);
         statement.setTimestamp(2, new Timestamp(tMin), calendar);
         statement.setTimestamp(3, new Timestamp(tMax), calendar);
-        statement.setString   (4, Envelopes.toPolygonWKT(GeneralEnvelope.castOrCopy(normalized).subEnvelope(0, 2)));
+
+        statement.setString   (4, Envelopes.toPolygonWKT(subEnv));
         final List<GridCoverageEntry> entries = new ArrayList<>();
         try (final ResultSet results = statement.executeQuery()) {
             SeriesEntry series = null;
