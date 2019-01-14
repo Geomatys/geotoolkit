@@ -18,6 +18,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,9 +52,9 @@ final class NewRaster {
     final Path path;
 
     /**
-     * 0-based index of the image in the file.
+     * Identifier of the resource in the file.
      */
-    final int imageIndex;
+    final String resourceName;
 
     /**
      * Grid geometry of the file to add.
@@ -68,10 +69,10 @@ final class NewRaster {
     /**
      * Creates information about a new raster to be added to the catalog.
      */
-    private NewRaster(final String driver, final Path file, final int index) {
+    private NewRaster(final String driver, final String resourceName, final Path file) {
         this.driver = driver;
         this.path   = file;
-        imageIndex  = index;
+        this.resourceName = resourceName;
     }
 
     /**
@@ -81,7 +82,7 @@ final class NewRaster {
      */
     @Override
     public String toString() {
-        return path.getFileName().toString() + " @ " + imageIndex;
+        return path.getFileName().toString() + " @ " + resourceName;
     }
 
     /**
@@ -98,7 +99,7 @@ final class NewRaster {
         for (final Path file : files) {
             try (final DataStore ds = DataStores.open(file)) {
                 String driver = ds.getProvider().getShortName();
-                collect(driver, file, ds, rasters, 0);
+                collect(driver, file, ds, rasters);
             } catch (TransformException e) {
                 throw new CatalogException(e);
             }
@@ -116,31 +117,30 @@ final class NewRaster {
      * @param  rasters   where to add the information about rasters.
      * @param  index     zero-based index of the image to read.
      */
-    private static void collect(final String driver, final Path file, final Resource resource,
-            final Map<String,List<NewRaster>> rasters, int index) throws DataStoreException, TransformException
+    private static void collect(final String driver, final Path file, final DataStore resource,
+            final Map<String,List<NewRaster>> rasters) throws DataStoreException, TransformException
     {
-        if (resource instanceof Aggregate) {
-            for (final Resource child : ((Aggregate) resource).components()) {
-                collect(driver, file, child, rasters, index++);
-            }
+
+        final Collection<GridCoverageResource> candidates = org.geotoolkit.storage.
+                DataStores.flatten(resource, true, GridCoverageResource.class);
+
+        if (candidates.size() == 1) {
+            //single resource, do not specify resource name
+            final GridCoverageResource gr = candidates.iterator().next();
+            final NewRaster r = new NewRaster(driver, null, file);
+            r.geometry = gr.getGridGeometry();
+            r.bands = gr.getSampleDimensions();
+            final GenericName identifier = gr.getIdentifier();
+            rasters.computeIfAbsent(identifier.tip().toString(), (k) -> new ArrayList<>()).add(r);
         } else {
-            final NewRaster r;
-            if (resource instanceof GridCoverageResource) {
-                r = new NewRaster(driver, file, index);
-                final GridCoverageResource gr = (GridCoverageResource) resource;
+            //multiple resource, specify name on each new raster
+            for (GridCoverageResource gr : candidates) {
+                final NewRaster r = new NewRaster(driver, gr.getIdentifier().toString(), file);
                 r.geometry = gr.getGridGeometry();
                 r.bands = gr.getSampleDimensions();
-            } else if (resource instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
-                r = new NewRaster(driver, file, index);
-                GridCoverageReader reader = ((org.geotoolkit.storage.coverage.GridCoverageResource) resource).acquireReader();
-                r.geometry = reader.getGridGeometry();
-                r.bands = reader.getSampleDimensions();
-                reader.dispose();
-            } else {
-                return;
+                final GenericName identifier = gr.getIdentifier();
+                rasters.computeIfAbsent(identifier.tip().toString(), (k) -> new ArrayList<>()).add(r);
             }
-            final GenericName identifier = resource.getIdentifier();
-            rasters.computeIfAbsent(identifier.tip().toString(), (k) -> new ArrayList<>()).add(r);
         }
     }
 }

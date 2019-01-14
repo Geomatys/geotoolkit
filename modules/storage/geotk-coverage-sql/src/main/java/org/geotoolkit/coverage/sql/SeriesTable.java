@@ -101,9 +101,9 @@ final class SeriesTable extends CachedTable<Integer,SeriesEntry> {
      * @throws SQLException if an error occurred while reading from or writing to the database.
      */
     final int findOrInsert(final String product, final String directory, final String extension, final String driver,
-            final List<SampleDimension> bands) throws SQLException, DataStoreException
+            final String resourceName, final List<SampleDimension> bands) throws SQLException, DataStoreException
     {
-        final String format = formats.findOrInsert(driver, bands, product);
+        final String format = formats.findOrInsert(driver, resourceName, bands, product);
         boolean insert = false;
         do {
             final PreparedStatement statement;

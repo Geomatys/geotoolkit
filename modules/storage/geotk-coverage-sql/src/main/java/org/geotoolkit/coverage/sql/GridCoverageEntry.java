@@ -57,11 +57,6 @@ final class GridCoverageEntry extends Entry {
     private final String filename;
 
     /**
-     * The 1-based index of the image to read.
-     */
-    private final short imageIndex;
-
-    /**
      * Image start time, inclusive.
      */
     private final Instant startTime;
@@ -82,12 +77,11 @@ final class GridCoverageEntry extends Entry {
      * @param  startTime  the coverage start time, or {@code null} if none.
      * @param  endTime    the coverage end time, or {@code null} if none.
      */
-    GridCoverageEntry(final SeriesEntry series, final String filename, final short imageIndex,
+    GridCoverageEntry(final SeriesEntry series, final String filename,
             final Instant startTime, final Instant endTime, final GridGeometryEntry grid) throws SQLException
     {
         this.series     = series;
         this.filename   = filename;
-        this.imageIndex = imageIndex;
         this.startTime  = startTime;
         this.endTime    = endTime;
         this.grid       = grid;
@@ -98,7 +92,7 @@ final class GridCoverageEntry extends Entry {
      */
     @Override
     public String toString() {
-        return filename + ':' + imageIndex + " @ " + endTime;
+        return filename + " @ " + endTime;
     }
 
     /**
@@ -160,7 +154,20 @@ final class GridCoverageEntry extends Entry {
      */
     final GridCoverage coverage(final Envelope areaOfInterest, final double[] resolution) throws DataStoreException {
         try (DataStore store = series.format.open(series.path(filename))) {
-            final GridCoverageResource r = resource(store);
+
+            final GridCoverageResource r;
+            if (series.format.resourceName != null) {
+                Resource cdt = store.findResource(series.format.resourceName);
+                if (cdt instanceof GridCoverageResource) {
+                    r = (GridCoverageResource) cdt;
+                } else {
+                    r = null;
+                }
+            } else {
+                //pick first resource
+                r = resource(store);
+            }
+
             if (r != null) {
                 GridGeometry gg = r.getGridGeometry();
                 gg = grid.getGridGeometry(gg, areaOfInterest, resolution);

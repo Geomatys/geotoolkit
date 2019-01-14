@@ -112,7 +112,7 @@ final class GridCoverageTable extends Table {
     final List<GridCoverageEntry> find(final String product, final Envelope areaOfInterest)
             throws SQLException, DataStoreException, TransformException
     {
-        final PreparedStatement statement = prepareStatement("SELECT \"series\", \"filename\", \"index\", \"grid\","
+        final PreparedStatement statement = prepareStatement("SELECT \"series\", \"filename\", \"grid\","
                 + " \"startTime\", \"endTime\" FROM " + SCHEMA + ".\"" + TABLE + "\""
                 + " INNER JOIN " + SCHEMA + ".\"" + SeriesTable.TABLE + "\" ON (\"series\" = \"" + SeriesTable.TABLE + "\".\"identifier\")"
                 + " INNER JOIN " + SCHEMA + ".\"" + GridGeometryTable.TABLE + "\" ON (\"grid\" = \"" + GridGeometryTable.TABLE + "\".\"identifier\")"
@@ -144,10 +144,9 @@ final class GridCoverageTable extends Table {
             while (results.next()) {
                 final int       seriesID  = results.getInt      (1);
                 final String    filename  = results.getString   (2);
-                final short     index     = results.getShort    (3);                    // We expect 0 if null.
-                final int       gridID    = results.getInt      (4);
-                final Timestamp startTime = results.getTimestamp(5, calendar);
-                final Timestamp endTime   = results.getTimestamp(6, calendar);
+                final int       gridID    = results.getInt      (3);
+                final Timestamp startTime = results.getTimestamp(4, calendar);
+                final Timestamp endTime   = results.getTimestamp(5, calendar);
                 if (series == null || series.identifier != seriesID) {
                     series = seriesTable.getEntry(seriesID);
                 }
@@ -155,7 +154,7 @@ final class GridCoverageTable extends Table {
                     grid = gridGeometries.getEntry(gridID);
                     lastGridID = gridID;
                 }
-                entries.add(new GridCoverageEntry(series, filename, index, toInstant(startTime), toInstant(endTime), grid));
+                entries.add(new GridCoverageEntry(series, filename, toInstant(startTime), toInstant(endTime), grid));
             }
         }
         return entries;
@@ -192,7 +191,8 @@ final class GridCoverageTable extends Table {
          */
         final Instant[] period = new Instant[2];        // Values to be provided by 'gridGeometries'.
         final int gridID = gridGeometries.findOrInsert(raster.geometry, period, product);
-        final int series = seriesTable.findOrInsert(product, directory, extension, raster.driver, raster.bands);
+        final int series = seriesTable.findOrInsert(product, directory, extension,
+                raster.driver, raster.resourceName, raster.bands);
         /*
          * If the "gridToCRS" has NaN scale factor and is mapping pixel corner, then only the lower
          * bounds is set since we can not compute the upper bounds. But for insertion in GridCoverages
@@ -206,15 +206,14 @@ final class GridCoverageTable extends Table {
          * Insert the grid coverage entry.
          */
         String sql = "INSERT INTO " + SCHEMA + ".\"" + TABLE + "\"("
-                    + "\"series\", \"filename\", \"index\", \"grid\", \"startTime\", \"endTime\") VALUES (?,?,?,?,?,?)";
+                    + "\"series\", \"filename\", \"grid\", \"startTime\", \"endTime\") VALUES (?,?,?,?,?)";
         final PreparedStatement statement = prepareStatement(sql);
         statement.setInt   (1, series);
         statement.setString(2, filename);
-        statement.setInt   (3, raster.imageIndex + 1);
-        statement.setInt   (4, gridID);
+        statement.setInt   (3, gridID);
         Calendar calendar = null;
         for (int i=0; i<2; i++) {
-            final int column = 5 + i;
+            final int column = 4 + i;
             final Instant instant = period[i];
             if (instant != null) {
                 if (calendar == null) calendar = newCalendar();

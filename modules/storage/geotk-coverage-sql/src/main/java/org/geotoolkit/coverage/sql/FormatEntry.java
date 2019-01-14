@@ -55,6 +55,11 @@ final class FormatEntry extends Entry {
     final List<SampleDimension> sampleDimensions;
 
     /**
+     * Name of the resource in the DataStore.
+     */
+    final String resourceName;
+
+    /**
      * Reference to an entry in the {@code metadata.Format} table, or {@code null}.
      */
     private final String metadata;
@@ -65,12 +70,14 @@ final class FormatEntry extends Entry {
      * @param driver    the format name (i.e. the plugin to use).
      * @param bands     sample dimensions for coverages encoded with this format, or {@code null}.
      *                  The bands given to this constructor shall <strong>not</strong> be geophysics.
+     * @param resourceName  name of the resource in the DataStore.
      * @param metadata  reference to an entry in the {@code metadata.Format} table, or {@code null}.
      */
-    FormatEntry(String driver, final List<SampleDimension> bands, final String metadata) {
+    FormatEntry(String driver, final List<SampleDimension> bands, String resourceName, final String metadata) {
         driver = driver.trim();
-        sampleDimensions = bands;
-        this.metadata    = metadata;
+        sampleDimensions  = bands;
+        this.resourceName = resourceName;
+        this.metadata     = metadata;
         for (DataStoreProvider provider : DataStores.providers()) {
             if (driver.equalsIgnoreCase(provider.getShortName())) {
                 this.provider = provider;

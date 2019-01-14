@@ -155,6 +155,7 @@ COMMENT ON VIEW rasters."BoundingBoxes" IS 'Comparison between the calculated en
 CREATE TABLE rasters."Formats" (
     "name"     VARCHAR(120) NOT NULL PRIMARY KEY,
     "driver"   VARCHAR(120) NOT NULL,
+    "resource" VARCHAR(200),
     "metadata" VARCHAR(15),
     CONSTRAINT "Reference to ISO metadata" FOREIGN KEY ("metadata")
         REFERENCES metadata."Format" ("ID")
@@ -167,9 +168,9 @@ COMMENT ON COLUMN rasters."Formats"."name"     IS 'Unique name of the format to 
 COMMENT ON COLUMN rasters."Formats"."driver"   IS 'Name of the driver to use for decoding the rasters. Examples: GeoTIFF, NetCDF.';
 COMMENT ON COLUMN rasters."Formats"."metadata" IS 'Reference to additional information about the format.';
 
-INSERT INTO rasters."Formats" ("name", "driver", "metadata") VALUES
-  ('PNG',  'Image:PNG',  'PNG'),
-  ('TIFF', 'Image:TIFF', 'GeoTIFF');
+INSERT INTO rasters."Formats" ("name", "driver", "resource", "metadata") VALUES
+  ('PNG',  'Image:PNG',  NULL, 'PNG'),
+  ('TIFF', 'Image:TIFF', NULL, 'GeoTIFF');
 
 
 
@@ -366,7 +367,6 @@ COMMENT ON CONSTRAINT "Reference to used format"       ON rasters."Series" IS 'A
 CREATE TABLE rasters."GridCoverages" (
     "series"    INTEGER           NOT NULL,
     "filename"  VARCHAR(200)      NOT NULL,
-    "index"     SMALLINT          NOT NULL DEFAULT 1,
     "startTime" TIMESTAMP WITHOUT TIME ZONE,
     "endTime"   TIMESTAMP WITHOUT TIME ZONE,
     "grid"      INTEGER           NOT NULL,
@@ -380,8 +380,7 @@ CREATE TABLE rasters."GridCoverages" (
         ON DELETE RESTRICT,
     CONSTRAINT "Restriction on time range" CHECK (("startTime" IS NULL AND "endTime" IS NULL)
         OR ("startTime" IS NOT NULL AND "endTime" IS NOT NULL AND "startTime" <= "endTime")),
-    CONSTRAINT "Restriction on image index" CHECK ("index" >= 1),
-    PRIMARY KEY ("filename", "series", "index")
+    PRIMARY KEY ("filename", "series")
 );
 
 -- Index "endTime" before "startTime" because we are often interrested in the latest raster available.
@@ -391,7 +390,6 @@ CREATE INDEX "Used grid geometries"   ON rasters."GridCoverages" ("grid");
 COMMENT ON TABLE  rasters."GridCoverages"              IS 'List of all the rasters available. Each line corresponds to a raster file.';
 COMMENT ON COLUMN rasters."GridCoverages"."series"     IS 'Series to which the raster belongs.';
 COMMENT ON COLUMN rasters."GridCoverages"."filename"   IS 'File name of the raster, relative to the directory specified in the series.';
-COMMENT ON COLUMN rasters."GridCoverages"."index"      IS 'Index of the raster in the file (for files containing multiple rasters). Numbered from 1.';
 COMMENT ON COLUMN rasters."GridCoverages"."startTime"  IS 'Date and time of the raster acquisition start (inclusive), in UTC. In the case of averages, the time corresponds to the beginning of the interval used to calculate the average.';
 COMMENT ON COLUMN rasters."GridCoverages"."endTime"    IS 'Date and time of the raster acquisition end (exclusive), in UTC. This time must be greater than or equal to the acquisition start time.';
 COMMENT ON COLUMN rasters."GridCoverages"."grid"       IS 'Grid geometry that defines the spatial footprint of this coverage.';
@@ -400,7 +398,6 @@ COMMENT ON INDEX  rasters."Time ranges per series"     IS 'Index of time ranges 
 COMMENT ON CONSTRAINT "Reference to enclosing series"   ON rasters."GridCoverages" IS 'Each raster belongs to a series.';
 COMMENT ON CONSTRAINT "Reference to used grid geometry" ON rasters."GridCoverages" IS 'Each raster must have a spatial extent.';
 COMMENT ON CONSTRAINT "Restriction on time range"       ON rasters."GridCoverages" IS 'The start and end times must be both null or both non-null, and the end time must be greater than or equal to the start time.';
-COMMENT ON CONSTRAINT "Restriction on image index"      ON rasters."GridCoverages" IS 'The image index shall be strictly positive.';
 
 
 
