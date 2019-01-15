@@ -37,6 +37,15 @@ import org.apache.sis.internal.metadata.AxisDirections;
 // Use static imports for avoiding confusion with SQL Array.
 import static java.lang.reflect.Array.getDouble;
 import static java.lang.reflect.Array.getLength;
+import java.util.Collections;
+import java.util.Date;
+import org.apache.sis.referencing.CommonCRS.Temporal;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.referencing.cs.DefaultTimeCS;
+import org.apache.sis.referencing.datum.DefaultTemporalDatum;
+import org.opengis.referencing.crs.TemporalCRS;
 
 
 /**
@@ -45,10 +54,18 @@ import static java.lang.reflect.Array.getLength;
  * @author Martin Desruisseaux (Geomatys)
  */
 final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> {
+
+    /**
+     * Coordinate system used to store temporal axis offsets in days.
+     */
+    static final TemporalCRS OFFSET = new DefaultTemporalCRS(Collections.singletonMap("name", "offset"),
+            new DefaultTemporalDatum(Collections.singletonMap("name", "offset"), new Date(0)),
+            new DefaultTimeCS(Collections.singletonMap("name", "offset"),
+                    new DefaultCoordinateSystemAxis(Collections.singletonMap("name", "offset"), "off", AxisDirection.FUTURE, Units.DAY)));
     /**
      * Name of this table in the database.
      */
-    private static final String TABLE = "AdditionalAxes";
+    static final String TABLE = "AdditionalAxes";
 
     /**
      * Maximum number of additional axes for the same name. Current algorithm is very inefficient
@@ -143,6 +160,21 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
                 final CoordinateSystemAxis axis = crs.getCoordinateSystem().getAxis(0);
                 if (direction.equals(axis.getDirection()) && axis.getUnit().equals(units)) {
                     return crs;
+                }
+            }
+        } else if (AxisDirections.isTemporal(direction)) {
+            if (datum.equals("offset")) {
+                return OFFSET;
+            }
+            for (Temporal t : CommonCRS.Temporal.values()) {
+                if (IdentifiedObjects.isHeuristicMatchForName(t.datum(), datum)) {
+                    final CoordinateSystemAxis axis = t.crs().getCoordinateSystem().getAxis(0);
+                    final AxisDirection dir = axis.getDirection();
+                    final Unit<?> unit = axis.getUnit();
+                    if (dir.equals(direction) && unit.equals(units)) {
+                        return t.crs();
+                    }
+
                 }
             }
         }

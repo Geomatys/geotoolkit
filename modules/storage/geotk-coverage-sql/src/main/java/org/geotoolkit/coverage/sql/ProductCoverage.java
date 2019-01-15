@@ -53,7 +53,7 @@ final class ProductCoverage extends GridCoverage {
     @Override
     public RenderedImage render(GridExtent sliceExtent) {
         try {
-            return entries.get(0).coverage(null, null).render(sliceExtent);
+            return entries.get(0).coverage((GridGeometry) null, null).render(sliceExtent);
         } catch (DataStoreException e) {
             throw new BackingStoreException(e);
         }

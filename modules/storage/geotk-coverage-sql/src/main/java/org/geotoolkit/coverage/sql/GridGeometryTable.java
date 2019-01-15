@@ -25,6 +25,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.time.Instant;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.geometry.Envelope;
@@ -273,6 +276,17 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                             final Envelope range = geometry.getEnvelope();
                             period[0] = temporal.toInstant(range.getMinimum(dim));
                             period[1] = temporal.toInstant(range.getMaximum(dim));
+                            if (extent.getSize(dim) > 1) {
+                                // add a fake temporal axis with offsets from range start.
+                                final double[] values = new double[Math.toIntExact(extent.getSize(dim) + 1)];
+                                for (int j=1; j<values.length; j++) values[j] = j;
+                                gridToCRS.transform(values, 0, values, 0, values.length);
+                                //convert to distance in days
+                                for (int j=0; j<values.length; j++) {
+                                    values[j] = period[0].until(temporal.toInstant(values[j]), ChronoUnit.DAYS);
+                                }
+                                additionalAxes.add(getAxisTable().findOrInsert(AdditionalAxisTable.OFFSET, values, suggestedID));
+                            }
                         } else {
                             final double[] values = new double[Math.toIntExact(extent.getSize(dim) + 1)];
                             for (int j=1; j<values.length; j++) values[j] = j;

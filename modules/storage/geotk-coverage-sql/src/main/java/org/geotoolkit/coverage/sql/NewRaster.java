@@ -24,13 +24,10 @@ import java.util.List;
 import java.util.Map;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.storage.Resource;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 

@@ -148,10 +148,34 @@ final class GridCoverageEntry extends Entry {
         return series.format.sampleDimensions;
     }
 
+    final GridCoverage coverage(final GridGeometry targetGeometry, final int... bands) throws DataStoreException {
+        try (DataStore store = series.format.open(series.path(filename))) {
+
+            final GridCoverageResource r;
+            if (series.format.resourceName != null) {
+                Resource cdt = store.findResource(series.format.resourceName);
+                if (cdt instanceof GridCoverageResource) {
+                    r = (GridCoverageResource) cdt;
+                } else {
+                    r = null;
+                }
+            } else {
+                //pick first resource
+                r = resource(store);
+            }
+
+            if (r != null) {
+                return r.read(targetGeometry, bands);
+            }
+        }
+        throw new DataStoreException("No GridCoverageResource found for " + filename);
+    }
+
     /**
      * Loads the data if needed and returns the coverage.
      * Current implementation reads only the first resource.
      */
+    @Deprecated
     final GridCoverage coverage(final Envelope areaOfInterest, final double[] resolution) throws DataStoreException {
         try (DataStore store = series.format.open(series.path(filename))) {
 

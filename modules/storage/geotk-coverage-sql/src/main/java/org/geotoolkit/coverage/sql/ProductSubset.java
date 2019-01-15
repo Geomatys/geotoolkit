@@ -91,6 +91,6 @@ final class ProductSubset extends AbstractGridResource {
 
     @Override
     public GridCoverage read(final GridGeometry targetGeometry, final int... bands) throws DataStoreException {
-        return representative.coverage(areaOfInterest, resolution);
+        return representative.coverage(targetGeometry, bands);
     }
 }

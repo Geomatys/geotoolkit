@@ -35,6 +35,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.referencing.CRS;
+import org.opengis.geometry.MismatchedReferenceSystemException;
 
 
 /**
@@ -112,52 +113,95 @@ final class GridCoverageTable extends Table {
     final List<GridCoverageEntry> find(final String product, final Envelope areaOfInterest)
             throws SQLException, DataStoreException, TransformException
     {
-        final PreparedStatement statement = prepareStatement("SELECT \"series\", \"filename\", \"grid\","
+        Envelope normalized = null;
+        try {
+            normalized = Envelopes.transform(areaOfInterest, transaction.database.spatioTemporalCRS);
+        } catch (TransformException ex) {
+            //no temporal extent for this data
+        }
+
+        if (normalized != null) {
+            final PreparedStatement statement = prepareStatement("SELECT \"series\", \"filename\", \"grid\","
                 + " \"startTime\", \"endTime\" FROM " + SCHEMA + ".\"" + TABLE + "\""
                 + " INNER JOIN " + SCHEMA + ".\"" + SeriesTable.TABLE + "\" ON (\"series\" = \"" + SeriesTable.TABLE + "\".\"identifier\")"
                 + " INNER JOIN " + SCHEMA + ".\"" + GridGeometryTable.TABLE + "\" ON (\"grid\" = \"" + GridGeometryTable.TABLE + "\".\"identifier\")"
                 + " WHERE \"product\"=? AND \"endTime\" >= ? and \"startTime\" <= ? AND ST_Intersects(extent, ST_GeomFromText(?,4326))");
-        /*
-         * endTime >= tmin or  startTime  <= tmax
-         *
-         * Note: we could wrote    ("startTime", "endTime") OVERLAPS (?,?)    but our tests
-         * with EXPLAIN on PostgreSQL 10.5 suggests that >= and <= make better use of index.
-         */
-        final Envelope normalized = Envelopes.transform(areaOfInterest, transaction.database.spatioTemporalCRS);
-        final GeneralEnvelope subEnv = GeneralEnvelope.castOrCopy(normalized).subEnvelope(0, 2);
-        //set sub envelope crs, CRS is needed for the envelope to properly handle wrap around axis
-        subEnv.setCoordinateReferenceSystem(CRS.getOrCreateSubCRS(normalized.getCoordinateReferenceSystem(), 0, 2));
-        final DefaultTemporalCRS temporalCRS = transaction.database.temporalCRS;
-        final long tMin = temporalCRS.toInstant(normalized.getMinimum(2)).toEpochMilli();
-        final long tMax = temporalCRS.toInstant(normalized.getMaximum(2)).toEpochMilli();
-        final Calendar calendar = newCalendar();
-        statement.setString   (1, product);
-        statement.setTimestamp(2, new Timestamp(tMin), calendar);
-        statement.setTimestamp(3, new Timestamp(tMax), calendar);
+            /*
+             * endTime >= tmin or  startTime  <= tmax
+             *
+             * Note: we could wrote    ("startTime", "endTime") OVERLAPS (?,?)    but our tests
+             * with EXPLAIN on PostgreSQL 10.5 suggests that >= and <= make better use of index.
+             */
+            final GeneralEnvelope subEnv = GeneralEnvelope.castOrCopy(normalized).subEnvelope(0, 2);
+            //set sub envelope crs, CRS is needed for the envelope to properly handle wrap around axis
+            subEnv.setCoordinateReferenceSystem(CRS.getOrCreateSubCRS(normalized.getCoordinateReferenceSystem(), 0, 2));
+            final DefaultTemporalCRS temporalCRS = transaction.database.temporalCRS;
+            final long tMin = temporalCRS.toInstant(normalized.getMinimum(2)).toEpochMilli();
+            final long tMax = temporalCRS.toInstant(normalized.getMaximum(2)).toEpochMilli();
+            final Calendar calendar = newCalendar();
+            statement.setString   (1, product);
+            statement.setTimestamp(2, new Timestamp(tMin), calendar);
+            statement.setTimestamp(3, new Timestamp(tMax), calendar);
 
-        statement.setString   (4, Envelopes.toPolygonWKT(subEnv));
-        final List<GridCoverageEntry> entries = new ArrayList<>();
-        try (final ResultSet results = statement.executeQuery()) {
-            SeriesEntry series = null;
-            GridGeometryEntry grid = null;
-            int lastGridID = 0;
-            while (results.next()) {
-                final int       seriesID  = results.getInt      (1);
-                final String    filename  = results.getString   (2);
-                final int       gridID    = results.getInt      (3);
-                final Timestamp startTime = results.getTimestamp(4, calendar);
-                final Timestamp endTime   = results.getTimestamp(5, calendar);
-                if (series == null || series.identifier != seriesID) {
-                    series = seriesTable.getEntry(seriesID);
+            statement.setString   (4, Envelopes.toPolygonWKT(subEnv));
+            final List<GridCoverageEntry> entries = new ArrayList<>();
+            try (final ResultSet results = statement.executeQuery()) {
+                SeriesEntry series = null;
+                GridGeometryEntry grid = null;
+                int lastGridID = 0;
+                while (results.next()) {
+                    final int       seriesID  = results.getInt      (1);
+                    final String    filename  = results.getString   (2);
+                    final int       gridID    = results.getInt      (3);
+                    final Timestamp startTime = results.getTimestamp(4, calendar);
+                    final Timestamp endTime   = results.getTimestamp(5, calendar);
+                    if (series == null || series.identifier != seriesID) {
+                        series = seriesTable.getEntry(seriesID);
+                    }
+                    if (grid == null || lastGridID != gridID) {
+                        grid = gridGeometries.getEntry(gridID);
+                        lastGridID = gridID;
+                    }
+                    entries.add(new GridCoverageEntry(series, filename, toInstant(startTime), toInstant(endTime), grid));
                 }
-                if (grid == null || lastGridID != gridID) {
-                    grid = gridGeometries.getEntry(gridID);
-                    lastGridID = gridID;
-                }
-                entries.add(new GridCoverageEntry(series, filename, toInstant(startTime), toInstant(endTime), grid));
             }
+            return entries;
+        } else {
+            final PreparedStatement statement = prepareStatement("SELECT \"series\", \"filename\", \"grid\","
+                + " \"startTime\", \"endTime\" FROM " + SCHEMA + ".\"" + TABLE + "\""
+                + " INNER JOIN " + SCHEMA + ".\"" + SeriesTable.TABLE + "\" ON (\"series\" = \"" + SeriesTable.TABLE + "\".\"identifier\")"
+                + " INNER JOIN " + SCHEMA + ".\"" + GridGeometryTable.TABLE + "\" ON (\"grid\" = \"" + GridGeometryTable.TABLE + "\".\"identifier\")"
+                + " WHERE \"product\"=? AND ST_Intersects(extent, ST_GeomFromText(?,4326))");
+            normalized = Envelopes.transform(areaOfInterest, transaction.database.extentCRS);
+            final GeneralEnvelope subEnv = GeneralEnvelope.castOrCopy(normalized).subEnvelope(0, 2);
+            //set sub envelope crs, CRS is needed for the envelope to properly handle wrap around axis
+            subEnv.setCoordinateReferenceSystem(CRS.getOrCreateSubCRS(normalized.getCoordinateReferenceSystem(), 0, 2));
+            final Calendar calendar = newCalendar();
+            statement.setString   (1, product);
+            statement.setString   (2, Envelopes.toPolygonWKT(subEnv));
+            final List<GridCoverageEntry> entries = new ArrayList<>();
+            try (final ResultSet results = statement.executeQuery()) {
+                SeriesEntry series = null;
+                GridGeometryEntry grid = null;
+                int lastGridID = 0;
+                while (results.next()) {
+                    final int       seriesID  = results.getInt      (1);
+                    final String    filename  = results.getString   (2);
+                    final int       gridID    = results.getInt      (3);
+                    final Timestamp startTime = results.getTimestamp(4, calendar);
+                    final Timestamp endTime   = results.getTimestamp(5, calendar);
+                    if (series == null || series.identifier != seriesID) {
+                        series = seriesTable.getEntry(seriesID);
+                    }
+                    if (grid == null || lastGridID != gridID) {
+                        grid = gridGeometries.getEntry(gridID);
+                        lastGridID = gridID;
+                    }
+                    entries.add(new GridCoverageEntry(series, filename, toInstant(startTime), toInstant(endTime), grid));
+                }
+            }
+            return entries;
         }
-        return entries;
     }
 
     /**

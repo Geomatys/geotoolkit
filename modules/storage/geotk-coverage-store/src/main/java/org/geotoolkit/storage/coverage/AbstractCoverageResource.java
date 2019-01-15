@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.metadata.iso.DefaultMetadata;
@@ -49,6 +50,8 @@ import org.geotoolkit.storage.AbstractFeatureSet;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.GenericName;
 
 /**
@@ -107,50 +110,31 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
 
         //calculate image statistics
         try {
-            final GridCoverageReader reader = acquireReader();
-            // Read a subset of the coverage, to compute approximative statistics
-            GridCoverage coverage = null;
-            try {
-                GridGeometry gridGeom = reader.getGridGeometry();
-                // For multi-dimensional data, we get the first 2D slice available
-                GridGeometryIterator geometryIterator = new GridGeometryIterator(gridGeom);
-                if (geometryIterator.hasNext()) {
-                    gridGeom = geometryIterator.next();
-                }
-                if (gridGeom instanceof GridGeometry2D) {
-                    final GridGeometry2D geom2d = (GridGeometry2D) gridGeom;
-                    final double[] subsetResolution = new double[geom2d.getDimension()];
-                    Arrays.fill(subsetResolution, 1);
 
-                    subsetResolution[geom2d.gridDimensionX] = geom2d.getEnvelope().getSpan(geom2d.axisDimensionX) / DEFAULT_SUBSET_SIZE;
-                    subsetResolution[geom2d.gridDimensionY] = geom2d.getEnvelope().getSpan(geom2d.axisDimensionY) / DEFAULT_SUBSET_SIZE;
+            final GridGeometry gridGeometry = getGridGeometry();
+            // latest data slice
+            final GridExtent extent = gridGeometry.getExtent();
+            final MathTransform gridToCrs = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
 
-                    try {
-                        final double[] nativeResolution = geom2d.getResolution(false);
-                        if (Double.isFinite(nativeResolution[geom2d.gridDimensionX])) {
-                            subsetResolution[geom2d.gridDimensionX] = Math.max(subsetResolution[geom2d.gridDimensionX], nativeResolution[geom2d.gridDimensionX]);
-                        }
-                        if (Double.isFinite(nativeResolution[geom2d.gridDimensionY])) {
-                            subsetResolution[geom2d.gridDimensionY] = Math.max(subsetResolution[geom2d.gridDimensionY], nativeResolution[geom2d.gridDimensionY]);
-                        }
-                    } catch(IncompleteGridGeometryException ex) {}
-
-
-                    final GridCoverageReadParam param = new GridCoverageReadParam();
-                    param.setResolution(subsetResolution);
-                    coverage = reader.read(param);
-                }
-
-                recycle(reader);
-
-            } catch (Exception e) {
-                try {
-                    reader.dispose();
-                } catch (Exception bis) {
-                    e.addSuppressed(bis);
-                }
-                throw e;
+            final long[] low = new long[extent.getDimension()];
+            final long[] high = new long[extent.getDimension()];
+            low[0] = extent.getLow(0);
+            low[1] = extent.getLow(1);
+            high[0] = extent.getHigh(0);
+            high[1] = extent.getHigh(1);
+            for (int i=2,n=low.length;i<n;i++) {
+                low[i] = extent.getHigh(i);
+                high[i] = extent.getHigh(i);
             }
+            final GridExtent sliceExt = new GridExtent(null, low, high, true);
+            GridGeometry slice = new GridGeometry(sliceExt, PixelInCell.CELL_CENTER, gridToCrs, gridGeometry.getCoordinateReferenceSystem());
+            final double[] subsetResolution = new double[sliceExt.getDimension()];
+            Arrays.fill(subsetResolution, 1.0);
+            subsetResolution[0] = gridGeometry.getEnvelope().getSpan(0) / DEFAULT_SUBSET_SIZE;
+            subsetResolution[1] = gridGeometry.getEnvelope().getSpan(1) / DEFAULT_SUBSET_SIZE;
+            slice = slice.derive().subgrid(null, subsetResolution).build();
+
+            GridCoverage coverage = org.geotoolkit.internal.coverage.CoverageUtilities.toGeotk(read(slice));
 
             if (coverage instanceof GridCoverage2D) {
                 final ProcessDescriptor processDesc = ProcessFinder.getProcessDescriptor("geotoolkit", "coverage:statistic");

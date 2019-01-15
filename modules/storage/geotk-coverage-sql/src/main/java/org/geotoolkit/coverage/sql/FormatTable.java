@@ -221,7 +221,7 @@ next:           while (results.next()) {
         final PreparedStatement statement = prepareStatement("INSERT INTO " +
                 SCHEMA + ".\"" + TABLE + "\" (\"name\",\"driver\",\"resource\") VALUES (?,?,?) ON CONFLICT (\"name\") DO NOTHING");
         statement.setString(2, driver);
-        if (resourceName == null) {
+        if (resourceName != null) {
             statement.setString(3, resourceName);
         } else {
             statement.setNull(3, Types.VARCHAR);

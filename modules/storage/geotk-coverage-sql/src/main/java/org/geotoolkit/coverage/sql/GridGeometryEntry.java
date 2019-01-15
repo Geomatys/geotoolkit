@@ -52,6 +52,7 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.ArraysExt;
+import org.opengis.referencing.crs.TemporalCRS;
 
 
 /**
@@ -116,6 +117,11 @@ final class GridGeometryEntry extends Entry {
     private final boolean approximate;
 
     /**
+     * Discrete temporal axis values.
+     */
+    private AdditionalAxisEntry temporalAxis;
+
+    /**
      * Creates an entry from the given grid geometry. This constructor does not clone
      * the object given in argument. Consequently, those object shall not be modified
      * after {@code GridGeometryEntry} construction.
@@ -130,7 +136,7 @@ final class GridGeometryEntry extends Entry {
      */
     GridGeometryEntry(final long width, final long height, final AffineTransform2D affine,
                       final boolean approximate, CoordinateReferenceSystem crs,
-                      final AdditionalAxisEntry[] axes, final String extraDimName,
+                      AdditionalAxisEntry[] axes, final String extraDimName,
                       final Database database) throws FactoryException, TransformException, IllegalRecordException
     {
         /*
@@ -153,7 +159,18 @@ final class GridGeometryEntry extends Entry {
          */
         int dim = AFFINE_DIMENSION;
         if (axes != null) {
+            //search and exclude temporal axis
+            for (int i=0; i<axes.length; i++) {
+                if (axes[i].crs == AdditionalAxisTable.OFFSET) {
+                    temporalAxis = axes[i];
+                    axes = ArraysExt.remove(axes, i, 1);
+                    break;
+                }
+            }
             dim += axes.length;
+            if (axes.length == 0) {
+                axes = null;
+            }
         }
         final long[]   upper   = new long  [dim];
         final double[] minimum = new double[dim];
@@ -174,13 +191,10 @@ final class GridGeometryEntry extends Entry {
                 maximum[AFFINE_DIMENSION + i] = axis.standardMax;
                 components[            1 + i] = axis.crs;
                 MathTransform tr = axis.gridToCRS;
-                tr = database.mtFactory.createPassThroughTransform(AFFINE_DIMENSION + i, tr, 0);
+                tr = database.mtFactory.createPassThroughTransform(AFFINE_DIMENSION + i, tr, axes.length-1-i);
                 gridToCRS = database.mtFactory.createConcatenatedTransform(gridToCRS, tr);
             }
             crs = database.crsFactory.createCompoundCRS(properties(crs, extraDimName), components);
-        }
-        if (ProductCoverage.HACK) {
-            java.util.Arrays.fill(upper, 2, upper.length, 1);
         }
         spatialGeometry      = new GridGeometry(new GridExtent(names, null, upper, false), CELL_ORIGIN, gridToCRS, crs);
         standardEnvelope     = new ImmutableEnvelope(minimum, maximum, null);
@@ -230,12 +244,24 @@ final class GridGeometryEntry extends Entry {
         MathTransform gridToCRS = spatialGeometry.getGridToCRS(CELL_ORIGIN);
         final double tMin = TEMPORAL_CRS.toValue(startTime);
         final double tMax = TEMPORAL_CRS.toValue(endTime);
-        gridToCRS = MathTransforms.compound(gridToCRS, MathTransforms.linear(tMax - tMin, tMin));
-        return new GridGeometry(spatioTemporalExtent, CELL_ORIGIN, gridToCRS, spatioTemporalCRS);
+
+        if (temporalAxis == null) {
+            gridToCRS = MathTransforms.compound(gridToCRS, MathTransforms.linear(tMax - tMin, tMin));
+            return new GridGeometry(spatioTemporalExtent, CELL_ORIGIN, gridToCRS, spatioTemporalCRS);
+        } else {
+            //offset are stored in days
+            final MathTransform temporalTrs = MathTransforms.concatenate(temporalAxis.gridToCRS, MathTransforms.linear(1, tMin));
+            gridToCRS = MathTransforms.compound(gridToCRS, temporalTrs);
+            final GridExtent tempExt = spatialGeometry.getExtent().append(DimensionNameType.TIME, 0, temporalAxis.count, false);
+            return new GridGeometry(tempExt, CELL_ORIGIN, gridToCRS, spatioTemporalCRS);
+        }
     }
 
     /**
      * Returns the grid geometry for the given enumerated dates.
+     *
+     * Note : this method should not be used, it does not provide an accurate representation
+     *        of the grid geometry extent.
      *
      * @param  gridExtent  number of cell values in the temporal dimension.
      * @param  timestamps  the conversion from [0 … n] grid cells to timestamp in the {@link #TEMPORAL_CRS} axis.

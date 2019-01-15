@@ -90,7 +90,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
             //convert resolution to coverage crs
             final double[] queryRes = param == null ? null : param.getResolution();
             double[] coverageRes = queryRes;
-            if (queryRes != null) {
+            if (queryRes != null && queryEnv != null) {
                 try {
                     //this operation works only for 2D CRS
                     coverageRes = ReferencingUtilities.convertResolution(queryEnv, queryRes, coverageCrs);

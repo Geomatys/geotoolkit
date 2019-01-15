@@ -22,11 +22,17 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.storage.DataStoreException;
@@ -147,25 +153,62 @@ final class SeriesTable extends CachedTable<Integer,SeriesEntry> {
      *       them together in Java code. TODO: check with PostgreSQL "EXPLAIN" on a larger data set.
      */
     final double[] listAllDates(final String product) throws SQLException {
-        int count = 0;
-        double[] timestamps = new double[100];
+        final TreeSet<Double> timestamps = new TreeSet<>();
+        final Map<Integer,Double[]> timeArrays = new HashMap<>();
         final PreparedStatement statement = prepareStatement(
-                "SELECT DISTINCT \"startTime\" + (\"endTime\" - \"startTime\")/2 AS \"time\" " +
-                "FROM " + SCHEMA + ".\"" + GridCoverageTable.TABLE + "\" INNER JOIN " + SCHEMA + ".\"" + TABLE + "\" " +
-                "ON (\"series\" = \"" + TABLE + "\".\"identifier\") WHERE \"product\"=? ORDER BY \"time\"");
+                "SELECT gc.\"startTime\", gc.\"endTime\", gc.\"grid\" " +
+                "FROM " + SCHEMA + ".\"" + GridCoverageTable.TABLE + "\" AS gc " +
+                "INNER JOIN " + SCHEMA + ".\"" + TABLE + "\" AS se ON (gc.\"series\" = se.\"identifier\") " +
+                "WHERE se.\"product\"=? AND gc.\"startTime\" IS NOT NULL");
         statement.setString(1, product);
         try (ResultSet results = statement.executeQuery()) {
             final Calendar calendar = newCalendar();
             final DefaultTemporalCRS axis = transaction.database.temporalCRS;
             while (results.next()) {
-                final Timestamp stamp = results.getTimestamp(1, calendar);
-                if (count >= timestamps.length) {
-                    timestamps = Arrays.copyOf(timestamps, count*2);
+                final Timestamp start = results.getTimestamp(1, calendar);
+                final Timestamp end = results.getTimestamp(2, calendar);
+                final int gridId = results.getInt(3);
+
+                Double[] offsets = timeArrays.get(gridId);
+                if (offsets == null) {
+                    offsets = listTimeOffsets(gridId);
+                    timeArrays.put(gridId, offsets.clone());
                 }
-                timestamps[count++] = axis.toValue(stamp);
+
+                if (offsets.length == 0) {
+                    timestamps.add(axis.toValue(start));
+                } else {
+                    double s = axis.toValue(start);
+                    for (double d : offsets) {
+                        timestamps.add(s + d);
+                    }
+                }
             }
         }
-        return ArraysExt.resize(timestamps, count);
+
+        final double[] array = new double[timestamps.size()];
+        final Iterator<Double> ite = timestamps.iterator();
+        for (int i=0;ite.hasNext();i++) {
+            array[i] = ite.next();
+        }
+        return array;
+    }
+
+    private final Double[] listTimeOffsets(int gridId) throws SQLException {
+
+        final PreparedStatement statement = getConnection().prepareStatement(
+                "SELECT aa.\"bounds\"\n" +
+                "FROM " + SCHEMA + ".\"" + GridGeometryTable.TABLE + "\" AS gg\n" +
+                "LEFT JOIN " + SCHEMA + ".\"" + AdditionalAxisTable.TABLE + "\" AS aa ON aa.\"name\" = any(gg.\"additionalAxes\") AND aa.\"datum\" = 'offset'\n" +
+                "WHERE gg.\"identifier\" = ?");
+        statement.setInt(1, gridId);
+        try (ResultSet results = statement.executeQuery()) {
+            results.next();
+            final Array array = results.getArray(1);
+            if (array == null) return new Double[0];
+            final Double[] da = (Double[]) array.getArray();
+            return da == null ? new Double[0] : da;
+        }
     }
 
     /**
