@@ -124,7 +124,9 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
         final GridCoverageReader reader = acquireReader();
         try {
             final GridCoverageReadParam param = new GridCoverageReadParam();
-            param.setSourceBands(range);
+            if (range != null && range.length > 0) {
+                param.setSourceBands(range);
+            }
 
             if (domain.isDefined(org.apache.sis.coverage.grid.GridGeometry.ENVELOPE)) {
                 param.setEnvelope(domain.getEnvelope());
