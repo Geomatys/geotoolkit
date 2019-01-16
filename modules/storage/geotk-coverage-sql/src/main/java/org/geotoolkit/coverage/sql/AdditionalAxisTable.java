@@ -39,17 +39,26 @@ import static java.lang.reflect.Array.getDouble;
 import static java.lang.reflect.Array.getLength;
 import java.util.Collections;
 import java.util.Date;
+import org.apache.sis.geometry.DirectPosition1D;
 import org.apache.sis.referencing.CommonCRS.Temporal;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.crs.DefaultParametricCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.crs.DefaultVerticalCRS;
 import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.referencing.cs.DefaultParametricCS;
 import org.apache.sis.referencing.cs.DefaultTimeCS;
 import org.apache.sis.referencing.cs.DefaultVerticalCS;
+import org.apache.sis.referencing.datum.DefaultParametricDatum;
 import org.apache.sis.referencing.datum.DefaultTemporalDatum;
 import org.apache.sis.referencing.datum.DefaultVerticalDatum;
+import org.opengis.referencing.crs.ParametricCRS;
 import org.opengis.referencing.crs.TemporalCRS;
+import org.opengis.referencing.cs.ParametricCS;
+import org.opengis.referencing.cs.TimeCS;
 import org.opengis.referencing.cs.VerticalCS;
+import org.opengis.referencing.datum.ParametricDatum;
+import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.referencing.datum.VerticalDatum;
 
 
@@ -146,6 +155,14 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
      * @todo Support more types.
      */
     private static SingleCRS crs(final String datum, final AxisDirection direction, final Unit<?> units) {
+        if (ProductCoverage.HACK && "forecast".equals(datum)) {
+            final ParametricDatum pdatum = new DefaultParametricDatum(Collections.singletonMap("name", "forecast"));
+            final CoordinateSystemAxis axis = new DefaultCoordinateSystemAxis(Collections.singletonMap("name", pdatum.getName()),
+                    "t", direction, units);
+            final ParametricCS cs = new DefaultParametricCS(Collections.singletonMap("name", pdatum.getName()), axis);
+            return new DefaultParametricCRS(Collections.singletonMap("name", pdatum.getName()), pdatum, cs);
+        }
+
         if (AxisDirections.isVertical(direction)) {
             CommonCRS.Vertical code = null;
             final VerticalDatumType type = VerticalDatumTypes.guess(datum, null, null);
@@ -198,6 +215,12 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
 
                 }
             }
+
+            //create a datum
+            final TemporalDatum vd = new DefaultTemporalDatum(Collections.singletonMap("name", datum), new Date(0));
+            final CoordinateSystemAxis axis = new DefaultCoordinateSystemAxis(Collections.singletonMap("name", datum+"_axis"), units.getSymbol(), direction, units);
+            final TimeCS cs = new DefaultTimeCS(Collections.singletonMap("name", datum+"_cs"), axis);
+            return new DefaultTemporalCRS(Collections.singletonMap("name", datum+"_crs"), vd, cs);
         }
         return null;
     }

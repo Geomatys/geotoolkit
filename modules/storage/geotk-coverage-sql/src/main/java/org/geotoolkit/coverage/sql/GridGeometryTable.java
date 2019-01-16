@@ -345,18 +345,35 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
     /**
      * Finds a {@code spatial_ref_sys} code for the given coordinate reference system.
      */
-    private static int findCRS(final CoordinateReferenceSystem crs) throws FactoryException, IllegalUpdateException {
+    private static int findCRS(CoordinateReferenceSystem crs) throws FactoryException, IllegalUpdateException {
         final IdentifiedObjectFinder finder = IdentifiedObjects.newFinder("EPSG");
         finder.setIgnoringAxes(true);
-        final AbstractCRS c = AbstractCRS.castOrCopy((CoordinateReferenceSystem) finder.findSingleton(crs));
-        if (c != null && c.forConvention(AxesConvention.RIGHT_HANDED).equals(crs, ComparisonMode.APPROXIMATIVE)) {
-            Identifier id = IdentifiedObjects.getIdentifier(c, Citations.EPSG);
-            if (id != null) try {
-                return Integer.valueOf(id.getCode());
-            } catch (NumberFormatException e) {
-                throw new IllegalUpdateException("Illegal SRID: " + id);
+        AbstractCRS c = AbstractCRS.castOrCopy((CoordinateReferenceSystem) finder.findSingleton(crs));
+
+        if (c != null) {
+            boolean match = false;
+            AbstractCRS cdt = c;
+            match = cdt.equals(crs, ComparisonMode.APPROXIMATIVE);
+            if (!match) {
+                cdt = cdt.forConvention(AxesConvention.RIGHT_HANDED);
+                crs = ((AbstractCRS) crs).forConvention(AxesConvention.RIGHT_HANDED);
+                match = cdt.equals(crs, ComparisonMode.APPROXIMATIVE);
+            }
+            if (!match) {
+                cdt = cdt.forConvention(AxesConvention.POSITIVE_RANGE);
+                crs = ((AbstractCRS) crs).forConvention(AxesConvention.POSITIVE_RANGE);
+                match = cdt.equals(crs, ComparisonMode.APPROXIMATIVE);
+            }
+            if (match) {
+                Identifier id = IdentifiedObjects.getIdentifier(c, Citations.EPSG);
+                if (id != null) try {
+                    return Integer.valueOf(id.getCode());
+                } catch (NumberFormatException e) {
+                    throw new IllegalUpdateException("Illegal SRID: " + id);
+                }
             }
         }
+
         /*
          * Temporary hack for Coriolis data (to be removed in a future version).
          */
