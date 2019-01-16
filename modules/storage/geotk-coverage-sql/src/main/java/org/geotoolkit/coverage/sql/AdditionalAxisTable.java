@@ -42,10 +42,15 @@ import java.util.Date;
 import org.apache.sis.referencing.CommonCRS.Temporal;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.crs.DefaultVerticalCRS;
 import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.referencing.cs.DefaultTimeCS;
+import org.apache.sis.referencing.cs.DefaultVerticalCS;
 import org.apache.sis.referencing.datum.DefaultTemporalDatum;
+import org.apache.sis.referencing.datum.DefaultVerticalDatum;
 import org.opengis.referencing.crs.TemporalCRS;
+import org.opengis.referencing.cs.VerticalCS;
+import org.opengis.referencing.datum.VerticalDatum;
 
 
 /**
@@ -162,6 +167,22 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
                     return crs;
                 }
             }
+
+            //create a datum
+            final VerticalDatumType vdt;
+            if (Units.BAR.isCompatible(units)) {
+                vdt = VerticalDatumType.BAROMETRIC;
+            } else {
+                if (AxisDirection.UP.equals(direction)) {
+                    vdt = VerticalDatumType.GEOIDAL;
+                } else {
+                    vdt = VerticalDatumType.DEPTH;
+                }
+            }
+            final VerticalDatum vd = new DefaultVerticalDatum(Collections.singletonMap("name", datum), vdt);
+            final CoordinateSystemAxis axis = new DefaultCoordinateSystemAxis(Collections.singletonMap("name", datum+"_axis"), "h", direction, units);
+            final VerticalCS cs = new DefaultVerticalCS(Collections.singletonMap("name", datum+"_cs"), axis);
+            return new DefaultVerticalCRS(Collections.singletonMap("name", datum+"_crs"), vd, cs);
         } else if (AxisDirections.isTemporal(direction)) {
             if (datum.equals("offset")) {
                 return OFFSET;
@@ -197,9 +218,9 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
         for (int i=0; i<values.length; i++) wrappers[i] = values[i];
         final Array bounds = getConnection().createArrayOf("FLOAT8", wrappers);
         String datum = crs.getDatum().getName().getCode();
-        if (datum.equalsIgnoreCase("Unknown datum presumably based upon Mean Sea Level")) {
-            datum = "Mean Sea Level";
-        }
+//        if (datum.equalsIgnoreCase("Unknown datum presumably based upon Mean Sea Level")) {
+//            datum = "Mean Sea Level";
+//        }
         final CoordinateSystemAxis axis = crs.getCoordinateSystem().getAxis(0);
         final String direction = Types.getCodeName(axis.getDirection());
         final String units     = axis.getUnit().toString();

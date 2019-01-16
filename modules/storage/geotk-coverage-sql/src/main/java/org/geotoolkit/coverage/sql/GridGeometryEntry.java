@@ -226,8 +226,18 @@ final class GridGeometryEntry extends Entry {
                     case 1: min = bounds.getMinY(); max = bounds.getMaxY(); break;
                     default: throw new AssertionError(i);
                 }
-                if (min >= 0 && max >= axis.getMaximumValue()) {
-                    return true;
+                if (ProductCoverage.HACK) {
+                    //it should be 0, but coverages are not always exactly on zero for various
+                    //reasons, or because of maths we sometimes end up with values such as
+                    // -2.1843638009499955E-14
+                    //TODO : find a better solution
+                    if (min >= -1 && max >= axis.getMaximumValue()) {
+                        return true;
+                    }
+                } else {
+                    if (min >= 0 && max >= axis.getMaximumValue()) {
+                        return true;
+                    }
                 }
             }
         }
