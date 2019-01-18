@@ -32,6 +32,7 @@ import org.apache.sis.internal.metadata.AxisDirections;
  * Information about an additional axis (vertical or other).
  *
  * @author Martin Desruisseaux (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 final class AdditionalAxisEntry extends Entry {
     /**

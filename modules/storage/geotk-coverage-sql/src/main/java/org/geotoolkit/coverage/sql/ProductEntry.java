@@ -54,6 +54,7 @@ import org.opengis.referencing.crs.SingleCRS;
  * on whether this entry is for a product or a group of products (or both - this is allowed).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 final class ProductEntry extends Entry {
     /**
@@ -299,21 +300,28 @@ final class ProductEntry extends Entry {
     }
 
     public GridCoverage read(GridGeometry areaOfInterest, int... bands) throws DataStoreException {
-        //modify envelope, when we encounter a slice we use the median value
-        //instead of the slice width to avoid multiple coverage occurence of coverages
-        //at envelope border intersections
-        final GeneralEnvelope env = new GeneralEnvelope(areaOfInterest.getEnvelope());
-        int offset = 0;
-        GridExtent extent = areaOfInterest.getExtent();
-        for (SingleCRS part : CRS.getSingleComponents(env.getCoordinateReferenceSystem())) {
-            final int crsDim = part.getCoordinateSystem().getDimension();
-            if (crsDim == 1 && extent.getSize(offset) == 1) {
-                double m = env.getMedian(offset);
-                env.setRange(offset, m, m);
+        /*
+         * Modify envelope: when we encounter a slice, use the median value instead of the slice width
+         * to avoid multiple coverage occurence of coverages at envelope border intersections.
+         */
+        Envelope envelope = areaOfInterest.getEnvelope();
+        if (HACK) {
+            int startDim = 0;
+            GeneralEnvelope modified = null;
+            final GridExtent extent = areaOfInterest.getExtent();
+            for (final SingleCRS part : CRS.getSingleComponents(envelope.getCoordinateReferenceSystem())) {
+                final int crsDim = part.getCoordinateSystem().getDimension();
+                if (crsDim == 1 && extent.getSize(startDim) == 1) {
+                    if (modified == null) {
+                        envelope = modified = new GeneralEnvelope(envelope);
+                    }
+                    double m = modified.getMedian(startDim);
+                    modified.setRange(startDim, m, m);
+                }
+                startDim += crsDim;
             }
-            offset += crsDim;
         }
-        return subset(env, getGridGeometry().getResolution(true)).read(areaOfInterest, bands);
+        return subset(envelope, getGridGeometry().getResolution(true)).read(areaOfInterest, bands);
     }
 
     /**
@@ -340,7 +348,7 @@ final class ProductEntry extends Entry {
                     .getString(Errors.Keys.IllegalCoordinateReferenceSystem, exception));
         }
         if (entries.isEmpty()) {
-            return null;
+            throw new CatalogException("No data in \"" + name + "\" product for the given area of interest.");
         }
         return new ProductSubset(this, areaOfInterest, resolution, entries);
     }

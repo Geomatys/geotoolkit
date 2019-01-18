@@ -23,7 +23,6 @@ import java.util.Optional;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 
 import org.apache.sis.util.Numbers;
 import org.apache.sis.measure.NumberRange;
@@ -69,7 +68,7 @@ final class FormatTable extends CachedTable<String,FormatEntry> {
      */
     @Override
     String select() {
-        return "SELECT \"driver\", \"resource\", \"metadata\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"name\" = ?";
+        return "SELECT \"driver\", \"metadata\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"name\" = ?";
     }
 
     /**
@@ -83,10 +82,9 @@ final class FormatTable extends CachedTable<String,FormatEntry> {
     @Override
     FormatEntry createEntry(final ResultSet results, final String identifier) throws SQLException, CatalogException {
         final String  format   = results.getString(1);
-        final String  resource = results.getString(2);
-        final String  metadata = results.getString(3);
+        final String  metadata = results.getString(2);
         final SampleDimension[] categories = sampleDimensions.query(identifier);
-        return new FormatEntry(format, UnmodifiableArrayList.wrap(categories), resource, metadata);
+        return new FormatEntry(format, UnmodifiableArrayList.wrap(categories), metadata);
     }
 
     /**
@@ -127,23 +125,20 @@ final class FormatTable extends CachedTable<String,FormatEntry> {
      *       in which case {@link #createEntry()} will ignore it anyway).</li>
      * </ul>
      *
-     * @param  driver       the name of the data store plugin.
-     * @param  resourceName the name of the resource in the data store.
-     * @param  bands        the sample dimensions to look for.
+     * @param  driver  the name of the data store plugin.
+     * @param  bands   the sample dimensions to look for.
      * @return identifier of an existing format, or {@code null} if none.
      * @throws SQLException if an error occurred while querying the database.
      */
-    private String search(final String driver, final String resourceName, final List<SampleDimension> bands) throws SQLException, DataStoreException {
+    private String search(final String driver, final List<SampleDimension> bands) throws SQLException, DataStoreException {
         final int numBands = size(bands);
         try (PreparedStatement statement = getConnection().prepareStatement(
-                "SELECT \"name\", \"resource\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"driver\" = ?"))
+                "SELECT \"name\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"driver\" = ?"))
         {
             statement.setString(1, driver);
             try (final ResultSet results = statement.executeQuery()) {
 next:           while (results.next()) {
                     final String name = results.getString(1);
-                    final String resource = results.getString(2);
-                    if (!Objects.equals(resource, resourceName)) continue;
                     final FormatEntry candidate = getEntry(name);                               // May use the cache.
                     final List<SampleDimension> current = candidate.sampleDimensions;
                     if (size(current) != numBands) {
@@ -200,16 +195,15 @@ next:           while (results.next()) {
      * Otherwise a new format is created with the given driver and the bands.
      *
      * @param  driver       the name of the data store to use.
-     * @param  resourceName the name of the resource in the data store.
      * @param  bands        the sample dimensions to add to the database.
      * @param  suggestedID  suggested name if a new format needs to be inserted.
      * @return the actual format name.
      * @throws SQLException if an error occurred while writing to the database.
      */
-    final String findOrInsert(final String driver, final String resourceName, final List<SampleDimension> bands, String suggestedID)
+    final String findOrInsert(final String driver, final List<SampleDimension> bands, String suggestedID)
             throws SQLException, DataStoreException
     {
-        String existing = search(driver, resourceName, bands);
+        String existing = search(driver, bands);
         if (existing != null) {
             return existing;
         }
@@ -219,13 +213,8 @@ next:           while (results.next()) {
          * there is few formats for the same product.
          */
         final PreparedStatement statement = prepareStatement("INSERT INTO " +
-                SCHEMA + ".\"" + TABLE + "\" (\"name\",\"driver\",\"resource\") VALUES (?,?,?) ON CONFLICT (\"name\") DO NOTHING");
+                SCHEMA + ".\"" + TABLE + "\" (\"name\",\"driver\") VALUES (?,?) ON CONFLICT (\"name\") DO NOTHING");
         statement.setString(2, driver);
-        if (resourceName != null) {
-            statement.setString(3, resourceName);
-        } else {
-            statement.setNull(3, Types.VARCHAR);
-        }
         StringBuilder buffer = null;
         for (int n=2; ; n++) {
             statement.setString(1, suggestedID);

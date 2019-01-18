@@ -31,15 +31,18 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.VerticalCRS;
+import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.metadata.spatial.DimensionNameType;
 
 import org.apache.sis.geometry.ImmutableEnvelope;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.metadata.AxisDirections;
 import org.apache.sis.referencing.CRS;
@@ -52,7 +55,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.ArraysExt;
-import org.opengis.referencing.crs.TemporalCRS;
 
 
 /**
@@ -62,6 +64,7 @@ import org.opengis.referencing.crs.TemporalCRS;
  * axis.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @author Sam Hiatt
  */
 final class GridGeometryEntry extends Entry {
@@ -117,9 +120,10 @@ final class GridGeometryEntry extends Entry {
     private final boolean approximate;
 
     /**
-     * Discrete temporal axis values.
+     * Time coordinates to insert on the temporal axis between grid coverage start time and end time,
+     * or {@code null} if none.
      */
-    private AdditionalAxisEntry temporalAxis;
+    private final AdditionalAxisEntry temporalAxis;
 
     /**
      * Creates an entry from the given grid geometry. This constructor does not clone
@@ -131,12 +135,13 @@ final class GridGeometryEntry extends Entry {
      * @param affine        the grid to CRS affine transform for the two first dimensions.
      * @param approximate   whether the "grid to CRS" transform is only an approximation of non-linear transform.
      * @param crs           the coordinate reference system for the two first dimensions.
-     * @param axes          additional dimensions, or {@code null} if none.
-     * @param extraDimName  a label for the additional dimensions, or {@code null} if none.
+     * @param temporalAxis  time coordinates to insert on the grid coverage temporal axis, or {@code null} if none.
+     * @param otherAxes     additional dimensions, or {@code null} if none.
+     * @param otherDimName  a label for the additional dimensions, or {@code null} if none.
      */
     GridGeometryEntry(final long width, final long height, final AffineTransform2D affine,
                       final boolean approximate, CoordinateReferenceSystem crs,
-                      AdditionalAxisEntry[] axes, final String extraDimName,
+                      final AdditionalAxisEntry temporalAxis, final AdditionalAxisEntry[] otherAxes, final String otherDimName,
                       final Database database) throws FactoryException, TransformException, IllegalRecordException
     {
         /*
@@ -158,19 +163,8 @@ final class GridGeometryEntry extends Entry {
          * and adding all supplemental axes.
          */
         int dim = AFFINE_DIMENSION;
-        if (axes != null) {
-            //search and exclude temporal axis
-            for (int i=0; i<axes.length; i++) {
-                if (axes[i].crs == AdditionalAxisTable.OFFSET) {
-                    temporalAxis = axes[i];
-                    axes = ArraysExt.remove(axes, i, 1);
-                    break;
-                }
-            }
-            dim += axes.length;
-            if (axes.length == 0) {
-                axes = null;
-            }
+        if (otherAxes != null) {
+            dim += otherAxes.length;
         }
         final long[]   upper   = new long  [dim];
         final double[] minimum = new double[dim];
@@ -178,29 +172,32 @@ final class GridGeometryEntry extends Entry {
         final DimensionNameType[] names = new DimensionNameType[dim];
         names[0] = DimensionNameType.COLUMN; upper[0] = width;  minimum[0] = bounds.getMinX(); maximum[0] = bounds.getMaxX();
         names[1] = DimensionNameType.ROW;    upper[1] = height; minimum[1] = bounds.getMinY(); maximum[1] = bounds.getMaxY();
+        final CRSFactory crsFactory = database.getCRSFactory();
         MathTransform gridToCRS = affine;
-        if (axes != null) {
-            final CoordinateReferenceSystem[] components = new CoordinateReferenceSystem[axes.length + 1];
+        if (otherAxes != null) {
+            final CoordinateReferenceSystem[] components = new CoordinateReferenceSystem[otherAxes.length + 1];
             components[0] = crs;
-            gridToCRS = database.mtFactory.createPassThroughTransform(0, gridToCRS, axes.length);
-            for (int i=0; i<axes.length; i++) {
-                final AdditionalAxisEntry axis = axes[i];
+            final MathTransformFactory mtFactory = database.getMathTransformFactory();
+            gridToCRS = mtFactory.createPassThroughTransform(0, gridToCRS, otherAxes.length);
+            for (int i=0; i<otherAxes.length; i++) {
+                final AdditionalAxisEntry axis = otherAxes[i];
                 names  [AFFINE_DIMENSION + i] = axis.type();
                 upper  [AFFINE_DIMENSION + i] = axis.count;
                 minimum[AFFINE_DIMENSION + i] = axis.standardMin;
                 maximum[AFFINE_DIMENSION + i] = axis.standardMax;
                 components[            1 + i] = axis.crs;
-                MathTransform tr = axis.gridToCRS;
-                tr = database.mtFactory.createPassThroughTransform(AFFINE_DIMENSION + i, tr, axes.length-1-i);
-                gridToCRS = database.mtFactory.createConcatenatedTransform(gridToCRS, tr);
+                MathTransform tr              = axis.gridToCRS;
+                tr = mtFactory.createPassThroughTransform(AFFINE_DIMENSION + i, tr, otherAxes.length - (i + 1));
+                gridToCRS = mtFactory.createConcatenatedTransform(gridToCRS, tr);
             }
-            crs = database.crsFactory.createCompoundCRS(properties(crs, extraDimName), components);
+            crs = crsFactory.createCompoundCRS(properties(crs, otherDimName), components);
         }
         spatialGeometry      = new GridGeometry(new GridExtent(names, null, upper, false), CELL_ORIGIN, gridToCRS, crs);
         standardEnvelope     = new ImmutableEnvelope(minimum, maximum, null);
-        spatioTemporalCRS    = database.crsFactory.createCompoundCRS(properties(crs, "time"), crs, database.temporalCRS);
-        spatioTemporalExtent = spatialGeometry.getExtent().append(DimensionNameType.TIME, 0, 0, true);
+        spatioTemporalCRS    = crsFactory.createCompoundCRS(properties(crs, "time"), crs, database.temporalCRS);
+        spatioTemporalExtent = spatialGeometry.getExtent().append(DimensionNameType.TIME, 0, (temporalAxis != null) ? temporalAxis.count : 1, false);
         this.approximate     = approximate;
+        this.temporalAxis    = temporalAxis;
     }
 
     /**
@@ -217,7 +214,7 @@ final class GridGeometryEntry extends Entry {
      * the [0…360]° range instead than the default [-180 … 180]° range.
      */
     private static boolean needsLongitudeShift(final Rectangle2D bounds, final CoordinateSystem cs) {
-        for (int i=0; i<=1; i++) {
+        for (int i=0; i<AFFINE_DIMENSION; i++) {
             final CoordinateSystemAxis axis = cs.getAxis(i);
             if (RangeMeaning.WRAPAROUND.equals(axis.getRangeMeaning())) {
                 final double min, max;
@@ -226,19 +223,17 @@ final class GridGeometryEntry extends Entry {
                     case 1: min = bounds.getMinY(); max = bounds.getMaxY(); break;
                     default: throw new AssertionError(i);
                 }
-                if (ProductCoverage.HACK) {
-                    //it should be 0, but coverages are not always exactly on zero for various
-                    //reasons, or because of maths we sometimes end up with values such as
-                    // -2.1843638009499955E-14
-                    //TODO : find a better solution
-                    if (min >= -1 && max >= axis.getMaximumValue()) {
-                        return true;
-                    }
-                } else {
-                    if (min >= 0 && max >= axis.getMaximumValue()) {
-                        return true;
-                    }
-                }
+                /*
+                 * We want to test if (min >= 0 && max >= axis.getMaximumValue()).
+                 * But the minimal coordinate is not always exactly on zero for various reasons.
+                 * For example because of rounding errors we sometime have values around -1E-14.
+                 * Instead, we test which convention has the less length outside its domain.
+                 */
+                final double axisMin = axis.getMinimumValue();
+                final double axisMax = axis.getMaximumValue();
+                final double out180  = Math.max(max - axisMax, 0) + Math.max(axisMin - min, 0);
+                final double out360  = Math.max(max - (axisMax - axisMin), 0) - Math.min(min, 0);
+                if (out180 > out360) return true;
             }
         }
         return false;
@@ -246,6 +241,10 @@ final class GridGeometryEntry extends Entry {
 
     /**
      * Returns the grid geometry for the given time range.
+     * This is used for computing the grid geometry of a single {@link GridCoverageEntry}.
+     *
+     * @param  startTime  the grid coverage start time (inclusive), or {@code null} if none.
+     * @param  endTime    the grid coverage end time (exclusive), or {@code null} if none.
      */
     final GridGeometry getGridGeometry(final Instant startTime, final Instant endTime) throws TransformException {
         if (startTime == null || endTime == null) {
@@ -253,33 +252,35 @@ final class GridGeometryEntry extends Entry {
         }
         MathTransform gridToCRS = spatialGeometry.getGridToCRS(CELL_ORIGIN);
         final double tMin = TEMPORAL_CRS.toValue(startTime);
-        final double tMax = TEMPORAL_CRS.toValue(endTime);
-
+        final MathTransform gridToTemporal;
         if (temporalAxis == null) {
-            gridToCRS = MathTransforms.compound(gridToCRS, MathTransforms.linear(tMax - tMin, tMin));
-            return new GridGeometry(spatioTemporalExtent, CELL_ORIGIN, gridToCRS, spatioTemporalCRS);
+            final double tMax = TEMPORAL_CRS.toValue(endTime);
+            gridToTemporal = MathTransforms.linear(tMax - tMin, tMin);
         } else {
-            //offset are stored in days
-            final MathTransform temporalTrs = MathTransforms.concatenate(temporalAxis.gridToCRS, MathTransforms.linear(1, tMin));
-            gridToCRS = MathTransforms.compound(gridToCRS, temporalTrs);
-            final GridExtent tempExt = spatialGeometry.getExtent().append(DimensionNameType.TIME, 0, temporalAxis.count, false);
-            return new GridGeometry(tempExt, CELL_ORIGIN, gridToCRS, spatioTemporalCRS);
+            // Time offsets are stored in days.
+            gridToTemporal = MathTransforms.concatenate(temporalAxis.gridToCRS, MathTransforms.linear(1, tMin));
         }
+        gridToCRS = MathTransforms.compound(gridToCRS, gridToTemporal);
+        return new GridGeometry(spatioTemporalExtent, CELL_ORIGIN, gridToCRS, spatioTemporalCRS);
     }
 
     /**
      * Returns the grid geometry for the given enumerated dates.
+     * This method is used for computing the grid geometry of a stack comprising more than one {@link GridCoverageEntry}.
      *
-     * Note : this method should not be used, it does not provide an accurate representation
-     *        of the grid geometry extent.
-     *
-     * @param  gridExtent  number of cell values in the temporal dimension.
-     * @param  timestamps  the conversion from [0 … n] grid cells to timestamp in the {@link #TEMPORAL_CRS} axis.
+     * @param  timestamps  the timestamps in units defined by {@link GridGeometryEntry#TEMPORAL_CRS}.
      */
-    final GridGeometry getGridGeometry(final int gridExtent, final MathTransform timestamps) throws TransformException {
+    final GridGeometry getGridGeometry(final double[] timestamps) throws TransformException {
+        MathTransform tr;
+        switch (timestamps.length) {
+            case 0:  return spatialGeometry;
+            case 1:  tr = MathTransforms.linear(1.0, timestamps[0]); break;     // Assume a temporal resolution of 1 day.
+            default: tr = MathTransforms.interpolate(null, timestamps); break;
+        }
+        tr = PixelTranslation.translate(tr, PixelInCell.CELL_CENTER, CELL_ORIGIN);
         MathTransform gridToCRS = spatialGeometry.getGridToCRS(CELL_ORIGIN);
-        gridToCRS = MathTransforms.compound(gridToCRS, timestamps);
-        GridExtent extent = spatialGeometry.getExtent().append(DimensionNameType.TIME, 0, gridExtent, false);
+        gridToCRS = MathTransforms.compound(gridToCRS, tr);
+        GridExtent extent = spatialGeometry.getExtent().append(DimensionNameType.TIME, 0, timestamps.length, false);
         return new GridGeometry(extent, CELL_ORIGIN, gridToCRS, spatioTemporalCRS);
     }
 
@@ -291,7 +292,10 @@ final class GridGeometryEntry extends Entry {
      * @param  aoi         the region of interest, or {@code null} for the full spatial extent.
      * @param  resolution  desired resolution in units of AOI.
      * @return indices of pixels to read.
+     *
+     * @deprecated Not used anymore.
      */
+    @Deprecated
     static GridGeometry getGridGeometry(final GridGeometry dataGrid, Envelope aoi, double[] resolution)
             throws FactoryException, TransformException
     {

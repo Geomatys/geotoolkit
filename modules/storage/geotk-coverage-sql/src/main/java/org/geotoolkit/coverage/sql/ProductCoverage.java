@@ -29,13 +29,9 @@ import org.apache.sis.util.collection.BackingStoreException;
  * Data of a product.
  *
  * @author Martin Desruisseaux (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 final class ProductCoverage extends GridCoverage {
-    /**
-     * For keeping trace of temporary hacks.
-     */
-    static final boolean HACK = true;
-
     /**
      * The components of this grid coverage.
      */
@@ -53,7 +49,7 @@ final class ProductCoverage extends GridCoverage {
     @Override
     public RenderedImage render(GridExtent sliceExtent) {
         try {
-            return entries.get(0).coverage((GridGeometry) null, null).render(sliceExtent);
+            return entries.get(0).coverage(null, null).render(sliceExtent);
         } catch (DataStoreException e) {
             throw new BackingStoreException(e);
         }

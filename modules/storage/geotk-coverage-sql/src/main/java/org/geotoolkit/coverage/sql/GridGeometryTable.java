@@ -25,15 +25,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.time.Instant;
-import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
+import javax.measure.IncommensurableException;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
@@ -50,13 +49,16 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.cs.AbstractCS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.internal.util.Constants;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.ArraysExt;
 
 import static org.geotoolkit.coverage.sql.GridGeometryEntry.AFFINE_DIMENSION;
 
@@ -65,6 +67,7 @@ import static org.geotoolkit.coverage.sql.GridGeometryEntry.AFFINE_DIMENSION;
  * Connection to a table of grid geometries.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @author Antoine Hnawia (IRD)
  */
 final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
@@ -121,18 +124,26 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
         final boolean approximate = results.getBoolean(9);
         final int srid = results.getInt(10);
         final Array refs = results.getArray(11);
-        AdditionalAxisEntry[] axes = null;
-        String extraDimName = null;
+        AdditionalAxisEntry temporalAxis = null;
+        AdditionalAxisEntry[] otherAxes = null;
+        String otherDimName = null;
         if (refs != null) {
             final Object data = refs.getArray();
             final int length = java.lang.reflect.Array.getLength(data);
             if (length != 0) {
-                axes = new AdditionalAxisEntry[length];
-                for (int i=0; i<axes.length; i++) {
+                int count = 0;
+                otherAxes = new AdditionalAxisEntry[length];
+                for (int i=0; i<length; i++) {
                     final String id = (String) java.lang.reflect.Array.get(data, i);
-                    extraDimName = (i == 0) ? id : extraDimName + " + " + id;
-                    axes[i] = getAxisTable().getEntry(id);
+                    final AdditionalAxisEntry axis = getAxisTable().getEntry(id);
+                    if (AdditionalAxisTable.isTemporalAxis(axis)) {
+                        temporalAxis = axis;
+                    } else {
+                        otherDimName = (count == 0) ? id : otherDimName + " + " + id;
+                        otherAxes[count++] = getAxisTable().getEntry(id);
+                    }
                 }
+                otherAxes = (count != 0) ? ArraysExt.resize(otherAxes, count) : null;
             }
             refs.free();
         }
@@ -142,11 +153,11 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
              * by changing axis order after decoding, but we should really use a PostGIS factory instead.
              */
             CoordinateReferenceSystem crs;
-            crs = transaction.database.authorityFactory.createCoordinateReferenceSystem(String.valueOf(srid));
+            crs = transaction.database.getCRSAuthorityFactory().createCoordinateReferenceSystem(String.valueOf(srid));
             crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED);
-            return new GridGeometryEntry(width, height, gridToCRS, approximate, crs, axes, extraDimName, transaction.database);
+            return new GridGeometryEntry(width, height, gridToCRS, approximate, crs, temporalAxis, otherAxes, otherDimName, transaction.database);
         } catch (FactoryException | TransformException exception) {
-            throw new IllegalRecordException(exception, results, 9, identifier);
+            throw new IllegalRecordException(exception, results, 10, identifier);
         }
     }
 
@@ -230,7 +241,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
      * @throws SQLException if the operation failed.
      */
     final int findOrInsert(final GridGeometry geometry, final Instant[] period, final String suggestedID)
-            throws SQLException, FactoryException, TransformException, CatalogException
+            throws SQLException, IncommensurableException, FactoryException, TransformException, CatalogException
     {
         final List<String> additionalAxes = new ArrayList<>();
         /*
@@ -256,44 +267,35 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                     final CoordinateReferenceSystem crs2D = CRS.getComponentAt(crs, lower, upper+1);
                     /*
                      * Iterates over all other dimensions. One of them may be a temporal dimension, which will be handled
-                     * in a special way by storing dates in in the "GridCoverages" table instead than coefficients in the
-                     * "GridGeometries" table. If more than one temporal dimension exist, only the first one is processed
-                     * in that special way; all other temporal dimension are handled like any other additional axis.
+                     * in a special way by storing dates in the "GridCoverages" table as a complement (or replacement) to
+                     * values in the "AdditionalAxes" table. If more than one temporal dimension exist, only the first one
+                     * is processed in that special way; all others temporal dimensions are handled like ordinary axes.
                      */
                     final GridExtent extent = geometry.getExtent();
                     for (int i=AFFINE_DIMENSION; i<dimension; i++) {
                         sep.clear();
                         sep.addSourceDimensionRange(i, i+1);
-                        final MathTransform gridToCRS = sep.separate();
+                        final MathTransform1D gridToCRS = (MathTransform1D) sep.separate();
                         targetDims = sep.getTargetDimensions();
                         if (targetDims.length != 1) {
                             throw new IllegalUpdateException("Unexpected number of target dimensions for source dimension " + i + ".");
                         }
-                        final int dim = targetDims[0];
-                        final CoordinateReferenceSystem crs1D = CRS.getComponentAt(crs, dim, dim+1);
+                        final int dim  = targetDims[0];
+                        final int span = Math.toIntExact(extent.getSize(dim));
+                        final SingleCRS crs1D = (SingleCRS) CRS.getComponentAt(crs, dim, dim+1);
+                        Instant startTime = null;
                         if (period[0] == null && period[1] == null && crs1D instanceof TemporalCRS) {
                             final DefaultTemporalCRS temporal = DefaultTemporalCRS.castOrCopy((TemporalCRS) crs1D);
                             final Envelope range = geometry.getEnvelope();
-                            period[0] = temporal.toInstant(range.getMinimum(dim));
+                            startTime = temporal.toInstant(range.getMinimum(dim));
                             period[1] = temporal.toInstant(range.getMaximum(dim));
-                            if (extent.getSize(dim) > 1) {
-                                // add a fake temporal axis with offsets from range start.
-                                final double[] values = new double[Math.toIntExact(extent.getSize(dim) + 1)];
-                                for (int j=1; j<values.length; j++) values[j] = j;
-                                gridToCRS.transform(values, 0, values, 0, values.length);
-                                //convert to distance in days
-                                for (int j=0; j<values.length; j++) {
-                                    values[j] = period[0].until(temporal.toInstant(values[j]), ChronoUnit.DAYS);
-                                }
-                                additionalAxes.add(getAxisTable().findOrInsert(AdditionalAxisTable.OFFSET, values, suggestedID));
+                            period[0] = startTime;
+                            if (span <= 1) {
+                                continue;       // Do not add an AdditionalAxisEntry if start time and end time are sufficient.
                             }
-                        } else {
-                            final double[] values = new double[Math.toIntExact(extent.getSize(dim) + 1)];
-                            for (int j=1; j<values.length; j++) values[j] = j;
-                            gridToCRS.transform(values, 0, values, 0, values.length);
-                            additionalAxes.add(getAxisTable().findOrInsert((SingleCRS) crs1D, values, suggestedID));
-                            // Above cast should never fail since a 1D CRS can not be compound.
                         }
+                        additionalAxes.add(getAxisTable().findOrInsert(suggestedID,
+                                extent.getLow(dim), span, gridToCRS, crs1D, startTime));
                     }
                     /*
                      * At this point we collected all additional axes. Process to the insertion.
@@ -334,7 +336,12 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                             gridToCRS.setElement(j, AFFINE_DIMENSION, s + shift);
                         }
                     }
-                    final Array axes = getConnection().createArrayOf("VARCHAR", additionalAxes.toArray());
+                    final Array axes;
+                    if (additionalAxes.isEmpty()) {
+                        axes = null;
+                    } else {
+                        axes = getConnection().createArrayOf("VARCHAR", additionalAxes.toArray());
+                    }
                     return findOrInsert(extent, gridToCRS, !isLinear, findCRS(crs2D), axes);
                 }
             }
@@ -343,47 +350,76 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
     }
 
     /**
+     * Changes to try on axis order when checking if the EPSG code for a coordinate reference system
+     * can be used for the {@code "srid"} column of the {@code "GridGeometris"} table. Those changes
+     * are cumulative: {@code CHANGES_TO_TRY[2]} is applied on the result of {@code CHANGES_TO_TRY[1]}.
+     */
+    private static final AxesConvention[] CHANGES_TO_TRY = {
+        null, AxesConvention.RIGHT_HANDED, AxesConvention.POSITIVE_RANGE
+    };
+
+    /**
      * Finds a {@code spatial_ref_sys} code for the given coordinate reference system.
      */
-    private static int findCRS(CoordinateReferenceSystem crs) throws FactoryException, IllegalUpdateException {
-        final IdentifiedObjectFinder finder = IdentifiedObjects.newFinder("EPSG");
+    private static int findCRS(final CoordinateReferenceSystem crs) throws FactoryException, IllegalUpdateException {
+        final IdentifiedObjectFinder finder = IdentifiedObjects.newFinder(Constants.EPSG);
         finder.setIgnoringAxes(true);
-        AbstractCRS c = AbstractCRS.castOrCopy((CoordinateReferenceSystem) finder.findSingleton(crs));
-
-        if (c != null) {
-            boolean match = false;
-            AbstractCRS cdt = c;
-            match = cdt.equals(crs, ComparisonMode.APPROXIMATIVE);
-            if (!match) {
-                cdt = cdt.forConvention(AxesConvention.RIGHT_HANDED);
-                crs = ((AbstractCRS) crs).forConvention(AxesConvention.RIGHT_HANDED);
-                match = cdt.equals(crs, ComparisonMode.APPROXIMATIVE);
-            }
-            if (!match) {
-                cdt = cdt.forConvention(AxesConvention.POSITIVE_RANGE);
-                crs = ((AbstractCRS) crs).forConvention(AxesConvention.POSITIVE_RANGE);
-                match = cdt.equals(crs, ComparisonMode.APPROXIMATIVE);
-            }
-            if (match) {
-                Identifier id = IdentifiedObjects.getIdentifier(c, Citations.EPSG);
-                if (id != null) try {
-                    return Integer.valueOf(id.getCode());
-                } catch (NumberFormatException e) {
-                    throw new IllegalUpdateException("Illegal SRID: " + id);
+        final CoordinateReferenceSystem found = (CoordinateReferenceSystem) finder.findSingleton(crs);
+        if (found != null) {
+            AbstractCS expected = AbstractCS.castOrCopy(crs.getCoordinateSystem());
+            AbstractCS actual = AbstractCS.castOrCopy(found.getCoordinateSystem());
+            for (final AxesConvention convention : CHANGES_TO_TRY) {
+                if (convention != null) {
+                    expected = expected.forConvention(convention);
+                    actual   = actual  .forConvention(convention);
+                }
+                if (actual.equals(expected, ComparisonMode.APPROXIMATIVE)) {
+                    final Identifier id = IdentifiedObjects.getIdentifier(found, Citations.EPSG);
+                    if (id != null) try {
+                        return Integer.valueOf(id.getCode());
+                    } catch (NumberFormatException e) {
+                        throw new IllegalUpdateException("Illegal SRID: " + id);
+                    }
                 }
             }
         }
-
         /*
          * Temporary hack for Coriolis data (to be removed in a future version).
          */
-        if (IdentifiedObjects.isHeuristicMatchForName(crs, "Mercator_1SP (Unspecified datum based upon the GRS 1980 Authalic Sphere)")) {
-            return 3395;
-        } else if (CRS.findOperation(crs, CommonCRS.defaultGeographic(), null).getMathTransform().isIdentity()) {
-            return 4326;
-        } else {
-            throw new IllegalUpdateException("SRID not found.");
+        if (Entry.HACK) {
+            if (IdentifiedObjects.isHeuristicMatchForName(crs, "Mercator_1SP (Unspecified datum based upon the GRS 1980 Authalic Sphere)")) {
+                return 3395;
+            } else if (CRS.findOperation(crs, CommonCRS.defaultGeographic(), null).getMathTransform().isIdentity()) {
+                return 4326;
+            }
         }
+        throw new IllegalUpdateException("SRID not found.");
+    }
+
+    /**
+     * Returns the time coordinates to add to the grid coverage start time, or {@code null} if none.
+     *
+     * @param  identifier  identifier of the grid geometry extent for which to get time offset components.
+     * @return time offsets, or {@code null} if none.
+     */
+    final AdditionalAxisEntry listTimeOffsets(final int identifier) throws SQLException, DataStoreException {
+        final PreparedStatement statement = prepareStatement(
+                "SELECT \"name\" FROM " + SCHEMA + ".\"" + TABLE + "\" " +
+                "LEFT JOIN " + SCHEMA + ".\"" + AdditionalAxisTable.TABLE + "\" ON \"name\"=ANY(\"additionalAxes\") " +
+                "AND \"datum\"='" + AdditionalAxisTable.RELATIVE_TIME_DATUM + "' WHERE \"identifier\"=?");
+
+        statement.setInt(1, identifier);
+        AdditionalAxisEntry axis = null;
+        try (ResultSet results = statement.executeQuery()) {
+            while (results.next()) {
+                if (axis == null) {
+                    axis = getAxisTable().getEntry(results.getString(1));
+                } else {
+                    throw new DuplicatedRecordException(results, 1, identifier);
+                }
+            }
+        }
+        return axis;
     }
 
     /**

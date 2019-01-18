@@ -36,6 +36,7 @@ import org.opengis.util.GenericName;
  * Information about a new raster to be added.
  *
  * @author Martin Desruisseaux (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 final class NewRaster {
     /**
@@ -51,7 +52,7 @@ final class NewRaster {
     /**
      * Identifier of the resource in the file.
      */
-    final String resourceName;
+    final String dataset;
 
     /**
      * Grid geometry of the file to add.
@@ -66,10 +67,10 @@ final class NewRaster {
     /**
      * Creates information about a new raster to be added to the catalog.
      */
-    private NewRaster(final String driver, final String resourceName, final Path file) {
-        this.driver = driver;
-        this.path   = file;
-        this.resourceName = resourceName;
+    private NewRaster(final String driver, final String dataset, final Path file) {
+        this.driver  = driver;
+        this.path    = file;
+        this.dataset = dataset;
     }
 
     /**
@@ -79,7 +80,7 @@ final class NewRaster {
      */
     @Override
     public String toString() {
-        return path.getFileName().toString() + " @ " + resourceName;
+        return path.getFileName().toString() + " @ " + dataset;
     }
 
     /**
@@ -120,24 +121,32 @@ final class NewRaster {
 
         final Collection<GridCoverageResource> candidates = org.geotoolkit.storage.
                 DataStores.flatten(resource, true, GridCoverageResource.class);
-
-        if (candidates.size() == 1) {
-            //single resource, do not specify resource name
-            final GridCoverageResource gr = candidates.iterator().next();
-            final NewRaster r = new NewRaster(driver, null, file);
+        /*
+         * If there is only one resource, do not specify the dataset. This increase the chance
+         * of being able to reuse the same SeriesEntry for many coverage, especially when using
+         * DataStores that put filename in their resource name.
+         */
+        final boolean isMultiResources = candidates.size() > 1;
+        for (final GridCoverageResource gr : candidates) {
+            final NewRaster r = new NewRaster(driver, isMultiResources ? gr.getIdentifier().toString() : null, file);
             r.geometry = gr.getGridGeometry();
             r.bands = gr.getSampleDimensions();
             final GenericName identifier = gr.getIdentifier();
             rasters.computeIfAbsent(identifier.tip().toString(), (k) -> new ArrayList<>()).add(r);
-        } else {
-            //multiple resource, specify name on each new raster
-            for (GridCoverageResource gr : candidates) {
-                final NewRaster r = new NewRaster(driver, gr.getIdentifier().toString(), file);
-                r.geometry = gr.getGridGeometry();
-                r.bands = gr.getSampleDimensions();
-                final GenericName identifier = gr.getIdentifier();
-                rasters.computeIfAbsent(identifier.tip().toString(), (k) -> new ArrayList<>()).add(r);
-            }
         }
+    }
+
+    /**
+     * Returns a suggested identifier for format entries.
+     * This method tries to return something shorter than the product name if possible.
+     *
+     * @param  product  the product name, to be used as a fallback if we have no better identifier.
+     */
+    final String suggestedID(final String product) {
+        if (bands != null && bands.size() == 1) {
+            final String c = bands.get(0).getName().tip().toString();
+            if (c.length() < product.length()) return c;
+        }
+        return product;
     }
 }

@@ -26,5 +26,10 @@
  * used as an index for searching image files from a 2D, 3D or 4D spatio-temporal envelopes.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- */
+ * @author Johann Sorel (Geomatys)
+ * @author Rémi Eve (Geomatys)
+ * @author Cédric Briançon (Geomatys)
+ * @author Antoine Hnawia (IRD)
+ * @author Sam Hiatt
+  */
 package org.geotoolkit.coverage.sql;

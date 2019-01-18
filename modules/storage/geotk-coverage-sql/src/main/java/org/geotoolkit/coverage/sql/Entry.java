@@ -24,6 +24,11 @@ package org.geotoolkit.coverage.sql;
  */
 abstract class Entry {
     /**
+     * For keeping trace of temporary hacks.
+     */
+    static final boolean HACK = true;
+
+    /**
      * Creates a new entry.
      */
     Entry() {

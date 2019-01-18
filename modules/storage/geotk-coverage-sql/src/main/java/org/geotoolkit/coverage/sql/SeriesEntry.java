@@ -37,6 +37,7 @@ import java.nio.file.Paths;
  * the need to go down to the {@code SeriesEntry}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 final class SeriesEntry extends Entry {
     /**
@@ -48,6 +49,12 @@ final class SeriesEntry extends Entry {
      * Identifier of the product to which this series belong.
      */
     final String product;
+
+    /**
+     * Name of the dataset to select. May be {@code null} if the file format contains only one dataset.
+     * Shall be a name recognized by {@link org.apache.sis.storage.DataStore#findResource(String)}.
+     */
+    final String dataset;
 
     /**
      * The directory which contains the data files for this series.
@@ -67,14 +74,20 @@ final class SeriesEntry extends Entry {
     /**
      * Creates a new series entry.
      *
+     * @param identifier identifier of this series.
+     * @param product    identifier of the product to which this series belong.
+     * @param dataset    name of the dataset to select, or {@code null} if the file format contains only one dataset.
      * @param root       the root directory or URL, or {@code null} if none.
      * @param directory  the relative or absolute directory which contains the data files for this series.
      * @param extension  the extension to add to filenames, not including the dot character.
      * @param format     the format of all coverages in this series.
      */
-    SeriesEntry(final int identifier, final String product, final Path root, final URI directory, String extension, final FormatEntry format) {
+    SeriesEntry(final int identifier, final String product, final String dataset,
+            final Path root, final URI directory, String extension, final FormatEntry format)
+    {
         this.identifier = identifier;
         this.product    = product;
+        this.dataset    = dataset;
         this.extension  = (extension != null && !(extension = extension.trim()).isEmpty()) ? extension : null;
         this.format     = format;
         this.directory  = directory.isAbsolute() ? Paths.get(directory) : root.resolve(directory.toString());

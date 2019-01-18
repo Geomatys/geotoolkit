@@ -27,15 +27,15 @@ import java.sql.PreparedStatement;
 import java.sql.Types;
 import java.nio.file.Path;
 import java.time.Instant;
+import javax.measure.IncommensurableException;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Envelopes;
-import org.geotoolkit.referencing.CRS;
-import org.opengis.geometry.MismatchedReferenceSystemException;
 
 
 /**
@@ -49,6 +49,7 @@ import org.opengis.geometry.MismatchedReferenceSystemException;
  * condition is changed, then {@link GridCoverageEntry#equalsAsSQL} must be updated accordingly.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @author Sam Hiatt
  */
 final class GridCoverageTable extends Table {
@@ -113,106 +114,73 @@ final class GridCoverageTable extends Table {
     final List<GridCoverageEntry> find(final String product, final Envelope areaOfInterest)
             throws SQLException, DataStoreException, TransformException
     {
-        Envelope normalized = null;
-        try {
-            normalized = Envelopes.transform(areaOfInterest, transaction.database.spatioTemporalCRS);
-        } catch (TransformException ex) {
-            //no temporal extent for this data
-        }
-
-        if (normalized != null) {
-            final PreparedStatement statement = prepareStatement("SELECT \"series\", \"filename\", \"grid\","
-                + " \"startTime\", \"endTime\" FROM " + SCHEMA + ".\"" + TABLE + "\""
-                + " INNER JOIN " + SCHEMA + ".\"" + SeriesTable.TABLE + "\" ON (\"series\" = \"" + SeriesTable.TABLE + "\".\"identifier\")"
-                + " INNER JOIN " + SCHEMA + ".\"" + GridGeometryTable.TABLE + "\" ON (\"grid\" = \"" + GridGeometryTable.TABLE + "\".\"identifier\")"
-                + " WHERE \"product\"=? AND \"endTime\" >= ? and \"startTime\" <= ? AND ST_Intersects(extent, ST_GeomFromText(?,4326))");
-            /*
-             * endTime >= tmin or  startTime  <= tmax
-             *
-             * Note: we could wrote    ("startTime", "endTime") OVERLAPS (?,?)    but our tests
-             * with EXPLAIN on PostgreSQL 10.5 suggests that >= and <= make better use of index.
-             */
-            final GeneralEnvelope subEnv = GeneralEnvelope.castOrCopy(normalized).subEnvelope(0, 2);
-            //set sub envelope crs, CRS is needed for the envelope to properly handle wrap around axis
-            subEnv.setCoordinateReferenceSystem(CRS.getOrCreateSubCRS(normalized.getCoordinateReferenceSystem(), 0, 2));
-            final DefaultTemporalCRS temporalCRS = transaction.database.temporalCRS;
-            final long tMin = temporalCRS.toInstant(normalized.getMinimum(2)).toEpochMilli();
-            final long tMax = temporalCRS.toInstant(normalized.getMaximum(2)).toEpochMilli();
-            final Calendar calendar = newCalendar();
-            statement.setString   (1, product);
-            statement.setTimestamp(2, new Timestamp(tMin), calendar);
-            statement.setTimestamp(3, new Timestamp(tMax), calendar);
-
-            statement.setString   (4, Envelopes.toPolygonWKT(subEnv));
-            final List<GridCoverageEntry> entries = new ArrayList<>();
-            try (final ResultSet results = statement.executeQuery()) {
-                SeriesEntry series = null;
-                GridGeometryEntry grid = null;
-                int lastGridID = 0;
-                while (results.next()) {
-                    final int       seriesID  = results.getInt      (1);
-                    final String    filename  = results.getString   (2);
-                    final int       gridID    = results.getInt      (3);
-                    final Timestamp startTime = results.getTimestamp(4, calendar);
-                    final Timestamp endTime   = results.getTimestamp(5, calendar);
-                    if (series == null || series.identifier != seriesID) {
-                        series = seriesTable.getEntry(seriesID);
-                    }
-                    if (grid == null || lastGridID != gridID) {
-                        grid = gridGeometries.getEntry(gridID);
-                        lastGridID = gridID;
-                    }
-                    entries.add(new GridCoverageEntry(series, filename, toInstant(startTime), toInstant(endTime), grid));
-                }
-            }
-            return entries;
+        final Database database   = transaction.database;
+        final boolean hasTemporal = CRS.getTemporalComponent(areaOfInterest.getCoordinateReferenceSystem()) != null;
+        final Envelope normalized = Envelopes.transform(areaOfInterest, hasTemporal ? database.spatioTemporalCRS : database.extentCRS);
+        final Envelope horizontal;
+        if (hasTemporal) {
+            final GeneralEnvelope ge = GeneralEnvelope.castOrCopy(normalized).subEnvelope(0, 2);
+            ge.setCoordinateReferenceSystem(database.extentCRS);                        // Required for handling wrap-around axis.
+            horizontal = ge;
         } else {
-            final PreparedStatement statement = prepareStatement("SELECT \"series\", \"filename\", \"grid\","
-                + " \"startTime\", \"endTime\" FROM " + SCHEMA + ".\"" + TABLE + "\""
-                + " INNER JOIN " + SCHEMA + ".\"" + SeriesTable.TABLE + "\" ON (\"series\" = \"" + SeriesTable.TABLE + "\".\"identifier\")"
-                + " INNER JOIN " + SCHEMA + ".\"" + GridGeometryTable.TABLE + "\" ON (\"grid\" = \"" + GridGeometryTable.TABLE + "\".\"identifier\")"
-                + " WHERE \"product\"=? AND ST_Intersects(extent, ST_GeomFromText(?,4326))");
-            normalized = Envelopes.transform(areaOfInterest, transaction.database.extentCRS);
-            final GeneralEnvelope subEnv = GeneralEnvelope.castOrCopy(normalized).subEnvelope(0, 2);
-            //set sub envelope crs, CRS is needed for the envelope to properly handle wrap around axis
-            subEnv.setCoordinateReferenceSystem(CRS.getOrCreateSubCRS(normalized.getCoordinateReferenceSystem(), 0, 2));
-            final Calendar calendar = newCalendar();
-            statement.setString   (1, product);
-            statement.setString   (2, Envelopes.toPolygonWKT(subEnv));
-            final List<GridCoverageEntry> entries = new ArrayList<>();
-            try (final ResultSet results = statement.executeQuery()) {
-                SeriesEntry series = null;
-                GridGeometryEntry grid = null;
-                int lastGridID = 0;
-                while (results.next()) {
-                    final int       seriesID  = results.getInt      (1);
-                    final String    filename  = results.getString   (2);
-                    final int       gridID    = results.getInt      (3);
-                    final Timestamp startTime = results.getTimestamp(4, calendar);
-                    final Timestamp endTime   = results.getTimestamp(5, calendar);
-                    if (series == null || series.identifier != seriesID) {
-                        series = seriesTable.getEntry(seriesID);
-                    }
-                    if (grid == null || lastGridID != gridID) {
-                        grid = gridGeometries.getEntry(gridID);
-                        lastGridID = gridID;
-                    }
-                    entries.add(new GridCoverageEntry(series, filename, toInstant(startTime), toInstant(endTime), grid));
-                }
-            }
-            return entries;
+            horizontal = normalized;
         }
+        String sql = "SELECT \"series\", \"filename\", \"grid\","
+                   + " \"startTime\", \"endTime\" FROM " + SCHEMA + ".\"" + TABLE + "\""
+                   + " INNER JOIN " + SCHEMA + ".\"" + SeriesTable.TABLE + "\" ON (\"series\" = \"" + SeriesTable.TABLE + "\".\"identifier\")"
+                   + " INNER JOIN " + SCHEMA + ".\"" + GridGeometryTable.TABLE + "\" ON (\"grid\" = \"" + GridGeometryTable.TABLE + "\".\"identifier\")"
+                   + " WHERE \"product\"=? AND ST_Intersects(extent, ST_GeomFromText(?,4326)) AND \"endTime\" >= ? AND \"startTime\" <= ?";
+        /*
+         * Note: we could write    ("startTime", "endTime") OVERLAPS (?,?)    but our tests
+         * with EXPLAIN on PostgreSQL 10.5 suggests that >= and <= make better use of index.
+         */
+        if (!hasTemporal) {
+            sql = sql.substring(0, sql.lastIndexOf(" AND \"endTime\""));        // Stop the query after the intersect condition.
+        }
+        final PreparedStatement statement = prepareStatement(sql);
+        final DefaultTemporalCRS temporalCRS = transaction.database.temporalCRS;
+        final long tMin = temporalCRS.toInstant(normalized.getMinimum(2)).toEpochMilli();
+        final long tMax = temporalCRS.toInstant(normalized.getMaximum(2)).toEpochMilli();
+        final Calendar calendar = newCalendar();
+        statement.setString(1, product);
+        statement.setString(2, Envelopes.toPolygonWKT(horizontal));
+        if (hasTemporal) {
+            statement.setTimestamp(3, new Timestamp(tMin), calendar);
+            statement.setTimestamp(4, new Timestamp(tMax), calendar);
+        }
+        final List<GridCoverageEntry> entries = new ArrayList<>();
+        try (final ResultSet results = statement.executeQuery()) {
+            SeriesEntry series = null;
+            GridGeometryEntry grid = null;
+            int lastGridID = 0;
+            while (results.next()) {
+                final int       seriesID  = results.getInt      (1);
+                final String    filename  = results.getString   (2);
+                final int       gridID    = results.getInt      (3);
+                final Timestamp startTime = results.getTimestamp(4, calendar);
+                final Timestamp endTime   = results.getTimestamp(5, calendar);
+                if (series == null || series.identifier != seriesID) {
+                    series = seriesTable.getEntry(seriesID);
+                }
+                if (grid == null || lastGridID != gridID) {
+                    grid = gridGeometries.getEntry(gridID);
+                    lastGridID = gridID;
+                }
+                entries.add(new GridCoverageEntry(series, filename, toInstant(startTime), toInstant(endTime), grid));
+            }
+        }
+        return entries;
     }
 
     /**
      * Adds a coverage having the specified grid geometry.
      *
-     * @param  path       path to the file to add.
-     * @param  imageIndex 1-based index of the image.
+     * @param  product  name of the product for which to add a raster.
+     * @param  raster   information about the raster to add.
      * @throws SQLException if an error occurred while reading from or writing to the database.
      */
     final void add(final String product, final NewRaster raster)
-            throws SQLException, FactoryException, TransformException, DataStoreException
+            throws SQLException, IncommensurableException, FactoryException, TransformException, DataStoreException
     {
         /*
          * Decompose the given path into the directory, filename and extension components.
@@ -234,9 +202,8 @@ final class GridCoverageTable extends Table {
          * Insert dependencies in other tables.
          */
         final Instant[] period = new Instant[2];        // Values to be provided by 'gridGeometries'.
-        final int gridID = gridGeometries.findOrInsert(raster.geometry, period, product);
-        final int series = seriesTable.findOrInsert(product, directory, extension,
-                raster.driver, raster.resourceName, raster.bands);
+        final int gridID = gridGeometries.findOrInsert(raster.geometry, period, raster.suggestedID(product));
+        final int series = seriesTable.findOrInsert(product, directory, extension, raster);
         /*
          * If the "gridToCRS" has NaN scale factor and is mapping pixel corner, then only the lower
          * bounds is set since we can not compute the upper bounds. But for insertion in GridCoverages

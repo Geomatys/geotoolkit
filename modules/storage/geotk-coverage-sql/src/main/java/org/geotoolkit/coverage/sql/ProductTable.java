@@ -28,25 +28,23 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.measure.IncommensurableException;
+import org.opengis.util.FactoryException;
+import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreReferencingException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.iso.DefaultNameSpace;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 
 /**
  * Connection to a table of products.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 final class ProductTable extends CachedTable<String,ProductEntry> {
     /**
@@ -116,24 +114,14 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
         GridGeometry   exportedGrid = null;
         if (!hasNoGrid) {
             final GridGeometryEntry gridEntry = gridGeometries.getEntry(gridID);
-            final double[] timestamps = FETCH_ALL_DATES ? seriesTable.listAllDates(name) : ArraysExt.EMPTY_DOUBLE;
+            final double[] timestamps;
             try {
-                if (timestamps.length != 0) {
-                    MathTransform tr;
-                    if (timestamps.length == 1) {
-                        //TODO
-                        tr = MathTransforms.linear(1.0, timestamps[0]);
-                    } else {
-                        tr = MathTransforms.interpolate(null, timestamps);
-                    }
-                    tr = PixelTranslation.translate(tr, PixelInCell.CELL_CENTER, GridGeometryEntry.CELL_ORIGIN);
-                    exportedGrid = gridEntry.getGridGeometry(timestamps.length, tr);
+                if (FETCH_ALL_DATES) {
+                    timestamps = seriesTable.listAllDates(name, gridGeometries);
                 } else {
-                    // TODO: specify startTime and endTime.
-                    Instant startTime = null;
-                    Instant endTime = null;
-                    exportedGrid = gridEntry.getGridGeometry(startTime, endTime);
+                    timestamps = ArraysExt.EMPTY_DOUBLE;
                 }
+                exportedGrid = gridEntry.getGridGeometry(timestamps);
             } catch (TransformException e) {
                 throw new DataStoreReferencingException(e);
             }
@@ -202,7 +190,7 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
      * @throws SQLException if an error occurred while reading or writing the database.
      */
     private void createIfAbsent(final AddOption option, final String name, final String parent, final List<NewRaster> rasters)
-            throws SQLException, DataStoreException, FactoryException, TransformException
+            throws SQLException, IncommensurableException, FactoryException, TransformException, DataStoreException
     {
         if (option != AddOption.NO_CREATE) {
             boolean exists;
@@ -261,7 +249,7 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
                     table.add(product, r);
                 }
             }
-        } catch (SQLException | FactoryException | TransformException e) {
+        } catch (SQLException | IncommensurableException | FactoryException | TransformException e) {
             throw new CatalogException(e);
         }
     }

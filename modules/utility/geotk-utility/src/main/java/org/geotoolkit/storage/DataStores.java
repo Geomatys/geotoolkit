@@ -68,7 +68,7 @@ public final class DataStores extends Static {
      * @return Collection of all resources
      */
     public static Collection<? extends Resource> flatten(Resource root, boolean includeRoot) throws DataStoreException {
-        return flatten(root, includeRoot, null);
+        return flatten(root, includeRoot, Resource.class);
     }
 
     /**
@@ -80,19 +80,16 @@ public final class DataStores extends Static {
      * @return Collection of all resources
      */
     public static <T extends Resource> Collection<T> flatten(Resource root, boolean includeRoot, Class<T> resourceClass) throws DataStoreException {
-        if (resourceClass == null) {
-            resourceClass = (Class<T>) Resource.class;
-        }
-
+        ArgumentChecks.ensureNonNull("resourceClass", resourceClass);   // null not allowed because unsafe.
         if (root instanceof Aggregate) {
             final List<T> list = new ArrayList<>();
-            if (includeRoot && resourceClass.isInstance(root)) list.add((T)root);
+            if (includeRoot && resourceClass.isInstance(root)) list.add((T) root);
             list(root, list, resourceClass);
             return list;
         } else if (includeRoot && resourceClass.isInstance(root)) {
-            return Collections.singleton((T)root);
+            return Collections.singleton((T) root);
         } else {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
 
@@ -100,7 +97,7 @@ public final class DataStores extends Static {
         if (resource instanceof Aggregate) {
             final Aggregate ds = (Aggregate) resource;
             for (Resource rs : ds.components()) {
-                if (resourceClass.isInstance(rs)) list.add((T)rs);
+                if (resourceClass.isInstance(rs)) list.add((T) rs);
                 list(rs, list, resourceClass);
             }
         }

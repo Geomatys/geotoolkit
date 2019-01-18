@@ -67,7 +67,7 @@ final class ProductSubset extends AbstractGridResource {
         this.areaOfInterest = areaOfInterest;
         this.resolution     = resolution;
         this.entries        = entries;
-        if (ProductCoverage.HACK) {
+        if (Entry.HACK) {
             representative = entries.get(entries.size() / 2);
         } else {
             throw new UnsupportedOperationException();

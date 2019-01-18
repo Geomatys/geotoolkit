@@ -21,13 +21,11 @@ import java.util.List;
 import java.time.Instant;
 import java.sql.SQLException;
 import org.opengis.geometry.Envelope;
-import org.opengis.util.FactoryException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
@@ -43,6 +41,7 @@ import org.apache.sis.coverage.SampleDimension;
  * <p>{@code GridCoverageReference} instances are immutable and thread-safe.</p>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @author Sam Hiatt
  */
 final class GridCoverageEntry extends Entry {
@@ -57,12 +56,12 @@ final class GridCoverageEntry extends Entry {
     private final String filename;
 
     /**
-     * Image start time, inclusive.
+     * Grid coverage start time (inclusive), or {@code null} if none.
      */
     private final Instant startTime;
 
     /**
-     * Image end time, exclusive.
+     * Grid coverage end time (exclusive), or {@code null} if none.
      */
     private final Instant endTime;
 
@@ -74,17 +73,17 @@ final class GridCoverageEntry extends Entry {
     /**
      * Creates an entry containing coverage information (but not yet the coverage itself).
      *
-     * @param  startTime  the coverage start time, or {@code null} if none.
-     * @param  endTime    the coverage end time, or {@code null} if none.
+     * @param  startTime  the coverage start time (inclusive), or {@code null} if none.
+     * @param  endTime    the coverage end time (exclusive), or {@code null} if none.
      */
     GridCoverageEntry(final SeriesEntry series, final String filename,
             final Instant startTime, final Instant endTime, final GridGeometryEntry grid) throws SQLException
     {
-        this.series     = series;
-        this.filename   = filename;
-        this.startTime  = startTime;
-        this.endTime    = endTime;
-        this.grid       = grid;
+        this.series    = series;
+        this.filename  = filename;
+        this.startTime = startTime;
+        this.endTime   = endTime;
+        this.grid      = grid;
     }
 
     /**
@@ -103,6 +102,7 @@ final class GridCoverageEntry extends Entry {
      *
      * @deprecated not yet used, maybe not needed.
      */
+    @Deprecated
     final double getStandardCenter(final int dimension) {
         double min, max;
         final Envelope envelope = grid.standardEnvelope;
@@ -148,61 +148,36 @@ final class GridCoverageEntry extends Entry {
         return series.format.sampleDimensions;
     }
 
-    final GridCoverage coverage(final GridGeometry targetGeometry, final int... bands) throws DataStoreException {
-        try (DataStore store = series.format.open(series.path(filename))) {
-
-            final GridCoverageResource r;
-            if (series.format.resourceName != null) {
-                Resource cdt = store.findResource(series.format.resourceName);
-                if (cdt instanceof GridCoverageResource) {
-                    r = (GridCoverageResource) cdt;
-                } else {
-                    r = null;
-                }
-            } else {
-                //pick first resource
-                r = resource(store);
-            }
-
-            if (r != null) {
-                return r.read(targetGeometry, bands);
-            }
-        }
-        throw new DataStoreException("No GridCoverageResource found for " + filename);
-    }
-
     /**
      * Loads the data if needed and returns the coverage.
      * Current implementation reads only the first resource.
      */
-    @Deprecated
-    final GridCoverage coverage(final Envelope areaOfInterest, final double[] resolution) throws DataStoreException {
+    final GridCoverage coverage(final GridGeometry targetGeometry, final int... bands) throws DataStoreException {
         try (DataStore store = series.format.open(series.path(filename))) {
-
+            final String dataset = series.dataset;
             final GridCoverageResource r;
-            if (series.format.resourceName != null) {
-                Resource cdt = store.findResource(series.format.resourceName);
+            if (dataset != null) {
+                Resource cdt = store.findResource(dataset);
                 if (cdt instanceof GridCoverageResource) {
                     r = (GridCoverageResource) cdt;
                 } else {
                     r = null;
                 }
             } else {
-                //pick first resource
+                // Pick first resource.
                 r = resource(store);
             }
-
             if (r != null) {
-                GridGeometry gg = r.getGridGeometry();
-                gg = grid.getGridGeometry(gg, areaOfInterest, resolution);
-                return r.read(gg, null);
+                return r.read(targetGeometry, bands);
             }
-        } catch (FactoryException | TransformException e) {
-            throw new CatalogException(e);
         }
-        throw new DataStoreException("No GridCoverageResource found for " + filename);
+        throw new CatalogException("No GridCoverageResource found for " + filename);
     }
 
+    /**
+     * Returns the first grid coverage resource found in the given resource,
+     * scanning recursively in children if that resource is an aggregate.
+     */
     private static GridCoverageResource resource(final Resource resource) throws DataStoreException {
         if (resource instanceof Aggregate) {
             for (final Resource child : ((Aggregate) resource).components()) {

@@ -84,7 +84,7 @@ final class CategoryTable extends Table {
         int bandOfPreviousCategory = 0;
         final PreparedStatement statement = prepareStatement("SELECT "
                 + "\"band\", \"name\", \"lower\", \"upper\", \"scale\", \"offset\", \"function\""
-                + " FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"format\" = ? ORDER BY \"band\"");
+                + " FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"format\"=? ORDER BY \"band\"");
         statement.setString(1, format);
         try (ResultSet results = statement.executeQuery()) {
             while (results.next()) {
@@ -117,7 +117,7 @@ final class CategoryTable extends Table {
                     trf.setScale(scale);
                     trf.setOffset(offset);
                     trf.setType(type);
-                    final MathTransform tr = trf.createTransform(transaction.database.mtFactory);
+                    final MathTransform tr = trf.createTransform(transaction.database.getMathTransformFactory());
                     categories.addQuantitative(name, range, (MathTransform1D) tr, units[band]);
                 } else {
                     final Integer bg = backgrounds[band];
