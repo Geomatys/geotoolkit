@@ -156,7 +156,7 @@ final class SeriesTable extends CachedTable<Integer,SeriesEntry> {
         final TreeSet<Double> timestamps = new TreeSet<>();
         final Map<Integer,Double[]> timeArrays = new HashMap<>();
         final PreparedStatement statement = prepareStatement(
-                "SELECT gc.\"startTime\", gc.\"endTime\", gc.\"grid\" " +
+                "SELECT gc.\"startTime\", gc.\"endTime\", \"startTime\" + (\"endTime\" - \"startTime\")/2, gc.\"grid\" " +
                 "FROM " + SCHEMA + ".\"" + GridCoverageTable.TABLE + "\" AS gc " +
                 "INNER JOIN " + SCHEMA + ".\"" + TABLE + "\" AS se ON (gc.\"series\" = se.\"identifier\") " +
                 "WHERE se.\"product\"=? AND gc.\"startTime\" IS NOT NULL");
@@ -167,7 +167,8 @@ final class SeriesTable extends CachedTable<Integer,SeriesEntry> {
             while (results.next()) {
                 final Timestamp start = results.getTimestamp(1, calendar);
                 final Timestamp end = results.getTimestamp(2, calendar);
-                final int gridId = results.getInt(3);
+                final Timestamp center = results.getTimestamp(3, calendar);
+                final int gridId = results.getInt(4);
 
                 Double[] offsets = timeArrays.get(gridId);
                 if (offsets == null) {
@@ -176,7 +177,7 @@ final class SeriesTable extends CachedTable<Integer,SeriesEntry> {
                 }
 
                 if (offsets.length == 0) {
-                    timestamps.add(axis.toValue(start));
+                    timestamps.add(axis.toValue(center));
                 } else {
                     double s = axis.toValue(start);
                     for (double d : offsets) {

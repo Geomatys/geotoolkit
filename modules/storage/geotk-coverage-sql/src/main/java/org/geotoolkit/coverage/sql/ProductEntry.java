@@ -36,11 +36,15 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreReferencingException;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.internal.util.CollectionsExt;
+import org.apache.sis.referencing.CRS;
 
 import org.geotoolkit.resources.Errors;
+import org.opengis.referencing.crs.SingleCRS;
 
 
 /**
@@ -295,7 +299,21 @@ final class ProductEntry extends Entry {
     }
 
     public GridCoverage read(GridGeometry areaOfInterest, int... bands) throws DataStoreException {
-        return subset(getGridGeometry().getEnvelope(), getGridGeometry().getResolution(true)).read(areaOfInterest, bands);
+        //modify envelope, when we encounter a slice we use the median value
+        //instead of the slice width to avoid multiple coverage occurence of coverages
+        //at envelope border intersections
+        final GeneralEnvelope env = new GeneralEnvelope(areaOfInterest.getEnvelope());
+        int offset = 0;
+        GridExtent extent = areaOfInterest.getExtent();
+        for (SingleCRS part : CRS.getSingleComponents(env.getCoordinateReferenceSystem())) {
+            final int crsDim = part.getCoordinateSystem().getDimension();
+            if (crsDim == 1 && extent.getSize(offset) == 1) {
+                double m = env.getMedian(offset);
+                env.setRange(offset, m, m);
+            }
+            offset += crsDim;
+        }
+        return subset(env, getGridGeometry().getResolution(true)).read(areaOfInterest, bands);
     }
 
     /**

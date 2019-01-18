@@ -41,6 +41,9 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -690,9 +693,34 @@ public class RenderingContext2D implements RenderingContext{
     public GridGeometry2D getGridGeometry() {
         final AffineTransform2D dispToObj = getDisplayToObjective();
         final Rectangle bounds = getCanvasDisplayBounds();
-        final CoordinateReferenceSystem crs2d = getObjectiveCRS2D();
-        final GridExtent extent = new GridExtent(bounds.width, bounds.height);
-        return new GridGeometry2D(extent, PixelInCell.CELL_CORNER, dispToObj, crs2d);
+        final CoordinateReferenceSystem objCrs = getObjectiveCRS();
+
+        if (objCrs.getCoordinateSystem().getDimension() == 2) {
+            final GridExtent extent = new GridExtent(bounds.width, bounds.height);
+            return new GridGeometry2D(extent, PixelInCell.CELL_CORNER, dispToObj, objCrs);
+        } else {
+            //create and N dimension slice
+            final long[] upper = new long[objCrs.getCoordinateSystem().getDimension()];
+            Arrays.fill(upper, 1);
+            upper[0] = bounds.width;
+            upper[1] = bounds.height;
+            final GridExtent extent = new GridExtent(null, new long[upper.length], upper, false);
+
+            final MatrixSIS m = Matrices.createDiagonal(upper.length+1-2, upper.length+1-2);
+            final Envelope canvasEnv = getCanvasObjectiveBounds();
+            for (int i=2;i<upper.length;i++) {
+                double scale = canvasEnv.getSpan(i);
+                if (scale == 0.0) {
+                    //TODO should be 0 or NaN but causes issues
+                    scale = 0.00001;
+                }
+                m.setElement(i-2, i-2, scale);
+                m.setElement(i-2, upper.length-2, canvasEnv.getMinimum(i));
+            }
+
+            final MathTransform gridToCrs = MathTransforms.compound(dispToObj, MathTransforms.linear(m));
+            return new GridGeometry2D(extent, PixelInCell.CELL_CORNER, gridToCrs, objCrs);
+        }
     }
 
     // Informations related to scale datas -------------------------------------

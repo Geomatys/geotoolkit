@@ -44,6 +44,7 @@ import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -274,10 +275,25 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         try {
             final GridGeometry gridGeometry = ref.getGridGeometry();
-            // latest data slice
-            final GridExtent extent = gridGeometry.getExtent();
-            final MathTransform gridToCrs = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
 
+            // on displayed area
+            Envelope canvasEnv = canvasGrid.getEnvelope();
+            double[] resolution = canvasGrid.getResolution(true);
+            /////// HACK FOR 0/360 /////////////////////////////////////////////
+            Map.Entry<Envelope, double[]> entry = solveWrapAround(gridGeometry, canvasEnv, resolution);
+            if (entry != null) {
+                canvasEnv = entry.getKey();
+                resolution = entry.getValue();
+            }
+            /////// HACK FOR 0/360 /////////////////////////////////////////////
+            GridGeometry slice = gridGeometry.derive()
+                    .rounding(GridRoundingMode.ENCLOSING)
+                    .subgrid(canvasEnv, resolution)
+                    .build();
+
+            // latest data slice
+            final GridExtent extent = slice.getExtent();
+            final MathTransform gridToCrs = slice.getGridToCRS(PixelInCell.CELL_CENTER);
             final long[] low = new long[extent.getDimension()];
             final long[] high = new long[extent.getDimension()];
             low[0] = extent.getLow(0);
@@ -288,27 +304,29 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 low[i] = extent.getHigh(i);
                 high[i] = extent.getHigh(i);
             }
-            final GridExtent sliceExt = new GridExtent(null, low, high, true);
-            GridGeometry slice = new GridGeometry(sliceExt, PixelInCell.CELL_CENTER, gridToCrs, gridGeometry.getCoordinateReferenceSystem());
-
-            // on displayed area
-            Envelope canvasEnv = canvasGrid.getEnvelope();
-            double[] resolution = canvasGrid.getResolution(true);
-            /////// HACK FOR 0/360 /////////////////////////////////////////////
-            Map.Entry<Envelope, double[]> entry = solveWrapAround(slice, canvasEnv, resolution);
-            if (entry != null) {
-                canvasEnv = entry.getKey();
-                resolution = entry.getValue();
+            //add 3 cell padding for interpolations
+            for (int i=0;i<2;i++) {
+                low[i] = extent.getLow(i) - 3;
+                high[i] = extent.getHigh(i) + 3;
             }
-            /////// HACK FOR 0/360 /////////////////////////////////////////////
-            slice = slice.derive().rounding(GridRoundingMode.ENCLOSING).subgrid(canvasEnv, resolution).build();
-
-            // with a  3pixel margin for resampling interpolations
-            slice = new GridChange(slice, gridGeometry, GridRoundingMode.ENCLOSING, 3, 3)
-                    .getTargetGeometry();
+            final GridExtent sliceExt = new GridExtent(null, low, high, true);
+            slice = new GridGeometry(sliceExt, PixelInCell.CELL_CENTER, gridToCrs, slice.getCoordinateReferenceSystem());
 
             final GridCoverage gc = ref.read(slice, sourceBands);
-            final GridCoverage2D coverage = org.geotoolkit.internal.coverage.CoverageUtilities.toGeotk(gc);
+            GridCoverage2D coverage = org.geotoolkit.internal.coverage.CoverageUtilities.toGeotk(gc);
+
+            //at this point, we want a single slice in 2D
+            //we remove all other dimension to simplify any following operation
+            if (coverage.getCoordinateReferenceSystem().getCoordinateSystem().getDimension() > 2) {
+                final GridGeometry gridGeometry2d = gc.getGridGeometry().derive().reduce(0,1).build();
+                final GridCoverageBuilder gcb = new GridCoverageBuilder();
+                gcb.setGridGeometry(gridGeometry2d);
+                gcb.setRenderedImage(coverage.getRenderedImage());
+                gcb.setSampleDimensions(coverage.getSampleDimensions());
+                gcb.setName(coverage.getName());
+                coverage = gcb.getGridCoverage2D();
+            }
+
 
             if (Utilities.equalsIgnoreMetadata(canvasGrid.getCoordinateReferenceSystem2D(), coverage.getCoordinateReferenceSystem2D())) {
                 return coverage;
@@ -319,12 +337,15 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
                 /////// HACK FOR 0/360 /////////////////////////////////////////
                 Envelope ge = Envelopes.transform(coverage.getEnvelope2D(), CommonCRS.WGS84.normalizedGeographic());
-                GridGeometry resampleGrid = canvasGrid.derive().rounding(GridRoundingMode.ENCLOSING).subgrid(ge).build();
+                GridGeometry resampleGrid = canvasGrid.derive()
+                        .rounding(GridRoundingMode.ENCLOSING)
+                        .subgrid(ge)
+                        .reduce(0,1)
+                        .build();
                 resampleGrid = CoverageUtilities.forceLowerToZero(resampleGrid);
                 /////// HACK FOR 0/360 /////////////////////////////////////////
-//                GridGeometry resampleGrid = canvasGrid;
 
-                return new ResampleProcess(coverage, canvasGrid.getCoordinateReferenceSystem(), resampleGrid, InterpolationCase.BILINEAR, fill).executeNow();
+                return new ResampleProcess(coverage, canvasGrid.getCoordinateReferenceSystem2D(), resampleGrid, InterpolationCase.BILINEAR, fill).executeNow();
             }
 
         } catch (DataStoreException ex) {
