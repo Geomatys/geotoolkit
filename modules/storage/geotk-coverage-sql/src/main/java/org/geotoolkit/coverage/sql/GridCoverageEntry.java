@@ -20,7 +20,6 @@ package org.geotoolkit.coverage.sql;
 import java.util.List;
 import java.time.Instant;
 import java.sql.SQLException;
-import org.opengis.geometry.Envelope;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
@@ -28,7 +27,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.coverage.SampleDimension;
 
@@ -92,33 +90,6 @@ final class GridCoverageEntry extends Entry {
     @Override
     public String toString() {
         return filename + " @ " + endTime;
-    }
-
-    /**
-     * Returns the center position in the given dimension, which may be vertical or temporal.
-     * The position is given in the database-wide CRS, not the coverage CRS.
-     *
-     * @return the range of values in the given dimension, in units of the database CRS.
-     *
-     * @deprecated not yet used, maybe not needed.
-     */
-    @Deprecated
-    final double getStandardCenter(final int dimension) {
-        double min, max;
-        final Envelope envelope = grid.standardEnvelope;
-        if (dimension < envelope.getDimension()) {
-            min = envelope.getMinimum(dimension);
-            max = envelope.getMaximum(dimension);
-        } else {
-            min = Double.NEGATIVE_INFINITY;
-            max = Double.POSITIVE_INFINITY;
-            final DefaultTemporalCRS temporalCRS = GridGeometryEntry.TEMPORAL_CRS;
-            if (startTime != null) min = temporalCRS.toValue(startTime);
-            if (  endTime != null) max = temporalCRS.toValue(  endTime);
-        }
-        if (!Double.isFinite(min)) return max;
-        if (!Double.isFinite(max)) return min;
-        return (max + min) / 2;
     }
 
     /**

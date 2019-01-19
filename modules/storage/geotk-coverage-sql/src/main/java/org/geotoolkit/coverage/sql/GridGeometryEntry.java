@@ -23,14 +23,11 @@ import java.time.Instant;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
-import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.cs.RangeMeaning;
-import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -39,12 +36,9 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.metadata.spatial.DimensionNameType;
 
-import org.apache.sis.geometry.ImmutableEnvelope;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.PixelTranslation;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.metadata.AxisDirections;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
@@ -54,7 +48,6 @@ import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.util.ArraysExt;
 
 
 /**
@@ -86,13 +79,6 @@ final class GridGeometryEntry extends Entry {
      * @see Database#temporalCRS
      */
     static final DefaultTemporalCRS TEMPORAL_CRS = DefaultTemporalCRS.castOrCopy(CommonCRS.Temporal.TRUNCATED_JULIAN.crs());
-
-    /**
-     * A shape describing the coverage outline in the database CRS (usually WGS 84). This is the value computed by Geotk,
-     * not the PostGIS object declared in the database, in order to make sure that coordinate transformations are applied
-     * using the same algorithm, i.e. the Geotk algorithm instead than the Proj4 algorithms used by PostGIS.
-     */
-    final ImmutableEnvelope standardEnvelope;
 
     /**
      * The immutable grid geometry without the temporal dimension. This grid geometry may be 2D, 3D or more.
@@ -167,11 +153,9 @@ final class GridGeometryEntry extends Entry {
             dim += otherAxes.length;
         }
         final long[]   upper   = new long  [dim];
-        final double[] minimum = new double[dim];
-        final double[] maximum = new double[dim];
         final DimensionNameType[] names = new DimensionNameType[dim];
-        names[0] = DimensionNameType.COLUMN; upper[0] = width;  minimum[0] = bounds.getMinX(); maximum[0] = bounds.getMaxX();
-        names[1] = DimensionNameType.ROW;    upper[1] = height; minimum[1] = bounds.getMinY(); maximum[1] = bounds.getMaxY();
+        names[0] = DimensionNameType.COLUMN; upper[0] = width;
+        names[1] = DimensionNameType.ROW;    upper[1] = height;
         final CRSFactory crsFactory = database.getCRSFactory();
         MathTransform gridToCRS = affine;
         if (otherAxes != null) {
@@ -181,19 +165,16 @@ final class GridGeometryEntry extends Entry {
             gridToCRS = mtFactory.createPassThroughTransform(0, gridToCRS, otherAxes.length);
             for (int i=0; i<otherAxes.length; i++) {
                 final AdditionalAxisEntry axis = otherAxes[i];
-                names  [AFFINE_DIMENSION + i] = axis.type();
-                upper  [AFFINE_DIMENSION + i] = axis.count;
-                minimum[AFFINE_DIMENSION + i] = axis.standardMin;
-                maximum[AFFINE_DIMENSION + i] = axis.standardMax;
-                components[            1 + i] = axis.crs;
-                MathTransform tr              = axis.gridToCRS;
+                names[AFFINE_DIMENSION + i] = axis.type();
+                upper[AFFINE_DIMENSION + i] = axis.count;
+                components[          1 + i] = axis.crs;
+                MathTransform tr            = axis.gridToCRS;
                 tr = mtFactory.createPassThroughTransform(AFFINE_DIMENSION + i, tr, otherAxes.length - (i + 1));
                 gridToCRS = mtFactory.createConcatenatedTransform(gridToCRS, tr);
             }
             crs = crsFactory.createCompoundCRS(properties(crs, otherDimName), components);
         }
         spatialGeometry      = new GridGeometry(new GridExtent(names, null, upper, false), CELL_ORIGIN, gridToCRS, crs);
-        standardEnvelope     = new ImmutableEnvelope(minimum, maximum, null);
         spatioTemporalCRS    = crsFactory.createCompoundCRS(properties(crs, "time"), crs, database.temporalCRS);
         spatioTemporalExtent = spatialGeometry.getExtent().append(DimensionNameType.TIME, 0, (temporalAxis != null) ? temporalAxis.count : 1, false);
         this.approximate     = approximate;
@@ -282,77 +263,5 @@ final class GridGeometryEntry extends Entry {
         gridToCRS = MathTransforms.compound(gridToCRS, tr);
         GridExtent extent = spatialGeometry.getExtent().append(DimensionNameType.TIME, 0, timestamps.length, false);
         return new GridGeometry(extent, CELL_ORIGIN, gridToCRS, spatioTemporalCRS);
-    }
-
-    /**
-     * Returns the grid geometry for the given region of interest.
-     * The region of interest can be specified in any CRS.
-     *
-     * @param  dataGrid    the grid geometry of the image to read. Used for deciding if there is dimensions to discard.
-     * @param  aoi         the region of interest, or {@code null} for the full spatial extent.
-     * @param  resolution  desired resolution in units of AOI.
-     * @return indices of pixels to read.
-     *
-     * @deprecated Not used anymore.
-     */
-    @Deprecated
-    static GridGeometry getGridGeometry(final GridGeometry dataGrid, Envelope aoi, double[] resolution)
-            throws FactoryException, TransformException
-    {
-        CoordinateReferenceSystem crs = (aoi != null) ? aoi.getCoordinateReferenceSystem() : null;
-        if (crs != null) {
-            /*
-             * Verify if the given envelope contains any unexpected axes, for example a vertical axis
-             * for querying data that do not have vertical axis. We will need to remove those axes.
-             */
-            final CoordinateReferenceSystem expected = dataGrid.getCoordinateReferenceSystem();
-            final CoordinateSystem expectedAxes = expected.getCoordinateSystem();
-            final CoordinateSystem specifiedAxes = crs.getCoordinateSystem();
-            final int[] dimensions = new int[specifiedAxes.getDimension()];
-            int verticalDim = -2, count = 0;
-            for (int i=0; i<dimensions.length; i++) {
-                AxisDirection dir = specifiedAxes.getAxis(i).getDirection();
-                if (AxisDirections.indexOfColinear(expectedAxes, dir) >= 0) {
-                    if (AxisDirections.isVertical(dir)) verticalDim = i;
-                    dimensions[count++] = i;
-                }
-            }
-            /*
-             * If we found any unexpected axis, create a new envelope with a new CRS without those axes.
-             * We also go through those steps if we find a vertical axis that may need to be replaced.
-             * We do that as a hack for the lack of support of conversion between ellipsoidal heights.
-             */
-            if (verticalDim >= 0 || count != dimensions.length) {
-                final CoordinateReferenceSystem[] crsComponents = new CoordinateReferenceSystem[count];
-                final GeneralEnvelope env = new GeneralEnvelope(count);
-                final double[] res = new double[count];
-                int crsFirstDim = 0, crsLastDim = 0, crsCount = 0;
-                for (int i=0; i<count; i++) {
-                    final int sourceDim = dimensions[i];
-                    res[i] = resolution[sourceDim];
-                    env.setRange(i, aoi.getMinimum(sourceDim), aoi.getMaximum(sourceDim));
-                    if (sourceDim != crsLastDim || sourceDim == verticalDim || sourceDim == verticalDim+1) {
-                        crsComponents[crsCount++] = CRS.getComponentAt(crs, crsFirstDim, crsLastDim);
-                        crsFirstDim = sourceDim;
-                    }
-                    crsLastDim = sourceDim+1;
-                }
-                crsComponents[crsCount++] = CRS.getComponentAt(crs, crsFirstDim, crsLastDim);
-                /*
-                 * Replace vertical axis.
-                 */
-                for (int i=0; i<crsCount; i++) {
-                    if (crsComponents[i] instanceof VerticalCRS) {
-                        VerticalCRS replacement = CRS.getVerticalComponent(expected, false);
-                        if (replacement != null) crsComponents[i] = replacement;
-                        break;
-                    }
-                }
-                env.setCoordinateReferenceSystem(CRS.compound(ArraysExt.resize(crsComponents, crsCount)));
-                aoi = env;
-                resolution = res;
-            }
-        }
-        return dataGrid.derive().subgrid(aoi, resolution).build();
     }
 }

@@ -19,13 +19,9 @@ package org.geotoolkit.coverage.sql;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.crs.TemporalCRS;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.metadata.spatial.DimensionNameType;
-
-import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.internal.metadata.AxisDirections;
 
 
 /**
@@ -46,12 +42,6 @@ final class AdditionalAxisEntry extends Entry {
     final MathTransform1D gridToCRS;
 
     /**
-     * Minimum and maximum values in standard units and direction. For elevation, this is metres toward up.
-     * For time axis, this is seconds toward future. For pressure, this is Pascal toward up.
-     */
-    final double standardMin, standardMax;
-
-    /**
      * Number of values along this axis.
      */
     final int count;
@@ -66,27 +56,7 @@ final class AdditionalAxisEntry extends Entry {
     AdditionalAxisEntry(final SingleCRS crs, final double[] values) {
         this.crs  = crs;
         gridToCRS = MathTransforms.interpolate(null, values);       // Integer indices map lower bounds.
-        double min = Double.POSITIVE_INFINITY;
-        double max = Double.NEGATIVE_INFINITY;
-        for (int i=0; i<values.length; i++) {
-            final double z = values[i];
-            if (z < min) min = z;
-            if (z > max) max = z;
-        }
-        // Transform the (min, max) in "standard" units of the database.
-        final CoordinateSystemAxis axis = crs.getCoordinateSystem().getAxis(0);
-        double scale = Units.toStandardUnit(axis.getUnit());
-        if (AxisDirections.isOpposite(axis.getDirection())) {
-            final double t = max;
-            max = min;
-            min = t;
-            scale = -scale;
-        }
-        min *= scale;
-        max *= scale;
-        standardMin = min;
-        standardMax = max;
-        count = values.length - 1;
+        count     = values.length - 1;
     }
 
     /**
