@@ -17,6 +17,8 @@
 package org.geotoolkit.coverage;
 
 import java.awt.Color;
+import java.lang.reflect.Field;
+import java.util.List;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.internal.coverage.ColoredCategory;
@@ -39,9 +41,18 @@ public class SampleDimensionBuilder extends SampleDimension.Builder {
      */
     public SampleDimensionBuilder setLastCategoryColors(final Color... colors) {
         if (colors != null) {
+            List<Category> categories = categories();
             final int i = categories.size() - 1;
             final Category c = categories.get(i);
-            categories.set(i, new ColoredCategory(c, colors));
+            Category[] array;
+            try {
+                Field f = SampleDimension.Builder.class.getDeclaredField("categories");
+                f.setAccessible(true);
+                array = (Category[]) f.get(this);
+            } catch (ReflectiveOperationException e) {
+                throw new AssertionError(e);
+            }
+            array[i] = new ColoredCategory(c, colors);
         }
         return this;
     }

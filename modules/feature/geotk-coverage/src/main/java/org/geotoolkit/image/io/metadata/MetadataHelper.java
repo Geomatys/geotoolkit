@@ -697,7 +697,7 @@ public class MetadataHelper implements Localized {
                     final Double scale  = sd.getScaleFactor();
                     final Double offset = sd.getOffset();
                     final boolean isGeophysics = (scale == null && offset == null);
-                    if (!isGeophysics || !categories.rangeCollides(range.getMinDouble(), range.getMaxDouble())) {
+                    if (!isGeophysics || !isOverlapping(categories, range)) {
                         final TransferFunctionType type = sd.getTransferFunctionType();
                         final MathTransformFactory mtFactory = getMathTransformFactory();
                         MathTransform tr;
@@ -753,6 +753,22 @@ public class MetadataHelper implements Localized {
             return UnmodifiableArrayList.wrap(bands);
         }
         return null;
+    }
+
+    /**
+     * Returns {@code true} if the given range intersects the range of a previously added category.
+     * This method can be invoked before to add a new category for checking if it would cause a range collision.
+     *
+     * @param  range  the range to test for intersection.
+     * @return whether the given range intersects at least one previously added category range.
+     */
+    private static boolean isOverlapping(final org.apache.sis.coverage.SampleDimension.Builder builder, final NumberRange<?> range) {
+        for (final Category category : builder.categories()) {
+            if (range.intersectsAny(category.getSampleRange())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
