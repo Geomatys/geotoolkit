@@ -34,6 +34,7 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.resources.Errors;
 
 
@@ -51,11 +52,13 @@ final class SampleDimensionTable extends Table {
     private static final String TABLE = "SampleDimensions";
 
     /**
-     * Default range of values used if the sample dimensions does not define any packed storage.
-     * "Packed storage" are values stored as integers with a transfer function from integer values
-     * to real values.
+     * Default range of values used if the sample dimensions does not define any transfer function.
+     * This is the range of "packed values" stored as integers, together with an arbitrary transfer
+     * function from integer values to real values computed by {@code defaultCategories(…)} method.
+     *
+     * @see #defaultCategories(List, MeasurementRange)
      */
-    private static final int DEFAULT_RANGE = 0xFFFF;
+    private static final int DEFAULT_RANGE = 10000;
 
     /**
      * The {@linkplain Category categories} table, created only when first needed.
@@ -237,11 +240,71 @@ final class SampleDimensionTable extends Table {
         if (padValue == 0) {
             b.setBackground(null, padValue++);
         }
-        double min    = range.getMinDouble();
-        double max    = range.getMaxDouble();
-        double scale  = (max - min) / (DEFAULT_RANGE - padValue);
-        double offset = min - scale * padValue;
-        b.addQuantitative(name, padValue, DEFAULT_RANGE + 1, scale, offset, range.unit());
+        double min = range.getMinDouble();
+        double max = range.getMaxDouble();
+        /*
+         * The minimum and maximum values may have been extracted from the actual data, in which case
+         * they are likely to differ for each files. But we need more stable values in order to avoid
+         * generating new SampleDimension entries for every files of the same product. First we round
+         * the extremum numbers in such a way that they differ by exactly one decimal digit.
+         */
+        final int exp = (int) Math.floor(Math.log10(max - min));
+        final double magnitude = MathFunctions.pow10(Math.abs(exp));
+        if (exp >= 0) {
+            min = Math.floor(min / magnitude) * magnitude;
+            max = Math.ceil (max / magnitude) * magnitude;
+        } else {
+            // Keep 'magnitude' as an integer for reducing rounding errors.
+            min = Math.floor(min * magnitude) / magnitude;
+            max = Math.ceil (max * magnitude) / magnitude;
+        }
+        /*
+         * Compute a scale factor for this new range and round it in such a way that its only decimal digit
+         * is 1, 2 or 5.  This may shrink or expand the range by a factor between 0.5714 and 1.4286 with an
+         * average factor of 0.9764 (determined empirically).  To compensate, we multiply the initial scale
+         * by 1.75 since 0.5714… × 1.75 ≈ 1. The result will be a range with a span between 1 and 2.5 times
+         * the span of the original range.
+         */
+        double delta = max - min;
+        double scale = delta / (DEFAULT_RANGE / 1.75);
+        final int es = (int) Math.floor(Math.log10(scale));
+        final double ms = MathFunctions.pow10(es);
+        final double sr = scale / ms;
+        if (sr >= 3.5) {
+            scale = MathFunctions.pow10(es + 1);            // Equivalent to ms * 10 but more accurate.
+            if (sr < 7.5) scale /= 2;                       // Equivalent to ms *  5 but more accurate.
+        } else if (sr >= 1.5) {
+            scale = ms * 2;
+        } else {
+            scale = ms;
+        }
+        /*
+         * Distribute the extra space between the minimum and maximum and apply the same rounding than we did before
+         * (only one decimal digit different between minimum and maximum). If the range is positive, distribute evenly.
+         * If the range crosses zero, distribute with a proportion p tending to result in min = -max.
+         *
+         *     min - delta*p = -(max + delta*(1-p))
+         *     delta*p = (min + max + delta) / 2
+         */
+        final boolean isPositive = (min >= 0);
+        delta = scale * DEFAULT_RANGE - delta;
+        if (isPositive || max < 0) {
+            delta /= 2;
+        } else {
+            delta = Math.min((min + max + delta) / 2, delta);
+        }
+        min -= Math.max(delta, 0);
+        if (exp >= 0) {
+            min = Math.rint(min / magnitude) * magnitude;
+        } else {
+            min = Math.rint(min * magnitude) / magnitude;
+        }
+        if (isPositive && min < 0) min = 0;
+        /*
+         * We take the minimum value as the offset, assuming that above rounding introduced enough space below the
+         * minimum value for encompassing all the data. This declared range is approximative anyway.
+         */
+        b.addQuantitative(name, padValue, DEFAULT_RANGE + 1, scale, min, range.unit());
         return b.build().getCategories();
     }
 
