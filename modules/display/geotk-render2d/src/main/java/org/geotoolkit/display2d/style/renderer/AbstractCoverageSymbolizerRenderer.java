@@ -318,7 +318,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             //at this point, we want a single slice in 2D
             //we remove all other dimension to simplify any following operation
             if (coverage.getCoordinateReferenceSystem().getCoordinateSystem().getDimension() > 2) {
-                final GridGeometry gridGeometry2d = gc.getGridGeometry().derive().reduce(0,1).build();
+                final GridGeometry gridGeometry2d = coverage.getGridGeometry().derive().reduce(0,1).build();
                 final GridCoverageBuilder gcb = new GridCoverageBuilder();
                 gcb.setGridGeometry(gridGeometry2d);
                 gcb.setRenderedImage(coverage.getRenderedImage());
@@ -336,7 +336,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 Arrays.fill(fill, Double.NaN);
 
                 /////// HACK FOR 0/360 /////////////////////////////////////////
-                Envelope ge = Envelopes.transform(coverage.getEnvelope2D(), CommonCRS.WGS84.normalizedGeographic());
+                GeneralEnvelope ge = GeneralEnvelope.castOrCopy(Envelopes.transform(coverage.getEnvelope2D(), CommonCRS.WGS84.normalizedGeographic()));
+                ge.normalize();
                 GridGeometry resampleGrid = canvasGrid.derive()
                         .rounding(GridRoundingMode.ENCLOSING)
                         .subgrid(ge)
