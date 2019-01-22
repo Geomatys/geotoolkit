@@ -16,6 +16,10 @@
  */
 package org.geotoolkit.ogc.xml.v200;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import org.opengis.filter.spatial.Contains;
 
 /**
@@ -23,6 +27,9 @@ import org.opengis.filter.spatial.Contains;
  * @author Guilhem Legal
  * @module
  */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "")
+@XmlRootElement(name = "Contains")
 public class ContainsType extends BinarySpatialOpType implements Contains {
 
     /**
@@ -46,5 +53,10 @@ public class ContainsType extends BinarySpatialOpType implements Contains {
     @Override
     public SpatialOpsType getClone() {
         return new ContainsType(this);
+    }
+
+    @Override
+    public String getOperator() {
+        return "Contains";
     }
 }

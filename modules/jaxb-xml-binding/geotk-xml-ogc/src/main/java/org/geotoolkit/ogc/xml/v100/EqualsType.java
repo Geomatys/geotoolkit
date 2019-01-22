@@ -41,4 +41,9 @@ public class EqualsType extends BinarySpatialOpType {
     public SpatialOpsType getClone() {
         return new EqualsType(this);
     }
+
+    @Override
+    public String getOperator() {
+        return "Equals";
+    }
 }

@@ -68,7 +68,7 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
      * Build a new List of acceptVersion.
      */
     public AcceptVersionsType(final String... versions){
-        version = new ArrayList<String>();
+        version = new ArrayList<>();
         for (String v: versions) {
             version.add(v);
         }
@@ -84,7 +84,7 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
     @Override
     public List<String> getVersion() {
         if (version == null) {
-            version = new ArrayList<String>();
+            version = new ArrayList<>();
         }
         return Collections.unmodifiableList(version);
     }

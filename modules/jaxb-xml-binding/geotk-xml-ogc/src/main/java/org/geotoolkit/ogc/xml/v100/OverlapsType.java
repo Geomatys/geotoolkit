@@ -41,4 +41,9 @@ public class OverlapsType extends BinarySpatialOpType {
     public SpatialOpsType getClone() {
         return new OverlapsType(this);
     }
+
+    @Override
+    public String getOperator() {
+        return "Overlaps";
+    }
 }

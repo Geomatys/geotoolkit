@@ -84,4 +84,9 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
         }
         return Collections.unmodifiableList(any);
     }
+
+    @Override
+    public boolean isRaw() {
+        return false;
+    }
 }

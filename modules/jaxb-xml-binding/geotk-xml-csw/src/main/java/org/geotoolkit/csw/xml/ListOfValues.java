@@ -25,5 +25,5 @@ import java.util.List;
  */
 public interface ListOfValues {
 
-    public List<String> getValue();
+    public List<? extends Object> getValue();
 }

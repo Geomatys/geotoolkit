@@ -49,4 +49,9 @@ public class OrType extends BinaryLogicOpType {
     public LogicOpsType getClone() {
         return new OrType(this);
     }
+
+    @Override
+    public String getOperator() {
+        return "OR";
+    }
 }

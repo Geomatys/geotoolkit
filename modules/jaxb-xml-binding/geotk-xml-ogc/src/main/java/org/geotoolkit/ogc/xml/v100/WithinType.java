@@ -41,4 +41,9 @@ public class WithinType extends BinarySpatialOpType {
     public SpatialOpsType getClone() {
         return new WithinType(this);
     }
+
+    @Override
+    public String getOperator() {
+        return "Within";
+    }
 }

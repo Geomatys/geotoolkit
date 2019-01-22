@@ -15,7 +15,6 @@
  *    Lesser General Public License for more details.
  */
 
-
 package org.geotoolkit.ogc.xml.v200;
 
 import java.util.ArrayList;
@@ -26,7 +25,6 @@ import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.*;
 import org.geotoolkit.ogc.xml.XMLFilter;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 
@@ -534,7 +532,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
         if (comparisonOps != null) {
             return comparisonOps.getValue();
         } else if (id != null && !id.isEmpty()) {
-            final List<AbstractIdType> featureId = new ArrayList<AbstractIdType>();
+            final List<AbstractIdType> featureId = new ArrayList<>();
             for (JAXBElement<? extends AbstractIdType> jb : id) {
                 featureId.add(jb.getValue());
             }

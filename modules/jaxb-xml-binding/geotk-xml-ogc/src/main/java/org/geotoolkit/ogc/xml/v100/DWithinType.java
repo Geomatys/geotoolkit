@@ -41,4 +41,9 @@ public class DWithinType extends DistanceBufferType {
     public SpatialOpsType getClone() {
         return new DWithinType(this);
     }
+
+    @Override
+    public String getOperator() {
+        return "DWithin";
+    }
 }

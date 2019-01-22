@@ -53,7 +53,7 @@ import org.geotoolkit.gml.xml.v212.AbstractGeometryType;
     "geometry",
     "distance"
 })
-public class DistanceBufferType extends SpatialOpsType {
+public abstract class DistanceBufferType extends SpatialOpsType {
 
     @XmlElement(name = "PropertyName", required = true)
     private PropertyNameType propertyName;

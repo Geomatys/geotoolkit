@@ -31,4 +31,6 @@ public interface GetRecordByIdResponse extends CSWResponse {
      */
     public List<Object> getAny();
 
+    boolean isRaw();
+
 }

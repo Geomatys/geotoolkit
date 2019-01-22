@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ogc.xml.v200;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.filter.spatial.Disjoint;
 
 /**
@@ -23,6 +24,7 @@ import org.opengis.filter.spatial.Disjoint;
  * @author Guilhem Legal
  * @module
  */
+@XmlRootElement(name = "Disjoint")
 public class DisjointType extends BinarySpatialOpType implements Disjoint {
 
     /**
@@ -46,6 +48,11 @@ public class DisjointType extends BinarySpatialOpType implements Disjoint {
     @Override
     public SpatialOpsType getClone() {
         return new DisjointType(this);
+    }
+
+    @Override
+    public String getOperator() {
+        return "Disjoint";
     }
 
 }

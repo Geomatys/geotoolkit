@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.AbstractCapabilities;
 import org.geotoolkit.csw.xml.CSWResponse;
 import org.geotoolkit.ogc.xml.v110.FilterCapabilities;
-import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
 import org.geotoolkit.ows.xml.Sections;
 import org.geotoolkit.ows.xml.v100.CapabilitiesBaseType;
 import org.geotoolkit.ows.xml.v100.OperationsMetadata;

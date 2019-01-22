@@ -41,4 +41,9 @@ public class CrossesType extends BinarySpatialOpType {
     public SpatialOpsType getClone() {
         return new CrossesType(this);
     }
+
+    @Override
+    public String getOperator() {
+        return "Crosses";
+    }
 }

@@ -78,7 +78,7 @@ import org.opengis.filter.spatial.BinarySpatialOperator;
     "abstractGeometry"
 })
 @XmlSeeAlso({PropertyNameType.class})
-public class BinarySpatialOpType extends SpatialOpsType implements BinarySpatialOperator {
+public abstract class BinarySpatialOpType extends SpatialOpsType implements BinarySpatialOperator {
 
     @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private JAXBElement<? extends AbstractGeometryType> abstractGeometry;

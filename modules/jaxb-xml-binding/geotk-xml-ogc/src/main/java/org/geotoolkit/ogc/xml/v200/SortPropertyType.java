@@ -93,6 +93,13 @@ public class SortPropertyType implements SortBy {
         this.sortOrder    = sortOrder;
     }
 
+    public SortPropertyType(final SortPropertyType that){
+        if (that != null) {
+            this.valueReference = that.valueReference;
+            this.sortOrder = that.sortOrder;
+        }
+    }
+
     /**
      * Gets the value of the valueReference property.
      *

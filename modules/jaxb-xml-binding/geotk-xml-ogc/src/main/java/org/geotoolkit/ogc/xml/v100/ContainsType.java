@@ -41,4 +41,9 @@ public class ContainsType extends BinarySpatialOpType {
     public SpatialOpsType getClone() {
         return new ContainsType(this);
     }
+
+    @Override
+    public String getOperator() {
+        return "Contains";
+    }
 }

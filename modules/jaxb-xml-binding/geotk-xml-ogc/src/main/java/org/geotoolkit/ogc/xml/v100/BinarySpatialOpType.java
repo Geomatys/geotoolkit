@@ -56,7 +56,7 @@ import org.geotoolkit.gml.xml.v212.BoxType;
     "geometry",
     "box"
 })
-public class BinarySpatialOpType extends SpatialOpsType {
+public abstract class BinarySpatialOpType extends SpatialOpsType {
 
     @XmlElement(name = "PropertyName", required = true)
     private PropertyNameType propertyName;

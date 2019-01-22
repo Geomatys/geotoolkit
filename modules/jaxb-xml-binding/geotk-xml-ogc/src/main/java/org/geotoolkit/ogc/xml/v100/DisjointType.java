@@ -41,4 +41,9 @@ public class DisjointType extends BinarySpatialOpType {
     public SpatialOpsType getClone() {
         return new DisjointType(this);
     }
+
+    @Override
+    public String getOperator() {
+        return "Disjoint";
+    }
 }

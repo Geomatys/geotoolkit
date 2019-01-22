@@ -18,6 +18,7 @@ package org.geotoolkit.ogc.xml.v100;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
 
@@ -28,6 +29,7 @@ import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsGreaterThanOrEqualTo")
+@XmlRootElement(name = "PropertyIsGreaterThanOrEqualTo")
 public class PropertyIsGreaterThanOrEqualToType extends BinaryComparisonOpType implements PropertyIsGreaterThanOrEqualTo {
 
     public PropertyIsGreaterThanOrEqualToType() {

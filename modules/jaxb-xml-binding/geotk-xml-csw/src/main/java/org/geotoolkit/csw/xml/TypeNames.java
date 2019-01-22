@@ -32,7 +32,12 @@ public class TypeNames {
     /**
      * a QName for csw:Record type
      */
-    public static final QName RECORD_QNAME = new QName("http://www.opengis.net/cat/csw/2.0.2", "Record");
+    public static final QName RECORD_202_QNAME = new QName("http://www.opengis.net/cat/csw/2.0.2", "Record");
+
+    /**
+     * a QName for csw:Record type
+     */
+    public static final QName RECORD_300_QNAME = new QName("http://www.opengis.net/cat/csw/3.0", "Record");
 
     /**
      * a QName for gmd:MD_Metadata type
@@ -52,7 +57,12 @@ public class TypeNames {
     /**
      * a QName for csw:Capabilities type
      */
-    public static final QName CAPABILITIES_QNAME = new QName("http://www.opengis.net/cat/csw/2.0.2", "Capabilities");
+    public static final QName CAPABILITIES_202_QNAME = new QName("http://www.opengis.net/cat/csw/2.0.2", "Capabilities");
+
+    /**
+     * a QName for csw:Capabilities type
+     */
+    public static final QName CAPABILITIES_300_QNAME = new QName("http://www.opengis.net/cat/csw/3.0", "Capabilities");
 
     /**
      * Some DublinCore Qnames
@@ -133,12 +143,12 @@ public class TypeNames {
      */
     public static final QName valueOf(final String key)throws IllegalArgumentException{
         if("csw:Record".equalsIgnoreCase(key) || "Record".equalsIgnoreCase(key)){
-            return RECORD_QNAME;
+            return RECORD_202_QNAME;
         }
         if("gmd:MD_Metadata".equalsIgnoreCase(key)){
             return METADATA_QNAME;
         }
-    if("gfc:FC_FeatureCatalogue".equalsIgnoreCase(key)){
+        if("gfc:FC_FeatureCatalogue".equalsIgnoreCase(key)){
             return FEATCAT_QNAME;
         }
         if("gmd:Dataset".equalsIgnoreCase(key)){
@@ -163,7 +173,8 @@ public class TypeNames {
     //dublin core typeNames
     public static final List<QName> DC_TYPE_NAMES = new ArrayList<QName>();
     static {
-        DC_TYPE_NAMES.add(RECORD_QNAME);
+        DC_TYPE_NAMES.add(RECORD_202_QNAME);
+        DC_TYPE_NAMES.add(RECORD_300_QNAME);
     }
 
     //ebrim v3.0 typeNames

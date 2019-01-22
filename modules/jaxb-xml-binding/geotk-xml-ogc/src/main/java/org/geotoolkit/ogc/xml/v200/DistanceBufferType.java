@@ -57,7 +57,7 @@ import org.opengis.filter.spatial.DistanceBufferOperator;
     "any",
     "distance"
 })
-public class DistanceBufferType extends SpatialOpsType implements DistanceBufferOperator {
+public abstract class DistanceBufferType extends SpatialOpsType implements DistanceBufferOperator {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
@@ -189,7 +189,7 @@ public class DistanceBufferType extends SpatialOpsType implements DistanceBuffer
 
     public void cleanAny() {
         if (this.any != null) {
-            final List<Object> toRemove = new ArrayList<Object>();
+            final List<Object> toRemove = new ArrayList<>();
             int i = 0;
             for (Object element : any) {
                 if (element instanceof String) {
@@ -285,11 +285,6 @@ public class DistanceBufferType extends SpatialOpsType implements DistanceBuffer
     @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public SpatialOpsType getClone() {
-        throw new UnsupportedOperationException("Must be overriden in sub-class.");
     }
 
     /**

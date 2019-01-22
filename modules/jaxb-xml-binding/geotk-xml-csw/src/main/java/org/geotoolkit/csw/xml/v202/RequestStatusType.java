@@ -110,6 +110,7 @@ public class RequestStatusType implements RequestStatus {
     /**
      * Gets the value of the timestamp property.
      */
+    @Override
     public XMLGregorianCalendar getTimestamp() {
         return timestamp;
     }
@@ -118,6 +119,7 @@ public class RequestStatusType implements RequestStatus {
      * Sets the timestamp property with a XMLGregorianCalendar value.
      * @param value
      */
+    @Override
     public void setTimestamp(final XMLGregorianCalendar value) {
         this.timestamp = value;
     }

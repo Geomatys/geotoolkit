@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.Boundary;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
 
@@ -51,7 +52,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
 @XmlType(name = "LowerBoundaryType", propOrder = {
     "expression"
 })
-public class LowerBoundaryType implements Expression {
+public class LowerBoundaryType implements Expression, Boundary {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private JAXBElement<?> expression;
@@ -167,6 +168,7 @@ public class LowerBoundaryType implements Expression {
     /**
      * Gets the value of the literal property.
      */
+    @Override
     public LiteralType getLiteral() {
         final Object value = expression.getValue();
         if (value instanceof LiteralType) {

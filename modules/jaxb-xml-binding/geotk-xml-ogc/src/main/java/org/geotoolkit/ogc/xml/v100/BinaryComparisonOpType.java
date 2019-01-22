@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.XMLLiteral;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.MatchAction;
@@ -53,7 +54,7 @@ import org.opengis.filter.expression.Expression;
 @XmlType(name = "BinaryComparisonOpType", propOrder = {
     "expression"
 })
-public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryComparisonOperator {
+public abstract class BinaryComparisonOpType extends ComparisonOpsType implements BinaryComparisonOperator, org.geotoolkit.ogc.xml.BinaryComparisonOperator {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private List<JAXBElement<?>> expression;
@@ -69,7 +70,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
      */
     public BinaryComparisonOpType(final LiteralType literal, final PropertyNameType propertyName) {
         if (this.expression == null) {
-            this.expression = new ArrayList<JAXBElement<?>>();
+            this.expression = new ArrayList<>();
         }
         if (propertyName != null) {
             this.expression.add(FACTORY.createPropertyName(propertyName));
@@ -83,7 +84,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
     public BinaryComparisonOpType(final BinaryComparisonOpType that) {
         if (that != null) {
             if (that.expression != null) {
-                this.expression = new ArrayList<JAXBElement<?>>();
+                this.expression = new ArrayList<>();
                 final ObjectFactory factory = new ObjectFactory();
                 for (JAXBElement jb : that.expression) {
                     final Object exp = jb.getValue();
@@ -108,7 +109,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
      */
     public List<JAXBElement<?>> getExpression() {
         if (expression == null) {
-            expression = new ArrayList<JAXBElement<?>>();
+            expression = new ArrayList<>();
         }
         return this.expression;
     }
@@ -160,6 +161,31 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
     @Override
     public Object accept(FilterVisitor fv, Object o) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String getPropertyName() {
+        for (JAXBElement<?> elem : getExpression()) {
+            final Object value = elem.getValue();
+            if (value instanceof String) {
+                return (String) value;
+            }
+            if (value instanceof PropertyNameType) {
+                return ((PropertyNameType) value).getPropertyName();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public XMLLiteral getLiteral() {
+        for (JAXBElement<?> elem : getExpression()) {
+            final Object value = elem.getValue();
+            if (value instanceof LiteralType) {
+                return (LiteralType) value;
+            }
+        }
+        return null;
     }
 
 }

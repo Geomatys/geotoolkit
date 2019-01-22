@@ -41,4 +41,9 @@ public class AndType extends BinaryLogicOpType {
     public LogicOpsType getClone() {
         return new AndType(this);
     }
+
+    @Override
+    public String getOperator() {
+        return "AND";
+    }
 }

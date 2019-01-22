@@ -130,7 +130,7 @@ public class OGC100toGTTransformer {
         } else if (ops instanceof org.geotoolkit.ogc.xml.v100.BBOXType) {
             final org.geotoolkit.ogc.xml.v100.BBOXType binary = (org.geotoolkit.ogc.xml.v100.BBOXType) ops;
             final org.geotoolkit.gml.xml.v212.BoxType box = binary.getBox();
-            final org.geotoolkit.ogc.xml.v100.PropertyNameType pnt = binary.getPropertyName();
+            final org.geotoolkit.ogc.xml.v100.PropertyNameType pnt = binary.getPropertyNameType();
 
             final Expression geom = filterFactory.property(pnt.getContent());
             final double minx = box.getCoord().get(0).getX().doubleValue();

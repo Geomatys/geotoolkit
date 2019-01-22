@@ -122,4 +122,9 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
         hash = 97 * hash + (this.any != null ? this.any.hashCode() : 0);
         return hash;
     }
+
+    @Override
+    public boolean isRaw() {
+        return false;
+    }
 }

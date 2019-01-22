@@ -163,13 +163,13 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
      */
     public static LogicalFilterType valueOf(final String filterName) {
 
-        if (filterName.equals("And")) {
+        if (filterName.equalsIgnoreCase("And")) {
             return AND;
-        } else if (filterName.equals("Or")) {
+        } else if (filterName.equalsIgnoreCase("Or")) {
             return OR;
-        } else if (filterName.equals("Xor")) {
+        } else if (filterName.equalsIgnoreCase("Xor")) {
             return XOR;
-        } else if (filterName.equals("Not")) {
+        } else if (filterName.equalsIgnoreCase("Not")) {
             return NOT;
         } else {
             return DEFAULT;

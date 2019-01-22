@@ -172,10 +172,10 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link BinaryLogicOpType }
      *
-     */
+
     public BinaryLogicOpType createBinaryLogicOpType() {
         return new BinaryLogicOpType();
-    }
+    }*/
 
     /**
      * Create an instance of {@link TemporalCapabilitiesType }
@@ -244,10 +244,10 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link BinarySpatialOpType }
      *
-     */
+
     public BinarySpatialOpType createBinarySpatialOpType() {
         return new BinarySpatialOpType();
-    }
+    }*/
 
     /**
      * Create an instance of {@link ExtensionOperatorType }
@@ -404,10 +404,10 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link DistanceBufferType }
      *
-     */
+
     public DistanceBufferType createDistanceBufferType() {
         return new DistanceBufferType();
-    }
+    } */
 
     /**
      * Create an instance of {@link TemporalOperatorsType }
@@ -452,10 +452,10 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link UnaryLogicOpType }
      *
-     */
+
     public UnaryLogicOpType createUnaryLogicOpType() {
         return new UnaryLogicOpType();
-    }
+    } */
 
     /**
      * Create an instance of {@link SpatialOperatorType }

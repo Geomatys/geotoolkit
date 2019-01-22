@@ -22,7 +22,8 @@ package org.geotoolkit.metadata;
  */
 public enum MetadataType {
 
-    DUBLINCORE(false, true),
+    DUBLINCORE_CSW202(false, true),
+    DUBLINCORE_CSW300(false, true),
     ISO_19115(true, false),
     EBRIM(false, false),
     SENSORML(false, false),

@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.Boundary;
+import org.geotoolkit.ogc.xml.XMLLiteral;
 
 
 /**
@@ -47,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "LowerBoundaryType", propOrder = {
     "expression"
 })
-public class LowerBoundaryType {
+public class LowerBoundaryType implements Boundary {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private JAXBElement<?> expression;
@@ -88,6 +90,14 @@ public class LowerBoundaryType {
      */
     public void setExpression(final JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);
+    }
+
+    @Override
+    public XMLLiteral getLiteral() {
+        if (expression != null && expression.getValue() instanceof XMLLiteral) {
+            return (XMLLiteral)expression;
+        }
+        return null;
     }
 
 }

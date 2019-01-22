@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.SpatialOperator;
 import org.opengis.filter.Filter;
 
 
@@ -43,7 +44,7 @@ import org.opengis.filter.Filter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SpatialOpsType")
 @XmlSeeAlso({BBOXType.class, DistanceBufferType.class, BinarySpatialOpType.class})
-public abstract class SpatialOpsType implements Filter {
+public abstract class SpatialOpsType implements Filter, SpatialOperator {
 
     @Override
     public String toString() {

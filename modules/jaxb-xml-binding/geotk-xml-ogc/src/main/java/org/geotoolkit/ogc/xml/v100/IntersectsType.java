@@ -41,4 +41,9 @@ public class IntersectsType extends BinarySpatialOpType {
     public SpatialOpsType getClone() {
         return new IntersectsType(this);
     }
+
+    @Override
+    public String getOperator() {
+        return "Intersects";
+    }
 }

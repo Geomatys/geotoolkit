@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.XMLFilter;
 import org.opengis.filter.BinaryLogicOperator;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
@@ -54,7 +55,7 @@ import org.opengis.filter.FilterVisitor;
 @XmlType(name = "BinaryLogicOpType", propOrder = {
     "comparisonOpsOrSpatialOpsOrTemporalOps"
 })
-public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperator {
+public abstract class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperator, org.geotoolkit.ogc.xml.BinaryLogicOperator {
 
     @XmlElementRefs({
         @XmlElementRef(name = "comparisonOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class),
@@ -74,7 +75,7 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
       * Build a new Binary logic operator
       */
      public BinaryLogicOpType(final Object... operators) {
-         this.comparisonOpsOrSpatialOpsOrTemporalOps = new ArrayList<JAXBElement<?>>();
+         this.comparisonOpsOrSpatialOpsOrTemporalOps = new ArrayList<>();
 
          for (Object obj: operators) {
 
@@ -227,16 +228,25 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
      */
     public List<JAXBElement<?>> getComparisonOpsOrSpatialOpsOrTemporalOps() {
         if (comparisonOpsOrSpatialOpsOrTemporalOps == null) {
-            comparisonOpsOrSpatialOpsOrTemporalOps = new ArrayList<JAXBElement<?>>();
+            comparisonOpsOrSpatialOpsOrTemporalOps = new ArrayList<>();
         }
         return this.comparisonOpsOrSpatialOpsOrTemporalOps;
     }
 
     @Override
     public List<Filter> getChildren() {
-        List<Filter> result = new ArrayList<Filter>();
+        List<Filter> result = new ArrayList<>();
         for (JAXBElement jb: getComparisonOpsOrSpatialOpsOrTemporalOps()) {
             result.add((Filter)jb.getValue());
+        }
+        return result;
+    }
+
+    @Override
+    public List<Object> getFilters() {
+        List<Object> result = new ArrayList<>();
+        for (JAXBElement jb: getComparisonOpsOrSpatialOpsOrTemporalOps()) {
+            result.add(jb.getValue());
         }
         return result;
     }
@@ -253,10 +263,5 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
     @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public LogicOpsType getClone() {
-        throw new UnsupportedOperationException("Must be overriden in sub-class.");
     }
 }

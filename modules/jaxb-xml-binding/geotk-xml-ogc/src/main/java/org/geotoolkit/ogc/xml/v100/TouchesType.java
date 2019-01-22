@@ -41,4 +41,9 @@ public class TouchesType extends BinarySpatialOpType {
     public SpatialOpsType getClone() {
         return new TouchesType(this);
     }
+
+    @Override
+    public String getOperator() {
+        return "Touches";
+    }
 }

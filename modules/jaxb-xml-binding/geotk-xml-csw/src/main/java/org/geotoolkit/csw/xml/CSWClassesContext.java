@@ -77,6 +77,10 @@ public class CSWClassesContext {
                                         org.geotoolkit.ows.xml.v110.ExceptionReport.class, // TODO remove
                                         org.geotoolkit.dublincore.xml.v2.terms.ObjectFactory.class));
 
+        //CSW 3.0.0 classes
+        classeList.addAll(Arrays.asList(org.geotoolkit.csw.xml.v300.ObjectFactory.class,
+                                        org.geotoolkit.ows.xml.v200.ExceptionReport.class));
+
         //CSW 2.0.0 classes
         classeList.addAll(Arrays.asList(org.geotoolkit.csw.xml.v200.ObjectFactory.class,
                                         org.geotoolkit.dublincore.xml.v1.terms.ObjectFactory.class));
@@ -132,6 +136,10 @@ public class CSWClassesContext {
 
     public static List<Class> getCSWClassesList() {
         final List<Class> classeList = new ArrayList<>();
+
+        //CSW 3.0.0 classes
+        classeList.addAll(Arrays.asList(org.geotoolkit.csw.xml.v300.ObjectFactory.class,
+                                        org.geotoolkit.ows.xml.v200.ExceptionReport.class));
 
         //CSW 2.0.2 classes
         classeList.addAll(Arrays.asList(org.geotoolkit.csw.xml.v202.LimitedObjectFactory.class,

@@ -74,9 +74,10 @@ public class ListOfValuesType implements ListOfValues {
      * Gets the value of the value property.
      * (unmodifiable)
      */
+    @Override
     public List<String> getValue() {
         if (value == null) {
-            value = new ArrayList<String>();
+            value = new ArrayList<>();
         }
         return Collections.unmodifiableList(value);
     }

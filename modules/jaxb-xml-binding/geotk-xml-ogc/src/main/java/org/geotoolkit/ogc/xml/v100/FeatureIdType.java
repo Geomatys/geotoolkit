@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.ogc.xml.ID;
 import org.opengis.feature.Feature;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
@@ -46,7 +47,7 @@ import org.opengis.filter.identity.Identifier;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureIdType")
-public class FeatureIdType implements FeatureId {
+public class FeatureIdType implements FeatureId, ID {
 
     @XmlAttribute(required = true)
     private String fid;

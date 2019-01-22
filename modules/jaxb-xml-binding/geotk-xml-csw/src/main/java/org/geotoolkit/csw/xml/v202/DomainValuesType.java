@@ -132,6 +132,7 @@ public class DomainValuesType implements DomainValues {
     /**
      * Gets the value of the propertyName property.
      */
+    @Override
     public String getPropertyName() {
         return propertyName;
     }
@@ -139,6 +140,7 @@ public class DomainValuesType implements DomainValues {
     /**
      * Gets the value of the parameterName property.
      */
+    @Override
     public String getParameterName() {
         return parameterName;
     }
@@ -146,6 +148,7 @@ public class DomainValuesType implements DomainValues {
     /**
      * Gets the value of the listOfValues property.
      */
+    @Override
     public ListOfValuesType getListOfValues() {
         return listOfValues;
     }
@@ -167,6 +170,7 @@ public class DomainValuesType implements DomainValues {
     /**
      * Gets the value of the type property.
      */
+    @Override
     public QName getType() {
         return type;
     }

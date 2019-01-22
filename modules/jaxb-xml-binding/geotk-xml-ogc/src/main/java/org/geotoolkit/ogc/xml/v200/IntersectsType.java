@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ogc.xml.v200;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.filter.spatial.Intersects;
 
 /**
@@ -23,6 +24,7 @@ import org.opengis.filter.spatial.Intersects;
  * @author guilhem
  * @module
  */
+@XmlRootElement(name = "Intersects")
 public class IntersectsType extends BinarySpatialOpType implements Intersects {
 
     /**
@@ -46,5 +48,10 @@ public class IntersectsType extends BinarySpatialOpType implements Intersects {
     @Override
     public SpatialOpsType getClone() {
         return new IntersectsType(this);
+    }
+
+    @Override
+    public String getOperator() {
+        return "Intersects";
     }
 }
