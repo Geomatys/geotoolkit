@@ -155,12 +155,12 @@ final class GridCoverageTable extends Table {
 
         final PreparedStatement statement = prepareStatement(sql);
         final DefaultTemporalCRS temporalCRS = transaction.database.temporalCRS;
-        final long tMin = temporalCRS.toInstant(normalized.getMinimum(2)).toEpochMilli();
-        final long tMax = temporalCRS.toInstant(normalized.getMaximum(2)).toEpochMilli();
         final Calendar calendar = newCalendar();
         statement.setString(1, product);
         statement.setString(2, poly.toText());
         if (hasTemporal) {
+            final long tMin = temporalCRS.toInstant(normalized.getMinimum(2)).toEpochMilli();
+            final long tMax = temporalCRS.toInstant(normalized.getMaximum(2)).toEpochMilli();
             statement.setTimestamp(3, new Timestamp(tMin), calendar);
             statement.setTimestamp(4, new Timestamp(tMax), calendar);
         }
