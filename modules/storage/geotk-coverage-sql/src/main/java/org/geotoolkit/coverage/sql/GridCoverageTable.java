@@ -36,6 +36,12 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.geometry.jts.JTS;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
 
 
 /**
@@ -137,13 +143,23 @@ final class GridCoverageTable extends Table {
         if (!hasTemporal) {
             sql = sql.substring(0, sql.lastIndexOf(" AND \"endTime\""));        // Stop the query after the intersect condition.
         }
+
+        Geometry poly = JTS.toGeometry(horizontal);
+        if (poly.getEnvelopeInternal().getMinX() < 0.0) {
+            //hack to compensate postgis uncomplete support for 0-360 geometries intersection
+            //if the coverage is not a 0-360, this might slow down the search a little
+            //bu the gist tree should be able to minimize the loss.
+            Geometry part2 = JTS.transform(poly, new AffineTransform2D(1, 0, 0, 1, 360, 0));
+            poly = new GeometryFactory().createMultiPolygon(new Polygon[]{(Polygon) poly, (Polygon) part2});
+        }
+
         final PreparedStatement statement = prepareStatement(sql);
         final DefaultTemporalCRS temporalCRS = transaction.database.temporalCRS;
         final long tMin = temporalCRS.toInstant(normalized.getMinimum(2)).toEpochMilli();
         final long tMax = temporalCRS.toInstant(normalized.getMaximum(2)).toEpochMilli();
         final Calendar calendar = newCalendar();
         statement.setString(1, product);
-        statement.setString(2, Envelopes.toPolygonWKT(horizontal));
+        statement.setString(2, poly.toText());
         if (hasTemporal) {
             statement.setTimestamp(3, new Timestamp(tMin), calendar);
             statement.setTimestamp(4, new Timestamp(tMax), calendar);
