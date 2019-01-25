@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import java.awt.Shape;
-import java.awt.geom.Area;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +25,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.GridChange;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -45,7 +42,6 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -60,6 +56,8 @@ import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import static org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer.LOGGER;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -69,6 +67,7 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -162,32 +161,17 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     @Override
     public boolean hit(final ProjectedCoverage projectedCoverage, final SearchAreaJ2D search, final VisitFilter filter) {
 
-        //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
+        final Geometry geom = search.getObjectiveGeometryJTS();
+        final JTSEnvelope2D searchEnv = JTS.toEnvelope(geom);
 
-        final Shape mask = search.getDisplayShape();
-        final Shape[] shapes;
+        GridGeometry searchGrid = renderingContext.getGridGeometry().derive().reduce(0,1).build();
+        searchGrid = searchGrid.derive().subgrid(searchEnv).build();
         try {
-            shapes = projectedCoverage.getEnvelopeGeometry().getDisplayShape();
-        } catch (TransformException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
+            GridCoverage2D coverage = getObjectiveCoverage(projectedCoverage, searchGrid, false);
+            return coverage != null;
+        } catch (CoverageStoreException | TransformException | FactoryException | ProcessException ex) {
             return false;
         }
-
-        for(Shape shape : shapes){
-            final Area area = new Area(mask);
-            switch(filter){
-                case INTERSECTS :
-                    area.intersect(new Area(shape));
-                    if(!area.isEmpty()) return true;
-                    break;
-                case WITHIN :
-                    Area start = new Area(area);
-                    area.add(new Area(shape));
-                    if(start.equals(area)) return true;
-                    break;
-            }
-        }
-        return false;
     }
 
     /**
@@ -244,7 +228,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * @see ProjectedCoverage#getCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam)
      */
     protected GridCoverage2D getObjectiveCoverage(final ProjectedCoverage projectedCoverage,
-            GridGeometry2D canvasGrid, final boolean isElevation)
+            GridGeometry canvasGrid, final boolean isElevation)
             throws CoverageStoreException, TransformException, FactoryException, ProcessException {
         return getObjectiveCoverage(projectedCoverage, canvasGrid, isElevation, null);
     }
@@ -266,7 +250,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * @see ProjectedCoverage#getCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam)
      */
     protected GridCoverage2D getObjectiveCoverage(final ProjectedCoverage projectedCoverage,
-            GridGeometry2D canvasGrid, final boolean isElevation, int[] sourceBands)
+            GridGeometry canvasGrid, final boolean isElevation, int[] sourceBands)
             throws CoverageStoreException, TransformException, FactoryException, ProcessException {
         ArgumentChecks.ensureNonNull("projectedCoverage", projectedCoverage);
 
@@ -274,43 +258,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final GridCoverageResource ref = coverageLayer.getCoverageReference();
 
         try {
-            final GridGeometry gridGeometry = ref.getGridGeometry();
-
-            // on displayed area
-            Envelope canvasEnv = canvasGrid.getEnvelope();
-            double[] resolution = canvasGrid.getResolution(true);
-            /////// HACK FOR 0/360 /////////////////////////////////////////////
-            Map.Entry<Envelope, double[]> entry = solveWrapAround(gridGeometry, canvasEnv, resolution);
-            if (entry != null) {
-                canvasEnv = entry.getKey();
-                resolution = entry.getValue();
-            }
-            /////// HACK FOR 0/360 /////////////////////////////////////////////
-            GridGeometry slice = gridGeometry.derive()
-                    .rounding(GridRoundingMode.ENCLOSING)
-                    .subgrid(canvasEnv, resolution)
-                    .build();
-
-            // latest data slice
-            final GridExtent extent = slice.getExtent();
-            final MathTransform gridToCrs = slice.getGridToCRS(PixelInCell.CELL_CENTER);
-            final long[] low = new long[extent.getDimension()];
-            final long[] high = new long[extent.getDimension()];
-            low[0] = extent.getLow(0);
-            low[1] = extent.getLow(1);
-            high[0] = extent.getHigh(0);
-            high[1] = extent.getHigh(1);
-            for (int i=2,n=low.length;i<n;i++) {
-                low[i] = extent.getHigh(i);
-                high[i] = extent.getHigh(i);
-            }
-            //add 3 cell padding for interpolations
-            for (int i=0;i<2;i++) {
-                low[i] = extent.getLow(i) - 3;
-                high[i] = extent.getHigh(i) + 3;
-            }
-            final GridExtent sliceExt = new GridExtent(null, low, high, true);
-            slice = new GridGeometry(sliceExt, PixelInCell.CELL_CENTER, gridToCrs, slice.getCoordinateReferenceSystem());
+            final GridGeometry slice = extractSlice(ref.getGridGeometry(), canvasGrid);
 
             final GridCoverage gc = ref.read(slice, sourceBands);
             GridCoverage2D coverage = org.geotoolkit.internal.coverage.CoverageUtilities.toGeotk(gc);
@@ -327,8 +275,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 coverage = gcb.getGridCoverage2D();
             }
 
-
-            if (Utilities.equalsIgnoreMetadata(canvasGrid.getCoordinateReferenceSystem2D(), coverage.getCoordinateReferenceSystem2D())) {
+            final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(canvasGrid.getCoordinateReferenceSystem());
+            if (Utilities.equalsIgnoreMetadata(crs2d, coverage.getCoordinateReferenceSystem2D())) {
                 return coverage;
             } else {
                 //resample
@@ -346,13 +294,54 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 resampleGrid = CoverageUtilities.forceLowerToZero(resampleGrid);
                 /////// HACK FOR 0/360 /////////////////////////////////////////
 
-                return new ResampleProcess(coverage, canvasGrid.getCoordinateReferenceSystem2D(), resampleGrid, InterpolationCase.BILINEAR, fill).executeNow();
+                return new ResampleProcess(coverage, crs2d, resampleGrid, InterpolationCase.BILINEAR, fill).executeNow();
             }
 
         } catch (DataStoreException ex) {
             throw new CoverageStoreException(ex.getMessage(), ex);
         }
+    }
 
+    private GridGeometry extractSlice(GridGeometry fullArea, GridGeometry areaOfInterest)
+            throws CoverageStoreException, TransformException, FactoryException, ProcessException {
+
+        // on displayed area
+        Envelope canvasEnv = areaOfInterest.getEnvelope();
+        double[] resolution = areaOfInterest.getResolution(true);
+        /////// HACK FOR 0/360 /////////////////////////////////////////////
+        Map.Entry<Envelope, double[]> entry = solveWrapAround(fullArea, canvasEnv, resolution);
+        if (entry != null) {
+            canvasEnv = entry.getKey();
+            resolution = entry.getValue();
+        }
+        /////// HACK FOR 0/360 /////////////////////////////////////////////
+        GridGeometry slice = fullArea.derive()
+                .rounding(GridRoundingMode.ENCLOSING)
+                .subgrid(canvasEnv, resolution)
+                .build();
+
+        // latest data slice
+        final GridExtent extent = slice.getExtent();
+        final MathTransform gridToCrs = slice.getGridToCRS(PixelInCell.CELL_CENTER);
+        final long[] low = new long[extent.getDimension()];
+        final long[] high = new long[extent.getDimension()];
+        low[0] = extent.getLow(0);
+        low[1] = extent.getLow(1);
+        high[0] = extent.getHigh(0);
+        high[1] = extent.getHigh(1);
+        for (int i=2,n=low.length;i<n;i++) {
+            low[i] = extent.getHigh(i);
+            high[i] = extent.getHigh(i);
+        }
+        //add 3 cell padding for interpolations
+        for (int i=0;i<2;i++) {
+            low[i] = extent.getLow(i) - 3;
+            high[i] = extent.getHigh(i) + 3;
+        }
+        final GridExtent sliceExt = new GridExtent(null, low, high, true);
+        slice = new GridGeometry(sliceExt, PixelInCell.CELL_CENTER, gridToCrs, slice.getCoordinateReferenceSystem());
+
+        return slice;
     }
 
     /**

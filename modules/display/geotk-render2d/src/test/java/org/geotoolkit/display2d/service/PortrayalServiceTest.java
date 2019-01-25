@@ -29,15 +29,21 @@ import java.awt.image.WritableRaster;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.measure.Unit;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage;
@@ -50,8 +56,11 @@ import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.SearchArea;
+import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.control.StopOnErrorMonitor;
 import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.jts.JTS;
@@ -61,6 +70,8 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.storage.coverage.DefaultCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -562,6 +573,70 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         assertEquals(Color.WHITE.getRGB(), img.getRGB(7, 5));
     }
 
+    /**
+     * Test picking on a coverage in range 0-360.
+     * @throws PortrayalException
+     */
+    @Test
+    public void testCoverageVisit0_360() throws PortrayalException {
+
+        // Create 0-360 coverage
+        final BufferedImage img = new BufferedImage(350, 180, BufferedImage.TYPE_INT_ARGB);
+        CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+        crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.POSITIVE_RANGE);
+        final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, 0, 90);
+        final GridExtent extent = new GridExtent(350, 180);
+        final GridGeometry gg = new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setRenderedImage(img);
+        gcb.setName("coverage");
+        gcb.setGridGeometry(gg);
+        final GridCoverage2D coverage = gcb.getGridCoverage2D();
+
+        final GridCoverageResource gcr = new DefaultCoverageResource(coverage, Names.createLocalName(null, null, coverage.getName()));
+        final MapLayer layer = MapBuilder.createCoverageLayer(gcr);
+        layer.setSelectable(true);
+
+        final MapContext context = MapBuilder.createContext();
+        context.layers().add(layer);
+
+
+        final GeneralEnvelope viewEnv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
+        viewEnv.setRange(0, -180, +180);
+        viewEnv.setRange(1, -90, +90);
+
+        final AtomicInteger count = new AtomicInteger();
+
+        GraphicVisitor gv = new GraphicVisitor() {
+            @Override
+            public void startVisit() {
+            }
+
+            @Override
+            public void endVisit() {
+            }
+
+            @Override
+            public void visit(org.opengis.display.primitive.Graphic graphic, RenderingContext context, SearchArea area) {
+                count.incrementAndGet();
+            }
+
+            @Override
+            public boolean isStopRequested() {
+                return false;
+            }
+        };
+
+
+        final SceneDef scene = new SceneDef(context);
+        final CanvasDef canvas = new CanvasDef(new Dimension(360, 180), null);
+        final ViewDef view = new ViewDef(viewEnv);
+        final VisitDef visit = new VisitDef(new Rectangle(10, 80, 2, 2), gv);
+
+        DefaultPortrayalService.visit(canvas, scene, view, visit);
+
+        assertEquals(1, count.get());
+    }
 
     private void testRendering(final MapLayer layer) throws TransformException, PortrayalException {
         final StopOnErrorMonitor monitor = new StopOnErrorMonitor();
