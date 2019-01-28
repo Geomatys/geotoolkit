@@ -223,10 +223,16 @@ final class SampleDimensionTable extends Table {
     }
 
     /**
-     * Creates a new list of categories for real values in the given range.
-     * The returned categories use an arbitrary packing.
+     * Creates a new list of categories for real values in the given range.  The returned categories use
+     * an arbitrary packing. This method is invoked when the sample dimensions to insert in the database
+     * declare only real values, without transfer function.  Since our database expect integer values to
+     * be converted to real value using  transfer function, we have to invent our own. We insert rounded
+     * numbers because the minimum and maximum values in that situation are often determined by scanning
+     * the data, in which case every raster would produce different minimum and maximum. Since we want a
+     * sample dimension that fit for all data of the same kind, we expand the value range for increasing
+     * the chance that the categories would be reusable for other files of the same series.
      */
-    static List<Category> defaultCategories(final List<Category> original, final MeasurementRange<?> range) {
+    private static List<Category> defaultCategories(final List<Category> original, final MeasurementRange<?> range) {
         final SampleDimension.Builder b = new SampleDimension.Builder();
         InternationalString name = null;
         int padValue = 0;
