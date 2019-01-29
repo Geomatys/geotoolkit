@@ -164,7 +164,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final Geometry geom = search.getObjectiveGeometryJTS();
         final JTSEnvelope2D searchEnv = JTS.toEnvelope(geom);
 
-        GridGeometry searchGrid = renderingContext.getGridGeometry().derive().reduce(0,1).build();
+        GridGeometry searchGrid = renderingContext.getGridGeometry().reduce(0,1);
         searchGrid = searchGrid.derive().subgrid(searchEnv).build();
         try {
             GridCoverage2D coverage = getObjectiveCoverage(projectedCoverage, searchGrid, false);
@@ -266,7 +266,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             //at this point, we want a single slice in 2D
             //we remove all other dimension to simplify any following operation
             if (coverage.getCoordinateReferenceSystem().getCoordinateSystem().getDimension() > 2) {
-                final GridGeometry gridGeometry2d = coverage.getGridGeometry().derive().reduce(0,1).build();
+                final GridGeometry gridGeometry2d = coverage.getGridGeometry().reduce(0,1);
                 final GridCoverageBuilder gcb = new GridCoverageBuilder();
                 gcb.setGridGeometry(gridGeometry2d);
                 gcb.setRenderedImage(coverage.getRenderedImage());
@@ -289,8 +289,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 GridGeometry resampleGrid = canvasGrid.derive()
                         .rounding(GridRoundingMode.ENCLOSING)
                         .subgrid(ge)
-                        .reduce(0,1)
-                        .build();
+                        .build()
+                        .reduce(0,1);
                 resampleGrid = CoverageUtilities.forceLowerToZero(resampleGrid);
                 /////// HACK FOR 0/360 /////////////////////////////////////////
 
