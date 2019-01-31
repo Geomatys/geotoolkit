@@ -83,6 +83,11 @@
       <artifactId>sis-netcdf</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>edu.ucar</groupId>
+      <artifactId>cdm</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 

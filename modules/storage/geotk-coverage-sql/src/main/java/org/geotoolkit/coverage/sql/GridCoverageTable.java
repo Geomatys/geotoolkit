@@ -37,7 +37,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.geometry.jts.JTS;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -120,17 +119,7 @@ final class GridCoverageTable extends Table {
     final List<GridCoverageEntry> find(final String product, final Envelope areaOfInterest)
             throws SQLException, DataStoreException, TransformException
     {
-        final Database database   = transaction.database;
-        final boolean hasTemporal = CRS.getTemporalComponent(areaOfInterest.getCoordinateReferenceSystem()) != null;
-        final Envelope normalized = Envelopes.transform(areaOfInterest, hasTemporal ? database.spatioTemporalCRS : database.extentCRS);
-        final Envelope horizontal;
-        if (hasTemporal) {
-            final GeneralEnvelope ge = GeneralEnvelope.castOrCopy(normalized).subEnvelope(0, 2);
-            ge.setCoordinateReferenceSystem(database.extentCRS);                        // Required for handling wrap-around axis.
-            horizontal = ge;
-        } else {
-            horizontal = normalized;
-        }
+        final Database database = transaction.database;
         String sql = "SELECT \"series\", \"filename\", \"grid\","
                    + " \"startTime\", \"endTime\" FROM " + SCHEMA + ".\"" + TABLE + "\""
                    + " INNER JOIN " + SCHEMA + ".\"" + SeriesTable.TABLE + "\" ON (\"series\" = \"" + SeriesTable.TABLE + "\".\"identifier\")"
@@ -140,10 +129,24 @@ final class GridCoverageTable extends Table {
          * Note: we could write    ("startTime", "endTime") OVERLAPS (?,?)    but our tests
          * with EXPLAIN on PostgreSQL 10.5 suggests that >= and <= make better use of index.
          */
-        if (!hasTemporal) {
+        Envelope horizontal = null;
+        Instant tmin = null, tmax = null;
+        if (CRS.getTemporalComponent(areaOfInterest.getCoordinateReferenceSystem()) != null) {
+            final Envelope normalized = Envelopes.transform(areaOfInterest, database.spatioTemporalCRS);
+            final GeneralEnvelope ge = GeneralEnvelope.castOrCopy(normalized).subEnvelope(0, 2);
+            ge.setCoordinateReferenceSystem(database.extentCRS);                        // Required for handling wrap-around axis.
+            horizontal = ge;
+
+            final DefaultTemporalCRS temporalCRS = transaction.database.temporalCRS;
+            tmin = temporalCRS.toInstant(normalized.getMinimum(2));
+            tmax = temporalCRS.toInstant(normalized.getMaximum(2));
+        }
+        if (horizontal == null) {
+            horizontal = Envelopes.transform(areaOfInterest, database.extentCRS);
+        }
+        if (tmin == null || tmax == null) {
             sql = sql.substring(0, sql.lastIndexOf(" AND \"endTime\""));        // Stop the query after the intersect condition.
         }
-
         Geometry poly = JTS.toGeometry(horizontal);
         if (poly.getEnvelopeInternal().getMinX() < 0.0) {
             //hack to compensate postgis uncomplete support for 0-360 geometries intersection
@@ -154,15 +157,12 @@ final class GridCoverageTable extends Table {
         }
 
         final PreparedStatement statement = prepareStatement(sql);
-        final DefaultTemporalCRS temporalCRS = transaction.database.temporalCRS;
         final Calendar calendar = newCalendar();
         statement.setString(1, product);
         statement.setString(2, poly.toText());
-        if (hasTemporal) {
-            final long tMin = temporalCRS.toInstant(normalized.getMinimum(2)).toEpochMilli();
-            final long tMax = temporalCRS.toInstant(normalized.getMaximum(2)).toEpochMilli();
-            statement.setTimestamp(3, new Timestamp(tMin), calendar);
-            statement.setTimestamp(4, new Timestamp(tMax), calendar);
+        if (tmin != null && tmax != null) {
+            statement.setTimestamp(3, new Timestamp(tmin.toEpochMilli()), calendar);
+            statement.setTimestamp(4, new Timestamp(tmax.toEpochMilli()), calendar);
         }
         final List<GridCoverageEntry> entries = new ArrayList<>();
         try (final ResultSet results = statement.executeQuery()) {
