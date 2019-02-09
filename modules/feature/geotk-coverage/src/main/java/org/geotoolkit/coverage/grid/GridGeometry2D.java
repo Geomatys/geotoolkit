@@ -531,18 +531,25 @@ public class GridGeometry2D extends GridGeometry {
          * If no grid envelope were specified, then we assume that they are the 2 first dimensions.
          */
         final TransformSeparator filter = new TransformSeparator(gridToCRS);
-        boolean isEmpty = true;
+        long dimAdded = 0;
         if (extent != null) {
             final int dimension = extent.getDimension();
             for (int i=0; i<dimension; i++) {
                 if (extent.getSize(i) > 1) {
-                    filter.addSourceDimensions(i);
-                    isEmpty = false;
+                    if (i >= Long.SIZE) {
+                        throw new ArithmeticException();
+                    }
+                    dimAdded |= (1L << i);
                 }
             }
         }
-        if (isEmpty) {
-            filter.addSourceDimensionRange(0, 2);
+        if (dimAdded < 3) {
+            dimAdded = 3;           // If we have only one of dimension 0 and 1, or non of them, add both of them.
+        }
+        while (dimAdded != 0) {
+            final int i = Long.numberOfTrailingZeros(dimAdded);
+            filter.addSourceDimensions(i);
+            dimAdded &= ~(1L << i);
         }
         Exception cause = null;
         int[] srcDim = filter.getSourceDimensions();

@@ -115,9 +115,9 @@ public abstract class Interpolation {
         this.numBands   = pixelIterator.getNumBands();
         this.boundary   = pixelIterator.getBoundary(false);
         if (windowSize > boundary.width || windowSize > boundary.height)
-            throw new IllegalArgumentException("windowSide argument is more "
-                    + "larger than iterate object boundary side. boundary = "
-                    +boundary+" windowSide = "+windowSize);
+            throw new IllegalArgumentException("windowSide argument is "
+                    + "larger than object boundary. boundary = "
+                    + boundary + " windowSide = " + windowSize);
 
         bminX = boundary.x - 0.5;
         bminY = boundary.y - 0.5;
