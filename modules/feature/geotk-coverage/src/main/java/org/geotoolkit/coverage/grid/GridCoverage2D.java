@@ -323,8 +323,14 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                 span  = Math.min(Math.max(range.getSize(i), 0), 1);
                 label = Integer.valueOf(i);
             }
-            if (range.getLow(i)!=min || range.getSize(i)!=span) {
-                return Errors.format(Errors.Keys.IllegalGridEnvelope_3, label, min, min + span);
+            long n;
+            if ((n = range.getLow(i)) != min) {
+                return Errors.format(Errors.Keys.IllegalGridEnvelope_3, label, min, min + span)
+                        + " The rendered image declares a low value of " + min + " while the grid extent declares " + n + ".";
+            }
+            if ((n = range.getSize(i)) != span) {
+                return Errors.format(Errors.Keys.IllegalGridEnvelope_3, label, min, min + span)
+                        + " The rendered image declares a span of " + span + " while the grid extent declares " + n + ".";
             }
         }
         return null;
