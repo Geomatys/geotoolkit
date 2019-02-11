@@ -26,7 +26,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,8 +82,8 @@ public class J2DGridUtilities {
         clip.height -= yTextOffset;
 
         final Shape shp = new TransformedShape(clip, context.getDisplayToObjective());
-        final List<Coordinate> coords = new ArrayList<Coordinate>();
-        final PathIterator ite = shp.getPathIterator(new AffineTransform());
+        final List<Coordinate> coords = new ArrayList<>();
+        final PathIterator ite = shp.getPathIterator(null);
 
         final double[] vals = new double[3];
         while(!ite.isDone()){
@@ -156,7 +155,7 @@ public class J2DGridUtilities {
                 final double d = tickIte.currentPosition();
                 if(d>gridBounds.getMaximum(0))continue;
 
-                final ArrayList<Coordinate> lineCoords = new ArrayList<Coordinate>();
+                final ArrayList<Coordinate> lineCoords = new ArrayList<>();
                 final double maxY = gridBounds.getMaximum(1);
                 final double step = gridBounds.getSpan(1)/nbPoint;
                 for(double k=Math.nextUp(gridBounds.getMinimum(1)); k<maxY; k+=step){
@@ -225,7 +224,7 @@ public class J2DGridUtilities {
                 final double d = tickIte.currentPosition();
                 if(d>gridBounds.getMaximum(1))continue;
 
-                final ArrayList<Coordinate> lineCoords = new ArrayList<Coordinate>();
+                final ArrayList<Coordinate> lineCoords = new ArrayList<>();
                 final double maxX = gridBounds.getMaximum(0);
                 final double step = gridBounds.getSpan(0)/nbPoint;
                 for(double k= Math.nextUp(gridBounds.getMinimum(0)); k<maxX; k+=step){
@@ -275,14 +274,9 @@ public class J2DGridUtilities {
 
                 layer.labels().add(desc);
             }
-
-
-        }catch(Exception ex){
-            ex.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();       // TODO: NO!!
         }
-
         renderer.portrayImmidiately(layer);
     }
-
-
 }
