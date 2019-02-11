@@ -559,7 +559,9 @@ public final class CoverageUtilities extends Static {
     public static GridCoverage2D toGeotk(final org.apache.sis.coverage.grid.GridCoverage coverage) {
         if (coverage == null) return null;
         GridGeometry gg = forceLowerToZero(coverage.getGridGeometry());
-        gg = gg.derive().sliceByRatio(0.5, 1, 2).build();
+        if (gg.getDimension() > 2) {
+            gg = gg.derive().sliceByRatio(0.5, 0, 1).build();
+        }
         GridCoverageBuilder builder = new GridCoverageBuilder();
         builder.setGridGeometry(gg);
         builder.setSampleDimensions(coverage.getSampleDimensions());
