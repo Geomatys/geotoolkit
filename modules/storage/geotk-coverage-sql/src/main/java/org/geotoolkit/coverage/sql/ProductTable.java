@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.measure.IncommensurableException;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
@@ -187,11 +185,9 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
      * @param  name     the name of the product.
      * @param  parent   the parent product, or {@code null} if none.
      * @param  rasters  the rasters from which to fetch a grid geometry if a new entry needs to be created, or {@code null}.
-     * @throws SQLException if an error occurred while reading or writing the database.
+     * @throws Exception if the operation failed (many checked exceptions possible).
      */
-    private void createIfAbsent(final AddOption option, final String name, final String parent, final List<NewRaster> rasters)
-            throws SQLException, IncommensurableException, FactoryException, TransformException, DataStoreException
-    {
+    private void createIfAbsent(final AddOption option, final String name, final String parent, final List<NewRaster> rasters) throws Exception {
         if (option != AddOption.NO_CREATE) {
             boolean exists;
             try {
@@ -249,7 +245,9 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
                     table.add(product, r);
                 }
             }
-        } catch (SQLException | IncommensurableException | FactoryException | TransformException e) {
+        } catch (DataStoreException e) {
+            throw e;
+        } catch (Exception e) {
             throw new CatalogException(e);
         }
     }

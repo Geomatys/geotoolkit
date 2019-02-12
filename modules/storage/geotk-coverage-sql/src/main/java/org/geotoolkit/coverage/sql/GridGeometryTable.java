@@ -17,15 +17,19 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.awt.Shape;
+import java.awt.geom.Area;
+import java.awt.geom.RectangularShape;
+import java.awt.geom.AffineTransform;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 import java.sql.Array;
 import java.sql.Types;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.time.Instant;
-import javax.measure.IncommensurableException;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.geometry.Envelope;
@@ -33,7 +37,9 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.SingleCRS;
@@ -43,6 +49,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.internal.feature.Geometries;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -55,10 +62,13 @@ import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.IntervalRectangle;
 import org.apache.sis.internal.util.Constants;
+import org.apache.sis.measure.Longitude;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.Utilities;
 
 import static org.geotoolkit.coverage.sql.GridGeometryEntry.AFFINE_DIMENSION;
 
@@ -172,11 +182,12 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
      * @param  approximate     whether the "grid to CRS" transform is only an approximation of non-linear transform.
      * @param  horizontalSRID  the coordinate reference system for the {@value GridGeometryEntry#AFFINE_DIMENSION} first dimensions.
      * @param  additionalAxes  names of additional axes, or {@code null} if none.
+     * @param  geographicArea  generator of the WKT of the geographic area. Invoked only if a new entry needs to be inserted.
      * @return the identifier of a matching entry.
-     * @throws SQLException if the operation failed.
+     * @throws Exception if the operation failed (many checked exceptions possible).
      */
     private int findOrInsert(final GridExtent extent, final Matrix gridToCRS, final boolean approximate, final int horizontalSRID,
-            final Array additionalAxes) throws SQLException, IllegalUpdateException
+            final Array additionalAxes, final Callable<String> geographicArea) throws Exception
     {
         if (extent.getLow(0) != 0 || extent.getLow(1) != 0) {
             throw new IllegalUpdateException("Grid extent must start at (0,0).");
@@ -196,8 +207,9 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
             } else {
                 statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\"("
                         + "\"width\", \"height\", \"scaleX\", \"shearY\", \"shearX\", \"scaleY\", "
-                        + "\"translateX\", \"translateY\", \"approximate\", \"srid\", \"additionalAxes\")"
-                        + " VALUES (?,?,?,?,?,?,?,?,?,?,?)", "identifier");
+                        + "\"translateX\", \"translateY\", \"approximate\", \"srid\", \"additionalAxes\", "
+                        + "\"extent\")"       // Extra parameter compared to query.
+                        + " VALUES (?,?,?,?,?,?,?,?,?,?,?, ST_GeomFromText(?,4326))", "identifier");
             }
             final int trc = gridToCRS.getNumCol() - 1;
             statement.setLong   (1, extent.getSize(0));                // width
@@ -216,6 +228,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                 statement.setNull(11, Types.ARRAY);
             }
             if (insert) {
+                statement.setString(12, geographicArea.call());
                 if (statement.executeUpdate() == 0) {
                     continue;                                           // Should never happen, but we are paranoiac.
                 }
@@ -231,6 +244,50 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
     }
 
     /**
+     * Returns the geographic extent in Well Known Text format.
+     * This method ensures that the geometry stay in the [-180 … +180]° range.
+     *
+     * @param  area       extent of the grid to insert in the database.
+     * @param  gridToCRS  a transform mapping cell corner to coordinates in the coverage CRS.
+     * @param  crs        the coverage CRS.
+     * @return geographic area in Well Known Text format.
+     */
+    final String geographicAreaWKT(Shape area, MathTransform2D gridToCRS, final CoordinateReferenceSystem crs)
+            throws FactoryException, TransformException
+    {
+        final CoordinateReferenceSystem extentCRS = transaction.database.extentCRS;
+        if (!Utilities.equalsIgnoreMetadata(crs, extentCRS)) {
+            final CoordinateOperation op = CRS.findOperation(crs, extentCRS, null);
+            gridToCRS = (MathTransform2D) MathTransforms.concatenate(gridToCRS, op.getMathTransform());
+        }
+        area = gridToCRS.createTransformedShape(area);
+        final RectangularShape bounds = (area instanceof RectangularShape) ? (RectangularShape) area : area.getBounds2D();
+        final boolean mergeLeft  = bounds.getMinX() < Longitude.MIN_VALUE;
+        final boolean mergeRight = bounds.getMaxX() > Longitude.MAX_VALUE;
+        if (mergeLeft | mergeRight) {
+            final Area mask = new Area(new IntervalRectangle(Longitude.MIN_VALUE, bounds.getMinY(),
+                                                             Longitude.MAX_VALUE, bounds.getMaxY()));
+            final Area merged = new Area(area);
+            Area left = null, right = null;
+            if (mergeLeft) {
+                left = new Area(merged);
+                left.transform(AffineTransform.getTranslateInstance(Longitude.MAX_VALUE - Longitude.MIN_VALUE, 0));
+                left.intersect(mask);
+            }
+            if (mergeRight) {
+                right = new Area(merged);
+                right.transform(AffineTransform.getTranslateInstance(Longitude.MIN_VALUE - Longitude.MAX_VALUE, 0));
+                right.intersect(mask);
+            }
+            if (left  != null) merged.add(left);
+            if (right != null) merged.add(right);
+            merged.intersect(mask);
+            area = merged;
+        }
+        return Geometries.formatWKT(area, 0.01);         // Tolerance of about 1 km.
+    }
+
+    /**
      * Returns the identifier for the specified grid geometry. If a suitable entry already exists,
      * its identifier is returned. Otherwise a new entry is inserted and its identifier is returned.
      *
@@ -238,11 +295,9 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
      * @param  period       an array of length 2 where to store start time and end time.
      * @param  suggestedID  suggested identifier if additional axes need to be inserted.
      * @return the identifier of a matching entry.
-     * @throws SQLException if the operation failed.
+     * @throws Exception if the operation failed (many checked exceptions possible).
      */
-    final int findOrInsert(final GridGeometry geometry, final Instant[] period, final String suggestedID)
-            throws SQLException, IncommensurableException, FactoryException, TransformException, CatalogException
-    {
+    final int findOrInsert(final GridGeometry geometry, final Instant[] period, final String suggestedID) throws Exception {
         final List<String> additionalAxes = new ArrayList<>();
         /*
          * Find grid geometry of the two first source dimensions. This is usually the horizontal axes of the data cube,
@@ -342,7 +397,12 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                     } else {
                         axes = getConnection().createArrayOf("VARCHAR", additionalAxes.toArray());
                     }
-                    return findOrInsert(extent, gridToCRS, !isLinear, findCRS(crs2D), axes);
+                    return findOrInsert(extent, gridToCRS, !isLinear, findCRS(crs2D), axes, () -> {
+                        IntervalRectangle area = new IntervalRectangle(
+                                extent.getLow(0), extent.getLow(1),
+                                extent.getHigh(0) + 1, extent.getHigh(1) + 1);
+                        return geographicAreaWKT(area, (MathTransform2D) gridToCRS2D, crs2D);
+                    });
                 }
             }
         }

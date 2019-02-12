@@ -27,20 +27,14 @@ import java.sql.PreparedStatement;
 import java.sql.Types;
 import java.nio.file.Path;
 import java.time.Instant;
-import javax.measure.IncommensurableException;
 import org.opengis.geometry.Envelope;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.geometry.jts.JTS;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Polygon;
+import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.internal.referencing.j2d.IntervalRectangle;
 
 
 /**
@@ -112,14 +106,11 @@ final class GridCoverageTable extends Table {
      * Returns the two-dimensional coverages that intercept the given envelope.
      *
      * @return areaOfInterest in the current envelope of interest.
-     * @throws SQLException if an error occurred while reading the database.
+     * @throws Exception if the operation failed (many checked exceptions possible).
      *
      * @todo returns a stream instead. Requires to be careful about closing the statement and the connection.
      */
-    final List<GridCoverageEntry> find(final String product, final Envelope areaOfInterest)
-            throws SQLException, DataStoreException, TransformException
-    {
-        final Database database = transaction.database;
+    final List<GridCoverageEntry> find(final String product, final Envelope areaOfInterest) throws Exception {
         String sql = "SELECT \"series\", \"filename\", \"grid\","
                    + " \"startTime\", \"endTime\" FROM " + SCHEMA + ".\"" + TABLE + "\""
                    + " INNER JOIN " + SCHEMA + ".\"" + SeriesTable.TABLE + "\" ON (\"series\" = \"" + SeriesTable.TABLE + "\".\"identifier\")"
@@ -129,37 +120,41 @@ final class GridCoverageTable extends Table {
          * Note: we could write    ("startTime", "endTime") OVERLAPS (?,?)    but our tests
          * with EXPLAIN on PostgreSQL 10.5 suggests that >= and <= make better use of index.
          */
-        Envelope horizontal = null;
-        Instant tmin = null, tmax = null;
-        if (CRS.getTemporalComponent(areaOfInterest.getCoordinateReferenceSystem()) != null) {
-            final Envelope normalized = Envelopes.transform(areaOfInterest, database.spatioTemporalCRS);
-            final GeneralEnvelope ge = GeneralEnvelope.castOrCopy(normalized).subEnvelope(0, 2);
-            ge.setCoordinateReferenceSystem(database.extentCRS);                        // Required for handling wrap-around axis.
-            horizontal = ge;
-
-            final DefaultTemporalCRS temporalCRS = transaction.database.temporalCRS;
-            tmin = temporalCRS.toInstant(normalized.getMinimum(2));
-            tmax = temporalCRS.toInstant(normalized.getMaximum(2));
-        }
-        if (horizontal == null) {
-            horizontal = Envelopes.transform(areaOfInterest, database.extentCRS);
+        final Instant tmin, tmax;
+        final CoordinateReferenceSystem crs = areaOfInterest.getCoordinateReferenceSystem();
+        final DefaultTemporalCRS temporalCRS = DefaultTemporalCRS.castOrCopy(CRS.getTemporalComponent(crs));
+        if (temporalCRS != null) {
+            final int d = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), temporalCRS.getCoordinateSystem());
+            tmin = temporalCRS.toInstant(areaOfInterest.getMinimum(d));             // May be null if the value is NaN.
+            tmax = temporalCRS.toInstant(areaOfInterest.getMaximum(d));
+        } else {
+            tmin = null;
+            tmax = null;
         }
         if (tmin == null || tmax == null) {
             sql = sql.substring(0, sql.lastIndexOf(" AND \"endTime\""));        // Stop the query after the intersect condition.
         }
-        Geometry poly = JTS.toGeometry(horizontal);
-        if (poly.getEnvelopeInternal().getMinX() < 0.0) {
-            //hack to compensate postgis uncomplete support for 0-360 geometries intersection
-            //if the coverage is not a 0-360, this might slow down the search a little
-            //bu the gist tree should be able to minimize the loss.
-            Geometry part2 = JTS.transform(poly, new AffineTransform2D(1, 0, 0, 1, 360, 0));
-            poly = new GeometryFactory().createMultiPolygon(new Polygon[]{(Polygon) poly, (Polygon) part2});
+        /*
+         * Compute the WKT of the geographic area in the [-180 … +180]° range. It may be a multipolygon
+         * if we had to split in two parts an area that cross the anti-meridian.
+         */
+        final String extentWKT;
+        final SingleCRS horizontalCRS = CRS.getHorizontalComponent(crs);
+        if (horizontalCRS != null) {
+            final int d = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), horizontalCRS.getCoordinateSystem());
+            IntervalRectangle area = new IntervalRectangle(areaOfInterest.getMinimum(d), areaOfInterest.getMinimum(d + 1),
+                                                           areaOfInterest.getMaximum(d), areaOfInterest.getMaximum(d + 1));
+            extentWKT = gridGeometries.geographicAreaWKT(area, null, horizontalCRS);
+        } else {
+            throw new CatalogException("Horizontal CRS not identified in " + crs.getName().getCode());
         }
-
+        /*
+         * SQL query part.
+         */
         final PreparedStatement statement = prepareStatement(sql);
         final Calendar calendar = newCalendar();
         statement.setString(1, product);
-        statement.setString(2, poly.toText());
+        statement.setString(2, extentWKT);
         if (tmin != null && tmax != null) {
             statement.setTimestamp(3, new Timestamp(tmin.toEpochMilli()), calendar);
             statement.setTimestamp(4, new Timestamp(tmax.toEpochMilli()), calendar);
@@ -193,11 +188,9 @@ final class GridCoverageTable extends Table {
      *
      * @param  product  name of the product for which to add a raster.
      * @param  raster   information about the raster to add.
-     * @throws SQLException if an error occurred while reading from or writing to the database.
+     * @throws Exception if the operation failed (many checked exceptions possible).
      */
-    final void add(final String product, final NewRaster raster)
-            throws SQLException, IncommensurableException, FactoryException, TransformException, DataStoreException
-    {
+    final void add(final String product, final NewRaster raster) throws Exception {
         /*
          * Decompose the given path into the directory, filename and extension components.
          */

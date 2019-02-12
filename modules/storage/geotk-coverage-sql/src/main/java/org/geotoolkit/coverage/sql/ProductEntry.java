@@ -341,11 +341,13 @@ final class ProductEntry extends Entry {
              GridCoverageTable table = new GridCoverageTable(transaction))
         {
             entries = table.find(name, areaOfInterest);
-        } catch (SQLException exception) {
-            throw new CatalogException(exception);
+        } catch (DataStoreException exception) {
+            throw exception;
         } catch (TransformException exception) {
             throw new MismatchedReferenceSystemException(Errors.getResources(database.locale)
                     .getString(Errors.Keys.IllegalCoordinateReferenceSystem, exception));
+        } catch (Exception exception) {
+            throw new CatalogException(exception);
         }
         if (entries.isEmpty()) {
             throw new CatalogException("No data in \"" + name + "\" product for the given area of interest.");
