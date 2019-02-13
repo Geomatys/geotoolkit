@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.csw.xml.FederatedSearchResult;
 
 
 /**
@@ -46,12 +47,19 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "FederatedSearchResultType", propOrder = {
     "searchResult"
 })
-public class FederatedSearchResultType
-    extends FederatedSearchResultBaseType
-{
+public class FederatedSearchResultType extends FederatedSearchResultBaseType implements FederatedSearchResult {
 
     @XmlElement(required = true)
     protected SearchResultsType searchResult;
+
+    public FederatedSearchResultType() {
+
+    }
+
+    public FederatedSearchResultType(String catalogueURL, SearchResultsType searchResult) {
+        super(catalogueURL);
+        this.searchResult = searchResult;
+    }
 
     /**
      * Obtient la valeur de la propriété searchResult.
@@ -61,6 +69,7 @@ public class FederatedSearchResultType
      *     {@link SearchResultsType }
      *
      */
+    @Override
     public SearchResultsType getSearchResult() {
         return searchResult;
     }
@@ -77,4 +86,19 @@ public class FederatedSearchResultType
         this.searchResult = value;
     }
 
+    @Override
+    public int getMatched() {
+        if (searchResult != null) {
+            return searchResult.getNumberOfRecordsMatched();
+        }
+        return 0;
+    }
+
+    @Override
+    public int getReturned() {
+        if (searchResult != null) {
+            return searchResult.getNumberOfRecordsReturned();
+        }
+        return 0;
+    }
 }

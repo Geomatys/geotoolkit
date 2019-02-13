@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.csw.xml.FederatedSearchResultBase;
 
 
 /**
@@ -48,11 +49,19 @@ import javax.xml.bind.annotation.XmlType;
     FederatedExceptionType.class,
     FederatedSearchResultType.class
 })
-public abstract class FederatedSearchResultBaseType {
+public abstract class FederatedSearchResultBaseType implements FederatedSearchResultBase {
 
     @XmlAttribute(name = "catalogueURL", required = true)
     @XmlSchemaType(name = "anyURI")
     protected String catalogueURL;
+
+    public FederatedSearchResultBaseType() {
+
+    }
+
+    public FederatedSearchResultBaseType(String catalogueURL) {
+        this.catalogueURL = catalogueURL;
+    }
 
     /**
      * Obtient la valeur de la propriété catalogueURL.

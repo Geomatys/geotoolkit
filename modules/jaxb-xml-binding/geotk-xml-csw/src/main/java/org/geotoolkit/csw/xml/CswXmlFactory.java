@@ -365,14 +365,38 @@ public class CswXmlFactory {
     }
 
     public static SearchResults createSearchResults(final String version, final String resultSetId, final ElementSetType elementSet, final int numberOfResultMatched,
-            final List<Object> records, final Integer numberOfRecordsReturned, final int nextRecord) {
+            final List<Object> records, final Integer numberOfRecordsReturned, final int nextRecord, final List<FederatedSearchResultBase> federatedResults) {
 
-        if ("2.0.2".equals(version)) {
-            return new org.geotoolkit.csw.xml.v202.SearchResultsType(resultSetId, elementSet, numberOfResultMatched, records, numberOfRecordsReturned, nextRecord);
-        } else if ("2.0.0".equals(version)) {
-            return new org.geotoolkit.csw.xml.v200.SearchResultsType(resultSetId, elementSet, numberOfResultMatched, records, numberOfRecordsReturned, nextRecord);
+        if ("2.0.2".equals(version) || "2.0.0".equals(version)) {
+            // before 3.0 version, federated results are aggregated with normal results
+            for (FederatedSearchResultBase federated : federatedResults) {
+                if (federated instanceof FederatedSearchResult) {
+                    FederatedSearchResult federatedResult = (FederatedSearchResult) federated;
+                    if (federatedResult.getSearchResult() != null) {
+                        records.addAll(federatedResult.getSearchResult().getAny());
+                    }
+                }
+            }
+
+            if ("2.0.2".equals(version)) {
+                return new org.geotoolkit.csw.xml.v202.SearchResultsType(resultSetId, elementSet, numberOfResultMatched, records, numberOfRecordsReturned, nextRecord);
+            } else if ("2.0.0".equals(version)) {
+                return new org.geotoolkit.csw.xml.v200.SearchResultsType(resultSetId, elementSet, numberOfResultMatched, records, numberOfRecordsReturned, nextRecord);
+            }
+            // can not happen
+            return null;
         } else if ("3.0.0".equals(version)) {
-            return new org.geotoolkit.csw.xml.v300.SearchResultsType(resultSetId, elementSet, numberOfResultMatched, records, numberOfRecordsReturned, nextRecord);
+            final List<org.geotoolkit.csw.xml.v300.FederatedSearchResultBaseType> federatedResults300 = new ArrayList<>();
+            if (federatedResults != null) {
+                for (FederatedSearchResultBase sc : federatedResults) {
+                    if (sc instanceof org.geotoolkit.csw.xml.v300.FederatedSearchResultBaseType) {
+                        federatedResults300.add((org.geotoolkit.csw.xml.v300.FederatedSearchResultBaseType)sc);
+                    } else {
+                        throw new IllegalArgumentException("bad version of federated results.");
+                    }
+                }
+            }
+            return new org.geotoolkit.csw.xml.v300.SearchResultsType(resultSetId, elementSet, numberOfResultMatched, records, numberOfRecordsReturned, nextRecord, federatedResults300);
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
         }
@@ -785,6 +809,44 @@ public class CswXmlFactory {
             return null;
         } else if ("3.0.0".equals(version)) {
             return new org.geotoolkit.csw.xml.v300.InsertResultType(briefRecord, handleRef);
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+
+    public static FederatedSearchException buildFederatedSearchException(String version, String catalogueURL, ExceptionResponse ex) {
+        if ("2.0.2".equals(version)) {
+            if (ex != null && !(ex instanceof org.geotoolkit.ows.xml.v100.ExceptionReport)) {
+                throw new IllegalArgumentException("bad version of exception.");
+            }
+            return new org.geotoolkit.csw.xml.v202.InternalFederatedSearchException((org.geotoolkit.ows.xml.v100.ExceptionReport)ex);
+        } else if ("2.0.0".equals(version)){
+            // dont exist ???????
+            return null;
+        } else if ("3.0.0".equals(version)) {
+            if (ex != null && !(ex instanceof org.geotoolkit.ows.xml.v200.ExceptionReport)) {
+                throw new IllegalArgumentException("bad version of exception.");
+            }
+            return new org.geotoolkit.csw.xml.v300.FederatedExceptionType(catalogueURL, (org.geotoolkit.ows.xml.v200.ExceptionReport)ex);
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+
+    public static FederatedSearchResult buildFederatedSearchResult(String version, String catalogueURL, SearchResults sr) {
+        if ("2.0.2".equals(version)) {
+            if (sr != null && !(sr instanceof org.geotoolkit.csw.xml.v202.SearchResultsType)) {
+                throw new IllegalArgumentException("bad version of exception.");
+            }
+            return new org.geotoolkit.csw.xml.v202.InternalFederatedSearchResult((org.geotoolkit.csw.xml.v202.SearchResultsType)sr);
+        } else if ("2.0.0".equals(version)){
+            // dont exist ???????
+            return null;
+        } else if ("3.0.0".equals(version)) {
+            if (sr != null && !(sr instanceof org.geotoolkit.csw.xml.v300.SearchResultsType)) {
+                throw new IllegalArgumentException("bad version of exception.");
+            }
+            return new org.geotoolkit.csw.xml.v300.FederatedSearchResultType(catalogueURL, (org.geotoolkit.csw.xml.v300.SearchResultsType)sr);
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
         }

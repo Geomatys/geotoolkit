@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.csw.xml.FederatedSearchException;
 import org.geotoolkit.ows.xml.v200.ExceptionReport;
 
 /**
@@ -48,12 +49,27 @@ import org.geotoolkit.ows.xml.v200.ExceptionReport;
 @XmlType(name = "FederatedExceptionType", propOrder = {
     "exceptionReport"
 })
-public class FederatedExceptionType
-    extends FederatedSearchResultBaseType
-{
+public class FederatedExceptionType extends FederatedSearchResultBaseType implements FederatedSearchException {
 
     @XmlElement(name = "ExceptionReport", namespace = "http://www.opengis.net/ows/2.0", required = true)
     protected List<ExceptionReport> exceptionReport;
+
+    public FederatedExceptionType() {
+
+    }
+
+    public FederatedExceptionType(String catalogueURL, List<ExceptionReport> exceptionReport) {
+        super(catalogueURL);
+        this.exceptionReport = exceptionReport;
+    }
+
+    public FederatedExceptionType(String catalogueURL, ExceptionReport exceptionReport) {
+        super(catalogueURL);
+        if (exceptionReport != null) {
+            this.exceptionReport = new ArrayList<>();
+            this.exceptionReport.add(exceptionReport);
+        }
+    }
 
     /**
      * Gets the value of the exceptionReport property.
@@ -79,9 +95,19 @@ public class FederatedExceptionType
      */
     public List<ExceptionReport> getExceptionReport() {
         if (exceptionReport == null) {
-            exceptionReport = new ArrayList<ExceptionReport>();
+            exceptionReport = new ArrayList<>();
         }
         return this.exceptionReport;
+    }
+
+    @Override
+    public int getMatched() {
+        return 0;
+    }
+
+    @Override
+    public int getReturned() {
+        return 0;
     }
 
 }

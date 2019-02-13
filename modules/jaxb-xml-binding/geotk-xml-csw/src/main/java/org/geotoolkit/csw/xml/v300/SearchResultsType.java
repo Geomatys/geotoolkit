@@ -157,6 +157,29 @@ public class SearchResultsType implements SearchResults {
         }
     }
 
+    public SearchResultsType(final String resultSetId, final ElementSetType elementSet, final int numberOfResultMatched,
+            final List<Object> records, final Integer numberOfRecordsReturned, final int nextRecord, List<FederatedSearchResultBaseType> federatedSearchResults) {
+        this.resultSetId             = resultSetId;
+        this.numberOfRecordsMatched  = numberOfResultMatched;
+        this.numberOfRecordsReturned = numberOfRecordsReturned;
+        this.nextRecord              = nextRecord;
+        this.any                     = records;
+        if (elementSet != null) {
+            this.elementSet          = elementSet.value();
+        }
+        if (federatedSearchResults != null) {
+            this.federatedSearchResultBase = new ArrayList<>();
+            ObjectFactory factory = new ObjectFactory();
+            for (FederatedSearchResultBaseType federatedSearchResult : federatedSearchResults) {
+                if (federatedSearchResult instanceof FederatedExceptionType) {
+                    this.federatedSearchResultBase.add(factory.createFederatedException((FederatedExceptionType) federatedSearchResult));
+                } else if (federatedSearchResult instanceof FederatedSearchResultType) {
+                    this.federatedSearchResultBase.add(factory.createFederatedSearchResult((FederatedSearchResultType) federatedSearchResult));
+                }
+            }
+        }
+    }
+
     /**
      * Gets the value of the abstractRecord property.
      *
@@ -249,6 +272,16 @@ public class SearchResultsType implements SearchResults {
             federatedSearchResultBase = new ArrayList<>();
         }
         return this.federatedSearchResultBase;
+    }
+
+    public List<FederatedSearchResultBaseType> getFederatedSearchResults() {
+        List<FederatedSearchResultBaseType> results = new ArrayList<>();
+        if (federatedSearchResultBase != null) {
+            for (JAXBElement<? extends FederatedSearchResultBaseType> fsr : federatedSearchResultBase) {
+                results.add(fsr.getValue());
+            }
+        }
+        return results;
     }
 
     /**
