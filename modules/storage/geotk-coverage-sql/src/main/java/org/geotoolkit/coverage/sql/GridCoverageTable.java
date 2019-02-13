@@ -30,11 +30,13 @@ import java.time.Instant;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.internal.metadata.AxisDirections;
 import org.apache.sis.internal.referencing.j2d.IntervalRectangle;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 
 
 /**
@@ -144,7 +146,7 @@ final class GridCoverageTable extends Table {
             final int d = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), horizontalCRS.getCoordinateSystem());
             IntervalRectangle area = new IntervalRectangle(areaOfInterest.getMinimum(d), areaOfInterest.getMinimum(d + 1),
                                                            areaOfInterest.getMaximum(d), areaOfInterest.getMaximum(d + 1));
-            extentWKT = gridGeometries.geographicAreaWKT(area, null, horizontalCRS);
+            extentWKT = gridGeometries.geographicAreaWKT(area, (MathTransform2D) MathTransforms.identity(2), horizontalCRS);
         } else {
             throw new CatalogException("Horizontal CRS not identified in " + crs.getName().getCode());
         }
