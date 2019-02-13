@@ -19,8 +19,10 @@ package org.geotoolkit.coverage.sql;
 
 import java.awt.Shape;
 import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.PathIterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -50,6 +52,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.internal.feature.Geometries;
+import org.apache.sis.internal.referencing.Formulas;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -64,6 +67,7 @@ import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.referencing.j2d.IntervalRectangle;
 import org.apache.sis.internal.util.Constants;
+import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ComparisonMode;
@@ -85,6 +89,19 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
      * Name of this table in the database.
      */
     static final String TABLE = "GridGeometries";
+
+    /**
+     * Approximate precision of geometries inserted in the database, in decimal degrees. This is the maximal
+     * error tolerated when flattening curves as straight lines, and is also the factor by which to expand
+     * the geometries in compensation for that error. Current value corresponds to about 1 km.
+     */
+    private static final double ANGULAR_PRECISION = Formulas.ANGULAR_TOLERANCE * (1000 / Formulas.LINEAR_TOLERANCE);
+
+    /**
+     * An area in the range of valid longitude and latitude values. Used for computing intersections.
+     */
+    private static final Area GEOGRAPHIC_AREA = new Area(new IntervalRectangle(
+            Longitude.MIN_VALUE, Latitude.MIN_VALUE, Longitude.MAX_VALUE, Latitude.MAX_VALUE));
 
     /**
      * Tables of additional axes, created when first needed.
@@ -228,7 +245,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                 statement.setNull(11, Types.ARRAY);
             }
             if (insert) {
-                statement.setString(12, geographicArea.call());
+                statement.setString(12, geographicArea.call());         // Call geographicAreaWKT(…).
                 if (statement.executeUpdate() == 0) {
                     continue;                                           // Should never happen, but we are paranoiac.
                 }
@@ -261,30 +278,75 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
             gridToCRS = (MathTransform2D) MathTransforms.concatenate(gridToCRS, op.getMathTransform());
         }
         area = gridToCRS.createTransformedShape(area);
-        final RectangularShape bounds = (area instanceof RectangularShape) ? (RectangularShape) area : area.getBounds2D();
+        RectangularShape bounds = (area instanceof RectangularShape) ? (RectangularShape) area : area.getBounds2D();
         final boolean mergeLeft  = bounds.getMinX() < Longitude.MIN_VALUE;
         final boolean mergeRight = bounds.getMaxX() > Longitude.MAX_VALUE;
+        Area merged = null;
         if (mergeLeft | mergeRight) {
-            final Area mask = new Area(new IntervalRectangle(Longitude.MIN_VALUE, bounds.getMinY(),
-                                                             Longitude.MAX_VALUE, bounds.getMaxY()));
-            final Area merged = new Area(area);
-            Area left = null, right = null;
-            if (mergeLeft) {
-                left = new Area(merged);
-                left.transform(AffineTransform.getTranslateInstance(Longitude.MAX_VALUE - Longitude.MIN_VALUE, 0));
-                left.intersect(mask);
+            if (bounds.getWidth() >= Longitude.MAX_VALUE - Longitude.MIN_VALUE) {
+                area = bounds = new IntervalRectangle(Longitude.MIN_VALUE, Math.max(Latitude.MIN_VALUE, bounds.getMinY()),
+                                                      Longitude.MAX_VALUE, Math.min(Latitude.MAX_VALUE, bounds.getMaxY()));
+            } else {
+                merged = new Area(area);
+                if (mergeLeft)  add(area, Longitude.MAX_VALUE - Longitude.MIN_VALUE, merged);
+                if (mergeRight) add(area, Longitude.MIN_VALUE - Longitude.MAX_VALUE, merged);
+                merged.intersect(GEOGRAPHIC_AREA);
+                area = merged;
+                bounds = null;
             }
-            if (mergeRight) {
-                right = new Area(merged);
-                right.transform(AffineTransform.getTranslateInstance(Longitude.MIN_VALUE - Longitude.MAX_VALUE, 0));
-                right.intersect(mask);
+        }
+        /*
+         * If the shape has curves, we may have an error of up to ANGULAR_PRECISION due to the flattening of curves.
+         * Expand the shape by this amount as an attempt to compensate that error. Note that we are applying a scale,
+         * not a buffer, so this hack may not work in all cases.
+         */
+        if (hasCurves(area)) {                              // Curves may be created as a result of map projections.
+            if (bounds == null) {
+                bounds = area.getBounds2D();
             }
-            if (left  != null) merged.add(left);
-            if (right != null) merged.add(right);
-            merged.intersect(mask);
+            final double cx = bounds.getCenterX();
+            final double cy = bounds.getCenterY();
+            final AffineTransform at = AffineTransform.getTranslateInstance(cx, cy);
+            at.scale(1 + 2*ANGULAR_PRECISION / bounds.getWidth(), 1 + 2*ANGULAR_PRECISION / bounds.getHeight());
+            at.translate(-cx, -cy);
+            if (merged == null) {
+                merged = new Area(area);
+            }
+            merged.transform(at);
+            merged.intersect(GEOGRAPHIC_AREA);
             area = merged;
         }
-        return Geometries.formatWKT(area, 0.01);         // Tolerance of about 1 km.
+        return Geometries.formatWKT(area, ANGULAR_PRECISION);
+    }
+
+    /**
+     * Adds the given shape, after translation, to the given area.
+     *
+     * @param source       the shape to add.
+     * @param translation  the translation to apply on X axis before to add the shape to the area.
+     * @param target       the area where to add the given shape.
+     */
+    private static void add(Shape source, final double translation, final Area target) {
+        source = AffineTransform.getTranslateInstance(translation, 0).createTransformedShape(source);
+        target.add(new Area(source));
+    }
+
+    /**
+     * Returns {@code true} if the given shape contains at least one curve.
+     */
+    private static boolean hasCurves(final Shape shape) {
+        if (!(shape instanceof Rectangle2D)) {                  // Optimization for a common case.
+            final PathIterator it = shape.getPathIterator(null);
+            final float[] coords = new float[6];
+            while (!it.isDone()) {
+                switch (it.currentSegment(coords)) {
+                    case PathIterator.SEG_QUADTO:
+                    case PathIterator.SEG_CUBICTO: return true;
+                }
+                it.next();
+            }
+        }
+        return false;
     }
 
     /**
