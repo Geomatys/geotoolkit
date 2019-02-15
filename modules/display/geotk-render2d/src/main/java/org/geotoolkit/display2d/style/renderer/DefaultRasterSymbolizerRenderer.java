@@ -49,6 +49,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.grid.*;
@@ -88,7 +89,7 @@ import org.geotoolkit.processing.coverage.statistics.Statistics;
 import org.geotoolkit.processing.image.bandselect.BandSelectDescriptor;
 import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
 import org.geotoolkit.referencing.operation.transform.EarthGravitationalModel;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
@@ -107,6 +108,7 @@ import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
@@ -491,17 +493,25 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             if (!defaultStyleIsNeeded(sampleMod, riColorModel))
                 break recolorCase;
 
-            final CoverageDescription covRefMetadata = ref.getCoverageDescription();
 
-            ImageStatistics analyse = null;
+            final Metadata metadata;
+            try {
+                metadata = ref.getMetadata();
+            } catch (DataStoreException ex) {
+                throw new IOException("Cannot fetch metadata from input resource.", ex);
+            }
 
-            if (covRefMetadata != null)
-                analyse = ImageStatistics.transform(covRefMetadata);
+            ImageStatistics analyse = metadata.getContentInfo().stream()
+                    .filter(CoverageDescription.class::isInstance)
+                    .map(info -> ImageStatistics.transform((CoverageDescription) info))
+                    .findFirst()
+                    .orElse(null);
 
             // TODO : we should analyze a subset of the entire image instead, to
             // ensure consistency over tiled rendering (cf. OpenLayer/WMS).
             if (analyse == null)
                 analyse = Statistics.analyse(ri, true);
+
 
             final int nbBands = sampleMod.getNumBands();
             if (nbBands < 3) {

@@ -18,12 +18,11 @@ package org.geotoolkit.map;
 
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.apache.sis.storage.GridCoverageResource;
 
 /**
  * An elevation model of elevation values.<br/>
@@ -38,7 +37,7 @@ public class ElevationModel {
     /**
      * {@link GridCoverageReader} which contain DEM altitude values.
      */
-    private final GridCoverageReader coverage;
+    private final GridCoverageResource coverage;
 
     /**
      * Coefficient (or factor) in per cent to controle shadow length spread
@@ -90,7 +89,7 @@ public class ElevationModel {
     public ElevationModel(final GridCoverageResource ref, final double azimuth, final double altitude,
                           final double scale, final AxisDirection axisDirection) throws CoverageStoreException {
         ArgumentChecks.ensureNonNull("CoverageReference", ref);
-        this.coverage = ref.acquireReader();
+        this.coverage = ref;
         this.azimuth  = azimuth;
         this.altitude = altitude;
         this.scale    = scale;
@@ -107,7 +106,7 @@ public class ElevationModel {
      *
      * @return angle between Origin to North axis and light source.
      */
-    public GridCoverageReader getCoverageReader() {
+    public GridCoverageResource getCoverageReader() {
         return coverage;
     }
 

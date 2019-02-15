@@ -39,7 +39,6 @@ import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.amended.AmendedCoverageResource;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.internal.coverage.ColoredCategory;
@@ -47,7 +46,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.coverage.SampleDimensionType;
 import org.opengis.feature.FeatureType;
@@ -132,10 +131,8 @@ public class FXLayerStructure extends FXPropertyPane {
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
             final GridCoverageResource ref = cml.getCoverageReference();
             try {
-                final GridCoverageReader reader = ref.acquireReader();
-                final GridGeometry gridgeom = reader.getGridGeometry();
-                final List<SampleDimension> dimensions = reader.getSampleDimensions();
-                ref.recycle(reader);
+                final GridGeometry gridgeom = ref.getGridGeometry();
+                final List<SampleDimension> dimensions = ref.getSampleDimensions();
 
                 // GRID GEOMETRY PART //////////////////////////////////////////
                 sb.append("<h1>").append("Grid geometry").append("</h1><br/>");

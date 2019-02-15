@@ -26,6 +26,7 @@ import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -36,8 +37,6 @@ import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.feature.FeatureType;
-import org.opengis.metadata.quality.CoverageResult;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Utility class to create MapLayers, MapContexts and Elevation models from different sources.

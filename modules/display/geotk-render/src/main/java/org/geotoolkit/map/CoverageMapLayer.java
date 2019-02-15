@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.map;
 
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.apache.sis.storage.GridCoverageResource;
 
 /**
  * MapLayer handeling coverages.

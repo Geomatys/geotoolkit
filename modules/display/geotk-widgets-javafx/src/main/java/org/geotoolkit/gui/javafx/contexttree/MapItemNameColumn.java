@@ -182,17 +182,20 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
 
     }
 
-    public static Image getTypeIcon(MapItem mapItem){
-        if(mapItem instanceof FeatureMapLayer){
+    public static Image getTypeIcon(MapItem mapItem) {
+        if (mapItem instanceof FeatureMapLayer) {
             return ICON_VECTOR;
-        }else if(mapItem instanceof CoverageMapLayer){
-            final DataStore store = ((CoverageMapLayer)mapItem).getCoverageReference().getStore();
-            if(store!=null && store.getProvider() instanceof ClientFactory){
-                return ICON_SERVICE;
-            }else{
-                return ICON_RASTER;
+        } else if (mapItem instanceof CoverageMapLayer) {
+            final org.apache.sis.storage.GridCoverageResource ref = ((CoverageMapLayer) mapItem).getCoverageReference();
+            if (ref instanceof GridCoverageResource) {
+                final DataStore store = ((GridCoverageResource) ref).getStore();
+                if (store != null && store.getProvider() instanceof ClientFactory) {
+                    return ICON_SERVICE;
+                }
             }
-        }else{
+            return ICON_RASTER;
+
+        } else {
             //container
             return ICON_FOLDER;
         }

@@ -18,8 +18,6 @@
 package org.geotoolkit.gui.javafx.chooser;
 
 import java.awt.Color;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -62,7 +60,12 @@ public class ResourceNameColumn extends TreeTableColumn<Resource,String>{
             @Override
             public ObservableValue<String> call(CellDataFeatures<Resource, String> param) {
                 try {
-                    return new SimpleObjectProperty<>(MetadataUtilities.getIdentifier(param.getValue().getValue().getMetadata()));
+                    final Resource r = param.getValue().getValue();
+                    String id = MetadataUtilities.getIdentifier(r.getMetadata());
+                    if (id == null || (id = id.trim()).isEmpty()) {
+                        id = r.getIdentifier().toString();
+                    }
+                    return new SimpleObjectProperty<>(id);
                 } catch (DataStoreException ex) {
                    return new SimpleObjectProperty<>(ex.getMessage());
                 }

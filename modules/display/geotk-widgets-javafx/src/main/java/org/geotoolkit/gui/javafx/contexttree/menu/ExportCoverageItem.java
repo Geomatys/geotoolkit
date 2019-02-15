@@ -94,13 +94,19 @@ public class ExportCoverageItem extends TreeMenuItem {
                     final DirectoryChooser chooser = new DirectoryChooser();
                     chooser.setTitle(GeotkFX.getString(ExportFeatureSetItem.class, "folder"));
                     final File folder = chooser.showDialog(null);
-                    final GridCoverageResource base = layer.getCoverageReference();
 
                     if (folder != null) {
 
                         GridCoverageReader reader = null;
                         ImageCoverageWriter writer = null;
                         try {
+
+                            org.apache.sis.storage.GridCoverageResource sisRef = layer.getCoverageReference();
+                            if (!(sisRef instanceof GridCoverageResource)) {
+                                throw new DataStoreException("Data loaded from SIS drivers are not supported for now.");
+                            }
+                            final GridCoverageResource base = (GridCoverageResource) sisRef;
+
                             final FeatureType baseType = base.getType();
                             final GenericName baseName = baseType.getName();
 
