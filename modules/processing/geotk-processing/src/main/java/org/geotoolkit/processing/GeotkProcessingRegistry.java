@@ -133,6 +133,8 @@ public class GeotkProcessingRegistry extends AbstractProcessingRegistry {
                 org.geotoolkit.processing.metadata.merge.MergeDescriptor.INSTANCE,
                 //referencing
                 org.geotoolkit.processing.referencing.createdb.CreateDBDescriptor.INSTANCE,
+                // science
+                new org.geotoolkit.processing.science.drift.v2.PredictorDescriptor(IDENTIFICATION),
                 //string
                 org.geotoolkit.processing.string.ConcatDescriptor.INSTANCE,
                 //vector

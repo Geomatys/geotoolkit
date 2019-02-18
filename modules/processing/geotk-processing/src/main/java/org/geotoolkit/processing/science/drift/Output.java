@@ -25,7 +25,7 @@ import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.Variable;
 
 
-final class Output {
+public final class Output {
     /**
      * Whether the output probability should use a logarithmic scale.
      */
@@ -37,7 +37,7 @@ final class Output {
 
     private final float min, max;
 
-    Output(final double[] data, final int w, final int h) {
+    public Output(final double[] data, final int w, final int h) {
         int xmin = w;
         int ymin = h;
         int xmax = 0;
@@ -104,7 +104,7 @@ final class Output {
      * @param outputs    list of data per day, except the last element which must be the overall data.
      * @param startTime  start time in milliseconds since Java epoch.
      */
-    static void write(final List<Output> outputs, final CoordinateReferenceSystem dataCRS, final long startTime,
+    public static void write(final List<Output> outputs, final CoordinateReferenceSystem dataCRS, final long startTime,
             final double prjX, final double prjY, final double resolutionX, final double resolutionY,
             final String outputPath)
             throws IOException, InvalidRangeException
@@ -188,5 +188,15 @@ final class Output {
                 CommonCRS.Temporal.JULIAN.crs().getCoordinateSystem()
         );
         return new DefaultCompoundCRS(Collections.singletonMap("name", "perDayCRS"), horizontalComponent, timeCRS);
+    }
+
+    public static void writeSnapshots(final Path outputDir, final List<Output> outputs) throws IOException {
+        for (int i=0; i<outputs.size(); i++) {
+            String filename = "overall.png";
+            if (i != outputs.size() - 1) {
+                filename = "day-" + (i+1) + ".png";
+            }
+            outputs.get(i).writePNG(outputDir, filename);
+        }
     }
 }
