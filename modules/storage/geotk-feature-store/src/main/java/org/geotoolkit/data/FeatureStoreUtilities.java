@@ -45,6 +45,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataSet;
+import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.apache.sis.util.logging.Logging;
@@ -66,7 +67,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
 /**
- * Convinient methods to manipulate FeatureStore and FeatureCollection.
+ * Convenient methods to manipulate FeatureStore and FeatureCollection.
  *
  * @author Johann Sorel (Geomatys)
  * @module
@@ -96,7 +97,10 @@ public class FeatureStoreUtilities {
         return col;
     }
 
-    public static FeatureCollection collection(final String id, FeatureType type){
+    public static FeatureCollection collection(final String id, final FeatureType type) {
+        ArgumentChecks.ensureNonNull("Collection id", id);
+        ArgumentChecks.ensureNonEmpty("Collection id", id);
+        ArgumentChecks.ensureNonNull("Collection type", type);
         final NamedIdentifier ident = new NamedIdentifier(NamesExt.create(id));
         return collection(ident, type);
     }
