@@ -33,6 +33,10 @@ public class WithinType extends BinarySpatialOpType {
 
     }
 
+    public WithinType(String propertyName, Object geometry) {
+        super(propertyName, geometry);
+    }
+
     public WithinType(final WithinType that) {
         super(that);
     }

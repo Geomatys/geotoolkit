@@ -24,6 +24,10 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v212.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v212.BoxType;
+import org.geotoolkit.ogc.xml.v200.InternalPropertyName;
+import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.spatial.BinarySpatialOperator;
 
 
 /**
@@ -56,7 +60,7 @@ import org.geotoolkit.gml.xml.v212.BoxType;
     "geometry",
     "box"
 })
-public abstract class BinarySpatialOpType extends SpatialOpsType {
+public abstract class BinarySpatialOpType extends SpatialOpsType implements BinarySpatialOperator {
 
     @XmlElement(name = "PropertyName", required = true)
     private PropertyNameType propertyName;
@@ -67,6 +71,22 @@ public abstract class BinarySpatialOpType extends SpatialOpsType {
 
     public BinarySpatialOpType() {
 
+    }
+
+    public BinarySpatialOpType(String propertyName, Object geometry) {
+        if (propertyName != null) {
+            this.propertyName = new PropertyNameType(propertyName);
+        }
+        if (geometry instanceof AbstractGeometryType) {
+            final AbstractGeometryType geom = (AbstractGeometryType) geometry;
+            this.geometry = geom.getXmlElement();
+        } else if (geometry instanceof BoxType) {
+            this.box = (BoxType) geometry;
+
+         // TODO handle direct JAXB element
+        } else {
+            throw new IllegalArgumentException("Unexpected geometry type.");
+        }
     }
 
     public BinarySpatialOpType(final BinarySpatialOpType that) {
@@ -135,5 +155,32 @@ public abstract class BinarySpatialOpType extends SpatialOpsType {
     @Override
     public SpatialOpsType getClone() {
         throw new UnsupportedOperationException("Must be overriden by sub-class");
+    }
+
+    @Override
+    public boolean evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+     public Expression getExpression1() {
+        return propertyName;
+    }
+
+    @Override
+    public Expression getExpression2() {
+        if (geometry != null) {
+            if (geometry.getValue() instanceof Expression) {
+                return (Expression)geometry.getValue();
+            } else if (geometry.getValue() != null){
+                throw new IllegalArgumentException("The object:" + geometry.getValue() + "can be casted as an Expression");
+            }
+        }
+        return null;
     }
 }

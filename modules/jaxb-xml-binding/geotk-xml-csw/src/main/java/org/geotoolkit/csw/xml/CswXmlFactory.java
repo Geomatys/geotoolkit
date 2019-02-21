@@ -861,6 +861,27 @@ public class CswXmlFactory {
             throw new IllegalArgumentException("unsupported version:" + version);
         }
     }
+    public static String getFilterVersion(final String version) {
+        if ("2.0.2".equals(version) | "2.0.0".equals(version)){
+            return "1.1.0";
+        } else if ("3.0.0".equals(version)) {
+            return "2.0.0";
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+
+    public static String getGmlVersion(final String version) {
+        if ("2.0.2".equals(version)) {
+            return "3.1.1";
+        } else if ("2.0.0".equals(version)){
+            return "2.1.2";
+        } else if ("3.0.0".equals(version)) {
+            return "3.2.1";
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
 
     public static ExceptionResponse buildExceptionReport(String version, final String exceptionText, final String exceptionCode, final String locator, final String exVersion) {
         return OWSXmlFactory.buildExceptionReport(getOwsVersion(version), exceptionText, exceptionCode, locator, exVersion);

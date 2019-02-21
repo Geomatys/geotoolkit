@@ -25,7 +25,8 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.BinaryLogicOperator;
-import org.geotoolkit.ogc.xml.XMLFilter;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterVisitor;
 
 
 /**
@@ -54,7 +55,7 @@ import org.geotoolkit.ogc.xml.XMLFilter;
 @XmlType(name = "BinaryLogicOpType", propOrder = {
     "comparisonOpsOrSpatialOpsOrLogicOps"
 })
-public abstract class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperator{
+public abstract class BinaryLogicOpType extends LogicOpsType implements org.opengis.filter.BinaryLogicOperator, BinaryLogicOperator {
 
     @XmlElementRefs({
         @XmlElementRef(name = "comparisonOps", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class),
@@ -168,4 +169,22 @@ public abstract class BinaryLogicOpType extends LogicOpsType implements BinaryLo
         return result;
     }
 
+    @Override
+    public List<Filter> getChildren() {
+        List<Filter> result = new ArrayList<>();
+        for (JAXBElement jb: getComparisonOpsOrSpatialOpsOrLogicOps()) {
+            result.add((Filter)jb.getValue());
+        }
+        return result;
+    }
+
+    @Override
+    public boolean evaluate(Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object accept(FilterVisitor fv, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

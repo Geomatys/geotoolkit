@@ -30,7 +30,6 @@ import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.XMLLiteral;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -141,6 +140,19 @@ public class LiteralType implements XMLLiteral {
     @Override
     public void setContent(final List<Object> content) {
         this.content = content;
+    }
+
+    /**
+     * The more often we just want to get a single String value.
+     * This method return the first object of the list and cast it in String (if its possible).
+     */
+    public String getStringValue() {
+        if (content != null && !content.isEmpty()) {
+            if (content.get(0) instanceof String) {
+                return (String)content.get(0);
+            }
+        }
+        return null;
     }
 
     /**

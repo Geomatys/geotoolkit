@@ -251,27 +251,31 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
 
     @Override
     public Expression getExpression1() {
-        if (expression != null && expression.getValue() instanceof Expression) {
-            return (Expression)expression.getValue();
+        if (expression != null && expression.getValue() != null) {
+            if (expression.getValue() instanceof Expression) {
+                return (Expression)expression.getValue();
+            } else if (expression.getValue() instanceof String) {
+                return new InternalPropertyName((String)expression.getValue());
+            }
         }
         return null;
     }
 
     @Override
     public Expression getExpression2() {
-        if (expression != null) {
-            if (expression.getValue() instanceof Expression) {
-                return (Expression)expression.getValue();
-            } else if (expression.getValue() != null){
-                throw new IllegalArgumentException("The object:" + expression.getValue() + "can be casted as an Expression");
-            }
-        }
         final Object a = getAny();
         if (a != null) {
             if (a instanceof Expression) {
                 return (Expression)a;
             } else {
                 throw new IllegalArgumentException("The object:" + a + "can be casted as an Expression");
+            }
+        }
+        if (expression != null) {
+            if (expression.getValue() instanceof Expression) {
+                return (Expression)expression.getValue();
+            } else if (expression.getValue() != null){
+                throw new IllegalArgumentException("The object:" + expression.getValue() + "can be casted as an Expression");
             }
         }
         return null;

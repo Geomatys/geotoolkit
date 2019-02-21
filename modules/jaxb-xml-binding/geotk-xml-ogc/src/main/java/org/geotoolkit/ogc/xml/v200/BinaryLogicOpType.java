@@ -99,12 +99,35 @@ public abstract class BinaryLogicOpType extends LogicOpsType implements BinaryLo
              } else if (obj instanceof AbstractIdType) {
                  this.comparisonOpsOrSpatialOpsOrTemporalOps.add(FilterType.createIdOps((AbstractIdType) obj));
 
+             // temporal
+             } else if (obj instanceof TemporalOpsType) {
+                 this.comparisonOpsOrSpatialOpsOrTemporalOps.add(FilterType.createTemporalOps((TemporalOpsType) obj));
+
+             // filter
+             } else if (obj instanceof FilterType) {
+                 treatFilter((FilterType)obj);
+
              } else {
                  throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
              }
          }
 
      }
+
+     private void treatFilter(final FilterType filter) {
+         if (filter.getComparisonOps() != null) {
+            this.comparisonOpsOrSpatialOpsOrTemporalOps.add(filter.getComparisonOps());
+         }
+         if (filter.getLogicOps() != null) {
+            this.comparisonOpsOrSpatialOpsOrTemporalOps.add(filter.getLogicOps());
+         }
+         if (filter.getSpatialOps() != null) {
+            this.comparisonOpsOrSpatialOpsOrTemporalOps.add(filter.getSpatialOps());
+         }
+         if (filter.getTemporalOps()!= null) {
+            this.comparisonOpsOrSpatialOpsOrTemporalOps.add(filter.getTemporalOps());
+         }
+    }
 
      /**
       * Build a new Binary logic operator

@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.PropertyIsNull;
+import org.opengis.filter.expression.Expression;
 
 
 /**
@@ -51,13 +53,20 @@ import org.opengis.filter.FilterVisitor;
 @XmlType(name = "PropertyIsNullType", propOrder = {
     "expression"
 })
-public class PropertyIsNullType extends ComparisonOpsType {
+public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsNull {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
 
     public PropertyIsNullType() {
 
+    }
+
+    public PropertyIsNullType(String propertyName) {
+        if (propertyName != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            this.expression = factory.createValueReference(propertyName);
+        }
     }
 
     public PropertyIsNullType(final PropertyIsNullType that) {
@@ -87,6 +96,14 @@ public class PropertyIsNullType extends ComparisonOpsType {
         return null;
     }
 
+    @Override
+    public Expression getExpression() {
+        if (expression != null && expression.getValue() instanceof String) {
+            return new InternalPropertyName((String)expression.getValue());
+        }
+        return null;
+    }
+
     /**
      * Gets the value of the expression property.
      *
@@ -98,7 +115,7 @@ public class PropertyIsNullType extends ComparisonOpsType {
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
      *
      */
-    public JAXBElement<?> getExpression() {
+    public JAXBElement<?> getJbExpression() {
         return expression;
     }
 

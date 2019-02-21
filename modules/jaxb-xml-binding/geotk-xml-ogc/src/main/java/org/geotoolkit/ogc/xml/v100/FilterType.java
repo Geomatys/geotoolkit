@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.*;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.ogc.xml.XMLFilter;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
@@ -111,7 +112,7 @@ public class FilterType implements Filter, XMLFilter {
 
         // id operator
         } else if (obj instanceof FeatureIdType) {
-            this.featureId = new ArrayList<FeatureIdType>();
+            this.featureId = new ArrayList<>();
             this.featureId.add((FeatureIdType) obj);
 
         // clone
@@ -139,8 +140,10 @@ public class FilterType implements Filter, XMLFilter {
                 }
             }
 
-        } else {
+        } else if (obj != null) {
             throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
+        } else {
+            throw new NullArgumentException("Filter object must be specified");
         }
     }
 
@@ -270,7 +273,7 @@ public class FilterType implements Filter, XMLFilter {
      */
     public List<FeatureIdType> getFeatureId() {
         if (featureId == null) {
-            featureId = new ArrayList<FeatureIdType>();
+            featureId = new ArrayList<>();
         }
         return this.featureId;
     }
@@ -287,6 +290,11 @@ public class FilterType implements Filter, XMLFilter {
             return spatialOps.getValue();
         }
         return null;
+    }
+
+    @Override
+    public String getVersion() {
+        return "1.0.0";
     }
 
      /**

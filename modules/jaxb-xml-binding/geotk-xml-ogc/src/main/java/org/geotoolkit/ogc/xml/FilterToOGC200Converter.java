@@ -171,14 +171,14 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
         } else if (filter instanceof PropertyIsLike) {
             final PropertyIsLike pis = (PropertyIsLike) filter;
             final PropertyIsLikeType bot = ogc_factory.createPropertyIsLikeType();
-            bot.setEscapeChar(pis.getEscape());
+            bot.setEscape(pis.getEscape());
             final LiteralType lt = ogc_factory.createLiteralType();
             lt.setContent(pis.getLiteral());
-            bot.getExpression().add(ogc_factory.createLiteral(lt));
+            bot.getExpressions().add(ogc_factory.createLiteral(lt));
             if (!(pis.getExpression() instanceof PropertyName)) {
                 throw new IllegalArgumentException("PropertyIsLike can support PropertyName only, but was a " + pis.getExpression());
             }
-            bot.getExpression().add(0, extract(pis.getExpression()));
+            bot.getExpressions().add(0, extract(pis.getExpression()));
             bot.setSingleChar(pis.getSingleChar());
             bot.setWildCard(pis.getWildCard());
             return ogc_factory.createPropertyIsLike(bot);

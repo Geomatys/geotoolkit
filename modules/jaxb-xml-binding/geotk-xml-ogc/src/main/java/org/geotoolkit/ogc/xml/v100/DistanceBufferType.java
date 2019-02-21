@@ -23,6 +23,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v212.AbstractGeometryType;
+import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.spatial.DistanceBufferOperator;
 
 
 /**
@@ -53,7 +56,7 @@ import org.geotoolkit.gml.xml.v212.AbstractGeometryType;
     "geometry",
     "distance"
 })
-public abstract class DistanceBufferType extends SpatialOpsType {
+public abstract class DistanceBufferType extends SpatialOpsType implements DistanceBufferOperator {
 
     @XmlElement(name = "PropertyName", required = true)
     private PropertyNameType propertyName;
@@ -64,6 +67,20 @@ public abstract class DistanceBufferType extends SpatialOpsType {
 
     public DistanceBufferType() {
 
+    }
+
+
+    /**
+     * build a new Distance buffer
+     */
+    public DistanceBufferType(final String propertyName, final Object geometry, final double distance, final String unit) {
+        if (propertyName != null) {
+            this.propertyName = new PropertyNameType(propertyName);
+        }
+        this.distance       = new DistanceType(String.valueOf(distance), unit);
+        if (geometry instanceof AbstractGeometryType) {
+            this.geometry = ((AbstractGeometryType)geometry).getXmlElement();
+        }
     }
 
     public DistanceBufferType(final DistanceBufferType that) {
@@ -112,11 +129,27 @@ public abstract class DistanceBufferType extends SpatialOpsType {
         this.geometry = ((JAXBElement<? extends AbstractGeometryType> ) value);
     }
 
+    @Override
+    public double getDistance() {
+        if (distance != null && distance.getContent() != null) {
+            return Double.parseDouble(distance.getContent());
+        }
+        return 0.0;
+    }
+
+    @Override
+    public String getDistanceUnits() {
+        if (distance != null) {
+            return distance.getUnits();
+        }
+        return null;
+    }
+
     /**
      * Gets the value of the distance property.
      *
      */
-    public DistanceType getDistance() {
+    public DistanceType getDistanceType() {
         return distance;
     }
 
@@ -126,6 +159,29 @@ public abstract class DistanceBufferType extends SpatialOpsType {
      */
     public void setDistance(final DistanceType value) {
         this.distance = value;
+    }
+
+    @Override
+    public Expression getExpression1() {
+        return propertyName;
+    }
+
+    @Override
+    public Expression getExpression2() {
+        if (geometry != null) {
+            return (Expression) geometry.getValue();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

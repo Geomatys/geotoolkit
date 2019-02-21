@@ -332,10 +332,10 @@ public class OGC200toGTTransformer {
             final org.geotoolkit.ogc.xml.v200.PropertyIsLikeType property = (org.geotoolkit.ogc.xml.v200.PropertyIsLikeType) ops;
 
             final Expression expr = visitPropertyName(property.getPropertyName());
-            final String pattern = visitExpression(property.getLiteral()).toString();
+            final String pattern = visitExpression(property.getLiteralType()).toString();
             final String wild = property.getWildCard();
             final String single = property.getSingleChar();
-            final String escape = property.getEscapeChar();
+            final String escape = property.getEscape();
 
             if (OGCJAXBStatics.FILTER_COMPARISON_ISLIKE.equalsIgnoreCase(OpName)) {
                 return filterFactory.like(expr, pattern, wild, single, escape);

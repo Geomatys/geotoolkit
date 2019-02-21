@@ -114,7 +114,7 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
             }
 
             if (that.any != null) {
-                this.any = new ArrayList<Object>();
+                this.any = new ArrayList<>();
                 for (Object obj : that.any) {
                     if (obj instanceof EnvelopeType) {
                         this.any.add(new EnvelopeType((EnvelopeType)obj));

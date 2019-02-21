@@ -29,10 +29,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Beyond")
 @XmlRootElement(name = "Beyond")
-public class BeyondType extends DistanceBufferType {
+public class BeyondType extends DistanceBufferType implements org.opengis.filter.spatial.Beyond {
 
     public BeyondType() {
 
+    }
+
+    /**
+     * Build a new Beyond Type
+     */
+    public BeyondType(final String propertyName, final Object geometry, final double distance, final String unit) {
+        super(propertyName, geometry, distance, unit);
     }
 
     public BeyondType(final BeyondType that) {

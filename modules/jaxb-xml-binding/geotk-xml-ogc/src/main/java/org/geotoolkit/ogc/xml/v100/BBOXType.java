@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.v212.BoxType;
 import org.geotoolkit.gml.xml.v212.CoordType;
+import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.expression.Expression;
 
 /**
  * <p>Java class for BBOXType complex type.
@@ -51,7 +53,7 @@ import org.geotoolkit.gml.xml.v212.CoordType;
     "propertyName",
     "box"
 })
-public class BBOXType extends SpatialOpsType implements org.geotoolkit.ogc.xml.BBOX {
+public class BBOXType extends SpatialOpsType implements  org.opengis.filter.spatial.BBOX, org.geotoolkit.ogc.xml.BBOX {
 
     @XmlElement(name = "PropertyName", required = true)
     private PropertyNameType propertyName;
@@ -171,5 +173,25 @@ public class BBOXType extends SpatialOpsType implements org.geotoolkit.ogc.xml.B
     @Override
     public String getOperator() {
         return "BBOX";
+    }
+
+    @Override
+    public Expression getExpression1() {
+        return propertyName;
+    }
+
+    @Override
+    public Expression getExpression2() {
+        return new LiteralType(box);
+    }
+
+    @Override
+    public boolean evaluate(Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object accept(FilterVisitor fv, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

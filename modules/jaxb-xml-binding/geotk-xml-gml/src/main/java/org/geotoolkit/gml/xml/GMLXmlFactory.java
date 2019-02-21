@@ -31,6 +31,16 @@ import org.opengis.temporal.Period;
  */
 public class GMLXmlFactory {
 
+    public static Point buildPoint(final String version, final String id, final String crsName, final org.opengis.geometry.DirectPosition pos) {
+        if ("3.2.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v321.PointType(id, crsName, pos);
+        } else if ("3.1.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v311.PointType(id, crsName, pos);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+
     public static Point buildPoint(final String version, final String id, final org.opengis.geometry.DirectPosition pos) {
         if ("3.2.1".equals(version)) {
             return new org.geotoolkit.gml.xml.v321.PointType(id, pos);
