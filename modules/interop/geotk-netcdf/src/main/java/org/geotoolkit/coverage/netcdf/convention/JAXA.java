@@ -35,13 +35,17 @@ public final class JAXA extends Convention {
     private static final String SATELLITE_VAL = "Global Change Observation Mission - Climate (GCOM-C)";
 
     @Override
-    protected boolean isApplicableTo(Decoder decoder) {
-        return SATELLITE_VAL.equals(decoder.stringValue(SATELLITE_KEY));
+    protected boolean isApplicableTo(final Decoder decoder) {
+        final String[] path = decoder.getSearchPath();
+        decoder.setSearchPath(getSearchPath());
+        final boolean r = SATELLITE_VAL.equals(decoder.stringValue(SATELLITE_KEY));
+        decoder.setSearchPath(path);
+        return r;
     }
 
     @Override
     public String[] getSearchPath() {
-        return new String[]{"Global_attributes", "Level_1_attributes", "Processing_attributes"};
+        return new String[] {"Global_attributes", "Level_1_attributes", "Processing_attributes"};
     }
 
     @Override
@@ -61,7 +65,14 @@ public final class JAXA extends Convention {
     @Override
     public String nameOfDimension(final Variable dataOrAxis, final int index) {
         String n = super.nameOfDimension(dataOrAxis, index);
-        if ("Piexl grids".equals(n)) {
+        if (n == null) {
+            if ("QA_flag".equals(dataOrAxis.getName())) {
+                switch (index) {
+                    case 0: n = "Line grids";  break;
+                    case 1: n = "Pixel grids"; break;
+                }
+            }
+        } else if ("Piexl grids".equals(n)) {
             n = "Pixel grids";
         }
         return n;
