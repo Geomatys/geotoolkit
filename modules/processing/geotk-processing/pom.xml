@@ -93,7 +93,7 @@
         </dependency>
         <dependency>
             <groupId>edu.ucar</groupId>
-            <artifactId>netcdf</artifactId>
+            <artifactId>cdm</artifactId>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
