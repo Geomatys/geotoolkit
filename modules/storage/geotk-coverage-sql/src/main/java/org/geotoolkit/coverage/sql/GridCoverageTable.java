@@ -17,26 +17,27 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.sql.Timestamp;
+import java.nio.file.Path;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.PreparedStatement;
+import java.sql.Timestamp;
 import java.sql.Types;
-import java.nio.file.Path;
 import java.time.Instant;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.SingleCRS;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform2D;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.crs.DefaultTemporalCRS;
-import org.apache.sis.storage.DataStoreException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import org.apache.sis.internal.metadata.AxisDirections;
 import org.apache.sis.internal.referencing.j2d.IntervalRectangle;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.DataStoreException;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.crs.TemporalCRS;
+import org.opengis.referencing.operation.MathTransform2D;
 
 
 /**
@@ -124,11 +125,22 @@ final class GridCoverageTable extends Table {
          */
         final Instant tmin, tmax;
         final CoordinateReferenceSystem crs = areaOfInterest.getCoordinateReferenceSystem();
-        final DefaultTemporalCRS temporalCRS = DefaultTemporalCRS.castOrCopy(CRS.getTemporalComponent(crs));
+
+        // note : we do not use CRS.getTemporalCRS with AxisDirections.indexOfColinear
+        // because of forecast axes who are colinear but not temporal
+        DefaultTemporalCRS temporalCRS = null;
+        int index = 0;
+        for (SingleCRS cdt : CRS.getSingleComponents(crs)) {
+            if (cdt instanceof TemporalCRS) {
+                temporalCRS = (DefaultTemporalCRS) DefaultTemporalCRS.castOrCopy(cdt);
+                break;
+            }
+            index += cdt.getCoordinateSystem().getDimension();
+        }
+
         if (temporalCRS != null) {
-            final int d = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), temporalCRS.getCoordinateSystem());
-            tmin = temporalCRS.toInstant(areaOfInterest.getMinimum(d));             // May be null if the value is NaN.
-            tmax = temporalCRS.toInstant(areaOfInterest.getMaximum(d));
+            tmin = temporalCRS.toInstant(areaOfInterest.getMinimum(index));     // May be null if the value is NaN.
+            tmax = temporalCRS.toInstant(areaOfInterest.getMaximum(index));
         } else {
             tmin = null;
             tmax = null;
