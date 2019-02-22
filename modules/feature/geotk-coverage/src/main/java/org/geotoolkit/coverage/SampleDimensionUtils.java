@@ -24,9 +24,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.collection.Containers;
 import org.geotoolkit.internal.coverage.ColoredCategory;
@@ -188,7 +190,8 @@ public final strictfp class SampleDimensionUtils {
 
     /**
      * Returns a color model for this category list. This method builds up the color model
-     * from each category's colors (as returned by {@link ColoredCategory#getColors}).
+     * from each category's colors (as returned by {@link ColoredCategory#getColors}) or default
+     * colors when category colors are not defined.
      *
      * @param  visibleBand The band to be made visible (usually 0). All other bands, if any
      *         will be ignored.
@@ -202,9 +205,29 @@ public final strictfp class SampleDimensionUtils {
      */
     public static ColorModel getColorModel(final SampleDimension band, final int visibleBand, final int numBands, final int type) {
         final List<Category> categories = band.forConvertedValues(false).getCategories();
+
+        final PseudoRandomPalette palette = new PseudoRandomPalette();
+
         final Map<NumberRange<?>, Color[]> ranges = new LinkedHashMap<>();
         for (final Category category : categories) {
-            ranges.put(category.getSampleRange(), ColoredCategory.getColors(category));
+            Color[] colors = ColoredCategory.getColors(category);
+            NumberRange<?> range = category.getSampleRange();
+            if (colors.length == 0) {
+                if (category.isQuantitative()) {
+                    MeasurementRange<?> mrange = category.getMeasurementRange().get();
+                    if (Double.isNaN(mrange.getMinDouble())) {
+                        //no data type category
+                        colors = new Color[]{new Color(0, 0, 0, 0)};
+                    } else {
+                        //use an interpolation
+                        colors = new Color[]{new Color(0, 0, 0),new Color(255, 255, 255)};
+                    }
+                } else {
+                    //qualitative category, pick colors from a default palette
+                    colors = new Color[]{palette.next()};
+                }
+            }
+            ranges.put(range, colors);
         }
         return org.apache.sis.internal.raster.ColorModelFactory.createColorModel(ranges, visibleBand, numBands, type);
     }
@@ -219,5 +242,23 @@ public final strictfp class SampleDimensionUtils {
     public static boolean isGeophysics(final SampleDimension dimension) {
         Optional<MathTransform1D> f = dimension.getTransferFunction();
         return f.isPresent() && f.get().isIdentity();
+    }
+
+    /**
+     * Generate infinite pseudo random colors.
+     * Colors will always be the sames.
+     */
+    private static final class PseudoRandomPalette {
+
+        private final Random rand = new Random(123456789);
+
+        public Color next() {
+            //pastel color
+            int red = (rand.nextInt(255) + 255) / 2;
+            int green = (rand.nextInt(255) + 255) / 2;
+            int blue = (rand.nextInt(255) + 255) / 2;
+            return new Color(red, green, blue);
+        }
+
     }
 }
