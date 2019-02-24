@@ -227,6 +227,7 @@ final class GridCoverageTable extends Table {
         final Instant[] period = new Instant[2];        // Values to be provided by 'gridGeometries'.
         final int gridID = gridGeometries.findOrInsert(raster.geometry, period, raster.suggestedID(product));
         final int series = seriesTable.findOrInsert(product, directory, extension, raster);
+        raster.completeTimeRange(period);
         /*
          * If the "gridToCRS" has NaN scale factor and is mapping pixel corner, then only the lower
          * bounds is set since we can not compute the upper bounds. But for insertion in GridCoverages
