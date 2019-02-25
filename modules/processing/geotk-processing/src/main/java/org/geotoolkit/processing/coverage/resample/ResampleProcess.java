@@ -29,7 +29,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -39,11 +41,9 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.processing.AbstractCoverageProcessor;
@@ -410,7 +410,6 @@ public class ResampleProcess extends AbstractProcess {
                 throw new CannotReprojectException(Errors.format(Errors.Keys.UnspecifiedCrs));
             }
             final Envelope        sourceEnvelope;
-            final GeneralEnvelope targetEnvelope;
             final CoordinateOperation operation = factory.createOperation(sourceCRS, targetCRS);
             final CoordinateOperation inverseOp = factory.createOperation(targetCRS, compatibleSourceCRS);
             final boolean force2D = (sourceCRS != compatibleSourceCRS);
@@ -418,8 +417,6 @@ public class ResampleProcess extends AbstractProcess {
             step3          = (force2D ? sourceGG.getGridToCRS2D(PixelOrientation.CENTER) : sourceGG.getGridToCRS(PixelOrientation.CENTER)).inverse();
             canUseGrid     = step2 == inverseOp.getMathTransform();
             sourceEnvelope = sourceCoverage.getEnvelope(); // Don't force this one to 2D.
-            targetEnvelope = Envelopes.transform(operation, sourceEnvelope);
-            targetEnvelope.setCoordinateReferenceSystem(targetCRS);
             // 'targetCRS' may be different than the one set by Envelopes.transform(...).
             /*
              * If the target GridGeometry is incomplete, provides default
@@ -438,16 +435,22 @@ public class ResampleProcess extends AbstractProcess {
              *   big enough to hold the result.
              */
             if (targetGG == null) {
+                final GeneralEnvelope targetEnvelope = Envelopes.transform(operation, sourceEnvelope);
+                targetEnvelope.setCoordinateReferenceSystem(targetCRS);
                 final GridExtent targetGR;
                 targetGR = force2D ? sourceGG.getExtent2D() : sourceGG.getExtent();
                 targetGG = new GridGeometry2D(targetGR, targetEnvelope);
                 step1    = targetGG.getGridToCRS(PixelOrientation.CENTER);
             } else if (!targetGG.isDefined(GridGeometry2D.GRID_TO_CRS)) {
+                final GeneralEnvelope targetEnvelope = Envelopes.transform(operation, sourceEnvelope);
+                targetEnvelope.setCoordinateReferenceSystem(targetCRS);
                 targetGG = new GridGeometry2D(targetGG.getExtent(), targetEnvelope);
                 step1    = targetGG.getGridToCRS(PixelOrientation.CENTER);
             } else {
                 step1 = targetGG.getGridToCRS(PixelOrientation.CENTER);
                 if (!targetGG.isDefined(GridGeometry2D.EXTENT)) {
+                    final GeneralEnvelope targetEnvelope = Envelopes.transform(operation, sourceEnvelope);
+                    targetEnvelope.setCoordinateReferenceSystem(targetCRS);
                     final GeneralEnvelope gridEnvelope = Envelopes.transform(step1.inverse(), targetEnvelope);
                     // According OpenGIS specification, GridGeometry maps pixel's center.
                     final GridExtent ext = new org.apache.sis.coverage.grid.GridGeometry(

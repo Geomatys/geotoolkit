@@ -22,9 +22,10 @@ import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
 import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
@@ -647,7 +648,13 @@ public class Resample {
             //-- Compute source coordinate from destination coordinate and mathtransform.
             destCoords[0] = destIterator.getX();
             destCoords[1] = destIterator.getY();
-            destToSourceMathTransform.transform(destCoords, 0, srcCoords, 0, 1);
+            try {
+                destToSourceMathTransform.transform(destCoords, 0, srcCoords, 0, 1);
+            } catch (ProjectionException ex) {
+                //coordinate can not be computed in source crs
+                srcCoords[0] = Double.NaN;
+                srcCoords[1] = Double.NaN;
+            }
 
             //-- if destination coordinate transformation is out of source boundary.
             if (!interpol.checkInterpolate(srcCoords[0], srcCoords[1])) {
