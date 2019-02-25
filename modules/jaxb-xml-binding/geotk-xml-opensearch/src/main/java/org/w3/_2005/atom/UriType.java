@@ -24,60 +24,47 @@
 
 package org.w3._2005.atom;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
-import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
 
 
 /**
- *
- *              The Atom text construct is defined in section 3.1 of the format spec.
- *
- *
- * <p>Java class for textType complex type.
+ * <p>Java class for uriType complex type.
  *
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="textType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;any namespace='http://www.w3.org/1999/xhtml' minOccurs="0"/>
- *       &lt;/sequence>
+ * &lt;complexType name="uriType">
+ *   &lt;simpleContent>
+ *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>anyURI">
  *       &lt;attGroup ref="{http://www.w3.org/2005/Atom}commonAttributes"/>
- *       &lt;attribute name="type" type="{http://www.w3.org/2005/Atom}textTypeType" />
  *       &lt;anyAttribute namespace='##other'/>
- *     &lt;/restriction>
- *   &lt;/complexContent>
+ *     &lt;/extension>
+ *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
  *
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "textType", propOrder = {
-    "content"
+@XmlType(name = "uriType", propOrder = {
+    "value"
 })
-public class TextType {
+public class UriType {
 
-    @XmlMixed
-    @XmlAnyElement(lax = true)
-    protected List<Object> content;
-    @XmlAttribute(name = "type")
-    protected TextTypeType type;
+    @XmlValue
+    @XmlSchemaType(name = "anyURI")
+    protected String value;
     @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
     @XmlSchemaType(name = "anyURI")
     protected String base;
@@ -86,77 +73,38 @@ public class TextType {
     @XmlSchemaType(name = "language")
     protected String lang;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<>();
+    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
-    public TextType() {
+    public UriType() {
 
     }
 
-    public TextType(List<Object> content) {
-        this.content = content;
+    public UriType(String value) {
+        this.value = value;
     }
-
-    public TextType(List<Object> content, TextTypeType type, String base, String lang) {
-        this.content = content;
-        this.type = type;
-        this.base = base;
-        this.lang = lang;
-    }
-
+    
     /**
-     *
-     *  The Atom text construct is defined in section 3.1 of the format spec.
-     *          Gets the value of the content property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the content property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getContent().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * {@link Object }
-     *
-     *
-     */
-    public List<Object> getContent() {
-        if (content == null) {
-            content = new ArrayList<>();
-        }
-        return this.content;
-    }
-
-    /**
-     * Gets the value of the type property.
+     * Gets the value of the value property.
      *
      * @return
      *     possible object is
-     *     {@link TextTypeType }
+     *     {@link String }
      *
      */
-    public TextTypeType getType() {
-        return type;
+    public String getValue() {
+        return value;
     }
 
     /**
-     * Sets the value of the type property.
+     * Sets the value of the value property.
      *
      * @param value
      *     allowed object is
-     *     {@link TextTypeType }
+     *     {@link String }
      *
      */
-    public void setType(TextTypeType value) {
-        this.type = value;
+    public void setValue(String value) {
+        this.value = value;
     }
 
     /**

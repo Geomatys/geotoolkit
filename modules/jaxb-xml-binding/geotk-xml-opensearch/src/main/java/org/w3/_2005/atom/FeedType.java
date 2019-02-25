@@ -22,47 +22,41 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyAttribute;
-import javax.xml.bind.annotation.XmlAnyElement;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElementRefs;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
-import org.geotoolkit.owc.xml.v10.OfferingType;
+import org.geotoolkit.georss.xml.v100.WhereType;
+import org.geotoolkit.ops.xml.OpenSearchResponse;
 
 
 /**
  *
- *              The Atom entry construct is defined in section 4.1.2 of the format spec.
+ *              The Atom feed construct is defined in section 4.1.1 of the format spec.
  *
  *
- * <p>Java class for entryType complex type.
+ * <p>Java class for feedType complex type.
  *
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="entryType">
+ * &lt;complexType name="feedType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice maxOccurs="unbounded">
+ *       &lt;choice maxOccurs="unbounded" minOccurs="3">
  *         &lt;element name="author" type="{http://www.w3.org/2005/Atom}personType" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="category" type="{http://www.w3.org/2005/Atom}categoryType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="content" type="{http://www.w3.org/2005/Atom}contentType" minOccurs="0"/>
  *         &lt;element name="contributor" type="{http://www.w3.org/2005/Atom}personType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="generator" type="{http://www.w3.org/2005/Atom}generatorType" minOccurs="0"/>
+ *         &lt;element name="icon" type="{http://www.w3.org/2005/Atom}iconType" minOccurs="0"/>
  *         &lt;element name="id" type="{http://www.w3.org/2005/Atom}idType"/>
  *         &lt;element name="link" type="{http://www.w3.org/2005/Atom}linkType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="published" type="{http://www.w3.org/2005/Atom}dateTimeType" minOccurs="0"/>
+ *         &lt;element name="logo" type="{http://www.w3.org/2005/Atom}logoType" minOccurs="0"/>
  *         &lt;element name="rights" type="{http://www.w3.org/2005/Atom}textType" minOccurs="0"/>
- *         &lt;element name="source" type="{http://www.w3.org/2005/Atom}sourceType" minOccurs="0"/>
- *         &lt;element name="summary" type="{http://www.w3.org/2005/Atom}textType" minOccurs="0"/>
+ *         &lt;element name="subtitle" type="{http://www.w3.org/2005/Atom}textType" minOccurs="0"/>
  *         &lt;element name="title" type="{http://www.w3.org/2005/Atom}textType"/>
  *         &lt;element name="updated" type="{http://www.w3.org/2005/Atom}dateTimeType"/>
+ *         &lt;element name="entry" type="{http://www.w3.org/2005/Atom}entryType" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;any namespace='##other' maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/choice>
  *       &lt;attGroup ref="{http://www.w3.org/2005/Atom}commonAttributes"/>
@@ -75,27 +69,30 @@ import org.geotoolkit.owc.xml.v10.OfferingType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "entryType", propOrder = {
-    "authorOrCategoryOrContent"
+@XmlType(name = "feedType", propOrder = {
+    "authorOrCategoryOrContributor"
 })
-public class EntryType {
+@XmlRootElement(name="feed")
+public class FeedType implements OpenSearchResponse {
 
     @XmlElementRefs({
-        @XmlElementRef(name = "rights", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "content", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "source", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "summary", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "id", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "title", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "link", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "category", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "contributor", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "author", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "updated", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "published", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false)
+        @XmlElementRef(name = "id", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "logo", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "where", namespace = "http://www.georss.org/georss", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "entry", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "author", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "contributor", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "rights", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "category", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "generator", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "link", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "subtitle", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "icon", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false)
     })
     @XmlAnyElement(lax = true)
-    protected List<Object> authorOrCategoryOrContent;
+    protected List<Object> authorOrCategoryOrContributor;
     @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
     @XmlSchemaType(name = "anyURI")
     protected String base;
@@ -104,83 +101,105 @@ public class EntryType {
     @XmlSchemaType(name = "language")
     protected String lang;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<>();
+    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
     private static final ObjectFactory OBJ_ATOM_FACT = new ObjectFactory();
-    private static final org.geotoolkit.owc.xml.v10.ObjectFactory OBJ_OWC_FACT = new org.geotoolkit.owc.xml.v10.ObjectFactory();
+    private static final org.geotoolkit.georss.xml.v100.ObjectFactory OBJ_GEORSS_FACT = new org.geotoolkit.georss.xml.v100.ObjectFactory();
 
-    public EntryType() {
+    public FeedType() {
 
-    }
-
-    public EntryType(List<Object> authorOrCategoryOrContent) {
-        this.authorOrCategoryOrContent = authorOrCategoryOrContent;
-    }
-
-    public EntryType(List<Object> authorOrCategoryOrContent, String base, String lang) {
-        this.authorOrCategoryOrContent = authorOrCategoryOrContent;
-        this.base = base;
-        this.lang = lang;
     }
 
     /**
-     * Gets the value of the authorOrCategoryOrContent property.
+     * Simple constructor with mandatory elements
+     */
+    public FeedType(String id, String title, PersonType author, String source) {
+        if (id != null) {
+            addId(new IdType(id));
+        }
+        if (title != null) {
+            addTitle(new TextType(title));
+        }
+        if (author != null) {
+            addAuthor(author);
+        }
+        if (source != null) {
+            LinkType srcLink = new LinkType(source, "search", "application/opensearchdescription+xml");
+            addLink(srcLink);
+        }
+
+    }
+
+    /**
+     * Gets the value of the authorOrCategoryOrContributor property.
      *
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link TextType }{@code >}
-     * {@link JAXBElement }{@code <}{@link ContentType }{@code >}
+     * {@link JAXBElement }{@code <}{@link DateTimeType }{@code >}
      * {@link Object }
-     * {@link JAXBElement }{@code <}{@link SourceType }{@code >}
      * {@link JAXBElement }{@code <}{@link IdType }{@code >}
+     * {@link JAXBElement }{@code <}{@link LogoType }{@code >}
+     * {@link JAXBElement }{@code <}{@link EntryType }{@code >}
+     * {@link JAXBElement }{@code <}{@link PersonType }{@code >}
+     * {@link JAXBElement }{@code <}{@link PersonType }{@code >}
      * {@link JAXBElement }{@code <}{@link TextType }{@code >}
      * {@link JAXBElement }{@code <}{@link CategoryType }{@code >}
+     * {@link JAXBElement }{@code <}{@link GeneratorType }{@code >}
      * {@link JAXBElement }{@code <}{@link LinkType }{@code >}
      * {@link JAXBElement }{@code <}{@link TextType }{@code >}
-     * {@link JAXBElement }{@code <}{@link PersonType }{@code >}
-     * {@link JAXBElement }{@code <}{@link PersonType }{@code >}
-     * {@link JAXBElement }{@code <}{@link DateTimeType }{@code >}
-     * {@link JAXBElement }{@code <}{@link DateTimeType }{@code >}
+     * {@link JAXBElement }{@code <}{@link IconType }{@code >}
      *
      *
      */
-    public List<Object> getAuthorOrCategoryOrContent() {
-        if (authorOrCategoryOrContent == null) {
-            authorOrCategoryOrContent = new ArrayList<>();
+    public List<Object> getAuthorOrCategoryOrContributor() {
+        if (authorOrCategoryOrContributor == null) {
+            authorOrCategoryOrContributor = new ArrayList<>();
         }
-        return this.authorOrCategoryOrContent;
+        return this.authorOrCategoryOrContributor;
     }
 
     public void addId(IdType id) {
         if (id != null) {
-            getAuthorOrCategoryOrContent().add(OBJ_ATOM_FACT.createEntryTypeId(id));
+            getAuthorOrCategoryOrContributor().add(OBJ_ATOM_FACT.createFeedTypeId(id));
         }
     }
 
     public void addTitle(TextType title) {
         if (title != null) {
-            getAuthorOrCategoryOrContent().add(OBJ_ATOM_FACT.createEntryTypeTitle(title));
+            getAuthorOrCategoryOrContributor().add(OBJ_ATOM_FACT.createFeedTypeTitle(title));
         }
     }
 
-    public void addContent(ContentType content) {
-        if (content != null) {
-            getAuthorOrCategoryOrContent().add(OBJ_ATOM_FACT.createEntryTypeContent(content));
+    public void addAuthor(PersonType author) {
+        if (author != null) {
+            getAuthorOrCategoryOrContributor().add(OBJ_ATOM_FACT.createFeedTypeAuthor(author));
         }
     }
 
-    public void addCategory(CategoryType category) {
-        if (category != null) {
-            getAuthorOrCategoryOrContent().add(OBJ_ATOM_FACT.createEntryTypeCategory(category));
+
+    public void addUpdated(DateTimeType updated) {
+        if (updated != null) {
+            getAuthorOrCategoryOrContributor().add(OBJ_ATOM_FACT.createFeedTypeUpdated(updated));
         }
     }
 
-    public void addOffering(OfferingType offering) {
-        if (offering != null) {
-            getAuthorOrCategoryOrContent().add(OBJ_OWC_FACT.createOffering(offering));
+    public void addWhere(WhereType where) {
+        if (where != null) {
+            getAuthorOrCategoryOrContributor().add(OBJ_GEORSS_FACT.createWhere(where));
         }
     }
 
+    public void addEntry(EntryType entry) {
+        if (entry != null) {
+            getAuthorOrCategoryOrContributor().add(OBJ_ATOM_FACT.createEntry(entry));
+        }
+    }
+
+    public void addLink(LinkType link) {
+        if (link != null) {
+            getAuthorOrCategoryOrContributor().add(OBJ_ATOM_FACT.createFeedTypeLink(link));
+        }
+    }
 
     /**
      * Gets the value of the base property.

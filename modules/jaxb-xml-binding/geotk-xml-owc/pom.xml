@@ -73,6 +73,11 @@
           <artifactId>geotk-xml-sld</artifactId>
           <version>${project.version}</version>
       </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-xml-opensearch</artifactId>
+          <version>${project.version}</version>
+      </dependency>
   </dependencies>
 
 </project>

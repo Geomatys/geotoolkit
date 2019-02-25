@@ -41,9 +41,9 @@ import javax.xml.namespace.QName;
 public class ObjectFactory {
 
     private final static QName _Query_QNAME = new QName("http://a9.com/-/spec/opensearch/1.1/", "Query");
-    private final static QName _ItemsPerPage_QNAME = new QName("http://a9.com/-/spec/opensearch/1.1/", "itemsPerPage");
-    private final static QName _TotalResults_QNAME = new QName("http://a9.com/-/spec/opensearch/1.1/", "totalResults");
-    private final static QName _StartIndex_QNAME = new QName("http://a9.com/-/spec/opensearch/1.1/", "startIndex");
+    public final static QName _ItemsPerPage_QNAME = new QName("http://a9.com/-/spec/opensearch/1.1/", "itemsPerPage");
+    public final static QName _TotalResults_QNAME = new QName("http://a9.com/-/spec/opensearch/1.1/", "totalResults");
+    public final static QName _StartIndex_QNAME = new QName("http://a9.com/-/spec/opensearch/1.1/", "startIndex");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: com.a9.opensearch

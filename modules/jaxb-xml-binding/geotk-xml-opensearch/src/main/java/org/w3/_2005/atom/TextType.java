@@ -28,14 +28,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElementRefs;
+import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
@@ -45,24 +43,22 @@ import javax.xml.namespace.QName;
 
 /**
  *
- *              The Atom person construct is defined in section 3.2 of the format spec.
+ *              The Atom text construct is defined in section 3.1 of the format spec.
  *
  *
- * <p>Java class for personType complex type.
+ * <p>Java class for textType complex type.
  *
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="personType">
+ * &lt;complexType name="textType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice maxOccurs="unbounded">
- *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="uri" type="{http://www.w3.org/2005/Atom}uriType" minOccurs="0"/>
- *         &lt;element name="email" type="{http://www.w3.org/2005/Atom}emailType" minOccurs="0"/>
- *         &lt;any namespace='##other'/>
- *       &lt;/choice>
+ *       &lt;sequence>
+ *         &lt;any namespace='http://www.w3.org/1999/xhtml' minOccurs="0"/>
+ *       &lt;/sequence>
  *       &lt;attGroup ref="{http://www.w3.org/2005/Atom}commonAttributes"/>
+ *       &lt;attribute name="type" type="{http://www.w3.org/2005/Atom}textTypeType" />
  *       &lt;anyAttribute namespace='##other'/>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -72,18 +68,16 @@ import javax.xml.namespace.QName;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "personType", propOrder = {
-    "nameOrUriOrEmail"
+@XmlType(name = "textType", propOrder = {
+    "content"
 })
-public class PersonType {
+public class TextType {
 
-    @XmlElementRefs({
-        @XmlElementRef(name = "email", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "uri", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "name", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false)
-    })
+    @XmlMixed
     @XmlAnyElement(lax = true)
-    protected List<Object> nameOrUriOrEmail;
+    protected List<Object> content;
+    @XmlAttribute(name = "type")
+    protected TextTypeType type;
     @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
     @XmlSchemaType(name = "anyURI")
     protected String base;
@@ -92,38 +86,84 @@ public class PersonType {
     @XmlSchemaType(name = "language")
     protected String lang;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private Map<QName, String> otherAttributes = new HashMap<>();
+
+    public TextType() {
+
+    }
+
+    public TextType(String simpleValue) {
+        if (simpleValue != null) {
+            this.content = new ArrayList<>();
+            this.content.add(simpleValue);
+        }
+    }
+
+    public TextType(List<Object> content) {
+        this.content = content;
+    }
+
+    public TextType(List<Object> content, TextTypeType type, String base, String lang) {
+        this.content = content;
+        this.type = type;
+        this.base = base;
+        this.lang = lang;
+    }
 
     /**
-     * Gets the value of the nameOrUriOrEmail property.
+     *
+     *  The Atom text construct is defined in section 3.1 of the format spec.
+     *          Gets the value of the content property.
      *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the nameOrUriOrEmail property.
+     * This is why there is not a <CODE>set</CODE> method for the content property.
      *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getNameOrUriOrEmail().add(newItem);
+     *    getContent().add(newItem);
      * </pre>
      *
      *
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link JAXBElement }{@code <}{@link UriType }{@code >}
+     * {@link String }
      * {@link Object }
-     * {@link JAXBElement }{@code <}{@link String }{@code >}
-     * {@link JAXBElement }{@code <}{@link String }{@code >}
      *
      *
      */
-    public List<Object> getNameOrUriOrEmail() {
-        if (nameOrUriOrEmail == null) {
-            nameOrUriOrEmail = new ArrayList<Object>();
+    public List<Object> getContent() {
+        if (content == null) {
+            content = new ArrayList<>();
         }
-        return this.nameOrUriOrEmail;
+        return this.content;
+    }
+
+    /**
+     * Gets the value of the type property.
+     *
+     * @return
+     *     possible object is
+     *     {@link TextTypeType }
+     *
+     */
+    public TextTypeType getType() {
+        return type;
+    }
+
+    /**
+     * Sets the value of the type property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link TextTypeType }
+     *
+     */
+    public void setType(TextTypeType value) {
+        this.type = value;
     }
 
     /**
