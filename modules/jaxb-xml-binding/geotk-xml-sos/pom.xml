@@ -84,5 +84,15 @@
       <artifactId>cdm</artifactId>
     </dependency>
   </dependencies>
+  <repositories>
+    <repository>
+      <id>UCAR</id>
+      <name>UCAR repository</name>
+      <url>${ucar.repository.url}</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
 </project>
