@@ -29,12 +29,14 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
@@ -284,13 +286,26 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 Arrays.fill(fill, Double.NaN);
 
                 /////// HACK FOR 0/360 /////////////////////////////////////////
-                GeneralEnvelope ge = GeneralEnvelope.castOrCopy(Envelopes.transform(coverage.getEnvelope2D(), CommonCRS.WGS84.normalizedGeographic()));
-                ge.normalize();
-                GridGeometry resampleGrid = canvasGrid.derive()
+                GeneralEnvelope ge = new GeneralEnvelope(coverage.getEnvelope2D());
+                try {
+                    GeneralEnvelope cdt = GeneralEnvelope.castOrCopy(Envelopes.transform(coverage.getEnvelope2D(), CommonCRS.WGS84.normalizedGeographic()));
+                    cdt.normalize();
+                    if (!cdt.isEmpty()) {
+                        ge = cdt;
+                    }
+                } catch (ProjectionException ex) {
+                    LOGGER.log(Level.INFO, ex.getMessage(), ex);
+                }
+                GridGeometry resampleGrid = canvasGrid;
+                try {
+                    resampleGrid = resampleGrid.derive()
                         .rounding(GridRoundingMode.ENCLOSING)
                         .subgrid(ge)
                         .build()
                         .reduce(0,1);
+                } catch (IllegalGridGeometryException ex) {
+                    LOGGER.log(Level.INFO, ex.getMessage(), ex);
+                }
                 resampleGrid = CoverageUtilities.forceLowerToZero(resampleGrid);
                 /////// HACK FOR 0/360 /////////////////////////////////////////
 
@@ -309,16 +324,27 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         Envelope canvasEnv = areaOfInterest.getEnvelope();
         double[] resolution = areaOfInterest.getResolution(true);
         /////// HACK FOR 0/360 /////////////////////////////////////////////
-        Map.Entry<Envelope, double[]> entry = solveWrapAround(fullArea, canvasEnv, resolution);
-        if (entry != null) {
-            canvasEnv = entry.getKey();
-            resolution = entry.getValue();
+        try {
+            Map.Entry<Envelope, double[]> entry = solveWrapAround(fullArea, canvasEnv, resolution);
+            if (entry != null) {
+                canvasEnv = entry.getKey();
+                resolution = entry.getValue();
+            }
+        } catch (ProjectionException ex) {
+            //mays happen when displaying an area partialy outside
+            //computation area of coverage crs
+            LOGGER.log(Level.INFO, ex.getMessage(), ex);
         }
         /////// HACK FOR 0/360 /////////////////////////////////////////////
-        GridGeometry slice = fullArea.derive()
-                .rounding(GridRoundingMode.ENCLOSING)
-                .subgrid(canvasEnv, resolution)
-                .build();
+        GridGeometry slice = fullArea;
+        try {
+            slice = fullArea.derive()
+                    .rounding(GridRoundingMode.ENCLOSING)
+                    .subgrid(canvasEnv, resolution)
+                    .build();
+        } catch (IllegalGridGeometryException ex) {
+            LOGGER.log(Level.INFO, ex.getMessage(), ex);
+        }
 
         // latest data slice
         final GridExtent extent = slice.getExtent();
@@ -438,6 +464,11 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         env.setRange(areaHorizontalOffset, gridEnv.getMinimum(0), gridEnv.getMaximum(0));
         env.setRange(areaHorizontalOffset+1, gridEnv.getMinimum(1), gridEnv.getMaximum(1));
 
+        if (env.isEmpty()) {
+            //the solvewrap arround method is not 100% reliable with special projection
+            //in some cases envelopes becomes empty
+            return null;
+        }
 
         //compute new resolution
         if (resolution != null && resolution.length != 0) {
