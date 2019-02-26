@@ -47,6 +47,12 @@ public class OpenSearchMarshallerPool {
             classes.add(org.geotoolkit.ows.xml.v200.ObjectFactory.class);
             classes.add(org.geotoolkit.observation.xml.v200.ObjectFactory.class);
 
+            // dublin core optional
+            try {
+                Class dcClass = Class.forName("org.geotoolkit.dublincore.xml.v2.elements.ObjectFactory");
+                classes.add(dcClass);
+            } catch (ClassNotFoundException ex) {}
+
 
             final JAXBContext jaxbCtxt = JAXBContext.newInstance(classes.toArray(new Class[classes.size()]));
             POOL = new MarshallerPool(jaxbCtxt, null);

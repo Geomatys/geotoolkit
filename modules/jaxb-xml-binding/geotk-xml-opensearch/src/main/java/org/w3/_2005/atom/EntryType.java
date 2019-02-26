@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
+import org.geotoolkit.ows.xml.BoundingBox;
 
 
 /**
@@ -106,6 +107,7 @@ public class EntryType {
     private Map<QName, String> otherAttributes = new HashMap<>();
 
     private static final ObjectFactory OBJ_ATOM_FACT = new ObjectFactory();
+    private static final org.geotoolkit.georss.xml.v100.ObjectFactory GEORSS_FACT = new org.geotoolkit.georss.xml.v100.ObjectFactory();
 
     public EntryType() {
 
@@ -155,10 +157,36 @@ public class EntryType {
         }
     }
 
+    public IdType getId() {
+        for (Object obj : getAuthorOrCategoryOrContent()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeId_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof IdType) {
+                    return (IdType) elem.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
     public void addTitle(TextType title) {
         if (title != null) {
             getAuthorOrCategoryOrContent().add(OBJ_ATOM_FACT.createEntryTypeTitle(title));
         }
+    }
+
+    public TextType getTitle() {
+        for (Object obj : getAuthorOrCategoryOrContent()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeTitle_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof TextType) {
+                    return (TextType) elem.getValue();
+                }
+            }
+        }
+        return null;
     }
 
     public void addContent(ContentType content) {
@@ -167,10 +195,168 @@ public class EntryType {
         }
     }
 
+    public List<ContentType> getContents() {
+        List<ContentType> results = new ArrayList<>();
+        for (Object obj : getAuthorOrCategoryOrContent()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeContent_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof ContentType) {
+                   results.add((ContentType) elem.getValue());
+                }
+            }
+        }
+        return results;
+    }
+
     public void addCategory(CategoryType category) {
         if (category != null) {
             getAuthorOrCategoryOrContent().add(OBJ_ATOM_FACT.createEntryTypeCategory(category));
         }
+    }
+
+    public List<CategoryType> getCategory() {
+        List<CategoryType> results = new ArrayList<>();
+        for (Object obj : getAuthorOrCategoryOrContent()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeCategory_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof ContentType) {
+                   results.add((CategoryType) elem.getValue());
+                }
+            }
+        }
+        return results;
+    }
+
+    public void addAuthor(PersonType author) {
+        if (author != null) {
+            getAuthorOrCategoryOrContent().add(OBJ_ATOM_FACT.createEntryTypeAuthor(author));
+        }
+    }
+
+    public List<PersonType> getAuthor() {
+        List<PersonType> results = new ArrayList<>();
+        for (Object obj : getAuthorOrCategoryOrContent()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeAuthor_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof PersonType) {
+                   results.add((PersonType) elem.getValue());
+                }
+            }
+        }
+        return results;
+    }
+
+    public void addContributor(PersonType contributor) {
+        if (contributor != null) {
+            getAuthorOrCategoryOrContent().add(OBJ_ATOM_FACT.createEntryTypeContributor(contributor));
+        }
+    }
+
+    public List<PersonType> getContributor() {
+        List<PersonType> results = new ArrayList<>();
+        for (Object obj : getAuthorOrCategoryOrContent()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeContributor_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof PersonType) {
+                   results.add((PersonType) elem.getValue());
+                }
+            }
+        }
+        return results;
+    }
+
+    public void addUpdated(DateTimeType updated) {
+        if (updated != null) {
+            getAuthorOrCategoryOrContent().add(OBJ_ATOM_FACT.createEntryTypeUpdated(updated));
+        }
+    }
+
+    public List<DateTimeType> getUpdated() {
+        List<DateTimeType> results = new ArrayList<>();
+        for (Object obj : getAuthorOrCategoryOrContent()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeUpdated_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof DateTimeType) {
+                   results.add((DateTimeType) elem.getValue());
+                }
+            }
+        }
+        return results;
+    }
+
+    public void addSummary(TextType summ) {
+        if (summ != null) {
+            getAuthorOrCategoryOrContent().add(OBJ_ATOM_FACT.createEntryTypeSummary(summ));
+        }
+    }
+
+    public List<TextType> getSummary() {
+        List<TextType> results = new ArrayList<>();
+        for (Object obj : getAuthorOrCategoryOrContent()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeSummary_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof TextType) {
+                   results.add((TextType) elem.getValue());
+                }
+            }
+        }
+        return results;
+    }
+
+    public void addRight(TextType right) {
+        if (right != null) {
+            getAuthorOrCategoryOrContent().add(OBJ_ATOM_FACT.createEntryTypeRights(right));
+        }
+    }
+
+    public List<TextType> getRight() {
+        List<TextType> results = new ArrayList<>();
+        for (Object obj : getAuthorOrCategoryOrContent()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeRights_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof TextType) {
+                   results.add((TextType) elem.getValue());
+                }
+            }
+        }
+        return results;
+    }
+
+    public void addBox(BoundingBox box) {
+        if (box != null) {
+            List<Double> coord = new ArrayList<>();
+            coord.add(box.getLowerCorner().get(0));
+            coord.add(box.getUpperCorner().get(0));
+            coord.add(box.getLowerCorner().get(1));
+            coord.add(box.getUpperCorner().get(1));
+            getAuthorOrCategoryOrContent().add(GEORSS_FACT.createBox(coord));
+        }
+    }
+
+    public void addBox(List<Double> coord) {
+        if (coord != null) {
+            getAuthorOrCategoryOrContent().add(GEORSS_FACT.createBox(coord));
+        }
+    }
+
+    public List<Double> getBox() {
+        for (Object obj : getAuthorOrCategoryOrContent()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (org.geotoolkit.georss.xml.v100.ObjectFactory._Box_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof List) {
+                   return (List<Double>) elem.getValue();
+                }
+            }
+        }
+        return new ArrayList<>();
     }
 
     /**

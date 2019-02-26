@@ -191,4 +191,24 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
         }
         return new BriefRecordType(getIdentifier(), getTitle(), getType(), bboxes);
     }
+
+    @Override
+    public long[] getTemporalExtentRange() {
+        if (temporalExtent != null && !temporalExtent.isEmpty()) {
+            long min = Long.MAX_VALUE;
+            long max = Long.MIN_VALUE;
+            for (TemporalExtentType tex : temporalExtent) {
+                if (tex.begin != null) {
+                    long time = tex.begin.value.toGregorianCalendar().getTimeInMillis();
+                    max = Math.max(time, max);
+                    min = Math.min(time, min);
+                    time = tex.end.value.toGregorianCalendar().getTimeInMillis();
+                    max = Math.max(time, max);
+                    min = Math.min(time, min);
+                }
+            }
+            return new long[]{min, max};
+        }
+        return new long[0];
+    }
 }

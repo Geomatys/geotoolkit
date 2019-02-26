@@ -423,14 +423,11 @@ public class FilterXmlFactory {
 
     public static PropertyIsNull buildPropertyIsNull(final String currentVersion, final String propertyName) {
         if ("2.0.0".equals(currentVersion)) {
-
             return new org.geotoolkit.ogc.xml.v200.PropertyIsNullType(propertyName);
         } else if ("1.1.0".equals(currentVersion)) {
-
             final org.geotoolkit.ogc.xml.v110.PropertyNameType pName = new org.geotoolkit.ogc.xml.v110.PropertyNameType(propertyName);
             return new org.geotoolkit.ogc.xml.v110.PropertyIsNullType(pName);
         } else if ("1.0.0".equals(currentVersion)) {
-            
             final org.geotoolkit.ogc.xml.v100.PropertyNameType pName = new org.geotoolkit.ogc.xml.v100.PropertyNameType(propertyName);
             return new org.geotoolkit.ogc.xml.v100.PropertyIsNullType(pName);
         } else {

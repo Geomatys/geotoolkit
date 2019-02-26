@@ -82,7 +82,7 @@ public class UriType {
     public UriType(String value) {
         this.value = value;
     }
-    
+
     /**
      * Gets the value of the value property.
      *

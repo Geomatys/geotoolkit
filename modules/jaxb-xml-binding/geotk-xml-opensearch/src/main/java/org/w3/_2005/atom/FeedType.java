@@ -164,16 +164,76 @@ public class FeedType implements OpenSearchResponse {
         }
     }
 
+    public IdType getId() {
+        for (Object obj : getAuthorOrCategoryOrContributor()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeId_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof IdType) {
+                    return (IdType) elem.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
     public void addTitle(TextType title) {
         if (title != null) {
             getAuthorOrCategoryOrContributor().add(OBJ_ATOM_FACT.createFeedTypeTitle(title));
         }
     }
 
+    public TextType getTitle() {
+        for (Object obj : getAuthorOrCategoryOrContributor()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeTitle_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof TextType) {
+                    return (TextType) elem.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
     public void addAuthor(PersonType author) {
         if (author != null) {
             getAuthorOrCategoryOrContributor().add(OBJ_ATOM_FACT.createFeedTypeAuthor(author));
         }
+    }
+
+    public List<PersonType> getAuthor() {
+        List<PersonType> results = new ArrayList<>();
+        for (Object obj : getAuthorOrCategoryOrContributor()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeAuthor_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof PersonType) {
+                   results.add((PersonType) elem.getValue());
+                }
+            }
+        }
+        return results;
+    }
+
+    public void addContributor(PersonType contributor) {
+        if (contributor != null) {
+            getAuthorOrCategoryOrContributor().add(OBJ_ATOM_FACT.createFeedTypeContributor(contributor));
+        }
+    }
+
+    public List<PersonType> getContributor() {
+        List<PersonType> results = new ArrayList<>();
+        for (Object obj : getAuthorOrCategoryOrContributor()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeContributor_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof PersonType) {
+                   results.add((PersonType) elem.getValue());
+                }
+            }
+        }
+        return results;
     }
 
 
@@ -183,11 +243,40 @@ public class FeedType implements OpenSearchResponse {
         }
     }
 
+    public List<DateTimeType> getUpdated() {
+        List<DateTimeType> results = new ArrayList<>();
+        for (Object obj : getAuthorOrCategoryOrContributor()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeUpdated_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof DateTimeType) {
+                   results.add((DateTimeType) elem.getValue());
+                }
+            }
+        }
+        return results;
+    }
+
     public void addWhere(WhereType where) {
         if (where != null) {
             getAuthorOrCategoryOrContributor().add(OBJ_GEORSS_FACT.createWhere(where));
         }
     }
+
+    public List<WhereType> getWhere() {
+        List<WhereType> results = new ArrayList<>();
+        for (Object obj : getAuthorOrCategoryOrContributor()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (org.geotoolkit.georss.xml.v100.ObjectFactory._WhereType_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof WhereType) {
+                   results.add((WhereType) elem.getValue());
+                }
+            }
+        }
+        return results;
+    }
+
 
     public void addEntry(EntryType entry) {
         if (entry != null) {
@@ -199,6 +288,60 @@ public class FeedType implements OpenSearchResponse {
         if (link != null) {
             getAuthorOrCategoryOrContributor().add(OBJ_ATOM_FACT.createFeedTypeLink(link));
         }
+    }
+
+    public List<LinkType> getLinks() {
+        List<LinkType> results = new ArrayList<>();
+        for (Object obj : getAuthorOrCategoryOrContributor()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeLink_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof LinkType) {
+                   results.add((LinkType) elem.getValue());
+                }
+            }
+        }
+        return results;
+    }
+
+    public void addRight(TextType right) {
+        if (right != null) {
+            getAuthorOrCategoryOrContributor().add(OBJ_ATOM_FACT.createFeedTypeRights(right));
+        }
+    }
+
+    public List<TextType> getRight() {
+        List<TextType> results = new ArrayList<>();
+        for (Object obj : getAuthorOrCategoryOrContributor()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeRights_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof TextType) {
+                   results.add((TextType) elem.getValue());
+                }
+            }
+        }
+        return results;
+    }
+
+    public void addCategory(CategoryType category) {
+        if (category != null) {
+            getAuthorOrCategoryOrContributor().add(OBJ_ATOM_FACT.createFeedTypeCategory(category));
+        }
+    }
+
+    public List<CategoryType> getCategory() {
+        List<CategoryType> results = new ArrayList<>();
+        for (Object obj : getAuthorOrCategoryOrContributor()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeCategory_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof ContentType) {
+                   results.add((CategoryType) elem.getValue());
+                }
+            }
+        }
+        return results;
     }
 
     /**
@@ -267,4 +410,51 @@ public class FeedType implements OpenSearchResponse {
         return otherAttributes;
     }
 
+    public List<EntryType> getEntries() {
+        List<EntryType> results = new ArrayList<>();
+        for (Object obj : getAuthorOrCategoryOrContributor()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._Entry_QNAME.equals(elem.getName())) {
+                    results.add((EntryType) elem.getValue());
+                }
+            }
+        }
+        return results;
+    }
+    public Integer getTotalResults() {
+        for (Object obj : getAuthorOrCategoryOrContributor()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (org.geotoolkit.ops.xml.v110.ObjectFactory._TotalResults_QNAME.equals(elem.getName())) {
+                    return Integer.valueOf(elem.getValue().toString());
+                }
+            }
+        }
+        return null;
+    }
+
+    public Integer getStartIndex() {
+        for (Object obj : getAuthorOrCategoryOrContributor()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (org.geotoolkit.ops.xml.v110.ObjectFactory._StartIndex_QNAME.equals(elem.getName())) {
+                    return Integer.valueOf(elem.getValue().toString());
+                }
+            }
+        }
+        return null;
+    }
+
+    public Integer getItemsPerPage() {
+        for (Object obj : getAuthorOrCategoryOrContributor()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (org.geotoolkit.ops.xml.v110.ObjectFactory._ItemsPerPage_QNAME.equals(elem.getName())) {
+                    return Integer.valueOf(elem.getValue().toString());
+                }
+            }
+        }
+        return null;
+    }
 }

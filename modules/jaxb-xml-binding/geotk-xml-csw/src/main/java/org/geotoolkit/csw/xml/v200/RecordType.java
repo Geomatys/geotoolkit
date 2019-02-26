@@ -115,6 +115,11 @@ public class RecordType extends DCMIRecordType implements Record {
     }
 
     @Override
+    public long[] getTemporalExtentRange() {
+        return new long[0];
+    }
+
+    @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
         if (boundingBox != null && boundingBox.getValue() != null) {
