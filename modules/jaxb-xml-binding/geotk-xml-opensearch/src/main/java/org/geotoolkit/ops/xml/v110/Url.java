@@ -18,11 +18,15 @@
 package org.geotoolkit.ops.xml.v110;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.opsp.xml.v100.Parameter;
 
 
 /**
@@ -82,6 +86,9 @@ public class Url {
     protected BigInteger indexOffset;
     @XmlAttribute(name = "pageOffset")
     protected BigInteger pageOffset;
+
+    @XmlElement(name = "Parameter", namespace = "http://a9.com/-/spec/opensearch/extensions/parameters/1.0/")
+    private List<Parameter> parameters;
 
     public Url() {
 
@@ -217,6 +224,30 @@ public class Url {
      */
     public void setPageOffset(BigInteger value) {
         this.pageOffset = value;
+    }
+
+    /**
+     * @return the parameters
+     */
+    public List<Parameter> getParameters() {
+        if (parameters == null) {
+            this.parameters = new ArrayList<>();
+        }
+        return parameters;
+    }
+
+
+    public void addParameter(Parameter parameter) {
+        if (parameter != null) {
+            getParameters().add(parameter);
+        }
+    }
+
+    /**
+     * @param parameters the parameters to set
+     */
+    public void setParameters(List<Parameter> parameters) {
+        this.parameters = parameters;
     }
 
 }

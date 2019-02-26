@@ -44,6 +44,7 @@ public class OpenSearchMarshallerPool {
             classes.add(org.geotoolkit.eop.xml.v201.ObjectFactory.class);
             classes.add(org.geotoolkit.opt.xml.v201.ObjectFactory.class);
             classes.add(org.geotoolkit.ops.xml.v110.ObjectFactory.class);
+            classes.add(org.geotoolkit.opsp.xml.v100.ObjectFactory.class);
             classes.add(org.geotoolkit.ows.xml.v200.ObjectFactory.class);
             classes.add(org.geotoolkit.observation.xml.v200.ObjectFactory.class);
 
