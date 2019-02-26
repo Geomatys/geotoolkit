@@ -18,63 +18,52 @@
 package org.geotoolkit.coverage.sql;
 
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.PathIterator;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.concurrent.Callable;
 import java.sql.Array;
-import java.sql.Types;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.PreparedStatement;
+import java.sql.Types;
 import java.time.Instant;
-
-import org.opengis.metadata.Identifier;
-import org.opengis.geometry.Envelope;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.operation.Matrix;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.TemporalCRS;
-import org.opengis.referencing.crs.SingleCRS;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.Geometries;
 import org.apache.sis.internal.referencing.Formulas;
-import org.apache.sis.metadata.iso.citation.Citations;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.IdentifiedObjects;
-import org.apache.sis.referencing.crs.AbstractCRS;
-import org.apache.sis.referencing.crs.DefaultTemporalCRS;
-import org.apache.sis.referencing.cs.AbstractCS;
-import org.apache.sis.referencing.cs.AxesConvention;
-import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.referencing.j2d.IntervalRectangle;
-import org.apache.sis.internal.util.Constants;
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Utilities;
-
 import static org.geotoolkit.coverage.sql.GridGeometryEntry.AFFINE_DIMENSION;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.crs.TemporalCRS;
+import org.opengis.referencing.operation.CoordinateOperation;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -459,7 +448,8 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                     } else {
                         axes = getConnection().createArrayOf("VARCHAR", additionalAxes.toArray());
                     }
-                    return findOrInsert(extent, gridToCRS, !isLinear, findCRS(crs2D), axes, () -> {
+                    final int srid = new SpatialReferencingTable(transaction).findOrInsertCRS(crs2D);
+                    return findOrInsert(extent, gridToCRS, !isLinear, srid, axes, () -> {
                         IntervalRectangle area = new IntervalRectangle(
                                 extent.getLow(0), extent.getLow(1),
                                 extent.getHigh(0) + 1, extent.getHigh(1) + 1);
@@ -469,53 +459,6 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
             }
         }
         throw new IllegalUpdateException("Illegal grid geometry.");
-    }
-
-    /**
-     * Changes to try on axis order when checking if the EPSG code for a coordinate reference system
-     * can be used for the {@code "srid"} column of the {@code "GridGeometris"} table. Those changes
-     * are cumulative: {@code CHANGES_TO_TRY[2]} is applied on the result of {@code CHANGES_TO_TRY[1]}.
-     */
-    private static final AxesConvention[] CHANGES_TO_TRY = {
-        null, AxesConvention.RIGHT_HANDED, AxesConvention.POSITIVE_RANGE
-    };
-
-    /**
-     * Finds a {@code spatial_ref_sys} code for the given coordinate reference system.
-     */
-    private static int findCRS(final CoordinateReferenceSystem crs) throws FactoryException, IllegalUpdateException {
-        final IdentifiedObjectFinder finder = IdentifiedObjects.newFinder(Constants.EPSG);
-        finder.setIgnoringAxes(true);
-        final CoordinateReferenceSystem found = (CoordinateReferenceSystem) finder.findSingleton(crs);
-        if (found != null) {
-            AbstractCS expected = AbstractCS.castOrCopy(crs.getCoordinateSystem());
-            AbstractCS actual = AbstractCS.castOrCopy(found.getCoordinateSystem());
-            for (final AxesConvention convention : CHANGES_TO_TRY) {
-                if (convention != null) {
-                    expected = expected.forConvention(convention);
-                    actual   = actual  .forConvention(convention);
-                }
-                if (actual.equals(expected, ComparisonMode.APPROXIMATIVE)) {
-                    final Identifier id = IdentifiedObjects.getIdentifier(found, Citations.EPSG);
-                    if (id != null) try {
-                        return Integer.valueOf(id.getCode());
-                    } catch (NumberFormatException e) {
-                        throw new IllegalUpdateException("Illegal SRID: " + id);
-                    }
-                }
-            }
-        }
-        /*
-         * Temporary hack for Coriolis data (to be removed in a future version).
-         */
-        if (Entry.HACK) {
-            if (IdentifiedObjects.isHeuristicMatchForName(crs, "Mercator_1SP (Unspecified datum based upon the GRS 1980 Authalic Sphere)")) {
-                return 3395;
-            } else if (CRS.findOperation(crs, CommonCRS.defaultGeographic(), null).getMathTransform().isIdentity()) {
-                return 4326;
-            }
-        }
-        throw new IllegalUpdateException("SRID not found.");
     }
 
     /**
