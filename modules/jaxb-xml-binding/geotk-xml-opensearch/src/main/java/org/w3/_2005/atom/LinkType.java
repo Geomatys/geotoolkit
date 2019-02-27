@@ -105,6 +105,13 @@ public class LinkType {
         this.type = type;
     }
 
+    public LinkType(String href, String title, String rel, String type) {
+        this.href = href;
+        this.rel = rel;
+        this.title = title;
+        this.type = type;
+    }
+
     /**
      *
      *              The Atom link construct is defined in section 3.4 of the format spec.

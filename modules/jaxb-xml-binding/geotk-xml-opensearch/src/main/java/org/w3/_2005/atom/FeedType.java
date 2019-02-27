@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
@@ -298,6 +299,23 @@ public class FeedType implements OpenSearchResponse {
                 if (ObjectFactory._EntryTypeLink_QNAME.equals(elem.getName()) &&
                     elem.getValue() instanceof LinkType) {
                    results.add((LinkType) elem.getValue());
+                }
+            }
+        }
+        return results;
+    }
+
+    public List<LinkType> getLinksByRel(String rel) {
+        List<LinkType> results = new ArrayList<>();
+        for (Object obj : getAuthorOrCategoryOrContributor()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeLink_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof LinkType) {
+                    LinkType l = (LinkType) elem.getValue();
+                    if (Objects.equals(l.rel, rel)) {
+                        results.add(l);
+                    }
                 }
             }
         }

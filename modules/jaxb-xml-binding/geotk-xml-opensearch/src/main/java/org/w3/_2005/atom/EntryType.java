@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -358,6 +359,44 @@ public class EntryType {
         }
         return new ArrayList<>();
     }
+
+    public void addLink(LinkType link) {
+        if (link != null) {
+            getAuthorOrCategoryOrContent().add(OBJ_ATOM_FACT.createFeedTypeLink(link));
+        }
+    }
+
+    public List<LinkType> getLinks() {
+        List<LinkType> results = new ArrayList<>();
+        for (Object obj : getAuthorOrCategoryOrContent()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeLink_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof LinkType) {
+                   results.add((LinkType) elem.getValue());
+                }
+            }
+        }
+        return results;
+    }
+
+    public List<LinkType> getLinksByRel(String rel) {
+        List<LinkType> results = new ArrayList<>();
+        for (Object obj : getAuthorOrCategoryOrContent()) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement elem = (JAXBElement) obj;
+                if (ObjectFactory._EntryTypeLink_QNAME.equals(elem.getName()) &&
+                    elem.getValue() instanceof LinkType) {
+                    LinkType l = (LinkType) elem.getValue();
+                    if (Objects.equals(l.rel, rel)) {
+                        results.add(l);
+                    }
+                }
+            }
+        }
+        return results;
+    }
+
 
     /**
      * Gets the value of the base property.

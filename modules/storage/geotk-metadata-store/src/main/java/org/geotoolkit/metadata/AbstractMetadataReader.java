@@ -74,7 +74,7 @@ public abstract class AbstractMetadataReader implements MetadataReader {
      * {@inheritDoc}
      */
     @Override
-    public abstract Node getMetadata(final String identifier, final MetadataType mode) throws MetadataIoException;
+    public abstract RecordInfo getMetadata(final String identifier, final MetadataType mode) throws MetadataIoException;
 
     /**
      * {@inheritDoc}
@@ -86,7 +86,7 @@ public abstract class AbstractMetadataReader implements MetadataReader {
      * {@inheritDoc}
      */
     @Override
-    public abstract List<? extends Object> getAllEntries() throws MetadataIoException;
+    public abstract List<RecordInfo> getAllEntries() throws MetadataIoException;
 
     /**
      * {@inheritDoc}
@@ -182,7 +182,7 @@ public abstract class AbstractMetadataReader implements MetadataReader {
     }
 
     @Override
-    public Iterator<Node> getEntryIterator() throws MetadataIoException {
+    public Iterator<RecordInfo> getEntryIterator() throws MetadataIoException {
         throw new UnsupportedOperationException("not supported by this implementation");
     }
 
