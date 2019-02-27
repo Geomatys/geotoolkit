@@ -27,6 +27,7 @@ import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AbstractCS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
@@ -45,6 +46,8 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  */
 public class SpatialReferencingTable extends Table {
+
+    private static final int USER_RANGE_START = 910000;
 
     /**
      * Changes to try on axis order when checking if the EPSG code for a coordinate reference system
@@ -106,7 +109,6 @@ public class SpatialReferencingTable extends Table {
                 if (AbstractCS.castOrCopy(crs.getCoordinateSystem()).equals(cs, ComparisonMode.APPROXIMATIVE)) {
                     return srid;
                 }
-
             }
         }
 
@@ -159,15 +161,36 @@ public class SpatialReferencingTable extends Table {
      */
     private int nextSrid() throws SQLException {
         try (Statement stmt = getConnection().createStatement()) {
-            final ResultSet rs = stmt.executeQuery("SELECT max(srid) FROM public.spatial_ref_sys WHERE srid > 909999");
+            final ResultSet rs = stmt.executeQuery("SELECT max(srid) FROM public.spatial_ref_sys WHERE srid >= " + USER_RANGE_START);
             if (rs.next()) {
                 int max = rs.getInt(1);
-                if (max > 909999) { //can be 0 if no records exist
+                if (max >= USER_RANGE_START) { //can be 0 if no records exist
                     return max + 1;
                 }
             }
         }
-        return 910000;
+        return USER_RANGE_START;
+    }
+
+    CoordinateReferenceSystem getCRS(int srid) throws FactoryException, SQLException {
+        if (srid >= USER_RANGE_START) {
+            try (Statement stmt = getConnection().createStatement()) {
+                final ResultSet rs = stmt.executeQuery("SELECT srtext FROM public.spatial_ref_sys WHERE srid = " + srid);
+                if (rs.next()) {
+                    return CRS.fromWKT(rs.getString(1));
+                } else {
+                    throw new FactoryException("Unknown srid " + srid);
+                }
+            }
+        }
+
+        /*
+        * TODO: the CRS codes are PostGIS codes, not EPSG codes. For now we simulate PostGIS codes
+        * by changing axis order after decoding, but we should really use a PostGIS factory instead.
+        */
+       CoordinateReferenceSystem crs;
+       crs = transaction.database.getCRSAuthorityFactory().createCoordinateReferenceSystem(String.valueOf(srid));
+       return AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED);
     }
 
 }

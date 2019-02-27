@@ -44,9 +44,7 @@ import org.apache.sis.internal.referencing.j2d.IntervalRectangle;
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
-import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.storage.DataStoreException;
@@ -54,6 +52,9 @@ import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Utilities;
 import static org.geotoolkit.coverage.sql.GridGeometryEntry.AFFINE_DIMENSION;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.extent.Extent;
+import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.TemporalCRS;
@@ -164,13 +165,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
             refs.free();
         }
         try {
-            /*
-             * TODO: the CRS codes are PostGIS codes, not EPSG codes. For now we simulate PostGIS codes
-             * by changing axis order after decoding, but we should really use a PostGIS factory instead.
-             */
-            CoordinateReferenceSystem crs;
-            crs = transaction.database.getCRSAuthorityFactory().createCoordinateReferenceSystem(String.valueOf(srid));
-            crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED);
+            CoordinateReferenceSystem crs = new SpatialReferencingTable(transaction).getCRS(srid);
             return new GridGeometryEntry(width, height, gridToCRS, approximate, crs, temporalAxis, otherAxes, otherDimName, transaction.database);
         } catch (FactoryException | TransformException exception) {
             throw new IllegalRecordException(exception, results, 10, identifier);
@@ -266,8 +261,41 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
             final CoordinateOperation op = CRS.findOperation(crs, extentCRS, null);
             gridToCRS = (MathTransform2D) MathTransforms.concatenate(gridToCRS, op.getMathTransform());
         }
-        area = gridToCRS.createTransformedShape(area);
-        RectangularShape bounds = (area instanceof RectangularShape) ? (RectangularShape) area : area.getBounds2D();
+        RectangularShape bounds = null;
+        try {
+            area = gridToCRS.createTransformedShape(area);
+            bounds = (area instanceof RectangularShape) ? (RectangularShape) area : area.getBounds2D();
+        } catch (TransformException ex) {
+            //may happen if one point is outside posible transformation range
+            area = null;
+            bounds = null;
+        }
+
+        if (bounds == null || (Double.isNaN(bounds.getCenterX()) || Double.isNaN(bounds.getCenterY()))) {
+            //fallback on crs domain of validity
+            Extent ext = crs.getDomainOfValidity();
+            if (ext != null) {
+                for (GeographicExtent ge : ext.getGeographicElements()) {
+                    if (ge instanceof GeographicBoundingBox) {
+                        GeographicBoundingBox geoext = (GeographicBoundingBox) ge;
+                        GeneralEnvelope env = new GeneralEnvelope(geoext);
+                        bounds = new Rectangle2D.Double(
+                                env.getMinimum(0),
+                                env.getMinimum(1),
+                                env.getMaximum(0) - env.getMinimum(0),
+                                env.getSpan(1));
+                        area = bounds.getBounds2D();
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (bounds == null) {
+            throw new TransformException("Failed to transform area to WKT and CRS has no defined domain of validity");
+        }
+
+
         final boolean mergeLeft  = bounds.getMinX() < Longitude.MIN_VALUE;
         final boolean mergeRight = bounds.getMaxX() > Longitude.MAX_VALUE;
         Area merged = null;
@@ -276,7 +304,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                 area = bounds = new IntervalRectangle(Longitude.MIN_VALUE, Math.max(Latitude.MIN_VALUE, bounds.getMinY()),
                                                       Longitude.MAX_VALUE, Math.min(Latitude.MAX_VALUE, bounds.getMaxY()));
             } else {
-                merged = new Area(area);
+               merged = new Area(area);
                 if (mergeLeft)  add(area, Longitude.MAX_VALUE - Longitude.MIN_VALUE, merged);
                 if (mergeRight) add(area, Longitude.MIN_VALUE - Longitude.MAX_VALUE, merged);
                 merged.intersect(GEOGRAPHIC_AREA);

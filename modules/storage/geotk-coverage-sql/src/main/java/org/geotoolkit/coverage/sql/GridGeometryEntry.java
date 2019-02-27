@@ -31,7 +31,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.metadata.spatial.DimensionNameType;
@@ -39,7 +38,6 @@ import org.opengis.metadata.spatial.DimensionNameType;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.PixelTranslation;
-import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.crs.AbstractCRS;
@@ -138,11 +136,6 @@ final class GridGeometryEntry extends Entry {
         shape = AffineTransforms2D.transform(affine, shape, true);
         if (needsLongitudeShift(shape.getBounds2D(), crs.getCoordinateSystem())) {
             crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.POSITIVE_RANGE);
-        }
-        shape = ((MathTransform2D) CRS.findOperation(crs, database.extentCRS, null).getMathTransform()).createTransformedShape(shape);
-        final Rectangle2D bounds = shape.getBounds2D();
-        if (bounds.isEmpty()) {
-            throw new IllegalRecordException("Empty grid extent.");
         }
         /*
          * Collects the data for grid extent and the envelope, starting from the two first dimensions

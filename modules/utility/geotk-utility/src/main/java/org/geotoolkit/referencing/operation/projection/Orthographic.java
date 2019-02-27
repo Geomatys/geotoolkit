@@ -206,6 +206,17 @@ public class Orthographic extends UnitaryProjection {
     {
         final double λ = srcPts[srcOff];
         final double φ = srcPts[srcOff + 1];
+
+        if (Math.abs(φ-latitudeOfOrigin) > (Math.PI/2.0)) {
+            if (derivate) {
+                throw new ProjectionException(Errors.format(Errors.Keys.PointOutsideHemisphere));
+            } else {
+                dstPts[dstOff  ] = Double.NaN;
+                dstPts[dstOff+1] = Double.NaN;
+                return null;
+            }
+        }
+
         final double cosφ = cos(φ);
         final double cosλ = cos(λ);
         final double sinλ = sin(λ);
