@@ -228,13 +228,8 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
     void addCoverageReferences(String product, final AddOption option, final Map<String,List<NewRaster>> rasters) throws DataStoreException {
         ArgumentChecks.ensureNonNull("product", product);
         try (final GridCoverageTable table = new GridCoverageTable(transaction, seriesTable, gridGeometries)) {
-            final String parent;
-            if (rasters.size() <= 1) {
-                parent = null;
-            } else {
-                parent = product;
-                createIfAbsent(option, parent, null, null);
-            }
+            final String parent = product;
+            createIfAbsent(option, parent, null, null);
             for (final Map.Entry<String,List<NewRaster>> entry : rasters.entrySet()) {
                 final List<NewRaster> list = entry.getValue();
                 if (parent != null) {
