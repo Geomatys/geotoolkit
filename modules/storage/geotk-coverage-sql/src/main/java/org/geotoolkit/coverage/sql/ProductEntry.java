@@ -42,6 +42,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.internal.util.CollectionsExt;
 import org.apache.sis.referencing.CRS;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 
 import org.geotoolkit.resources.Errors;
 import org.opengis.referencing.crs.SingleCRS;
@@ -350,7 +351,7 @@ final class ProductEntry extends Entry {
             throw new CatalogException(exception);
         }
         if (entries.isEmpty()) {
-            throw new CatalogException("No data in \"" + name + "\" product for the given area of interest.");
+            throw new DisjointCoverageDomainException("No data in \"" + name + "\" product for the given area of interest.");
         }
         return new ProductSubset(this, areaOfInterest, resolution, entries);
     }
