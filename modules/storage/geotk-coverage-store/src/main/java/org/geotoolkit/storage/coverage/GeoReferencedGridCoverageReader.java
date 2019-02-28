@@ -293,7 +293,11 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
             vector.setElement(i, 0, resolution[i]);
         }
         final Matrix result = Matrices.multiply(derivative, vector);
-        return MatrixSIS.castOrCopy(result).getElements();
+        double[] res = MatrixSIS.castOrCopy(result).getElements();
+        for (int i=0; i<res.length; i++) {
+            res[i] = Math.abs(res[i]);
+        }
+        return res;
     }
 
     /**
