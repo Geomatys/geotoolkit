@@ -92,7 +92,8 @@ public class GeoTiffMetaDataWriter {
         //readjust gridToCRS to be the pixel corner
         final Georectified georect = spatialMD.getInstanceForType(Georectified.class);
         final CellGeometry cell = georect.getCellGeometry();
-        final PixelOrientation orientation = georect.getPointInPixel();
+        PixelOrientation orientation = georect.getPointInPixel();
+        if (orientation == null) orientation = PixelOrientation.CENTER;
 
         /*
          * FAQ GEOTIFF :
