@@ -65,6 +65,9 @@ public class CSWClassesContext {
         //ISO 19115 French profile class
         classeList.addAll(FRA_CLASSES);
 
+        // DIF classes
+        classeList.add(org.geotoolkit.dif.xml.v102.ObjectFactory.class);
+
         // Inspire classes
         classeList.add(org.geotoolkit.inspire.xml.ObjectFactory.class);
 

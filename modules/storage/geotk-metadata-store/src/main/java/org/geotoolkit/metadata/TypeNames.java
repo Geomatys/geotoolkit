@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.csw.xml;
+package org.geotoolkit.metadata;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +43,8 @@ public class TypeNames {
      * a QName for gmd:MD_Metadata type
      */
     public static final QName METADATA_QNAME = new QName("http://www.isotc211.org/2005/gmd", "MD_Metadata");
+    public static final QName METADATA2_QNAME = new QName("http://www.isotc211.org/2005/gmi", "MI_Metadata");
+    public static final QName CONTACT_QNAME = new QName("http://www.isotc211.org/2005/gmd", "CI_ResponsibleParty");
 
     /**
      * a QName for gfc:MD_Metadata type
@@ -63,6 +65,11 @@ public class TypeNames {
      * a QName for csw:Capabilities type
      */
     public static final QName CAPABILITIES_300_QNAME = new QName("http://www.opengis.net/cat/csw/3.0", "Capabilities");
+
+    /**
+     * a QName for dif:DIF type
+     */
+    public static final QName DIF_QNAME = new QName("http://gcmd.gsfc.nasa.gov/Aboutus/xml/dif/", "DIF");
 
     /**
      * Some DublinCore Qnames
@@ -132,6 +139,12 @@ public class TypeNames {
     public static final  QName APPLICATION_MODULE09_QNAME    = new QName("http://www.opengis.net/cat/wrs",              "ApplicationModule");
     public static final  QName WRS_EXTRINSIC_OBJECT09_QNAME  = new QName("http://www.opengis.net/cat/wrs",              "WRSExtrinsicObject");
 
+    /**
+     * some QName for SensorML types
+     */
+    public static final QName SML_101_QNAME = new QName("http://www.opengis.net/sensorML/1.0.1", "SensorML");
+    public static final QName SML_100_QNAME = new QName("http://www.opengis.net/sensorML/1.0",   "SensorML");
+    public static final QName SML_200_QNAME = new QName("http://www.opengis.net/sensorML/2.0",   "SensorML");
 
     /**
      * Returns QName from specified string value
@@ -157,11 +170,17 @@ public class TypeNames {
         throw new IllegalArgumentException("Cannot get TypeNames for '" + key + "' there is no QName for this value.");
     }
 
+    //nasa DIF typeNames
+    public static final List<QName> DIF_TYPE_NAMES = new ArrayList<QName>();
+    static {
+        DIF_TYPE_NAMES.add(DIF_QNAME);
+    }
 
     //iso 19115 typeNames
     public static final List<QName> ISO_TYPE_NAMES = new ArrayList<QName>();
     static {
         ISO_TYPE_NAMES.add(METADATA_QNAME);
+        ISO_TYPE_NAMES.add(METADATA2_QNAME);
     }
 
     //iso 19110 typeNames
@@ -230,6 +249,20 @@ public class TypeNames {
         EBRIM25_TYPE_NAMES.add(GEOMETRY09_QNAME);
         EBRIM25_TYPE_NAMES.add(APPLICATION_MODULE09_QNAME);
         EBRIM25_TYPE_NAMES.add(WRS_EXTRINSIC_OBJECT09_QNAME);
+    }
+
+    //sml typeNames
+    public static final List<QName> SML100_TYPE_NAMES = new ArrayList<QName>();
+    static {
+        DC_TYPE_NAMES.add(SML_100_QNAME);
+    }
+    public static final List<QName> SML101_TYPE_NAMES = new ArrayList<QName>();
+    static {
+        DC_TYPE_NAMES.add(SML_101_QNAME);
+    }
+    public static final List<QName> SML200_TYPE_NAMES = new ArrayList<QName>();
+    static {
+        DC_TYPE_NAMES.add(SML_200_QNAME);
     }
 
     /**
