@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display2d.ext.cellular;
 
+import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.logging.Level;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.math.Statistics;
@@ -47,8 +49,6 @@ import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRendere
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.locationtech.jts.geom.Coordinate;
@@ -300,23 +300,27 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         MathTransform2D gridToCRS = coverage.getGridGeometry().getGridToCRS2D();
 
 
-        final PixelIterator ite = PixelIteratorFactory.createDefaultIterator(image);
+        final PixelIterator ite = PixelIterator.create(image);
         int i,x,y;
         final double[] gridCoord = new double[gridToCRS.getSourceDimensions()];
         final double[] crsCoord = new double[gridToCRS.getTargetDimensions()];
+        final double[] pixel = new double[nbBand];
         try{
             while(ite.next()){
-                gridCoord[0] = ite.getX();
-                gridCoord[1] = ite.getY();
+                Point position = ite.getPosition();
+                gridCoord[0] = position.getX();
+                gridCoord[1] = position.getY();
                 gridToCRS.transform(gridCoord, 0, crsCoord, 0, 1);
                 crsCoord[0] = (crsCoord[0]-area.getMinimum(0))/objCellSize;
                 crsCoord[1] = (crsCoord[1]-area.getMinimum(1))/objCellSize;
                 x = (int) crsCoord[0];
                 y = (int) crsCoord[1];
-                for(i=0;i<nbBand;i++){
-                    if(stats[i][y][x]==null) stats[i][y][x] = new Statistics("");
-                    stats[i][y][x].accept(ite.getSampleDouble());
-                    if(i<nbBand-1) ite.next();
+                ite.getPixel(pixel);
+                for (i=0;i<nbBand;i++) {
+                    if (stats[i][y][x] == null) stats[i][y][x] = new Statistics("");
+                    if (!Double.isNaN(pixel[i])) {
+                        stats[i][y][x].accept(pixel[i]);
+                    }
                 }
             }
         }catch(TransformException ex){
