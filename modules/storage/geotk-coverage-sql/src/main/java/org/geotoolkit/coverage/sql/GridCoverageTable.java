@@ -17,10 +17,12 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.Instant;
@@ -259,6 +261,56 @@ final class GridCoverageTable extends Table {
         }
         if (statement.executeUpdate() != 1) {
             throw new IllegalUpdateException("Can not add the coverage.");      // Should never happen (paranoiac check).
+        }
+    }
+
+    /**
+     * Removes a specific file from any product.
+     * This method removes only the entry in the database; it does not delete the file.
+     *
+     * @param  raster  path to the raster file to remove from the database.
+     */
+    final void remove(final Path raster) throws Exception {
+        /*
+         * The SQL statement to use for deleting entries.  That statement must enumerate the series where the
+         * filename appears since the series defines the path. This is necessary for avoiding to delete files
+         * of the same name but in another directory.
+         */
+        StringBuilder sqlDelete = null;
+        /*
+         * Following separation of suffix from filename must be identical to the one performed in 'addEntries(…).'.
+         */
+        String filename = raster.getFileName().toString();
+        final int s = filename.lastIndexOf('.');
+        if (s > 0) filename = filename.substring(0, s);
+        /*
+         * Collect the list of all series where the file appears.
+         */
+        final PreparedStatement statement = prepareStatement("SELECT DISTINCT \"series\" FROM "
+                + SCHEMA + ".\"" + TABLE + "\" WHERE \"filename\"=?");
+        statement.setString(1, filename);
+        try (final ResultSet results = statement.executeQuery()) {
+            while (results.next()) {
+                final int seriesID = results.getInt(1);
+                final SeriesEntry series = seriesTable.getEntry(seriesID);
+                if (Files.isSameFile(raster, series.path(filename))) {
+                    if (sqlDelete == null) {
+                        sqlDelete = new StringBuilder("DELETE FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"filename\"='")
+                                .append(filename.replace("'", "''")).append("' AND \"series\" IN (");
+                    } else {
+                        sqlDelete.append(", ");
+                    }
+                    sqlDelete.append(seriesID);
+                }
+            }
+        }
+        /*
+         * Actual deletion of coverage entries happen here.
+         */
+        if (sqlDelete != null) {
+            try (Statement stmt = transaction.connection.createStatement()) {
+                stmt.executeUpdate(sqlDelete.append(')').toString());
+            }
         }
     }
 

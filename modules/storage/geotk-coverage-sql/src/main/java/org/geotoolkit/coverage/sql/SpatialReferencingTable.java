@@ -155,9 +155,6 @@ public class SpatialReferencingTable extends Table {
     /**
      * The range of SRIDs reserved for user custom SRIDs is from 910000 to 998999.
      * ref : https://gis.stackexchange.com/questions/145017/why-is-there-an-upper-limit-to-the-srid-value-in-the-spatial-ref-sys-table-in-po
-     *
-     * @return
-     * @throws SQLException
      */
     private int nextSrid() throws SQLException {
         try (Statement stmt = getConnection().createStatement()) {

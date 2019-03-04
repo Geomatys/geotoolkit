@@ -450,6 +450,37 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     }
 
     /**
+     * Removes the given grid coverages from the database. The grid coverages are specified by the path to their file.
+     * The path may be relative or absolute; this method will resolve them for verifying if they are the same that the
+     * paths in the database. If the file appears in more than one product, the corresponding grid coverage entries will
+     * be removed for all products.
+     *
+     * <p>Note that this method does <strong>not</strong> delete the given files.
+     * It assumes that the files will be deleted or moved by the caller.</p>
+     *
+     * @param  files  the files to remove from any product.
+     * @throws DataStoreException if an error occurred while resolving a path of removing entries from the database.
+     */
+    public synchronized void removeRaster(final Path... files) throws DataStoreException {
+        if (files.length != 0) {
+            try (Transaction transaction = database.transaction()) {
+                transaction.writeStart();
+                try (GridCoverageTable table = new GridCoverageTable(transaction)) {
+                    for (final Path file : files) {
+                        table.remove(file);
+                    }
+                }
+                transaction.writeEnd();
+            } catch (DataStoreException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new CatalogException(e);
+            }
+            components = null;
+        }
+    }
+
+    /**
      * Removes the given resource.
      *
      * @param  resource  the resource to remove.

@@ -74,9 +74,8 @@ abstract class Table implements AutoCloseable {
     /**
      * Returns a prepared statement for the given query.
      */
-    @SuppressWarnings("StringEquality")
     final PreparedStatement prepareStatement(final String sql) throws SQLException {
-        if (currentSQL != sql) {        // Identity check okay for the purpose of this package.
+        if (!sql.equals(currentSQL)) {
             close();
             statement  = getConnection().prepareStatement(sql);
             currentSQL = sql;
@@ -88,9 +87,8 @@ abstract class Table implements AutoCloseable {
      * Returns a prepared statement for the given update to be executed on a table having
      * an auto-generated identifier.
      */
-    @SuppressWarnings("StringEquality")
     final PreparedStatement prepareStatement(final String sql, final String keyColumn) throws SQLException {
-        if (currentSQL != sql) {        // Identity check okay for the purpose of this package.
+        if (!sql.equals(currentSQL)) {
             close();
             statement  = getConnection().prepareStatement(sql, new String[] {keyColumn});
             currentSQL = sql;
