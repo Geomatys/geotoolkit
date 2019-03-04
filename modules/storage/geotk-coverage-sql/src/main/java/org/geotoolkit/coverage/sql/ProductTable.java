@@ -67,6 +67,11 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
     private static final boolean FETCH_ALL_DATES = true;
 
     /**
+     * @todo Investigate why this is the case.
+     */
+    private static final boolean ALWAYS_CREATE_PARENT = true;
+
+    /**
      * The table of series.
      */
     private final SeriesTable seriesTable;
@@ -228,8 +233,13 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
     void addCoverageReferences(String product, final AddOption option, final Map<String,List<NewRaster>> rasters) throws DataStoreException {
         ArgumentChecks.ensureNonNull("product", product);
         try (final GridCoverageTable table = new GridCoverageTable(transaction, seriesTable, gridGeometries)) {
-            final String parent = product;
-            createIfAbsent(option, parent, null, null);
+            final String parent;
+            if (!ALWAYS_CREATE_PARENT && rasters.size() <= 1) {
+                parent = null;
+            } else {
+                parent = product;
+                createIfAbsent(option, parent, null, null);
+            }
             for (final Map.Entry<String,List<NewRaster>> entry : rasters.entrySet()) {
                 final List<NewRaster> list = entry.getValue();
                 if (parent != null) {
