@@ -1030,7 +1030,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @see BandSelectProcess
      */
     private static GridCoverage2D selectBand(final GridCoverage2D sourceCoverage, final int[] indices) throws ProcessException {
-        if (sourceCoverage.getSampleDimensions().size() < indices.length) {
+        final List<SampleDimension> sampleDimensions = sourceCoverage.getSampleDimensions();
+
+        if (sampleDimensions.size() < indices.length) {
             //not enough bands in the image
             LOGGER.log(Level.WARNING, "Raster Style define more bands than the data");
             return sourceCoverage;
@@ -1048,7 +1050,12 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final GridCoverageBuilder builder = new GridCoverageBuilder();
             builder.setGridCoverage(sourceCoverage);
             builder.setRenderedImage(image);
-            builder.setSampleDimensions();
+
+            final List<SampleDimension> newDims = new ArrayList<>();
+            for (int i : indices) {
+                newDims.add(sampleDimensions.get(i));
+            }
+            builder.setSampleDimensions(newDims);
             return builder.getGridCoverage2D();
         }
     }
