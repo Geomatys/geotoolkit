@@ -44,6 +44,7 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -309,6 +310,10 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             resampleGrid = CoverageUtilities.forceLowerToZero(resampleGrid);
             /////// HACK FOR 0/360 /////////////////////////////////////////
 
+            if (coverage.getSampleDimensions() != null && !coverage.getSampleDimensions().isEmpty()) {
+                //interpolate in geophysic
+                coverage = coverage.view(ViewType.GEOPHYSICS);
+            }
             return new ResampleProcess(coverage, crs2d, resampleGrid, InterpolationCase.BILINEAR, fill).executeNow();
         }
 
