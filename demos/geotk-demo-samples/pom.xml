@@ -89,16 +89,6 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-client-googlemaps</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-client-ignrm</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-client-wmts</artifactId>
             <version>${project.version}</version>
         </dependency>
