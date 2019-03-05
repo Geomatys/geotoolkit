@@ -12,7 +12,6 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.db.postgres.PostgresFeatureStore;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -23,6 +22,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 
 /**
  * Example of creating a postgresql feature store with a raster geometry.
@@ -81,7 +81,7 @@ public class PostgisRasterDemo {
         final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col, RandomStyleBuilder.createDefaultRasterStyle());
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);
-        JMap2DFrame.show(context);
+        FXMapFrame.show(context);
 
 
     }

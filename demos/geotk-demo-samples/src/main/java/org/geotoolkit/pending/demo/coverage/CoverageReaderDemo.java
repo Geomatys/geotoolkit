@@ -11,7 +11,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -97,7 +97,7 @@ public class CoverageReaderDemo {
         context.layers().add(cl);
 
         //display it
-        JMap2DFrame.show(context);
+        FXMapFrame.show(context);
 
     }
 

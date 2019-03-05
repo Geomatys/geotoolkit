@@ -9,7 +9,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -42,7 +42,7 @@ public class ProcessedLayerDemo {
         context.layers().add(processedCovLayer);
         context.layers().add(processedColLayer);
 
-        JMap2DFrame.show(context);
+        FXMapFrame.show(context);
     }
 
     private static MapLayer createProcessedCollectionLayer() throws Exception{

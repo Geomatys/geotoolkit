@@ -69,13 +69,6 @@
       <artifactId>geotk-client-store</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-widgets-swing</artifactId>
-      <version>${project.version}</version>
-      <!-- provided scope since this client can be used without swing -->
-      <scope>provided</scope>
-    </dependency>
   </dependencies>
 
 </project>

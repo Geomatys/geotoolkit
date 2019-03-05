@@ -28,12 +28,12 @@
 
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-widgets-swing</artifactId>
+            <artifactId>geotk-widgets-javafx</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-widgets-javafx</artifactId>
+            <artifactId>geotk-jasperreport</artifactId>
             <version>${project.version}</version>
         </dependency>
 

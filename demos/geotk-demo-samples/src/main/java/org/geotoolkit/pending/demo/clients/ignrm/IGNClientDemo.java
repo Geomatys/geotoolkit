@@ -3,7 +3,6 @@ package org.geotoolkit.pending.demo.clients.ignrm;
 
 import java.net.URL;
 import javax.swing.JOptionPane;
-import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.ignrm.IGNRMClient;
 import org.geotoolkit.ignrm.Token;
 import org.geotoolkit.ignrm.TokenClientSecurity;
@@ -11,6 +10,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.ClientSecurityStack;
 import org.geotoolkit.security.RefererClientSecurity;
@@ -43,7 +43,7 @@ public class IGNClientDemo {
 
         final MapContext context = createIGNContext(key);
 
-        JMap2DFrame.show(context);
+        FXMapFrame.show(context);
 
     }
 

@@ -20,13 +20,13 @@ import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.coverage.postgresql.PGCoverageStore;
 import org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory;
-import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -69,6 +69,6 @@ public class PGCoverageDemo {
         final MapContext ctx = MapBuilder.createContext();
         ctx.layers().add(layer);
 
-        JMap2DFrame.show(ctx);
+        FXMapFrame.show(ctx);
     }
 }

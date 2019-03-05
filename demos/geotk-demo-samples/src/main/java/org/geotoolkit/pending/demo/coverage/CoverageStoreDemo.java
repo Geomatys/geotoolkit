@@ -7,7 +7,7 @@ import org.apache.sis.storage.Resource;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.coverage.filestore.FileCoverageProvider;
-import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -47,7 +47,7 @@ public class CoverageStoreDemo {
         }
 
         //display it
-        JMap2DFrame.show(context);
+        FXMapFrame.show(context);
 
     }
 

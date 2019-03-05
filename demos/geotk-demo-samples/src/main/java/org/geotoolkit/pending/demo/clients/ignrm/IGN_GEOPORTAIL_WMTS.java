@@ -5,7 +5,7 @@ import java.net.URL;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -54,7 +54,7 @@ public class IGN_GEOPORTAIL_WMTS {
         }
 
 
-        JMap2DFrame.show(context, true, null);
+        FXMapFrame.show(context, true, null);
 
     }
 

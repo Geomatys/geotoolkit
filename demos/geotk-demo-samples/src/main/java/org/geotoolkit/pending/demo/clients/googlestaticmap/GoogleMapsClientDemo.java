@@ -4,8 +4,8 @@ package org.geotoolkit.pending.demo.clients.googlestaticmap;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -44,7 +44,7 @@ public class GoogleMapsClientDemo {
             context.layers().add(layer);
         }
 
-        JMap2DFrame.show(context);
+        FXMapFrame.show(context);
 
     }
 

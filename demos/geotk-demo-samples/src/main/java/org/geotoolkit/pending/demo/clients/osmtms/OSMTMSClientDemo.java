@@ -4,7 +4,6 @@ package org.geotoolkit.pending.demo.clients.osmtms;
 import java.net.URL;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -16,6 +15,7 @@ import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.util.GenericName;
 
@@ -29,7 +29,7 @@ public class OSMTMSClientDemo {
 
         final MapContext context = createOSMTMSContext();
 
-        JMap2DFrame.show(context,false,null);
+        FXMapFrame.show(context,false,null);
 
     }
 

@@ -6,7 +6,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
@@ -73,7 +73,7 @@ public class CollectionLayerDemo {
         final MapContext context = MapBuilder.createContext();
         context.layers().add(MapBuilder.createCollectionLayer(myObjects));
 
-        JMap2DFrame.show(context);
+        FXMapFrame.show(context);
     }
 
 }

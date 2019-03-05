@@ -9,7 +9,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.filestore.FileCoverageStore;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
@@ -19,6 +18,7 @@ import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.measure.Units;
 import org.apache.sis.storage.Resource;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -96,7 +96,7 @@ public class ReliefShadowDemo {
         env.setEnvelope(-180, -90, 180, 90);
         context.setAreaOfInterest(env);
         context.layers().add(cl);
-        JMap2DFrame.show(context);
+        FXMapFrame.show(context);
     }
 
     /*
