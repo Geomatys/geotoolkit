@@ -17,10 +17,8 @@
 package org.geotoolkit.wmsc;
 
 import java.util.Collection;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.CapabilitiesException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.MultiResolutionModel;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
@@ -44,16 +42,6 @@ public class WMSCCoverageResource extends AbstractPyramidalCoverageResource {
 
     public WMSCPyramidSet getPyramidSet() {
         return set;
-    }
-
-    @Override
-    public GridGeometry getGridGeometry() throws DataStoreException {
-        final GridCoverageReader reader = acquireReader();
-        try {
-            return reader.getGridGeometry();
-        } finally {
-            recycle(reader);
-        }
     }
 
     @Override

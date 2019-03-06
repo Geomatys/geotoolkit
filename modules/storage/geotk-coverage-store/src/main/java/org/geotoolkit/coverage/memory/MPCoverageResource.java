@@ -23,12 +23,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.MultiResolutionModel;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
@@ -52,16 +50,6 @@ public class MPCoverageResource extends AbstractPyramidalCoverageResource {
     public MPCoverageResource(final MPCoverageStore store, final GenericName name) {
         super(store,name);
         this.pyramidSet = new DefaultPyramidSet();
-    }
-
-    @Override
-    public GridGeometry getGridGeometry() throws DataStoreException {
-        final GridCoverageReader reader = acquireReader();
-        try {
-            return reader.getGridGeometry();
-        } finally {
-            recycle(reader);
-        }
     }
 
     /**
