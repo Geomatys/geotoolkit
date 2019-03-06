@@ -19,7 +19,6 @@ package org.geotoolkit.coverage.grid;
 
 import java.awt.image.RenderedImage;
 import javax.media.jai.PropertySource;
-import org.geotoolkit.coverage.grid.GridCoverage;
 
 
 /**
