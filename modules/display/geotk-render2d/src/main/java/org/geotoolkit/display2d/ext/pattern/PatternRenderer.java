@@ -25,7 +25,6 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -48,6 +47,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.opengis.feature.Feature;
 
 /**
@@ -90,12 +91,11 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
 
         if(!Utilities.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem2D(), renderingContext.getObjectiveCRS())){
             //coverage is not in objective crs, resample it
-            try{
+            try {
                 //we resample the native view of the coverage only, the style will be applied later.
-                dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(
-                        dataCoverage.view(ViewType.NATIVE),
-                        renderingContext.getObjectiveCRS());
-            }catch(Exception ex){
+
+                dataCoverage = new ResampleProcess(dataCoverage.view(ViewType.NATIVE), renderingContext.getObjectiveCRS(), null, InterpolationCase.NEIGHBOR, null).executeNow();
+            } catch(Exception ex) {
                 LOGGER.log(Level.WARNING, "ERROR resample in raster symbolizer renderer",ex);
             }
         }

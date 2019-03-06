@@ -39,7 +39,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.Boundary;
@@ -54,11 +53,13 @@ import org.geotoolkit.data.kml.model.Style;
 import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.nio.ZipUtilities;
+import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -370,18 +371,17 @@ public class KmzContextInterpreter {
     /**
      * Transforms a CoverageMapLayer into KML GroundOverlay.
      */
-    private Feature writeCoverageMapLayer(CoverageMapLayer coverageMapLayer) throws Exception {
+    private Feature writeCoverageMapLayer(MapLayer coverageMapLayer) throws Exception {
         final Feature groundOverlay = KML_FACTORY.createGroundOverlay();
         final CoordinateReferenceSystem targetCrs = CommonCRS.WGS84.normalizedGeographic();
 
-        final GridCoverageResource ref = coverageMapLayer.getResource();
+        final GridCoverageResource ref = (GridCoverageResource) coverageMapLayer.getResource();
         final CoverageReader reader = ref.acquireReader();
         final GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
         ref.recycle(reader);
 
-        final GridCoverage2D targetCoverage =
-                (GridCoverage2D) Operations.DEFAULT.resample(coverage, targetCrs);
-        //targetCoverage.show();
+
+        final GridCoverage2D targetCoverage = new ResampleProcess(coverage, targetCrs, null, InterpolationCase.NEIGHBOR, null).executeNow();
 
         // Creating image file and Writting referenced image into.
         final Path img = filesDirectory.resolve(targetCoverage.getName().toString()+".png");

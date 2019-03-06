@@ -58,14 +58,9 @@ import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Coverage;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.processing.CoverageProcessingException;
-import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -779,31 +774,6 @@ public final class GO2Utilities {
     ////////////////////////////////////////////////////////////////////////////
     // rewrite coverage read param  ////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-
-    public static GridCoverage reCalculate(final GridCoverageReader reader, final GridCoverageReadParam params,
-            final RenderingContext2D context) throws CoverageStoreException, TransformException{
-        final CoordinateReferenceSystem sourceCRS = reader.getGridGeometry().getCoordinateReferenceSystem();
-        final CoordinateReferenceSystem targetCRS = params.getEnvelope().getCoordinateReferenceSystem();
-
-
-        if(!Utilities.equalsIgnoreMetadata(sourceCRS, targetCRS)){
-            //projection is not the same, must reproject it
-            final GridCoverageReadParam newParams = new GridCoverageReadParam();
-            final double[] newRes = context.getResolution(targetCRS);
-            final Envelope newEnv= Envelopes.transform(params.getEnvelope(), targetCRS);
-
-            newParams.setEnvelope(newEnv);
-            newParams.setResolution(newRes);
-
-            GridCoverage2D cov = (GridCoverage2D) reader.read(newParams);
-            cov = (GridCoverage2D) Operations.DEFAULT.resample(cov.view(ViewType.NATIVE), targetCRS);
-            cov = cov.view(ViewType.RENDERED);
-
-            return cov;
-        }
-
-        return reader.read(params);
-    }
 
     public static GridCoverage2D resample(final Coverage dataCoverage, final CoordinateReferenceSystem targetCRS) throws ProcessException{
         final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;

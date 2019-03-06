@@ -72,7 +72,6 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
-import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -101,6 +100,8 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.coverage.bandselect.BandSelectProcess;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -559,7 +560,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         if(!GO2Utilities.isDefaultRasterSymbolizer(s)) return false;
 
         //we can bypass the renderer
-        try{
+        try {
             final GridCoverageResource ref = (GridCoverageResource) resource;
             final CoverageReader reader = ref.acquireReader();
             final String mime = outputDef.getMime();
@@ -583,14 +584,14 @@ public final class DefaultPortrayalService implements PortrayalService{
                     final int nbBands = image.getSampleModel().getNumBands();
                     if(nbBands > 3){
                         //we can remove the fourth band assuming it is the alpha
-                        coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{0,1,2});
+                        coverage = new BandSelectProcess(coverage, new int[]{0,1,2}).executeNow();
                     }
                 }
             }
             ////////////////////////////////////////////////////////////////////
 
             writeCoverage(coverage, env, resolution, outputDef, canvasDef.getBackground());
-        }catch(CoverageStoreException ex){
+        } catch(CoverageStoreException | ProcessException ex) {
             throw new PortrayalException(ex);
         }
         return true;

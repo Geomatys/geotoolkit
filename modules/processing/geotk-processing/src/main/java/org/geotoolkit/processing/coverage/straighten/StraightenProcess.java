@@ -21,10 +21,11 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.coverage.Coverage;
+import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
@@ -118,7 +119,7 @@ public class StraightenProcess extends AbstractProcess {
             final AffineTransform2D outGridToCRS = new AffineTransform2D(scale, 0, 0, -scale, minX, maxY);
             final GridExtent gridEnv = new GridExtent((long)(spanX/scale), (long)(spanY/scale));
             final GridGeometry2D outgridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, outGridToCRS, crs);
-            final GridCoverage2D outCoverage = (GridCoverage2D) Operations.DEFAULT.resample(candidate, crs, outgridGeom, null);
+            final GridCoverage2D outCoverage = new ResampleProcess(candidate, outgridGeom.getCoordinateReferenceSystem(), outgridGeom, InterpolationCase.NEIGHBOR, null).executeNow();
             outputParameters.getOrCreate(StraightenDescriptor.COVERAGE_OUT).setValue(outCoverage);
         }catch(TransformException ex){
             throw new ProcessException(ex.getMessage(), this, ex);

@@ -14,8 +14,6 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.processing.CoverageProcessingException;
-import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -29,6 +27,9 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 
 
 public class CrystallizeSymbolizerRenderer extends AbstractSymbolizerRenderer<CrystallizeCachedSymbolizer>{
@@ -59,11 +60,9 @@ public class CrystallizeSymbolizerRenderer extends AbstractSymbolizerRenderer<Cr
         //reproject coverage
         final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
         if(!Utilities.equalsIgnoreMetadata(coverageCRS,renderingContext.getObjectiveCRS2D()) ){
-            try{
-                dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(
-                        dataCoverage.view(ViewType.NATIVE), renderingContext.getObjectiveCRS2D());
-                dataCoverage = dataCoverage.view(ViewType.RENDERED);
-            } catch (CoverageProcessingException ex) {
+            try {
+                dataCoverage = new ResampleProcess(dataCoverage.view(ViewType.NATIVE), renderingContext.getObjectiveCRS2D(), null, InterpolationCase.NEIGHBOR, null).executeNow();
+            } catch (ProcessException ex) {
                 monitor.exceptionOccured(ex, Level.WARNING);
                 return false;
             }
