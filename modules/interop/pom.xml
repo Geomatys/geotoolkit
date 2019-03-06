@@ -67,7 +67,6 @@
   <modules>
     <module>geotk-netcdf</module>
     <module>geotk-mapfile</module>
-    <module>geotk-legacy</module>
   </modules>
 
 </project>
