@@ -62,197 +62,197 @@ public class WMSMapLayer extends DefaultCoverageMapLayer {
      * @return WMSCoverageResource , never null
      */
     @Override
-    public WMSCoverageResource getCoverageReference() {
-        return (WMSCoverageResource) super.getCoverageReference();
+    public WMSCoverageResource getResource() {
+        return (WMSCoverageResource) super.getResource();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public void setLayerNames(final String... names) {
-        getCoverageReference().setLayerNames(names);
+        getResource().setLayerNames(names);
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public String[] getLayerNames() {
-        return getCoverageReference().getLayerNames();
+        return getResource().getLayerNames();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public String getCombinedLayerNames() {
-        return getCoverageReference().getCombinedLayerNames();
+        return getResource().getCombinedLayerNames();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public void setStyles(final String... styles) {
-        getCoverageReference().setStyles(styles);
+        getResource().setStyles(styles);
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public String[] getStyles() {
-        return getCoverageReference().getStyles();
+        return getResource().getStyles();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public void setSld(final String sld) {
-        getCoverageReference().setSld(sld);
+        getResource().setSld(sld);
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public String getSld() {
-        return getCoverageReference().getSld();
+        return getResource().getSld();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public void setSldBody(final String sldBody) {
-        getCoverageReference().setSldBody(sldBody);
+        getResource().setSldBody(sldBody);
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public String getSldBody() {
-        return getCoverageReference().getSldBody();
+        return getResource().getSldBody();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public String getSldVersion() {
-        return getCoverageReference().getSldVersion();
+        return getResource().getSldVersion();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public void setSldVersion(final String sldVersion) {
-        getCoverageReference().setSldVersion(sldVersion);
+        getResource().setSldVersion(sldVersion);
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public void setFormat(final String format) {
-        getCoverageReference().setFormat(format);
+        getResource().setFormat(format);
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public String getFormat() {
-        return getCoverageReference().getFormat();
+        return getResource().getFormat();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public Map<String, String> dimensions() {
-        return getCoverageReference().dimensions();
+        return getResource().dimensions();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public String getExceptionsFormat() {
-        return getCoverageReference().getExceptionsFormat();
+        return getResource().getExceptionsFormat();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public void setExceptionsFormat(final String exceptionsFormat) {
-        getCoverageReference().setExceptionsFormat(exceptionsFormat);
+        getResource().setExceptionsFormat(exceptionsFormat);
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public Boolean isTransparent() {
-        return getCoverageReference().isTransparent();
+        return getResource().isTransparent();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public void setTransparent(final Boolean transparent) {
-        getCoverageReference().setTransparent(transparent);
+        getResource().setTransparent(transparent);
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public WebMapClient getServer() {
-        return (WebMapClient)getCoverageReference().getStore();
+        return (WebMapClient)getResource().getStore();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public void setCrs84Politic(final CRS84Politic crs84Politic) {
-        getCoverageReference().setCrs84Politic(crs84Politic);
+        getResource().setCrs84Politic(crs84Politic);
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public CRS84Politic getCrs84Politic() {
-        return getCoverageReference().getCrs84Politic();
+        return getResource().getCrs84Politic();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public void setEpsg4326Politic(final EPSG4326Politic epsg4326Politic) {
-        getCoverageReference().setEpsg4326Politic(epsg4326Politic);
+        getResource().setEpsg4326Politic(epsg4326Politic);
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public EPSG4326Politic getEpsg4326Politic() {
-        return getCoverageReference().getEpsg4326Politic();
+        return getResource().getEpsg4326Politic();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public void setUseLocalReprojection(final boolean useLocalReprojection) {
-        getCoverageReference().setUseLocalReprojection(useLocalReprojection);
+        getResource().setUseLocalReprojection(useLocalReprojection);
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public boolean isUseLocalReprojection() {
-        return getCoverageReference().isUseLocalReprojection();
+        return getResource().isUseLocalReprojection();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public void setMatchCapabilitiesDates(final boolean matchCapabilitiesDates) {
-        getCoverageReference().setMatchCapabilitiesDates(matchCapabilitiesDates);
+        getResource().setMatchCapabilitiesDates(matchCapabilitiesDates);
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public boolean isMatchCapabilitiesDates() {
-        return getCoverageReference().isMatchCapabilitiesDates();
+        return getResource().isMatchCapabilitiesDates();
     }
 
     /**
@@ -260,7 +260,7 @@ public class WMSMapLayer extends DefaultCoverageMapLayer {
      */
     public URL query(final Envelope env, final Dimension rect)
             throws MalformedURLException, TransformException, FactoryException {
-        return getCoverageReference().query(env, rect);
+        return getResource().query(env, rect);
     }
 
     /**
@@ -269,7 +269,7 @@ public class WMSMapLayer extends DefaultCoverageMapLayer {
     public void prepareQuery(final GetMapRequest request, final GeneralEnvelope env,
             final Dimension dim, final Point2D pickCoord) throws TransformException,
             FactoryException{
-        getCoverageReference().prepareQuery(request, env, dim, pickCoord);
+        getResource().prepareQuery(request, env, dim, pickCoord);
     }
 
     /**
@@ -277,7 +277,7 @@ public class WMSMapLayer extends DefaultCoverageMapLayer {
      */
     public URL queryLegend(final Dimension rect, final String format,
             final String rule, final Double scale) throws MalformedURLException {
-        return getCoverageReference().queryLegend(rect, format, rule, scale).getURL();
+        return getResource().queryLegend(rect, format, rule, scale).getURL();
     }
 
     /**
@@ -287,7 +287,7 @@ public class WMSMapLayer extends DefaultCoverageMapLayer {
             int y, final String[] queryLayers, final String infoFormat,
             final int featureCount) throws TransformException, FactoryException,
             MalformedURLException {
-        return getCoverageReference().queryFeatureInfo(env, rect, x, y, queryLayers, infoFormat, featureCount).getURL();
+        return getResource().queryFeatureInfo(env, rect, x, y, queryLayers, infoFormat, featureCount).getURL();
     }
 
 }

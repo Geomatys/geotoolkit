@@ -16,11 +16,6 @@
  */
 package org.geotoolkit.display2d.service;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.Polygon;
-
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -30,32 +25,32 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.geotoolkit.data.FeatureStoreUtilities;
-
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import org.opengis.filter.identity.FeatureId;
-import static org.junit.Assert.*;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.filter.identity.FeatureId;
 
 /**
  *
@@ -157,7 +152,7 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
         gcb.setGridToCRS(trs);
 
 
-        final CoverageMapLayer cml = MapBuilder.createCoverageLayer(gcb.build());
+        final MapLayer cml = MapBuilder.createCoverageLayer(gcb.build());
         cml.setSelectable(true);
         MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.layers().add(cml);

@@ -18,6 +18,7 @@ package org.geotoolkit.map;
 
 import java.beans.PropertyChangeEvent;
 import java.util.List;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
@@ -51,13 +52,11 @@ public interface MapLayer extends MapItem {
     public static final String USERKEY_STYLED_FEATURE = "styled_feature";
 
     /**
-     * Convinient method to test if the current layer is well knowned, it means
-     * using conventional types : Features or Coverages. Other layer types
-     * like WMS or KML are unusual types.
+     * Get layer resource.
      *
-     * @return true if the layer is a FeatureMapLayer or CoverageMapLayer
+     * @return Resource, can be null.
      */
-    boolean isWellKnownedType();
+    Resource getResource();
 
     /**
      * Get the style for this layer.  If style has not been set, then null is

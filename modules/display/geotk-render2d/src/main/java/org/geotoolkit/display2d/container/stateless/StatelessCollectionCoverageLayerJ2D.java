@@ -22,10 +22,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.VisitFilter;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -36,31 +40,28 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.GraphicBuilder;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.map.ElevationModel;
+import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.ItemListener;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapItem;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.storage.coverage.CollectionCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
-import org.opengis.util.GenericName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Description;
-import org.geotoolkit.storage.coverage.CollectionCoverageResource;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.opengis.util.GenericName;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer> implements ChangeListener<ChangeEvent>{
+public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> implements ChangeListener<ChangeEvent>{
 
     protected StorageListener.Weak weakStoreListener = new StorageListener.Weak(this);
 
@@ -71,16 +72,16 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
     private final StatelessContextParams params;
     private CoordinateReferenceSystem lastObjectiveCRS = null;
 
-    public StatelessCollectionCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer){
+    public StatelessCollectionCoverageLayerJ2D(final J2DCanvas canvas, final MapLayer layer){
         this(canvas,layer,false);
     }
 
-    public StatelessCollectionCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer, final boolean ignoreBuilders){
+    public StatelessCollectionCoverageLayerJ2D(final J2DCanvas canvas, final MapLayer layer, final boolean ignoreBuilders){
         super(canvas, layer, false);
         this.ignoreBuilders = ignoreBuilders;
         this.params = new StatelessContextParams(canvas,null);
         this.projectedCoverage = new ProjectedCoverage(params, layer);
-        this.weakStoreListener.registerSource(layer.getCoverageReference());
+        this.weakStoreListener.registerSource(layer.getResource());
     }
 
     private synchronized void updateCache(final RenderingContext2D context){
@@ -122,7 +123,12 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
     @Override
     public boolean paintLayer(final RenderingContext2D renderingContext) {
 
-        final GenericName coverageName = item.getCoverageReference().getIdentifier();
+        GenericName coverageName = null;
+        try {
+            coverageName = item.getResource().getIdentifier();
+        } catch (DataStoreException ex) {
+            //do nothing
+        }
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 renderingContext.getSEScale(), coverageName,null);
 
@@ -133,7 +139,7 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
         }
 
         boolean dataRendered = false;
-        final CollectionCoverageResource ref = (CollectionCoverageResource) item.getCoverageReference();
+        final CollectionCoverageResource ref = (CollectionCoverageResource) item.getResource();
         final Collection<GridCoverageResource> references = ref.getCoverages(null);
         final LoopLayer layer = new LoopLayer();
         for (GridCoverageResource cref : references) {
@@ -143,7 +149,7 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
         return dataRendered;
     }
 
-    private boolean paintRaster(final CoverageMapLayer item, final CachedRule[] rules,
+    private boolean paintRaster(final MapLayer item, final CachedRule[] rules,
             final RenderingContext2D context) {
         updateCache(context);
 
@@ -187,7 +193,12 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
 
         final RenderingContext2D renderingContext = (RenderingContext2D) context;
 
-        final GenericName coverageName = item.getCoverageReference().getIdentifier();
+        GenericName coverageName = null;
+        try {
+            coverageName = item.getResource().getIdentifier();
+        } catch (DataStoreException ex) {
+            //do nothing
+        }
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 renderingContext.getSEScale(), coverageName,null);
 
@@ -206,7 +217,7 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
         return graphics;
     }
 
-    private List<Graphic> searchAt(final CoverageMapLayer layer, final CachedRule[] rules,
+    private List<Graphic> searchAt(final MapLayer layer, final CachedRule[] rules,
             final RenderingContext2D renderingContext, final SearchAreaJ2D mask, final VisitFilter filter, List<Graphic> graphics) {
         updateCache(renderingContext);
 
@@ -251,18 +262,13 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
     /**
      * Fake coverage layer to avoid the expensive instanciation.
      */
-    private class LoopLayer implements CoverageMapLayer {
+    private class LoopLayer implements MapLayer {
 
         private GridCoverageResource ref;
 
         @Override
-        public GridCoverageResource getCoverageReference() {
+        public GridCoverageResource getResource() {
             return ref;
-        }
-
-        @Override
-        public boolean isWellKnownedType() {
-            throw new UnsupportedOperationException("Not supported.");
         }
 
         @Override

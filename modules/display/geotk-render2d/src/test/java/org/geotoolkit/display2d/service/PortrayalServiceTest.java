@@ -64,7 +64,6 @@ import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -513,7 +512,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
         //display it
         final MapContext context = MapBuilder.createContext();
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(
+        final MapLayer cl = MapBuilder.createCoverageLayer(
                 coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.layers().add(cl);
 

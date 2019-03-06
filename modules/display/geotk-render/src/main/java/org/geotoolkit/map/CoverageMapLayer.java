@@ -24,12 +24,14 @@ import org.geotoolkit.storage.coverage.GridCoverageResource;
  * @author Johann Sorel (Geomatys)
  * @module
  */
+@Deprecated
 public interface CoverageMapLayer extends MapLayer{
 
     /**
      * Reference to coverage.
      * @return CoverageResource, never null.
      */
-    GridCoverageResource getCoverageReference();
+    @Override
+    GridCoverageResource getResource();
 
 }

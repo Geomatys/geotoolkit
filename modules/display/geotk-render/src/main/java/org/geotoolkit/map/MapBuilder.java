@@ -36,7 +36,6 @@ import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.feature.FeatureType;
-import org.opengis.metadata.quality.CoverageResult;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
@@ -88,55 +87,6 @@ public final class MapBuilder {
         hints.put(Hints.STYLE_FACTORY, MutableStyleFactory.class);
         final MutableStyleFactory factory = (MutableStyleFactory)FactoryFinder.getStyleFactory(hints);
         return new EmptyMapLayer(factory.style());
-    }
-
-    //geometryType
-    /**
-     * Create a default collection map layer with a collection.
-     * The style expect the default geometry property to be named 'Geometry'
-     *
-     * @param collection layer data collection
-     * @param style layer style
-     * @return CollectionMapLayer
-     */
-    public static CollectionMapLayer createCollectionLayer(final Collection<?> collection){
-        final MutableStyleFactory sf = new DefaultStyleFactory();
-        final FilterFactory ff = FactoryFinder.getFilterFactory(null);
-        final MutableStyle style = sf.style();
-        final MutableFeatureTypeStyle fts = sf.featureTypeStyle();
-
-        final MutableRule rulePoint = sf.rule(StyleConstants.DEFAULT_POINT_SYMBOLIZER);
-        rulePoint.setFilter(ff.or(
-                                ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("Point")),
-                                ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("MultiPoint"))
-                            ));
-        final MutableRule ruleLine = sf.rule(StyleConstants.DEFAULT_LINE_SYMBOLIZER);
-        ruleLine.setFilter(ff.or(
-                                ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("LineString")),
-                                ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("MultiLineString"))
-                            ));
-        final MutableRule rulePolygon = sf.rule(StyleConstants.DEFAULT_POLYGON_SYMBOLIZER);
-        rulePolygon.setFilter(ff.or(
-                                ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("Polygon")),
-                                ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("MultiPolygon"))
-                            ));
-
-        fts.rules().add(rulePoint);
-        fts.rules().add(ruleLine);
-        fts.rules().add(rulePolygon);
-        style.featureTypeStyles().add(fts);
-
-        return createCollectionLayer(collection, style);
-    }
-
-    /**
-     * Create a default collection map layer with a collection and a style.
-     * @param collection layer data collection
-     * @param style layer style
-     * @return CollectionMapLayer
-     */
-    public static CollectionMapLayer createCollectionLayer(final Collection<?> collection, final MutableStyle style){
-        return new DefaultCollectionMapLayer(collection, style);
     }
 
     /**

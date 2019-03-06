@@ -43,9 +43,9 @@ import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.MapItem;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.storage.coverage.ImageTile;
 import org.opengis.geometry.Envelope;
@@ -76,7 +76,7 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
     private boolean loaded = false;
 
     public StatefullTileJ2D(Mosaic mosaic, Point3d coordinate, J2DCanvas canvas,
-            CoverageMapLayer item, CachedRule[] rules) {
+            MapLayer item, CachedRule[] rules) {
         super(canvas, item, false);
         this.mosaic = mosaic;
         this.coordinate = coordinate;
@@ -179,7 +179,7 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
                         for(final CachedSymbolizer symbol : rule.symbolizers()){
                             if(symbol.getSource() instanceof RasterSymbolizer){
                                 // todo appeler method getElevationmodel le coverage a deja ete reprojeté
-                                final CoverageMapLayer layer = (CoverageMapLayer) getUserObject();
+                                final MapLayer layer = (MapLayer) getUserObject();
                                 final ElevationModel elevMod = layer.getElevationModel();
                                 final GridCoverage2D dem = DefaultRasterSymbolizerRenderer.getDEMCoverage(coverage, elevMod);
                                 ri = DefaultRasterSymbolizerRenderer.applyStyle(null,coverage, dem, (RasterSymbolizer)symbol.getSource());

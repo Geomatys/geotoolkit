@@ -16,18 +16,6 @@
  */
 package org.geotoolkit.display2d;
 
-import java.awt.image.Raster;
-import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.map.CoverageMapLayer;
-import javax.imageio.ImageIO;
-import org.geotoolkit.display2d.service.OutputDef;
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -37,63 +25,67 @@ import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
+import java.awt.image.Raster;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import javax.imageio.ImageIO;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-
-import org.geotoolkit.coverage.Coverage;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.style.PointSymbolizer;
-import org.opengis.geometry.Envelope;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.style.GraphicalSymbol;
-
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-
+import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.painter.GradiantColorPainter;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
+import org.geotoolkit.display2d.service.OutputDef;
 import org.geotoolkit.display2d.service.PortrayalExtension;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
-
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.referencing.CRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.StyleConstants;
+import static org.geotoolkit.style.StyleConstants.*;
 import org.geotoolkit.test.Assert;
-
-import org.apache.sis.geometry.Envelopes;
-import org.geotoolkit.data.query.QueryBuilder;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
-import static org.geotoolkit.style.StyleConstants.*;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.style.GraphicalSymbol;
+import org.opengis.style.PointSymbolizer;
+import org.opengis.util.FactoryException;
 
 /**
  * Testing color model optimisations.
@@ -472,7 +464,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
         //display it
         final MapContext context = MapBuilder.createContext();
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
+        final MapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.layers().add(cl);
 
         final Envelope envelope = Envelopes.transform(env, CRS.forCode("EPSG:3031"));
@@ -523,7 +515,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
         //display it
         final MapContext context = MapBuilder.createContext();
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
+        final MapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.layers().add(cl);
 
         final Envelope envelope = Envelopes.transform(env, CRS.forCode("EPSG:3031"));

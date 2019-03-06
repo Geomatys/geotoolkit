@@ -17,17 +17,17 @@
 package org.geotoolkit.pending.demo.coverage;
 
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.coverage.postgresql.PGCoverageStore;
-import org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
+import org.geotoolkit.coverage.postgresql.PGCoverageStore;
+import org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory;
 import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
+import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -63,7 +63,7 @@ public class PGCoverageDemo {
         }
 
         final Resource ref = store.findResource(LAYER_NAME);
-        final CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref,
+        final MapLayer layer = MapBuilder.createCoverageLayer(ref,
                 new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
 
         final MapContext ctx = MapBuilder.createContext();

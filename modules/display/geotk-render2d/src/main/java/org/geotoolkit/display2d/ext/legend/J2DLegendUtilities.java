@@ -234,7 +234,7 @@ public class J2DLegendUtilities {
             if (layer instanceof DefaultCoverageMapLayer) {
                 final DefaultCoverageMapLayer covLayer = (DefaultCoverageMapLayer)layer;
                 // Get the image from the ones previously stored, to not resend a get legend graphic request.
-                final BufferedImage image = legendResults.get(covLayer.getCoverageReference().getIdentifier().tip().toString());
+                final BufferedImage image = legendResults.get(covLayer.getResource().getIdentifier().tip().toString());
                 if (image == null) {
                     break wmscase;
                 }
@@ -507,7 +507,7 @@ public class J2DLegendUtilities {
             testwms:
             if (layer instanceof DefaultCoverageMapLayer) {
                 final DefaultCoverageMapLayer covLayer = (DefaultCoverageMapLayer)layer;
-                final GridCoverageResource covRef = covLayer.getCoverageReference();
+                final GridCoverageResource covRef = covLayer.getResource();
 
                 if (covRef == null) {
                     continue;
@@ -522,7 +522,7 @@ public class J2DLegendUtilities {
                             toSet.width = image.getWidth();
                         }
                         if (images != null) {
-                            images.put(covLayer.getCoverageReference().getIdentifier(), image);
+                            images.put(covLayer.getResource().getIdentifier(), image);
                         }
                         continue;
                     }

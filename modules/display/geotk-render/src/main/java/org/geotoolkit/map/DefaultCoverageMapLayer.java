@@ -61,7 +61,7 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
      * {@inheritDoc }
      */
     @Override
-    public GridCoverageResource getCoverageReference() {
+    public GridCoverageResource getResource() {
         return ref;
     }
 
@@ -109,13 +109,13 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
             }
         }
 
-        final GridCoverageResource ref = getCoverageReference();
+        final GridCoverageResource ref = getResource();
         try {
             GridCoverageReader reader = ref.acquireReader();
             final GridGeometry geom = reader.getGridGeometry();
             ref.recycle(reader);
             if (geom == null) {
-                LOGGER.log(Level.WARNING, "Could not access envelope of layer {0}", getCoverageReference().getIdentifier());
+                LOGGER.log(Level.WARNING, "Could not access envelope of layer {0}", getResource().getIdentifier());
                 return INFINITE;
             } else {
                 return geom.getEnvelope();

@@ -3,16 +3,15 @@ package org.geotoolkit.pending.demo.coverage;
 
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
-
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
-import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -49,7 +48,7 @@ public class CustomCoverage1SDemo {
 
         //display it
         final MapContext context = MapBuilder.createContext();
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
+        final MapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.layers().add(cl);
         FXMapFrame.show(context);
     }

@@ -6,23 +6,23 @@ import java.net.URL;
 import javax.imageio.ImageReader;
 import javax.measure.Unit;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.filestore.FileCoverageStore;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.measure.Units;
-import org.apache.sis.storage.Resource;
-import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-
 import static org.geotoolkit.style.StyleConstants.DEFAULT_DESCRIPTION;
 import static org.geotoolkit.style.StyleConstants.LITERAL_ONE_FLOAT;
 import org.opengis.filter.FilterFactory;
@@ -36,7 +36,6 @@ import org.opengis.style.OverlapBehavior;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.ShadedRelief;
 import org.opengis.style.Symbolizer;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Show how to use {@link ElevationModel} to add shadow on image in renderer.
@@ -79,7 +78,7 @@ public class ReliefShadowDemo {
         File cloudFile = new File(ReliefShadowDemo.class.getResource("/data/coverage/clouds.jpg").toURI());
         //create a mapcontext
         final MapContext context  = MapBuilder.createContext();
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(cloudFile);
+        final MapLayer cl = MapBuilder.createCoverageLayer(cloudFile);
         final double azimuth = 45;
         final double altitude = 2;
         final double scale = 0.4;

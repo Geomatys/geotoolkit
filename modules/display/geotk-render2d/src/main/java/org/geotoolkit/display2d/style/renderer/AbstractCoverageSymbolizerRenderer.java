@@ -46,7 +46,6 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.PortrayalException;
@@ -65,8 +64,8 @@ import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
@@ -120,19 +119,19 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 final GridCoverage2D cov = (GridCoverage2D) obj;
                 CharSequence name = cov.getName();
                 if (name==null) name = "unnamed";
-                final CoverageMapLayer ml = MapBuilder.createCoverageLayer(cov, GO2Utilities.STYLE_FACTORY.style(), name.toString());
+                final MapLayer ml = MapBuilder.createCoverageLayer(cov, GO2Utilities.STYLE_FACTORY.style(), name.toString());
                 final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
                 return portray(pc);
             }else  if(obj instanceof GridCoverageResource){
-                final CoverageMapLayer ml = MapBuilder.createCoverageLayer((GridCoverageResource)obj);
+                final MapLayer ml = MapBuilder.createCoverageLayer((GridCoverageResource)obj);
                 final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
                 return portray(pc);
             }else  if(obj instanceof GridCoverageReader){
-                final CoverageMapLayer ml = MapBuilder.createCoverageLayer((GridCoverageReader)obj);
+                final MapLayer ml = MapBuilder.createCoverageLayer((GridCoverageReader)obj);
                 final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
@@ -149,7 +148,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             final Object obj = GO2Utilities.evaluate(GO2Utilities.FILTER_FACTORY.property(
                     symbol.getSource().getGeometryPropertyName()), pf.getCandidate(), null, null);
             if(obj instanceof GridCoverage2D){
-                final CoverageMapLayer ml = MapBuilder.createCoverageLayer((GridCoverage2D)obj, GO2Utilities.STYLE_FACTORY.style(), "");
+                final MapLayer ml = MapBuilder.createCoverageLayer((GridCoverage2D)obj, GO2Utilities.STYLE_FACTORY.style(), "");
                 final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
@@ -258,8 +257,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             throws DataStoreException, TransformException, FactoryException, ProcessException {
         ArgumentChecks.ensureNonNull("projectedCoverage", projectedCoverage);
 
-        final CoverageMapLayer coverageLayer = projectedCoverage.getLayer();
-        final GridCoverageResource ref = coverageLayer.getCoverageReference();
+        final MapLayer coverageLayer = projectedCoverage.getLayer();
+        final GridCoverageResource ref = (GridCoverageResource) coverageLayer.getResource();
 
         final GridGeometry slice = extractSlice(ref.getGridGeometry(), canvasGrid);
 

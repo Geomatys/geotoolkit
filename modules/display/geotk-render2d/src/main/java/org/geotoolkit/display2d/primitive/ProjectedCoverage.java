@@ -18,6 +18,7 @@ package org.geotoolkit.display2d.primitive;
 
 import java.util.logging.Level;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridCoverageStack;
@@ -31,8 +32,8 @@ import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.geometry.GeometricUtilities;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.expression.Expression;
@@ -48,15 +49,15 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
+public class ProjectedCoverage implements ProjectedObject<MapLayer> {
 
     private final Cache<GridCoverageReadParam, GridCoverage2D> cache = new Cache<>(1, 0, false);
 
     private final StatelessContextParams params;
-    private final CoverageMapLayer layer;
+    private final MapLayer layer;
     private ProjectedGeometry border;
 
-    public ProjectedCoverage(final StatelessContextParams params, final CoverageMapLayer layer) {
+    public ProjectedCoverage(final StatelessContextParams params, final MapLayer layer) {
         this.params = params;
         this.layer = layer;
     }
@@ -75,7 +76,7 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
      * @return CoverageMapLayer
      */
     @Override
-    public CoverageMapLayer getLayer() {
+    public MapLayer getLayer() {
         return layer;
     }
 
@@ -97,27 +98,30 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
             try {
                 value = handler.peek();
                 if (value == null) {
-                    final GridCoverageResource ref = layer.getCoverageReference();
-                    final GridCoverageReader reader = ref.acquireReader();
-                    try {
-                        GridCoverage result = reader.read(param);
-                        if (result instanceof GridCoverageStack) {
-                            Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, "Coverage reader return more than one slice.");
+                    Resource resource = layer.getResource();
+                    if (resource instanceof GridCoverageResource) {
+                        final GridCoverageResource ref = (GridCoverageResource) resource;
+                        final GridCoverageReader reader = ref.acquireReader();
+                        try {
+                            GridCoverage result = reader.read(param);
+                            if (result instanceof GridCoverageStack) {
+                                Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, "Coverage reader return more than one slice.");
+                            }
+                            while (result instanceof GridCoverageStack) {
+                                //pick the first slice
+                                result = (GridCoverage) ((GridCoverageStack)result).coverageAtIndex(0);
+                            }
+                            value = (GridCoverage2D) result;
+                            ref.recycle(reader);
+                        } catch (DisjointCoverageDomainException ex) {
+                            //-- DisjointCoverageDomainException is return when we request area out of source boundary.
+                            //-- it's an expected comportement
+                            //-- this method will return null in accordance with its contract.
+                            ref.recycle(reader);
+                        } catch (Throwable e) {
+                            reader.dispose();
+                            throw e;
                         }
-                        while (result instanceof GridCoverageStack) {
-                            //pick the first slice
-                            result = (GridCoverage) ((GridCoverageStack)result).coverageAtIndex(0);
-                        }
-                        value = (GridCoverage2D) result;
-                        ref.recycle(reader);
-                    } catch (DisjointCoverageDomainException ex) {
-                        //-- DisjointCoverageDomainException is return when we request area out of source boundary.
-                        //-- it's an expected comportement
-                        //-- this method will return null in accordance with its contract.
-                        ref.recycle(reader);
-                    } catch (Throwable e) {
-                        reader.dispose();
-                        throw e;
                     }
                 }
             } finally {
@@ -191,7 +195,7 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
     }
 
     @Override
-    public CoverageMapLayer getCandidate() {
+    public MapLayer getCandidate() {
         return layer;
     }
 

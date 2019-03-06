@@ -2,6 +2,10 @@
 
 package org.geotoolkit.pending.demo.mapmodel;
 
+import java.io.File;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
@@ -11,23 +15,17 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.jai.Registry;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-
-import java.io.File;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
-import org.geotoolkit.storage.DataStores;
 
 
 public class MapContextDemo {
@@ -50,11 +48,11 @@ public class MapContextDemo {
         //create a feature layer
         final FeatureCollection features = openShapeFile();
         final MutableStyle featureStyle = SF.style(StyleConstants.DEFAULT_LINE_SYMBOLIZER);
-        final FeatureMapLayer featureLayer = MapBuilder.createFeatureLayer(features, featureStyle);
+        final MapLayer featureLayer = MapBuilder.createFeatureLayer(features, featureStyle);
 
         //create a coverage layer
         File cloudFile = new File(MapContextDemo.class.getResource("/data/coverage/clouds.jpg").toURI());
-        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(cloudFile);
+        final MapLayer coverageLayer = MapBuilder.createCoverageLayer(cloudFile);
 
         //add all layers in the context
         context.layers().add(coverageLayer);

@@ -40,9 +40,9 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.lang.Setup;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -147,7 +147,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
      * @param cml {@link CoverageMapLayer} use to build {@link MapContext}.
      * @throws PortrayalException
      */
-    private void testImageLayer(RenderedImage sourceImage, CoverageMapLayer cml) throws PortrayalException{
+    private void testImageLayer(RenderedImage sourceImage, MapLayer cml) throws PortrayalException{
         //create a mapcontext
         final MapContext context  = MapBuilder.createContext();
         context.layers().add(cml);
@@ -178,7 +178,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
         final double[] envelope = new double[]{-180, -90, 180, 90};
         final GridCoverage2D gc2D = createCoverage(img, crs, envelope);
 
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(gc2D, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "raster");
+        final MapLayer cl = MapBuilder.createCoverageLayer(gc2D, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "raster");
 
         //Envelope result
         GeneralEnvelope resuEnv = new GeneralEnvelope(crs);
@@ -212,7 +212,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
 
         proportionalityCoefficient = 2;
 
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(input);
+        final MapLayer cl = MapBuilder.createCoverageLayer(input);
 
         //Envelope result
         resEnv = gridcov.getEnvelope();

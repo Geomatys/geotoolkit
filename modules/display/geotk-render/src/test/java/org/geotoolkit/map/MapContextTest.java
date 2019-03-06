@@ -27,6 +27,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 import java.io.IOException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.Utilities;
 import static org.junit.Assert.*;
 
@@ -178,6 +179,11 @@ public class MapContextTest {
         @Override
         public Envelope getBounds() {
             return bounds;
+        }
+
+        @Override
+        public Resource getResource() {
+            return null;
         }
     }
 

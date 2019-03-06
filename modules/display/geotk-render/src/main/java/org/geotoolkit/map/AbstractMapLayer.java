@@ -20,11 +20,11 @@ import java.beans.PropertyChangeEvent;
 import java.util.Collections;
 import java.util.EventObject;
 import java.util.List;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
-import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.collection.CheckedArrayList;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.display.primitive.Graphic;
@@ -58,14 +58,6 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
         setStyle(style);
         this.desc = StyleConstants.DEFAULT_DESCRIPTION;
         this.selectionStyle = null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public final boolean isWellKnownedType() {
-        return this instanceof FeatureMapLayer || this instanceof CoverageMapLayer;
     }
 
     @Override

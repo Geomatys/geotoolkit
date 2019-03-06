@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -64,8 +65,9 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
     @Override
     public boolean portray(ProjectedCoverage projectedCoverage) throws PortrayalException {
 
-        try{
-            final GridCoverageResource covref = projectedCoverage.getCandidate().getCoverageReference();
+        try {
+            final Resource resource = projectedCoverage.getCandidate().getResource();
+            final GridCoverageResource covref = (GridCoverageResource) resource;
 
             final DynamicRangeSymbolizer symbolizer = symbol.getSource();
 

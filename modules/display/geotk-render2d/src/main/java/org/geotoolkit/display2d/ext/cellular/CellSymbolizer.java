@@ -203,7 +203,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
     }
 
     public static FeatureType buildCellType(CoverageMapLayer layer) throws DataStoreException{
-        return buildCellType(layer.getCoverageReference());
+        return buildCellType(layer.getResource());
     }
 
     public static FeatureType buildCellType(GridCoverageResource ref) throws DataStoreException{

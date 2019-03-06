@@ -374,7 +374,7 @@ public class KmzContextInterpreter {
         final Feature groundOverlay = KML_FACTORY.createGroundOverlay();
         final CoordinateReferenceSystem targetCrs = CommonCRS.WGS84.normalizedGeographic();
 
-        final GridCoverageResource ref = coverageMapLayer.getCoverageReference();
+        final GridCoverageResource ref = coverageMapLayer.getResource();
         final CoverageReader reader = ref.acquireReader();
         final GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
         ref.recycle(reader);

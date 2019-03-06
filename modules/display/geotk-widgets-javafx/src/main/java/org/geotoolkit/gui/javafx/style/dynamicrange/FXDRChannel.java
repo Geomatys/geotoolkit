@@ -118,7 +118,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
 
         if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final GridCoverageResource ref = cml.getCoverageReference();
+            final GridCoverageResource ref = cml.getResource();
             GridCoverageReader reader = null;
             try {
                 reader = ref.acquireReader();
@@ -168,7 +168,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
     public void fitToData(){
         final MapLayer cml = getLayer();
         if(cml instanceof CoverageMapLayer){
-            final GridCoverageResource ref = ((CoverageMapLayer)cml).getCoverageReference();
+            final GridCoverageResource ref = ((CoverageMapLayer)cml).getResource();
             GridCoverageReader reader = null;
             try {
                 reader = ref.acquireReader();

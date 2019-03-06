@@ -244,7 +244,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         if(!(layer instanceof CoverageMapLayer)) return;
 
         final CoverageMapLayer cml = (CoverageMapLayer)layer;
-        final GridCoverageResource cref = cml.getCoverageReference();
+        final GridCoverageResource cref = cml.getResource();
 
         final Double[] range = findMinMaxInMeta();
         if(range!=null && range[0]!=null && range[1]!=null){
@@ -314,7 +314,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
      */
     private Double[] findMinMaxInMeta(){
         final CoverageMapLayer cml = (CoverageMapLayer)layer;
-        final GridCoverageResource cref = cml.getCoverageReference();
+        final GridCoverageResource cref = cml.getResource();
         final CoverageDescription covdesc = cref.getCoverageDescription();
         if(covdesc==null) return null;
         final Integer index = uiBand.valueProperty().get().intValue();
@@ -669,7 +669,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         //update nbBands spinner
         try {
             if (layer instanceof CoverageMapLayer) {
-                final GridCoverageResource covRef = ((CoverageMapLayer) layer).getCoverageReference();
+                final GridCoverageResource covRef = ((CoverageMapLayer) layer).getResource();
                 final GridCoverageReader reader = covRef.acquireReader();
                 final GridGeometry gridGeometry = reader.getGridGeometry();
 

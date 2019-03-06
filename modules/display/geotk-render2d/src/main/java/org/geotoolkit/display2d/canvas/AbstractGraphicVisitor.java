@@ -24,15 +24,16 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import javax.measure.IncommensurableException;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -43,7 +44,7 @@ import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.coverage.CoverageExtractor;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.coverage.CannotEvaluateException;
@@ -115,7 +116,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
      */
     protected static List<Entry<SampleDimension,Object>> getCoverageValues(final ProjectedCoverage gra, final RenderingContext2D context, final SearchAreaJ2D queryArea) {
 
-        final CoverageMapLayer layer = gra.getLayer();
+        final MapLayer layer = gra.getLayer();
         Envelope objBounds = context.getCanvasObjectiveBounds();
         CoordinateReferenceSystem objCRS = objBounds.getCoordinateReferenceSystem();
         TemporalCRS temporalCRS = CRS.getTemporalComponent(objCRS);
@@ -167,12 +168,15 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         param.setEnvelope(objBounds);
         param.setResolution(resolution);
 
-        final GridCoverage2D coverage;
+        GridCoverage2D coverage = null;
         try {
-            final GridCoverageResource ref = layer.getCoverageReference();
-            final GridCoverageReader reader = ref.acquireReader();
-            coverage = (GridCoverage2D) reader.read(param);
-            ref.recycle(reader);
+            final Resource resource = layer.getResource();
+            if (resource instanceof GridCoverageResource) {
+                final GridCoverageResource ref = (GridCoverageResource) resource;
+                final GridCoverageReader reader = ref.acquireReader();
+                coverage = (GridCoverage2D) reader.read(param);
+                ref.recycle(reader);
+            }
         } catch (CoverageStoreException ex) {
             context.getMonitor().exceptionOccured(ex, Level.INFO);
             return null;
@@ -226,31 +230,36 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         dp.setOrdinate(0, bounds2D.getCenterX());
         dp.setOrdinate(1, bounds2D.getCenterY());
 
-        final CoverageMapLayer layer = projectedCoverage.getLayer();
-        final GridCoverageResource covRef = layer.getCoverageReference();
-        GridCoverageReader reader = null;
-        try {
-            reader = covRef.acquireReader();
-            final Envelope canvasObjective = context.getCanvasObjectiveBounds();
-            final int canvasNbDim = canvasObjective.getDimension();
+        final MapLayer layer = projectedCoverage.getLayer();
+        final Resource resource = layer.getResource();
+        if (resource instanceof GridCoverageResource) {
+            final GridCoverageResource covRef = (GridCoverageResource) resource;
+            GridCoverageReader reader = null;
+            try {
+                reader = covRef.acquireReader();
+                final Envelope canvasObjective = context.getCanvasObjectiveBounds();
+                final int canvasNbDim = canvasObjective.getDimension();
 
-            //fix resolution array
-            double[] resolution = new double[canvasNbDim];
-            resolution[0] = context.getResolution()[0];
-            resolution[1] = context.getResolution()[1];
-            for (int i = 2; i < canvasNbDim; i++) {
-                resolution[i] = 1.0;
-            }
+                //fix resolution array
+                double[] resolution = new double[canvasNbDim];
+                resolution[0] = context.getResolution()[0];
+                resolution[1] = context.getResolution()[1];
+                for (int i = 2; i < canvasNbDim; i++) {
+                    resolution[i] = 1.0;
+                }
 
-            final GridCoverageReadParam param = new GridCoverageReadParam();
-            param.setDeferred(true);
-            param.setEnvelope(canvasObjective);
-            param.setResolution(resolution);
-            return CoverageExtractor.rayExtraction(dp, reader, param);
-        } finally {
-            if (reader != null) {
-                covRef.recycle(reader);
+                final GridCoverageReadParam param = new GridCoverageReadParam();
+                param.setDeferred(true);
+                param.setEnvelope(canvasObjective);
+                param.setResolution(resolution);
+                return CoverageExtractor.rayExtraction(dp, reader, param);
+            } finally {
+                if (reader != null) {
+                    covRef.recycle(reader);
+                }
             }
+        } else {
+            throw new CoverageStoreException("Resource is not a coverage.");
         }
     }
 }

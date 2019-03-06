@@ -43,6 +43,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.AbstractTileGenerator;
@@ -60,7 +61,6 @@ import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -68,6 +68,7 @@ import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.style.MutableStyle;
@@ -151,6 +152,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
 
         search:
         for (MapLayer layer : sceneDef.getContext().layers()) {
+            final Resource resource = layer.getResource();
             final MutableStyle style = layer.getStyle();
             for (FeatureTypeStyle fts : style.featureTypeStyles()) {
                 for (Rule rule : fts.rules()) {
@@ -176,7 +178,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                 }
             }
 
-            if (layer instanceof CoverageMapLayer) {
+            if (resource instanceof GridCoverageResource) {
                 //ok
             } else {
                 rasterOptimisation = false;

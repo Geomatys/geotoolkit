@@ -17,10 +17,7 @@
 
 package org.geotoolkit.map;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-
 import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
@@ -30,8 +27,6 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.style.MutableStyle;
-
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.feature.FeatureType;
@@ -46,34 +41,6 @@ import org.opengis.filter.Filter;
 public class MapLayerTest {
 
     public MapLayerTest() {
-    }
-
-    @Test
-    public void testCollectionLayer() {
-
-        try{
-            MapBuilder.createFeatureLayer(null, null);
-            fail("Creating collection maplayer with null style and source should raise an error");
-        }catch(Exception ex){
-            //ok
-        }
-
-        final MutableStyle style = new DefaultStyleFactory().style();
-
-        try{
-            MapBuilder.createFeatureLayer(null, style);
-            fail("Creating collection maplayer with null source should raise an error");
-        }catch(Exception ex){
-            //ok
-        }
-
-        final List<String> collection = new ArrayList<String>();
-
-        final CollectionMapLayer layer = MapBuilder.createCollectionLayer(collection, style);
-        assertNotNull(layer);
-
-        assertEquals(layer.getCollection(), collection);
-
     }
 
     @Test

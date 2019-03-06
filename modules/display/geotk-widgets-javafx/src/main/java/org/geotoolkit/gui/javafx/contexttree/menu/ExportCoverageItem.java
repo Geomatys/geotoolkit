@@ -94,7 +94,7 @@ public class ExportCoverageItem extends TreeMenuItem {
                     final DirectoryChooser chooser = new DirectoryChooser();
                     chooser.setTitle(GeotkFX.getString(ExportFeatureSetItem.class, "folder"));
                     final File folder = chooser.showDialog(null);
-                    final GridCoverageResource base = layer.getCoverageReference();
+                    final GridCoverageResource base = layer.getResource();
 
                     if (folder != null) {
 

@@ -50,43 +50,43 @@ public class NcWMSMapLayer extends WMSMapLayer {
     }
 
     @Override
-    public NcWMSCoverageResource getCoverageReference(){
-        return (NcWMSCoverageResource) super.getCoverageReference();
+    public NcWMSCoverageResource getResource(){
+        return (NcWMSCoverageResource) super.getResource();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public void setOpacity(final Integer opacity) {
-        getCoverageReference().setOpacity(opacity);
+        getResource().setOpacity(opacity);
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public Integer getNumColorBands() {
-        return getCoverageReference().getNumColorBands();
+        return getResource().getNumColorBands();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public void setNumColorBands(Integer numColorBands) {
-        getCoverageReference().setNumColorBands(numColorBands);
+        getResource().setNumColorBands(numColorBands);
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public Boolean isLogScale() {
-        return getCoverageReference().isLogScale();
+        return getResource().isLogScale();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public void setLogScale(Boolean logScale) {
-        getCoverageReference().setLogScale(logScale);
+        getResource().setLogScale(logScale);
     }
 
     /**
@@ -96,7 +96,7 @@ public class NcWMSMapLayer extends WMSMapLayer {
     public void prepareQuery(final GetMapRequest request, final GeneralEnvelope env,
             final Dimension dim, final Point2D pickCoord) throws TransformException,
             FactoryException{
-        getCoverageReference().prepareQuery(request, env, dim, pickCoord);
+        getResource().prepareQuery(request, env, dim, pickCoord);
     }
 
     /**
@@ -105,7 +105,7 @@ public class NcWMSMapLayer extends WMSMapLayer {
     @Override
     public URL query(final Envelope env, final Dimension rect) throws MalformedURLException,
     TransformException, FactoryException {
-        return getCoverageReference().query(env, rect);
+        return getResource().query(env, rect);
     }
 
     /**
@@ -116,7 +116,7 @@ public class NcWMSMapLayer extends WMSMapLayer {
             int y, final String[] queryLayers, final String infoFormat,
             final int featureCount) throws TransformException, FactoryException,
             MalformedURLException {
-        return getCoverageReference().queryFeatureInfo(env, rect, x, y, queryLayers, infoFormat, featureCount).getURL();
+        return getResource().queryFeatureInfo(env, rect, x, y, queryLayers, infoFormat, featureCount).getURL();
     }
 
     /**
@@ -125,35 +125,35 @@ public class NcWMSMapLayer extends WMSMapLayer {
     @Override
     public URL queryLegend(final Dimension rect, final String format, final String rule,
             final Double scale) throws MalformedURLException {
-        return getCoverageReference().queryLegend(rect, format, rule, scale).getURL();
+        return getResource().queryLegend(rect, format, rule, scale).getURL();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public URL queryMetadataLayerDetails() throws MalformedURLException {
-        return getCoverageReference().queryMetadataLayerDetails();
+        return getResource().queryMetadataLayerDetails();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public URL queryMetadataAnimationTimesteps(final String  start, final String end) throws MalformedURLException {
-        return getCoverageReference().queryMetadataAnimationTimesteps(start, end);
+        return getResource().queryMetadataAnimationTimesteps(start, end);
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public URL queryMetadataTimesteps() throws MalformedURLException {
-        return getCoverageReference().queryMetadataTimesteps();
+        return getResource().queryMetadataTimesteps();
     }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     public URL queryMetadataMinmax(final String crsCode, final String bbox, final String width, final String height) throws MalformedURLException {
-        return getCoverageReference().queryMetadataMinmax(crsCode, bbox, width, height);
+        return getResource().queryMetadataMinmax(crsCode, bbox, width, height);
     }
 
     /**
@@ -161,7 +161,7 @@ public class NcWMSMapLayer extends WMSMapLayer {
      */
     public URL queryTransect(final String crsCode, final String lineString,
             final String outputFormat) throws MalformedURLException {
-        return getCoverageReference().queryTransect(crsCode, lineString, outputFormat);
+        return getResource().queryTransect(crsCode, lineString, outputFormat);
     }
 
     /**
@@ -169,7 +169,7 @@ public class NcWMSMapLayer extends WMSMapLayer {
      */
     public URL queryVerticalProfile(final String crsCode, float x, float y,
             final String outputFormat) throws MalformedURLException {
-        return getCoverageReference().queryVerticalProfile(crsCode, x, y, outputFormat);
+        return getResource().queryVerticalProfile(crsCode, x, y, outputFormat);
     }
 
     /**
@@ -178,6 +178,6 @@ public class NcWMSMapLayer extends WMSMapLayer {
     public URL queryTimeseries(final Envelope env, final Dimension rect, int x,
             int y, final String infoFormat,
             final String dateBegin, final String dateEnd) throws MalformedURLException, TransformException, FactoryException {
-        return getCoverageReference().queryTimeseries(env, rect, x, y, infoFormat, dateBegin, dateEnd);
+        return getResource().queryTimeseries(env, rect, x, y, infoFormat, dateBegin, dateEnd);
     }
 }

@@ -30,6 +30,7 @@ import org.geotoolkit.data.kml.model.MultiGeometry;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.map.AbstractMapLayer;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -50,6 +51,11 @@ public class KmlMapLayer extends AbstractMapLayer {
         super(style);
         this.kml = kml;
         graphicBuilders().add(KMLGraphicBuilder.INSTANCE);
+    }
+
+    @Override
+    public Resource getResource() {
+        return null;
     }
 
     /*

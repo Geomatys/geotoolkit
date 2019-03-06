@@ -1,28 +1,26 @@
 
 package org.geotoolkit.pending.demo.rendering.customgraphicbuilder;
 
+import java.io.File;
+import java.io.Serializable;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-
-import java.io.File;
-import java.io.Serializable;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
-import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
-import org.geotoolkit.storage.DataStores;
 
 
 public class GraphicBuilderDemo {
@@ -58,7 +56,7 @@ public class GraphicBuilderDemo {
 
         //create a coverage layer
         File cloudFile = new File(GraphicBuilderDemo.class.getResource("/data/coverage/clouds.jpg").toURI());
-        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(cloudFile);
+        final MapLayer coverageLayer = MapBuilder.createCoverageLayer(cloudFile);
 
         //set our graphic builder
         layer.graphicBuilders().add(new LinksGraphicBuilder());

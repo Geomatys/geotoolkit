@@ -3,20 +3,20 @@ package org.geotoolkit.pending.demo.clients.osmtms;
 
 import java.net.URL;
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.osmtms.OSMTMSClientFactory;
-import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
+import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.osmtms.OSMTMSClientFactory;
+import org.geotoolkit.pending.demo.Demos;
+import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
-import org.geotoolkit.storage.DataStores;
 import org.opengis.util.GenericName;
 
 
@@ -46,7 +46,7 @@ public class OSMTMSClientDemo {
 
         for(GenericName n : store.getNames()){
             final Resource cr = store.findResource(n.toString());
-            final CoverageMapLayer cml = MapBuilder.createCoverageLayer(cr);
+            final MapLayer cml = MapBuilder.createCoverageLayer(cr);
             cml.setDescription(new DefaultDescription(
                     new SimpleInternationalString(n.tip().toString()),
                     new SimpleInternationalString("")));

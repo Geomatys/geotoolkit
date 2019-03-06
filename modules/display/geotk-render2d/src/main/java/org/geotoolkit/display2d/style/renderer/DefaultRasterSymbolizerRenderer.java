@@ -76,9 +76,9 @@ import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -159,8 +159,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         try {
             GridCoverage2D dataCoverage = getObjectiveCoverage(projectedCoverage);
             GridCoverage2D elevationCoverage = null;//getObjectiveElevationCoverage(projectedCoverage);
-            final CoverageMapLayer coverageLayer = projectedCoverage.getLayer();
-            final GridCoverageResource ref = coverageLayer.getCoverageReference();
+            final MapLayer coverageLayer = projectedCoverage.getLayer();
+            final GridCoverageResource ref = (GridCoverageResource) coverageLayer.getResource();
 
             assert ref != null : "CoverageMapLayer.getCoverageReference() contract don't allow null pointeur.";
 
@@ -720,7 +720,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     if(eles.length > 0 && ComponentColorModel.class.getName().equalsIgnoreCase(eles[0].getClassName())){
 
                         try{
-                            final GridCoverageResource ref = projectedCoverage.getLayer().getCoverageReference();
+                            final GridCoverageResource ref = (GridCoverageResource) projectedCoverage.getLayer().getResource();
                             final GridCoverageReader reader = ref.acquireReader();
                             final Map<String,Object> analyze = StatisticOp.analyze(reader);
                             ref.recycle(reader);
@@ -834,7 +834,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @param coverageMapLayer CoverageMapLayer
      * @return a Map</String,Double> with query parameters or null
      */
-    public static Map<String, Double> extractQuery(final CoverageMapLayer coverageMapLayer) {
+    public static Map<String, Double> extractQuery(final MapLayer coverageMapLayer) {
 
         Map<String,Double> values = null;
         if (coverageMapLayer instanceof DefaultCoverageMapLayer) {

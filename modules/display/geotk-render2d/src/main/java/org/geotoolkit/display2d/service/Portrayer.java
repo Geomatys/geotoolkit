@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -48,7 +49,6 @@ import org.geotoolkit.display2d.container.ContextContainer2D;
 import static org.geotoolkit.display2d.service.DefaultPortrayalService.*;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -223,7 +223,8 @@ public final class Portrayer {
 
         //layer must be a coverage
         final MapLayer layer = layers.get(0);
-        if(!(layer instanceof CoverageMapLayer)) return false;
+        final Resource resource = layer.getResource();
+        if(!(resource instanceof GridCoverageResource)) return false;
 
         //we must not have extensions
         if(!sceneDef.extensions().isEmpty()) return false;
@@ -239,10 +240,8 @@ public final class Portrayer {
         if(!GO2Utilities.isDefaultRasterSymbolizer(s)) return false;
 
         //we can bypass the renderer
-        final CoverageMapLayer cml = (CoverageMapLayer) layer;
-
         try{
-            final GridCoverageResource ref = cml.getCoverageReference();
+            final GridCoverageResource ref = (GridCoverageResource) resource;
             final CoverageReader reader = ref.acquireReader();
             final String mime = outputDef.getMime();
             final Envelope env = viewDef.getEnvelope();

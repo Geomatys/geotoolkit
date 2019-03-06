@@ -26,12 +26,10 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -40,11 +38,13 @@ import org.geotoolkit.owc.xml.OwcExtension;
 import org.geotoolkit.owc.xml.v10.OfferingType;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -108,11 +108,11 @@ public class OwcDataStoreExtension extends OwcExtension {
             if(store instanceof FeatureStore){
                 final Session session = ((FeatureStore)store).createSession(true);
                 final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(NamesExt.valueOf(typeName)));
-                final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col);
+                final MapLayer layer = MapBuilder.createFeatureLayer(col);
                 return layer;
             }else if(store instanceof CoverageStore){
                 final Resource covref = ((CoverageStore)store).findResource(NamesExt.valueOf(typeName).toString());
-                final CoverageMapLayer layer = MapBuilder.createCoverageLayer(covref);
+                final MapLayer layer = MapBuilder.createCoverageLayer(covref);
                 return layer;
             }
         }
@@ -166,7 +166,7 @@ public class OwcDataStoreExtension extends OwcExtension {
             }
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final GridCoverageResource covref = cml.getCoverageReference();
+            final GridCoverageResource covref = cml.getResource();
             final DataStore store = covref.getStore();
             if(store!=null){
                 final DataStoreProvider factory = store.getProvider();
@@ -188,7 +188,7 @@ public class OwcDataStoreExtension extends OwcExtension {
             }
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final GridCoverageResource covref = cml.getCoverageReference();
+            final GridCoverageResource covref = cml.getResource();
             final DataStore store = covref.getStore();
             if(store!=null){
                 return store.getOpenParameters();
@@ -207,7 +207,7 @@ public class OwcDataStoreExtension extends OwcExtension {
             }
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final GridCoverageResource covref = cml.getCoverageReference();
+            final GridCoverageResource covref = cml.getResource();
             return covref.getIdentifier().toString();
         }
         return null;

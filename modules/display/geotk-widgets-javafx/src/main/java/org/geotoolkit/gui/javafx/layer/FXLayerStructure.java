@@ -130,7 +130,7 @@ public class FXLayerStructure extends FXPropertyPane {
 
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final GridCoverageResource ref = cml.getCoverageReference();
+            final GridCoverageResource ref = cml.getResource();
             try {
                 final GridCoverageReader reader = ref.acquireReader();
                 final GridGeometry gridgeom = reader.getGridGeometry();

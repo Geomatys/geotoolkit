@@ -14,9 +14,9 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -93,7 +93,7 @@ public class CoverageReaderDemo {
          */
         //create a mapcontext
         final MapContext context = MapBuilder.createContext();
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(tempData);
+        final MapLayer cl = MapBuilder.createCoverageLayer(tempData);
         context.layers().add(cl);
 
         //display it
