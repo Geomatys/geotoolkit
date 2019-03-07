@@ -103,6 +103,24 @@ public class Geometry {
         this.coordinateSystem = value;
     }
 
+    public BoundingRectangleType getBoundingRectangle() {
+        if (boundingRectangleOrPointOrLine != null) {
+            for (Object obj : boundingRectangleOrPointOrLine) {
+                if (obj instanceof BoundingRectangleType) {
+                    return (BoundingRectangleType)obj;
+                }
+            }
+        }
+        return null;
+    }
+
+    public void setBoundingRectangle(BoundingRectangleType rect) {
+        boundingRectangleOrPointOrLine = new ArrayList<>();
+        if (rect != null) {
+            boundingRectangleOrPointOrLine.add(rect);
+        }
+    }
+
     /**
      * Gets the value of the boundingRectangleOrPointOrLine property.
      *
@@ -130,7 +148,7 @@ public class Geometry {
      */
     public List<Object> getBoundingRectangleOrPointOrLine() {
         if (boundingRectangleOrPointOrLine == null) {
-            boundingRectangleOrPointOrLine = new ArrayList<Object>();
+            boundingRectangleOrPointOrLine = new ArrayList<>();
         }
         return this.boundingRectangleOrPointOrLine;
     }

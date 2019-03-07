@@ -21,6 +21,7 @@ import org.apache.sis.util.logging.Logging;
 import org.w3c.dom.Node;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -70,11 +71,13 @@ public abstract class AbstractMetadataReader implements MetadataReader {
         this.threadEnabled = isThreadEnabled;
     }
 
-    /**
+     /**
      * {@inheritDoc}
      */
     @Override
-    public abstract RecordInfo getMetadata(final String identifier, final MetadataType mode) throws MetadataIoException;
+    public RecordInfo getMetadata(final String identifier, final MetadataType mode) throws MetadataIoException {
+        return getMetadata(identifier, mode, ElementSetType.FULL, new ArrayList<>());
+    }
 
     /**
      * {@inheritDoc}
