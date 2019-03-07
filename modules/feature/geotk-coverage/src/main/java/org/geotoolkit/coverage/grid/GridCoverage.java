@@ -40,6 +40,7 @@ import java.awt.image.SampleModel;
 import java.awt.image.renderable.RenderContext;
 import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.text.FieldPosition;
@@ -131,7 +132,7 @@ import org.opengis.util.InternationalString;
  *
  * @author Martin Desruisseaux (IRD)
  */
-public abstract class GridCoverage implements Localized {
+public abstract class GridCoverage implements Localized, Serializable {
 
     /**
      * The logger for grid coverage operations.
@@ -541,7 +542,9 @@ public abstract class GridCoverage implements Localized {
     @UML(identifier="gridGeometry", obligation=MANDATORY, specification=OGC_01004)
     public abstract GridGeometry getGridGeometry();
 
-
+    public Map getProperties() {
+        return properties;
+    }
 
     /////////////////////////////////////////////////////////////////////////
     ////////////////                                         ////////////////
