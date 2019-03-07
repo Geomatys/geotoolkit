@@ -23,7 +23,7 @@ package org.geotoolkit.coverage.processing;
 import java.util.Objects;
 import java.io.Serializable;
 
-import org.geotoolkit.coverage.Coverage;
+import org.geotoolkit.coverage.grid.Coverage;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;

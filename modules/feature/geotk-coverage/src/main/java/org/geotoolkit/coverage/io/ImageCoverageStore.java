@@ -26,7 +26,7 @@ import javax.imageio.spi.ImageReaderWriterSpi;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.coverage.AbstractCoverage;
+import org.geotoolkit.coverage.grid.AbstractCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import static org.geotoolkit.coverage.io.GridCoverageStore.LOGGER;

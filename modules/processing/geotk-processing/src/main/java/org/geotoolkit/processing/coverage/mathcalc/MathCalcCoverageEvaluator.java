@@ -23,7 +23,7 @@ import java.util.logging.Level;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.Coverage;
+import org.geotoolkit.coverage.grid.Coverage;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

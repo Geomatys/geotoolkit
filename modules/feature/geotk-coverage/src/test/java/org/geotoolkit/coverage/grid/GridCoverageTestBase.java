@@ -33,7 +33,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import static org.apache.sis.measure.Units.*;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.test.Assert;
 import org.geotoolkit.test.image.ImageTestBase;

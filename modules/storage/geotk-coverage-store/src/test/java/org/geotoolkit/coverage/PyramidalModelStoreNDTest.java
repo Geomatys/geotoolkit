@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.coverage;
 
+import org.geotoolkit.coverage.grid.Coverage;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;

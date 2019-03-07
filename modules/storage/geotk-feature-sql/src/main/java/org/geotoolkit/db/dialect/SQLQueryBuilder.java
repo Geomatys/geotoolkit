@@ -38,7 +38,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.visitor.FIDFixVisitor;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.db.DBRelationOperation;
-import org.geotoolkit.coverage.Coverage;
+import org.geotoolkit.coverage.grid.Coverage;
 import org.opengis.util.GenericName;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;

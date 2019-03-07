@@ -2,8 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003-2012, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2012, Geomatys
+ *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage;
+package org.geotoolkit.coverage.grid;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -39,26 +38,28 @@ import javax.media.jai.InterpolationNearest;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.PassThroughTransform;
+import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
 import static org.apache.sis.util.Utilities.equalsIgnoreMetadata;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.FrequencySortedSet;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.Interpolator2D;
 import org.geotoolkit.coverage.processing.OperationNotFoundException;
 import org.geotoolkit.image.palette.IIOListeners;
 import org.geotoolkit.image.palette.IIOReadProgressAdapter;
 import static org.geotoolkit.internal.InternalUtilities.debugEquals;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -119,10 +120,12 @@ import org.opengis.util.FactoryException;
  * caching mechanism is sufficient if {@code evaluate(...)} methods are invoked with increasing
  * <var>z</var> values.
  *
- * @author Martin Desruisseaux (IRD, Geomatys)
+ *
  * @author Johann Sorel (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  */
-public abstract class CoverageStack extends AbstractCoverage {
+public class GridCoverageStack extends AbstractCoverage implements GridCoverage {
+
 
     /**
      * For compatibility during cross-version serialization.
@@ -550,6 +553,8 @@ public abstract class CoverageStack extends AbstractCoverage {
      */
     private transient double[] doubleBuffer;
 
+    private GridGeometry gridGeometry;
+
     /**
      * Initializes fields after deserialization.
      */
@@ -593,8 +598,8 @@ public abstract class CoverageStack extends AbstractCoverage {
      * @param  coverages All {@link Coverage} elements for this stack.
      * @throws IOException if an I/O operation was required and failed.
      */
-    CoverageStack(final CharSequence name, final Collection<? extends Coverage> coverages)
-            throws IOException
+    public GridCoverageStack(final CharSequence name, final Collection<? extends Coverage> coverages)
+            throws IOException, TransformException, FactoryException
     {
         this(name, (CoordinateReferenceSystem) null, toElements(coverages,null), null);
     }
@@ -606,8 +611,8 @@ public abstract class CoverageStack extends AbstractCoverage {
      * @param zDimension Dimension index in CRS where Z varies. If null, use the last dimension
      * @throws IOException if an I/O operation was required and failed.
      */
-    CoverageStack(final CharSequence name, final Collection<? extends Coverage> coverages, final Integer zDimension)
-            throws IOException
+    public GridCoverageStack(final CharSequence name, final Collection<? extends Coverage> coverages, final Integer zDimension)
+            throws IOException, TransformException, FactoryException
     {
         this(name, (CoordinateReferenceSystem) null, toElements(coverages, zDimension), zDimension);
     }
@@ -639,9 +644,9 @@ public abstract class CoverageStack extends AbstractCoverage {
      * @param  elements All coverage {@link Element Element}s for this stack.
      * @throws IOException if an I/O operation was required and failed.
      */
-    CoverageStack(final CharSequence name,
+    public GridCoverageStack(final CharSequence name,
                          final CoordinateReferenceSystem crs,
-                         final Collection<? extends Element> elements) throws IOException
+                         final Collection<? extends Element> elements) throws IOException, TransformException, FactoryException
     {
         this(name, crs, elements.toArray(new Element[elements.size()]), null);
     }
@@ -661,10 +666,10 @@ public abstract class CoverageStack extends AbstractCoverage {
      * @param zDimension Dimension index in CRS where Z varies. If null, use the last dimension
      * @throws IOException if an I/O operation was required and failed.
      */
-    CoverageStack(final CharSequence name,
+    public GridCoverageStack(final CharSequence name,
                          final CoordinateReferenceSystem crs,
                          final Collection<? extends Element> elements,
-                         final Integer zDimension) throws IOException
+                         final Integer zDimension) throws IOException, TransformException, FactoryException
     {
         this(name, crs, elements.toArray(new Element[elements.size()]), zDimension);
     }
@@ -680,10 +685,10 @@ public abstract class CoverageStack extends AbstractCoverage {
      * @param zDimension Dimension index in CRS where Z varies. If null, use the last dimension
      * @throws IOException if an I/O operation was required and failed.
      */
-    CoverageStack(final CharSequence name,
+    GridCoverageStack(final CharSequence name,
                           final CoordinateReferenceSystem crs,
                           final Element[] elements,
-                          final Integer zDimension) throws IOException
+                          final Integer zDimension) throws IOException, TransformException, FactoryException
     {
         this(name, getEnvelope(crs, elements), elements, zDimension); // 'elements' must be after 'getEnvelope'
     }
@@ -692,10 +697,10 @@ public abstract class CoverageStack extends AbstractCoverage {
      * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
      * call in constructors").
      */
-    CoverageStack(final CharSequence name,
+    GridCoverageStack(final CharSequence name,
                           final GeneralEnvelope envelope,
                           final Element[] elements,
-                          final Integer zDimension) throws IOException
+                          final Integer zDimension) throws IOException, TransformException, FactoryException
     {
         super(name, envelope.getCoordinateReferenceSystem(), null, null);
         assert ArraysExt.isSorted(elements, COMPARATOR, false);
@@ -729,6 +734,7 @@ public abstract class CoverageStack extends AbstractCoverage {
         this.numSampleDimensions = (sampleDimensions != null) ? sampleDimensions.length : 0;
         this.sampleDimensions = sampleDimensionMismatch ? null : sampleDimensions;
         zCRS = CRS.getOrCreateSubCRS(crs, this.zDimension, this.zDimension+1);
+        buildGridGeometry();
     }
 
     /**
@@ -737,7 +743,7 @@ public abstract class CoverageStack extends AbstractCoverage {
      * @param name   The coverage name.
      * @param source The stack to copy.
      */
-    protected CoverageStack(final CharSequence name, final CoverageStack source) {
+    protected GridCoverageStack(final CharSequence name, final GridCoverageStack source) {
         super(name, source);
         // TODO: Put synchronization before the call to super(...) if Sun fixes RFE #4093999
         // ("Relax constraint on placement of this()/super() call in constructors").
@@ -814,7 +820,7 @@ public abstract class CoverageStack extends AbstractCoverage {
                         final int[] f = frequency.frequencies();
                         final LogRecord record = Loggings.format(Level.WARNING, Loggings.Keys.
                                 FoundMismatchedCRS_4, size, elements.length, f[0], f[size-1]);
-                        record.setSourceClassName(CoverageStack.class.getName());
+                        record.setSourceClassName(GridCoverageStack.class.getName());
                         record.setSourceMethodName("<init>"); // This is the public method invoked.
                         final Logger logger = Logging.getLogger("org.geotoolkit.coverage");
                         record.setLoggerName(logger.getName());
@@ -983,7 +989,7 @@ public abstract class CoverageStack extends AbstractCoverage {
      * Used only by GridCoverageStack sub class to rebuild the grid geometry.
      * @return Element[] stack elements
      */
-    Element[] getElements() {
+    public Element[] getElements() {
         return elements;
     }
 
@@ -1664,7 +1670,7 @@ public abstract class CoverageStack extends AbstractCoverage {
     private void logLoading(final short key, final Object[] parameters) {
         final Locale locale = null;
         final LogRecord record = Vocabulary.getResources(locale).getLogRecord(Level.INFO, key);
-        record.setSourceClassName(CoverageStack.class.getName());
+        record.setSourceClassName(GridCoverageStack.class.getName());
         record.setSourceMethodName("evaluate");
         record.setParameters(parameters);
         if (readListener == null) {
@@ -1702,4 +1708,121 @@ public abstract class CoverageStack extends AbstractCoverage {
             }
         }
     }
+
+    private void buildGridGeometry() throws IOException, TransformException, FactoryException {
+        final Element[] elements = getElements();
+        final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
+        final int nbDim = crs.getCoordinateSystem().getDimension();
+
+        if (elements.length == 0)
+            throw new IOException("Coverages list is empty");
+
+
+        //build the grid geometry
+        final long[] gridLower = new long[nbDim];
+        final long[] gridUpper = new long[nbDim];
+        final double[] zAxisSteps = new double[elements.length];
+        MathTransform baseGridToCRS = null;
+        int k=0;
+        for (Element element : elements) {
+            final GridCoverage coverage = (GridCoverage) element.getCoverage(null);
+
+            final GridGeometry gg = coverage.getGridGeometry();
+            final GridExtent ext = gg.getExtent();
+
+            //-- check extent pertinency
+            //we expect the axisIndex dimension to be a slice, low == high
+            if (ext.getLow(zDimension) != ext.getHigh(zDimension))
+                throw new IOException("Last dimension of the coverage is not a slice.");
+
+            if (baseGridToCRS == null) {
+                for (int i = 0; i < nbDim; i++) {
+                    gridLower[i] = ext.getLow(i);
+                    gridUpper[i] = ext.getHigh(i);
+                }
+            }
+
+            //-- check baseGridToCRS pertinency
+            baseGridToCRS = gg.getGridToCRS(PixelInCell.CELL_CENTER);
+            assert baseGridToCRS != null;
+
+            //-- pass gridToCRS into Corner
+            //-- GeoApi define that gridToCRS in Center
+            baseGridToCRS = PixelTranslation.translate(baseGridToCRS, PixelInCell.CELL_CENTER, PixelInCell.CELL_CORNER);
+
+
+            //find the real value
+            final double[] coord = new double[gridUpper.length];
+            for (int i = 0; i < gridUpper.length; i++) {
+                coord[i] = ext.getLow(i);
+            }
+            baseGridToCRS.transform(coord, 0, coord, 0, 1);
+            zAxisSteps[k] = coord[zDimension];
+
+            //increment number of slices
+            gridUpper[zDimension]++;
+            k++;
+        }
+
+        // reduce by one, values are inclusive
+        gridUpper[zDimension]--;
+
+        int remainingDimensions = nbDim - zDimension - 1;
+
+        /*
+         * Rebuild GridGeometry gridToCRS by extracting MT parts before and after MT1D on current zDimension axis.
+         * This is done in order to keep GridCoverage2D slice with all there dimension instead of truncate there dimensions
+         * on each CoverageStack level.
+         *
+         * TODO replace this hack by a GridCoverageStackBuilder that rebuild global gridGeometry and propagate it to every level
+         * and GridCoverage2D.
+         */
+
+        //extract MT [0, zDim[
+        TransformSeparator df = new TransformSeparator(baseGridToCRS);
+        df.addSourceDimensionRange(0, zDimension);
+        MathTransform firstMT = df.separate();
+        firstMT = PassThroughTransform.create(0, firstMT, nbDim - zDimension);
+
+        //create dimension pass through transform with linear
+        final MathTransform lastAxisTrs;
+        if(zAxisSteps.length==1){
+            lastAxisTrs = MathTransforms.linear(1, zAxisSteps[0]);
+        }else{
+            lastAxisTrs = LinearInterpolator1D.create(zAxisSteps);
+        }
+        final MathTransform dimLinear = PassThroughTransform.create(zDimension, lastAxisTrs, remainingDimensions);
+
+        //extract MT [zDim+1, nbDim[
+        MathTransform lastPart = null;
+        if (remainingDimensions > 0) {
+            df = new TransformSeparator(baseGridToCRS);
+            df.addSourceDimensionRange(zDimension+1, nbDim);
+            lastPart = df.separate();
+            lastPart = PassThroughTransform.create(zDimension+1, lastPart, 0);
+        }
+
+        //build final gridToCRS
+        final MathTransform gridToCRS;
+        if (lastPart == null) {
+            gridToCRS = MathTransforms.concatenate(firstMT, dimLinear);
+        } else {
+            gridToCRS = MathTransforms.concatenate(firstMT, dimLinear, lastPart);
+        }
+
+        //build gridGeometry
+        final GridExtent gridEnv = new GridExtent(null, gridLower, gridUpper, true);
+        gridGeometry = new GridGeometry(gridEnv, PixelInCell.CELL_CORNER, gridToCRS, crs);
+    }
+
+    @Override
+    public GridGeometry getGridGeometry() {
+        return gridGeometry;
+    }
+
+    @Override
+    public List<GridCoverage> getSources() {
+        return Collections.emptyList();
+    }
+
 }

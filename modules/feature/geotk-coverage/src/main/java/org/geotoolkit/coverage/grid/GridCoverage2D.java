@@ -47,7 +47,6 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.TransformedDirectPosition;
 import org.geotoolkit.internal.coverage.CoverageUtilities;

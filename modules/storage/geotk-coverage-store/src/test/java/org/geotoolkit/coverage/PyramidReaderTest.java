@@ -16,6 +16,7 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.data.multires.DefiningMosaic;
@@ -133,7 +134,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         //check each block range
         Assert.assertTrue(result instanceof GridCoverageStack);
         final GridCoverageStack stackT = (GridCoverageStack) result;
-        final CoverageStack.Element[] elementsT = stackT.getElements();
+        final GridCoverageStack.Element[] elementsT = stackT.getElements();
         Assert.assertEquals(-9.0,elementsT[0].getZCenter());
         Assert.assertEquals( 0.0,elementsT[1].getZCenter());
         Assert.assertEquals(21.0,elementsT[2].getZCenter());
@@ -142,19 +143,19 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         Assert.assertEquals(NumberRange.create( 10.5, true, 31.5, false),elementsT[2].getZRange()); // [ (21-((0+9)/2) ... (21+((0+21)/2) [
 
         final GridCoverageStack stackT0 = (GridCoverageStack) stackT.coveragesAt(-9).get(0);
-        final CoverageStack.Element[] elementsT0 = stackT0.getElements();
+        final GridCoverageStack.Element[] elementsT0 = stackT0.getElements();
         Assert.assertEquals(-5.0,elementsT0[0].getZCenter());
         Assert.assertEquals(62.0,elementsT0[1].getZCenter());
         Assert.assertEquals(NumberRange.create(-38.5, true, 28.5, false),elementsT0[0].getZRange()); // [ -5-((-5+62)/2) ... -5-((-5+62)/2) [
         Assert.assertEquals(NumberRange.create( 28.5, true, 95.5, false),elementsT0[1].getZRange()); // [ 62-((-5+62)/2) ... 62-((-5+62)/2) [
         final GridCoverageStack stackT1 = (GridCoverageStack) stackT.coveragesAt( 0).get(0);
-        final CoverageStack.Element[] elementsT1 = stackT0.getElements();
+        final GridCoverageStack.Element[] elementsT1 = stackT0.getElements();
         Assert.assertEquals(-5.0,elementsT1[0].getZCenter());
         Assert.assertEquals(62.0,elementsT1[1].getZCenter());
         Assert.assertEquals(NumberRange.create(-38.5, true, 28.5, false),elementsT1[0].getZRange()); // [ -5-((-5+62)/2) ... -5-((-5+62)/2) [
         Assert.assertEquals(NumberRange.create( 28.5, true, 95.5, false),elementsT1[1].getZRange()); // [ 62-((-5+62)/2) ... 62-((-5+62)/2) [
         final GridCoverageStack stackT2 = (GridCoverageStack) stackT.coveragesAt(21).get(0);
-        final CoverageStack.Element[] elementsT2 = stackT0.getElements();
+        final GridCoverageStack.Element[] elementsT2 = stackT0.getElements();
         Assert.assertEquals(-5.0,elementsT2[0].getZCenter());
         Assert.assertEquals(62.0,elementsT2[1].getZCenter());
         Assert.assertEquals(NumberRange.create(-38.5, true, 28.5, false),elementsT2[0].getZRange()); // [ -5-((-5+62)/2) ... -5-((-5+62)/2) [

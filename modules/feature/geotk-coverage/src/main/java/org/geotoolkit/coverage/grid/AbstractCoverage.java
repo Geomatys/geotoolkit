@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage;
+package org.geotoolkit.coverage.grid;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -69,6 +69,7 @@ import org.apache.sis.util.Localized;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.iso.Types;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.io.LineWriter;
 import org.geotoolkit.lang.Debug;

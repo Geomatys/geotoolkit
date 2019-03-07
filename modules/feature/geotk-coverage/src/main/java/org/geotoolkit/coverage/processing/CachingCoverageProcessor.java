@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.awt.image.RenderedImage;
 import javax.media.jai.PlanarImage;
 
-import org.geotoolkit.coverage.Coverage;
+import org.geotoolkit.coverage.grid.Coverage;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.parameter.ParameterValueGroup;
 

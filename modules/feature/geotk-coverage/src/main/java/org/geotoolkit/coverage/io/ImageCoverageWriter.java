@@ -47,7 +47,7 @@ import javax.media.jai.operator.WarpDescriptor;
 import org.apache.sis.io.TableAppender;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.coverage.AbstractCoverage;
+import org.geotoolkit.coverage.grid.AbstractCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.image.io.MultidimensionalImageStore;

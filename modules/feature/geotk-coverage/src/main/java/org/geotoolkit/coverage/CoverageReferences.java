@@ -22,7 +22,7 @@ import java.lang.ref.WeakReference;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.geotoolkit.coverage.Coverage;
+import org.geotoolkit.coverage.grid.Coverage;
 
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Disposable;

@@ -26,13 +26,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 
-import org.geotoolkit.coverage.Coverage;
+import org.geotoolkit.coverage.grid.Coverage;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.factory.Factory;
-import org.geotoolkit.coverage.AbstractCoverage;
+import org.geotoolkit.coverage.grid.AbstractCoverage;
 import org.geotoolkit.coverage.grid.Interpolator2D;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;

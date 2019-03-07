@@ -32,7 +32,7 @@ import javax.media.jai.JAI;
 import javax.media.jai.TileCache;
 import javax.media.jai.Interpolation;
 
-import org.geotoolkit.coverage.Coverage;
+import org.geotoolkit.coverage.grid.Coverage;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.GeneralParameterValue;

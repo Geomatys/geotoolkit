@@ -29,7 +29,6 @@ import javax.media.jai.PropertySource;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.resources.Errors;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
