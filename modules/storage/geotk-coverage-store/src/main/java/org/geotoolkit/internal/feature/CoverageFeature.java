@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.AbstractAssociation;
@@ -34,8 +35,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.Coverage;
-import org.geotoolkit.coverage.CoverageStack;
-import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -131,8 +131,8 @@ public final class CoverageFeature {
         }
 
         //in case of Nd Coverage unstack them.
-        while (coverage instanceof CoverageStack) {
-            coverage = ((CoverageStack)coverage).coverageAtIndex(0);
+        while (coverage instanceof GridCoverageStack) {
+            coverage = ((GridCoverageStack) coverage).coverageAtIndex(0);
         }
 
         if (coverage instanceof GridCoverage2D) {
@@ -220,8 +220,8 @@ public final class CoverageFeature {
         Coverage coverage = reader.read(param);
 
         //in case of Nd Coverage unstack them.
-        while (coverage instanceof CoverageStack) {
-            coverage = ((CoverageStack)coverage).coverageAtIndex(0);
+        while (coverage instanceof GridCoverageStack) {
+            coverage = ((GridCoverageStack) coverage).coverageAtIndex(0);
         }
 
         if (coverage instanceof GridCoverage2D) {
@@ -352,8 +352,8 @@ public final class CoverageFeature {
     private static Iterator<Feature> create(FeatureType recordType, Coverage coverage) {
         if (coverage instanceof GridCoverage2D) {
             return new GridCoverage2DRecordIterator(recordType, (GridCoverage2D) coverage);
-        } else if (coverage instanceof CoverageStack) {
-            return new GridCoverageRecordIterator(recordType, (CoverageStack) coverage);
+        } else if (coverage instanceof GridCoverageStack) {
+            return new GridCoverageRecordIterator(recordType, (GridCoverageStack) coverage);
         } else {
             throw new UnsupportedOperationException("Unsupported coverage type "+coverage.getClass().getName());
         }
@@ -367,7 +367,7 @@ public final class CoverageFeature {
         private Feature next = null;
 
 
-        private GridCoverageRecordIterator(FeatureType recordType, CoverageStack coverage) {
+        private GridCoverageRecordIterator(FeatureType recordType, GridCoverageStack coverage) {
             this.recordType = recordType;
             final int nb = coverage.getStackSize();
             final List<GridCoverage> stack = new ArrayList<>(nb);

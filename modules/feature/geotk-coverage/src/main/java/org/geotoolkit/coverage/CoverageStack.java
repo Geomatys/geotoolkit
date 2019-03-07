@@ -38,6 +38,7 @@ import javax.imageio.event.IIOReadWarningListener;
 import javax.media.jai.InterpolationNearest;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -52,8 +53,8 @@ import org.apache.sis.util.collection.FrequencySortedSet;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.Interpolator2D;
+import org.geotoolkit.coverage.processing.OperationNotFoundException;
 import org.geotoolkit.image.palette.IIOListeners;
 import org.geotoolkit.image.palette.IIOReadProgressAdapter;
 import static org.geotoolkit.internal.InternalUtilities.debugEquals;
@@ -72,7 +73,6 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
-import org.geotoolkit.coverage.processing.OperationNotFoundException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -122,7 +122,8 @@ import org.opengis.util.FactoryException;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class CoverageStack extends AbstractCoverage {
+public abstract class CoverageStack extends AbstractCoverage {
+
     /**
      * For compatibility during cross-version serialization.
      */
@@ -592,7 +593,7 @@ public class CoverageStack extends AbstractCoverage {
      * @param  coverages All {@link Coverage} elements for this stack.
      * @throws IOException if an I/O operation was required and failed.
      */
-    public CoverageStack(final CharSequence name, final Collection<? extends Coverage> coverages)
+    CoverageStack(final CharSequence name, final Collection<? extends Coverage> coverages)
             throws IOException
     {
         this(name, (CoordinateReferenceSystem) null, toElements(coverages,null), null);
@@ -605,7 +606,7 @@ public class CoverageStack extends AbstractCoverage {
      * @param zDimension Dimension index in CRS where Z varies. If null, use the last dimension
      * @throws IOException if an I/O operation was required and failed.
      */
-    public CoverageStack(final CharSequence name, final Collection<? extends Coverage> coverages, final Integer zDimension)
+    CoverageStack(final CharSequence name, final Collection<? extends Coverage> coverages, final Integer zDimension)
             throws IOException
     {
         this(name, (CoordinateReferenceSystem) null, toElements(coverages, zDimension), zDimension);
@@ -638,7 +639,7 @@ public class CoverageStack extends AbstractCoverage {
      * @param  elements All coverage {@link Element Element}s for this stack.
      * @throws IOException if an I/O operation was required and failed.
      */
-    public CoverageStack(final CharSequence name,
+    CoverageStack(final CharSequence name,
                          final CoordinateReferenceSystem crs,
                          final Collection<? extends Element> elements) throws IOException
     {
@@ -660,7 +661,7 @@ public class CoverageStack extends AbstractCoverage {
      * @param zDimension Dimension index in CRS where Z varies. If null, use the last dimension
      * @throws IOException if an I/O operation was required and failed.
      */
-    public CoverageStack(final CharSequence name,
+    CoverageStack(final CharSequence name,
                          final CoordinateReferenceSystem crs,
                          final Collection<? extends Element> elements,
                          final Integer zDimension) throws IOException
@@ -679,7 +680,7 @@ public class CoverageStack extends AbstractCoverage {
      * @param zDimension Dimension index in CRS where Z varies. If null, use the last dimension
      * @throws IOException if an I/O operation was required and failed.
      */
-    private CoverageStack(final CharSequence name,
+    CoverageStack(final CharSequence name,
                           final CoordinateReferenceSystem crs,
                           final Element[] elements,
                           final Integer zDimension) throws IOException
@@ -691,7 +692,7 @@ public class CoverageStack extends AbstractCoverage {
      * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
      * call in constructors").
      */
-    private CoverageStack(final CharSequence name,
+    CoverageStack(final CharSequence name,
                           final GeneralEnvelope envelope,
                           final Element[] elements,
                           final Integer zDimension) throws IOException

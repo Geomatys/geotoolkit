@@ -36,7 +36,6 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
@@ -44,8 +43,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.Coverage;
-import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -122,8 +119,6 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
     private final List<Envelope> envelopes = new ArrayList<>();
     private final List<Date[]> dates = new ArrayList<>();
     private final List<Double[]> elevations = new ArrayList<>();
-
-    private final Coverage coverage4D;
 
     public PortrayalServiceTest() throws Exception {
 
@@ -228,31 +223,6 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         coverage = GCF.getGridCoverage2D();
         coverages.add(coverage);
 
-        //create some ND coverages ---------------------------------------------
-        CoordinateReferenceSystem crs = new GeodeticObjectBuilder().addName("4D crs")
-                                                                   .createCompoundCRS(CommonCRS.WGS84.geographic(),
-                                                                                      CommonCRS.Vertical.ELLIPSOIDAL.crs(),
-                                                                                      CommonCRS.Temporal.JAVA.crs());
-
-        List<Coverage> temps = new ArrayList<>();
-        for(int i=0; i<10; i++){
-            final List<Coverage> eles = new ArrayList<>();
-            for(int k=0;k<10;k++){
-                env = new GeneralEnvelope(crs);
-                env.setRange(0,  0,  10);
-                env.setRange(1, 0, 10);
-                env.setRange(2, k, k+1);
-                env.setRange(3, i, i+1);
-                img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
-                GCF.reset();
-                GCF.setEnvelope(env);
-                GCF.setRenderedImage(img);
-                coverage = GCF.getGridCoverage2D();
-                eles.add(coverage);
-            }
-            temps.add(new CoverageStack("3D", eles));
-        }
-        coverage4D = new CoverageStack("4D", coverages);
     }
 
     @Test

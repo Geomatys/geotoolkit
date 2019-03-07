@@ -17,7 +17,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Coverage;
-import org.geotoolkit.coverage.CoverageStack;
+import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -142,9 +142,9 @@ public class Categorize extends AbstractProcess {
                 final GeneralEnvelope expectedSliceEnvelope = GeneralEnvelope.castOrCopy(sliceGeom.getEnvelope());
                 readParam.setEnvelope(expectedSliceEnvelope);
                 GridCoverage sourceCvg = reader.read(readParam);
-                if (sourceCvg instanceof CoverageStack) {
+                if (sourceCvg instanceof GridCoverageStack) {
                     // Try to unravel expected slice
-                    final Optional<GridCoverage2D> slice = extractSlice((CoverageStack) sourceCvg, sliceGeom.getEnvelope());
+                    final Optional<GridCoverage2D> slice = extractSlice((GridCoverageStack) sourceCvg, sliceGeom.getEnvelope());
                     if (slice.isPresent()) {
                         sourceCvg = slice.get();
                     }
@@ -194,7 +194,7 @@ public class Categorize extends AbstractProcess {
      * @return If we find a 2D data contained in the given envelope, we return it.
      * Otherwise, we return nothing.
      */
-    private static Optional<GridCoverage2D> extractSlice(final CoverageStack source, final Envelope aoi) {
+    private static Optional<GridCoverage2D> extractSlice(final GridCoverageStack source, final Envelope aoi) {
         int stackSize = source.getStackSize();
         for (int i = 0; i < stackSize; i++) {
             final Coverage cvg = source.coverageAtIndex(i);
@@ -202,8 +202,8 @@ public class Categorize extends AbstractProcess {
             if (subsetEnvelope.contains(aoi, true)) {
                 if (cvg instanceof GridCoverage2D) {
                     return Optional.of((GridCoverage2D) cvg);
-                } else if (cvg instanceof CoverageStack) {
-                    return extractSlice((CoverageStack) cvg, aoi);
+                } else if (cvg instanceof GridCoverageStack) {
+                    return extractSlice((GridCoverageStack) cvg, aoi);
                 }
             }
         }
