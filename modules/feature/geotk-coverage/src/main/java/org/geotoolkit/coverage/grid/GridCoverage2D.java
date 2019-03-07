@@ -96,7 +96,7 @@ import org.opengis.referencing.operation.TransformException;
  * @see SampleDimension
  * @see GridCoverageBuilder
  */
-public class GridCoverage2D extends AbstractGridCoverage {
+public class GridCoverage2D extends GridCoverage {
     /**
      * For compatibility during cross-version serialization.
      */
@@ -783,7 +783,7 @@ public class GridCoverage2D extends AbstractGridCoverage {
      * @todo Override {@link #createRendering} and use the affine transform operation.
      *       Also uses the JAI's "Transpose" operation is x and y axis are interchanged.
      */
-    protected class Renderable extends AbstractGridCoverage.Renderable {
+    protected class Renderable extends GridCoverage.Renderable {
         /**
          * For compatibility during cross-version serialization.
          */

@@ -33,7 +33,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.AbstractGridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
@@ -83,7 +83,7 @@ public final class CoverageFeature {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setSuperTypes(TypeConventions.COVERAGE_TYPE);
-        ftb.setName(coverage instanceof AbstractGridCoverage ? ((AbstractGridCoverage) coverage).getName() : "Coverage");
+        ftb.setName(coverage instanceof GridCoverage ? ((GridCoverage) coverage).getName() : "Coverage");
         ftb.addAttribute(Polygon.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
         ftb.addAssociation(createRecordType(coverage)).setName(TypeConventions.RANGE_ELEMENTS_PROPERTY).setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
 
@@ -107,7 +107,7 @@ public final class CoverageFeature {
     public static FeatureType createRecordType(GridCoverage coverage) throws CoverageStoreException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setSuperTypes(TypeConventions.COVERAGE_RECORD_TYPE);
-        ftb.setName((coverage instanceof AbstractGridCoverage ? ((AbstractGridCoverage) coverage).getName() : "") + "Record" );
+        ftb.setName((coverage instanceof GridCoverage ? ((GridCoverage) coverage).getName() : "") + "Record" );
         final CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem();
         final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(crs);
         ftb.addAttribute(Geometry.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs2d).setMinimumOccurs(1).setMaximumOccurs(1).addRole(AttributeRole.DEFAULT_GEOMETRY);

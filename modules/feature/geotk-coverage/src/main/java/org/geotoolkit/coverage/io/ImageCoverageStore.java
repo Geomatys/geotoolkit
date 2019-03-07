@@ -26,7 +26,7 @@ import javax.imageio.spi.ImageReaderWriterSpi;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.coverage.grid.AbstractGridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import static org.geotoolkit.coverage.io.GridCoverageStore.LOGGER;
@@ -152,8 +152,8 @@ final class ImageCoverageStore extends Static {
          * the NetCDF format.
          */
         InternationalString name = null;
-        if (coverage instanceof AbstractGridCoverage) {
-            name = ((AbstractGridCoverage) coverage).getName();
+        if (coverage instanceof GridCoverage) {
+            name = ((GridCoverage) coverage).getName();
         }
         if (name == null) {
             name = Vocabulary.formatInternational(Vocabulary.Keys.Untitled);

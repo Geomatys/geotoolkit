@@ -27,7 +27,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import org.apache.sis.util.Localized;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.AbstractGridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.Interpolator2D;
 import org.geotoolkit.factory.Factory;
@@ -198,8 +198,8 @@ public abstract class AbstractCoverageProcessor extends Factory implements Local
      * Returns the coverage name in the specified locale.
      */
     private static String getName(final GridCoverage coverage, final Locale locale) {
-        if (coverage instanceof AbstractGridCoverage) {
-            final InternationalString name = ((AbstractGridCoverage) coverage).getName();
+        if (coverage instanceof GridCoverage) {
+            final InternationalString name = ((GridCoverage) coverage).getName();
             if (name != null) {
                 return name.toString(locale);
             }

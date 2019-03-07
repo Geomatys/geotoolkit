@@ -48,7 +48,7 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.io.TableAppender;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.coverage.grid.AbstractGridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.image.io.MultidimensionalImageStore;
@@ -587,8 +587,8 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                  *  - The translation or scale factors of the above transform are not integers;
                  *  - The requested envelope is greater than the coverage envelope;
                  */
-                final InternationalString name = (coverage instanceof AbstractGridCoverage) ?
-                        ((AbstractGridCoverage) coverage).getName() : null;
+                final InternationalString name = (coverage instanceof GridCoverage) ?
+                        ((GridCoverage) coverage).getName() : null;
                 final ImageLayout layout = new ImageLayout(
                         requestRegion.x,     requestRegion.y,
                         requestRegion.width, requestRegion.height);
