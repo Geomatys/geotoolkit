@@ -183,8 +183,7 @@ public class GridCoverage2D extends AbstractGridCoverage {
      * This constructor accepts an optional map of user properties. This map is
      * useful for storing user-values like statistics. Keys shall be {@link String} or
      * {@link javax.media.jai.util.CaselessStringKey} instances, while values can be any
-     * {@link Object}. The property values can be fetched by the methods defined in the
-     * {@link javax.media.jai.PropertySource} interface.
+     * {@link Object}.
      * <p>
      * Note that {@link GridCoverageBuilder} provides more convenient ways to create
      * {@code GridCoverage2D} instances. But all those convenience methods will ultimately
@@ -221,7 +220,7 @@ public class GridCoverage2D extends AbstractGridCoverage {
                           final Hints                   hints)
             throws IllegalArgumentException
     {
-        super(name, gridGeometry.getCoordinateReferenceSystem(), sources, null, properties);
+        super(name, gridGeometry.getCoordinateReferenceSystem(), sources, properties);
         this.image = image;
         /*
          * Wraps the user-supplied sample dimensions into instances of RenderedSampleDimension. This

@@ -124,7 +124,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
  */
-public class GridCoverageStack extends AbstractGridCoverage implements GridCoverage {
+public class GridCoverageStack extends AbstractGridCoverage {
 
     /**
      * Reference to a single <var>n</var> dimensional coverage in a (<var>n</var>+1) dimensional

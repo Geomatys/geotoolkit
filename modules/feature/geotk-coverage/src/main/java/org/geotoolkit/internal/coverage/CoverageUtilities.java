@@ -29,7 +29,6 @@ import java.util.Set;
 import javax.media.jai.Interpolation;
 import javax.media.jai.InterpolationBilinear;
 import javax.media.jai.InterpolationNearest;
-import javax.media.jai.PropertySource;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -224,8 +223,6 @@ public final class CoverageUtilities extends Static {
         Object candidate = null;
         if (image instanceof RenderedImage) {
             candidate = ((RenderedImage) image).getProperty("GC_VisibleBand");
-        } else if (image instanceof PropertySource) {
-            candidate = ((PropertySource) image).getProperty("GC_VisibleBand");
         }
         if (candidate instanceof Integer) {
             return ((Integer) candidate).intValue();

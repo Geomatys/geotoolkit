@@ -38,7 +38,6 @@ import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -67,6 +66,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import org.geotoolkit.coverage.SampleDimensionBuilder;
+import org.geotoolkit.coverage.SampleDimensionType;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.internal.ImageUtilities;
@@ -74,7 +74,6 @@ import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.lang.Builder;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.coverage.SampleDimensionType;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.content.TransferFunctionType;
@@ -2069,7 +2068,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *   <li>{@link #setCoordinateReferenceSystem(CoordinateReferenceSystem)}</li>
      *   <li>{@link #setSampleDimensions(SampleDimension[])}</li>
      *   <li>{@link #setSources(GridCoverage[])}</li>
-     *   <li>{@link #setProperties(PropertySource)} (for instances of {@link PropertySource} only)</li>
      * </ul>
      *
      * @param coverage The coverage to set.
@@ -2082,9 +2080,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         final List<GridCoverage> sources = coverage.getSources();
         if (sources != null) {
             setSources(sources.toArray(new GridCoverage[sources.size()]));
-        }
-        if (coverage instanceof PropertySource) {
-            setProperties((PropertySource) coverage);
         }
         if (coverage instanceof GridCoverage2D) {
             final GridCoverage2D c2 = (GridCoverage2D) coverage;
@@ -2185,26 +2180,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      */
     public void setProperties(final Map<?,?> properties) {
         this.properties = properties; // NOSONAR
-    }
-
-    /**
-     * Inherits all the properties from the given source. This convenience methods copies the
-     * properties in a new {@link Map} object, then invokes {@link #setProperties(Map)}.
-     *
-     * @param source The source from which to get the properties, {@code null}.
-     */
-    public void setProperties(final PropertySource source) {
-        Map<String,Object> map = null;
-        if (source != null) {
-            final String[] names = source.getPropertyNames();
-            if (names != null && names.length != 0) {
-                map = new LinkedHashMap<>();
-                for (final String name : names) {
-                    map.put(name, source.getProperty(name));
-                }
-            }
-        }
-        setProperties(map);
     }
 
     /**

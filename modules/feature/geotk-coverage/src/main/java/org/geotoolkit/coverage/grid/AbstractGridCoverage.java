@@ -55,7 +55,6 @@ import javax.media.jai.ImageFunction;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
-import javax.media.jai.PropertySource;
 import javax.media.jai.PropertySourceImpl;
 import javax.media.jai.TiledImage;
 import javax.media.jai.iterator.RectIterFactory;
@@ -115,7 +114,7 @@ import org.opengis.util.InternationalString;
  *
  * @author Martin Desruisseaux (IRD)
  */
-public abstract class AbstractGridCoverage extends PropertySourceImpl implements GridCoverage, Localized {
+public abstract class AbstractGridCoverage implements GridCoverage, Localized {
 
     /**
      * The logger for grid coverage operations.
@@ -145,6 +144,8 @@ public abstract class AbstractGridCoverage extends PropertySourceImpl implements
      */
     protected final CoordinateReferenceSystem crs;
 
+    protected transient Map properties;
+
     /**
      * Constructs a coverage using the specified coordinate reference system. If the coordinate
      * reference system is {@code null}, then the subclasses must override {@link #getDimension()}.
@@ -154,9 +155,6 @@ public abstract class AbstractGridCoverage extends PropertySourceImpl implements
      * @param crs
      *          The coordinate reference system. This specifies the CRS used when accessing
      *          a coverage or grid coverage with the {@code evaluate(...)} methods.
-     * @param propertySource
-     *          The source for this coverage, or {@code null} if none. Source may be (but is not
-     *          limited to) a {@link PlanarImage} or an other {@code AbstractCoverage} object.
      * @param properties
      *          The set of properties for this coverage, or {@code null} if there is none.
      *          Keys are {@link String} objects ({@link javax.media.jai.util.CaselessStringKey}
@@ -164,10 +162,9 @@ public abstract class AbstractGridCoverage extends PropertySourceImpl implements
      */
     protected AbstractGridCoverage(final CharSequence             name,
                                final CoordinateReferenceSystem crs,
-                               final PropertySource propertySource,
                                final Map<?,?>           properties)
     {
-        super(properties, propertySource);
+        this.properties = properties;
         this.name = Types.toInternationalString(name);
         this.crs  = crs;
         this.sources = null;
@@ -176,16 +173,12 @@ public abstract class AbstractGridCoverage extends PropertySourceImpl implements
     /**
      * Constructs a new coverage with the same parameters than the specified coverage.
      *
-     * {@note This constructor keeps a strong reference to the source
-     *        coverage through the <code>PropertySourceImpl</code> super class}.
-     *
      * @param name
      *          The name for this coverage, or {@code null} for the same than {@code coverage}.
      * @param coverage
      *          The source coverage.
      */
     protected AbstractGridCoverage(final CharSequence name, final GridCoverage coverage) {
-        super(null, (coverage instanceof PropertySource) ? (PropertySource) coverage : null);
         final InternationalString n = Types.toInternationalString(name);
         if (coverage instanceof AbstractGridCoverage) {
             final AbstractGridCoverage source = (AbstractGridCoverage) coverage;
@@ -200,7 +193,7 @@ public abstract class AbstractGridCoverage extends PropertySourceImpl implements
 
     /**
      * Constructs a grid coverage with sources. Arguments are the same than for the
-     * {@linkplain #AbstractGridCoverage(CharSequence,CoordinateReferenceSystem,PropertySource,Map)
+     * {@linkplain #AbstractGridCoverage(CharSequence,CoordinateReferenceSystem,Map)
      * previous constructor}, with an additional {@code sources} argument.
      *
      * @param name
@@ -209,18 +202,15 @@ public abstract class AbstractGridCoverage extends PropertySourceImpl implements
      *          The coordinate reference system.
      * @param sources
      *          The {@linkplain #getSources sources} for a grid coverage, or {@code null} if none.
-     * @param propertySource
-     *          The source for properties for this coverage, or {@code null} if none.
      * @param properties
      *          Set of additional properties for this coverage, or {@code null} if there is none.
      */
     protected AbstractGridCoverage(final CharSequence             name,
                                    final CoordinateReferenceSystem crs,
                                    final GridCoverage[]        sources,
-                                   final PropertySource propertySource,
                                    final Map<?,?>           properties)
     {
-        super(properties, propertySource);
+        this.properties = properties;
         this.name = Types.toInternationalString(name);
         this.crs  = crs;
         if (sources != null) {
@@ -586,7 +576,7 @@ public abstract class AbstractGridCoverage extends PropertySourceImpl implements
          * @param yAxis Dimension to use for <var>y</var> axis.
          */
         public Renderable(final int xAxis, final int yAxis) {
-            super(null, AbstractGridCoverage.this);
+            super(AbstractGridCoverage.this.properties, null);
             this.xAxis = xAxis;
             this.yAxis = yAxis;
             final Envelope envelope = getEnvelope();
