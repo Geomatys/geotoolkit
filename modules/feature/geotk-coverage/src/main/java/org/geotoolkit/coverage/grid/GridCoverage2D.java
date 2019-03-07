@@ -97,7 +97,7 @@ import org.opengis.referencing.operation.TransformException;
  * @see SampleDimension
  * @see GridCoverageBuilder
  */
-public class GridCoverage2D extends AbstractGridCoverage implements RenderedCoverage {
+public class GridCoverage2D extends AbstractGridCoverage {
     /**
      * For compatibility during cross-version serialization.
      */
@@ -680,7 +680,6 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      *
      * @return The grid data as a rendered image.
      */
-    @Override
     public RenderedImage getRenderedImage() {
         return image;
     }

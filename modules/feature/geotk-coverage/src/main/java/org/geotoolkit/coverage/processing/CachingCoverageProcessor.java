@@ -28,9 +28,9 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Decorator;
 import org.apache.sis.util.collection.Cache;
-import org.geotoolkit.coverage.grid.RenderedCoverage;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
 
 
 /**
@@ -145,8 +145,8 @@ public class CachingCoverageProcessor extends AbstractCoverageProcessor {
                 return coverage;
             }
             coverage = processor.doOperation(parameters);
-            if (coverage instanceof RenderedCoverage) {
-                final RenderedImage image = ((RenderedCoverage) coverage).getRenderedImage();
+            if (coverage instanceof GridCoverage2D) {
+                final RenderedImage image = ((GridCoverage2D) coverage).getRenderedImage();
                 if (image instanceof PlanarImage) {
                     /*
                      * Adds a sink to the planar image in order to prevent GridCoverage2D.dispose
