@@ -17,35 +17,31 @@
  */
 package org.geotoolkit.coverage.processing;
 
-import java.util.Map;
-import java.util.Locale;
+import java.awt.RenderingHints;
 import java.util.Arrays;
-import java.util.TreeMap;
-import java.util.Iterator;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import java.awt.RenderingHints;
-
+import javax.media.jai.Interpolation;
 import javax.media.jai.JAI;
 import javax.media.jai.TileCache;
-import javax.media.jai.Interpolation;
-
-import org.geotoolkit.coverage.grid.Coverage;
-import org.opengis.parameter.ParameterValue;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.parameter.GeneralParameterValue;
-
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.FactoryRegistry;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.Interpolator2D;
+import org.geotoolkit.factory.FactoryRegistry;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.FactoryUtilities;
-import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
-
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.geotoolkit.resources.Loggings;
+import org.opengis.parameter.GeneralParameterValue;
+import org.opengis.parameter.ParameterValue;
+import org.opengis.parameter.ParameterValueGroup;
 
 
 /**
@@ -245,10 +241,10 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
      * @throws CoverageProcessingException if the operation can not be executed.
      */
     @Override
-    public synchronized Coverage doOperation(final ParameterValueGroup parameters)
+    public synchronized GridCoverage doOperation(final ParameterValueGroup parameters)
             throws CoverageProcessingException, OperationNotFoundException
     {
-        Coverage source = getPrimarySource(parameters);
+        GridCoverage source = getPrimarySource(parameters);
         final String operationName = getOperationName(parameters);
         final AbstractOperation operation = getOperation(operationName);
         /*
@@ -296,7 +292,7 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
             throw new OperationNotFoundException(Errors.getResources(getLocale()).getString(
                         Errors.Keys.NoSuchOperation_1, operationName), cause);
         }
-        Coverage cv = op.doOperation(parameters, hints);
+        GridCoverage cv = op.doOperation(parameters, hints);
         if (interpolations != null && (cv instanceof GridCoverage2D) && !(cv instanceof Interpolator2D)) {
             cv = Interpolator2D.create((GridCoverage2D) cv, interpolations);
         }

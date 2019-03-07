@@ -22,8 +22,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -44,6 +42,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
@@ -53,10 +52,8 @@ import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.converters.WPSObjectConverterAdapter;
 import org.geotoolkit.wps.converters.inputs.references.ReferenceToUrlConnectionConverter;
 import org.geotoolkit.wps.converters.outputs.complex.JAXBToComplexConverter;
-import org.geotoolkit.wps.xml.TypeRegistration;
 import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.Reference;
-import org.geotoolkit.coverage.grid.Coverage;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -141,18 +138,18 @@ public final class WPSIO {
         FORMATSUPPORTS.add(new FormatSupport(FeatureType.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), true));
 
         //Coverage support
-        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF_BIS.val(), null, null, true));
-        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF_BIS.val(), WPSEncoding.BASE64.getValue(), null, false));
-        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF.val(), null, null, false));
-        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.BASE64.getValue(), null, false));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF_BIS.val(), null, null, true));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF_BIS.val(), WPSEncoding.BASE64.getValue(), null, false));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF.val(), null, null, false));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.BASE64.getValue(), null, false));
 
-        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, WPSMimeType.OGC_WMS.val(), WPSEncoding.UTF8.getValue(), null, false));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage.class, IOType.OUTPUT, WPSMimeType.OGC_WMS.val(), WPSEncoding.UTF8.getValue(), null, false));
 
         //TODO test NetCDF & GRIB in base64
-        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), null, null, false));
-        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), WPSEncoding.BASE64.getValue(), null, false));
-        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), null, null, false));
-        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), WPSEncoding.BASE64.getValue(), null, false));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), null, null, false));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), WPSEncoding.BASE64.getValue(), null, false));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), null, null, false));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), WPSEncoding.BASE64.getValue(), null, false));
 
         // Images support
         for (final String readerMime : ImageIO.getReaderMIMETypes()) {

@@ -49,7 +49,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.coverage.grid.Coverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -611,7 +611,7 @@ public class WPSConvertersUtils {
                 final AttributeTypeBuilder atb = (AttributeTypeBuilder) desc;
                 Class binded = atb.getValueClass();
                 if(RenderedImage.class.isAssignableFrom(binded) ||
-                        Coverage.class.isAssignableFrom(binded) ||
+                        GridCoverage.class.isAssignableFrom(binded) ||
                         File.class.isAssignableFrom(binded)) {
                     atb.setValueClass(URL.class);
                 }

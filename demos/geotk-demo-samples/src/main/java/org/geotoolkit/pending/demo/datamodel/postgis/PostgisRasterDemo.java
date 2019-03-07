@@ -5,24 +5,24 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Collections;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.db.postgres.PostgresFeatureStore;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.style.RandomStyleBuilder;
-import org.geotoolkit.coverage.grid.Coverage;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
-import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 
 /**
  * Example of creating a postgresql feature store with a raster geometry.
@@ -42,7 +42,7 @@ public class PostgisRasterDemo {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("SpotImages");
         ftb.addAttribute(String.class).setName("name");
-        ftb.addAttribute(Coverage.class).setName("image").setCRS(crs);
+        ftb.addAttribute(GridCoverage.class).setName("image").setCRS(crs);
         FeatureType type = ftb.build();
         store.createFeatureType(type);
         //type migh be a little different after insertion

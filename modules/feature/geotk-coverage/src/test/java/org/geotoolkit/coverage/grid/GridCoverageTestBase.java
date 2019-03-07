@@ -227,7 +227,7 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
      * @param expected The coverage containing the expected pixel values.
      * @param actual   The coverage containing the actual pixel values.
      */
-    public static void assertRasterEquals(final Coverage expected, final Coverage actual) {
+    public static void assertRasterEquals(final GridCoverage expected, final GridCoverage actual) {
         Assert.assertRasterEquals(expected.getRenderableImage(0,1).createDefaultRendering(),
                              actual.getRenderableImage(0,1).createDefaultRendering());
     }
@@ -238,7 +238,7 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
      *
      * @param coverage The coverage to display.
      */
-    protected final synchronized void show(final Coverage coverage) {
+    protected final synchronized void show(final GridCoverage coverage) {
         if (!viewEnabled) {
             return;
         }

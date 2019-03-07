@@ -24,7 +24,6 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.grid.Coverage;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -54,11 +53,11 @@ public class BandCombineProcess extends AbstractProcess {
      *
      * @param coverages Coverages to combine
      */
-    public BandCombineProcess(Coverage ... coverages){
+    public BandCombineProcess(GridCoverage ... coverages){
         super(INSTANCE, asParameters(coverages));
     }
 
-    private static ParameterValueGroup asParameters(Coverage ... coverages){
+    private static ParameterValueGroup asParameters(GridCoverage ... coverages){
         final Parameters params = Parameters.castOrWrap(BandCombineDescriptor.INPUT_DESC.createValue());
         params.getOrCreate(IN_COVERAGES).setValue(coverages);
         return params;
@@ -80,7 +79,7 @@ public class BandCombineProcess extends AbstractProcess {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
 
         // PARAMETERS CHECK ////////////////////////////////////////////////////
-        final Coverage[] inputCoverage = inputParameters.getValue(IN_COVERAGES);
+        final GridCoverage[] inputCoverage = inputParameters.getValue(IN_COVERAGES);
         if (inputCoverage.length == 0) {
             throw new ProcessException("No coverage to combine", this, null);
         } else if (inputCoverage.length == 1) {

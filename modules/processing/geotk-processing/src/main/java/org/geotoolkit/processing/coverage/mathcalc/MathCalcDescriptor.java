@@ -19,15 +19,15 @@ package org.geotoolkit.processing.coverage.mathcalc;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.processing.AbstractProcessDescriptor;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.process.Process;
+import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
-import org.geotoolkit.coverage.grid.Coverage;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -40,11 +40,11 @@ public class MathCalcDescriptor extends AbstractProcessDescriptor {
     /**
      * Coverage images
      */
-    public static final ParameterDescriptor<Coverage[]> IN_COVERAGES = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage[]> IN_COVERAGES = new ParameterBuilder()
             .addName("inCoverages")
             .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_mathcalc_inCoverages))
             .setRequired(true)
-            .create(Coverage[].class, null);
+            .create(GridCoverage[].class, null);
 
     /**
      * Mathematic expression

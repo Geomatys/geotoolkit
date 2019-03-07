@@ -18,12 +18,12 @@ package org.geotoolkit.processing.coverage.merge;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.processing.AbstractProcessDescriptor;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
-import org.geotoolkit.coverage.grid.Coverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -41,12 +41,12 @@ public class MergeDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Coverages to merge
      */
-    public static final ParameterDescriptor<Coverage[]> IN_COVERAGES = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage[]> IN_COVERAGES = new ParameterBuilder()
             .addName("coverages")
             .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inCoverages))
             .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inCoveragesDesc))
             .setRequired(true)
-            .create(Coverage[].class, null);
+            .create(GridCoverage[].class, null);
 
     /**
      * Mandatory - output coverage envelope
@@ -74,12 +74,12 @@ public class MergeDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Resulting coverage.
      */
-    public static final ParameterDescriptor<Coverage> OUT_COVERAGE = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage> OUT_COVERAGE = new ParameterBuilder()
             .addName("result")
             .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_outCoverage))
             .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_outCoverageDesc))
             .setRequired(true)
-            .create(Coverage.class, null);
+            .create(GridCoverage.class, null);
 
     public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder()
             .addName(NAME + "OutputParameters").createGroup(OUT_COVERAGE);

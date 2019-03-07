@@ -81,7 +81,6 @@ import org.geotoolkit.referencing.operation.builder.LocalizationGrid;
 import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.geotoolkit.temporal.util.TimeParser;
-import org.geotoolkit.coverage.grid.Coverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.content.AttributeGroup;

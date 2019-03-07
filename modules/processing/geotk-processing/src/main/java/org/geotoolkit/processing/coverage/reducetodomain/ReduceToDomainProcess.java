@@ -27,6 +27,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -34,7 +35,6 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.coverage.straighten.StraightenDescriptor;
-import org.geotoolkit.coverage.grid.Coverage;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -64,11 +64,11 @@ public class ReduceToDomainProcess extends AbstractProcess {
      *
      * @param coverage coverage to process
      */
-    public ReduceToDomainProcess(Coverage coverage){
+    public ReduceToDomainProcess(GridCoverage coverage){
         super(ReduceToDomainDescriptor.INSTANCE, asParameters(coverage));
     }
 
-    private static ParameterValueGroup asParameters(Coverage coverage){
+    private static ParameterValueGroup asParameters(GridCoverage coverage){
         final Parameters params = Parameters.castOrWrap(ReduceToDomainDescriptor.INPUT_DESC.createValue());
         params.getOrCreate(ReduceToDomainDescriptor.COVERAGE_IN).setValue(coverage);
         return params;
@@ -80,9 +80,9 @@ public class ReduceToDomainProcess extends AbstractProcess {
      * @return reduced coverage
      * @throws ProcessException
      */
-    public Coverage executeNow() throws ProcessException {
+    public GridCoverage executeNow() throws ProcessException {
         execute();
-        return (Coverage) outputParameters.getValue(ReduceToDomainDescriptor.COVERAGE_OUT);
+        return (GridCoverage) outputParameters.getValue(ReduceToDomainDescriptor.COVERAGE_OUT);
     }
 
     /**

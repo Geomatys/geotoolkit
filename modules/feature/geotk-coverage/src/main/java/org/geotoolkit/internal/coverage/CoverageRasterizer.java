@@ -22,19 +22,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.geotoolkit.coverage.grid.Coverage;
-import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.apache.sis.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.coverage.CannotEvaluateException;
-import org.apache.sis.coverage.SampleDimension;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -48,15 +47,15 @@ import org.opengis.util.FactoryException;
  */
 public class CoverageRasterizer {
 
-    private Coverage source;
+    private GridCoverage source;
     private GridCoverage target;
     private CoordinateReferenceSystem targetCrs;
 
-    public void setSource(Coverage source) {
+    public void setSource(GridCoverage source) {
         this.source = source;
     }
 
-    public Coverage getSource() {
+    public GridCoverage getSource() {
         return source;
     }
 

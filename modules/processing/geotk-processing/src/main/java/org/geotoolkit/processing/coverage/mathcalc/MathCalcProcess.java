@@ -21,7 +21,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.Coverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
@@ -45,7 +45,7 @@ import org.opengis.util.FactoryException;
  */
 public class MathCalcProcess extends AbstractProcess {
 
-    public MathCalcProcess(Coverage[] inCoverages, String inFormula, String[] inMapping, GridCoverageResource outCoverage){
+    public MathCalcProcess(GridCoverage[] inCoverages, String inFormula, String[] inMapping, GridCoverageResource outCoverage){
         this(toParameters(inCoverages, inFormula, inMapping, outCoverage));
     }
 
@@ -53,7 +53,7 @@ public class MathCalcProcess extends AbstractProcess {
         super(MathCalcDescriptor.INSTANCE, params);
     }
 
-    private static ParameterValueGroup toParameters(Coverage[] inCoverages, String inFormula, String[] inMapping, GridCoverageResource outCoverage){
+    private static ParameterValueGroup toParameters(GridCoverage[] inCoverages, String inFormula, String[] inMapping, GridCoverageResource outCoverage){
         final Parameters params = Parameters.castOrWrap(MathCalcDescriptor.INSTANCE.getInputDescriptor().createValue());
         params.getOrCreate(MathCalcDescriptor.IN_COVERAGES).setValue(inCoverages);
         params.getOrCreate(MathCalcDescriptor.IN_FORMULA).setValue(inFormula);
@@ -64,7 +64,7 @@ public class MathCalcProcess extends AbstractProcess {
 
     @Override
     protected void execute() throws ProcessException {
-        final Coverage[] inCoverages = inputParameters.getValue(MathCalcDescriptor.IN_COVERAGES);
+        final GridCoverage[] inCoverages = inputParameters.getValue(MathCalcDescriptor.IN_COVERAGES);
         final String inFormula = inputParameters.getValue(MathCalcDescriptor.IN_FORMULA);
         final String[] inMapping = inputParameters.getValue(MathCalcDescriptor.IN_MAPPING);
         final GridCoverageResource outRef = inputParameters.getValue(MathCalcDescriptor.IN_RESULT_COVERAGE);

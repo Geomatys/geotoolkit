@@ -44,10 +44,11 @@ import javax.media.jai.PlanarImage;
 import javax.media.jai.RenderedImageAdapter;
 import javax.media.jai.Warp;
 import javax.media.jai.operator.WarpDescriptor;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.io.TableAppender;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.coverage.grid.AbstractCoverage;
+import org.geotoolkit.coverage.grid.AbstractGridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.image.io.MultidimensionalImageStore;
@@ -63,7 +64,6 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.referencing.operation.transform.WarpFactory;
 import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.InterpolationMethod;
-import org.apache.sis.coverage.SampleDimension;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -587,8 +587,8 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                  *  - The translation or scale factors of the above transform are not integers;
                  *  - The requested envelope is greater than the coverage envelope;
                  */
-                final InternationalString name = (coverage instanceof AbstractCoverage) ?
-                        ((AbstractCoverage) coverage).getName() : null;
+                final InternationalString name = (coverage instanceof AbstractGridCoverage) ?
+                        ((AbstractGridCoverage) coverage).getName() : null;
                 final ImageLayout layout = new ImageLayout(
                         requestRegion.x,     requestRegion.y,
                         requestRegion.width, requestRegion.height);

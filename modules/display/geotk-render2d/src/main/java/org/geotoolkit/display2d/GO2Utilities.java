@@ -57,7 +57,7 @@ import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.Coverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.processing.CoverageProcessingException;
@@ -775,7 +775,7 @@ public final class GO2Utilities {
     // rewrite coverage read param  ////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public static GridCoverage2D resample(final Coverage dataCoverage, final CoordinateReferenceSystem targetCRS) throws ProcessException{
+    public static GridCoverage2D resample(final GridCoverage dataCoverage, final CoordinateReferenceSystem targetCRS) throws ProcessException{
         final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
         final Parameters params = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
         params.getOrCreate(ResampleDescriptor.IN_COVERAGE).setValue(dataCoverage);

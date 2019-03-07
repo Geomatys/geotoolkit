@@ -16,11 +16,10 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.Coverage;
-import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -197,7 +196,7 @@ public class Categorize extends AbstractProcess {
     private static Optional<GridCoverage2D> extractSlice(final GridCoverageStack source, final Envelope aoi) {
         int stackSize = source.getStackSize();
         for (int i = 0; i < stackSize; i++) {
-            final Coverage cvg = source.coverageAtIndex(i);
+            final GridCoverage cvg = source.coverageAtIndex(i);
             final GeneralEnvelope subsetEnvelope = GeneralEnvelope.castOrCopy(cvg.getEnvelope());
             if (subsetEnvelope.contains(aoi, true)) {
                 if (cvg instanceof GridCoverage2D) {

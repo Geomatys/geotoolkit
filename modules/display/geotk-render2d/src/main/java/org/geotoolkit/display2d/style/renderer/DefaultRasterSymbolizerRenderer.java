@@ -50,7 +50,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.grid.Coverage;
 import org.geotoolkit.coverage.grid.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -682,7 +681,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         return sampleSize != 8;
     }
 
-    private static int getBandIndice(final String name, final Coverage coverage) throws PortrayalException{
+    private static int getBandIndice(final String name, final GridCoverage coverage) throws PortrayalException{
         try{
             return Integer.parseInt(name);
         }catch(NumberFormatException ex){

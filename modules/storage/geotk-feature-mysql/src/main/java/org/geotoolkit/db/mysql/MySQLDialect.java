@@ -43,9 +43,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import org.geotoolkit.feature.SingleAttributeTypeBuilder;
-import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Version;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.JDBCFeatureStoreUtilities;
@@ -65,7 +65,6 @@ import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
 import org.geotoolkit.filter.capability.DefaultTemporalCapabilities;
 import org.geotoolkit.filter.capability.DefaultTemporalOperators;
-import org.geotoolkit.coverage.grid.Coverage;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 
@@ -504,17 +503,17 @@ public class MySQLDialect extends AbstractSQLDialect {
     }
 
     @Override
-    public void encodeCoverageValue(StringBuilder sql, Coverage value) throws DataStoreException {
+    public void encodeCoverageValue(StringBuilder sql, GridCoverage value) throws DataStoreException {
         throw new UnsupportedOperationException("Coverage types not supported in MySQL.");
     }
 
     @Override
-    public Coverage decodeCoverageValue(AttributeType descriptor, ResultSet rs, String column) throws IOException, SQLException {
+    public GridCoverage decodeCoverageValue(AttributeType descriptor, ResultSet rs, String column) throws IOException, SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Coverage decodeCoverageValue(AttributeType descriptor, ResultSet rs, int column) throws IOException, SQLException {
+    public GridCoverage decodeCoverageValue(AttributeType descriptor, ResultSet rs, int column) throws IOException, SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

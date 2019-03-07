@@ -124,13 +124,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
  */
-public class GridCoverageStack extends AbstractCoverage implements GridCoverage {
-
-
-    /**
-     * For compatibility during cross-version serialization.
-     */
-    private static final long serialVersionUID = -7100201963376146053L;
+public class GridCoverageStack extends AbstractGridCoverage implements GridCoverage {
 
     /**
      * Reference to a single <var>n</var> dimensional coverage in a (<var>n</var>+1) dimensional
@@ -250,7 +244,7 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
          * @return The coverage (never {@code null}).
          * @throws IOException if a data loading was required but failed.
          */
-        Coverage getCoverage(IIOListeners listeners) throws IOException;
+        GridCoverage getCoverage(IIOListeners listeners) throws IOException;
     }
 
     /**
@@ -272,7 +266,7 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
          * The wrapped coverage, or {@code null} if not yet loaded.
          * If null, the loading must be performed by the {@link #getCoverage} method.
          */
-        protected Coverage coverage;
+        protected GridCoverage coverage;
 
         /**
          * Minimum and maximum <var>z</var> values for this element, or {@code null} if not yet
@@ -298,7 +292,7 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
          *                 is invoked from a sub-class constructor.
          * @param zDimension   dimension index to use for z range
          */
-        public Adapter(final Coverage coverage, final Integer zDimension) {
+        public Adapter(final GridCoverage coverage, final Integer zDimension) {
             this(coverage,null,null);
             this.zDimension = zDimension;
         }
@@ -312,7 +306,7 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
          *                 {@code null} to infers it from the last dimension in the coverage
          *                 envelope.
          */
-        public Adapter(final Coverage coverage, final NumberRange<?> range) {
+        public Adapter(final GridCoverage coverage, final NumberRange<?> range) {
             this(coverage,range,null);
         }
 
@@ -326,7 +320,7 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
          *                 envelope.
          * @param center The center of the Z range or {@code null} for range middle.
          */
-        public Adapter(final Coverage coverage, final NumberRange<?> range, Number center) {
+        public Adapter(final GridCoverage coverage, final NumberRange<?> range, Number center) {
             this.coverage = coverage;
             this.range    = range;
             this.center   = center;
@@ -346,8 +340,8 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
         @Override
         public String getName() throws IOException {
             Object coverage = getCoverage(null);
-            if (coverage instanceof AbstractCoverage)  {
-                coverage = ((AbstractCoverage) coverage).getName();
+            if (coverage instanceof AbstractGridCoverage)  {
+                coverage = ((AbstractGridCoverage) coverage).getName();
             }
             return coverage.toString();
         }
@@ -409,7 +403,7 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
          */
         @Override
         public GridGeometry getGridGeometry() throws IOException {
-            final Coverage coverage = getCoverage(null);
+            final GridCoverage coverage = getCoverage(null);
             return (coverage instanceof GridCoverage) ?
                     ((GridCoverage) coverage).getGridGeometry() : null;
         }
@@ -420,7 +414,7 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
          */
         @Override
         public SampleDimension[] getSampleDimensions() throws IOException {
-            final Coverage coverage = getCoverage(null);
+            final GridCoverage coverage = getCoverage(null);
             return coverage.getSampleDimensions().toArray(new SampleDimension[0]);
         }
 
@@ -431,7 +425,7 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
          * since all default implementations invoke {@code getCoverage(null)}.
          */
         @Override
-        public Coverage getCoverage(final IIOListeners listeners) throws IOException {
+        public GridCoverage getCoverage(final IIOListeners listeners) throws IOException {
             return coverage;
         }
     }
@@ -510,14 +504,14 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
      * If possible, this class will tries to select a coverage with a middle value (not just the
      * minimum value) lower than the requested <var>z</var> value.
      */
-    private transient Coverage lower;
+    private transient GridCoverage lower;
 
     /**
      * Coverage with a maximum z-value higher than or equals to the requested <var>z</var> value.
      * If possible, this class will tries to select a coverage with a middle value (not just the
      * maximum value) higher than the requested <var>z</var> value.
      */
-    private transient Coverage upper;
+    private transient GridCoverage upper;
 
     /**
      * <var>Z</var> values in the middle of {@link #lower} and {@link #upper} envelope.
@@ -598,7 +592,7 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
      * @param  coverages All {@link Coverage} elements for this stack.
      * @throws IOException if an I/O operation was required and failed.
      */
-    public GridCoverageStack(final CharSequence name, final Collection<? extends Coverage> coverages)
+    public GridCoverageStack(final CharSequence name, final Collection<? extends GridCoverage> coverages)
             throws IOException, TransformException, FactoryException
     {
         this(name, (CoordinateReferenceSystem) null, toElements(coverages,null), null);
@@ -611,7 +605,7 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
      * @param zDimension Dimension index in CRS where Z varies. If null, use the last dimension
      * @throws IOException if an I/O operation was required and failed.
      */
-    public GridCoverageStack(final CharSequence name, final Collection<? extends Coverage> coverages, final Integer zDimension)
+    public GridCoverageStack(final CharSequence name, final Collection<? extends GridCoverage> coverages, final Integer zDimension)
             throws IOException, TransformException, FactoryException
     {
         this(name, (CoordinateReferenceSystem) null, toElements(coverages, zDimension), zDimension);
@@ -621,10 +615,10 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
      * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
      * call in constructors").
      */
-    private static Element[] toElements(final Collection<? extends Coverage> coverages, Integer zDimension) {
+    private static Element[] toElements(final Collection<? extends GridCoverage> coverages, Integer zDimension) {
         final Element[] elements = new Element[coverages.size()];
         int count = 0;
-        for (final Coverage coverage : coverages) {
+        for (final GridCoverage coverage : coverages) {
             elements[count++] = new Adapter(coverage, zDimension);
         }
         return elements;
@@ -1109,9 +1103,9 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
      * @return The loaded coverage.
      * @throws IOException if an error occurred while loading image.
      */
-    private Coverage load(final Element element) throws IOException {
+    private GridCoverage load(final Element element) throws IOException {
         assert Thread.holdsLock(this);
-        Coverage coverage = element.getCoverage(listeners);
+        GridCoverage coverage = element.getCoverage(listeners);
         if (coverage instanceof GridCoverage2D) {
             final GridCoverage2D coverage2D = (GridCoverage2D) coverage;
             if (interpolationEnabled) {
@@ -1157,8 +1151,8 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
         });
         final NumberRange<?> lowerRange = lowerElement.getZRange();
         final NumberRange<?> upperRange = upperElement.getZRange();
-        final Coverage lower = load(lowerElement);
-        final Coverage upper = load(upperElement);
+        final GridCoverage lower = load(lowerElement);
+        final GridCoverage upper = load(upperElement);
 
         this.lower      = lower; // Set only when BOTH images are OK.
         this.upper      = upper;
@@ -1286,7 +1280,7 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
      * The number of dimensions must be equals to the dimension of this coverage, or
      * the dimension of this coverage minus one.
      */
-    private DirectPosition reduce(DirectPosition coord, final Coverage coverage) {
+    private DirectPosition reduce(DirectPosition coord, final GridCoverage coverage) {
         assert Thread.holdsLock(this);
         final CoordinateReferenceSystem targetCRS = coverage.getCoordinateReferenceSystem();
         final int dimension = targetCRS.getCoordinateSystem().getDimension();
@@ -1347,7 +1341,7 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
             return lower.evaluate(reduce(coord, lower), dest);
         }
         assert !(z<lowerZ || z>upperZ) : z;   // Uses !(...) in order to accepts NaN.
-        final Coverage coverage = (z >= 0.5*(lowerZ + upperZ)) ? upper : lower;
+        final GridCoverage coverage = (z >= 0.5*(lowerZ + upperZ)) ? upper : lower;
         return coverage.evaluate(reduce(coord, coverage), dest);
     }
 
@@ -1545,14 +1539,14 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
      *
      * @since 2.3
      */
-    public synchronized List<Coverage> coveragesAt(final double z) {
+    public synchronized List<GridCoverage> coveragesAt(final double z) {
         if (!seek(z)) {
             return Collections.emptyList();
         }
         if (lower == upper) {
             return Collections.singletonList(lower);
         }
-        return Arrays.asList(new Coverage[] {lower, upper});
+        return Arrays.asList(new GridCoverage[] {lower, upper});
     }
 
     /**
@@ -1578,7 +1572,7 @@ public class GridCoverageStack extends AbstractCoverage implements GridCoverage 
      * @param index Index in {@link #elements} for the image to load.
      * @return Coverage in specified index.
      */
-    public synchronized Coverage coverageAtIndex(int index) {
+    public synchronized GridCoverage coverageAtIndex(int index) {
         try {
             load(index);
             return lower;

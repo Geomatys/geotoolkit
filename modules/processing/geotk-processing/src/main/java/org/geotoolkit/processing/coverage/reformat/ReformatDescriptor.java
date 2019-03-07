@@ -17,13 +17,13 @@
 package org.geotoolkit.processing.coverage.reformat;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.processing.AbstractProcessDescriptor;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
-import org.geotoolkit.coverage.grid.Coverage;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -41,12 +41,12 @@ public class ReformatDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Coverage to reformat
      */
-    public static final ParameterDescriptor<Coverage> IN_COVERAGE = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage> IN_COVERAGE = new ParameterBuilder()
             .addName("coverage")
             .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_reformat_inCoverage))
             .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_reformat_inCoverageDesc))
             .setRequired(true)
-            .create(Coverage.class, null);
+            .create(GridCoverage.class, null);
 
     /**
      * Mandatory - new data type
@@ -64,12 +64,12 @@ public class ReformatDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Resulting coverage.
      */
-    public static final ParameterDescriptor<Coverage> OUT_COVERAGE = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage> OUT_COVERAGE = new ParameterBuilder()
             .addName("result")
             .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_reformat_outCoverage))
             .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_reformat_outCoverageDesc))
             .setRequired(true)
-            .create(Coverage.class, null);
+            .create(GridCoverage.class, null);
 
     public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder()
             .addName(NAME + "OutputParameters").createGroup(OUT_COVERAGE);

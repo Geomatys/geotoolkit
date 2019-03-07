@@ -17,22 +17,20 @@
 
 package org.geotoolkit.feature.op;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Polygon;
 import java.awt.image.BufferedImage;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.util.NamesExt;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.geotoolkit.coverage.grid.Coverage;
-import org.geotoolkit.coverage.grid.GridCoverage;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -61,7 +59,7 @@ public class CoverageGeometryOperationTest {
         //create type
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.addAttribute(Coverage.class).setName("coverage");
+        ftb.addAttribute(GridCoverage.class).setName("coverage");
         ftb.addProperty(new CoverageGeometryOperation(NamesExt.create(null, "contour"), "coverage"));
         final FeatureType type = ftb.build();
 

@@ -31,10 +31,10 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.grid.Coverage;
-import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.SampleDimensionUtils;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -81,7 +81,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             if (sampleDimensions == null) {
                 final GridCoverageReadParam param = new GridCoverageReadParam();
                 param.setDeferred(true);
-                Coverage coverage = reader.read(param);
+                GridCoverage coverage = reader.read(param);
                 sampleDimensions = (List) coverage.getSampleDimensions();
             }
 
@@ -160,7 +160,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         }
 
         final CoverageReader reader = resource.acquireReader();
-        Coverage coverage;
+        GridCoverage coverage;
         try {
             final GridCoverageReadParam param = new GridCoverageReadParam();
             param.setEnvelope(gridGeomNd.getEnvelope());
@@ -202,7 +202,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
                 final Process process = desc.createProcess(params);
                 final ParameterValueGroup results = process.call();
-                coverage = (Coverage) results.parameter("result").getValue();
+                coverage = (GridCoverage) results.parameter("result").getValue();
             } catch (ProcessException | NoSuchIdentifierException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
             }

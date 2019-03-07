@@ -17,20 +17,16 @@
  */
 package org.geotoolkit.coverage.processing;
 
-import java.util.Collection;
 import java.awt.image.RenderedImage;
+import java.util.Collection;
 import javax.media.jai.PlanarImage;
-
-import org.geotoolkit.coverage.grid.Coverage;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.opengis.parameter.ParameterValueGroup;
-
+import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Decorator;
-import org.apache.sis.util.collection.Cache;
-
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.opengis.parameter.ParameterValueGroup;
 
 
 /**
@@ -58,7 +54,7 @@ public class CachingCoverageProcessor extends AbstractCoverageProcessor {
      *
      * @todo Use the capability of {@link Cache} to evict entries based on cost calculation.
      */
-    private final Cache<CachedOperationParameters, Coverage> cache = new Cache<>(12, 0, false);
+    private final Cache<CachedOperationParameters, GridCoverage> cache = new Cache<>(12, 0, false);
 
     /**
      * Creates a default caching processor.
@@ -126,18 +122,18 @@ public class CachingCoverageProcessor extends AbstractCoverageProcessor {
      * @throws CoverageProcessingException if the operation can not be executed.
      */
     @Override
-    public Coverage doOperation(final ParameterValueGroup parameters)
+    public GridCoverage doOperation(final ParameterValueGroup parameters)
             throws OperationNotFoundException, CoverageProcessingException
     {
         final String operationName = getOperationName(parameters);
         final AbstractOperation operation = processor.getOperation(operationName);
         final CachedOperationParameters key = new CachedOperationParameters(operation, parameters);
-        Coverage coverage = cache.peek(key);
+        GridCoverage coverage = cache.peek(key);
         if (coverage != null) {
             log(getPrimarySource(parameters), coverage, operationName, true);
             return coverage;
         }
-        final Cache.Handler<Coverage> handler = cache.lock(key);
+        final Cache.Handler<GridCoverage> handler = cache.lock(key);
         try {
             coverage = handler.peek();
             if (coverage != null) {

@@ -784,7 +784,7 @@ public class GridCoverage2D extends AbstractGridCoverage {
      * @todo Override {@link #createRendering} and use the affine transform operation.
      *       Also uses the JAI's "Transpose" operation is x and y axis are interchanged.
      */
-    protected class Renderable extends AbstractCoverage.Renderable {
+    protected class Renderable extends AbstractGridCoverage.Renderable {
         /**
          * For compatibility during cross-version serialization.
          */

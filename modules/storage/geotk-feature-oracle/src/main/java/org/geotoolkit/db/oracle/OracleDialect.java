@@ -16,15 +16,6 @@
  */
 package org.geotoolkit.db.oracle;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.io.WKBReader;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
@@ -42,10 +33,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import org.geotoolkit.feature.SingleAttributeTypeBuilder;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.Version;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.JDBCFeatureStoreUtilities;
@@ -53,6 +47,7 @@ import org.geotoolkit.db.dialect.AbstractSQLDialect;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
 import org.geotoolkit.filter.capability.DefaultComparisonOperators;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
@@ -65,8 +60,17 @@ import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
 import org.geotoolkit.filter.capability.DefaultTemporalCapabilities;
 import org.geotoolkit.filter.capability.DefaultTemporalOperators;
-import org.apache.sis.referencing.CRS;
-import org.geotoolkit.coverage.grid.Coverage;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.WKBReader;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsBetween;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -105,10 +109,6 @@ import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.referencing.crs.AbstractCRS;
-import org.apache.sis.referencing.cs.AxesConvention;
-import org.opengis.feature.AttributeType;
-import org.opengis.feature.FeatureType;
 
 /**
  *
@@ -246,7 +246,7 @@ public class OracleDialect extends AbstractSQLDialect{
         CLASS_TO_TYPENAME.put(java.util.Date.class, "timestamp");
         CLASS_TO_TYPENAME.put(Timestamp.class, "timestamp");
         CLASS_TO_TYPENAME.put(byte[].class, "blob");
-        CLASS_TO_TYPENAME.put(Coverage.class, "raster");
+        CLASS_TO_TYPENAME.put(GridCoverage.class, "raster");
 
 
         //H2GIS extension
@@ -531,7 +531,7 @@ public class OracleDialect extends AbstractSQLDialect{
     }
 
     @Override
-    public void encodeCoverageValue(StringBuilder sql, Coverage value) throws DataStoreException {
+    public void encodeCoverageValue(StringBuilder sql, GridCoverage value) throws DataStoreException {
         throw new DataStoreException("Coverage type not supported.");
     }
 
@@ -688,12 +688,12 @@ public class OracleDialect extends AbstractSQLDialect{
     }
 
     @Override
-    public Coverage decodeCoverageValue(AttributeType descriptor, ResultSet rs, String column) throws IOException, SQLException {
+    public GridCoverage decodeCoverageValue(AttributeType descriptor, ResultSet rs, String column) throws IOException, SQLException {
         throw new IOException("Coverage type not supported.");
     }
 
     @Override
-    public Coverage decodeCoverageValue(AttributeType descriptor, ResultSet rs, int column) throws IOException, SQLException {
+    public GridCoverage decodeCoverageValue(AttributeType descriptor, ResultSet rs, int column) throws IOException, SQLException {
         throw new IOException("Coverage type not supported.");
     }
 

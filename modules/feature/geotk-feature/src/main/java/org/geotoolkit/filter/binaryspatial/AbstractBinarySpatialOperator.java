@@ -30,7 +30,7 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.Coverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
@@ -111,9 +111,9 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
         }
 
         Geometry candidate;
-        if(value instanceof Coverage){
+        if(value instanceof GridCoverage){
             //use the coverage envelope
-            final Coverage coverage = (Coverage) value;
+            final GridCoverage coverage = (GridCoverage) value;
             candidate = JTS.toGeometry(coverage.getEnvelope());
         }else if(value instanceof GridCoverageReader){
             //use the coverage envelope

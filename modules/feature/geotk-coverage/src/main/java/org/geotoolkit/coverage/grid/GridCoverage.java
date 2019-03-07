@@ -32,11 +32,17 @@
 package org.geotoolkit.coverage.grid;
 
 import java.awt.image.RenderedImage;
+import java.awt.image.renderable.RenderableImage;
 import java.util.List;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import static org.opengis.annotation.Obligation.*;
 import static org.opengis.annotation.Specification.*;
 import org.opengis.annotation.UML;
+import org.opengis.coverage.CannotEvaluateException;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -51,12 +57,41 @@ import org.opengis.annotation.UML;
  * compatibility as possible, but no migration plan has been determined yet.
  * </div>
  *
+ * Temporary class while moving classes to Apache SIS.
+ *
  * @author  Martin Desruisseaux (IRD)
  *
  * @see RenderedImage
  */
 @UML(identifier="CV_GridCoverage", specification=OGC_01004)
-public interface GridCoverage extends Coverage {
+public interface GridCoverage {
+
+    /**
+     * Returns information about the <cite>range</cite> of this grid coverage.
+     * Information include names, sample value ranges, fill values and transfer functions for all bands in this grid coverage.
+     *
+     * @return names, value ranges, fill values and transfer functions for all bands in this grid coverage.
+     */
+    List<? extends SampleDimension> getSampleDimensions();
+
+    Envelope getEnvelope();
+
+    CoordinateReferenceSystem getCoordinateReferenceSystem();
+
+    Object evaluate(final DirectPosition point) throws CannotEvaluateException;
+
+    boolean[] evaluate(final DirectPosition coord, boolean[] dest) throws CannotEvaluateException;
+
+    byte[] evaluate(final DirectPosition coord, byte[] dest) throws CannotEvaluateException;
+
+    int[] evaluate(final DirectPosition coord, final int[] dest) throws CannotEvaluateException;
+
+    float[] evaluate(final DirectPosition coord, final float[] dest) throws CannotEvaluateException;
+
+    double[] evaluate(final DirectPosition coord, final double[] dest) throws CannotEvaluateException;
+
+    RenderableImage getRenderableImage(final int xAxis, final int yAxis);
+
     /**
      * Information for the grid coverage geometry.
      * Grid geometry includes the valid range of grid coordinates and the georeferencing.

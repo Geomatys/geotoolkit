@@ -30,7 +30,10 @@ import javax.media.jai.Interpolation;
 import javax.media.jai.InterpolationBilinear;
 import javax.media.jai.InterpolationNearest;
 import javax.media.jai.PropertySource;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -38,19 +41,15 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.coverage.Category;
-import org.geotoolkit.coverage.grid.Coverage;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.OutOfDomainOfValidityException;
-import org.apache.sis.coverage.SampleDimension;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -89,7 +88,7 @@ public final class CoverageUtilities extends Static {
      * @return The two-dimensional CRS.
      * @throws TransformException if the CRS can't be reduced to two dimensions.
      */
-    public static CoordinateReferenceSystem getCRS2D(final Coverage coverage)
+    public static CoordinateReferenceSystem getCRS2D(final GridCoverage coverage)
             throws TransformException
     {
         if (coverage instanceof GridCoverage2D) {
@@ -118,7 +117,7 @@ public final class CoverageUtilities extends Static {
      * @return The two-dimensional envelope.
      * @throws MismatchedDimensionException if the envelope can't be reduced to two dimensions.
      */
-    public static Envelope2D getEnvelope2D(final Coverage coverage)
+    public static Envelope2D getEnvelope2D(final GridCoverage coverage)
             throws MismatchedDimensionException
     {
         if (coverage instanceof GridCoverage2D) {

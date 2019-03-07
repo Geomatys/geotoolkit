@@ -10,7 +10,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
-import org.geotoolkit.coverage.grid.Coverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -54,7 +54,7 @@ public abstract class GeoReferencedCoverageReader implements CoverageReader {
 
 
     @Override
-    public final Coverage read(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
+    public final GridCoverage read(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
 
         final CoordinateReferenceSystem coverageCrs = getCoordinateReferenceSystem();
 
@@ -120,7 +120,7 @@ public abstract class GeoReferencedCoverageReader implements CoverageReader {
      *
      * @param param Parameters are guarantee to be in coverage CRS.
      */
-    protected abstract Coverage readInNativeCRS(GridCoverageReadParam cparam) throws CoverageStoreException, CancellationException;
+    protected abstract GridCoverage readInNativeCRS(GridCoverageReadParam cparam) throws CoverageStoreException, CancellationException;
 
     /**
      * Convert resolution from one CRS to another at the center of given envelope.
