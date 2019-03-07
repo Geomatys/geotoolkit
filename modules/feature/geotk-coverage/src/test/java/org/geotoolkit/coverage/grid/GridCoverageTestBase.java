@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.grid;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,12 +28,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Random;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.GeneralEnvelope;
 import static org.apache.sis.measure.Units.*;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
-import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.test.Assert;
 import org.geotoolkit.test.image.ImageTestBase;
 import static org.junit.Assert.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -217,5 +220,42 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
         final GridCoverage2D view = read.view(ViewType.PACKED);
         assertNotSame(read, view);
         return view;
+    }
+
+    /**
+     * Compares the rendered view of two coverages for equality.
+     *
+     * @param expected The coverage containing the expected pixel values.
+     * @param actual   The coverage containing the actual pixel values.
+     */
+    public static void assertRasterEquals(final Coverage expected, final Coverage actual) {
+        Assert.assertRasterEquals(expected.getRenderableImage(0,1).createDefaultRendering(),
+                             actual.getRenderableImage(0,1).createDefaultRendering());
+    }
+
+    /**
+     * Shows the default rendering of the specified coverage.
+     * This is used for debugging only.
+     *
+     * @param coverage The coverage to display.
+     */
+    protected final synchronized void show(final Coverage coverage) {
+        if (!viewEnabled) {
+            return;
+        }
+        final RenderedImage image = coverage.getRenderableImage(0,1).createDefaultRendering();
+        try {
+            Class.forName("org.geotoolkit.gui.swing.image.OperationTreeBrowser")
+                 .getMethod("show", new Class<?>[] {RenderedImage.class})
+                 .invoke(null, new Object[]{image});
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            /*
+             * The OperationTreeBrowser is not part of Geotk's core. It is optional and this
+             * class should not fails if it is not presents. This is only a helper for debugging.
+             */
+            System.err.println(e);
+        }
     }
 }

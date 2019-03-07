@@ -43,11 +43,9 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 import javax.media.jai.ImageFunction;
 import javax.media.jai.ImageLayout;
@@ -76,23 +74,14 @@ import org.geotoolkit.io.LineWriter;
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.resources.Errors;
-import org.opengis.coverage.AttributeValues;
 import org.opengis.coverage.CannotEvaluateException;
-import org.opengis.coverage.CommonPointRule;
-import org.opengis.coverage.DomainObject;
-import org.opengis.coverage.GeometryValuePair;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.Geometry;
-import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.temporal.Period;
 import org.opengis.util.InternationalString;
-import org.opengis.util.Record;
-import org.opengis.util.RecordType;
 
 
 /**
@@ -255,174 +244,6 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
     }
 
     /**
-     * Returns the extent of the domain of the coverage. Extents may be specified in space,
-     * time or space-time. The collection must contains at least one element.
-     * <p>
-     * <strong>This method is not yet implemented.</strong>
-     *
-     * @since 2.3
-     *
-     * @todo Proposed default implementation: invokes {@link #getEnvelope}, extract
-     *       the spatial and temporal parts and put them in a {@link Extent} object.
-     */
-    @Override
-    public Set<Extent> getDomainExtents() {
-        throw unsupported();
-    }
-
-    /**
-     * Returns the set of domain objects in the domain.
-     * The collection must contains at least one element.
-     * <p>
-     * <strong>This method is not yet implemented.</strong>
-     *
-     * @since 2.3
-     *
-     * @todo Proposed default implementation: invokes {@link #getEnvelope}, extract the
-     *       spatial and temporal parts, get the grid geometry and create on-the-fly a
-     *       {@link DomainObject} for each cell.
-     */
-    @Override
-    public Set<? extends DomainObject<?>> getDomainElements() {
-        throw unsupported();
-    }
-
-    /**
-     * Returns the set of attribute values in the range. The range of a coverage shall be a
-     * homogeneous collection of records. That is, the range shall have a constant dimension
-     * over the entire domain, and each field of the record shall provide a value of the same
-     * attribute type over the entire domain.
-     * <p>
-     * In the case of a {@linkplain DiscreteCoverage discrete coverage}, the size of the range
-     * collection equals that of the {@linkplain #getDomainElements domains} collection. In other
-     * words, there is one instance of {@link AttributeValues} for each instance of
-     * {@link DomainObject}. Usually, these are stored values that are accessed by the
-     * {@link #evaluate(DirectPosition,Collection) evaluate} operation.
-     * <p>
-     * In the case of a {@linkplain ContinuousCoverage continuous coverage}, there is a transfinite
-     * number of instances of {@link AttributeValues} for each {@link DomainObject}. A few instances
-     * may be stored as input for the {@link #evaluate(DirectPosition,Collection) evaluate}
-     * operation, but most are generated as needed by that operation.
-     * <p>
-     * <B>NOTE:</B> ISO 19123 does not specify how the {@linkplain #getDomainElements domain}
-     * and {@linkplain #getRangeElements range} associations are to be implemented. The relevant
-     * data may be generated in real time, it may be held in persistent local storage, or it may
-     * be electronically accessible from remote locations.
-     * <p>
-     * <strong>This method is not yet implemented.</strong>
-     *
-     * @since 2.3
-     */
-    @Override
-    public Set<AttributeValues> getRangeElements() {
-        throw unsupported();
-    }
-
-    /**
-     * Describes the range of the coverage. It consists of a list of attribute name/data type pairs.
-     * A simple list is the most common form of range type, but {@code RecordType} can be used
-     * recursively to describe more complex structures. The range type for a specific coverage
-     * shall be specified in an application schema.
-     * <p>
-     * <strong>This method is not yet implemented.</strong>
-     *
-     * @since 2.3
-     */
-    @Override
-    public RecordType getRangeType() {
-        throw unsupported();
-    }
-
-    /**
-     * Identifies the procedure to be used for evaluating the coverage at a position that falls
-     * either on a boundary between geometric objects or within the boundaries of two or more
-     * overlapping geometric objects. The geometric objects are either {@linkplain DomainObject
-     * domain objects} or {@linkplain ValueObject value objects}.
-     * <p>
-     * <strong>This method is not yet implemented.</strong>
-     *
-     * @since 2.3
-     */
-    @Override
-    public CommonPointRule getCommonPointRule() {
-        throw unsupported();
-    }
-
-    /**
-     * Returns the dictionary of <var>geometry</var>-<var>value</var> pairs that contain the
-     * {@linkplain DomainObject objects} in the domain of the coverage each paired with its
-     * record of feature attribute values. In the case of an analytical coverage, the operation
-     * shall return the empty set.
-     * <p>
-     * <strong>This method is not yet implemented.</strong>
-     *
-     * @since 2.3
-     */
-    @Override
-    public Set<? extends GeometryValuePair> list() {
-        throw unsupported();
-    }
-
-    /**
-     * Returns the set of <var>geometry</var>-<var>value</var> pairs that contain
-     * {@linkplain DomainObject domain objects} that lie within the specified geometry and period.
-     * If {@code s} is null, the operation shall return all <var>geometry</var>-<var>value</var>
-     * pairs that contain {@linkplain DomainObject domain objects} within {@code t}. If the value
-     * of {@code t} is null, the operation shall return all <var>geometry</var>-<var>value</var>
-     * pair that contain {@linkplain DomainObject domain objects} within {@code s}. In the case
-     * of an analytical coverage, the operation shall return the empty set.
-     * <p>
-     * <strong>This method is not yet implemented.</strong>
-     *
-     * @since 2.3
-     */
-    @Override
-    public Set<? extends GeometryValuePair> select(Geometry s, Period t) {
-        throw unsupported();
-    }
-
-    /**
-     * Returns the sequence of <var>geometry</var>-<var>value</var> pairs that include the
-     * {@linkplain DomainObject domain objects} nearest to the direct position and their
-     * distances from the direction position. The sequence shall be ordered by distance from
-     * the direct position, beginning with the record containing the {@linkplain DomainObject
-     * domain object} nearest to the direct position. The length of the sequence (the number
-     * of <var>geometry</var>-<var>value</var> pairs returned) shall be no greater than the
-     * number specified by the parameter {@code limit}. The default shall be to return a single
-     * <var>geometry</var>-<var>value</var> pair. The operation shall return a warning if the
-     * last {@linkplain DomainObject domain object} in the sequence is at a distance from the
-     * direct position equal to the distance of other {@linkplain DomainObject domain objects}
-     * that are not included in the sequence. In the case of an analytical coverage, the operation
-     * shall return the empty set.
-     * <p>
-     * <B>NOTE:</B> This operation is useful when the domain of a coverage does not exhaustively
-     * partition the extent of the coverage. Even in that case, the first element of the sequence
-     * returned may be the <var>geometry</var>-<var>value</var> pair that contains the input direct
-     * position.
-     * <p>
-     * <strong>This method is not yet implemented.</strong>
-     *
-     * @since 2.3
-     */
-    @Override
-    public List<? extends GeometryValuePair> find(DirectPosition p, int limit) {
-        throw unsupported();
-    }
-
-    /**
-     * Returns the nearest <var>geometry</var>-<var>value</var> pair
-     * from the specified direct position. This is a shortcut for
-     * <code>{@linkplain #find(DirectPosition,int) find}(p,1)</code>.
-     *
-     * @since 2.3
-     */
-    @Override
-    public GeometryValuePair find(final DirectPosition p) {
-        final List<? extends GeometryValuePair> pairs = find(p, 1);
-        return pairs.isEmpty() ? null : (GeometryValuePair) pairs.get(0);
-    }
-
-    /**
      * Invoked when an unsupported operation is invoked.
      */
     private static UnsupportedOperationException unsupported() {
@@ -443,27 +264,6 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
             }
         }
         return Errors.format(Errors.Keys.CantConvertFromType_1, type);
-    }
-
-    /**
-     * Returns a set of records of feature attribute values for the specified direct position. The
-     * parameter {@code list} is a sequence of feature attribute names each of which identifies a
-     * field of the range type. If {@code list} is null, the operation shall return a value for
-     * every field of the range type. Otherwise, it shall return a value for each field included in
-     * {@code list}. If the direct position passed is not in the domain of the coverage, then an
-     * exception is thrown. If the input direct position falls within two or more geometric objects
-     * within the domain, the operation shall return records of feature attribute values computed
-     * according to the {@linkplain #getCommonPointRule common point rule}.
-     * <P>
-     * <B>NOTE:</B> Normally, the operation will return a single record of feature attribute values.
-     * <p>
-     * <strong>This method is not yet implemented.</strong>
-     *
-     * @since 2.3
-     */
-    @Override
-    public Set<Record> evaluate(final DirectPosition p, final Collection<String> list) {
-        throw unsupported();
     }
 
     /**
@@ -654,26 +454,6 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
             throw new CannotEvaluateException(formatErrorMessage(array), exception);
         }
         return dest;
-    }
-
-    /**
-     * Returns a set of {@linkplain DomainObject domain objects} for the specified record of feature
-     * attribute values. Normally, this method returns the set of {@linkplain DomainObject objects}
-     * in the domain that are associated with values equal to those in the input record. However,
-     * the operation may return other {@linkplain DomainObject objects} derived from those in the
-     * domain, as specified by the application schema.
-     * <p>
-     * <B>Example:</B> The {@code evaluateInverse} operation could return a set
-     * of contours derived from the feature attribute values associated with the
-     * {@linkplain org.opengis.coverage.grid.GridPoint grid points} of a grid coverage.
-     * <p>
-     * <strong>This method is not yet implemented.</strong>
-     *
-     * @since 2.3
-     */
-    @Override
-    public Set<? extends DomainObject<?>> evaluateInverse(Record v) {
-        throw unsupported();
     }
 
     /**

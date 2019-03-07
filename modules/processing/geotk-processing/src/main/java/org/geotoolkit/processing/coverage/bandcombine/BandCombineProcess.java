@@ -20,10 +20,11 @@ import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.Coverage;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -34,7 +35,6 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.bandcombine.BandCombineDescriptor.*;
 import org.geotoolkit.storage.coverage.CoverageUtilities;
-import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**

@@ -16,8 +16,13 @@
  */
 package org.geotoolkit.coverage;
 
+import java.awt.image.renderable.RenderableImage;
 import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
+import org.opengis.coverage.CannotEvaluateException;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -25,7 +30,7 @@ import org.apache.sis.coverage.SampleDimension;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface Coverage extends org.opengis.coverage.Coverage {
+public interface Coverage {
     /**
      * Returns information about the <cite>range</cite> of this grid coverage.
      * Information include names, sample value ranges, fill values and transfer functions for all bands in this grid coverage.
@@ -33,4 +38,23 @@ public interface Coverage extends org.opengis.coverage.Coverage {
      * @return names, value ranges, fill values and transfer functions for all bands in this grid coverage.
      */
     List<? extends SampleDimension> getSampleDimensions();
+
+    Envelope getEnvelope();
+
+    CoordinateReferenceSystem getCoordinateReferenceSystem();
+
+    Object evaluate(final DirectPosition point) throws CannotEvaluateException;
+
+    boolean[] evaluate(final DirectPosition coord, boolean[] dest) throws CannotEvaluateException;
+
+    byte[] evaluate(final DirectPosition coord, byte[] dest) throws CannotEvaluateException;
+
+    int[] evaluate(final DirectPosition coord, final int[] dest) throws CannotEvaluateException;
+
+    float[] evaluate(final DirectPosition coord, final float[] dest) throws CannotEvaluateException;
+
+    double[] evaluate(final DirectPosition coord, final double[] dest) throws CannotEvaluateException;
+
+    RenderableImage getRenderableImage(final int xAxis, final int yAxis);
+
 }
