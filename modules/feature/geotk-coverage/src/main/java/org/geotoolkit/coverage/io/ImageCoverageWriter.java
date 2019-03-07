@@ -49,7 +49,6 @@ import org.apache.sis.io.TableAppender;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.image.io.MultidimensionalImageStore;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
@@ -772,7 +771,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
 
                 }
             }
-            final List<? extends SampleDimension> dims = coverage.getSampleDimensions();
+            final List<SampleDimension> dims = coverage.getSampleDimensions();
             final DimensionAccessor accessor = new DimensionAccessor(imageMetadata);
             for (int i=0,n=dims.size(); i<n; i++) {
                 final SampleDimension band = dims.get(i);

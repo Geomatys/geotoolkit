@@ -82,7 +82,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                 final GridCoverageReadParam param = new GridCoverageReadParam();
                 param.setDeferred(true);
                 GridCoverage coverage = reader.read(param);
-                sampleDimensions = (List) coverage.getSampleDimensions();
+                sampleDimensions = coverage.getSampleDimensions();
             }
 
             empty = new double[sampleDimensions.size()];

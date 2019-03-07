@@ -34,7 +34,6 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -119,7 +118,7 @@ public final class CoverageFeature {
         }
 
         //use existing sample dimensions
-        final List<? extends SampleDimension> dims = coverage.getSampleDimensions();
+        final List<SampleDimension> dims = coverage.getSampleDimensions();
         if (dims != null && !dims.isEmpty()) {
             for (int i=0,n=dims.size();i<n;i++) {
                 final SampleDimension gsd = dims.get(i);

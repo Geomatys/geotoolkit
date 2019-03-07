@@ -32,6 +32,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BandedSampleModel;
+import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
@@ -62,6 +63,7 @@ import javax.media.jai.iterator.RectIterFactory;
 import javax.media.jai.iterator.WritableRectIter;
 import javax.media.jai.operator.ImageFunctionDescriptor;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -77,6 +79,7 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.iso.Types;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.io.LineWriter;
 import org.geotoolkit.lang.Debug;
@@ -253,22 +256,12 @@ public abstract class GridCoverage implements Localized, Serializable {
     }
 
     /**
-     * Returns the dimension of this coverage. This is a shortcut for
-     * <code>{@linkplain #crs}.getCoordinateSystem().getDimension()</code>.
-     *
-     * @return The dimension of this coverage.
-     */
-    public final int getDimension() {
-        return crs.getCoordinateSystem().getDimension();
-    }
-
-    /**
      * Returns information about the <cite>range</cite> of this grid coverage.
      * Information include names, sample value ranges, fill values and transfer functions for all bands in this grid coverage.
      *
      * @return names, value ranges, fill values and transfer functions for all bands in this grid coverage.
      */
-    public abstract List<? extends SampleDimension> getSampleDimensions();
+    public abstract List<SampleDimension> getSampleDimensions();
 
     /**
      * Returns the coordinate reference system to which the objects in its domain are
@@ -309,15 +302,6 @@ public abstract class GridCoverage implements Localized, Serializable {
      */
     public Envelope getEnvelope() {
         return CRS.getDomainOfValidity(crs);
-    }
-
-    /**
-     * Invoked when an unsupported operation is invoked.
-     */
-    private static UnsupportedOperationException unsupported() {
-        throw new UnsupportedOperationException(
-                "This method is currently not implemented. " +
-                "It may be implemented by next version of coverage module.");
     }
 
     /**
@@ -521,6 +505,45 @@ public abstract class GridCoverage implements Localized, Serializable {
         return dest;
     }
 
+    public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
+
+        int xAxis = -1;
+        int yAxis = -1;
+        for (int i=0,n=sliceExtent.getDimension(); i<n; i++) {
+            if (sliceExtent.getSize(i) > 1) {
+                if (xAxis == -1) {
+                    xAxis = i;
+                } else if (yAxis == -1) {
+                    yAxis = i;
+                } else {
+                    throw new CannotEvaluateException("Requested extent must be a 2D slice");
+                }
+            }
+        }
+
+        if (xAxis == -1 || yAxis == -1) throw new CannotEvaluateException("Requested extent must be a 2D slice");
+
+        final RenderableImage ri = getRenderableImage(xAxis, yAxis);
+        final RenderedImage img = ri.createDefaultRendering();
+        int x = (int) sliceExtent.getLow(xAxis);
+        int y = (int) sliceExtent.getLow(yAxis);
+        int width = (int) sliceExtent.getSize(xAxis);
+        int height = (int) sliceExtent.getSize(yAxis);
+
+        if (img.getWidth() == width && img.getHeight() == height) {
+            return img;
+        }
+
+        if (img instanceof BufferedImage) {
+            final BufferedImage bimg = (BufferedImage) img;
+            return bimg.getSubimage(x, y, width, height);
+        } else {
+            final BufferedImage bimg = BufferedImages.createImage(width, height, img);
+            bimg.setData(img.getData(new Rectangle(x, y, width, height)));
+            return bimg;
+        }
+    }
+
     /**
      * Returns 2D view of this grid coverage as a renderable image. This method
      * allows inter-operability with Java2D.
@@ -597,7 +620,7 @@ public abstract class GridCoverage implements Localized, Serializable {
          * coverage. By default, all ordinates are initialized to 0. Subclasses should set the
          * desired values in their constructor if needed.
          */
-        protected final GeneralDirectPosition coordinate = new GeneralDirectPosition(getDimension());
+        protected final GeneralDirectPosition coordinate = new GeneralDirectPosition(getCoordinateReferenceSystem().getCoordinateSystem().getDimension());
 
         /**
          * Constructs a renderable image.
@@ -1130,7 +1153,7 @@ public abstract class GridCoverage implements Localized, Serializable {
         out.write(']');
         final String lineSeparator = System.lineSeparator();
         final LineWriter filter = new LineWriter(out, lineSeparator + "\u2502   ");
-        final List<? extends SampleDimension> dims = getSampleDimensions();
+        final List<SampleDimension> dims = getSampleDimensions();
         final int n = dims.size();
         try {
             filter.write(lineSeparator);

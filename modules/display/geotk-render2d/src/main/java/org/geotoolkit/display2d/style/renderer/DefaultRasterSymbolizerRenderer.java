@@ -686,7 +686,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             return Integer.parseInt(name);
         }catch(NumberFormatException ex){
             //can be a name
-            final List<? extends SampleDimension> dims = coverage.getSampleDimensions();
+            final List<SampleDimension> dims = coverage.getSampleDimensions();
             for(int i=0,n=dims.size();i<n;i++){
                 final SampleDimension sampleDim = dims.get(i);
                 if (Objects.equals(String.valueOf(sampleDim.getName()), n)) {

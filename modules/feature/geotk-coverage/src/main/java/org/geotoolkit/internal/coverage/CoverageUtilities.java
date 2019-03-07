@@ -146,7 +146,7 @@ public final class CoverageUtilities extends Static {
      */
     @Deprecated
     public static double[] getBackgroundValues(final GridCoverage coverage) {
-        final List<? extends SampleDimension> dims = coverage.getSampleDimensions();
+        final List<SampleDimension> dims = coverage.getSampleDimensions();
         final int numBands = dims.size();
         final double[] background = new double[numBands];
         for (int i=0; i<numBands; i++) {
@@ -181,7 +181,7 @@ public final class CoverageUtilities extends Static {
      */
     public static boolean hasRenderingCategories(final GridCoverage gridCoverage) {
         // getting all the SampleDimensions of this coverage, if any exist
-        final List<? extends SampleDimension> dims = gridCoverage.getSampleDimensions();
+        final List<SampleDimension> dims = gridCoverage.getSampleDimensions();
         if (dims == null || dims.isEmpty()) {
             return false;
         }

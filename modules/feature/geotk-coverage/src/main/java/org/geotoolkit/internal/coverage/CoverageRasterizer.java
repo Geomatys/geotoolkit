@@ -111,7 +111,7 @@ public class CoverageRasterizer {
 
     private GridCoverage buildSlice(GridGeometry sliceGridGeom) throws TransformException, FactoryException {
 
-        final List<? extends SampleDimension> samples = source.getSampleDimensions();
+        final List<SampleDimension> samples = source.getSampleDimensions();
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName("slice");

@@ -727,7 +727,7 @@ public class GridCoverageStack extends GridCoverage {
         }
         this.numSampleDimensions = (sampleDimensions != null) ? sampleDimensions.length : 0;
         this.sampleDimensions = sampleDimensionMismatch ? null : sampleDimensions;
-        zCRS = CRS.getOrCreateSubCRS(crs, this.zDimension, this.zDimension+1);
+        zCRS = CRS.getOrCreateSubCRS(getCoordinateReferenceSystem(), this.zDimension, this.zDimension+1);
         buildGridGeometry();
     }
 
@@ -996,7 +996,7 @@ public class GridCoverageStack extends GridCoverage {
     }
 
     @Override
-    public List<? extends SampleDimension> getSampleDimensions() {
+    public List<SampleDimension> getSampleDimensions() {
         return sampleDimensions == null ? Collections.EMPTY_LIST : UnmodifiableArrayList.wrap(sampleDimensions);
     }
 
@@ -1119,7 +1119,7 @@ public class GridCoverageStack extends GridCoverage {
          */
         final CoordinateReferenceSystem sourceCRS;
         assert debugEquals((sourceCRS = coverage.getCoordinateReferenceSystem()),
-                CRS.getOrCreateSubCRS(crs, 0, sourceCRS.getCoordinateSystem().getDimension())) : sourceCRS;
+                CRS.getOrCreateSubCRS(getCoordinateReferenceSystem(), 0, sourceCRS.getCoordinateSystem().getDimension())) : sourceCRS;
         assert coverage.getSampleDimensions().size() == numSampleDimensions : coverage;
         return coverage;
     }
@@ -1293,7 +1293,7 @@ public class GridCoverageStack extends GridCoverage {
             }
             coord = reducedPosition;
         } else {
-            assert debugEquals(crs, targetCRS) : targetCRS;
+            assert debugEquals(getCoordinateReferenceSystem(), targetCRS) : targetCRS;
         }
         return coord;
     }

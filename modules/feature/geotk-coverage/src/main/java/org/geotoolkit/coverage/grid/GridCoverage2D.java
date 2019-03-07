@@ -237,6 +237,7 @@ public class GridCoverage2D extends GridCoverage {
          * 'gridToCRS' transform in the GridGeometry object. In any case, the envelope must be
          * non-empty and its dimension must matches the coordinate reference system's dimension.
          */
+        final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
         final int dimension = crs.getCoordinateSystem().getDimension();
         if (!gridGeometry.isDefined(GridGeometry2D.EXTENT)) {
             final long[] low = new long[dimension];
@@ -537,7 +538,7 @@ public class GridCoverage2D extends GridCoverage {
          * geometry and copy in a new Point2D instance.
          */
         final int actual   = point.getDimension();
-        final int expected = crs.getCoordinateSystem().getDimension();
+        final int expected = getCoordinateReferenceSystem().getCoordinateSystem().getDimension();
         if (actual != expected) {
             throw new MismatchedDimensionException(Errors.format(
                     Errors.Keys.MismatchedDimension_2, actual, expected));
@@ -680,6 +681,19 @@ public class GridCoverage2D extends GridCoverage {
      */
     public RenderedImage getRenderedImage() {
         return image;
+    }
+
+    @Override
+    public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
+        int[] dims = sliceExtent.getSubspaceDimensions(2);
+        if (dims[0] != gridGeometry.axisDimensionX && dims[1] != gridGeometry.axisDimensionY) {
+            throw new CannotEvaluateException("Unsupported axis");
+        }
+        final GridExtent extent = getGridGeometry().getExtent();
+        if (sliceExtent.getSize(dims[0]) != extent.getSize(dims[0]) || sliceExtent.getSize(dims[1]) != extent.getSize(dims[1])) {
+            throw new CannotEvaluateException("Slice sizemust match coverage extent");
+        }
+        return getRenderedImage();
     }
 
     /**
