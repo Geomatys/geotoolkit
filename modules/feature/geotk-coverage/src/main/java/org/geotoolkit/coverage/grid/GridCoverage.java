@@ -464,32 +464,23 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
     @Override
     public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
 
-        int xAxis = -1;
-        int yAxis = -1;
-        for (int i=0,n=sliceExtent.getDimension(); i<n; i++) {
-            if (sliceExtent.getSize(i) > 1) {
-                if (xAxis == -1) {
-                    xAxis = i;
-                } else if (yAxis == -1) {
-                    yAxis = i;
-                } else {
-                    throw new CannotEvaluateException("Requested extent must be a 2D slice");
-                }
-            }
-        }
-
-        if (xAxis == -1 || yAxis == -1) throw new CannotEvaluateException("Requested extent must be a 2D slice");
-
+        final int[] indices = sliceExtent.getSubspaceDimensions(2);
+        final int xAxis = indices[0];
+        final int yAxis = indices[1];
         final RenderableImage ri = getRenderableImage(xAxis, yAxis);
         final RenderedImage img = ri.createDefaultRendering();
-        int x = (int) sliceExtent.getLow(xAxis);
-        int y = (int) sliceExtent.getLow(yAxis);
-        int width = (int) sliceExtent.getSize(xAxis);
-        int height = (int) sliceExtent.getSize(yAxis);
+        final GridExtent gridExtent = getGridGeometry().getExtent();
+        final long dx = Math.subtractExact(sliceExtent.getLow(xAxis), gridExtent.getLow(xAxis));
+        final long dy = Math.subtractExact(sliceExtent.getLow(yAxis), gridExtent.getLow(yAxis));
+        final int width = Math.toIntExact(sliceExtent.getSize(xAxis));
+        final int height = Math.toIntExact(sliceExtent.getSize(yAxis));
 
-        if (img.getWidth() == width && img.getHeight() == height) {
+        if (img.getWidth() == width && img.getHeight() == height && dx == 0 && dy == 0) {
             return img;
         }
+
+        final int x = Math.toIntExact(img.getMinX() + dx);
+        final int y = Math.toIntExact(img.getMinY() + dy);
 
         if (img instanceof BufferedImage) {
             final BufferedImage bimg = (BufferedImage) img;
