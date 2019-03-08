@@ -98,10 +98,6 @@ import org.opengis.referencing.operation.TransformException;
  * @see GridCoverageBuilder
  */
 public class GridCoverage2D extends GridCoverage {
-    /**
-     * For compatibility during cross-version serialization.
-     */
-    private static final long serialVersionUID = 667472989475027853L;
 
     /**
      * Whatever default grid envelope computation should be performed on transform
@@ -661,7 +657,7 @@ public class GridCoverage2D extends GridCoverage {
         }
         final GridExtent extent = getGridGeometry().getExtent();
         if (sliceExtent.getSize(dims[0]) != extent.getSize(dims[0]) || sliceExtent.getSize(dims[1]) != extent.getSize(dims[1])) {
-            throw new CannotEvaluateException("Slice sizemust match coverage extent");
+            throw new CannotEvaluateException("Slice size must match coverage extent");
         }
         return getRenderedImage();
     }

@@ -41,7 +41,6 @@ import java.awt.image.SampleModel;
 import java.awt.image.renderable.RenderContext;
 import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.text.FieldPosition;
@@ -131,7 +130,7 @@ import org.opengis.util.InternationalString;
  *
  * @author Martin Desruisseaux (IRD)
  */
-public abstract class GridCoverage implements Localized, Serializable {
+public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCoverage implements Localized {
 
     /**
      * The logger for grid coverage operations.
@@ -156,22 +155,6 @@ public abstract class GridCoverage implements Localized, Serializable {
      */
     private final InternationalString name;
 
-    /**
-     * The grid extent, coordinate reference system (CRS) and conversion from cell indices to CRS.
-     *
-     * @see #getGridGeometry()
-     */
-    private final GridGeometry gridGeometry;
-
-    /**
-     * List of sample dimension (band) information for the grid coverage. Information include such things
-     * as description, the no data values, minimum and maximum values, <i>etc</i>. A coverage must have
-     * at least one sample dimension. The content of this array shall never be modified.
-     *
-     * @see #getSampleDimensions()
-     */
-    private final SampleDimension[] sampleDimensions;
-
     protected transient Map properties;
 
     /**
@@ -180,6 +163,8 @@ public abstract class GridCoverage implements Localized, Serializable {
      *
      * @param name
      *          The coverage name, or {@code null} if none.
+     * @param grid   the grid extent, CRS and conversion from cell indices to CRS.
+     * @param bands  sample dimensions for each image band.
      * @param properties
      *          The set of properties for this coverage, or {@code null} if there is none.
      *          Keys are {@link String} objects ({@link javax.media.jai.util.CaselessStringKey}
@@ -190,10 +175,9 @@ public abstract class GridCoverage implements Localized, Serializable {
                            final Collection<? extends SampleDimension> bands,
                            final Map<?,?>     properties)
     {
+        super(grid, bands);
         this.properties = properties;
         this.name = Types.toInternationalString(name);
-        this.gridGeometry = grid;
-        this.sampleDimensions = bands.toArray(new SampleDimension[bands.size()]);
         this.sources = null;
     }
 
@@ -206,10 +190,9 @@ public abstract class GridCoverage implements Localized, Serializable {
      *          The source coverage.
      */
     protected GridCoverage(final CharSequence name, final GridCoverage coverage) {
+        super(coverage.getGridGeometry(), coverage.getSampleDimensions());
         final InternationalString n = Types.toInternationalString(name);
         this.name = (n != null) ? n : coverage.name;
-        this.gridGeometry  = coverage.getGridGeometry();
-        this.sampleDimensions = coverage.getSampleDimensions().toArray(new SampleDimension[0]);
         this.sources = Collections.singletonList(coverage);
     }
 
@@ -220,6 +203,8 @@ public abstract class GridCoverage implements Localized, Serializable {
      *
      * @param name
      *          The grid coverage name.
+     * @param grid   the grid extent, CRS and conversion from cell indices to CRS.
+     * @param bands  sample dimensions for each image band.
      * @param sources
      *          The {@linkplain #getSources sources} for a grid coverage, or {@code null} if none.
      * @param properties
@@ -231,10 +216,9 @@ public abstract class GridCoverage implements Localized, Serializable {
                            final GridCoverage[]        sources,
                            final Map<?,?>           properties)
     {
+        super(grid, bands);
         this.properties = properties;
         this.name = Types.toInternationalString(name);
-        this.gridGeometry  = grid;
-        this.sampleDimensions = bands.toArray(new SampleDimension[0]);
         if (sources != null) {
             switch (sources.length) {
                 case 0:  this.sources = null; break;
@@ -256,50 +240,6 @@ public abstract class GridCoverage implements Localized, Serializable {
         return name;
     }
 
-
-    /**
-     * Returns the coordinate reference system to which the values in grid domain are referenced.
-     * This is the CRS used when accessing a coverage with the {@code evaluate(…)} methods.
-     * This coordinate reference system is usually different than the coordinate system of the grid.
-     * It is the target coordinate reference system of the {@link GridGeometry#getGridToCRS gridToCRS}
-     * math transform.
-     *
-     * <p>The default implementation delegates to {@link GridGeometry#getCoordinateReferenceSystem()}.</p>
-     *
-     * @return the CRS used when accessing a coverage with the {@code evaluate(…)} methods.
-     * @throws IncompleteGridGeometryException if the grid geometry has no CRS.
-     */
-    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-        return gridGeometry.getCoordinateReferenceSystem();
-    }
-
-    /**
-     * Returns information about the <cite>domain</cite> of this grid coverage.
-     * Information includes the grid extent, CRS and conversion from cell indices to CRS.
-     * {@code GridGeometry} can also provide derived information like bounding box and resolution.
-     *
-     * @return grid extent, CRS and conversion from cell indices to CRS.
-     *
-     * @see org.apache.sis.storage.GridCoverageResource#getGridGeometry()
-     */
-    public GridGeometry getGridGeometry() {
-        return gridGeometry;
-    }
-
-    /**
-     * Returns information about the <cite>range</cite> of this grid coverage.
-     * Information include names, sample value ranges, fill values and transfer functions for all bands in this grid coverage.
-     * The length of the returned list should be equal to the {@linkplain java.awt.image.SampleModel#getNumBands() number of
-     * bands} in the rendered image.
-     *
-     * @return names, value ranges, fill values and transfer functions for all bands in this grid coverage.
-     *
-     * @see org.apache.sis.storage.GridCoverageResource#getSampleDimensions()
-     */
-    public List<SampleDimension> getSampleDimensions() {
-        return UnmodifiableArrayList.wrap(sampleDimensions);
-    }
-
     /**
      * Returns the bounding box for the coverage domain in
      * {@linkplain #getCoordinateReferenceSystem coordinate reference system} coordinates. May
@@ -317,7 +257,7 @@ public abstract class GridCoverage implements Localized, Serializable {
      * @return The bounding box for the coverage domain in coordinate system coordinates.
      */
     public Envelope getEnvelope() {
-        return gridGeometry.getEnvelope();
+        return getGridGeometry().getEnvelope();
     }
 
     /**
@@ -521,6 +461,7 @@ public abstract class GridCoverage implements Localized, Serializable {
         return dest;
     }
 
+    @Override
     public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
 
         int xAxis = -1;

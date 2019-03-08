@@ -19,11 +19,11 @@ package org.geotoolkit.coverage.grid;
 
 import java.awt.geom.Point2D;
 import java.awt.image.Raster;
-import java.io.IOException;
 import javax.media.jai.Interpolation;
 import org.apache.sis.coverage.grid.GridExtent;
-import static org.geotoolkit.test.Assert.*;
 import org.junit.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.opengis.geometry.Envelope;
 
 
@@ -81,32 +81,4 @@ public final strictfp class InterpolatorTest extends GridCoverageTestBase {
         }
     }
 
-    /**
-     * Tests the serialization of a grid coverage.
-     *
-     * @throws IOException if an I/O operation was needed and failed.
-     * @throws ClassNotFoundException Should never happen.
-     */
-    @Test
-    public void testSerialization() throws IOException, ClassNotFoundException {
-        final int[] types = {
-            Interpolation.INTERP_BICUBIC,
-            Interpolation.INTERP_BILINEAR,
-            Interpolation.INTERP_NEAREST
-        };
-        final Interpolation[] interpolations = new Interpolation[types.length];
-        for (int i=0; i<interpolations.length; i++) {
-            interpolations[i] = Interpolation.getInstance(types[i]);
-        }
-        loadSampleCoverage(SampleCoverage.SST);
-        coverage = Interpolator2D.create(coverage, interpolations);
-        GridCoverage2D serial = serialize();
-        assertNotSame(coverage, serial);
-        assertEquals(Interpolator2D.class, serial.getClass());
-        // Compares the geophysics view for working around the
-        // conversions of NaN values which may be the expected ones.
-        coverage = coverage.view(ViewType.GEOPHYSICS);
-        serial   = serial  .view(ViewType.GEOPHYSICS);
-        assertRasterEquals(coverage, serial);
-    }
 }

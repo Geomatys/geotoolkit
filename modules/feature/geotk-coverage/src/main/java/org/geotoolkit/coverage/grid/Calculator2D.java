@@ -30,10 +30,6 @@ package org.geotoolkit.coverage.grid;
  * @module
  */
 public abstract class Calculator2D extends GridCoverage2D {
-    /**
-     * For cross-version compatibility.
-     */
-    private static final long serialVersionUID = -6287856672249003253L;
 
     /**
      * The source grid coverage which was specified at construction time (never {@code null}).

@@ -45,10 +45,6 @@ import org.opengis.referencing.operation.TransformException;
  * @module
  */
 public final class Interpolator2D extends Calculator2D {
-    /**
-     * For cross-version compatibility.
-     */
-    private static final long serialVersionUID = 9028980295030908004L;
 
     /**
      * The greatest value smaller than 1 representable as a {@code float} number.
