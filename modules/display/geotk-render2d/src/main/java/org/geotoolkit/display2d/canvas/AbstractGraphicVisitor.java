@@ -31,6 +31,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
@@ -177,7 +178,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
                 coverage = (GridCoverage2D) reader.read(param);
                 ref.recycle(reader);
             }
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             context.getMonitor().exceptionOccured(ex, Level.INFO);
             return null;
         }
@@ -222,7 +223,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
      * @throws TransformException
      */
     protected static CoverageExtractor.Ray rayExtraction(ProjectedCoverage projectedCoverage, RenderingContext2D context, SearchAreaJ2D area)
-            throws CoverageStoreException, TransformException {
+            throws DataStoreException, TransformException {
 
         //point in objective CRS
         final GeneralDirectPosition dp = new GeneralDirectPosition(context.getObjectiveCRS2D());

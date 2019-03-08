@@ -27,6 +27,7 @@ import java.util.Locale;
 import javax.imageio.ImageWriter;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.internal.system.OS;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.image.SampleModels;
@@ -83,7 +84,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
     /**
      * Creates a {@link GridCoverage2D} from the given file.
      */
-    private static GridCoverage2D read(final String file) throws IOException, CoverageStoreException {
+    private static GridCoverage2D read(final String file) throws IOException, DataStoreException {
         final ImageCoverageReader reader = new ImageCoverageReader();
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, file));
         final GridCoverage2D coverage = reader.read(null);
@@ -168,7 +169,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
      * @throws ParseException Should not happen.
      */
     @Test
-    public void writeFull() throws IOException, CoverageStoreException, ParseException {
+    public void writeFull() throws IOException, DataStoreException, ParseException {
         final GridCoverage2D coverage = read("matrix.txt");
         final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeFull", "matrix");
         final StringWriter buffer = new StringWriter();
@@ -192,7 +193,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
      * @throws ParseException Should not happen.
      */
     @Test
-    public void writeRegion() throws IOException, CoverageStoreException, ParseException {
+    public void writeRegion() throws IOException, DataStoreException, ParseException {
         final GridCoverage2D coverage = read("matrix.txt");
         final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeRegion");
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
@@ -234,7 +235,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
      * @throws ParseException Should not happen.
      */
     @Test
-    public void writeSubsampledRegion() throws IOException, CoverageStoreException, ParseException {
+    public void writeSubsampledRegion() throws IOException, DataStoreException, ParseException {
         final GridCoverage2D coverage = read("matrix.txt");
         final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeSubsampledRegion");
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
@@ -269,7 +270,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
      * @throws ParseException Should not happen.
      */
     @Test
-    public void writeScaledRegion() throws IOException, CoverageStoreException, ParseException {
+    public void writeScaledRegion() throws IOException, DataStoreException, ParseException {
         final GridCoverage2D coverage = read("matrix.txt");
         final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeScaledRegion");
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
@@ -334,7 +335,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
     @Test
     @PlatformDependentTest
     @org.junit.Ignore
-    public void writeExpandedUpperLeftRegion() throws IOException, CoverageStoreException, ParseException {
+    public void writeExpandedUpperLeftRegion() throws IOException, DataStoreException, ParseException {
         assumeTrue(OS.current() == OS.MAC_OS);
 
         final GridCoverage2D coverage = read("matrix.txt");
@@ -378,7 +379,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
      * @throws CoverageStoreException Should not happen.
      */
     @Test
-    public void writeTwice() throws IOException, CoverageStoreException {
+    public void writeTwice() throws IOException, DataStoreException {
         final ImageCoverageReader reader = new ImageCoverageReader();
         reader.setInput(TestData.file(SampleModels.class, "Contour.png"));
         final GridCoverage2D coverage = reader.read(null);

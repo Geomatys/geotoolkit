@@ -12,7 +12,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
@@ -58,16 +57,9 @@ public class MemoryStoreTest {
         final DefaultExtent expectedExtent = new DefaultExtent();
         final Set<CoordinateReferenceSystem> crss = new HashSet<>();
         for (final GridCoverageResource ref : refs) {
-            final GridCoverageReader reader = ref.acquireReader();
-            try {
-                final GridGeometry gg = reader.getGridGeometry();
-                expectedExtent.addElements(gg.getEnvelope());
-                crss.add(gg.getCoordinateReferenceSystem());
-                ref.recycle(reader);
-            } catch (Exception e) {
-                reader.dispose();
-                throw e;
-            }
+            final GridGeometry gg = ref.getGridGeometry();
+            expectedExtent.addElements(gg.getEnvelope());
+            crss.add(gg.getCoordinateReferenceSystem());
         }
 
         final Set<GeographicExtent> geoBoxes = new HashSet<>();

@@ -18,12 +18,13 @@ package org.geotoolkit.display2d.primitive;
 
 import java.util.logging.Level;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -91,7 +92,7 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
      * @throws CoverageStoreException if problem during {@link GridCoverageResource#acquireReader() }
      * or {@link GridCoverageReader#dispose() } call.
      */
-    public GridCoverage2D getCoverage(final GridCoverageReadParam param) throws CoverageStoreException{
+    public GridCoverage2D getCoverage(final GridCoverageReadParam param) throws DataStoreException {
         GridCoverage2D value = cache.peek(param);
         if (value == null) {
             Cache.Handler<GridCoverage2D> handler = cache.lock(param);
@@ -153,7 +154,7 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
      *
      * @throws CoverageStoreException
      */
-    public GridCoverage2D getElevationCoverage(final GridCoverageReadParam param) throws CoverageStoreException{
+    public GridCoverage2D getElevationCoverage(final GridCoverageReadParam param) throws DataStoreException {
         ElevationModel elevationModel = layer.getElevationModel();
         if(elevationModel == null){
              elevationModel = (ElevationModel) params.context.getRenderingHints().get(GO2Hints.KEY_ELEVATION_MODEL);

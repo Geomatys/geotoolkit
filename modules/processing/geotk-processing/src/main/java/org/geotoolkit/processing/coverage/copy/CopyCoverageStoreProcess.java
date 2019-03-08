@@ -343,25 +343,24 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
 
         if(reduce == null) reduce = Boolean.TRUE;
 
-        final GridCoverageReader reader = inRef.acquireReader();
-        final GridGeometry globalGeom = reader.getGridGeometry();
+        final GridGeometry globalGeom = inRef.getGridGeometry();
         final CoordinateReferenceSystem crs = globalGeom.getCoordinateReferenceSystem();
 
         final GenericName name = inRef.getIdentifier();
         if(crs instanceof ImageCRS){
             //image is not georeferenced, we can't store it.
             fireWarningOccurred("Image "+name+" does not have a CoordinateReferenceSystem, insertion is skipped.", 0, null);
-            inRef.recycle(reader);
             return;
         }
 
         //create sampleDimensions bands
-        final List<SampleDimension> sampleDimensions = reader.getSampleDimensions();
+        final List<SampleDimension> sampleDimensions = inRef.getSampleDimensions();
         outPM.setSampleDimensions(sampleDimensions);
 
         final Pyramid pyramid = (Pyramid) outPM.createModel(new DefiningPyramid(crs));
 
         // save all possible envelope slice combinations in a separate mosaic.
+        final GridCoverageReader reader = inRef.acquireReader();
         final GridGeometryIterator gridCIte = new GridGeometryIterator(globalGeom);
         while (gridCIte.hasNext()) {
             GeneralEnvelope env = GeneralEnvelope.castOrCopy(gridCIte.next().getEnvelope());

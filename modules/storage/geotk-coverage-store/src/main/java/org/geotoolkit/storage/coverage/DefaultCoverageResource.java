@@ -78,7 +78,7 @@ public class DefaultCoverageResource extends AbstractCoverageResource{
     }
 
     @Override
-    public GridCoverageReader acquireReader() throws CoverageStoreException {
+    public GridCoverageReader acquireReader() throws DataStoreException {
         if (coverage != null) {
             return new MemoryCoverageReader(coverage);
         } else if (input instanceof GridCoverage2D) {
@@ -93,7 +93,7 @@ public class DefaultCoverageResource extends AbstractCoverageResource{
     }
 
     @Override
-    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
+    public GridCoverageWriter acquireWriter() throws DataStoreException {
         throw new CoverageStoreException("Writing not supported.");
     }
 

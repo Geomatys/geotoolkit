@@ -23,7 +23,6 @@ import java.util.logging.Level;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.content.DefaultAttributeGroup;
@@ -35,12 +34,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.CoverageWriter;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.Process;
@@ -179,7 +174,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
     public void recycle(CoverageWriter writer) {
         try {
             writer.dispose();
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
         }
     }
@@ -267,7 +262,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
 
             reader.dispose();
 
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
         }
     }

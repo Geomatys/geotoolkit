@@ -39,6 +39,7 @@ import org.apache.sis.internal.metadata.AxisDirections;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -211,7 +212,7 @@ public class Index implements Closeable {
             markIndexed(image);
 
             return true;
-        } catch (StoreIndexException|CoverageStoreException|IOException ex) {
+        } catch (DataStoreException|IOException ex) {
             TimedUtils.LOGGER.log(Level.WARNING, ex, () -> String.format("Cannot read input image. It will be ignored.%nPath : %s", image));
         }
 
@@ -241,7 +242,7 @@ public class Index implements Closeable {
         return false;
     }
 
-    private void ensureTreeExists(final Path imageFile) throws CoverageStoreException, IOException, StoreIndexException {
+    private void ensureTreeExists(final Path imageFile) throws DataStoreException, IOException, StoreIndexException {
         if (tree == null || !Files.exists(treePath)) {
             // First, we ensure given data is readable
             final CoordinateReferenceSystem imageCRS;
@@ -282,7 +283,7 @@ public class Index implements Closeable {
                 throw new CoverageStoreException("No spatial information found in "+imageFile);
             }
             return toTreeCRS(tmpEnvelope, time);
-        } catch (CoverageStoreException|TransformException e) {
+        } catch (DataStoreException | TransformException e) {
             throw new RuntimeException(e);
         }
     }

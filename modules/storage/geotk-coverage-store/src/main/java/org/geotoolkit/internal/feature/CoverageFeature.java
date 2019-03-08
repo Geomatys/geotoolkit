@@ -77,7 +77,7 @@ public final class CoverageFeature {
 
     private CoverageFeature(){}
 
-    public static FeatureType createCoverageType(GridCoverage coverage) throws CoverageStoreException {
+    public static FeatureType createCoverageType(GridCoverage coverage) throws DataStoreException {
         final CoordinateReferenceSystem crs = CRS.getHorizontalComponent(coverage.getCoordinateReferenceSystem());
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -89,7 +89,7 @@ public final class CoverageFeature {
         return ftb.build();
     }
 
-    public static FeatureType createCoverageType(GridCoverageReader reader) throws CoverageStoreException {
+    public static FeatureType createCoverageType(GridCoverageReader reader) throws DataStoreException {
 
         final GridGeometry gridGeometry = reader.getGridGeometry();
         final CoordinateReferenceSystem crs = CRS.getHorizontalComponent(gridGeometry.getCoordinateReferenceSystem());
@@ -103,7 +103,7 @@ public final class CoverageFeature {
         return ftb.build();
     }
 
-    public static FeatureType createRecordType(GridCoverage coverage) throws CoverageStoreException {
+    public static FeatureType createRecordType(GridCoverage coverage) throws DataStoreException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setSuperTypes(TypeConventions.COVERAGE_RECORD_TYPE);
         ftb.setName((coverage instanceof GridCoverage ? ((GridCoverage) coverage).getName() : "") + "Record" );
@@ -145,7 +145,7 @@ public final class CoverageFeature {
 
     }
 
-    public static FeatureType createRecordType(GridCoverageReader reader) throws CoverageStoreException {
+    public static FeatureType createRecordType(GridCoverageReader reader) throws DataStoreException {
 
         final GridGeometry gridGeometry = reader.getGridGeometry();
         final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();

@@ -27,14 +27,15 @@ import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -65,14 +66,14 @@ public class WMSCoverageReader extends GridCoverageReader{
     public WMSCoverageReader(final WMSCoverageResource reference) {
         try {
             setInput(reference);
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             //won't happen
             LOGGER.log(Level.WARNING, ex.getMessage(), ex);
         }
     }
 
     @Override
-    public void setInput(Object input) throws CoverageStoreException {
+    public void setInput(Object input) throws DataStoreException {
         if(!(input instanceof WMSCoverageResource)){
             throw new CoverageStoreException("Unsupported input type, can only be WMSCoverageReference.");
         }
@@ -80,12 +81,12 @@ public class WMSCoverageReader extends GridCoverageReader{
     }
 
     @Override
-    public WMSCoverageResource getInput() throws CoverageStoreException {
+    public WMSCoverageResource getInput() throws DataStoreException {
         return (WMSCoverageResource) super.getInput();
     }
 
     @Override
-    public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
+    public GenericName getCoverageName() throws DataStoreException, CancellationException {
         final NameFactory dnf = FactoryFinder.getNameFactory(null);
         final GenericName name = getInput().getIdentifier();
         NameSpace ns = null;
@@ -97,7 +98,7 @@ public class WMSCoverageReader extends GridCoverageReader{
     }
 
     @Override
-    public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
+    public GridGeometry getGridGeometry() throws DataStoreException, CancellationException {
         final WMSCoverageResource ref = getInput();
         //we only know the envelope,
         final GridGeometry gridGeom = new GridGeometry(PixelInCell.CELL_CENTER, null, ref.getBounds(), GridRoundingMode.ENCLOSING);
@@ -105,13 +106,13 @@ public class WMSCoverageReader extends GridCoverageReader{
     }
 
     @Override
-    public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException, CancellationException {
         //unknowned
         return null;
     }
 
     @Override
-    public GridCoverage read(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
+    public GridCoverage read(GridCoverageReadParam param) throws DataStoreException, CancellationException {
 
         if(param == null){
             param = new GridCoverageReadParam();
@@ -216,12 +217,12 @@ public class WMSCoverageReader extends GridCoverageReader{
     }
 
     @Override
-    public void dispose() throws CoverageStoreException {
+    public void dispose() throws DataStoreException {
         //nothing to dispose, we must preserve the input
     }
 
     @Override
-    public void reset() throws CoverageStoreException {
+    public void reset() throws DataStoreException {
         //nothing to reset, we must preserve the input
     }
 

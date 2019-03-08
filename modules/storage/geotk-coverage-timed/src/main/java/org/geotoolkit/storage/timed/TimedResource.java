@@ -99,12 +99,12 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
     }
 
     @Override
-    public GridCoverageReader acquireReader() throws CoverageStoreException {
+    public GridCoverageReader acquireReader() throws DataStoreException {
         return new TimedReader(this);
     }
 
     @Override
-    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
+    public GridCoverageWriter acquireWriter() throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -114,7 +114,7 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
     }
 
     @Override
-    public GridGeometry getGridGeometry() throws CoverageStoreException {
+    public GridGeometry getGridGeometry() throws DataStoreException {
         final GeneralEnvelope treeEnv;
         try {
             treeEnv = index.getEnvelope()

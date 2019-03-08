@@ -32,7 +32,6 @@ import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
@@ -125,7 +124,7 @@ public class ExportCoverageItem extends TreeMenuItem {
                             if (reader != null) {
                                 try {
                                     reader.dispose();
-                                } catch (CoverageStoreException ex) {
+                                } catch (DataStoreException ex) {
                                     Loggers.DATA.log(Level.WARNING, ex.getMessage(),ex);
                                     final Alert alert = new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK);
                                     alert.showAndWait();
@@ -134,7 +133,7 @@ public class ExportCoverageItem extends TreeMenuItem {
                             if (writer != null) {
                                 try {
                                     writer.dispose();
-                                } catch (CoverageStoreException ex) {
+                                } catch (DataStoreException ex) {
                                     Loggers.DATA.log(Level.WARNING, ex.getMessage(),ex);
                                     final Alert alert = new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK);
                                     alert.showAndWait();

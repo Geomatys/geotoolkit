@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage.io;
 
 import java.util.concurrent.CancellationException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage;
 
 /**
@@ -34,12 +35,12 @@ public interface CoverageWriter<T extends GridCoverage> {
      * @param  coverage The coverage to write.
      * @param  param Optional parameters used to control the writing process, or {@code null}.
      * @throws IllegalStateException If the output destination has not been set.
-     * @throws CoverageStoreException If an error occurs while writing the information to the output destination.
+     * @throws DataStoreException If an error occurs while writing the information to the output destination.
      * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
      *         the execution of this method.
      */
     public void write(T coverage, GridCoverageWriteParam param)
-            throws CoverageStoreException, CancellationException;
+            throws DataStoreException, CancellationException;
 
     /**
      * Writes one or many coverages.
@@ -47,7 +48,7 @@ public interface CoverageWriter<T extends GridCoverage> {
      * @param  coverages The coverages to write.
      * @param  param Optional parameters used to control the writing process, or {@code null}.
      * @throws IllegalStateException If the output destination has not been set.
-     * @throws CoverageStoreException If the iterable contains an unsupported number of coverages,
+     * @throws DataStoreException If the iterable contains an unsupported number of coverages,
      *         or if an error occurs while writing the information to the output destination.
      * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
      *         the execution of this method.
@@ -55,21 +56,21 @@ public interface CoverageWriter<T extends GridCoverage> {
      * @since 3.20
      */
     public void write(final Iterable<? extends T> coverages, final GridCoverageWriteParam param)
-            throws CoverageStoreException, CancellationException;
+            throws DataStoreException, CancellationException;
 
     /**
      * Restores the {@code CoverageWriter} to its initial state.
      *
-     * @throws CoverageStoreException If an error occurs while restoring to the initial state.
+     * @throws DataStoreException If an error occurs while restoring to the initial state.
      */
-    public void reset() throws CoverageStoreException;
+    public void reset() throws DataStoreException;
 
     /**
      * Allows any resources held by this writer to be released. The result of calling
      * any other method subsequent to a call to this method is undefined.
      *
-     * @throws CoverageStoreException If an error occurs while disposing resources.
+     * @throws DataStoreException If an error occurs while disposing resources.
      */
-    public void dispose() throws CoverageStoreException;
+    public void dispose() throws DataStoreException;
 
 }

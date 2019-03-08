@@ -17,7 +17,6 @@
 package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.Color;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.awt.image.renderable.ParameterBlock;
@@ -39,10 +38,6 @@ import javax.media.jai.OpImage;
 import javax.media.jai.RenderedOp;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
@@ -51,9 +46,7 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.grid.*;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.display.PortrayalException;
@@ -69,14 +62,12 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.interpolation.Rescaler;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
-import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -111,7 +102,6 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -410,7 +400,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             //-- ReliefShadow creating --------------------
             final GridCoverage2D mntCoverage;
             if (elevationCoverage != null) {
-                mntCoverage = getDEMCoverage(coverage, elevationCoverage);
+                //TODO replace by a simple sobel effect for relief shading
+                mntCoverage = null;
             } else {
                 break shadingCase;
                 //does not have a nice result, still better then nothing
@@ -859,119 +850,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
         }
         return values;
-    }
-
-    /**
-     * Return a Digital Elevation Model from source {@link ElevationModel} parameter in function of coverage parameter properties.
-     *
-     * @param coverage
-     * @param elevationModel
-     * @return a Digital Elevation Model from source {@link ElevationModel} parameter in function of coverage parameter properties.
-     * @throws FactoryException If we cannot determine a conversion method between
-     * input coverage and DEM spaces.
-     * @throws TransformException If we cannot determine input coverage location
-     * in DEM space.
-     * @throws CoverageStoreException If an error occurs while reading DEM
-     */
-    public static GridCoverage2D getDEMCoverage(final GridCoverage2D coverage, final ElevationModel elevationModel) throws FactoryException, TransformException, CoverageStoreException {
-
-        if (elevationModel == null) return null;
-
-        // coverage attributs
-        final GridGeometry2D covGridGeom       = coverage.getGridGeometry();
-        final GridExtent covExtend             = covGridGeom.getExtent2D();
-        final CoordinateReferenceSystem covCRS = coverage.getCoordinateReferenceSystem2D();
-        final Envelope2D covEnv2d              = coverage.getGridGeometry().getEnvelope2D();
-
-        final GridCoverageReader elevationReader = elevationModel.getCoverageReader();
-        final GridGeometry elevGridGeom          = elevationReader.getGridGeometry();
-        if (!(elevGridGeom instanceof GridGeometry2D)) {
-            throw new IllegalArgumentException("the Digital Elevation Model should be instance of gridcoverage2D."+elevGridGeom);
-        }
-        final GridGeometry2D elevGridGeom2D    = (GridGeometry2D) elevGridGeom;
-
-        final CoordinateReferenceSystem demCRS = elevGridGeom2D.getCoordinateReferenceSystem2D();
-
-        final MathTransform demCRSToCov        = CRS.findOperation(demCRS, covCRS, null).getMathTransform(); // dem -> cov
-
-        if (elevGridGeom2D.getEnvelope2D().equals(coverage.getGridGeometry().getEnvelope2D())
-         && covExtend.equals(elevGridGeom2D.getExtent2D())) return (GridCoverage2D) elevationReader.read(null);
-
-        final GeneralEnvelope readParamEnv = Envelopes.transform(demCRSToCov.inverse(), covEnv2d);
-
-        final GridCoverageReadParam gcrp = new GridCoverageReadParam();
-        gcrp.setCoordinateReferenceSystem(demCRS);
-        gcrp.setEnvelope(readParamEnv);
-        // TODO : set resolution
-
-        final GridCoverage2D dem = (GridCoverage2D) elevationReader.read(gcrp);
-        return getDEMCoverage(coverage, dem);
-
-    }
-
-    /**
-     * Return a Digital Elevation Model from source DEM parameter in function of coverage parameter properties.
-     *
-     * @param coverage
-     * @param dem
-     * @return a Digital Elevation Model from source DEM parameter in function of coverage parameter properties.
-     * @throws FactoryException
-     * @throws TransformException
-     */
-    public static GridCoverage2D getDEMCoverage(final GridCoverage2D coverage, final GridCoverage2D dem) throws FactoryException, TransformException {
-
-        // coverage attributs
-        final GridGeometry2D covGridGeom       = coverage.getGridGeometry();
-        final GridExtent covExtend             = covGridGeom.getExtent2D();
-        final GridGeometry2D demGridGeom       = dem.getGridGeometry();
-
-        //CRS
-        final CoordinateReferenceSystem covCRS = coverage.getCoordinateReferenceSystem2D();
-        final CoordinateReferenceSystem demCRS = demGridGeom.getCoordinateReferenceSystem2D();
-
-        final MathTransform demCRSToCov = CRS.findOperation(demCRS, covCRS, null).getMathTransform(); // dem -> cov
-
-        if (demCRSToCov.isIdentity())
-            return dem;
-
-        final GeneralEnvelope demDestEnv = Envelopes.transform(demCRSToCov, demGridGeom.getEnvelope2D());
-        // coverage envelope
-        final Envelope2D covEnv = covGridGeom.getEnvelope2D();
-
-        /**
-         * if the 2 coverage don't represent the same area we can't compute shadow on coverage.
-         */
-        if (!demDestEnv.intersects(covEnv, true)) {
-            return null;
-        }
-        // get intersection to affect relief on shared area.
-        GeneralEnvelope intersec = new GeneralEnvelope(demDestEnv);
-        intersec.intersect(covEnv);
-
-        final RenderedImage demImage = dem.getRenderedImage();
-
-        // output mnt creation
-        final BufferedImage destMNT = BufferedImages.createImage(Math.toIntExact(covExtend.getSize(0)), Math.toIntExact(covExtend.getSize(1)), demImage);
-        intersec = Envelopes.transform(covGridGeom.getGridToCRS(PixelInCell.CELL_CORNER).inverse(), intersec);
-
-        final Rectangle areaIterate = new Rectangle((int) intersec.getMinimum(0), (int) intersec.getMinimum(1), (int) Math.ceil(intersec.getSpan(0)), (int) Math.ceil(intersec.getSpan(1)));
-
-        // dem source to dem dest
-        final MathTransform sourcetodest = MathTransforms.concatenate(dem.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER),
-                                                                      demCRSToCov,
-                                                                      covGridGeom.getGridToCRS(PixelInCell.CELL_CENTER).inverse());
-
-
-        final PixelIterator srcPix   = PixelIteratorFactory.createRowMajorIterator(demImage);
-        final Interpolation interpol = Interpolation.create(srcPix, InterpolationCase.BICUBIC, 2);
-        final Resample resampl       = new Resample(sourcetodest.inverse(), destMNT, areaIterate, interpol, new double[interpol.getNumBands()]);
-        resampl.fillImage();
-
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setCoordinateReferenceSystem(covCRS);
-        gcb.setRenderedImage(destMNT);
-        gcb.setEnvelope(covEnv);
-        return gcb.getGridCoverage2D();
     }
 
     /**

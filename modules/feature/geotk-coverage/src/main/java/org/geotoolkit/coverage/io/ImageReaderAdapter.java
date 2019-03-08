@@ -43,6 +43,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
@@ -142,7 +143,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
      * for the former. Otherwise the {@code CoverageStoreException} is wrapped in a new
      * {@link IIOException}.
      */
-    private static IOException convert(final CoverageStoreException exception) {
+    private static IOException convert(final DataStoreException exception) {
         final Throwable cause = exception.getCause();
         if (cause instanceof IOException) {
             return (IOException) cause;
@@ -164,7 +165,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
         super.dispose(); // Must be the super-class method, not this.dispose().
         try {
             reader.setInput(input);
-        } catch (CoverageStoreException e) {
+        } catch (DataStoreException e) {
             throw new IllegalArgumentException(e);
         }
         this.input           = input;           // Do not invoke super.setInput(...).
@@ -195,7 +196,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
         final List<SampleDimension> sampleDimensions;
         try {
             sampleDimensions = reader.getSampleDimensions();
-        } catch (CoverageStoreException e) {
+        } catch (DataStoreException e) {
             throw convert(e);
         }
         return (sampleDimensions != null) ? sampleDimensions.size() : 1;
@@ -212,7 +213,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
     public int getDimension(final int imageIndex) throws IOException {
         try {
             return reader.getGridGeometry().getDimension();
-        } catch (CoverageStoreException e) {
+        } catch (DataStoreException e) {
             throw convert(e);
         }
     }
@@ -230,7 +231,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
     public GridExtent getGridEnvelope(final int imageIndex) throws IOException {
         try {
             return reader.getGridGeometry().getExtent();
-        } catch (CoverageStoreException e) {
+        } catch (DataStoreException e) {
             throw convert(e);
         }
     }
@@ -251,7 +252,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
             final GridGeometry geometry;
             try {
                 geometry = reader.getGridGeometry();
-            } catch (CoverageStoreException e) {
+            } catch (DataStoreException e) {
                 throw convert(e);
             }
             final GridExtent range = geometry.getExtent();
@@ -310,7 +311,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
             final List<SampleDimension> bands;
             try {
                 bands = reader.getSampleDimensions();
-            } catch (CoverageStoreException e) {
+            } catch (DataStoreException e) {
                 throw convert(e);
             }
             if (bands != null) {
@@ -356,7 +357,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
         try {
             return (imageIndex < 0) ? reader.getStreamMetadata() : reader.getCoverageMetadata();
-        } catch (CoverageStoreException e) {
+        } catch (DataStoreException e) {
             throw convert(e);
         }
     }
@@ -382,7 +383,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
             final GridGeometry geometry;
             try {
                 geometry = reader.getGridGeometry();
-            } catch (CoverageStoreException e) {
+            } catch (DataStoreException e) {
                 throw convert(e);
             }
             final GridExtent range = geometry.getExtent();
@@ -464,7 +465,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
     protected GridCoverage read(final GridCoverageReadParam param) throws IOException {
         try {
             return reader.read(param);
-        } catch (CoverageStoreException e) {
+        } catch (DataStoreException e) {
             throw convert(e);
         } catch (CancellationException e) {
             return null;
@@ -488,7 +489,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
     public void dispose() {
         try {
             reader.dispose();
-        } catch (CoverageStoreException e) {
+        } catch (DataStoreException e) {
             Logging.unexpectedException(null, getClass(), "dispose", e);
         }
         super.dispose();

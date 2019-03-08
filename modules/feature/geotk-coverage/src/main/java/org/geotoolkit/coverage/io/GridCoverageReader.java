@@ -31,6 +31,7 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.measure.IncommensurableException;
 import javax.measure.Quantity;
 import javax.measure.Unit;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.internal.storage.MetadataBuilder;
@@ -41,12 +42,12 @@ import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.metadata.iso.identification.DefaultResolution;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.collection.BackingStoreException;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -136,7 +137,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      *
      * @see ImageReader#setInput(Object)
      */
-    public void setInput(final Object input) throws CoverageStoreException {
+    public void setInput(final Object input) throws DataStoreException {
         this.input = input;
         abortRequested = false;
     }
@@ -150,7 +151,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      *
      * @see ImageReader#getInput()
      */
-    public Object getInput() throws CoverageStoreException {
+    public Object getInput() throws DataStoreException {
         return input;
     }
 
@@ -187,7 +188,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      */
     @Override
     public abstract GenericName getCoverageName()
-            throws CoverageStoreException, CancellationException;
+            throws DataStoreException, CancellationException;
 
     /**
      * Returns the grid geometry for the {@link GridCoverage} to be read at the given index.
@@ -203,7 +204,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      * @see ImageReader#getHeight(int)
      */
     public abstract GridGeometry getGridGeometry()
-            throws CoverageStoreException, CancellationException;
+            throws DataStoreException, CancellationException;
 
     /**
      * Returns the sample dimensions for each band of the {@link GridCoverage} to be read.
@@ -220,14 +221,14 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      */
     @Override
     public abstract List<SampleDimension> getSampleDimensions()
-            throws CoverageStoreException, CancellationException;
+            throws DataStoreException, CancellationException;
 
     /**
      * If the given metadata is non-null, supports the ISO-19115 format and contains a
      * {@link Metadata} user object in the root node, returns that object. Otherwise
      * creates a new, initially empty, metadata object.
      */
-    private static DefaultMetadata createMetadata(final IIOMetadata streamMetadata) throws CoverageStoreException {
+    private static DefaultMetadata createMetadata(final IIOMetadata streamMetadata) throws DataStoreException {
         if (streamMetadata != null) try {
             if (ArraysExt.contains(streamMetadata.getExtraMetadataFormatNames(), ISO_FORMAT_NAME)) {
                 final Node root = streamMetadata.getAsTree(ISO_FORMAT_NAME);
@@ -268,7 +269,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      *
      * @since 3.18
      */
-    public Metadata getMetadata() throws CoverageStoreException {
+    public Metadata getMetadata() throws DataStoreException {
         final SpatialMetadata streamMetadata = getStreamMetadata();
         final DefaultMetadata metadata = createMetadata(streamMetadata);
         /*
@@ -510,7 +511,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      *
      * @since 3.14
      */
-    public SpatialMetadata getStreamMetadata() throws CoverageStoreException {
+    public SpatialMetadata getStreamMetadata() throws DataStoreException {
         return null;
     }
 
@@ -525,7 +526,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      *
      * @since 3.14
      */
-    public SpatialMetadata getCoverageMetadata() throws CoverageStoreException {
+    public SpatialMetadata getCoverageMetadata() throws DataStoreException {
         return null;
     }
 
@@ -544,7 +545,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      */
     @Override
     public abstract GridCoverage read(GridCoverageReadParam param)
-            throws CoverageStoreException, CancellationException;
+            throws DataStoreException, CancellationException;
 
     /**
      * Restores the {@code GridCoverageReader} to its initial state.
@@ -554,7 +555,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      * @see ImageReader#reset()
      */
     @Override
-    public void reset() throws CoverageStoreException {
+    public void reset() throws DataStoreException {
         input = null;
         super.reset();
     }
@@ -568,7 +569,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      * @see ImageReader#dispose()
      */
     @Override
-    public void dispose() throws CoverageStoreException {
+    public void dispose() throws DataStoreException {
         input = null;
         super.dispose();
     }

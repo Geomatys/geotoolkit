@@ -30,6 +30,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
@@ -42,7 +43,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -132,9 +132,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
             GeneralEnvelope env = null;
             double[] resolution = null;
             for (GridCoverageResource ref : getCoverages(null)) {
-                final GridCoverageReader reader = ref.acquireReader();
-                final GridGeometry gg = reader.getGridGeometry();
-                ref.recycle(reader);
+                final GridGeometry gg = ref.getGridGeometry();
 
                 if (gg instanceof GridGeometry2D) {
                     final GridGeometry2D gg2d = (GridGeometry2D) gg;
@@ -173,7 +171,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
             gridGeom = new GridGeometry2D(new GridExtent(sizeX, sizeY), env);
 
             return gridGeom;
-        } catch (TransformException ex) {
+        } catch (TransformException | DataStoreException ex) {
             throw new CoverageStoreException(ex.getMessage(), ex);
         }
 
@@ -187,7 +185,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
      * @return
      * @throws CoverageStoreException
      */
-    private synchronized List<SampleDimension> getSampleDimensionsInternal() throws CoverageStoreException {
+    private synchronized List<SampleDimension> getSampleDimensionsInternal() throws DataStoreException {
         if (sampleDimensions != null) return sampleDimensions;
 
         final Collection<GridCoverageResource> references = getCoverages(null);
@@ -208,17 +206,18 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
         }
 
         @Override
-        public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
+        public GridGeometry getGridGeometry() throws DataStoreException, CancellationException {
             return AbstractCollectionCoverageResource.this.getGridGeometry();
         }
 
         @Override
-        public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+        public List<SampleDimension> getSampleDimensions() throws DataStoreException, CancellationException {
             return AbstractCollectionCoverageResource.this.getSampleDimensionsInternal();
         }
 
         @Override
-        protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, GridCoverageReadParam param) throws CoverageStoreException, TransformException, CancellationException {
+        protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, GridCoverageReadParam param)
+                throws DataStoreException, TransformException, CancellationException {
 
             final Collection<GridCoverageResource> references = getCoverages(param);
             final List<GridCoverage2D> coverages = new ArrayList<>();

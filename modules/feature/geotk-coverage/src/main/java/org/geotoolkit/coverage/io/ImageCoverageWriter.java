@@ -47,6 +47,7 @@ import javax.media.jai.operator.WarpDescriptor;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.io.TableAppender;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -913,7 +914,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
      * @see ImageWriter#reset()
      */
     @Override
-    public void reset() throws CoverageStoreException {
+    public void reset() throws DataStoreException {
         try {
             close();
         } catch (IOException e) {
@@ -935,7 +936,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
      * @see ImageWriter#dispose()
      */
     @Override
-    public void dispose() throws CoverageStoreException {
+    public void dispose() throws DataStoreException {
         try {
             close();
         } catch (IOException e) {

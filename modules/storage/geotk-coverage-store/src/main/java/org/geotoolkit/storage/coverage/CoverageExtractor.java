@@ -18,11 +18,12 @@
 package org.geotoolkit.storage.coverage;
 
 import java.util.*;
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -69,7 +70,7 @@ public class CoverageExtractor extends Static {
      * @throws TransformException
      */
     public static Ray rayExtraction(GeneralDirectPosition point, GridCoverageReader reader,
-                                                              GridCoverageReadParam param) throws CoverageStoreException, TransformException {
+                                                              GridCoverageReadParam param) throws DataStoreException, TransformException {
         param.setDeferred(true); //force deferred
         final GridCoverage coverage = reader.read(param);
         Ray result = new Ray();
@@ -89,7 +90,7 @@ public class CoverageExtractor extends Static {
      * @throws TransformException
      */
     private static void evaluateAllSlices(GeneralDirectPosition directPos, GridCoverage coverage, Ray result)
-            throws CoverageStoreException, TransformException {
+            throws DataStoreException, TransformException {
 
         if (coverage instanceof GridCoverage2D) {
             final GridCoverage2D coverage2D = (GridCoverage2D) coverage;

@@ -18,13 +18,13 @@ package org.geotoolkit.coverage.amended;
 
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -51,7 +51,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
     private final AmendedCoverageResource ref;
     private final GridCoverageReader reader;
 
-    public AmendedCoverageReader(AmendedCoverageResource ref) throws CoverageStoreException {
+    public AmendedCoverageReader(AmendedCoverageResource ref) throws DataStoreException {
         this.ref = ref;
         this.reader = ref.getDecorated().acquireReader();
     }
@@ -64,11 +64,11 @@ public class AmendedCoverageReader extends GridCoverageReader{
      * Delegates to wrapped coverage reader.
      *
      * @return wrapped real coverage names
-     * @throws CoverageStoreException
+     * @throws DataStoreException
      * @throws CancellationException
      */
     @Override
-    public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
+    public GenericName getCoverageName() throws DataStoreException, CancellationException {
         return reader.getCoverageName();
     }
 
@@ -77,11 +77,11 @@ public class AmendedCoverageReader extends GridCoverageReader{
      *
      * @param index : image index
      * @return GeneralGridGeometry, never null
-     * @throws CoverageStoreException
+     * @throws DataStoreException
      * @throws CancellationException
      */
     @Override
-    public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
+    public GridGeometry getGridGeometry() throws DataStoreException, CancellationException {
         return ref.getGridGeometry();
     }
 
@@ -90,11 +90,11 @@ public class AmendedCoverageReader extends GridCoverageReader{
      *
      * @param index : image index
      * @return sample dimensions, can be null or empty
-     * @throws CoverageStoreException
+     * @throws DataStoreException
      * @throws CancellationException
      */
     @Override
-    public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException, CancellationException {
         return ref.getSampleDimensions(0);
     }
 
@@ -106,11 +106,11 @@ public class AmendedCoverageReader extends GridCoverageReader{
      * @param index : image index
      * @param param : features parameters.
      * @return GridCoverage
-     * @throws CoverageStoreException
+     * @throws DataStoreException
      * @throws CancellationException
      */
     @Override
-    public GridCoverage read(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
+    public GridCoverage read(GridCoverageReadParam param) throws DataStoreException, CancellationException {
 
         GridCoverage coverage;
         if(ref.isGridGeometryOverriden()){
@@ -235,7 +235,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
      * {@inheritDoc }
      */
     @Override
-    public void reset() throws CoverageStoreException {
+    public void reset() throws DataStoreException {
         reader.reset();
     }
 

@@ -22,11 +22,11 @@ import java.awt.image.SampleModel;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.finder.StrictlyCoverageFinder;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -64,14 +64,14 @@ public final class ProgressiveCoverageResource<T extends GridCoverageResource & 
     }
 
     @Override
-    public GridCoverageReader acquireReader() throws CoverageStoreException {
+    public GridCoverageReader acquireReader() throws DataStoreException {
         final PyramidalModelReader reader = new PyramidalModelReader(new StrictlyCoverageFinder());
         reader.setInput(this);
         return reader;
     }
 
     @Override
-    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
+    public GridCoverageWriter acquireWriter() throws DataStoreException {
         throw new CoverageStoreException("Not supported.");
     }
 
@@ -94,7 +94,7 @@ public final class ProgressiveCoverageResource<T extends GridCoverageResource & 
     public void recycle(CoverageReader reader) {
         try {
             reader.dispose();
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
         }
     }
@@ -103,7 +103,7 @@ public final class ProgressiveCoverageResource<T extends GridCoverageResource & 
     public void recycle(CoverageWriter writer) {
         try {
             writer.dispose();
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
         }
     }

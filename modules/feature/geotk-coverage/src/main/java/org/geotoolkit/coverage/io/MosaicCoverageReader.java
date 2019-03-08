@@ -23,6 +23,7 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -79,10 +80,10 @@ final class MosaicCoverageReader extends ImageCoverageReader {
      *
      * @param  tiles The tiles.
      * @param  crs   The coordinate reference system.
-     * @throws CoverageStoreException If the reader can not be created for the given input.
+     * @throws DataStoreException If the reader can not be created for the given input.
      */
     public MosaicCoverageReader(final Object tiles, final CoordinateReferenceSystem crs)
-            throws CoverageStoreException
+            throws DataStoreException
     {
         this.crs = crs;
         setInput(tiles);
@@ -101,11 +102,11 @@ final class MosaicCoverageReader extends ImageCoverageReader {
      * @param  input The input to read.
      * @param  generate If {@code true}, this constructor is allowed to generate its own mosaic
      *         from the given input.
-     * @throws CoverageStoreException If the reader can not be created for the given file.
+     * @throws DataStoreException If the reader can not be created for the given file.
      * @deprecated use {@link #MosaicCoverageReader(Path, boolean)} instead
      */
     @Deprecated
-    public MosaicCoverageReader(final File input, final boolean generate) throws CoverageStoreException {
+    public MosaicCoverageReader(final File input, final boolean generate) throws DataStoreException {
         this(input.toPath(), generate);
     }
 
@@ -122,9 +123,9 @@ final class MosaicCoverageReader extends ImageCoverageReader {
      * @param  input The input to read.
      * @param  generate If {@code true}, this constructor is allowed to generate its own mosaic
      *         from the given input.
-     * @throws CoverageStoreException If the reader can not be created for the given file.
+     * @throws DataStoreException If the reader can not be created for the given file.
      */
-    public MosaicCoverageReader(final Path input, final boolean generate) throws CoverageStoreException {
+    public MosaicCoverageReader(final Path input, final boolean generate) throws DataStoreException {
         Path directory = input.getParent(); // May be null.
         if (directory != null && !Files.isDirectory(directory)) {
             throw new CoverageStoreException(Errors.format(Errors.Keys.NotADirectory_1, directory));
@@ -220,7 +221,7 @@ final class MosaicCoverageReader extends ImageCoverageReader {
      * @throws CoverageStoreException if the input can not be set.
      */
     @Override
-    public void setInput(Object input) throws CoverageStoreException {
+    public void setInput(Object input) throws DataStoreException {
         if (input != null && !(input instanceof TileManager)) {
             // Attempt a TileManager creation.
             final TileManager[] managers;
@@ -241,7 +242,7 @@ final class MosaicCoverageReader extends ImageCoverageReader {
      * Returns the input, or {@code null} if none.
      */
     @Override
-    public TileManager getInput() throws CoverageStoreException {
+    public TileManager getInput() throws DataStoreException {
         return (TileManager) super.getInput();
     }
 
@@ -249,7 +250,7 @@ final class MosaicCoverageReader extends ImageCoverageReader {
      * Returns the grid geometry computed from the tile manager.
      */
     @Override
-    public GridGeometry2D getGridGeometry() throws CoverageStoreException {
+    public GridGeometry2D getGridGeometry() throws DataStoreException {
         if (gridGeometry == null) {
             final TileManager input = getInput();
             if (input == null) {

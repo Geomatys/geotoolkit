@@ -55,12 +55,12 @@ import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.util.Callback;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -262,7 +262,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         RenderedImage image = null;
         try {
             reader = cref.acquireReader();
-            gridGeometry = reader.getGridGeometry();
+            gridGeometry = cref.getGridGeometry();
 
             if (gridGeometry.isDefined(GridGeometry.GRID_TO_CRS)
                     && gridGeometry.isDefined(GridGeometry.EXTENT)) {
@@ -671,7 +671,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
             if (layer instanceof CoverageMapLayer) {
                 final GridCoverageResource covRef = ((CoverageMapLayer) layer).getResource();
                 final GridCoverageReader reader = covRef.acquireReader();
-                final GridGeometry gridGeometry = reader.getGridGeometry();
+                final GridGeometry gridGeometry = covRef.getGridGeometry();
 
                 if (gridGeometry.isDefined(GridGeometry.GRID_TO_CRS)
                         && gridGeometry.isDefined(GridGeometry.EXTENT)) {
@@ -696,7 +696,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                     readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
                     readParam.setResolution(res);
 
-                    final List<SampleDimension> sd = reader.getSampleDimensions();
+                    final List<SampleDimension> sd = covRef.getSampleDimensions();
                     int nbBands = 10;
                     if (sd != null && !sd.isEmpty()) {
                         nbBands = sd.size();

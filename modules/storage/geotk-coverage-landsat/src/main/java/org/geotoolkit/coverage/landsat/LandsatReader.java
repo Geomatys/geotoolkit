@@ -27,10 +27,11 @@ import java.util.List;
 import java.util.concurrent.CancellationException;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -181,7 +182,7 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
      * @throws CancellationException
      */
     @Override
-    public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException, CancellationException {
 
         if (gsdLandsat != null)
             return gsdLandsat;
@@ -212,7 +213,7 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
 
     @Override
     protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, GridCoverageReadParam param)
-            throws CoverageStoreException, TransformException, CancellationException {
+            throws DataStoreException, TransformException, CancellationException {
 
         GridGeometry geometry = GeoReferencedGridCoverageReader.getGridGeometry(getGridGeometry(), areaLower, areaUpper, subsampling);
 

@@ -591,7 +591,7 @@ public final class DefaultPortrayalService implements PortrayalService{
             ////////////////////////////////////////////////////////////////////
 
             writeCoverage(coverage, env, resolution, outputDef, canvasDef.getBackground());
-        } catch(CoverageStoreException | ProcessException ex) {
+        } catch(DataStoreException | ProcessException ex) {
             throw new PortrayalException(ex);
         }
         return true;
@@ -663,11 +663,11 @@ public final class DefaultPortrayalService implements PortrayalService{
                         throw new PortrayalException(ex);
                     }
                 }
-            } catch (CoverageStoreException ex) {
+            } catch (DataStoreException ex) {
                 //the writer has problems, we better not put in back in the cache.
                 try {
                     writer.dispose();
-                } catch (CoverageStoreException ex1) {
+                } catch (DataStoreException ex1) {
                     Logging.getLogger("org.geotoolkit.display2d.service").log(Level.WARNING, null, ex1);
                 }
                 throw new PortrayalException(ex);

@@ -2,26 +2,41 @@
 package org.geotoolkit.pending.demo.symbology;
 
 
+import java.awt.*;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.measure.Unit;
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.font.FontAwesomeIcons;
+import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+import static org.geotoolkit.style.StyleConstants.*;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
@@ -37,6 +52,7 @@ import org.opengis.style.ContrastEnhancement;
 import org.opengis.style.ContrastMethod;
 import org.opengis.style.Description;
 import org.opengis.style.Displacement;
+import org.opengis.style.ExternalMark;
 import org.opengis.style.Fill;
 import org.opengis.style.Font;
 import org.opengis.style.Graphic;
@@ -55,24 +71,6 @@ import org.opengis.style.ShadedRelief;
 import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
-
-import javax.measure.Unit;
-import java.awt.*;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
-import org.geotoolkit.font.FontAwesomeIcons;
-import org.geotoolkit.font.IconBuilder;
-import org.apache.sis.measure.Units;
-
-import static org.geotoolkit.style.StyleConstants.*;
-import org.opengis.style.ExternalMark;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -659,7 +657,7 @@ public class Styles {
     /**
      * Relief shading requieres a secondary data for the elevation model.
      */
-    public static MapLayer ShadedReliefRaster() throws CoverageStoreException{
+    public static MapLayer ShadedReliefRaster() throws DataStoreException {
 
         final RasterSymbolizer shadedSymbolizer = SF.rasterSymbolizer(
                 null,

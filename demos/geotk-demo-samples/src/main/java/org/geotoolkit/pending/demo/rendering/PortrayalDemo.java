@@ -1,9 +1,17 @@
 
 package org.geotoolkit.pending.demo.rendering;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.*;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
@@ -22,20 +30,10 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
-import org.geotoolkit.storage.DataStores;
 
 public class PortrayalDemo {
 
@@ -98,7 +96,7 @@ public class PortrayalDemo {
         return collection;
     }
 
-    private static GridCoverageReader openWorldFile() throws CoverageStoreException, URISyntaxException {
+    private static GridCoverageReader openWorldFile() throws DataStoreException, URISyntaxException {
         WorldFileImageReader.Spi.registerDefaults(null);
         File cloudFile = new File(PortrayalDemo.class.getResource("/data/coverage/clouds.jpg").toURI());
         return CoverageIO.createSimpleReader(cloudFile);

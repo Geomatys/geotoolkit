@@ -27,18 +27,17 @@ import java.awt.image.WritableRaster;
 import java.util.Arrays;
 import java.util.List;
 import javax.measure.IncommensurableException;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtilities;
@@ -74,9 +73,8 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
     public DefaultElevationLoader(GridCoverageResource ref) throws FactoryException, IncommensurableException, DataStoreException {
         this.coverageRef = ref;
 
-        final GridCoverageReader reader = coverageRef.acquireReader();
-        this.gridGeom = reader.getGridGeometry();
-        final List<SampleDimension> dimensions = reader.getSampleDimensions();
+        this.gridGeom = coverageRef.getGridGeometry();
+        final List<SampleDimension> dimensions = coverageRef.getSampleDimensions();
         if(dimensions!=null && !dimensions.isEmpty()){
             final SampleDimension elevationDim = dimensions.get(0).forConvertedValues(true);
             this.minElevation = SampleDimensionUtils.getMinimumValue(elevationDim);
@@ -85,8 +83,6 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
             this.minElevation = 0;
             this.maxElevation = 1000;
         }
-
-        ref.recycle(reader);
 
     }
 

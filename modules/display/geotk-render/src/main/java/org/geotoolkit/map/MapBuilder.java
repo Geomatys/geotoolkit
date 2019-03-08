@@ -16,27 +16,20 @@
  */
 package org.geotoolkit.map;
 
-import java.util.Collection;
-import org.geotoolkit.storage.coverage.DefaultCoverageResource;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.storage.coverage.DefaultCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.style.MutableFeatureTypeStyle;
-import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.RandomStyleBuilder;
-import org.geotoolkit.style.StyleConstants;
-import org.opengis.filter.FilterFactory;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.FeatureType;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Utility class to create MapLayers, MapContexts and Elevation models from different sources.
@@ -189,7 +182,7 @@ public final class MapBuilder {
      * @param grid : Coverage reader holding elevation values
      * @return ElevationModel
      */
-    public static ElevationModel createElevationModel(final GridCoverageResource ref) throws CoverageStoreException {
+    public static ElevationModel createElevationModel(final GridCoverageResource ref) throws DataStoreException {
         return createElevationModel(ref, 130, 2, 55);
     }
 
@@ -201,7 +194,7 @@ public final class MapBuilder {
      * @param scale : a multiplication factor to use on the coverage values
      * @return ElevationModel
      */
-    public static ElevationModel createElevationModel(final GridCoverageResource ref, final double azimuthAngle, final double altitudeAngle, final double altitudeScale) throws CoverageStoreException {
+    public static ElevationModel createElevationModel(final GridCoverageResource ref, final double azimuthAngle, final double altitudeAngle, final double altitudeScale) throws DataStoreException {
         return new ElevationModel(ref, azimuthAngle, altitudeAngle, altitudeScale);
     }
  }

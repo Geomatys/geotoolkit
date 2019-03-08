@@ -16,40 +16,40 @@
  */
 package org.geotoolkit.display2d.ext.pattern;
 
-import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
+import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.processing.coverage.resample.ResampleProcess;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.feature.Feature;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.util.Utilities;
-import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.processing.coverage.resample.ResampleProcess;
-import org.opengis.feature.Feature;
 
 /**
  * Renderer for Pattern symbolizer.
@@ -85,7 +85,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
         GridCoverage2D dataCoverage;
         try {
             dataCoverage = projectedCoverage.getCoverage(param);
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             throw new PortrayalException(ex);
         }
 

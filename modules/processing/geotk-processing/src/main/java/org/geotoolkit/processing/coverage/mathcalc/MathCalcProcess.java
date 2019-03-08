@@ -20,16 +20,15 @@ package org.geotoolkit.processing.coverage.mathcalc;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.WrapFilterFactory2;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
@@ -70,11 +69,8 @@ public class MathCalcProcess extends AbstractProcess {
         final GridCoverageResource outRef = inputParameters.getValue(MathCalcDescriptor.IN_RESULT_COVERAGE);
 
         final GridGeometry gg;
-        final GridCoverageReader outReader;
         try {
-            outReader = outRef.acquireReader();
-            gg = outReader.getGridGeometry();
-            outRef.recycle(outReader);
+            gg = outRef.getGridGeometry();
         } catch (DataStoreException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
@@ -101,7 +97,7 @@ public class MathCalcProcess extends AbstractProcess {
             if(outRef instanceof PyramidalCoverageResource){
                 filler.fill((PyramidalCoverageResource)outRef, evaluator);
             }else{
-                filler.fill(outRef, evaluator, null);
+                filler.fill((org.geotoolkit.storage.coverage.GridCoverageResource) outRef, evaluator, null);
             }
         } catch (DataStoreException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

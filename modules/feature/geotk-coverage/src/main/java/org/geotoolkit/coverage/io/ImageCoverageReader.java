@@ -37,15 +37,16 @@ import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.collection.BackingStoreException;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -336,7 +337,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      * of the {@link #imageReader} instance, if it was not already done by the above method calls.
      */
     @Override
-    public void setInput(final Object input) throws CoverageStoreException {
+    public void setInput(final Object input) throws DataStoreException {
         final ImageReader oldReader = imageReader;
         try {
             reset();
@@ -564,7 +565,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      * </ul>
      */
     @Override
-    public GridGeometry2D getGridGeometry() throws CoverageStoreException {
+    public GridGeometry2D getGridGeometry() throws DataStoreException {
         final int index = 0;
         GridGeometry2D gridGeometry = getCached(gridGeometries, index);
         if (gridGeometry == null) {
@@ -928,7 +929,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      */
     @Override
     public GridCoverage2D read(final GridCoverageReadParam param)
-            throws CoverageStoreException, CancellationException
+            throws DataStoreException, CancellationException
     {
         final int index = 0;
         final boolean loggingEnabled = isLoggable();
@@ -1244,7 +1245,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      * @see ImageReader#reset()
      */
     @Override
-    public void reset() throws CoverageStoreException {
+    public void reset() throws DataStoreException {
         try {
             close();
         } catch (IOException e) {
@@ -1269,7 +1270,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      * @see ImageReader#dispose()
      */
     @Override
-    public void dispose() throws CoverageStoreException {
+    public void dispose() throws DataStoreException {
         try {
             close();
         } catch (IOException e) {

@@ -84,7 +84,7 @@ public class FileCoverageResource extends AbstractCoverageResource {
     }
 
     @Override
-    public GridCoverageReader acquireReader() throws CoverageStoreException {
+    public GridCoverageReader acquireReader() throws DataStoreException {
         final ImageCoverageReader reader = new ImageCoverageReader();
         try {
             final ImageReader ioreader = ((FileCoverageStore)store).createReader(file, spi);
@@ -123,6 +123,7 @@ public class FileCoverageResource extends AbstractCoverageResource {
         return spi;
     }
 
+    @Override
     public Image getLegend() throws DataStoreException {
         return null;
     }

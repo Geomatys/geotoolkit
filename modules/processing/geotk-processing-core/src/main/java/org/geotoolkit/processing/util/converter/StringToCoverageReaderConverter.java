@@ -18,11 +18,10 @@ package org.geotoolkit.processing.util.converter;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.coverage.io.CoverageIO;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.util.converter.SimpleConverter;
 
 
@@ -78,7 +77,7 @@ public class StringToCoverageReaderConverter extends SimpleConverter<String, Gri
             return reader;
         } catch (MalformedURLException ex) {
             throw new UnconvertibleObjectException(ex);
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             throw new UnconvertibleObjectException(ex);
         }
     }

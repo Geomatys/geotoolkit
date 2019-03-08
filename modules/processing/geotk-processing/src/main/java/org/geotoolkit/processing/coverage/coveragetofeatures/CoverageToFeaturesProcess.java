@@ -18,12 +18,13 @@ package org.geotoolkit.processing.coverage.coveragetofeatures;
 
 import java.awt.geom.Point2D;
 import java.util.List;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.parameter.Parameters;
-import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -102,7 +103,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
                     new CoverageToFeatureCollection(reader, gridGeom.getExtent(), coverage, gridGeom);
 
             outputParameters.getOrCreate(CoverageToFeaturesDescriptor.FEATURE_OUT).setValue(resultFeatureList);
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
     }
@@ -112,7 +113,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
      *
      * @return the FeatureType of Features
      */
-    static FeatureType createFeatureType(final GridCoverage2D coverage, final GridCoverageReader reader) throws CoverageStoreException {
+    static FeatureType createFeatureType(final GridCoverage2D coverage, final GridCoverageReader reader) throws DataStoreException {
 
         final int nbBand = coverage.getSampleDimensions().size();
 
@@ -143,7 +144,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
      * @throws TransformException
      */
     static Feature convertToFeature(FeatureType type, long x, long y, GridCoverage2D coverage, GridCoverageReader reader,
-            GridGeometry gridGeom) throws CoverageStoreException, TransformException {
+            GridGeometry gridGeom) throws DataStoreException, TransformException {
 
         final GeometryFactory geomFac = new GeometryFactory();
         //get the number of band contained in a cell

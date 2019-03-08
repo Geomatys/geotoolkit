@@ -513,7 +513,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     private static GridCoverage2D readCoverage(final ProjectedCoverage projectedCoverage, final boolean isElevation,
                                                final Envelope paramEnvelope, double[] paramResolution, final int[] sourceBands,
                                                final Envelope inputCoverageEnvelope)
-            throws CoverageStoreException, TransformException {
+            throws DataStoreException, TransformException {
 
         //check if the envelope is not reduced to an empty area
         if (paramEnvelope != null) {

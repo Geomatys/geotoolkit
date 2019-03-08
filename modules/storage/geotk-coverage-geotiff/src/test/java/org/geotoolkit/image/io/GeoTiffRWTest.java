@@ -33,6 +33,7 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -797,7 +798,7 @@ final CoordinateReferenceSystem sourceCRS = CRS.fromWKT("PROJCS[\"NAD83 / Califo
     // TODO : Activate if the writer manage ImageOutputStream.
     @Test
     @Ignore
-    public void testStreamWriting() throws CoverageStoreException, IOException{
+    public void testStreamWriting() throws DataStoreException, IOException{
 
         File file = TestData.file(GeoTiffRWTest.class, "002025_0100_010722_l7_01_utm2.tiff");
         ImageCoverageReader reader = new ImageCoverageReader();
@@ -825,7 +826,7 @@ final CoordinateReferenceSystem sourceCRS = CRS.fromWKT("PROJCS[\"NAD83 / Califo
 
 
     private void test(final String fileName, final CoordinateReferenceSystem crs, final AffineTransform gridToCRS)
-            throws IOException, CoverageStoreException{
+            throws IOException, DataStoreException{
 
         File file = TestData.file(GeoTiffRWTest.class, fileName);
         ImageCoverageReader reader = new ImageCoverageReader();

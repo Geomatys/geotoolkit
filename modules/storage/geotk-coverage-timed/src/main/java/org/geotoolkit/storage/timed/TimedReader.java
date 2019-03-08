@@ -21,9 +21,10 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -53,22 +54,22 @@ public class TimedReader extends GridCoverageReader {
     }
 
     @Override
-    public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
+    public GenericName getCoverageName() throws DataStoreException, CancellationException {
         return parent.getIdentifier();
     }
 
     @Override
-    public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
+    public GridGeometry getGridGeometry() throws DataStoreException, CancellationException {
         return parent.getGridGeometry();
     }
 
     @Override
-    public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException, CancellationException {
         return Collections.EMPTY_LIST;
     }
 
     @Override
-    public GridCoverage read(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
+    public GridCoverage read(GridCoverageReadParam param) throws DataStoreException, CancellationException {
         if (param == null) {
             param = new GridCoverageReadParam();
         }

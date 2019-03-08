@@ -26,18 +26,16 @@ import java.util.EventListener;
 import java.util.Vector;
 import javax.media.jai.RasterFactory;
 import javax.swing.event.EventListenerList;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.image.BufferedImages;
@@ -77,10 +75,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
         this.ref = ref;
         this.mosaic = mosaic;
 
-
-        final GridCoverageReader reader = ref.acquireReader();
-        dataEnv = reader.getGridGeometry().getEnvelope();
-        ref.recycle(reader);
+        dataEnv = ref.getGridGeometry().getEnvelope();
 
         final RenderedImage prototype = getTileCoverage(0, 0).getRenderedImage();
         colorModel = prototype.getColorModel();
@@ -269,7 +264,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
         return sampleModel;
     }
 
-    public GridCoverage2D getTileCoverage(int idx, int idy) throws CoverageStoreException, TransformException {
+    public GridCoverage2D getTileCoverage(int idx, int idy) throws DataStoreException, TransformException {
         final GridCoverageReadParam rparam = new GridCoverageReadParam();
         Envelope tenv = Pyramids.computeTileEnvelope(mosaic, idx, idy);
         final GeneralEnvelope genv = new GeneralEnvelope(tenv);

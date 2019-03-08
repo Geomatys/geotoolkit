@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageIO;
@@ -199,7 +200,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
      * @throws IOException
      */
     @Test
-    public void coverageReaderTest() throws PortrayalException, CoverageStoreException, IOException {
+    public void coverageReaderTest() throws PortrayalException, DataStoreException, IOException {
 
         ImageIO.scanForPlugins();
         Setup.initialize(null);

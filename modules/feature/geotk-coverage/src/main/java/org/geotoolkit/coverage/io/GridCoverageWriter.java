@@ -27,6 +27,7 @@ import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import org.geotoolkit.resources.Errors;
@@ -216,7 +217,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore implements Co
      * @see ImageWriter#reset()
      */
     @Override
-    public void reset() throws CoverageStoreException {
+    public void reset() throws DataStoreException {
         requestedBounds = null;
         output = null;
         super.reset();
@@ -231,7 +232,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore implements Co
      * @see ImageWriter#dispose()
      */
     @Override
-    public void dispose() throws CoverageStoreException {
+    public void dispose() throws DataStoreException {
         requestedBounds = null;
         output = null;
         super.dispose();

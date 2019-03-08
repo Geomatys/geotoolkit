@@ -25,19 +25,19 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.operation.matrix.Matrix4;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.SampleDimensionBuilder;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
 import org.geotoolkit.image.BufferedImages;
 import static org.junit.Assert.*;
@@ -64,10 +64,10 @@ public class CoverageFeatureTest {
     /**
      * Test coverage 2D mapped as a feature.
      *
-     * @throws CoverageStoreException
+     * @throws DataStoreException
      */
     @Test
-    public void coverageRecord2DTest() throws CoverageStoreException {
+    public void coverageRecord2DTest() throws DataStoreException {
 
         //create coverage
         final BufferedImage image = BufferedImages.createImage(2, 2, 2, DataBuffer.TYPE_INT);
@@ -137,10 +137,10 @@ public class CoverageFeatureTest {
     /**
      * Test coverage 3D mapped as a feature.
      *
-     * @throws CoverageStoreException
+     * @throws DataStoreException
      */
     @Test
-    public void coverageRecord3DTest() throws CoverageStoreException, IOException, TransformException, FactoryException {
+    public void coverageRecord3DTest() throws DataStoreException, IOException, TransformException, FactoryException {
 
         //create CRS
         final CoordinateReferenceSystem crs3d = new DefaultCompoundCRS(Collections.singletonMap("name", "crs3d"),

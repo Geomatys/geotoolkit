@@ -31,8 +31,9 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.geotoolkit.coverage.grid.GridCoverageStack;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -75,7 +76,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
      * this coverage CRS.
      */
     @Override
-    public final GridCoverage read(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
+    public final GridCoverage read(GridCoverageReadParam param) throws DataStoreException, CancellationException {
 
         final GridGeometry gridGeometry = getGridGeometry();
         final CoordinateReferenceSystem coverageCrs = gridGeometry.getCoordinateReferenceSystem();
@@ -146,7 +147,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
      *
      * @param param Parameters are guarantee to be in coverage CRS.
      */
-    protected GridCoverage readInNativeCRS(GridCoverageReadParam param) throws CoverageStoreException, TransformException, CancellationException {
+    protected GridCoverage readInNativeCRS(GridCoverageReadParam param) throws DataStoreException, TransformException, CancellationException {
 
         final Envelope coverageEnv = param.getEnvelope();
         final double[] coverageRes = param.getResolution();
@@ -212,7 +213,8 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
      * @throws CoverageStoreException if Coverage readInGridCRS failed
      * @throws CancellationException if reading operation has been canceled
      */
-    protected GridCoverage readInGridCRS(int[] areaLower, int[] areaUpper, int[] subsampling, GridCoverageReadParam param) throws CoverageStoreException, TransformException, CancellationException {
+    protected GridCoverage readInGridCRS(int[] areaLower, int[] areaUpper, int[] subsampling, GridCoverageReadParam param)
+            throws DataStoreException, TransformException, CancellationException {
 
         //ensure we readInGridCRS at least 3x3 pixels otherwise the gridgeometry won't be
         //able to identify the 2D composant of the grid to crs transform.
@@ -268,7 +270,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
      *
      * @param param grid coverage features parameters in native CRS
      */
-    protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, GridCoverageReadParam param) throws CoverageStoreException, TransformException, CancellationException {
+    protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, GridCoverageReadParam param) throws DataStoreException, TransformException, CancellationException {
         throw new UnsupportedOperationException("Subclass must implement either : read, readCoverage, readImage or readSlice methods");
     }
 

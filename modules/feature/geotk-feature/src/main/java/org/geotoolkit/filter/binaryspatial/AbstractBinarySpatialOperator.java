@@ -25,13 +25,13 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.geometry.jts.JTS;
@@ -122,7 +122,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
                 GridGeometry gg = reader.getGridGeometry();
                 candidate = JTS.toGeometry(gg.getEnvelope());
                 candidate.setUserData(gg.getCoordinateReferenceSystem());
-            }catch(CoverageStoreException ex){
+            }catch(DataStoreException ex){
                 LOGGER.log(Level.INFO, "Could not convert expression : "+exp+" to geometry for object : "+object+"\n"+ex.getMessage(), ex);
                 candidate = null;
             }

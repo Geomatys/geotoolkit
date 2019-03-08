@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.io;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.util.GenericName;
 
@@ -41,7 +42,7 @@ public interface CoverageReader {
      *         the execution of this method.
      */
     GenericName getCoverageName()
-            throws CoverageStoreException, CancellationException;
+            throws DataStoreException, CancellationException;
 
     /**
      * Returns the sample dimensions for each band of the {@link Coverage} to be read.
@@ -57,7 +58,7 @@ public interface CoverageReader {
      *         the execution of this method.
      */
     List<SampleDimension> getSampleDimensions()
-            throws CoverageStoreException, CancellationException;
+            throws DataStoreException, CancellationException;
 
     /**
      * Reads the coverage.
@@ -71,14 +72,14 @@ public interface CoverageReader {
      *         the execution of this method.
      */
     GridCoverage read(GridCoverageReadParam param)
-            throws CoverageStoreException, CancellationException;
+            throws DataStoreException, CancellationException;
 
     /**
      * Restores the {@code CoverageReader} to its initial state.
      *
      * @throws CoverageStoreException If an error occurs while restoring to the initial state.
      */
-    void reset() throws CoverageStoreException;
+    void reset() throws DataStoreException;
 
     /**
      * Allows any resources held by this reader to be released. The result of calling
@@ -86,6 +87,6 @@ public interface CoverageReader {
      *
      * @throws CoverageStoreException If an error occurs while disposing resources.
      */
-    void dispose() throws CoverageStoreException;
+    void dispose() throws DataStoreException;
 
 }

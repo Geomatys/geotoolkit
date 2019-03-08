@@ -16,14 +16,14 @@
  */
 package org.geotoolkit.map;
 
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * An elevation model of elevation values.<br/>
@@ -73,7 +73,7 @@ public class ElevationModel {
      * @param altitude Light angle in degree of the light from the ground.
      * @param scale Coefficient (or factor) in per cent to controle shadow length spread in function of maximum DEM amplitude value.
      */
-    public ElevationModel(final GridCoverageResource ref, final double azimuth, final double altitude, final double scale) throws CoverageStoreException {
+    public ElevationModel(final GridCoverageResource ref, final double azimuth, final double altitude, final double scale) throws DataStoreException {
         this(ref, azimuth, altitude, scale, AxisDirection.UP);
     }
 
@@ -88,7 +88,7 @@ public class ElevationModel {
      * @throws IllegalArgumentException if axis direction is not instance of {@link AxisDirection#DOWN} or {@link AxisDirection#UP}.
      */
     public ElevationModel(final GridCoverageResource ref, final double azimuth, final double altitude,
-                          final double scale, final AxisDirection axisDirection) throws CoverageStoreException {
+                          final double scale, final AxisDirection axisDirection) throws DataStoreException {
         ArgumentChecks.ensureNonNull("CoverageReference", ref);
         this.coverage = ref.acquireReader();
         this.azimuth  = azimuth;

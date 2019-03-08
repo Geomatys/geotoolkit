@@ -104,8 +104,7 @@ public class Isoline2 extends AbstractProcess {
         }
 
         try {
-            final GridCoverageReader reader  = coverageRef.acquireReader();
-            final GridGeometry gridgeom = reader.getGridGeometry();
+            final GridGeometry gridgeom = coverageRef.getGridGeometry();
             crs = gridgeom.getCoordinateReferenceSystem();
             type = getOrCreateIsoType(featureStore, featureTypeName, crs);
             col = featureStore.createSession(false).getFeatureCollection(QueryBuilder.all(type.getName()));
@@ -117,6 +116,7 @@ public class Isoline2 extends AbstractProcess {
             } else {
                 final MathTransform gridtoCRS = gridgeom.getGridToCRS(PixelInCell.CELL_CENTER);
 
+                final GridCoverageReader reader  = coverageRef.acquireReader();
                 RenderedImage image = null;
                 if (readParam == null) {
                     final Object obj = reader.getInput();
@@ -135,6 +135,7 @@ public class Isoline2 extends AbstractProcess {
                     coverage = coverage = coverage.view(ViewType.GEOPHYSICS);
                     image = coverage.getRenderedImage();
                 }
+                coverageRef.recycle(reader);
 
                 final PixelIterator ite = PixelIteratorFactory.createDefaultIterator(image);
                 final int width = image.getWidth();
@@ -143,7 +144,6 @@ public class Isoline2 extends AbstractProcess {
                 final BlockRunnable runnable = new BlockRunnable(gridtoCRS, ite, width, height, 0);
                 runnable.run();
             }
-            coverageRef.recycle(reader);
 
         } catch (Exception ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

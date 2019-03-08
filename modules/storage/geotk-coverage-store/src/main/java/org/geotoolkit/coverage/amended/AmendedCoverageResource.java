@@ -20,6 +20,7 @@ import java.awt.Image;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.NamedIdentifier;
@@ -28,7 +29,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -95,12 +95,10 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
         return getGridGeometry().getEnvelope();
     }
 
-    private void loadRefData() throws CoverageStoreException {
-        if(refGridGeom==null){
-            final GridCoverageReader reader = ref.acquireReader();
-            refGridGeom = reader.getGridGeometry();
-            refDims = reader.getSampleDimensions();
-            ref.recycle(reader);
+    private void loadRefData() throws DataStoreException {
+        if (refGridGeom == null) {
+            refGridGeom = ref.getGridGeometry();
+            refDims = ref.getSampleDimensions();
         }
     }
 
@@ -130,7 +128,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      * @return
      * @throws CoverageStoreException
      */
-    public GridGeometry getOriginalGridGeometry() throws CoverageStoreException{
+    public GridGeometry getOriginalGridGeometry() throws DataStoreException {
         loadRefData();
         return refGridGeom;
     }
@@ -220,7 +218,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      * @throws CoverageStoreException
      */
     @Override
-    public GridGeometry getGridGeometry() throws CoverageStoreException{
+    public GridGeometry getGridGeometry() throws DataStoreException {
         loadRefData();
         if(isGridGeometryOverriden()){
             if(refGridGeom instanceof GridGeometry2D){
@@ -249,7 +247,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      * @return overridden sample dimensions or original ones is there are no overrides.
      * @throws CoverageStoreException
      */
-    public List<SampleDimension> getSampleDimensions(int index) throws CoverageStoreException{
+    public List<SampleDimension> getSampleDimensions(int index) throws DataStoreException {
         loadRefData();
         if(overrideDims!=null){
             return overrideDims;
@@ -278,7 +276,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      * {@inheritDoc }
      */
     @Override
-    public GridCoverageReader acquireReader() throws CoverageStoreException {
+    public GridCoverageReader acquireReader() throws DataStoreException {
         return new AmendedCoverageReader(this);
     }
 

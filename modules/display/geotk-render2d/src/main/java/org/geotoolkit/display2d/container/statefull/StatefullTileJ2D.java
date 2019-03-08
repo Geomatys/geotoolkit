@@ -43,7 +43,6 @@ import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.process.ProcessException;
@@ -178,11 +177,8 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
                     for(final CachedRule rule : rules){
                         for(final CachedSymbolizer symbol : rule.symbolizers()){
                             if(symbol.getSource() instanceof RasterSymbolizer){
-                                // todo appeler method getElevationmodel le coverage a deja ete reprojeté
                                 final MapLayer layer = (MapLayer) getUserObject();
-                                final ElevationModel elevMod = layer.getElevationModel();
-                                final GridCoverage2D dem = DefaultRasterSymbolizerRenderer.getDEMCoverage(coverage, elevMod);
-                                ri = DefaultRasterSymbolizerRenderer.applyStyle(null,coverage, dem, (RasterSymbolizer)symbol.getSource());
+                                ri = DefaultRasterSymbolizerRenderer.applyStyle(null,coverage, null, (RasterSymbolizer)symbol.getSource());
                                 break;
                             }
                         }

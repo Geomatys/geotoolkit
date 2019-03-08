@@ -37,7 +37,6 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.data.multires.Mosaic;
@@ -82,12 +81,8 @@ public class FillCoverage {
 
         final GridGeometry gg;
         final GridCoverageWriter outWriter;
-        final GridCoverageReader outReader;
-        outReader = outRef.acquireReader();
         outWriter = outRef.acquireWriter();
-        gg = outReader.getGridGeometry();
-        outRef.recycle(outReader);
-
+        gg = outRef.getGridGeometry();
 
         // prepare dynamic pick object
         final GridExtent ge = gg.getExtent();

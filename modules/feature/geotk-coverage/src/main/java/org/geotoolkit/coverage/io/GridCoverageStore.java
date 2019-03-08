@@ -42,6 +42,7 @@ import org.apache.sis.referencing.cs.DefaultCompoundCS;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Localized;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
@@ -915,12 +916,12 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
     /**
      * Restores this reader or writer to its initial state.
      *
-     * @throws CoverageStoreException if an error occurs while restoring to the initial state.
+     * @throws DataStoreException if an error occurs while restoring to the initial state.
      *
      * @see javax.imageio.ImageReader#reset()
      * @see javax.imageio.ImageWriter#reset()
      */
-    public void reset() throws CoverageStoreException {
+    public void reset() throws DataStoreException {
         locale           = null;
         destGridToSource = null;
         abortRequested   = false;
@@ -933,12 +934,12 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      * Subclass implementations shall ensure that all resources, especially JCBC connections,
      * are released.
      *
-     * @throws CoverageStoreException if an error occurs while disposing resources.
+     * @throws DataStoreException if an error occurs while disposing resources.
      *
      * @see javax.imageio.ImageReader#dispose()
      * @see javax.imageio.ImageWriter#dispose()
      */
-    public void dispose() throws CoverageStoreException {
+    public void dispose() throws DataStoreException {
         locale           = null;
         destGridToSource = null;
         abortRequested   = false;

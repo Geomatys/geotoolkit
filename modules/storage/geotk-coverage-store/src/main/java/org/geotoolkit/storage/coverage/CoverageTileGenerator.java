@@ -69,7 +69,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
     private InterpolationCase interpolation = InterpolationCase.NEIGHBOR;
     private double[] fillValues;
 
-    public CoverageTileGenerator(CoverageResource resource) throws CoverageStoreException {
+    public CoverageTileGenerator(CoverageResource resource) throws DataStoreException {
         ArgumentChecks.ensureNonNull("resource", resource);
 
         this.resource = resource;
@@ -91,11 +91,11 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             }
 
             this.resource.recycle(reader);
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             //dispose the reader, it may be in an invalid state
             try {
                 reader.dispose();
-            } catch (CoverageStoreException e) {
+            } catch (DataStoreException e) {
                 ex.addSuppressed(e);
             }
             throw ex;

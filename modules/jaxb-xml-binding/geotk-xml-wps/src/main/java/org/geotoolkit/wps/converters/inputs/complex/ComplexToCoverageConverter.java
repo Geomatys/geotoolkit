@@ -25,11 +25,11 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import net.iharder.Base64;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.image.io.XImageIO;
-import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v200.Data;
 
@@ -85,7 +85,7 @@ public class ComplexToCoverageConverter extends AbstractComplexInputConverter<Gr
             } else {
                 throw new UnconvertibleObjectException("Encoding should be in \"base64\"");
             }
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             throw new UnconvertibleObjectException(ex.getMessage(), ex);
         } catch (IOException ex) {
             throw new UnconvertibleObjectException(ex.getMessage(), ex);

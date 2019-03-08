@@ -25,12 +25,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -122,7 +122,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
             GridCoverageReader reader = null;
             try {
                 reader = ref.acquireReader();
-                final List<SampleDimension> dims = reader.getSampleDimensions();
+                final List<SampleDimension> dims = ref.getSampleDimensions();
 
                 final int nbdim;
                 if(dims==null){
@@ -152,7 +152,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                 uiBands.setItems(bvals);
 
                 ref.recycle(reader);
-            } catch (CoverageStoreException ex) {
+            } catch (DataStoreException ex) {
                 Logging.getLogger("org.geotoolkit.gui.javafx.style.dynamicrange").log(Level.SEVERE, null, ex);
             } finally{
                 if(reader!=null) ref.recycle(reader);
@@ -177,7 +177,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                 final int nbdim;
                 if(dims==null){
                     //read a very low resolution image to extract bands from it
-                    final GridGeometry gg = reader.getGridGeometry();
+                    final GridGeometry gg = ref.getGridGeometry();
                     final Envelope env = gg.getEnvelope();
                     final double[] res = gg.getResolution(false);
                     for(int i=0;i<res.length;i++){
@@ -229,7 +229,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                 valueProperty().get().setUpper(boundMax);
                 uiUpper.valueProperty().setValue(boundMax);
 
-            } catch (CoverageStoreException ex) {
+            } catch (DataStoreException ex) {
                 Logging.getLogger("org.geotoolkit.gui.javafx.style.dynamicrange").log(Level.SEVERE, null, ex);
             } finally{
                 if(reader!=null) ref.recycle(reader);

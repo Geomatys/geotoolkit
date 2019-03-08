@@ -125,7 +125,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
             final GridGeometry gg;
             try {
                 md = reader.getCoverageMetadata();
-                gg = reader.getGridGeometry();
+                gg = ref.getGridGeometry();
                 ref.recycle(reader);
             } catch (Exception e) {
                 // If something turned wrong, we definitively get rid of the reader.

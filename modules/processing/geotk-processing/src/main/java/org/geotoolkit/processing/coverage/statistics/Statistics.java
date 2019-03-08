@@ -28,11 +28,11 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.Mosaic;
@@ -150,7 +150,7 @@ public class Statistics extends AbstractProcess {
      * @return ImageStatistics
      * @throws ProcessException
      */
-    public static ImageStatistics analyse(GridCoverageResource ref, boolean excludeNoData, int imageSize) throws ProcessException, CoverageStoreException{
+    public static ImageStatistics analyse(GridCoverageResource ref, boolean excludeNoData, int imageSize) throws ProcessException, DataStoreException{
         GridCoverageReader reader = null;
         try {
             reader = ref.acquireReader();
@@ -534,7 +534,7 @@ public class Statistics extends AbstractProcess {
             ref.recycle(reader);
             return coverage;
 
-        } catch (CoverageStoreException e) {
+        } catch (DataStoreException e) {
             throw new ProcessException(e.getMessage(), this, e);
         }
     }
@@ -574,7 +574,7 @@ public class Statistics extends AbstractProcess {
 
             final GridCoverage coverage = reader.read(readParam);
             return  CoverageUtilities.firstSlice(coverage);
-        } catch (CoverageStoreException | TransformException e) {
+        } catch (DataStoreException | TransformException e) {
             throw new ProcessException(e.getMessage(), this, e);
         }
     }

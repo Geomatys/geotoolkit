@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.image.io.mosaic.MosaicReadWriteTest;
@@ -80,7 +81,7 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
      * @throws CoverageStoreException If an error occurred while reading of writing the file.
      */
     @Test
-    public void testReadWrite() throws IOException, CoverageStoreException {
+    public void testReadWrite() throws IOException, DataStoreException {
         final GridCoverage coverage = CoverageIO.read(TestData.file(TileTest.class, "A2.png"));
         verify(coverage.getGridGeometry(), 90, 90, 0);
         /*
@@ -121,7 +122,7 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
     /**
      * Verifies the metadata provided by the given reader.
      */
-    private void verify(final GridCoverageReader reader) throws CoverageStoreException {
+    private void verify(final GridCoverageReader reader) throws DataStoreException {
         verify(reader.getGridGeometry(), 360, 180, 90);
         image = reader.read(null).getRenderableImage(0, 1).createDefaultRendering();
         assertCurrentChecksumEquals("verify", MosaicReadWriteTest.IMAGE_CHECKSUMS);
@@ -135,7 +136,7 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
      * @throws CoverageStoreException If an error occurred while building the mosaic.
      */
     @Test
-    public void testCreateMosaic() throws IOException, CoverageStoreException {
+    public void testCreateMosaic() throws IOException, DataStoreException {
         final File directory = TestData.file(TileTest.class, null);
         final GridCoverageReader reader = CoverageIO.createMosaicReader(directory, null);
         final TileManager manager = (TileManager) reader.getInput();
@@ -154,7 +155,7 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
      * @throws CoverageStoreException If an error occurred while building the mosaic.
      */
     @Test
-    public void testWriteOrReuseMosaic() throws IOException, CoverageStoreException {
+    public void testWriteOrReuseMosaic() throws IOException, DataStoreException {
         boolean cleaned = false;
         final File directory = TestData.file(TileTest.class, null);
         final File cacheDirectory = new File(directory.getPath() + MosaicCoverageReader.CACHE_EXTENSION);

@@ -42,11 +42,11 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreUtilities;
@@ -465,7 +465,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
      * Test the CoverageReader view of a scene.
      */
     @Test
-    public void testPortrayalCoverageReader() throws CoverageStoreException {
+    public void testPortrayalCoverageReader() throws DataStoreException {
 
         //create a test coverage
         final BufferedImage img = new BufferedImage(360, 180, BufferedImage.TYPE_INT_ARGB);

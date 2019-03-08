@@ -26,13 +26,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -272,7 +272,7 @@ public final class Portrayer {
             ////////////////////////////////////////////////////////////////////
 
             writeCoverage(coverage, env, resolution, outputDef, canvasDef.getBackground());
-        } catch (CoverageStoreException | ProcessException ex) {
+        } catch (DataStoreException | ProcessException ex) {
             throw new PortrayalException(ex);
         }
         return true;
@@ -332,17 +332,17 @@ public final class Portrayer {
             writer.setOutput(outputDef.getOutput());
             writer.write(coverage, writeParam);
 
-        }catch(CoverageStoreException ex){
+        } catch (DataStoreException ex) {
             throw new PortrayalException(ex);
-        }finally{
+        } finally {
             try {
                 writer.reset();
                 coverageWriter = writer;
-            } catch (CoverageStoreException ex) {
+            } catch (DataStoreException ex) {
                 //the writer has problems, we better not put in back in the cache.
                 try {
                     writer.dispose();
-                } catch (CoverageStoreException ex1) {
+                } catch (DataStoreException ex1) {
                     Logging.getLogger("org.geotoolkit.display2d.service").log(Level.WARNING, null, ex1);
                 }
                 throw new PortrayalException(ex);

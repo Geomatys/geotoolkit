@@ -99,7 +99,7 @@ public class PyramidalModelReader extends GridCoverageReader{
     }
 
     @Override
-    public void setInput(Object input) throws CoverageStoreException {
+    public void setInput(Object input) throws DataStoreException {
         if(!(input instanceof GridCoverageResource) || !(input instanceof PyramidalCoverageResource)){
             throw new CoverageStoreException("Unsupported input type, can only be CoverageReference implementing PyramidalModel.");
         }

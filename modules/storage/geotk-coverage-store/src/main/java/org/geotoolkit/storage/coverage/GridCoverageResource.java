@@ -19,15 +19,15 @@ package org.geotoolkit.storage.coverage;
 import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -63,14 +63,14 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
      * When you have finished using it, return it using the recycle method.
      */
     @Override
-    GridCoverageReader acquireReader() throws CoverageStoreException;
+    GridCoverageReader acquireReader() throws DataStoreException;
 
     /**
      * Get a writer for this coverage.
      * When you have finished using it, return it using the recycle method.
      */
     @Override
-    GridCoverageWriter acquireWriter() throws CoverageStoreException;
+    GridCoverageWriter acquireWriter() throws DataStoreException;
 
     @Override
     public default FeatureType getType() throws DataStoreException {
@@ -95,9 +95,8 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
         final FeatureAssociationRole role = (FeatureAssociationRole) type.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
         final Feature feature = type.newInstance();
 
-        final GridCoverageReader reader = acquireReader();
         try {
-            final GridGeometry gridGeom = reader.getGridGeometry();
+            final GridGeometry gridGeom = getGridGeometry();
             Envelope envelope = gridGeom.getEnvelope();
             if (envelope != null) {
                 Geometry geom = GeometricUtilities.toJTSGeometry(envelope, GeometricUtilities.WrapResolution.SPLIT);
@@ -106,13 +105,7 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
                     feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
                 }
             }
-            recycle(reader);
         } catch (CoverageStoreException ex) {
-            try {
-                reader.dispose();
-            } catch (CoverageStoreException ex2) {
-                ex.addSuppressed(ex2);
-            }
             throw ex;
         }
         feature.setProperty(CoverageFeature.coverageRecords(this,role));

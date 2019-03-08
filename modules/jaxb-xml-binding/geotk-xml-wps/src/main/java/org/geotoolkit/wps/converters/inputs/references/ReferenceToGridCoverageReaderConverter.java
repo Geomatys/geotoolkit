@@ -26,14 +26,15 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import net.iharder.Base64;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.nio.IOUtilities;
-import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
-import org.geotoolkit.wps.xml.v200.Reference;;
+import org.geotoolkit.wps.xml.v200.Reference;
+;
 
 /**
  * Implementation of ObjectConverter to convert a reference into a GridCoverageReader.
@@ -104,7 +105,7 @@ public final class ReferenceToGridCoverageReaderConverter extends AbstractRefere
 
         } catch (MalformedURLException ex) {
             throw new UnconvertibleObjectException("ReferenceType grid coverage invalid input : Malformed url", ex);
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             throw new UnconvertibleObjectException("ReferenceType grid coverage invalid input : Can't read coverage", ex);
         } catch (IOException ex) {
             throw new UnconvertibleObjectException("ReferenceType grid coverage invalid input : IO", ex);

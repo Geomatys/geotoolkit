@@ -23,7 +23,6 @@ import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
@@ -73,20 +72,20 @@ public class Categorize extends AbstractProcess {
         final GridCoverageReader reader;
         try {
             reader = source.acquireReader();
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             throw new ProcessException("Cannot access data source", this, ex);
         }
 
         final GridCoverageWriter writer;
         try {
             writer = destination.acquireWriter();
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             throw new ProcessException("Cannot access data output", this, ex);
         }
 
         try (final UncheckedCloseable inClose = () -> source.recycle(reader);
                 final UncheckedCloseable outClose = () -> destination.recycle(writer)) {
-            final GridGeometry inputGG = reader.getGridGeometry();
+            final GridGeometry inputGG = source.getGridGeometry();
 
             final GridGeometry readGeom;
             Envelope env = getEnvelope();
@@ -179,7 +178,7 @@ public class Categorize extends AbstractProcess {
             throw new ProcessException("Cannot adapt input geometry", this, ex);
         } catch (FactoryException ex) {
             throw new ProcessException("Failure on EPSG database use", this, ex);
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             throw new ProcessException("Cannot access either input or output data source", this, ex);
         } catch (CancellationException ex) {
             throw new DismissProcessException("Process cancelled", this, ex);

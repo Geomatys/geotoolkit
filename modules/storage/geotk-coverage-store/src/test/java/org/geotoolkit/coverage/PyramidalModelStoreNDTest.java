@@ -37,7 +37,6 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
 import org.geotoolkit.data.multires.Mosaic;
@@ -184,13 +183,12 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
      * @throws Exception
      */
     @Test
-    public void checkMetaTest() throws Exception{
+    public void checkMetaTest() throws Exception {
         //load the coverage store
         getCoverageStore();
-        final GridCoverageReader reader = (GridCoverageReader) ref.acquireReader();
 
         //check the image size
-        final GridGeometry gridGeom = reader.getGridGeometry();
+        final GridGeometry gridGeom = ref.getGridGeometry();
         final GridExtent gridEnv = gridGeom.getExtent();
         assertEquals( 3, gridEnv.getDimension());
         assertEquals( 0, gridEnv.getLow(0));
@@ -208,14 +206,13 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
         assertEquals(CORNER_V[0], env.getMinimum(2), DELTA);
         assertEquals(CORNER_V[1], env.getMaximum(2), DELTA);
 
-        ref.recycle(reader);
     }
 
     /**
      * Read with no parameter, we should obtain the most accurate data
      */
     @Test
-    public void readDefaultTest() throws Exception{
+    public void readDefaultTest() throws Exception {
         getCoverageStore();
         final CoverageReader reader = ref.acquireReader();
 
@@ -252,7 +249,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
      * Read special scales and dimensions.
      */
     @Test
-    public void readSlicesTest() throws Exception{
+    public void readSlicesTest() throws Exception {
         getCoverageStore();
         final CoverageReader reader = ref.acquireReader();
         final GridCoverageReadParam param = new GridCoverageReadParam();

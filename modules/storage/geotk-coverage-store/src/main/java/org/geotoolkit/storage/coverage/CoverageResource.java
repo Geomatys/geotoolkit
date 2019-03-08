@@ -69,13 +69,13 @@ public interface CoverageResource extends FeatureSet {
      * Get a reader for this coverage.
      * When you have finished using it, return it using the recycle method.
      */
-    CoverageReader acquireReader() throws CoverageStoreException;
+    CoverageReader acquireReader() throws DataStoreException;
 
     /**
      * Get a writer for this coverage.
      * When you have finished using it, return it using the recycle method.
      */
-    CoverageWriter acquireWriter() throws CoverageStoreException;
+    CoverageWriter acquireWriter() throws DataStoreException;
 
     /**
      * Return the used reader, they can be reused later.

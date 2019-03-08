@@ -28,6 +28,7 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.test.DependsOn;
 import static org.apache.sis.test.MetadataAssert.*;
 import static org.apache.sis.test.TestUtilities.getSingleton;
@@ -110,7 +111,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
      */
     @Test
     @Ignore("Need to be revisited during the migration to Apache SIS.")
-    public void testMetadata() throws IOException, CoverageStoreException, JAXBException {
+    public void testMetadata() throws IOException, DataStoreException, JAXBException {
         final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readFull");
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));
         assertEquals(WorldFileImageReader.class, reader.imageReader.getClass());
@@ -131,7 +132,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
      * @throws CoverageStoreException Should not happen.
      */
     @Test
-    public void readFull() throws IOException, CoverageStoreException {
+    public void readFull() throws IOException, DataStoreException {
         final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readFull");
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));
         assertEquals(WorldFileImageReader.class, reader.imageReader.getClass());
@@ -192,7 +193,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
      * @throws CoverageStoreException Should not happen.
      */
     @Test
-    public void readRegion() throws IOException, CoverageStoreException {
+    public void readRegion() throws IOException, DataStoreException {
         final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readRegion");
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));
         assertEquals(WorldFileImageReader.class, reader.imageReader.getClass());
@@ -240,7 +241,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
      * @throws CoverageStoreException Should not happen.
      */
     @Test
-    public void readSubsampledRegion() throws IOException, CoverageStoreException {
+    public void readSubsampledRegion() throws IOException, DataStoreException {
         final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readSubsampledRegion");
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));
         assertEquals(WorldFileImageReader.class, reader.imageReader.getClass());
@@ -290,7 +291,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
      * @throws CoverageStoreException Should not happen.
      */
     @Test
-    public void readTwice() throws IOException, CoverageStoreException {
+    public void readTwice() throws IOException, DataStoreException {
         final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readTwice");
         final File file = TestData.file(SampleModels.class, "Contour.png");
         reader.setInput(file);
