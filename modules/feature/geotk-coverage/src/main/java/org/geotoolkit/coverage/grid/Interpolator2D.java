@@ -21,12 +21,10 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.media.jai.Interpolation;
 import javax.media.jai.InterpolationNearest;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -193,7 +191,7 @@ public final class Interpolator2D extends Calculator2D {
         if (fallback!=null && fallback!=this) {
             this.toGrid = fallback.toGrid;
         } else try {
-            final MathTransform2D transform = gridGeometry.getGridToCRS2D();
+            final MathTransform2D transform = getGridGeometry().getGridToCRS2D();
             // Note: If we want nearest-neighbor interpolation, we need to add the
             //       following line (assuming the transform is an 'AffineTransform'):
             //

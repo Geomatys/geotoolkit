@@ -29,7 +29,9 @@ import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,7 +47,6 @@ import javax.media.jai.remote.SerializableRenderedImage;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.TransformedDirectPosition;
@@ -121,22 +122,6 @@ public class GridCoverage2D extends GridCoverage {
     private RenderedImage serializedImage;
 
     /**
-     * The grid geometry.
-     */
-    protected final GridGeometry2D gridGeometry;
-
-    /**
-     * List of sample dimension information for the grid coverage.
-     * For a grid coverage, a sample dimension is a band. The sample dimension information
-     * include such things as description, data type of the value (bit, byte, integer...),
-     * the no data values, minimum and maximum values and a color table if one is associated
-     * with the dimension. A coverage must have at least one sample dimension.
-     * <p>
-     * The content of this array should never be modified.
-     */
-    final RenderedSampleDimension[] sampleDimensions;
-
-    /**
      * The views returned by {@link #views}. Constructed when first needed.
      * Note that some views may appear in the {@link #sources} list.
      */
@@ -168,8 +153,6 @@ public class GridCoverage2D extends GridCoverage {
     GridCoverage2D(final CharSequence name, final GridCoverage2D coverage) {
         super(name, coverage);
         image            = coverage.image;
-        gridGeometry     = coverage.gridGeometry;
-        sampleDimensions = coverage.sampleDimensions;
         tileEncoding     = coverage.tileEncoding;
         // Do not share the views, since subclasses will create different instances.
     }
@@ -220,24 +203,40 @@ public class GridCoverage2D extends GridCoverage {
                           final Hints                   hints)
             throws IllegalArgumentException
     {
-        super(name, gridGeometry.getCoordinateReferenceSystem(), sources, properties);
+        super(name, fillGridGeometry(image, gridGeometry), fillSampleDimensions(name, image, bands), sources, properties);
         this.image = image;
-        /*
-         * Wraps the user-supplied sample dimensions into instances of RenderedSampleDimension. This
-         * process will creates default sample dimensions if the user supplied null values. Those
-         * default will be inferred from image type (integers, floats...) and range of values. If
-         * an inconsistency is found in user-supplied sample dimensions, an IllegalArgumentException
-         * is thrown.
-         */
-        sampleDimensions = new RenderedSampleDimension[image.getSampleModel().getNumBands()];
+        if (hints != null) {
+            tileEncoding = (String) hints.get(Hints.TILE_ENCODING);
+        }
+    }
+
+    /**
+     * Wraps the user-supplied sample dimensions into instances of RenderedSampleDimension. This
+     * process will creates default sample dimensions if the user supplied null values. Those
+     * default will be inferred from image type (integers, floats...) and range of values. If
+     * an inconsistency is found in user-supplied sample dimensions, an IllegalArgumentException
+     * is thrown.
+     *
+     * @return
+     */
+    private static Collection<SampleDimension> fillSampleDimensions(final CharSequence name, final RenderedImage image, final SampleDimension[] bands) {
+        RenderedSampleDimension[] sampleDimensions = new RenderedSampleDimension[image.getSampleModel().getNumBands()];
         RenderedSampleDimension.create(name, image, bands, sampleDimensions);
-        /*
-         * Computes the grid envelope if it was not explicitly provided. The range will be inferred
-         * from the image size, if needed. The envelope computation (if needed) requires a valid
-         * 'gridToCRS' transform in the GridGeometry object. In any case, the envelope must be
-         * non-empty and its dimension must matches the coordinate reference system's dimension.
-         */
-        final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
+        final List<SampleDimension> dims = new ArrayList<>(sampleDimensions.length);
+        for (RenderedSampleDimension rsd : sampleDimensions) {
+            dims.add(rsd.dimension);
+        }
+        return dims;
+    }
+
+    /**
+     * Computes the grid envelope if it was not explicitly provided. The range will be inferred
+     * from the image size, if needed. The envelope computation (if needed) requires a valid
+     * 'gridToCRS' transform in the GridGeometry object. In any case, the envelope must be
+     * non-empty and its dimension must matches the coordinate reference system's dimension.
+     */
+    private static GridGeometry2D fillGridGeometry(final RenderedImage image, GridGeometry2D gridGeometry) {
+        final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
         final int dimension = crs.getCoordinateSystem().getDimension();
         if (!gridGeometry.isDefined(GridGeometry2D.EXTENT)) {
             final long[] low = new long[dimension];
@@ -268,7 +267,6 @@ public class GridCoverage2D extends GridCoverage {
              */
             gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
         }
-        this.gridGeometry = gridGeometry;
         assert gridGeometry.isDefined(GridGeometry2D.CRS        |
                                       GridGeometry2D.ENVELOPE   |
                                       GridGeometry2D.EXTENT |
@@ -287,9 +285,7 @@ public class GridCoverage2D extends GridCoverage {
         {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.EmptyEnvelope2d));
         }
-        if (hints != null) {
-            tileEncoding = (String) hints.get(Hints.TILE_ENCODING);
-        }
+        return gridGeometry;
     }
 
     /**
@@ -335,27 +331,9 @@ public class GridCoverage2D extends GridCoverage {
         return null;
     }
 
-    /**
-     * Returns information for the grid coverage geometry. Grid geometry
-     * includes the valid range of grid coordinates and the georeferencing.
-     */
     @Override
     public GridGeometry2D getGridGeometry() {
-        final String error = checkConsistency(image, gridGeometry);
-        if (error != null) {
-            throw new IllegalStateException(error);
-        }
-        return gridGeometry;
-    }
-
-    /**
-     * Returns the bounding box for the coverage domain in coordinate reference system coordinates.
-     * The returned envelope have at least two dimensions. It may have more dimensions if the
-     * coverage has some extent in other dimensions (for example a depth, or a start and end time).
-     */
-    @Override
-    public Envelope getEnvelope() {
-        return gridGeometry.getEnvelope();
+        return (GridGeometry2D) super.getGridGeometry();
     }
 
     /**
@@ -366,7 +344,7 @@ public class GridCoverage2D extends GridCoverage {
      * @return The two-dimensional bounding box.
      */
     public Envelope2D getEnvelope2D() {
-        return gridGeometry.getEnvelope2D();
+        return getGridGeometry().getEnvelope2D();
     }
 
     /**
@@ -381,21 +359,7 @@ public class GridCoverage2D extends GridCoverage {
      * @see #getCoordinateReferenceSystem
      */
     public CoordinateReferenceSystem getCoordinateReferenceSystem2D() {
-        return gridGeometry.getCoordinateReferenceSystem2D();
-    }
-
-    /**
-     * Returns all sample dimensions for this grid coverage.
-     *
-     * @return All sample dimensions.
-     */
-    @Override
-    public List<SampleDimension> getSampleDimensions() {
-        final SampleDimension[] sd = new SampleDimension[sampleDimensions.length];
-        for (int i=0; i<sd.length; i++) {
-            sd[i] = sampleDimensions[i].dimension;
-        }
-        return UnmodifiableArrayList.wrap(sd);
+        return getGridGeometry().getCoordinateReferenceSystem2D();
     }
 
     /**
@@ -546,6 +510,7 @@ public class GridCoverage2D extends GridCoverage {
         if (point instanceof Point2D) {
             return (Point2D) point;
         }
+        final GridGeometry2D gridGeometry = getGridGeometry();
         assert gridGeometry.axisDimensionX < gridGeometry.axisDimensionY;
         return new Point2D.Double(point.getOrdinate(gridGeometry.axisDimensionX),
                                   point.getOrdinate(gridGeometry.axisDimensionY));
@@ -564,6 +529,7 @@ public class GridCoverage2D extends GridCoverage {
     public int[] evaluate(final Point2D coord, final int[] dest)
             throws CannotEvaluateException
     {
+        final GridGeometry2D gridGeometry = getGridGeometry();
         final Point2D pixel = gridGeometry.inverseTransform(coord);
         final double fx = pixel.getX();
         final double fy = pixel.getY();
@@ -590,6 +556,7 @@ public class GridCoverage2D extends GridCoverage {
     public float[] evaluate(final Point2D coord, final float[] dest)
             throws CannotEvaluateException
     {
+        final GridGeometry2D gridGeometry = getGridGeometry();
         final Point2D pixel = gridGeometry.inverseTransform(coord);
         final double fx = pixel.getX();
         final double fy = pixel.getY();
@@ -616,6 +583,7 @@ public class GridCoverage2D extends GridCoverage {
     public double[] evaluate(final Point2D coord, final double[] dest)
             throws CannotEvaluateException
     {
+        final GridGeometry2D gridGeometry = getGridGeometry();
         final Point2D pixel = gridGeometry.inverseTransform(coord);
         final double fx = pixel.getX();
         final double fy = pixel.getY();
@@ -644,6 +612,7 @@ public class GridCoverage2D extends GridCoverage {
      */
     @Debug
     public synchronized String getDebugString(final DirectPosition coord) {
+        final GridGeometry2D gridGeometry = getGridGeometry();
         Point2D pixel = toPoint2D(coord);
         pixel         = gridGeometry.inverseTransform(pixel);
         final int   x = (int) Math.round(pixel.getX());
@@ -685,6 +654,7 @@ public class GridCoverage2D extends GridCoverage {
 
     @Override
     public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
+        final GridGeometry2D gridGeometry = getGridGeometry();
         int[] dims = sliceExtent.getSubspaceDimensions(2);
         if (dims[0] != gridGeometry.axisDimensionX && dims[1] != gridGeometry.axisDimensionY) {
             throw new CannotEvaluateException("Unsupported axis");
@@ -706,6 +676,7 @@ public class GridCoverage2D extends GridCoverage {
      */
     @Override
     public RenderableImage getRenderableImage(final int xAxis, final int yAxis) {
+        final GridGeometry2D gridGeometry = getGridGeometry();
         if (xAxis == gridGeometry.axisDimensionX  &&  yAxis == gridGeometry.axisDimensionY) {
             return new Renderable();
         } else {
@@ -778,6 +749,7 @@ public class GridCoverage2D extends GridCoverage {
      */
     @Override
     public void show(final String title) {
+        final GridGeometry2D gridGeometry = getGridGeometry();
         show(title, gridGeometry.axisDimensionX, gridGeometry.axisDimensionY);
     }
 
@@ -807,7 +779,7 @@ public class GridCoverage2D extends GridCoverage {
          * Constructs a renderable image.
          */
         public Renderable() {
-            super(gridGeometry.axisDimensionX, gridGeometry.axisDimensionY);
+            super(getGridGeometry().axisDimensionX, getGridGeometry().axisDimensionY);
         }
 
         /**
@@ -817,6 +789,7 @@ public class GridCoverage2D extends GridCoverage {
          */
         @Override
         public RenderedImage createDefaultRendering() {
+            final GridGeometry2D gridGeometry = getGridGeometry();
             if (xAxis == gridGeometry.axisDimensionX &&
                 yAxis == gridGeometry.axisDimensionY)
             {

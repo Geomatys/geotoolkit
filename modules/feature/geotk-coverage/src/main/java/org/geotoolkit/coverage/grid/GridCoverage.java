@@ -47,6 +47,7 @@ import java.lang.reflect.Array;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -71,11 +72,9 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.metadata.AxisDirections;
 import org.apache.sis.internal.raster.ScaledColorSpace;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Localized;
-import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.iso.Types;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
@@ -85,9 +84,6 @@ import org.geotoolkit.io.LineWriter;
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.resources.Errors;
-import static org.opengis.annotation.Obligation.MANDATORY;
-import static org.opengis.annotation.Specification.OGC_01004;
-import org.opengis.annotation.UML;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
@@ -161,9 +157,20 @@ public abstract class GridCoverage implements Localized, Serializable {
     private final InternationalString name;
 
     /**
-     * The coordinate reference system, or {@code null} if there is none.
+     * The grid extent, coordinate reference system (CRS) and conversion from cell indices to CRS.
+     *
+     * @see #getGridGeometry()
      */
-    protected final CoordinateReferenceSystem crs;
+    private final GridGeometry gridGeometry;
+
+    /**
+     * List of sample dimension (band) information for the grid coverage. Information include such things
+     * as description, the no data values, minimum and maximum values, <i>etc</i>. A coverage must have
+     * at least one sample dimension. The content of this array shall never be modified.
+     *
+     * @see #getSampleDimensions()
+     */
+    private final SampleDimension[] sampleDimensions;
 
     protected transient Map properties;
 
@@ -173,21 +180,20 @@ public abstract class GridCoverage implements Localized, Serializable {
      *
      * @param name
      *          The coverage name, or {@code null} if none.
-     * @param crs
-     *          The coordinate reference system. This specifies the CRS used when accessing
-     *          a coverage or grid coverage with the {@code evaluate(...)} methods.
      * @param properties
      *          The set of properties for this coverage, or {@code null} if there is none.
      *          Keys are {@link String} objects ({@link javax.media.jai.util.CaselessStringKey}
      *          are accepted as well), while values may be any {@link Object}.
      */
-    protected GridCoverage(final CharSequence             name,
-                               final CoordinateReferenceSystem crs,
-                               final Map<?,?>           properties)
+    protected GridCoverage(final CharSequence name,
+                           final GridGeometry grid,
+                           final Collection<? extends SampleDimension> bands,
+                           final Map<?,?>     properties)
     {
         this.properties = properties;
         this.name = Types.toInternationalString(name);
-        this.crs  = crs;
+        this.gridGeometry = grid;
+        this.sampleDimensions = bands.toArray(new SampleDimension[bands.size()]);
         this.sources = null;
     }
 
@@ -201,15 +207,10 @@ public abstract class GridCoverage implements Localized, Serializable {
      */
     protected GridCoverage(final CharSequence name, final GridCoverage coverage) {
         final InternationalString n = Types.toInternationalString(name);
-        if (coverage instanceof GridCoverage) {
-            final GridCoverage source = (GridCoverage) coverage;
-            this.name = (n != null) ? n : source.name;
-            this.crs  = source.crs;
-        } else {
-            this.name = (n != null) ? n : new SimpleInternationalString(coverage.toString());
-            this.crs  = coverage.getCoordinateReferenceSystem();
-        }
-        sources = Collections.singletonList(coverage);
+        this.name = (n != null) ? n : coverage.name;
+        this.gridGeometry  = coverage.getGridGeometry();
+        this.sampleDimensions = coverage.getSampleDimensions().toArray(new SampleDimension[0]);
+        this.sources = Collections.singletonList(coverage);
     }
 
     /**
@@ -219,21 +220,21 @@ public abstract class GridCoverage implements Localized, Serializable {
      *
      * @param name
      *          The grid coverage name.
-     * @param crs
-     *          The coordinate reference system.
      * @param sources
      *          The {@linkplain #getSources sources} for a grid coverage, or {@code null} if none.
      * @param properties
      *          Set of additional properties for this coverage, or {@code null} if there is none.
      */
     protected GridCoverage(final CharSequence             name,
-                                   final CoordinateReferenceSystem crs,
-                                   final GridCoverage[]        sources,
-                                   final Map<?,?>           properties)
+                           final GridGeometry grid,
+                           final Collection<? extends SampleDimension> bands,
+                           final GridCoverage[]        sources,
+                           final Map<?,?>           properties)
     {
         this.properties = properties;
         this.name = Types.toInternationalString(name);
-        this.crs  = crs;
+        this.gridGeometry  = grid;
+        this.sampleDimensions = bands.toArray(new SampleDimension[0]);
         if (sources != null) {
             switch (sources.length) {
                 case 0:  this.sources = null; break;
@@ -255,33 +256,48 @@ public abstract class GridCoverage implements Localized, Serializable {
         return name;
     }
 
+
+    /**
+     * Returns the coordinate reference system to which the values in grid domain are referenced.
+     * This is the CRS used when accessing a coverage with the {@code evaluate(…)} methods.
+     * This coordinate reference system is usually different than the coordinate system of the grid.
+     * It is the target coordinate reference system of the {@link GridGeometry#getGridToCRS gridToCRS}
+     * math transform.
+     *
+     * <p>The default implementation delegates to {@link GridGeometry#getCoordinateReferenceSystem()}.</p>
+     *
+     * @return the CRS used when accessing a coverage with the {@code evaluate(…)} methods.
+     * @throws IncompleteGridGeometryException if the grid geometry has no CRS.
+     */
+    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
+        return gridGeometry.getCoordinateReferenceSystem();
+    }
+
+    /**
+     * Returns information about the <cite>domain</cite> of this grid coverage.
+     * Information includes the grid extent, CRS and conversion from cell indices to CRS.
+     * {@code GridGeometry} can also provide derived information like bounding box and resolution.
+     *
+     * @return grid extent, CRS and conversion from cell indices to CRS.
+     *
+     * @see org.apache.sis.storage.GridCoverageResource#getGridGeometry()
+     */
+    public GridGeometry getGridGeometry() {
+        return gridGeometry;
+    }
+
     /**
      * Returns information about the <cite>range</cite> of this grid coverage.
      * Information include names, sample value ranges, fill values and transfer functions for all bands in this grid coverage.
+     * The length of the returned list should be equal to the {@linkplain java.awt.image.SampleModel#getNumBands() number of
+     * bands} in the rendered image.
      *
      * @return names, value ranges, fill values and transfer functions for all bands in this grid coverage.
-     */
-    public abstract List<SampleDimension> getSampleDimensions();
-
-    /**
-     * Returns the coordinate reference system to which the objects in its domain are
-     * referenced. This is the CRS used when accessing a coverage or grid coverage with
-     * the {@code evaluate(...)} methods. This coordinate reference system is usually
-     * different than coordinate system of the grid. It is the target coordinate reference
-     * system of the {@link org.geotoolkit.coverage.grid.GridGeometry#getGridToCRS gridToCRS}
-     * math transform.
-     * <p>
-     * Grid coverage can be accessed (re-projected) with new coordinate reference system
-     * with the {@code GridCoverageProcessor} component.
-     * In this case, a new instance of a grid coverage is created.
      *
-     * @return The coordinate reference system used when accessing a coverage or
-     *         grid coverage with the {@code evaluate(...)} methods.
-     *
-     * @see org.geotoolkit.coverage.grid.GeneralGridGeometry#getGridToCRS
+     * @see org.apache.sis.storage.GridCoverageResource#getSampleDimensions()
      */
-    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-        return crs;
+    public List<SampleDimension> getSampleDimensions() {
+        return UnmodifiableArrayList.wrap(sampleDimensions);
     }
 
     /**
@@ -301,7 +317,7 @@ public abstract class GridCoverage implements Localized, Serializable {
      * @return The bounding box for the coverage domain in coordinate system coordinates.
      */
     public Envelope getEnvelope() {
-        return CRS.getDomainOfValidity(crs);
+        return gridGeometry.getEnvelope();
     }
 
     /**
@@ -555,15 +571,6 @@ public abstract class GridCoverage implements Localized, Serializable {
     public RenderableImage getRenderableImage(final int xAxis, final int yAxis) {
         return new Renderable(xAxis, yAxis);
     }
-
-    /**
-     * Information for the grid coverage geometry.
-     * Grid geometry includes the valid range of grid coordinates and the georeferencing.
-     *
-     * @return the information for the grid coverage geometry.
-     */
-    @UML(identifier="gridGeometry", obligation=MANDATORY, specification=OGC_01004)
-    public abstract GridGeometry getGridGeometry();
 
     public Map getProperties() {
         return properties;
@@ -908,6 +915,7 @@ public abstract class GridCoverage implements Localized, Serializable {
             final GeneralEnvelope dstEnvelope = new GeneralEnvelope(
                     new double[] {gridBounds.getMinX(), gridBounds.getMinY()},
                     new double[] {gridBounds.getMaxX(), gridBounds.getMaxY()});
+            final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
             if (crs != null) {
                 final CoordinateSystem cs = crs.getCoordinateSystem();
                 final AxisDirection[] axis = new AxisDirection[] {
@@ -1143,6 +1151,7 @@ public abstract class GridCoverage implements Localized, Serializable {
             out.write(", ");
             out.write(envelope.toString());
         }
+        final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
         if (crs != null) {
             out.write(", ");
             out.write(Classes.getShortClassName(crs));
