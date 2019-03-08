@@ -23,16 +23,16 @@ import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.process.Process;
-import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
-import org.junit.Test;
 import static org.junit.Assert.*;
-import org.geotoolkit.coverage.Coverage;
+import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -53,7 +53,7 @@ public class BandCombineTest extends org.geotoolkit.test.TestBase {
         assertNotNull(desc);
 
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();
-        params.parameter("coverages").setValue(new Coverage[]{cov1,cov2,cov3});
+        params.parameter("coverages").setValue(new GridCoverage[]{cov1,cov2,cov3});
 
         final Process process = desc.createProcess(params);
         final ParameterValueGroup result = process.call();

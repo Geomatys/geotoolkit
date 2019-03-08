@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage;
+package org.geotoolkit.coverage.grid;
 
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.WritableRectIter;

@@ -34,6 +34,7 @@ import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -232,8 +233,8 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
 
         assertTrue(coverage instanceof GridCoverageStack);
         final GridCoverageStack stack = (GridCoverageStack) coverage;
-        final List<Coverage> lowerCovs = stack.coveragesAt(-15);
-        final List<Coverage> upperCovs = stack.coveragesAt(46.58);
+        final List<GridCoverage> lowerCovs = stack.coveragesAt(-15);
+        final List<GridCoverage> upperCovs = stack.coveragesAt(46.58);
         assertNotNull(lowerCovs);
         assertNotNull(upperCovs);
         assertEquals(1, lowerCovs.size());

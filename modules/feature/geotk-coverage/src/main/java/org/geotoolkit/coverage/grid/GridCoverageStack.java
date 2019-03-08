@@ -2,8 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003-2012, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2012, Geomatys
+ *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage;
+package org.geotoolkit.coverage.grid;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -38,26 +37,28 @@ import javax.imageio.event.IIOReadWarningListener;
 import javax.media.jai.InterpolationNearest;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.PassThroughTransform;
+import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
 import static org.apache.sis.util.Utilities.equalsIgnoreMetadata;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.FrequencySortedSet;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.geotoolkit.coverage.grid.Interpolator2D;
+import org.geotoolkit.coverage.processing.OperationNotFoundException;
 import org.geotoolkit.image.palette.IIOListeners;
 import org.geotoolkit.image.palette.IIOReadProgressAdapter;
 import static org.geotoolkit.internal.InternalUtilities.debugEquals;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -72,7 +73,6 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
-import org.geotoolkit.coverage.processing.OperationNotFoundException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -119,14 +119,11 @@ import org.opengis.util.FactoryException;
  * caching mechanism is sufficient if {@code evaluate(...)} methods are invoked with increasing
  * <var>z</var> values.
  *
- * @author Martin Desruisseaux (IRD, Geomatys)
+ *
  * @author Johann Sorel (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  */
-public class CoverageStack extends AbstractCoverage {
-    /**
-     * For compatibility during cross-version serialization.
-     */
-    private static final long serialVersionUID = -7100201963376146053L;
+public class GridCoverageStack extends GridCoverage {
 
     /**
      * Reference to a single <var>n</var> dimensional coverage in a (<var>n</var>+1) dimensional
@@ -246,7 +243,7 @@ public class CoverageStack extends AbstractCoverage {
          * @return The coverage (never {@code null}).
          * @throws IOException if a data loading was required but failed.
          */
-        Coverage getCoverage(IIOListeners listeners) throws IOException;
+        GridCoverage getCoverage(IIOListeners listeners) throws IOException;
     }
 
     /**
@@ -268,7 +265,7 @@ public class CoverageStack extends AbstractCoverage {
          * The wrapped coverage, or {@code null} if not yet loaded.
          * If null, the loading must be performed by the {@link #getCoverage} method.
          */
-        protected Coverage coverage;
+        protected GridCoverage coverage;
 
         /**
          * Minimum and maximum <var>z</var> values for this element, or {@code null} if not yet
@@ -294,7 +291,7 @@ public class CoverageStack extends AbstractCoverage {
          *                 is invoked from a sub-class constructor.
          * @param zDimension   dimension index to use for z range
          */
-        public Adapter(final Coverage coverage, final Integer zDimension) {
+        public Adapter(final GridCoverage coverage, final Integer zDimension) {
             this(coverage,null,null);
             this.zDimension = zDimension;
         }
@@ -308,7 +305,7 @@ public class CoverageStack extends AbstractCoverage {
          *                 {@code null} to infers it from the last dimension in the coverage
          *                 envelope.
          */
-        public Adapter(final Coverage coverage, final NumberRange<?> range) {
+        public Adapter(final GridCoverage coverage, final NumberRange<?> range) {
             this(coverage,range,null);
         }
 
@@ -322,7 +319,7 @@ public class CoverageStack extends AbstractCoverage {
          *                 envelope.
          * @param center The center of the Z range or {@code null} for range middle.
          */
-        public Adapter(final Coverage coverage, final NumberRange<?> range, Number center) {
+        public Adapter(final GridCoverage coverage, final NumberRange<?> range, Number center) {
             this.coverage = coverage;
             this.range    = range;
             this.center   = center;
@@ -342,8 +339,8 @@ public class CoverageStack extends AbstractCoverage {
         @Override
         public String getName() throws IOException {
             Object coverage = getCoverage(null);
-            if (coverage instanceof AbstractCoverage)  {
-                coverage = ((AbstractCoverage) coverage).getName();
+            if (coverage instanceof GridCoverage)  {
+                coverage = ((GridCoverage) coverage).getName();
             }
             return coverage.toString();
         }
@@ -405,7 +402,7 @@ public class CoverageStack extends AbstractCoverage {
          */
         @Override
         public GridGeometry getGridGeometry() throws IOException {
-            final Coverage coverage = getCoverage(null);
+            final GridCoverage coverage = getCoverage(null);
             return (coverage instanceof GridCoverage) ?
                     ((GridCoverage) coverage).getGridGeometry() : null;
         }
@@ -416,7 +413,7 @@ public class CoverageStack extends AbstractCoverage {
          */
         @Override
         public SampleDimension[] getSampleDimensions() throws IOException {
-            final Coverage coverage = getCoverage(null);
+            final GridCoverage coverage = getCoverage(null);
             return coverage.getSampleDimensions().toArray(new SampleDimension[0]);
         }
 
@@ -427,7 +424,7 @@ public class CoverageStack extends AbstractCoverage {
          * since all default implementations invoke {@code getCoverage(null)}.
          */
         @Override
-        public Coverage getCoverage(final IIOListeners listeners) throws IOException {
+        public GridCoverage getCoverage(final IIOListeners listeners) throws IOException {
             return coverage;
         }
     }
@@ -437,17 +434,6 @@ public class CoverageStack extends AbstractCoverage {
      * instances of {@code CoverageStack}.
      */
     private final Element[] elements;
-
-    /**
-     * The sample dimensions for this coverage, or {@code null} if unknown.
-     */
-    private final SampleDimension[] sampleDimensions;
-
-    /**
-     * The number of sample dimensions for this coverage, or 0 is unknown.
-     * Note: this attribute may be different than zero even if {@link #sampleDimensions} is null.
-     */
-    private final int numSampleDimensions;
 
     /**
      * The envelope for this coverage. This is the union of all elements envelopes.
@@ -506,14 +492,14 @@ public class CoverageStack extends AbstractCoverage {
      * If possible, this class will tries to select a coverage with a middle value (not just the
      * minimum value) lower than the requested <var>z</var> value.
      */
-    private transient Coverage lower;
+    private transient GridCoverage lower;
 
     /**
      * Coverage with a maximum z-value higher than or equals to the requested <var>z</var> value.
      * If possible, this class will tries to select a coverage with a middle value (not just the
      * maximum value) higher than the requested <var>z</var> value.
      */
-    private transient Coverage upper;
+    private transient GridCoverage upper;
 
     /**
      * <var>Z</var> values in the middle of {@link #lower} and {@link #upper} envelope.
@@ -592,8 +578,8 @@ public class CoverageStack extends AbstractCoverage {
      * @param  coverages All {@link Coverage} elements for this stack.
      * @throws IOException if an I/O operation was required and failed.
      */
-    public CoverageStack(final CharSequence name, final Collection<? extends Coverage> coverages)
-            throws IOException
+    public GridCoverageStack(final CharSequence name, final Collection<? extends GridCoverage> coverages)
+            throws IOException, TransformException, FactoryException
     {
         this(name, (CoordinateReferenceSystem) null, toElements(coverages,null), null);
     }
@@ -605,8 +591,8 @@ public class CoverageStack extends AbstractCoverage {
      * @param zDimension Dimension index in CRS where Z varies. If null, use the last dimension
      * @throws IOException if an I/O operation was required and failed.
      */
-    public CoverageStack(final CharSequence name, final Collection<? extends Coverage> coverages, final Integer zDimension)
-            throws IOException
+    public GridCoverageStack(final CharSequence name, final Collection<? extends GridCoverage> coverages, final Integer zDimension)
+            throws IOException, TransformException, FactoryException
     {
         this(name, (CoordinateReferenceSystem) null, toElements(coverages, zDimension), zDimension);
     }
@@ -615,10 +601,10 @@ public class CoverageStack extends AbstractCoverage {
      * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
      * call in constructors").
      */
-    private static Element[] toElements(final Collection<? extends Coverage> coverages, Integer zDimension) {
+    private static Element[] toElements(final Collection<? extends GridCoverage> coverages, Integer zDimension) {
         final Element[] elements = new Element[coverages.size()];
         int count = 0;
-        for (final Coverage coverage : coverages) {
+        for (final GridCoverage coverage : coverages) {
             elements[count++] = new Adapter(coverage, zDimension);
         }
         return elements;
@@ -638,9 +624,9 @@ public class CoverageStack extends AbstractCoverage {
      * @param  elements All coverage {@link Element Element}s for this stack.
      * @throws IOException if an I/O operation was required and failed.
      */
-    public CoverageStack(final CharSequence name,
+    public GridCoverageStack(final CharSequence name,
                          final CoordinateReferenceSystem crs,
-                         final Collection<? extends Element> elements) throws IOException
+                         final Collection<? extends Element> elements) throws IOException, TransformException, FactoryException
     {
         this(name, crs, elements.toArray(new Element[elements.size()]), null);
     }
@@ -660,10 +646,10 @@ public class CoverageStack extends AbstractCoverage {
      * @param zDimension Dimension index in CRS where Z varies. If null, use the last dimension
      * @throws IOException if an I/O operation was required and failed.
      */
-    public CoverageStack(final CharSequence name,
+    public GridCoverageStack(final CharSequence name,
                          final CoordinateReferenceSystem crs,
                          final Collection<? extends Element> elements,
-                         final Integer zDimension) throws IOException
+                         final Integer zDimension) throws IOException, TransformException, FactoryException
     {
         this(name, crs, elements.toArray(new Element[elements.size()]), zDimension);
     }
@@ -679,10 +665,10 @@ public class CoverageStack extends AbstractCoverage {
      * @param zDimension Dimension index in CRS where Z varies. If null, use the last dimension
      * @throws IOException if an I/O operation was required and failed.
      */
-    private CoverageStack(final CharSequence name,
+    GridCoverageStack(final CharSequence name,
                           final CoordinateReferenceSystem crs,
                           final Element[] elements,
-                          final Integer zDimension) throws IOException
+                          final Integer zDimension) throws IOException, TransformException, FactoryException
     {
         this(name, getEnvelope(crs, elements), elements, zDimension); // 'elements' must be after 'getEnvelope'
     }
@@ -691,16 +677,49 @@ public class CoverageStack extends AbstractCoverage {
      * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
      * call in constructors").
      */
-    private CoverageStack(final CharSequence name,
+    GridCoverageStack(final CharSequence name,
                           final GeneralEnvelope envelope,
                           final Element[] elements,
-                          final Integer zDimension) throws IOException
+                          final Integer zDimension) throws IOException, TransformException, FactoryException
     {
-        super(name, envelope.getCoordinateReferenceSystem(), null, null);
+        super(name,
+                buildGridGeometry(
+                    elements,
+                    envelope.getCoordinateReferenceSystem(),
+                    zDimension != null ? zDimension  : envelope.getDimension() - 1
+                ),
+                buildSampleDimensions(elements),
+                null);
         assert ArraysExt.isSorted(elements, COMPARATOR, false);
         this.elements = elements;
         this.envelope = envelope;
         this.zDimension = zDimension != null ? zDimension  : envelope.getDimension() - 1;
+        this.zCRS = CRS.getOrCreateSubCRS(getCoordinateReferenceSystem(), this.zDimension, this.zDimension+1);
+    }
+
+
+
+    /**
+     * Constructs a new coverage using the same elements than the specified coverage stack.
+     *
+     * @param name   The coverage name.
+     * @param source The stack to copy.
+     */
+    protected GridCoverageStack(final CharSequence name, final GridCoverageStack source) {
+        super(name, source);
+        // TODO: Put synchronization before the call to super(...) if Sun fixes RFE #4093999
+        // ("Relax constraint on placement of this()/super() call in constructors").
+        synchronized (source) {
+            elements             = source.elements;
+            envelope             = source.envelope;
+            zDimension           = source.zDimension;
+            zCRS                 = source.zCRS;
+            interpolationEnabled = source.interpolationEnabled;
+        }
+    }
+
+    private static Collection<SampleDimension> buildSampleDimensions(Element[] elements) throws IOException {
+
         boolean sampleDimensionMismatch = false;
         SampleDimension[] sampleDimensions = null;
         for (final Element element : elements) {
@@ -725,30 +744,113 @@ public class CoverageStack extends AbstractCoverage {
                 }
             }
         }
-        this.numSampleDimensions = (sampleDimensions != null) ? sampleDimensions.length : 0;
-        this.sampleDimensions = sampleDimensionMismatch ? null : sampleDimensions;
-        zCRS = CRS.getOrCreateSubCRS(crs, this.zDimension, this.zDimension+1);
+        //this.numSampleDimensions = (sampleDimensions != null) ? sampleDimensions.length : 0;
+        //this.sampleDimensions = sampleDimensionMismatch ? null : sampleDimensions;
+        return Arrays.asList(sampleDimensions);
     }
 
-    /**
-     * Constructs a new coverage using the same elements than the specified coverage stack.
-     *
-     * @param name   The coverage name.
-     * @param source The stack to copy.
-     */
-    protected CoverageStack(final CharSequence name, final CoverageStack source) {
-        super(name, source);
-        // TODO: Put synchronization before the call to super(...) if Sun fixes RFE #4093999
-        // ("Relax constraint on placement of this()/super() call in constructors").
-        synchronized (source) {
-            elements             = source.elements;
-            sampleDimensions     = source.sampleDimensions;
-            numSampleDimensions  = source.numSampleDimensions;
-            envelope             = source.envelope;
-            zDimension           = source.zDimension;
-            zCRS                 = source.zCRS;
-            interpolationEnabled = source.interpolationEnabled;
+    private static GridGeometry buildGridGeometry(Element[] elements, CoordinateReferenceSystem crs, int zDimension) throws IOException, TransformException, FactoryException {
+        final int nbDim = crs.getCoordinateSystem().getDimension();
+
+        if (elements.length == 0)
+            throw new IOException("Coverages list is empty");
+
+
+        //build the grid geometry
+        final long[] gridLower = new long[nbDim];
+        final long[] gridUpper = new long[nbDim];
+        final double[] zAxisSteps = new double[elements.length];
+        MathTransform baseGridToCRS = null;
+        int k=0;
+        for (Element element : elements) {
+            final GridCoverage coverage = (GridCoverage) element.getCoverage(null);
+
+            final GridGeometry gg = coverage.getGridGeometry();
+            final GridExtent ext = gg.getExtent();
+
+            //-- check extent pertinency
+            //we expect the axisIndex dimension to be a slice, low == high
+            if (ext.getLow(zDimension) != ext.getHigh(zDimension))
+                throw new IOException("Last dimension of the coverage is not a slice.");
+
+            if (baseGridToCRS == null) {
+                for (int i = 0; i < nbDim; i++) {
+                    gridLower[i] = ext.getLow(i);
+                    gridUpper[i] = ext.getHigh(i);
+                }
+            }
+
+            //-- check baseGridToCRS pertinency
+            baseGridToCRS = gg.getGridToCRS(PixelInCell.CELL_CENTER);
+            assert baseGridToCRS != null;
+
+            //-- pass gridToCRS into Corner
+            //-- GeoApi define that gridToCRS in Center
+            baseGridToCRS = PixelTranslation.translate(baseGridToCRS, PixelInCell.CELL_CENTER, PixelInCell.CELL_CORNER);
+
+
+            //find the real value
+            final double[] coord = new double[gridUpper.length];
+            for (int i = 0; i < gridUpper.length; i++) {
+                coord[i] = ext.getLow(i);
+            }
+            baseGridToCRS.transform(coord, 0, coord, 0, 1);
+            zAxisSteps[k] = coord[zDimension];
+
+            //increment number of slices
+            gridUpper[zDimension]++;
+            k++;
         }
+
+        // reduce by one, values are inclusive
+        gridUpper[zDimension]--;
+
+        int remainingDimensions = nbDim - zDimension - 1;
+
+        /*
+         * Rebuild GridGeometry gridToCRS by extracting MT parts before and after MT1D on current zDimension axis.
+         * This is done in order to keep GridCoverage2D slice with all there dimension instead of truncate there dimensions
+         * on each CoverageStack level.
+         *
+         * TODO replace this hack by a GridCoverageStackBuilder that rebuild global gridGeometry and propagate it to every level
+         * and GridCoverage2D.
+         */
+
+        //extract MT [0, zDim[
+        TransformSeparator df = new TransformSeparator(baseGridToCRS);
+        df.addSourceDimensionRange(0, zDimension);
+        MathTransform firstMT = df.separate();
+        firstMT = PassThroughTransform.create(0, firstMT, nbDim - zDimension);
+
+        //create dimension pass through transform with linear
+        final MathTransform lastAxisTrs;
+        if (zAxisSteps.length == 1) {
+            lastAxisTrs = MathTransforms.linear(1, zAxisSteps[0]);
+        } else {
+            lastAxisTrs = LinearInterpolator1D.create(zAxisSteps);
+        }
+        final MathTransform dimLinear = PassThroughTransform.create(zDimension, lastAxisTrs, remainingDimensions);
+
+        //extract MT [zDim+1, nbDim[
+        MathTransform lastPart = null;
+        if (remainingDimensions > 0) {
+            df = new TransformSeparator(baseGridToCRS);
+            df.addSourceDimensionRange(zDimension+1, nbDim);
+            lastPart = df.separate();
+            lastPart = PassThroughTransform.create(zDimension+1, lastPart, 0);
+        }
+
+        //build final gridToCRS
+        final MathTransform gridToCRS;
+        if (lastPart == null) {
+            gridToCRS = MathTransforms.concatenate(firstMT, dimLinear);
+        } else {
+            gridToCRS = MathTransforms.concatenate(firstMT, dimLinear, lastPart);
+        }
+
+        //build gridGeometry
+        final GridExtent gridEnv = new GridExtent(null, gridLower, gridUpper, true);
+        return new GridGeometry(gridEnv, PixelInCell.CELL_CORNER, gridToCRS, crs);
     }
 
     /**
@@ -813,7 +915,7 @@ public class CoverageStack extends AbstractCoverage {
                         final int[] f = frequency.frequencies();
                         final LogRecord record = Loggings.format(Level.WARNING, Loggings.Keys.
                                 FoundMismatchedCRS_4, size, elements.length, f[0], f[size-1]);
-                        record.setSourceClassName(CoverageStack.class.getName());
+                        record.setSourceClassName(GridCoverageStack.class.getName());
                         record.setSourceMethodName("<init>"); // This is the public method invoked.
                         final Logger logger = Logging.getLogger("org.geotoolkit.coverage");
                         record.setLoggerName(logger.getName());
@@ -982,7 +1084,7 @@ public class CoverageStack extends AbstractCoverage {
      * Used only by GridCoverageStack sub class to rebuild the grid geometry.
      * @return Element[] stack elements
      */
-    Element[] getElements() {
+    public Element[] getElements() {
         return elements;
     }
 
@@ -992,11 +1094,6 @@ public class CoverageStack extends AbstractCoverage {
     @Override
     public Envelope getEnvelope() {
         return envelope.clone();
-    }
-
-    @Override
-    public List<? extends SampleDimension> getSampleDimensions() {
-        return sampleDimensions == null ? Collections.EMPTY_LIST : UnmodifiableArrayList.wrap(sampleDimensions);
     }
 
     /**
@@ -1102,9 +1199,9 @@ public class CoverageStack extends AbstractCoverage {
      * @return The loaded coverage.
      * @throws IOException if an error occurred while loading image.
      */
-    private Coverage load(final Element element) throws IOException {
+    private GridCoverage load(final Element element) throws IOException {
         assert Thread.holdsLock(this);
-        Coverage coverage = element.getCoverage(listeners);
+        GridCoverage coverage = element.getCoverage(listeners);
         if (coverage instanceof GridCoverage2D) {
             final GridCoverage2D coverage2D = (GridCoverage2D) coverage;
             if (interpolationEnabled) {
@@ -1118,8 +1215,7 @@ public class CoverageStack extends AbstractCoverage {
          */
         final CoordinateReferenceSystem sourceCRS;
         assert debugEquals((sourceCRS = coverage.getCoordinateReferenceSystem()),
-                CRS.getOrCreateSubCRS(crs, 0, sourceCRS.getCoordinateSystem().getDimension())) : sourceCRS;
-        assert coverage.getSampleDimensions().size() == numSampleDimensions : coverage;
+                CRS.getOrCreateSubCRS(getCoordinateReferenceSystem(), 0, sourceCRS.getCoordinateSystem().getDimension())) : sourceCRS;
         return coverage;
     }
 
@@ -1150,8 +1246,8 @@ public class CoverageStack extends AbstractCoverage {
         });
         final NumberRange<?> lowerRange = lowerElement.getZRange();
         final NumberRange<?> upperRange = upperElement.getZRange();
-        final Coverage lower = load(lowerElement);
-        final Coverage upper = load(upperElement);
+        final GridCoverage lower = load(lowerElement);
+        final GridCoverage upper = load(upperElement);
 
         this.lower      = lower; // Set only when BOTH images are OK.
         this.upper      = upper;
@@ -1279,7 +1375,7 @@ public class CoverageStack extends AbstractCoverage {
      * The number of dimensions must be equals to the dimension of this coverage, or
      * the dimension of this coverage minus one.
      */
-    private DirectPosition reduce(DirectPosition coord, final Coverage coverage) {
+    private DirectPosition reduce(DirectPosition coord, final GridCoverage coverage) {
         assert Thread.holdsLock(this);
         final CoordinateReferenceSystem targetCRS = coverage.getCoordinateReferenceSystem();
         final int dimension = targetCRS.getCoordinateSystem().getDimension();
@@ -1292,7 +1388,7 @@ public class CoverageStack extends AbstractCoverage {
             }
             coord = reducedPosition;
         } else {
-            assert debugEquals(crs, targetCRS) : targetCRS;
+            assert debugEquals(getCoordinateReferenceSystem(), targetCRS) : targetCRS;
         }
         return coord;
     }
@@ -1329,6 +1425,7 @@ public class CoverageStack extends AbstractCoverage {
         final double z = coord.getOrdinate(zDimension);
         if (!seek(z)) {
             // Missing data
+            final int numSampleDimensions = getSampleDimensions().size();
             if (dest == null) {
                 dest = new boolean[numSampleDimensions];
             } else {
@@ -1340,7 +1437,7 @@ public class CoverageStack extends AbstractCoverage {
             return lower.evaluate(reduce(coord, lower), dest);
         }
         assert !(z<lowerZ || z>upperZ) : z;   // Uses !(...) in order to accepts NaN.
-        final Coverage coverage = (z >= 0.5*(lowerZ + upperZ)) ? upper : lower;
+        final GridCoverage coverage = (z >= 0.5*(lowerZ + upperZ)) ? upper : lower;
         return coverage.evaluate(reduce(coord, coverage), dest);
     }
 
@@ -1360,6 +1457,7 @@ public class CoverageStack extends AbstractCoverage {
         final double z = coord.getOrdinate(zDimension);
         if (!seek(z)) {
             // Missing data
+            final int numSampleDimensions = getSampleDimensions().size();
             if (dest == null) {
                 dest = new byte[numSampleDimensions];
             } else {
@@ -1396,6 +1494,7 @@ public class CoverageStack extends AbstractCoverage {
         final double z = coord.getOrdinate(zDimension);
         if (!seek(z)) {
             // Missing data
+            final int numSampleDimensions = getSampleDimensions().size();
             if (dest == null) {
                 dest = new int[numSampleDimensions];
             } else {
@@ -1432,6 +1531,7 @@ public class CoverageStack extends AbstractCoverage {
         final double z = coord.getOrdinate(zDimension);
         if (!seek(z)) {
             // Missing data
+            final int numSampleDimensions = getSampleDimensions().size();
             if (dest == null) {
                 dest = new float[numSampleDimensions];
             }
@@ -1483,6 +1583,7 @@ public class CoverageStack extends AbstractCoverage {
         final double z = coord.getOrdinate(zDimension);
         if (!seek(z)) {
             // Missing data
+            final int numSampleDimensions = getSampleDimensions().size();
             if (dest == null) {
                 dest = new double[numSampleDimensions];
             }
@@ -1538,14 +1639,14 @@ public class CoverageStack extends AbstractCoverage {
      *
      * @since 2.3
      */
-    public synchronized List<Coverage> coveragesAt(final double z) {
+    public synchronized List<GridCoverage> coveragesAt(final double z) {
         if (!seek(z)) {
             return Collections.emptyList();
         }
         if (lower == upper) {
             return Collections.singletonList(lower);
         }
-        return Arrays.asList(new Coverage[] {lower, upper});
+        return Arrays.asList(new GridCoverage[] {lower, upper});
     }
 
     /**
@@ -1571,7 +1672,7 @@ public class CoverageStack extends AbstractCoverage {
      * @param index Index in {@link #elements} for the image to load.
      * @return Coverage in specified index.
      */
-    public synchronized Coverage coverageAtIndex(int index) {
+    public synchronized GridCoverage coverageAtIndex(int index) {
         try {
             load(index);
             return lower;
@@ -1663,7 +1764,7 @@ public class CoverageStack extends AbstractCoverage {
     private void logLoading(final short key, final Object[] parameters) {
         final Locale locale = null;
         final LogRecord record = Vocabulary.getResources(locale).getLogRecord(Level.INFO, key);
-        record.setSourceClassName(CoverageStack.class.getName());
+        record.setSourceClassName(GridCoverageStack.class.getName());
         record.setSourceMethodName("evaluate");
         record.setParameters(parameters);
         if (readListener == null) {
@@ -1701,4 +1802,10 @@ public class CoverageStack extends AbstractCoverage {
             }
         }
     }
+
+    @Override
+    public List<GridCoverage> getSources() {
+        return Collections.emptyList();
+    }
+
 }

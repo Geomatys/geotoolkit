@@ -17,18 +17,16 @@
  */
 package org.geotoolkit.coverage.processing;
 
-import java.util.Map;
-import java.util.Locale;
 import java.util.Arrays;
-import java.util.TreeMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
-
-import org.geotoolkit.coverage.Coverage;
-import org.opengis.parameter.ParameterValueGroup;
-
+import java.util.TreeMap;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.coverage.CoverageReferences;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.parameter.Parameters;
+import org.opengis.parameter.ParameterValueGroup;
 
 
 /**
@@ -78,8 +76,8 @@ final class CachedOperationParameters {
             Object value = entry.getValue();
             if (value != null) {
                 hashCode = 31*hashCode + Utilities.deepHashCode(value);
-                if (value instanceof Coverage) {
-                    value = CoverageReferences.DEFAULT.reference((Coverage) value);
+                if (value instanceof GridCoverage) {
+                    value = CoverageReferences.DEFAULT.reference((GridCoverage) value);
                 }
             }
             hashCode = 7*hashCode + name.hashCode();

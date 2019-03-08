@@ -16,19 +16,19 @@
  */
 package org.geotoolkit.db.dialect;
 
-import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
-import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Version;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.coverage.Coverage;
+import org.geotoolkit.feature.SingleAttributeTypeBuilder;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -113,7 +113,7 @@ public interface SQLDialect {
 
     void encodeGeometryValue(StringBuilder sql, Geometry value, int srid) throws DataStoreException;
 
-    void encodeCoverageValue(StringBuilder sql, Coverage value) throws DataStoreException;
+    void encodeCoverageValue(StringBuilder sql, GridCoverage value) throws DataStoreException;
 
     void encodePrimaryKey(StringBuilder sql, Class binding, String sqlType);
 
@@ -153,13 +153,13 @@ public interface SQLDialect {
     Geometry decodeGeometryValue(AttributeType descriptor, ResultSet rs,
         String column) throws IOException, SQLException;
 
-    Coverage decodeCoverageValue(AttributeType descriptor, ResultSet rs,
+    GridCoverage decodeCoverageValue(AttributeType descriptor, ResultSet rs,
         String column) throws IOException, SQLException;
 
     Geometry decodeGeometryValue(AttributeType descriptor, ResultSet rs,
         int column) throws IOException, SQLException;
 
-    Coverage decodeCoverageValue(AttributeType descriptor, ResultSet rs,
+    GridCoverage decodeCoverageValue(AttributeType descriptor, ResultSet rs,
         int column) throws IOException, SQLException;
 
 

@@ -24,18 +24,18 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
-import org.geotoolkit.coverage.Coverage;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
@@ -87,7 +87,7 @@ public class MergeTest extends org.geotoolkit.test.TestBase {
         penv.setRange(1, -45, 45);
 
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();
-        params.parameter("coverages").setValue(new Coverage[]{inCoverage1,inCoverage2});
+        params.parameter("coverages").setValue(new GridCoverage[]{inCoverage1,inCoverage2});
         params.parameter("envelope").setValue(penv);
         params.parameter("resolution").setValue(1);
 

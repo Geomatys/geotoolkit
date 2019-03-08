@@ -21,7 +21,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.GridCoverageStack;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;

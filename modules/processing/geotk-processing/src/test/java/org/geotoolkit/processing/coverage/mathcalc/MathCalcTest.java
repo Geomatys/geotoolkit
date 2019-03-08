@@ -30,18 +30,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.Coverage;
-import org.geotoolkit.coverage.GridCoverageStack;
-import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
@@ -102,7 +101,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
 
         //run math calc process
         final MathCalcProcess process = new MathCalcProcess(
-                new Coverage[]{baseCoverage},
+                new GridCoverage[]{baseCoverage},
                 "A",
                 new String[]{"A"},
                 outRef);
@@ -155,7 +154,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
 
         //run math calc process
         final MathCalcProcess process = new MathCalcProcess(
-                new Coverage[]{baseCoverage},
+                new GridCoverage[]{baseCoverage},
                 "A+10",
                 new String[]{"A"},
                 outRef);
@@ -209,7 +208,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
 
         //run math calc process
         final MathCalcProcess process = new MathCalcProcess(
-                new Coverage[]{baseCoverage1, baseCoverage2},
+                new GridCoverage[]{baseCoverage1, baseCoverage2},
                 "(A+B)*5",
                 new String[]{"A","B"},
                 outRef);
@@ -290,7 +289,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
 
         //run math calc process
         final MathCalcProcess process = new MathCalcProcess(
-                new Coverage[]{baseCoverage1, baseCoverage2},
+                new GridCoverage[]{baseCoverage1, baseCoverage2},
                 "(A+B)*5",
                 new String[]{"A","B"},
                 outRef);

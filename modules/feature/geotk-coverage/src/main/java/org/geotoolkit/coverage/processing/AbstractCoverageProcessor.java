@@ -20,25 +20,23 @@
  */
 package org.geotoolkit.coverage.processing;
 
-import java.util.Locale;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.logging.LogRecord;
-
-import org.geotoolkit.coverage.Coverage;
+import java.util.logging.Logger;
+import org.apache.sis.util.Localized;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.Interpolator2D;
+import org.geotoolkit.factory.Factory;
+import org.geotoolkit.image.internal.ImageUtilities;
+import org.geotoolkit.resources.Loggings;
+import org.geotoolkit.resources.Vocabulary;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
-
-import org.geotoolkit.factory.Factory;
-import org.geotoolkit.coverage.AbstractCoverage;
-import org.geotoolkit.coverage.grid.Interpolator2D;
-import org.geotoolkit.resources.Loggings;
-import org.geotoolkit.resources.Vocabulary;
-import org.apache.sis.util.logging.Logging;
-import org.apache.sis.util.Localized;
-import org.geotoolkit.image.internal.ImageUtilities;
 
 
 /**
@@ -127,7 +125,7 @@ public abstract class AbstractCoverageProcessor extends Factory implements Local
      * @throws OperationNotFoundException if there is no operation for the parameter group name.
      * @throws CoverageProcessingException if the operation can not be executed.
      */
-    public abstract Coverage doOperation(final ParameterValueGroup parameters)
+    public abstract GridCoverage doOperation(final ParameterValueGroup parameters)
             throws OperationNotFoundException, CoverageProcessingException;
 
     /**
@@ -151,8 +149,8 @@ public abstract class AbstractCoverageProcessor extends Factory implements Local
      * @param operationName the operation name.
      * @param fromCache {@code true} if the result has been fetch from the cache.
      */
-    final void log(final Coverage source,
-                   final Coverage result,
+    final void log(final GridCoverage source,
+                   final GridCoverage result,
                    final String   operationName,
                    final boolean  fromCache)
     {
@@ -177,9 +175,9 @@ public abstract class AbstractCoverageProcessor extends Factory implements Local
     /**
      * Returns the primary source coverage from the specified parameters, or {@code null} if none.
      */
-    static Coverage getPrimarySource(final ParameterValueGroup parameters) {
+    static GridCoverage getPrimarySource(final ParameterValueGroup parameters) {
         try {
-            return (Coverage) parameters.parameter("Source").getValue();
+            return (GridCoverage) parameters.parameter("Source").getValue();
         } catch (ParameterNotFoundException exception) {
             /*
              * "Source" parameter may not exists. Conservatively
@@ -199,9 +197,9 @@ public abstract class AbstractCoverageProcessor extends Factory implements Local
     /**
      * Returns the coverage name in the specified locale.
      */
-    private static String getName(final Coverage coverage, final Locale locale) {
-        if (coverage instanceof AbstractCoverage) {
-            final InternationalString name = ((AbstractCoverage) coverage).getName();
+    private static String getName(final GridCoverage coverage, final Locale locale) {
+        if (coverage instanceof GridCoverage) {
+            final InternationalString name = ((GridCoverage) coverage).getName();
             if (name != null) {
                 return name.toString(locale);
             }

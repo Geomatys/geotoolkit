@@ -16,17 +16,6 @@
  */
 package org.geotoolkit.db.postgres;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.io.ParseException;
-import org.locationtech.jts.io.WKBReader;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
@@ -44,12 +33,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import net.iharder.Base64;
-import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.metadata.iso.citation.Citations;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.Version;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.wkb.WKBRasterReader;
 import org.geotoolkit.coverage.wkb.WKBRasterWriter;
@@ -63,6 +58,8 @@ import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.MetaDataConstants;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
 import org.geotoolkit.filter.capability.DefaultComparisonOperators;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
@@ -75,10 +72,21 @@ import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
 import org.geotoolkit.filter.capability.DefaultTemporalCapabilities;
 import org.geotoolkit.filter.capability.DefaultTemporalOperators;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.IdentifiedObjects;
-import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.coverage.Coverage;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKBReader;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsBetween;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -116,18 +124,10 @@ import org.opengis.filter.spatial.Intersects;
 import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
-import org.apache.sis.referencing.crs.AbstractCRS;
-import org.apache.sis.referencing.cs.AxesConvention;
-import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
-import org.apache.sis.util.Classes;
-import org.opengis.feature.AttributeType;
-import org.opengis.feature.FeatureType;
-import org.opengis.feature.Operation;
-import org.opengis.feature.PropertyType;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 import org.postgresql.jdbc.PgResultSetMetaData;
 import org.postgresql.util.PSQLException;
 
@@ -276,7 +276,7 @@ final class PostgresDialect extends AbstractSQLDialect{
         CLASS_TO_TYPENAME.put(java.util.Date.class, "timestamp");
         CLASS_TO_TYPENAME.put(Timestamp.class, "timestamp");
         CLASS_TO_TYPENAME.put(byte[].class, "blob");
-        CLASS_TO_TYPENAME.put(Coverage.class, "raster");
+        CLASS_TO_TYPENAME.put(GridCoverage.class, "raster");
 
 
         //POSTGIS extension
@@ -296,7 +296,7 @@ final class PostgresDialect extends AbstractSQLDialect{
         TYPENAME_TO_CLASS.put("MULTIPOLYGONM", MultiPolygon.class);
         TYPENAME_TO_CLASS.put("GEOMETRYCOLLECTION", GeometryCollection.class);
         TYPENAME_TO_CLASS.put("GEOMETRYCOLLECTIONM", GeometryCollection.class);
-        TYPENAME_TO_CLASS.put("RASTER", Coverage.class);
+        TYPENAME_TO_CLASS.put("RASTER", GridCoverage.class);
 
         CLASS_TO_TYPENAME.put(Geometry.class, "GEOMETRY");
         CLASS_TO_TYPENAME.put(Point.class, "POINT");
@@ -591,7 +591,7 @@ final class PostgresDialect extends AbstractSQLDialect{
 
         //postgis raster type
         final Class binding = gatt.getValueClass();
-        if(Coverage.class.isAssignableFrom(binding)){
+        if(GridCoverage.class.isAssignableFrom(binding)){
             sql.append("encode(st_asbinary(");
             encodeColumnName(sql, gatt.getName().tip().toString());
             sql.append("),'base64')");
@@ -678,7 +678,7 @@ final class PostgresDialect extends AbstractSQLDialect{
     }
 
     @Override
-    public void encodeCoverageValue(StringBuilder sql, Coverage value) throws DataStoreException {
+    public void encodeCoverageValue(StringBuilder sql, GridCoverage value) throws DataStoreException {
         try{
             final WKBRasterWriter writer = new WKBRasterWriter();
             final byte[] wkbimg = writer.write((GridCoverage2D)value);
@@ -746,7 +746,7 @@ final class PostgresDialect extends AbstractSQLDialect{
                     }
 
                     Class binding = ((AttributeType)gd).getValueClass();
-                    if(Coverage.class.isAssignableFrom(binding)){
+                    if(GridCoverage.class.isAssignableFrom(binding)){
                         //postgis raster type
                         final StringBuilder sb = new StringBuilder();
                         sb.append("select addrasterconstraints('");
@@ -900,7 +900,7 @@ final class PostgresDialect extends AbstractSQLDialect{
 
         //postgis raster type
         if("RASTER".equals(typeName)){
-            atb.setValueClass(Coverage.class);
+            atb.setValueClass(GridCoverage.class);
             return;
         }
 
@@ -1281,7 +1281,7 @@ final class PostgresDialect extends AbstractSQLDialect{
     }
 
     @Override
-    public Coverage decodeCoverageValue(AttributeType descriptor, ResultSet rs, String column) throws IOException, SQLException {
+    public GridCoverage decodeCoverageValue(AttributeType descriptor, ResultSet rs, String column) throws IOException, SQLException {
         byte[] data = rs.getBytes(column);
         try {
             data = Base64.decode(data);
@@ -1294,7 +1294,7 @@ final class PostgresDialect extends AbstractSQLDialect{
     }
 
     @Override
-    public Coverage decodeCoverageValue(AttributeType descriptor, ResultSet rs, int column) throws IOException, SQLException {
+    public GridCoverage decodeCoverageValue(AttributeType descriptor, ResultSet rs, int column) throws IOException, SQLException {
         byte[] data = rs.getBytes(column);
         try {
             data = Base64.decode(data);

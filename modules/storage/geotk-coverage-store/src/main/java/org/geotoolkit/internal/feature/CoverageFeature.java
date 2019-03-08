@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.AbstractAssociation;
@@ -32,12 +33,9 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.AbstractCoverage;
-import org.geotoolkit.coverage.Coverage;
-import org.geotoolkit.coverage.CoverageStack;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -84,7 +82,7 @@ public final class CoverageFeature {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setSuperTypes(TypeConventions.COVERAGE_TYPE);
-        ftb.setName(coverage instanceof AbstractCoverage ? ((AbstractCoverage)coverage).getName() : "Coverage");
+        ftb.setName(coverage instanceof GridCoverage ? ((GridCoverage) coverage).getName() : "Coverage");
         ftb.addAttribute(Polygon.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
         ftb.addAssociation(createRecordType(coverage)).setName(TypeConventions.RANGE_ELEMENTS_PROPERTY).setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
 
@@ -105,10 +103,10 @@ public final class CoverageFeature {
         return ftb.build();
     }
 
-    public static FeatureType createRecordType(Coverage coverage) throws CoverageStoreException {
+    public static FeatureType createRecordType(GridCoverage coverage) throws CoverageStoreException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setSuperTypes(TypeConventions.COVERAGE_RECORD_TYPE);
-        ftb.setName((coverage instanceof AbstractCoverage ? ((AbstractCoverage)coverage).getName() : "") + "Record" );
+        ftb.setName((coverage instanceof GridCoverage ? ((GridCoverage) coverage).getName() : "") + "Record" );
         final CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem();
         final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(crs);
         ftb.addAttribute(Geometry.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs2d).setMinimumOccurs(1).setMaximumOccurs(1).addRole(AttributeRole.DEFAULT_GEOMETRY);
@@ -120,7 +118,7 @@ public final class CoverageFeature {
         }
 
         //use existing sample dimensions
-        final List<? extends SampleDimension> dims = coverage.getSampleDimensions();
+        final List<SampleDimension> dims = coverage.getSampleDimensions();
         if (dims != null && !dims.isEmpty()) {
             for (int i=0,n=dims.size();i<n;i++) {
                 final SampleDimension gsd = dims.get(i);
@@ -131,8 +129,8 @@ public final class CoverageFeature {
         }
 
         //in case of Nd Coverage unstack them.
-        while (coverage instanceof CoverageStack) {
-            coverage = ((CoverageStack)coverage).coverageAtIndex(0);
+        while (coverage instanceof GridCoverageStack) {
+            coverage = ((GridCoverageStack) coverage).coverageAtIndex(0);
         }
 
         if (coverage instanceof GridCoverage2D) {
@@ -217,11 +215,11 @@ public final class CoverageFeature {
         Arrays.fill(res, 1);
         param.setResolution(res);
 
-        Coverage coverage = reader.read(param);
+        GridCoverage coverage = reader.read(param);
 
         //in case of Nd Coverage unstack them.
-        while (coverage instanceof CoverageStack) {
-            coverage = ((CoverageStack)coverage).coverageAtIndex(0);
+        while (coverage instanceof GridCoverageStack) {
+            coverage = ((GridCoverageStack) coverage).coverageAtIndex(0);
         }
 
         if (coverage instanceof GridCoverage2D) {
@@ -349,11 +347,11 @@ public final class CoverageFeature {
 
     }
 
-    private static Iterator<Feature> create(FeatureType recordType, Coverage coverage) {
+    private static Iterator<Feature> create(FeatureType recordType, GridCoverage coverage) {
         if (coverage instanceof GridCoverage2D) {
             return new GridCoverage2DRecordIterator(recordType, (GridCoverage2D) coverage);
-        } else if (coverage instanceof CoverageStack) {
-            return new GridCoverageRecordIterator(recordType, (CoverageStack) coverage);
+        } else if (coverage instanceof GridCoverageStack) {
+            return new GridCoverageRecordIterator(recordType, (GridCoverageStack) coverage);
         } else {
             throw new UnsupportedOperationException("Unsupported coverage type "+coverage.getClass().getName());
         }
@@ -367,7 +365,7 @@ public final class CoverageFeature {
         private Feature next = null;
 
 
-        private GridCoverageRecordIterator(FeatureType recordType, CoverageStack coverage) {
+        private GridCoverageRecordIterator(FeatureType recordType, GridCoverageStack coverage) {
             this.recordType = recordType;
             final int nb = coverage.getStackSize();
             final List<GridCoverage> stack = new ArrayList<>(nb);

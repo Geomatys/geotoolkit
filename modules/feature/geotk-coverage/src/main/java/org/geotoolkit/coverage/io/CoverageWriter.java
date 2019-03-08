@@ -18,7 +18,7 @@
 package org.geotoolkit.coverage.io;
 
 import java.util.concurrent.CancellationException;
-import org.geotoolkit.coverage.Coverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 
 /**
  * Generalized version of the GridCoverageWriter for possible none grid and
@@ -26,7 +26,7 @@ import org.geotoolkit.coverage.Coverage;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface CoverageWriter<T extends Coverage> {
+public interface CoverageWriter<T extends GridCoverage> {
 
     /**
      * Writes a single coverage.

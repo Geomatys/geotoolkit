@@ -23,6 +23,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.List;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.WritablePixelIterator;
@@ -30,11 +31,10 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.Coverage;
-import org.geotoolkit.coverage.CoverageStack;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.SampleDimensionUtils;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -81,8 +81,8 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             if (sampleDimensions == null) {
                 final GridCoverageReadParam param = new GridCoverageReadParam();
                 param.setDeferred(true);
-                Coverage coverage = reader.read(param);
-                sampleDimensions = (List) coverage.getSampleDimensions();
+                GridCoverage coverage = reader.read(param);
+                sampleDimensions = coverage.getSampleDimensions();
             }
 
             empty = new double[sampleDimensions.size()];
@@ -160,7 +160,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         }
 
         final CoverageReader reader = resource.acquireReader();
-        Coverage coverage;
+        GridCoverage coverage;
         try {
             final GridCoverageReadParam param = new GridCoverageReadParam();
             param.setEnvelope(gridGeomNd.getEnvelope());
@@ -202,12 +202,12 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
                 final Process process = desc.createProcess(params);
                 final ParameterValueGroup results = process.call();
-                coverage = (Coverage) results.parameter("result").getValue();
+                coverage = (GridCoverage) results.parameter("result").getValue();
             } catch (ProcessException | NoSuchIdentifierException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
             }
 
-        } else if (coverage instanceof CoverageStack) {
+        } else if (coverage instanceof GridCoverageStack) {
             throw new DataStoreException("Pyramid tile resulted in a Coverage stack from the source coverage, "
                     + "this happens when source coverage has more dimensions then the pyramid. Given source coverage can not be used with this pyramid");
         } else {

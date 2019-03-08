@@ -156,9 +156,9 @@ scan:   for (int i=0,n=dims.size(); i<n; i++) {
                 for (final GridCoverage source : sources) {
                     if (source instanceof GridCoverage2D) {
                         final GridCoverage2D candidate = (GridCoverage2D) source;
-                        if (Objects.equals(coverage.image,            candidate.image)            &&
-                            Objects.equals(coverage.gridGeometry,     candidate.gridGeometry)     &&
-                            Arrays .equals(coverage.sampleDimensions, candidate.sampleDimensions) &&
+                        if (Objects.equals(coverage.image,                 candidate.image)            &&
+                            Objects.equals(coverage.getGridGeometry(),     candidate.getGridGeometry())     &&
+                            Objects.equals(coverage.getSampleDimensions(), candidate.getSampleDimensions()) &&
                             candidate.getViewClass() == viewClass)
                             // The CRS is checked with the GridGeometry2D.
                         {
@@ -631,7 +631,7 @@ testLinear: for (int i=0; i<numBands; i++) {
             logger.log(record);
         }
         final GridCoverage[] sources = new GridCoverage[] {coverage};
-        return new GridCoverage2D(name, view, coverage.gridGeometry, targetBands, sources, null, userHints);
+        return new GridCoverage2D(name, view, coverage.getGridGeometry(), targetBands, sources, null, userHints);
     }
 
     /**

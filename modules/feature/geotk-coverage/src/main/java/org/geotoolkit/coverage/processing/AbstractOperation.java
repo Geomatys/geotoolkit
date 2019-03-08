@@ -20,20 +20,17 @@
  */
 package org.geotoolkit.coverage.processing;
 
-import java.util.Objects;
 import java.io.Serializable;
-
-import org.geotoolkit.coverage.Coverage;
-import org.opengis.parameter.ParameterValueGroup;
+import java.util.Objects;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.apache.sis.util.Classes;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.factory.Hints;
+import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
-
-import org.geotoolkit.factory.Hints;
-import org.apache.sis.util.Classes;
-
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -153,7 +150,7 @@ public abstract class AbstractOperation implements Serializable {
             }
             if (candidate instanceof ParameterDescriptor<?>) {
                 final Class<?> type = ((ParameterDescriptor<?>) candidate).getValueClass();
-                if (Coverage.class.isAssignableFrom(type)) {
+                if (GridCoverage.class.isAssignableFrom(type)) {
                     count++;
                 }
             }
@@ -181,7 +178,7 @@ public abstract class AbstractOperation implements Serializable {
      * @throws IllegalArgumentException If a parameter has an illegal value.
      * @throws CoverageProcessingException if the operation can't be applied.
      */
-    protected abstract Coverage doOperation(final ParameterValueGroup parameters, final Hints hints)
+    protected abstract GridCoverage doOperation(final ParameterValueGroup parameters, final Hints hints)
             throws IllegalArgumentException, CoverageProcessingException;
 
     /**

@@ -24,7 +24,7 @@ import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.coverage.Coverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
@@ -182,7 +182,7 @@ public class ResampleDescriptor extends AbstractProcessDescriptor {
     /**
      * Output coverage result of the process execution.
      */
-    public static final ParameterDescriptor<Coverage> OUT_COVERAGE;
+    public static final ParameterDescriptor<GridCoverage> OUT_COVERAGE;
 
     /**
      * Output parameters descriptor of this process.
@@ -204,7 +204,7 @@ public class ResampleDescriptor extends AbstractProcessDescriptor {
         propertiesOut.put(IdentifiedObject.ALIAS_KEY, ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_resample_outCoverage));
         propertiesOut.put(IdentifiedObject.REMARKS_KEY, ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_resample_outCoverageDesc));
         OUT_COVERAGE = new DefaultParameterDescriptor<>(
-                propertiesOut, Coverage.class, null, null, null, null, null, true);
+                propertiesOut, GridCoverage.class, null, null, null, null, null, true);
 
         OUTPUT_DESC  = new ParameterBuilder().addName(NAME + "OutputParameters").createGroup(OUT_COVERAGE);
     }

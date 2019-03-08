@@ -21,18 +21,18 @@ import java.io.File;
 import java.net.URL;
 import java.util.logging.Level;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
-import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-import org.opengis.parameter.ParameterValueGroup;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.Coverage;
-import org.opengis.metadata.Metadata;
-import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.opengis.metadata.Metadata;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
@@ -87,7 +87,7 @@ public class ExtractionProcess extends AbstractProcess {
             }
         }
         //Coverage case is not supported yet
-        if (input instanceof Coverage) {
+        if (input instanceof GridCoverage) {
             //TODO : add a convenience method into coverage interface to get metadata
         } else if (input instanceof GridCoverageResource) {
             try {

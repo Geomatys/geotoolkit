@@ -19,12 +19,12 @@ package org.geotoolkit.processing.coverage.straighten;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.coverage.Coverage;
-import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -52,11 +52,11 @@ public class StraightenProcess extends AbstractProcess {
      *
      * @param coverage coverage to process
      */
-    public StraightenProcess(Coverage coverage){
+    public StraightenProcess(GridCoverage coverage){
         super(StraightenDescriptor.INSTANCE, asParameters(coverage));
     }
 
-    private static ParameterValueGroup asParameters(Coverage coverage){
+    private static ParameterValueGroup asParameters(GridCoverage coverage){
         final Parameters params = Parameters.castOrWrap(StraightenDescriptor.INPUT_DESC.createValue());
         params.getOrCreate(StraightenDescriptor.COVERAGE_IN).setValue(coverage);
         return params;
@@ -68,9 +68,9 @@ public class StraightenProcess extends AbstractProcess {
      * @return straighten coverage
      * @throws ProcessException
      */
-    public Coverage executeNow() throws ProcessException {
+    public GridCoverage executeNow() throws ProcessException {
         execute();
-        return (Coverage) outputParameters.parameter(StraightenDescriptor.COVERAGE_OUT.getName().getCode()).getValue();
+        return (GridCoverage) outputParameters.parameter(StraightenDescriptor.COVERAGE_OUT.getName().getCode()).getValue();
     }
 
     /**

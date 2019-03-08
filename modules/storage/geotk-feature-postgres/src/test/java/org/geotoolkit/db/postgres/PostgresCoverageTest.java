@@ -25,6 +25,7 @@ import java.util.Properties;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.PARAMETERS_DESCRIPTOR;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.version.VersionControl;
@@ -34,7 +35,6 @@ import static org.junit.Assert.*;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.geotoolkit.coverage.Coverage;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
@@ -116,7 +116,7 @@ public class PostgresCoverageTest extends org.geotoolkit.test.TestBase {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("testCovereage");
-        ftb.addAttribute(Coverage.class).setName("coverage");
+        ftb.addAttribute(GridCoverage.class).setName("coverage");
         final FeatureType covType = ftb.build();
 
         store.createFeatureType(covType);
@@ -132,7 +132,7 @@ public class PostgresCoverageTest extends org.geotoolkit.test.TestBase {
         PropertyType desc;
         desc = descs.get(index++);
         assertEquals("coverage", desc.getName().tip().toString());
-        assertEquals(Coverage.class, ((AttributeType)desc).getValueClass());
+        assertEquals(GridCoverage.class, ((AttributeType)desc).getValueClass());
 
     }
 

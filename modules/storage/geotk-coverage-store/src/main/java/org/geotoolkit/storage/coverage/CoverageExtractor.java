@@ -19,7 +19,7 @@ package org.geotoolkit.storage.coverage;
 
 import java.util.*;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.coverage.GridCoverageStack;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;

@@ -19,15 +19,13 @@ package org.geotoolkit.coverage;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.geotoolkit.coverage.Coverage;
-
-import org.geotoolkit.resources.Errors;
+import java.util.concurrent.ConcurrentMap;
 import org.apache.sis.util.Disposable;
 import org.apache.sis.util.NullArgumentException;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -93,7 +91,7 @@ public class CoverageReferences {
      * @param  coverage The coverage to reference.
      * @return A unique weak reference to the specified coverage.
      */
-    public Reference<Coverage> reference(final Coverage coverage) {
+    public Reference<GridCoverage> reference(final GridCoverage coverage) {
         if (coverage == null) {
             throw new NullArgumentException(Errors.format(Errors.Keys.NullArgument_1, "coverage"));
         }
@@ -128,12 +126,12 @@ public class CoverageReferences {
         /**
          * The coverage to test for equality.
          */
-        private final Coverage coverage;
+        private final GridCoverage coverage;
 
         /**
          * Creates a new lookup key for the given coverage.
          */
-        Lookup(final Coverage coverage) {
+        Lookup(final GridCoverage coverage) {
             this.coverage = coverage;
         }
 
@@ -176,7 +174,7 @@ public class CoverageReferences {
      * @since 2.1
      * @module
      */
-    private final class Ref extends WeakReference<Coverage> implements Disposable {
+    private final class Ref extends WeakReference<GridCoverage> implements Disposable {
         /**
          * Hash code value, saved at construction time before
          * the coverage reference is nullified.
@@ -186,7 +184,7 @@ public class CoverageReferences {
         /**
          * Constructs a reference to the specified coverage.
          */
-        Ref(final Coverage coverage) {
+        Ref(final GridCoverage coverage) {
             super(coverage, ReferenceQueueConsumer.DEFAULT.queue);
             hash = System.identityHashCode(coverage);
         }
@@ -215,7 +213,7 @@ public class CoverageReferences {
                 return ((Lookup) object).coverage == get();
             }
             if (object instanceof Ref) {
-                final Coverage coverage = get();
+                final GridCoverage coverage = get();
                 if (coverage != null) {
                     return coverage == ((Ref) object).get();
                 }

@@ -21,11 +21,11 @@ import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.util.Hashtable;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.Coverage;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.SampleDimensionUtils;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.image.BufferedImages;
@@ -51,11 +51,11 @@ public class ReformatProcess extends AbstractProcess {
      * @param coverage coverage to process
      * @param dataType new output data type
      */
-    public ReformatProcess(Coverage coverage, Integer dataType){
+    public ReformatProcess(GridCoverage coverage, Integer dataType){
         super(ReformatDescriptor.INSTANCE, asParameters(coverage,dataType));
     }
 
-    private static ParameterValueGroup asParameters(Coverage coverage, Integer dataType){
+    private static ParameterValueGroup asParameters(GridCoverage coverage, Integer dataType){
         final Parameters params = Parameters.castOrWrap(ReformatDescriptor.INPUT_DESC.createValue());
         params.getOrCreate(ReformatDescriptor.IN_COVERAGE).setValue(coverage);
         params.getOrCreate(ReformatDescriptor.IN_DATATYPE).setValue(dataType);
@@ -68,9 +68,9 @@ public class ReformatProcess extends AbstractProcess {
      * @return reformatted coverage
      * @throws ProcessException
      */
-    public Coverage executeNow() throws ProcessException {
+    public GridCoverage executeNow() throws ProcessException {
         execute();
-        return (Coverage) outputParameters.parameter(ReformatDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
+        return (GridCoverage) outputParameters.parameter(ReformatDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
     }
 
     @Override

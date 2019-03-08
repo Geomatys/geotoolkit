@@ -31,7 +31,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.operation.matrix.Matrix4;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.geotoolkit.coverage.GridCoverageStack;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.SampleDimensionBuilder;
 import org.geotoolkit.coverage.grid.GridCoverage;

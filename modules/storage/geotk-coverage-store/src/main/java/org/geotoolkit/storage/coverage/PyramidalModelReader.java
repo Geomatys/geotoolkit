@@ -33,6 +33,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
@@ -40,9 +41,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.CoverageStack;
-import org.geotoolkit.coverage.GridCoverageStack;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
 import org.geotoolkit.coverage.grid.*;
@@ -594,7 +592,7 @@ public class PyramidalModelReader extends GridCoverageReader{
         final CoordinateSystem cs = crs.getCoordinateSystem();
         int nbDim = cs.getDimension();
 
-        final List<CoverageStack.Element> elements = new ArrayList<>();
+        final List<GridCoverageStack.Element> elements = new ArrayList<>();
         final List<Entry<Double,Object>> entries = new ArrayList<>(groups.entrySet());
 
         for(int k=0,kn=entries.size();k<kn;k++){
@@ -647,7 +645,7 @@ public class PyramidalModelReader extends GridCoverageReader{
                 max = z + (nextD - z) / 2.0;
             }
 
-            elements.add(new CoverageStack.Adapter(subCoverage, NumberRange.create(min, true, max, false), z));
+            elements.add(new GridCoverageStack.Adapter(subCoverage, NumberRange.create(min, true, max, false), z));
         }
 
         try {

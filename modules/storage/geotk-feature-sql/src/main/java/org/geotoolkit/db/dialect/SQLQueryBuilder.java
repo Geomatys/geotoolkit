@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.db.dialect;
 
-import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -24,22 +23,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.db.DBRelationOperation;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.db.reverse.RelationMetaModel;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.filter.visitor.FIDFixVisitor;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.db.DBRelationOperation;
-import org.geotoolkit.coverage.Coverage;
-import org.opengis.util.GenericName;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
@@ -51,6 +50,7 @@ import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
 
 /**
  * SQL query builder, rely on dialect to build conform SQL queries.
@@ -211,8 +211,8 @@ public class SQLQueryBuilder {
                     final Geometry g = (Geometry) value;
                     final int srid = getGeometrySRID(g, desc);
                     dialect.encodeGeometryValue(sqlValues, g, srid);
-                } else if (Coverage.class.isAssignableFrom(binding)) {
-                    final Coverage g = (Coverage) value;
+                } else if (GridCoverage.class.isAssignableFrom(binding)) {
+                    final GridCoverage g = (GridCoverage) value;
                     dialect.encodeCoverageValue(sqlValues, g);
                 } else {
                     dialect.encodeValue(sqlValues, value, binding);
