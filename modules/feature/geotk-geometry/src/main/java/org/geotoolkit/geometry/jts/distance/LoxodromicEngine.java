@@ -108,13 +108,13 @@ public class LoxodromicEngine implements ToDoubleBiFunction<Coordinate, Coordina
         final double Δφ = φB - φA;
 
         /* special case : if the segment is aligned on a parallal or a
-             * meridian, we don't need to use complex loxodromic equation. We
-             * can fallback on a simple arc perimeter.
+         * meridian, we don't need to use complex loxodromic equation. We
+         * can fallback on a simple arc perimeter.
          */
         if (-1e-7 < Δλ && Δλ < 1e-7) {
             return meridianDistance(Δφ);
         } else if (-1e-7 < Δφ && Δφ < 1e-7) {
-            return parallalDistance(Δλ, start.y);
+            return parallalDistance(Δλ, φA);
         }
 
         // First, we compute the constant heading
