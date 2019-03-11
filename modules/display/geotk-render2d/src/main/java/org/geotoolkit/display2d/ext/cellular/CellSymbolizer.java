@@ -31,23 +31,22 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.measure.Units;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.se.xml.v110.RuleType;
 import org.geotoolkit.se.xml.v110.SymbolizerType;
 import org.geotoolkit.sld.xml.StyleXmlIO;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.AttributeType;
@@ -207,15 +206,8 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
     }
 
     public static FeatureType buildCellType(GridCoverageResource ref) throws DataStoreException{
-        final GridCoverageReader reader = ref.acquireReader();
-        final FeatureType sft = buildCellType(reader);
-        ref.recycle(reader);
-        return sft;
-    }
-
-    public static FeatureType buildCellType(GridCoverageReader reader) throws DataStoreException{
-        final List<SampleDimension> lst = reader.getSampleDimensions();
-        final GridGeometry gg = reader.getGridGeometry();
+        final List<SampleDimension> lst = ref.getSampleDimensions();
+        final GridGeometry gg = ref.getGridGeometry();
         final CoordinateReferenceSystem crs = gg.getCoordinateReferenceSystem();
         if(lst!=null){
             final String[] names = new String[lst.size()];
@@ -225,10 +217,8 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
             return buildCellType(lst.size(), names, crs);
         }else{
             //we need to find the number of bands by some other way
-            final GridCoverageReadParam param = new GridCoverageReadParam();
-            param.setResolution(gg.getEnvelope().getSpan(0),gg.getEnvelope().getSpan(1));
-            final GridCoverage2D cov = (GridCoverage2D) reader.read(param);
-            final int nbBands = cov.getRenderedImage().getSampleModel().getNumBands();
+            GridCoverage coverage = ref.read(null);
+            int nbBands = coverage.getSampleDimensions().size();
             return buildCellType(nbBands, null, crs);
         }
     }

@@ -30,9 +30,9 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.font.FontAwesomeIcons;
@@ -41,8 +41,6 @@ import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
-import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 
 /**
@@ -97,39 +95,23 @@ public class ExportCoverageItem extends TreeMenuItem {
 
                     if (folder != null) {
 
-                        GridCoverageReader reader = null;
                         ImageCoverageWriter writer = null;
                         try {
-                            final FeatureType baseType = base.getType();
-                            final GenericName baseName = baseType.getName();
-
-                            reader = base.acquireReader();
-                            final GridCoverage coverage = reader.read(null);
-                            base.recycle(reader);
-                            reader = null;
-
+                            final GenericName baseName = base.getIdentifier();
+                            final GridCoverage coverage = base.read(null);
 
                             final GridCoverageWriteParam writeParam = new GridCoverageWriteParam();
                             writeParam.setFormatName("geotiff");
 
                             writer = new ImageCoverageWriter();
                             writer.setOutput(folder.toPath().resolve(baseName+".tiff"));
-                            writer.write(coverage, writeParam);
+                            writer.write((org.geotoolkit.coverage.grid.GridCoverage) coverage, writeParam);
 
                         } catch (DataStoreException ex) {
                             Loggers.DATA.log(Level.WARNING, ex.getMessage(),ex);
                             final Alert alert = new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK);
                             alert.showAndWait();
                         } finally {
-                            if (reader != null) {
-                                try {
-                                    reader.dispose();
-                                } catch (DataStoreException ex) {
-                                    Loggers.DATA.log(Level.WARNING, ex.getMessage(),ex);
-                                    final Alert alert = new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK);
-                                    alert.showAndWait();
-                                }
-                            }
                             if (writer != null) {
                                 try {
                                     writer.dispose();

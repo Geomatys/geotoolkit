@@ -19,11 +19,11 @@ package org.geotoolkit.map;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.coverage.DefaultCoverageResource;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;
@@ -195,6 +195,6 @@ public final class MapBuilder {
      * @return ElevationModel
      */
     public static ElevationModel createElevationModel(final GridCoverageResource ref, final double azimuthAngle, final double altitudeAngle, final double altitudeScale) throws DataStoreException {
-        return new ElevationModel(ref, azimuthAngle, altitudeAngle, altitudeScale);
+        return new ElevationModel((org.geotoolkit.storage.coverage.GridCoverageResource) ref, azimuthAngle, altitudeAngle, altitudeScale);
     }
  }

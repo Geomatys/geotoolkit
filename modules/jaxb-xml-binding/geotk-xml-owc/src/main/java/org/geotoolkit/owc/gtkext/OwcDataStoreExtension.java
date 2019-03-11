@@ -20,10 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBElement;
+import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.data.FeatureCollection;
@@ -39,7 +41,6 @@ import org.geotoolkit.owc.xml.v10.OfferingType;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
@@ -167,10 +168,12 @@ public class OwcDataStoreExtension extends OwcExtension {
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
             final GridCoverageResource covref = cml.getResource();
-            final DataStore store = covref.getOriginator();
-            if(store!=null){
-                final DataStoreProvider factory = store.getProvider();
-                return factory.getOpenParameters().getName().getCode();
+            if (covref instanceof StoreResource) {
+                final DataStore store = ((StoreResource) covref).getOriginator();
+                if (store != null) {
+                    final DataStoreProvider factory = store.getProvider();
+                    return factory.getOpenParameters().getName().getCode();
+                }
             }
         }
         return null;
@@ -189,9 +192,11 @@ public class OwcDataStoreExtension extends OwcExtension {
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
             final GridCoverageResource covref = cml.getResource();
-            final DataStore store = covref.getOriginator();
-            if(store!=null){
-                return store.getOpenParameters();
+            if (covref instanceof StoreResource) {
+                final DataStore store = ((StoreResource) covref).getOriginator();
+                if (store != null) {
+                    return store.getOpenParameters();
+                }
             }
         }
         return null;
@@ -208,7 +213,11 @@ public class OwcDataStoreExtension extends OwcExtension {
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
             final GridCoverageResource covref = cml.getResource();
-            return covref.getIdentifier().toString();
+            try {
+                return covref.getIdentifier().toString();
+            } catch (DataStoreException ex) {
+                return null;
+            }
         }
         return null;
     }

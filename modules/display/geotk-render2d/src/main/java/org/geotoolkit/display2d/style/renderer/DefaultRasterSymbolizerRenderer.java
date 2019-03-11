@@ -44,6 +44,8 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.grid.*;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -78,7 +80,6 @@ import org.geotoolkit.processing.coverage.statistics.Statistics;
 import org.geotoolkit.processing.image.bandselect.BandSelectDescriptor;
 import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
 import org.geotoolkit.referencing.operation.transform.EarthGravitationalModel;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
@@ -469,7 +470,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             //if there is no geophysic, the same coverage is returned
             coverage = hasQuantitativeCategory(coverage) ? coverage.view(ViewType.GEOPHYSICS) : coverage;
 
-            final RenderedImage ri      = coverage.getRenderedImage();
+            final RenderedImage ri = coverage.getRenderedImage();
             final SampleModel sampleMod = ri.getSampleModel();
             final ColorModel riColorModel = ri.getColorModel();
 
@@ -478,15 +479,20 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
              * (which mean index color model with positive colormap array index -> DataBuffer.TYPE_BYTE || DataBuffer.TYPE_USHORT)
              * or if image has already 3 or 4 bands Byte typed.
              */
-            if (!defaultStyleIsNeeded(sampleMod, riColorModel))
+            if (!defaultStyleIsNeeded(sampleMod, riColorModel)) {
                 break recolorCase;
+            }
 
-            final CoverageDescription covRefMetadata = ref.getCoverageDescription();
+            CoverageDescription covRefMetadata = null;
+            if(ref instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
+                covRefMetadata = ((org.geotoolkit.storage.coverage.GridCoverageResource)ref).getCoverageDescription();
+            }
 
             ImageStatistics analyse = null;
 
-            if (covRefMetadata != null)
+            if (covRefMetadata != null) {
                 analyse = ImageStatistics.transform(covRefMetadata);
+            }
 
             // TODO : we should analyze a subset of the entire image instead, to
             // ensure consistency over tiled rendering (cf. OpenLayer/WMS).
@@ -709,35 +715,37 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     final StackTraceElement[] eles = ex.getStackTrace();
                     if(eles.length > 0 && ComponentColorModel.class.getName().equalsIgnoreCase(eles[0].getClassName())){
 
-                        try{
-                            final GridCoverageResource ref = (GridCoverageResource) projectedCoverage.getLayer().getResource();
-                            final GridCoverageReader reader = ref.acquireReader();
-                            final Map<String,Object> analyze = StatisticOp.analyze(reader);
-                            ref.recycle(reader);
-                            final double[] minArray = (double[])analyze.get(StatisticOp.MINIMUM);
-                            final double[] maxArray = (double[])analyze.get(StatisticOp.MAXIMUM);
-                            final double min = findExtremum(minArray, true);
-                            final double max = findExtremum(maxArray, false);
+                        final Resource resource = projectedCoverage.getLayer().getResource();
+                        if (resource instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
+                            try {
+                                final GridCoverageReader reader = ((org.geotoolkit.storage.coverage.GridCoverageResource) resource).acquireReader();
+                                final Map<String,Object> analyze = StatisticOp.analyze(reader);
+                                ((org.geotoolkit.storage.coverage.GridCoverageResource) resource).recycle(reader);
+                                final double[] minArray = (double[])analyze.get(StatisticOp.MINIMUM);
+                                final double[] maxArray = (double[])analyze.get(StatisticOp.MAXIMUM);
+                                final double min = findExtremum(minArray, true);
+                                final double max = findExtremum(maxArray, false);
 
-                            final List<InterpolationPoint> values = new ArrayList<>();
-                            values.add(new DefaultInterpolationPoint(Double.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
-                            values.add(new DefaultInterpolationPoint(min, GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
-                            values.add(new DefaultInterpolationPoint(max, GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
-                            final Literal lookup = StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
-                            final Literal fallback = StyleConstants.DEFAULT_FALLBACK;
-                            final Function function = GO2Utilities.STYLE_FACTORY.interpolateFunction(
-                                    lookup, values, Method.COLOR, Mode.LINEAR, fallback);
-                            final CompatibleColorModel model = new CompatibleColorModel(img.getColorModel().getPixelSize(), function);
-                            final ImageLayout layout = new ImageLayout().setColorModel(model);
-                            img = new NullOpImage(img, layout, null, OpImage.OP_COMPUTE_BOUND);
-                            g2d.drawRenderedImage(img, (AffineTransform)trs2D);
-                            dataRendered = true;
-                        }catch(Exception e){
-                            //plenty of errors can happen when painting an image
-                            monitor.exceptionOccured(e, Level.WARNING);
+                                final List<InterpolationPoint> values = new ArrayList<>();
+                                values.add(new DefaultInterpolationPoint(Double.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
+                                values.add(new DefaultInterpolationPoint(min, GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
+                                values.add(new DefaultInterpolationPoint(max, GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
+                                final Literal lookup = StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
+                                final Literal fallback = StyleConstants.DEFAULT_FALLBACK;
+                                final Function function = GO2Utilities.STYLE_FACTORY.interpolateFunction(
+                                        lookup, values, Method.COLOR, Mode.LINEAR, fallback);
+                                final CompatibleColorModel model = new CompatibleColorModel(img.getColorModel().getPixelSize(), function);
+                                final ImageLayout layout = new ImageLayout().setColorModel(model);
+                                img = new NullOpImage(img, layout, null, OpImage.OP_COMPUTE_BOUND);
+                                g2d.drawRenderedImage(img, (AffineTransform)trs2D);
+                                dataRendered = true;
+                            } catch(Exception e) {
+                                //plenty of errors can happen when painting an image
+                                monitor.exceptionOccured(e, Level.WARNING);
 
-                            //raise the original error
-                            monitor.exceptionOccured(ex, Level.WARNING);
+                                //raise the original error
+                                monitor.exceptionOccured(ex, Level.WARNING);
+                            }
                         }
                     } else {
                         //plenty of errors can happen when painting an image

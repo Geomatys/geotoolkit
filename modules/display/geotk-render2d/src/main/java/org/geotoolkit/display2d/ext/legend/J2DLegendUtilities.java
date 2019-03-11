@@ -32,6 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.BackgroundUtilities;
@@ -41,17 +45,13 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
-import org.apache.sis.util.logging.Logging;
-import org.opengis.util.GenericName;
 import org.opengis.style.Description;
 import org.opengis.style.Rule;
+import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Utility class to render legend using a provided template.
@@ -234,7 +234,12 @@ public class J2DLegendUtilities {
             if (layer instanceof DefaultCoverageMapLayer) {
                 final DefaultCoverageMapLayer covLayer = (DefaultCoverageMapLayer)layer;
                 // Get the image from the ones previously stored, to not resend a get legend graphic request.
-                final BufferedImage image = legendResults.get(covLayer.getResource().getIdentifier().tip().toString());
+                BufferedImage image = null;
+                try {
+                    image = legendResults.get(covLayer.getResource().getIdentifier().tip().toString());
+                } catch (DataStoreException ex) {
+                    //do nothing
+                }
                 if (image == null) {
                     break wmscase;
                 }
@@ -513,9 +518,11 @@ public class J2DLegendUtilities {
                     continue;
                 }
                 // try first to retrieve the legend directly from the coverage reference.
-                BufferedImage image;
+                BufferedImage image = null;
                 try {
-                    image = (BufferedImage) covRef.getLegend();
+                    if (covRef instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
+                        image = (BufferedImage) ((org.geotoolkit.storage.coverage.GridCoverageResource) covRef).getLegend();
+                    }
                     if (image != null) {
                         toSet.height += image.getHeight();
                         if (toSet.width < image.getWidth()) {

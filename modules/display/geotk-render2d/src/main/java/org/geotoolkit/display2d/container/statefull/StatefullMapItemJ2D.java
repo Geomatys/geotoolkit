@@ -24,10 +24,11 @@ import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Level;
 import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.VisitFilter;
-import org.geotoolkit.display.primitive.SceneNode;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.display.SearchArea;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.primitive.SceneNode;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
@@ -36,11 +37,10 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.ItemListener;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
