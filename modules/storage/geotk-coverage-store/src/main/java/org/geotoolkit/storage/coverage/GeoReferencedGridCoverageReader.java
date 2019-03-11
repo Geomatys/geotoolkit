@@ -34,10 +34,10 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
+import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.Envelope;
@@ -56,7 +56,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader {
+public abstract class GeoReferencedGridCoverageReader extends AbstractGridCoverageReader {
 
     protected final GridCoverageResource ref;
 

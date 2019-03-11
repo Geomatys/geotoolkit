@@ -43,12 +43,12 @@ import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.StorageEvent;
 import org.opengis.metadata.Metadata;
+import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -121,10 +121,10 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
         for (final GridCoverageResource ref : refs) {
             final GridCoverageReader reader = ref.acquireReader();
-            final SpatialMetadata md;
+            final Metadata md;
             final GridGeometry gg;
             try {
-                md = reader.getCoverageMetadata();
+                md = reader.getMetadata();
                 gg = ref.getGridGeometry();
                 ref.recycle(reader);
             } catch (Exception e) {
@@ -137,10 +137,12 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
                 geometries.put(ref.getIdentifier(), gg);
             }
 
-            if (md != null) {
-                final CoverageDescription cd = md.getInstanceForType(CoverageDescription.class); // ImageDescription
-                if (cd != null)
-                    rootMd.getContentInfo().add(cd);
+            if (md != null && md.getContentInfo() != null) {
+                for (ContentInformation ci : md.getContentInfo()) {
+                    if (ci instanceof CoverageDescription) {
+                        rootMd.getContentInfo().add(ci);
+                    }
+                }
             }
         }
 

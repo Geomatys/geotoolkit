@@ -57,7 +57,7 @@ import org.opengis.referencing.operation.MathTransform;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class AmendedCoverageResource implements Resource,GridCoverageResource{
+public class AmendedCoverageResource implements Resource, GridCoverageResource{
 
     protected final Set<ChangeListener> listeners = new HashSet<>();
     protected final GridCoverageResource ref;

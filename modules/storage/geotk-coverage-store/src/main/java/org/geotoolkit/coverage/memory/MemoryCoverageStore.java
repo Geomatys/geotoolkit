@@ -23,15 +23,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
+import org.geotoolkit.coverage.io.AbstractGridCoverageWriter;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -167,7 +169,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
 
     }
 
-    private static class MemoryCoverageReader extends GridCoverageReader {
+    private static class MemoryCoverageReader extends AbstractGridCoverageReader {
 
         private final MemoryCoverageResource ref;
 
@@ -196,7 +198,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
         }
     }
 
-    private static class MemoryCoverageWriter extends GridCoverageWriter{
+    private static class MemoryCoverageWriter extends AbstractGridCoverageWriter {
 
         private final MemoryCoverageResource ref;
 

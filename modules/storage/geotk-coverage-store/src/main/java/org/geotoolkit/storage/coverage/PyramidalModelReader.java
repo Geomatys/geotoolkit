@@ -44,9 +44,9 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
 import org.geotoolkit.coverage.grid.*;
+import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.MultiResolutionModel;
 import org.geotoolkit.data.multires.Pyramids;
@@ -73,7 +73,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class PyramidalModelReader extends GridCoverageReader{
+public class PyramidalModelReader extends AbstractGridCoverageReader{
 
     private GridCoverageResource ref;
     private final CoverageFinder coverageFinder;

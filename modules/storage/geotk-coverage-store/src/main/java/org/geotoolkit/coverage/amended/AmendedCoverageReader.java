@@ -27,6 +27,7 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -45,7 +46,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class AmendedCoverageReader extends GridCoverageReader {
+public class AmendedCoverageReader extends AbstractGridCoverageReader {
 
     private final AmendedCoverageResource ref;
     private final GridCoverageReader reader;

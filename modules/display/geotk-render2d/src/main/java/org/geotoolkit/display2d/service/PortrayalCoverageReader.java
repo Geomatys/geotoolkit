@@ -22,16 +22,16 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -51,7 +51,7 @@ import org.opengis.util.NameSpace;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class PortrayalCoverageReader extends GridCoverageReader {
+public class PortrayalCoverageReader extends AbstractGridCoverageReader {
 
     private final SceneDef scene;
     private final GenericName name;

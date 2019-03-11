@@ -355,10 +355,15 @@ public class ImageReaderAdapter extends SpatialImageReader {
      */
     @Override
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
-        try {
-            return (imageIndex < 0) ? reader.getStreamMetadata() : reader.getCoverageMetadata();
-        } catch (DataStoreException e) {
-            throw convert(e);
+        if (reader instanceof ImageCoverageReader) {
+            ImageCoverageReader icr = (ImageCoverageReader) reader;
+            try {
+                return (imageIndex < 0) ? icr.getStreamMetadata() : icr.getCoverageMetadata();
+            } catch (DataStoreException e) {
+                throw convert(e);
+            }
+        } else {
+            return null;
         }
     }
 

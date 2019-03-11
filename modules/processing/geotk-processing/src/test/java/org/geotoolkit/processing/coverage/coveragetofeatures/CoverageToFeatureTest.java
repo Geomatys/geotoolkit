@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -30,10 +31,10 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.iso.Names;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -102,58 +103,6 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         final Collection<Feature> featureListOut = (Collection<Feature>) proc.call().parameter("feature_out").getValue();
 
         final List<Feature> featureListResult = (List<Feature>) buildFCResultPixelCenter();
-
-
-        assertEquals(featureListResult.get(0).getType(), featureListOut.iterator().next().getType());
-        assertEquals(featureListOut.size(), featureListResult.size());
-
-        final Iterator<Feature> iteratorOut = featureListOut.iterator();
-        final Iterator<Feature> iteratorResult = featureListResult.iterator();
-
-        final ArrayList<Geometry> geomsOut = new ArrayList<>();
-        int itOut = 0;
-        while (iteratorOut.hasNext()) {
-            Feature featureOut = iteratorOut.next();
-            geomsOut.add((Geometry) featureOut.getPropertyValue("cellgeom"));
-            geomsOut.add((Geometry) featureOut.getPropertyValue("position"));
-        }
-        final ArrayList<Geometry> geomsResult = new ArrayList<>();
-        int itResult = 0;
-        while (iteratorResult.hasNext()) {
-            Feature featureResult = iteratorResult.next();
-            geomsResult.add((Geometry) featureResult.getPropertyValue("cellgeom"));
-            geomsResult.add((Geometry) featureResult.getPropertyValue("position"));
-        }
-        assertEquals(geomsResult.size(), geomsOut.size());
-        for (int i = 0; i < geomsResult.size(); i++) {
-            Geometry gOut = geomsOut.get(i);
-            Geometry gResult = geomsResult.get(i);
-            assertArrayEquals(gResult.getCoordinates(), gOut.getCoordinates());
-        }
-    }
-
-    /**
-     * Test coverageToFeature process with a PixelInCell.CELL_CORNER coverage
-     * @throws NoSuchAuthorityCodeException
-     * @throws FactoryException
-     */
-    @Test
-    public void coverageToFeatureTestPixelCorner() throws NoSuchAuthorityCodeException, FactoryException, ProcessException {
-
-        Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
-
-        final PixelInCell pixPos = PixelInCell.CELL_CORNER;
-        final GridCoverageReader reader = buildReader(pixPos);
-        // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, CoverageToFeaturesDescriptor.NAME);
-        final ParameterValueGroup in = desc.getInputDescriptor().createValue();
-        in.parameter("reader_in").setValue(reader);
-        final Process proc = desc.createProcess(in);
-
-        //Features out
-        final Collection<Feature> featureListOut = (Collection<Feature>) proc.call().parameter("feature_out").getValue();
-
-        final List<Feature> featureListResult = (List<Feature>) buildFCResultPixelCorner();
 
 
         assertEquals(featureListResult.get(0).getType(), featureListOut.iterator().next().getType());
@@ -296,7 +245,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static class SimpleCoverageReader extends GridCoverageReader {
+    private static class SimpleCoverageReader extends AbstractGridCoverageReader {
 
         private final GridCoverage2D coverage;
         private final PixelInCell pixPos;

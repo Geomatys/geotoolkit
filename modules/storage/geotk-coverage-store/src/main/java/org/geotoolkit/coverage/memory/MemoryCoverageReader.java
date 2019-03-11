@@ -18,14 +18,14 @@ package org.geotoolkit.coverage.memory;
 
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.util.iso.Names;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.opengis.util.GenericName;
 
 /**
@@ -33,7 +33,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class MemoryCoverageReader extends GridCoverageReader {
+public class MemoryCoverageReader extends AbstractGridCoverageReader {
     private final GridCoverage2D coverage;
 
     public MemoryCoverageReader(final GridCoverage2D coverage) {

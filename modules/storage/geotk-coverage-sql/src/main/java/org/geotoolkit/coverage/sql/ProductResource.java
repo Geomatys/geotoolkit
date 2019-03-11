@@ -19,13 +19,14 @@ package org.geotoolkit.coverage.sql;
 import java.awt.Image;
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -105,7 +106,7 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
         }
     }
 
-    private final class DirectReader extends GridCoverageReader {
+    private final class DirectReader extends AbstractGridCoverageReader {
         DirectReader() {
         }
 

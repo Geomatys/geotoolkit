@@ -38,9 +38,9 @@ import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -58,7 +58,7 @@ import org.opengis.util.NameSpace;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMSCoverageReader extends GridCoverageReader{
+public class WMSCoverageReader extends AbstractGridCoverageReader {
 
     static final Dimension DEFAULT_SIZE = new Dimension(256, 256);
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");

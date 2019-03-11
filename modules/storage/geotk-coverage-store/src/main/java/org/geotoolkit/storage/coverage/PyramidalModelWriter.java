@@ -33,6 +33,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -43,12 +44,12 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.io.AbstractGridCoverageWriter;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
@@ -60,7 +61,6 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.coverage.InterpolationMethod;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -76,7 +76,7 @@ import org.opengis.util.FactoryException;
  * @author Cédric Briançon (Geomatys)
  * @author Rémi Maréchal (Geomatys)
  */
-public class PyramidalModelWriter extends GridCoverageWriter {
+public class PyramidalModelWriter extends AbstractGridCoverageWriter {
 
     private final GridCoverageResource reference;
 

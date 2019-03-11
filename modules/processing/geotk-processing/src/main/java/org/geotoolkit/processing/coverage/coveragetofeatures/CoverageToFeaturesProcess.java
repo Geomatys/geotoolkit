@@ -37,7 +37,6 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.datum.PixelInCell;
@@ -151,11 +150,9 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
         final List<SampleDimension> dims = coverage.getSampleDimensions();
         final int nbBand = dims.size();
 
-        final Georectified rep = reader.getCoverageMetadata().getInstanceForType(Georectified.class);
-
         //Define the pixel position in cells
         PixelInCell posPix = PixelInCell.CELL_CENTER;
-        final PixelOrientation pixOr = rep.getPointInPixel();
+        final PixelOrientation pixOr = PixelOrientation.CENTER;//rep.getPointInPixel();
         if (pixOr == PixelOrientation.CENTER) {
             posPix = PixelInCell.CELL_CENTER;
         } else if (pixOr == PixelOrientation.UPPER_LEFT) {

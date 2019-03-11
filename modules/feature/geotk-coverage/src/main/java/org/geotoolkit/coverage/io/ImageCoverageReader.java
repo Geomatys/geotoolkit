@@ -21,10 +21,14 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -35,18 +39,34 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
+import javax.measure.IncommensurableException;
+import javax.measure.Quantity;
+import javax.measure.Unit;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.internal.storage.MetadataBuilder;
+import org.apache.sis.measure.Units;
+import org.apache.sis.metadata.ModifiableMetadata;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.metadata.iso.identification.DefaultResolution;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.collection.BackingStoreException;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import org.apache.sis.util.iso.Names;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.resources.Vocabulary;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -66,6 +86,7 @@ import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 import org.geotoolkit.image.io.mosaic.MosaicImageReadParam;
 import org.geotoolkit.image.io.mosaic.MosaicImageReader;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
@@ -75,10 +96,22 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.XCollections;
+import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
+import org.opengis.metadata.acquisition.AcquisitionInformation;
+import org.opengis.metadata.content.ContentInformation;
+import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.metadata.content.ImageDescription;
+import org.opengis.metadata.extent.Extent;
+import org.opengis.metadata.identification.DataIdentification;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.metadata.identification.Resolution;
+import org.opengis.metadata.quality.DataQuality;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.metadata.spatial.SpatialRepresentation;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -130,7 +163,7 @@ import org.w3c.dom.NodeList;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class ImageCoverageReader extends GridCoverageReader {
+public class ImageCoverageReader extends GridCoverageStore implements GridCoverageReader {
     /**
      * The name of metadata nodes we are interested in. Some implementations of
      * {@link ImageReader} may use this information for reading only the metadata
@@ -250,6 +283,12 @@ public class ImageCoverageReader extends GridCoverageReader {
     protected final NameFactory nameFactory;
 
     /**
+     * The input (typically a {@link java.io.File}, {@link java.net.URL} or {@link String}),
+     * or {@code null} if input is not set.
+     */
+    Object input;
+
+    /**
      * Creates a new instance using the default
      * {@linkplain GridCoverageFactory grid coverage factory}.
      */
@@ -265,9 +304,39 @@ public class ImageCoverageReader extends GridCoverageReader {
      *        or {@code null} for the default hints.
      */
     public ImageCoverageReader(final Hints hints) {
+        ignoreGridTransforms = true;
         coverageBuilder = new GridCoverageBuilder(hints);
         nameFactory = FactoryFinder.getNameFactory(hints);
         imageMetadataIndex = -1;
+    }
+
+    /**
+     * If the given metadata is non-null, supports the ISO-19115 format and contains a
+     * {@link Metadata} user object in the root node, returns that object. Otherwise
+     * creates a new, initially empty, metadata object.
+     */
+    private static DefaultMetadata createMetadata(final IIOMetadata streamMetadata) throws DataStoreException {
+        if (streamMetadata != null) try {
+            if (ArraysExt.contains(streamMetadata.getExtraMetadataFormatNames(), ISO_FORMAT_NAME)) {
+                final Node root = streamMetadata.getAsTree(ISO_FORMAT_NAME);
+                if (root instanceof IIOMetadataNode) {
+                    final Object userObject = ((IIOMetadataNode) root).getUserObject();
+                    if (userObject instanceof Metadata) {
+                        // Unconditionally copy the metadata, even if the original object was
+                        // already an instance of DefaultMetadata, because the original object
+                        // may be cached in the ImageReader - so we don't want to modify it.
+                        return new DefaultMetadata((Metadata) userObject);
+                    }
+                }
+            }
+        } catch (BackingStoreException e) {
+            final Throwable cause = e.getCause();
+            if (cause instanceof IOException) {
+                throw new CoverageStoreException(cause);
+            }
+            throw e.unwrapOrRethrow(CoverageStoreException.class);
+        }
+        return new DefaultMetadata();
     }
 
     /**
@@ -433,7 +502,34 @@ public class ImageCoverageReader extends GridCoverageReader {
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(input, e, false), e);
         }
-        super.setInput(input);
+        this.input = input;
+        abortRequested = false;
+    }
+
+    /**
+     * Returns the input which was set by the last call to {@link #setInput(Object)},
+     * or {@code null} if none.
+     *
+     * @return The current input, or {@code null} if none.
+     * @throws CoverageStoreException If the operation failed.
+     *
+     * @see ImageReader#getInput()
+     */
+    public Object getInput() throws DataStoreException {
+        return input;
+    }
+
+    /**
+     * Returns the name of the {@linkplain #input}, or "<cite>Untitled</cite>" if
+     * the input is not a recognized type. This is used for formatting messages only.
+     */
+    final String getInputName() {
+        final Object input = this.input;
+        if (IOUtilities.canProcessAsPath(input)) {
+            return IOUtilities.filename(input);
+        } else {
+            return Vocabulary.getResources(locale).getString(Vocabulary.Keys.Untitled);
+        }
     }
 
     /**
@@ -804,6 +900,255 @@ public class ImageCoverageReader extends GridCoverageReader {
         return false;
     }
 
+
+    /**
+     * Returns the ISO 19115 metadata object associated with the input source as a whole
+     * and each coverages. The default implementation constructs the metadata from the
+     * {@linkplain #getStreamMetadata() stream metadata} and the
+     * {@linkplain #getCoverageMetadata(int) coverage metadata},
+     * eventually completed by the {@link #getGridGeometry(int)}.
+     * <p>
+     * Since the relationship between Image I/O metadata and ISO 19115 is not always a
+     * "<cite>one-to-one</cite>" relationship, this method works on a best effort basis.
+     *
+     * @return The ISO 19115 metadata (never {@code null}).
+     * @throws CoverageStoreException If an error occurs while reading the information from the input source.
+     *
+     * @see <a href="../../image/io/metadata/SpatialMetadataFormat.html#default-formats">Metadata formats</a>
+     *
+     * @since 3.18
+     */
+    public Metadata getMetadata() throws DataStoreException {
+        final SpatialMetadata streamMetadata = getStreamMetadata();
+        final DefaultMetadata metadata = createMetadata(streamMetadata);
+        /*
+         * Extract all information available from the stream metadata, provided that metadata
+         * elements were not already provided by the above call to createMetadata(...). Since
+         * createMetadata(...) typically get its information from the stream metadata as well,
+         * we assume that creating here new objects from stream metadata would be redundant.
+         */
+        DataIdentification identification = null;
+        if (streamMetadata != null) {
+            final Collection<DataQuality> quality = metadata.getDataQualityInfo();
+            if (quality.isEmpty()) {
+                addIfNonNull(quality, streamMetadata.getInstanceForType(DataQuality.class));
+            }
+            final Collection<AcquisitionInformation> acquisition = metadata.getAcquisitionInformation();
+            if (acquisition.isEmpty()) {
+                addIfNonNull(acquisition, streamMetadata.getInstanceForType(AcquisitionInformation.class));
+            }
+            /*
+             * Get the existing identification info if any, or create a new one otherwise.
+             * If an identification info is found, remove it from the metadata (it will be
+             * added back at the end of this method, or a copy of it will be added).
+             */
+            final Iterator<Identification> it = metadata.getIdentificationInfo().iterator();
+            while (it.hasNext()) {
+                final Identification candidate = it.next();
+                if (candidate instanceof DataIdentification) {
+                    identification = (DataIdentification) candidate;
+                    it.remove();
+                    break;
+                }
+            }
+            if (identification == null) {
+                identification = streamMetadata.getInstanceForType(DataIdentification.class);
+            }
+        }
+        /*
+         * Check if we should complete the extents and resolutions. We will do so only
+         * if the vertical/temporal extent, geographic bounding box and resolution are
+         * not already provided in the metadata.  If the geographic extent is declared
+         * by an other kind of object than GeographicBoundingBox, we will still add the
+         * bounding box because the existing extent could be only a textual description.
+         */
+        boolean failed              = false;  // For logging warning only once.
+        boolean computeExtents      = true;   // 'false' if extents are already present.
+        boolean computeResolutions  = true;   // 'false' is resolutions are already present.
+        DefaultExtent   extent      = null;   // The extent to compute, if needed.
+        List<Extent>    extents     = null;   // The extents already provided in the metadata.
+        Set<Resolution> resolutions = null;   // The resolutions to compute, if needed.
+        if (identification != null) {
+            computeResolutions = isNullOrEmpty(identification.getSpatialResolutions());
+            final Collection<? extends Extent> existings = identification.getExtents();
+            if (!isNullOrEmpty(existings)) {
+                extents = new ArrayList<>(existings);
+                extent = UniqueExtents.getIncomplete(extents);
+                if (extent == null) {
+                    // The plugin-provided Metadata instance seems to contain Extents
+                    // that are complete enough, so we will not try to complete them.
+                    computeExtents = false;
+                    extents = null;
+                }
+            }
+        }
+        /*
+         * Check if we should complete the content info and the spatial representation info.
+         * If the plugin-provided metadata declare explicitly such information, we will not
+         * compute them in this method (the plugin information will have precedence).
+         */
+        final Collection<ContentInformation>    contentInfo = metadata.getContentInfo();
+        final Collection<SpatialRepresentation> spatialInfo = metadata.getSpatialRepresentationInfo();
+        final boolean computeContent = (contentInfo != null) && contentInfo.isEmpty();
+        final boolean computeSpatial = (spatialInfo != null) && spatialInfo.isEmpty();
+        if (computeContent || computeSpatial || computeResolutions || computeExtents) {
+            final GenericName coverageName = getCoverageName();
+            if (computeContent || computeSpatial) {
+
+                CoverageDescription ci = null;
+                final SpatialMetadata coverageMetadata = getCoverageMetadata();
+                if (coverageMetadata != null) {
+                    if (computeContent) {
+                        ci = coverageMetadata.getInstanceForType(ImageDescription.class);
+                        if (ci != null) {
+                            contentInfo.add(ci);
+                        }
+                    }
+                    if (computeSpatial) {
+                        final Georectified rectified = coverageMetadata.getInstanceForType(Georectified.class);
+                        if (rectified != null) {
+                            metadata.getSpatialRepresentationInfo().add(rectified);
+                        }
+                    }
+                }
+
+                /*
+                 * Get or create the content info to store sample dimensions
+                 */
+                if (ci==null) {
+                    //get or create it
+                    if (contentInfo.size()>0) {
+                        CoverageDescription cd = contentInfo.stream().limit(1)
+                                .filter(CoverageDescription.class::isInstance)
+                                .map(CoverageDescription.class::cast)
+                                .findFirst().orElse(null);
+                        if (cd instanceof ModifiableMetadata && ((ModifiableMetadata)cd).isModifiable()) {
+                            ci = cd;
+                        }
+                    } else {
+                        ci = new DefaultCoverageDescription();
+                        contentInfo.add(ci);
+                    }
+                }
+
+                if (ci!=null && ci.getAttributeGroups()!=null && ci.getAttributeGroups().isEmpty() && ci.getDimensions().isEmpty()) {
+                    final List<SampleDimension> sampleDimensions = getSampleDimensions();
+                    if (sampleDimensions!=null) {
+                        final MetadataBuilder mb = new MetadataBuilder();
+                        for (int idx=0,n=sampleDimensions.size();idx<n;idx++) {
+                            SampleDimension gsd = sampleDimensions.get(idx).forConvertedValues(true);
+                            final Unit<? extends Quantity<?>> units = gsd.getUnits().orElse(null);
+                            mb.newSampleDimension();
+                            mb.setBandIdentifier(Names.createMemberName(null, null, ""+idx, Integer.class));
+                            mb.addBandDescription(gsd.getName().toString());
+                            if(units!=null) mb.setSampleUnits(units);
+                            mb.addMinimumSampleValue(SampleDimensionUtils.getMinimumValue(gsd));
+                            mb.addMaximumSampleValue(SampleDimensionUtils.getMaximumValue(gsd));
+                            gsd = gsd.forConvertedValues(false);
+                            gsd.getTransferFunctionFormula().ifPresent((f) -> {
+                                mb.setTransferFunction(f.getScale(), f.getOffset());
+                            });
+                        }
+                        final DefaultMetadata meta = mb.build(false);
+                        final CoverageDescription imgDesc = (CoverageDescription) meta.getContentInfo().iterator().next();
+                        ci.getAttributeGroups().addAll((Collection)imgDesc.getAttributeGroups());
+                    }
+                }
+
+            }
+            if (computeResolutions || computeExtents) {
+                /*
+                 * Resolution along the horizontal axes only, ignoring all other axes. For linear units (feet,
+                 * kilometres, etc.), we convert the units to metres for compliance with a current limitation
+                 * of Apache SIS, which can handle only metres. For angular resolution (typically in degrees),
+                 * we perform an APPROXIMATIVE conversion to metres using the nautical mile definition. This
+                 * conversion is only valid along the latitudes axis (the number is wrong along the longitude
+                 * axis), and more accurate for mid-latitude (the numbers are differents close to equator or
+                 * to the poles).
+                 */
+                final GridGeometry gg = getGridGeometry();
+                if (computeResolutions && gg.isDefined(GridGeometry.CRS)) {
+
+                    double[] res = null;
+                    try {
+                        res = gg.getResolution(false);
+                    } catch (IncompleteGridGeometryException ex) {
+                    }
+
+                    final Quantity<?> m = CRSUtilities.getHorizontalResolution(
+                            gg.getCoordinateReferenceSystem(), res);
+                    if (m != null) {
+                        double  measureValue = m.getValue().doubleValue();
+                        final Unit<?>   unit = m.getUnit();
+                        Unit<?> standardUnit = null;
+                        double  scaleFactor = 1;
+                        if (Units.isAngular(unit)) {
+                            standardUnit = Units.DEGREE;
+                            scaleFactor  = (1852*60); // From definition of nautical miles.
+                        } else if (Units.isLinear(unit)) {
+                            standardUnit = Units.METRE;
+                        }
+                        if (standardUnit != null) try {
+                            measureValue = unit.getConverterToAny(standardUnit).convert(measureValue) * scaleFactor;
+                            final DefaultResolution resolution = new DefaultResolution();
+                            resolution.setDistance(measureValue);
+                            if (resolutions == null) {
+                                resolutions = new LinkedHashSet<>();
+                            }
+                            resolutions.add(resolution);
+                        } catch (IncommensurableException e) {
+                            // In case of failure, do not create a Resolution object.
+                            Logging.recoverableException(LOGGER, AbstractGridCoverageReader.class, "getMetadata", e);
+                        }
+                    }
+                }
+                /*
+                * Horizontal, vertical and temporal extents. The horizontal extents is
+                * represented as a geographic bounding box, which may require a reprojection.
+                */
+                if (computeExtents && gg.isDefined(GridGeometry.ENVELOPE)) {
+                    if (extent == null) {
+                        extent = new UniqueExtents();
+                    }
+                    try {
+                        extent.addElements(gg.getEnvelope());
+                    } catch (TransformException e) {
+                        // Not a big deal if we fail. We will just let the identification section unchanged.
+                        if (!failed) {
+                            failed = true; // Log only once.
+                            Logging.recoverableException(LOGGER, AbstractGridCoverageReader.class, "getMetadata", e);
+                        }
+                    }
+                }
+            }
+        }
+        /*
+         * At this point, we have computed extents and resolutions from every images
+         * in the stream. Now store the result. Note that we unconditionally create
+         * a copy of the identification info, even if the original object was already
+         * an instance of DefaultDataIdentification, because the original object may
+         * be cached in the ImageReader.
+         */
+        if (extent != null || resolutions != null) {
+            final DefaultDataIdentification copy = new DefaultDataIdentification(identification);
+            if (extent != null) {
+                if (extents != null) {
+                    copy.setExtents(extents);
+                } else {
+                    copy.getExtents().add(extent);
+                }
+            }
+            if (resolutions != null) {
+                copy.setSpatialResolutions(resolutions);
+            }
+            identification = copy;
+        }
+        if (identification != null) {
+            metadata.getIdentificationInfo().add(identification);
+        }
+        return metadata;
+    }
+
     /**
      * Returns the metadata associated with the input source as a whole, or {@code null} if none.
      * The default implementation delegates to the {@linkplain #imageReader image reader}, wrapping
@@ -814,7 +1159,6 @@ public class ImageCoverageReader extends GridCoverageReader {
      *
      * @since 3.14
      */
-    @Override
     public SpatialMetadata getStreamMetadata() throws CoverageStoreException {
         final ImageReader imageReader = this.imageReader; // Protect from changes.
         if (imageReader == null) {
@@ -844,7 +1188,6 @@ public class ImageCoverageReader extends GridCoverageReader {
      *
      * @since 3.14
      */
-    @Override
     public SpatialMetadata getCoverageMetadata() throws CoverageStoreException {
         final int index = 0;
         final ImageReader imageReader = this.imageReader; // Protect from changes.
@@ -1246,6 +1589,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      */
     @Override
     public void reset() throws DataStoreException {
+        input = null;
         try {
             close();
         } catch (IOException e) {
@@ -1271,6 +1615,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      */
     @Override
     public void dispose() throws DataStoreException {
+        input = null;
         try {
             close();
         } catch (IOException e) {
