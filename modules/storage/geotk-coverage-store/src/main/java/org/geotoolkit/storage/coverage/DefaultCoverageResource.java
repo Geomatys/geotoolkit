@@ -21,7 +21,6 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -98,7 +97,7 @@ public class DefaultCoverageResource extends AbstractCoverageResource{
     }
 
     @Override
-    public void recycle(CoverageReader reader) {
+    public void recycle(GridCoverageReader reader) {
         if (input instanceof GridCoverageReader) {
             //do not dispose it, it will be reused
         } else {

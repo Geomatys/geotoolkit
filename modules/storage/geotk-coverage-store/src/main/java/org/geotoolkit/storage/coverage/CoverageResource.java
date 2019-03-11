@@ -22,10 +22,8 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.CoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.data.FeatureSet;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
@@ -69,23 +67,23 @@ public interface CoverageResource extends FeatureSet {
      * Get a reader for this coverage.
      * When you have finished using it, return it using the recycle method.
      */
-    CoverageReader acquireReader() throws DataStoreException;
+    GridCoverageReader acquireReader() throws DataStoreException;
 
     /**
      * Get a writer for this coverage.
      * When you have finished using it, return it using the recycle method.
      */
-    CoverageWriter acquireWriter() throws DataStoreException;
+    GridCoverageWriter acquireWriter() throws DataStoreException;
 
     /**
      * Return the used reader, they can be reused later.
      */
-    void recycle(CoverageReader reader);
+    void recycle(GridCoverageReader reader);
 
     /**
      * Return the used writer, they can be reused later.
      */
-    void recycle(CoverageWriter writer);
+    void recycle(GridCoverageWriter writer);
 
     /**
      * Return the legend of this coverage
@@ -94,7 +92,7 @@ public interface CoverageResource extends FeatureSet {
 
     @Override
     public default FeatureType getType() throws DataStoreException {
-        final CoverageReader reader = acquireReader();
+        final GridCoverageReader reader = acquireReader();
 
         if (reader instanceof GridCoverageReader) {
             final GridCoverageReader gcr = (GridCoverageReader) reader;
@@ -102,10 +100,10 @@ public interface CoverageResource extends FeatureSet {
                 final FeatureType type = CoverageFeature.createCoverageType(gcr);
                 recycle(reader);
                 return type;
-            } catch (CoverageStoreException ex) {
+            } catch (DataStoreException ex) {
                 try {
                     reader.dispose();
-                } catch (CoverageStoreException ex2) {
+                } catch (DataStoreException ex2) {
                     ex.addSuppressed(ex2);
                 }
                 throw ex;
@@ -121,7 +119,7 @@ public interface CoverageResource extends FeatureSet {
         final FeatureAssociationRole role = (FeatureAssociationRole) type.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
         final Feature feature = type.newInstance();
 
-        final CoverageReader reader = acquireReader();
+        final GridCoverageReader reader = acquireReader();
         if (reader instanceof GridCoverageReader) {
             final GridCoverageReader gcr = (GridCoverageReader) reader;
             try {
@@ -135,10 +133,10 @@ public interface CoverageResource extends FeatureSet {
                     }
                 }
                 recycle(reader);
-            } catch (CoverageStoreException ex) {
+            } catch (DataStoreException ex) {
                 try {
                     reader.dispose();
-                } catch (CoverageStoreException ex2) {
+                } catch (DataStoreException ex2) {
                     ex.addSuppressed(ex2);
                 }
                 throw ex;

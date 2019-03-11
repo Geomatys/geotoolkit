@@ -70,7 +70,8 @@ import org.opengis.referencing.operation.TransformException;
  * @since 3.14
  * @module
  */
-public abstract class GridCoverageWriter extends GridCoverageStore implements CoverageWriter<GridCoverage>{
+public abstract class GridCoverageWriter extends GridCoverageStore {
+
     /**
      * The output (typically a {@link java.io.File}, {@link java.net.URL} or {@link String}),
      * or {@code null} if output is not set.
@@ -142,7 +143,6 @@ public abstract class GridCoverageWriter extends GridCoverageStore implements Co
      * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
      *         the execution of this method.
      */
-    @Override
     public abstract void write(GridCoverage coverage, GridCoverageWriteParam param)
             throws CoverageStoreException, CancellationException;
 
@@ -161,7 +161,6 @@ public abstract class GridCoverageWriter extends GridCoverageStore implements Co
      *
      * @since 3.20
      */
-    @Override
     public void write(final Iterable<? extends GridCoverage> coverages, final GridCoverageWriteParam param)
             throws CoverageStoreException, CancellationException
     {

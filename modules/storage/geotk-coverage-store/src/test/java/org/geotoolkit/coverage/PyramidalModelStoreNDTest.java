@@ -35,8 +35,8 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
 import org.geotoolkit.data.multires.Mosaic;
@@ -214,7 +214,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
     @Test
     public void readDefaultTest() throws Exception {
         getCoverageStore();
-        final CoverageReader reader = ref.acquireReader();
+        final GridCoverageReader reader = ref.acquireReader();
 
         //we expect a 3D coverage, with all slices
         final GridCoverage coverage = (GridCoverage) reader.read(null);
@@ -251,7 +251,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
     @Test
     public void readSlicesTest() throws Exception {
         getCoverageStore();
-        final CoverageReader reader = ref.acquireReader();
+        final GridCoverageReader reader = ref.acquireReader();
         final GridCoverageReadParam param = new GridCoverageReadParam();
 
         //expecting image from mosaic with min resolution and vertical -15

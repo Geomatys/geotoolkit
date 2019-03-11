@@ -65,7 +65,6 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -562,7 +561,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         //we can bypass the renderer
         try {
             final GridCoverageResource ref = (GridCoverageResource) resource;
-            final CoverageReader reader = ref.acquireReader();
+            final GridCoverageReader reader = ref.acquireReader();
             final String mime = outputDef.getMime();
             final Envelope env = viewDef.getEnvelope();
             final Dimension dim = canvasDef.getDimension();

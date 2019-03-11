@@ -35,9 +35,9 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtilities;
@@ -141,7 +141,7 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
         }
 
         try{
-            final CoverageReader reader = coverageRef.acquireReader();
+            final GridCoverageReader reader = coverageRef.acquireReader();
             final GridCoverageReadParam params = new GridCoverageReadParam();
             params.setEnvelope(outputEnv);
             try{

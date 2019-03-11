@@ -36,8 +36,8 @@ import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
 import org.geotoolkit.data.multires.Mosaic;
@@ -202,7 +202,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
     public void readRGBANoArgumentTest() throws Exception{
         //load the coverage store
         getCoverageStore();
-        final CoverageReader reader = rgbaCoverageRef.acquireReader();
+        final GridCoverageReader reader = rgbaCoverageRef.acquireReader();
         final GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
         rgbaCoverageRef.recycle(reader);
 
@@ -250,7 +250,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
     public void readFloat1BNoArgumentTest() throws Exception{
         //load the coverage store
         getCoverageStore();
-        final CoverageReader reader = float1bCoverageRef.acquireReader();
+        final GridCoverageReader reader = float1bCoverageRef.acquireReader();
         final GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
         float1bCoverageRef.recycle(reader);
 
@@ -300,7 +300,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
 
         //load the coverage store
         getCoverageStore();
-        final CoverageReader reader = rgbaCoverageRef.acquireReader();
+        final GridCoverageReader reader = rgbaCoverageRef.acquireReader();
 
         final GeneralEnvelope paramEnv = new GeneralEnvelope(crs);
         paramEnv.setRange(0, corner.getOrdinate(0) +(1*10)*1, corner.getOrdinate(0) +(2*10)*1);

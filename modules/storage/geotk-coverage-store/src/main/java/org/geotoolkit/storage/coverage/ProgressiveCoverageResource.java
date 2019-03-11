@@ -29,9 +29,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.finder.StrictlyCoverageFinder;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.CoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.data.multires.GeneralProgressiveResource;
@@ -91,7 +89,7 @@ public final class ProgressiveCoverageResource<T extends GridCoverageResource & 
     }
 
     @Override
-    public void recycle(CoverageReader reader) {
+    public void recycle(GridCoverageReader reader) {
         try {
             reader.dispose();
         } catch (DataStoreException ex) {
@@ -100,7 +98,7 @@ public final class ProgressiveCoverageResource<T extends GridCoverageResource & 
     }
 
     @Override
-    public void recycle(CoverageWriter writer) {
+    public void recycle(GridCoverageWriter writer) {
         try {
             writer.dispose();
         } catch (DataStoreException ex) {

@@ -37,7 +37,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
@@ -144,7 +144,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         assertEquals(versions.get(0).getDate().getTime(),0);
         assertEquals(date1.getTime(),versions.get(0).getDate().getTime());
 
-        CoverageReader reader = cref.acquireReader();
+        GridCoverageReader reader = cref.acquireReader();
         coverage = (GridCoverage2D)reader.read(null);
         cref.recycle(reader);
         assertImageColor(coverage.getRenderedImage(), Color.RED);

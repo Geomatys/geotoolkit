@@ -34,8 +34,8 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.image.BufferedImages;
@@ -273,7 +273,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
         tenv = ReferencingUtilities.transform(genv, dataEnv.getCoordinateReferenceSystem());
         rparam.setEnvelope(tenv);
 
-        final CoverageReader reader = ref.acquireReader();
+        final GridCoverageReader reader = ref.acquireReader();
         final GridCoverage2D coverage = (GridCoverage2D) reader.read(rparam);
         ref.recycle(reader);
         return coverage;

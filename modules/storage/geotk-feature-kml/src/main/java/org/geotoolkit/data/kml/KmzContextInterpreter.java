@@ -38,7 +38,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.Boundary;
@@ -376,7 +376,7 @@ public class KmzContextInterpreter {
         final CoordinateReferenceSystem targetCrs = CommonCRS.WGS84.normalizedGeographic();
 
         final GridCoverageResource ref = (GridCoverageResource) coverageMapLayer.getResource();
-        final CoverageReader reader = ref.acquireReader();
+        final GridCoverageReader reader = ref.acquireReader();
         final GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
         ref.recycle(reader);
 

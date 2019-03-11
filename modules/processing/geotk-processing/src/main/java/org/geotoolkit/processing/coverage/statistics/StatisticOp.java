@@ -20,7 +20,6 @@ import java.awt.image.RenderedImage;
 import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.lang.Static;
@@ -38,23 +37,6 @@ public class StatisticOp extends Static {
 
     public static final String MINIMUM = "min";
     public static final String MAXIMUM = "max";
-
-    /**
-     * Analyse image to return min and max value per bands.
-     * @param reader
-     * @param imageIndex
-     * @return A Map with two Entry.
-     * Each Entry have a name ("min", "max") and values are an double[] for each bands.
-     * @throws CoverageStoreException
-     * @deprecated use {@link Statistics#analyse(org.geotoolkit.coverage.io.GridCoverageReader, int, boolean)}
-     */
-    public static Map<String,Object> analyze(CoverageReader reader) throws CoverageStoreException {
-        if (reader instanceof GridCoverageReader) {
-            return analyze((GridCoverageReader)reader);
-        } else {
-            throw new UnsupportedOperationException("Support GridCoverageReader only.");
-        }
-    }
 
     /**
      * Analyse image to return min and max value per bands. No-data are excluded.

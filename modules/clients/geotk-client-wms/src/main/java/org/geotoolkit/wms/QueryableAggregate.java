@@ -24,9 +24,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.CoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
@@ -99,12 +97,12 @@ public class QueryableAggregate extends WMSAggregate implements GridCoverageReso
     }
 
     @Override
-    public void recycle(CoverageReader reader) {
+    public void recycle(GridCoverageReader reader) {
         queryableResource.recycle(reader);
     }
 
     @Override
-    public void recycle(CoverageWriter writer) {
+    public void recycle(GridCoverageWriter writer) {
         queryableResource.recycle(writer);
     }
 

@@ -30,9 +30,7 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.CoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.StorageEvent;
@@ -292,7 +290,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      * {@inheritDoc }
      */
     @Override
-    public void recycle(CoverageReader reader) {
+    public void recycle(GridCoverageReader reader) {
         ((AmendedCoverageReader)reader).dispose();
     }
 
@@ -300,7 +298,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      * {@inheritDoc }
      */
     @Override
-    public void recycle(CoverageWriter writer) {
+    public void recycle(GridCoverageWriter writer) {
         throw new UnsupportedOperationException("Not supported.");
     }
 

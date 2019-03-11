@@ -34,9 +34,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotoolkit.coverage.io.CoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -162,7 +161,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
      * Dispose the reader.
      */
     @Override
-    public void recycle(CoverageReader reader) {
+    public void recycle(GridCoverageReader reader) {
         dispose(reader);
     }
 
@@ -171,7 +170,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
      * Dispose the writer.
      */
     @Override
-    public void recycle(CoverageWriter writer) {
+    public void recycle(GridCoverageWriter writer) {
         try {
             writer.dispose();
         } catch (DataStoreException ex) {
@@ -245,7 +244,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
      *
      * @param reader
      */
-    protected void dispose(CoverageReader reader) {
+    protected void dispose(GridCoverageReader reader) {
         try {
 //            //try to close sub stream
 //            Object input = reader.getInput();

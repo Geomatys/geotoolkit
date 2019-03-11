@@ -36,10 +36,9 @@ import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.AbstractTileGenerator;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramid;
@@ -74,7 +73,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
         this.resource = resource;
 
-        final CoverageReader reader = resource.acquireReader();
+        final GridCoverageReader reader = resource.acquireReader();
         try {
             List<SampleDimension> sampleDimensions = reader.getSampleDimensions();
 
@@ -159,7 +158,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             resolution[i] = Math.abs(matrix.getElement(i, i));
         }
 
-        final CoverageReader reader = resource.acquireReader();
+        final GridCoverageReader reader = resource.acquireReader();
         GridCoverage coverage;
         try {
             final GridCoverageReadParam param = new GridCoverageReadParam();
@@ -177,11 +176,11 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             }
             ite.close();
             return new DefaultImageTile(img, tileCoord);
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             //dispose the reader, it may be in an invalid state
             try {
                 reader.dispose();
-            } catch (CoverageStoreException e) {
+            } catch (DataStoreException e) {
                 ex.addSuppressed(e);
             }
             throw ex;

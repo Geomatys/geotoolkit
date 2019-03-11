@@ -100,7 +100,8 @@ import org.w3c.dom.Node;
  *
  * @see ImageReader
  */
-public abstract class GridCoverageReader extends GridCoverageStore implements CoverageReader {
+public abstract class GridCoverageReader extends GridCoverageStore {
+
     /**
      * The input (typically a {@link java.io.File}, {@link java.net.URL} or {@link String}),
      * or {@code null} if input is not set.
@@ -186,7 +187,6 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      *
      * @see ImageReader#getNumImages(boolean)
      */
-    @Override
     public abstract GenericName getCoverageName()
             throws DataStoreException, CancellationException;
 
@@ -219,7 +219,6 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
      *         the execution of this method.
      */
-    @Override
     public abstract List<SampleDimension> getSampleDimensions()
             throws DataStoreException, CancellationException;
 
@@ -543,7 +542,6 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      *
      * @see ImageReader#read(int)
      */
-    @Override
     public abstract GridCoverage read(GridCoverageReadParam param)
             throws DataStoreException, CancellationException;
 
