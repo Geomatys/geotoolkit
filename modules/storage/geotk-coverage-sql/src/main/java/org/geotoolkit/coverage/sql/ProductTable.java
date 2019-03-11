@@ -67,11 +67,6 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
     private static final boolean FETCH_ALL_DATES = true;
 
     /**
-     * @todo Investigate why this is the case.
-     */
-    private static final boolean ALWAYS_CREATE_PARENT = true;
-
-    /**
      * The table of series.
      */
     private final SeriesTable seriesTable;
@@ -234,7 +229,7 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
         ArgumentChecks.ensureNonNull("product", product);
         try (final GridCoverageTable table = new GridCoverageTable(transaction, seriesTable, gridGeometries)) {
             final String parent;
-            if (!ALWAYS_CREATE_PARENT && rasters.size() <= 1) {
+            if (option != AddOption.CREATE_AS_CHILD_PRODUCT && rasters.size() <= 1) {
                 parent = null;
             } else {
                 parent = product;

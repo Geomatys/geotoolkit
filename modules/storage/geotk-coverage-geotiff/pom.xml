@@ -16,15 +16,15 @@
     </parent>
 
 
-  <!-- =========================================================== -->
-  <!--     Module Description                                      -->
-  <!-- =========================================================== -->
+    <!-- ==========================================================
+             Module Description
+         ========================================================== -->
     <artifactId>geotk-coverage-geotiff</artifactId>
     <packaging>jar</packaging>
     <name>Coverage Geotiff</name>
 
     <description>
-    Datasource created to read geotiff files
+        Datasource for reading geotiff files
     </description>
 
     <licenses>
@@ -36,9 +36,9 @@
     </licenses>
 
 
-  <!-- =========================================================== -->
-  <!--     Developers and Contributors                             -->
-  <!-- =========================================================== -->
+    <!-- ==========================================================
+             Developers and Contributors
+         ========================================================== -->
     <developers>
         <developer>
             <name>Johann Sorel (Geomatys)</name>
@@ -52,9 +52,9 @@
     </developers>
 
 
-  <!-- =========================================================== -->
-  <!--     Dependency Management                                   -->
-  <!-- =========================================================== -->
+  <!-- ==========================================================
+           Dependencies
+       ========================================================== -->
     <dependencies>
         <dependency>
             <groupId>org.geotoolkit</groupId>

@@ -35,8 +35,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.identification.Identification;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.GenericName;
 
 
 /**
@@ -105,50 +103,36 @@ final class NewRaster {
      * @param  files  paths to the files to add.
      * @return information about rasters, separated by resource identifier.
      */
-    static Map<String,List<NewRaster>> list(final Path... files) throws DataStoreException {
+    static Map<String,List<NewRaster>> list(final String product, final AddOption option, final Path... files) throws DataStoreException {
         final Map<String,List<NewRaster>> rasters = new LinkedHashMap<>();
         for (final Path file : files) {
             try (final DataStore ds = DataStores.open(file)) {
-                String driver = ds.getProvider().getShortName();
-                collect(driver, file, ds, rasters);
-            } catch (TransformException e) {
-                throw new CatalogException(e);
+                final String driver = ds.getProvider().getShortName();
+                final Collection<GridCoverageResource> candidates = org.geotoolkit.storage.DataStores.flatten(ds, true, GridCoverageResource.class);
+                /*
+                 * If there is only one resource, do not specify the dataset. This increase the chance
+                 * of being able to reuse the same SeriesEntry for many coverage, especially when using
+                 * DataStores that put filename in their resource name.
+                 */
+                final boolean isMultiResources = (option == AddOption.CREATE_AS_CHILD_PRODUCT) || candidates.size() > 1;
+                for (final GridCoverageResource gr : candidates) {
+                    final String dataset;
+                    if (isMultiResources) {
+                        dataset = gr.getIdentifier().tip().toString();
+                    } else {
+                        dataset = null;
+                    }
+                    final NewRaster r = new NewRaster(driver, dataset, file);
+                    r.geometry = gr.getGridGeometry();
+                    r.bands = gr.getSampleDimensions();
+                    if (!r.setTimeRange(gr.getMetadata())) {
+                        r.setTimeRange(ds.getMetadata());
+                    }
+                    rasters.computeIfAbsent((dataset != null) ? dataset : product, (k) -> new ArrayList<>()).add(r);
+                }
             }
         }
         return rasters;
-    }
-
-    /**
-     * Adds to the given {@code rasters} list information about all resources found in the given node.
-     * This method add recursively all children resources.
-     *
-     * @param  driver    the format name as given by the data store provider. Example: "NetCDF".
-     * @param  file      path to the file, including parent directories and file extension.
-     * @param  resource  the resource to add to the given {@code rasters} list.
-     * @param  rasters   where to add the information about rasters.
-     * @param  index     zero-based index of the image to read.
-     */
-    private static void collect(final String driver, final Path file, final DataStore resource,
-            final Map<String,List<NewRaster>> rasters) throws DataStoreException, TransformException
-    {
-        final Collection<GridCoverageResource> candidates = org.geotoolkit.storage.
-                DataStores.flatten(resource, true, GridCoverageResource.class);
-        /*
-         * If there is only one resource, do not specify the dataset. This increase the chance
-         * of being able to reuse the same SeriesEntry for many coverage, especially when using
-         * DataStores that put filename in their resource name.
-         */
-        final boolean isMultiResources = candidates.size() > 1;
-        for (final GridCoverageResource gr : candidates) {
-            final NewRaster r = new NewRaster(driver, isMultiResources ? gr.getIdentifier().toString() : null, file);
-            r.geometry = gr.getGridGeometry();
-            r.bands = gr.getSampleDimensions();
-            if (!r.setTimeRange(gr.getMetadata())) {
-                r.setTimeRange(resource.getMetadata());
-            }
-            final GenericName identifier = gr.getIdentifier();
-            rasters.computeIfAbsent(identifier.tip().toString(), (k) -> new ArrayList<>()).add(r);
-        }
     }
 
     /**

@@ -434,7 +434,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
      * @throws DataStoreException if an error occurred while reading the grid coverages or adding them to the database.
      */
     public synchronized void addRaster(final String product, final AddOption option, final Path... files) throws DataStoreException {
-        final Map<String,List<NewRaster>> rasters = NewRaster.list(files);
+        final Map<String,List<NewRaster>> rasters = NewRaster.list(product, option, files);
         if (!rasters.isEmpty()) {
             try (Transaction transaction = database.transaction()) {
                 transaction.writeStart();

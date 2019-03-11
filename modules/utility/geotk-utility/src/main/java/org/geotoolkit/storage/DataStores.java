@@ -134,17 +134,15 @@ public final class DataStores extends Static {
 
     /**
      * Returns the set of all providers, optionally filtered by class and resource types.
-     * This method ensures also that the iterator backing the set is properly synchronized.
-     * <p>
-     * Note that the iterator doesn't need to be thread-safe; this is the accesses to the
-     * underlying {@linkplain #loader}, directly or indirectly through its iterator, which
-     * need to be thread-safe.
      *
      * @param  <T>  The type of provider to be returned.
      * @param  clazz The type of factories to be returned, or {@code null} for all kind of factories.
      * @param types types of resources that must be supported by the provider, none for all
      * @return The set of factories for the given conditions.
+     *
+     * @deprecated the implementation of this method is unsafe.
      */
+    @Deprecated
     public static <T> Set<T> getProviders(final Class<T> clazz, ResourceType ... types) {
         final Set<T> results = new HashSet<>();
         loop:

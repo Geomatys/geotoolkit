@@ -29,12 +29,18 @@ public enum AddOption {
     NO_CREATE,
 
     /**
-     * Creates a new product if it does not already exists.
+     * Creates a new product if it does not already exist.
      */
     CREATE_PRODUCT,
 
     /**
      * Creates a new product, failing if a product of the same name already exists.
      */
-    CREATE_NEW_PRODUCT
+    CREATE_NEW_PRODUCT,
+
+    /**
+     * Creates a new product if it does not exist, unconditionally as a child of a parent product.
+     * The parent product will also be created if it does not exist.
+     */
+    CREATE_AS_CHILD_PRODUCT
 }
