@@ -186,7 +186,7 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
         if(mapItem instanceof FeatureMapLayer){
             return ICON_VECTOR;
         }else if(mapItem instanceof CoverageMapLayer){
-            final DataStore store = ((CoverageMapLayer)mapItem).getResource().getStore();
+            final DataStore store = ((CoverageMapLayer)mapItem).getResource().getOriginator();
             if(store!=null && store.getProvider() instanceof ClientFactory){
                 return ICON_SERVICE;
             }else{

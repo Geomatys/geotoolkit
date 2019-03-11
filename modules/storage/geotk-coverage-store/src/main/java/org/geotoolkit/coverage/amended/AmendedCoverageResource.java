@@ -79,7 +79,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
     }
 
     @Override
-    public DataStore getStore() {
+    public DataStore getOriginator() {
         return store;
     }
 

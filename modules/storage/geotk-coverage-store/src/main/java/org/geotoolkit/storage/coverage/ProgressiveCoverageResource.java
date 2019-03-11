@@ -84,7 +84,7 @@ public final class ProgressiveCoverageResource<T extends GridCoverageResource & 
     }
 
     @Override
-    public DataStore getStore() {
+    public DataStore getOriginator() {
         return null;
     }
 

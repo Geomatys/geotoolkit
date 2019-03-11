@@ -650,14 +650,16 @@ public class GridCoverage2D extends GridCoverage {
 
     @Override
     public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
-        final GridGeometry2D gridGeometry = getGridGeometry();
-        int[] dims = sliceExtent.getSubspaceDimensions(2);
-        if (dims[0] != gridGeometry.axisDimensionX && dims[1] != gridGeometry.axisDimensionY) {
-            throw new CannotEvaluateException("Unsupported axis");
-        }
-        final GridExtent extent = getGridGeometry().getExtent();
-        if (sliceExtent.getSize(dims[0]) != extent.getSize(dims[0]) || sliceExtent.getSize(dims[1]) != extent.getSize(dims[1])) {
-            throw new CannotEvaluateException("Slice size must match coverage extent");
+        if (sliceExtent != null) {
+            final GridGeometry2D gridGeometry = getGridGeometry();
+            int[] dims = sliceExtent.getSubspaceDimensions(2);
+            if (dims[0] != gridGeometry.axisDimensionX && dims[1] != gridGeometry.axisDimensionY) {
+                throw new CannotEvaluateException("Unsupported axis");
+            }
+            final GridExtent extent = getGridGeometry().getExtent();
+            if (sliceExtent.getSize(dims[0]) != extent.getSize(dims[0]) || sliceExtent.getSize(dims[1]) != extent.getSize(dims[1])) {
+                throw new CannotEvaluateException("Slice size must match coverage extent");
+            }
         }
         return getRenderedImage();
     }

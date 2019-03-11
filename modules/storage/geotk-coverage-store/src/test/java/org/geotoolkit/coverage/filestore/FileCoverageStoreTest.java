@@ -32,7 +32,7 @@ import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -80,7 +80,7 @@ public class FileCoverageStoreTest {
                 Assert.assertTrue("Datastore should not be empty", it.hasNext());
                 final Resource first = it.next();
                 Assert.assertFalse("Current store should have exactly one resource", it.hasNext());
-                Assert.assertTrue(first instanceof CoverageResource);
+                Assert.assertTrue(first instanceof GridCoverageResource);
             }
         } finally {
             IOUtilities.deleteRecursively(tmpDir);

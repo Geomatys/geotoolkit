@@ -72,7 +72,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
     }
 
     @Override
-    public DataStore getStore() {
+    public DataStore getOriginator() {
         return store;
     }
 

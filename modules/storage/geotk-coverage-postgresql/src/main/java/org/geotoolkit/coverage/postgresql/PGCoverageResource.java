@@ -153,7 +153,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
 
     private PGPyramid readPyramid(final Connection cnx, final int pyramidId, final String epsgcode) throws SQLException, FactoryException{
 
-        final PGCoverageStore store = getStore();
+        final PGCoverageStore store = getOriginator();
         final CoordinateReferenceSystem crs = store.getEPSGFactory().createCoordinateReferenceSystem(epsgcode);
         PGPyramid pyramid = new PGPyramid(this, pyramidId, crs);
 
@@ -262,7 +262,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
     }
 
     @Override
-    public PGCoverageStore getStore() {
+    public PGCoverageStore getOriginator() {
         return (PGCoverageStore) pgstore;
     }
 
@@ -370,7 +370,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
 
         mustUpdate();
         final CoverageStoreManagementEvent event = firePyramidAdded(pyramidId);
-        getStore().forwardEvent(event);
+        getOriginator().forwardEvent(event);
         for(Pyramid p : getPyramids()){
             if(p.getIdentifier().equals(pyramidId)){
                 return p;

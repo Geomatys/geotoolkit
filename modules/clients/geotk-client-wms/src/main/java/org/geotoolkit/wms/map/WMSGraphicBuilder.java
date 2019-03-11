@@ -86,7 +86,7 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         }
 
         final WMSCoverageResource reference = (WMSCoverageResource) resource;
-        final WebMapClient server = (WebMapClient)reference.getStore();
+        final WebMapClient server = (WebMapClient)reference.getOriginator();
 
         final GetLegendRequest request = server.createGetLegend();
         request.setLayer(reference.getLayerNames()[0]);

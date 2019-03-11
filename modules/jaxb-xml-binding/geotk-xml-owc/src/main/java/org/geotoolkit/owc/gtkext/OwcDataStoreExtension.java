@@ -167,7 +167,7 @@ public class OwcDataStoreExtension extends OwcExtension {
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
             final GridCoverageResource covref = cml.getResource();
-            final DataStore store = covref.getStore();
+            final DataStore store = covref.getOriginator();
             if(store!=null){
                 final DataStoreProvider factory = store.getProvider();
                 return factory.getOpenParameters().getName().getCode();
@@ -189,7 +189,7 @@ public class OwcDataStoreExtension extends OwcExtension {
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
             final GridCoverageResource covref = cml.getResource();
-            final DataStore store = covref.getStore();
+            final DataStore store = covref.getOriginator();
             if(store!=null){
                 return store.getOpenParameters();
             }

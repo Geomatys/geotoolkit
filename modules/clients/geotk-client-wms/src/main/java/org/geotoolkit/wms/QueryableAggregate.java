@@ -82,8 +82,8 @@ public class QueryableAggregate extends WMSAggregate implements GridCoverageReso
     }
 
     @Override
-    public DataStore getStore() {
-        return queryableResource.getStore();
+    public DataStore getOriginator() {
+        return queryableResource.getOriginator();
     }
 
     @Override

@@ -62,13 +62,13 @@ import org.opengis.util.NoSuchIdentifierException;
  */
 public class CoverageTileGenerator extends AbstractTileGenerator {
 
-    private final CoverageResource resource;
+    private final GridCoverageResource resource;
     private final double[] empty;
 
     private InterpolationCase interpolation = InterpolationCase.NEIGHBOR;
     private double[] fillValues;
 
-    public CoverageTileGenerator(CoverageResource resource) throws DataStoreException {
+    public CoverageTileGenerator(GridCoverageResource resource) throws DataStoreException {
         ArgumentChecks.ensureNonNull("resource", resource);
 
         this.resource = resource;

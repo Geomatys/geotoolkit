@@ -16,14 +16,14 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import java.awt.image.RenderedImage;
+import java.awt.Image;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -32,16 +32,17 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.data.FeatureSet;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.feature.CoverageFeature;
 import org.geotoolkit.internal.feature.TypeConventions;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.content.CoverageDescription;
 
 /**
  * Resource to a coverage in the coverage store.
@@ -49,7 +50,8 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface GridCoverageResource extends CoverageResource, org.apache.sis.storage.GridCoverageResource {
+public interface GridCoverageResource extends FeatureSet, org.apache.sis.storage.GridCoverageResource, StoreResource {
+
     /**
      * Same as {@link org.apache.sis.storage.Resource} without exception.
      *
@@ -59,18 +61,43 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
     NamedIdentifier getIdentifier();
 
     /**
+     * Get the coverage description and statistics.
+     *
+     * @return CoverageDescripion, can be null
+     */
+    CoverageDescription getCoverageDescription();
+
+    /**
+     * @return true if coverage is writable
+     */
+    boolean isWritable() throws DataStoreException;
+
+    /**
+     * Return the legend of this coverage
+     */
+    Image getLegend() throws DataStoreException;
+
+    /**
      * Get a reader for this coverage.
      * When you have finished using it, return it using the recycle method.
      */
-    @Override
     GridCoverageReader acquireReader() throws DataStoreException;
 
     /**
      * Get a writer for this coverage.
      * When you have finished using it, return it using the recycle method.
      */
-    @Override
     GridCoverageWriter acquireWriter() throws DataStoreException;
+
+    /**
+     * Return the used reader, they can be reused later.
+     */
+    void recycle(GridCoverageReader reader);
+
+    /**
+     * Return the used writer, they can be reused later.
+     */
+    void recycle(GridCoverageWriter writer);
 
     @Override
     public default FeatureType getType() throws DataStoreException {
@@ -121,7 +148,7 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
                 param.setSourceBands(range);
             }
 
-            if (domain.isDefined(org.apache.sis.coverage.grid.GridGeometry.ENVELOPE)) {
+            if (domain != null && domain.isDefined(org.apache.sis.coverage.grid.GridGeometry.ENVELOPE)) {
                 param.setEnvelope(domain.getEnvelope());
                 final double[] resolution = domain.getResolution(true);
                 param.setResolution(resolution);
@@ -136,14 +163,7 @@ public interface GridCoverageResource extends CoverageResource, org.apache.sis.s
             if (!(cov instanceof GridCoverage2D)) {
                 throw new DataStoreException("Read coverage is not a GridCoverage2D");
             }
-            final GridCoverage2D cov2d = (GridCoverage2D) cov;
-            final List<SampleDimension> bands = cov2d.getSampleDimensions();
-            return new GridCoverage(cov2d.getGridGeometry(), bands) {
-                @Override
-                public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
-                    return cov2d.getRenderedImage();
-                }
-            };
+            return (GridCoverage2D) cov;
         } finally {
             recycle(reader);
         }

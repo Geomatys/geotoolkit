@@ -175,7 +175,7 @@ public class XMLMosaic implements Mosaic {
         // If we create a new mosaic, behavior for tile state management has not been determined yet, we try to get it from store parameters.
         if (cacheTileState == null) {
             try {
-                cacheTileState = ((XMLCoverageStore) pyramid.getPyramidSet().getRef().getStore()).cacheTileState;
+                cacheTileState = ((XMLCoverageStore) pyramid.getPyramidSet().getRef().getOriginator()).cacheTileState;
             } catch (Exception e) {
                 // If we've got a problem retrieving cache state parameter, we use default behavior (flushing tile states).
                 cacheTileState = false;

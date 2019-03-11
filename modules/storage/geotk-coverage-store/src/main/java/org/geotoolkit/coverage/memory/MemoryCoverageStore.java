@@ -152,7 +152,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
         public void setCoverage(GridCoverage2D coverage) {
             this.coverage = coverage;
             final CoverageStoreContentEvent event = fireDataUpdated();
-            ((MemoryCoverageStore)getStore()).forwardEvent(event);
+            ((MemoryCoverageStore)getOriginator()).forwardEvent(event);
         }
 
         @Override

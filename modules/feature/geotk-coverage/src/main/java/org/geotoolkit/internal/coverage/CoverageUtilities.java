@@ -554,6 +554,7 @@ public final class CoverageUtilities extends Static {
      */
     public static GridCoverage2D toGeotk(final org.apache.sis.coverage.grid.GridCoverage coverage) {
         if (coverage == null) return null;
+        if (coverage instanceof GridCoverage2D) return (GridCoverage2D) coverage;
         GridGeometry gg = forceLowerToZero(coverage.getGridGeometry());
         if (gg.getDimension() > 2) {
             gg = gg.derive().sliceByRatio(0.5, 0, 1).build();
