@@ -60,7 +60,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.processing.CoverageProcessingException;
+import org.geotoolkit.processing.coverage.resample.CannotReprojectException;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -278,7 +278,7 @@ public final class GO2Utilities {
                     dataCoverage = dataCoverage.view(ViewType.RENDERED);
                 }
             }
-        } catch (CoverageProcessingException ex) {
+        } catch (CannotReprojectException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
             return false;
         } catch(Exception ex){

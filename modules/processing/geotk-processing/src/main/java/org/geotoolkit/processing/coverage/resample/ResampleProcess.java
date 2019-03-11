@@ -27,8 +27,6 @@ import java.awt.image.WritableRaster;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -46,8 +44,6 @@ import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.processing.AbstractCoverageProcessor;
-import org.geotoolkit.coverage.processing.CannotReprojectException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.BufferedImages;
@@ -707,17 +703,6 @@ public class ResampleProcess extends AbstractProcess {
             upper[i] = gridEnvelope.getHigh(i) + 1;
         }
         return new GeneralEnvelope(lower, upper);
-    }
-
-    /**
-     * Logs a message.
-     */
-    private static void log(final LogRecord record) {
-        record.setSourceClassName("Resample");
-        record.setSourceMethodName("doOperation");
-        final Logger logger = AbstractCoverageProcessor.LOGGER;
-        record.setLoggerName(logger.getName());
-        logger.log(record);
     }
 
     /**

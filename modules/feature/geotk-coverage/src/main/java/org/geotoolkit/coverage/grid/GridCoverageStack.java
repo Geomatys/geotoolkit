@@ -53,7 +53,6 @@ import static org.apache.sis.util.Utilities.equalsIgnoreMetadata;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.FrequencySortedSet;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.processing.OperationNotFoundException;
 import org.geotoolkit.image.palette.IIOListeners;
 import org.geotoolkit.image.palette.IIOReadProgressAdapter;
 import static org.geotoolkit.internal.InternalUtilities.debugEquals;
@@ -73,6 +72,7 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 

@@ -24,6 +24,7 @@ import java.awt.image.renderable.ParameterBlock;
 import static java.lang.Double.NaN;
 import static java.lang.Double.isNaN;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javax.media.jai.ImageLayout;
@@ -43,7 +44,6 @@ import org.apache.sis.util.ArraysExt;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.processing.AbstractCoverageProcessor;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.color.ColorUtilities;
 import org.geotoolkit.image.internal.ImageUtilities;
@@ -70,6 +70,21 @@ final class ViewsManager {
      * Slight number for rounding errors in floating point comparison.
      */
     private static final float EPS = 1E-5f;
+    /**
+     * The logging level for reporting coverage operations.
+     * This level is equals or slightly lower than {@link Level#INFO}.
+     */
+    public static final Level OPERATION = new LogLevel("OPERATION", 780);
+
+    /**
+     * The grid coverage logging level type.
+     */
+    private static final class LogLevel extends Level {
+        private static final long serialVersionUID = -2944283575307061508L;
+        protected LogLevel(final String name, final int level) {
+            super(name, level);
+        }
+    }
 
     /**
      * The views. The coverage that created this {@code ViewsManager} must be stored under
@@ -613,13 +628,13 @@ testLinear: for (int i=0; i<numBands; i++) {
             final SampleDimension[] targetBands, final int code, final Hints userHints)
     {
         final InternationalString name = coverage.getName();
-        if (GridCoverage2D.LOGGER.isLoggable(AbstractCoverageProcessor.OPERATION)) {
+        if (GridCoverage2D.LOGGER.isLoggable(OPERATION)) {
             // Logs a message using the same level than grid coverage processor.
             final String operation = view.getOperationName();
             final String shortName = operation.substring(operation.lastIndexOf('.') + 1);
             final Locale    locale = coverage.getLocale();
             final LogRecord record = Loggings.getResources(locale).getLogRecord(
-                    AbstractCoverageProcessor.OPERATION, Loggings.Keys.SampleTranscode_3, new Object[] {
+                    OPERATION, Loggings.Keys.SampleTranscode_3, new Object[] {
                         (name != null) ? name.toString(locale) :
                             Vocabulary.getResources(locale).getString(Vocabulary.Keys.Untitled),
                         code, shortName

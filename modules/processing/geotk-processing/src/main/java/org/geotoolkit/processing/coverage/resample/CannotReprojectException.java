@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2006-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2001-2012, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -15,36 +15,37 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.processing;
+package org.geotoolkit.processing.coverage.resample;
 
 
 /**
- * Throws when a coverage operation failed.
+ * Throws when a {@code "Resample"} operation has been requested
+ * but the specified grid coverage can't be reprojected.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
  *
- * @since 2.3
+ * @since 1.2
  * @module
  */
-public class CoverageProcessingException extends RuntimeException {
+public class CannotReprojectException extends RuntimeException {
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = -2199436135615396946L;
+    private static final long serialVersionUID = -8145425848361056027L;
 
     /**
      * Creates a new exception without detail message.
      */
-    public CoverageProcessingException() {
+    public CannotReprojectException() {
     }
 
     /**
      * Constructs a new exception with the specified detail message.
      *
-     * @param message the detail message.
+     * @param message The detail message.
      */
-    public CoverageProcessingException(final String message) {
+    public CannotReprojectException(final String message) {
         super(message);
     }
 
@@ -53,17 +54,17 @@ public class CoverageProcessingException extends RuntimeException {
      *
      * @param cause The cause of this exception.
      */
-    public CoverageProcessingException(final Throwable cause) {
+    public CannotReprojectException(Throwable cause) {
         super(cause);
     }
 
     /**
      * Constructs a new exception with the specified detail message and cause.
      *
-     * @param message the detail message.
+     * @param message The detail message.
      * @param cause The cause of this exception.
      */
-    public CoverageProcessingException(final String message, final Throwable cause) {
+    public CannotReprojectException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }
