@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import org.apache.sis.internal.util.Constants;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
@@ -31,11 +32,16 @@ import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AbstractCS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.Utilities;
 import org.opengis.metadata.Identifier;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.util.FactoryException;
 
 /**
@@ -58,6 +64,14 @@ public class SpatialReferencingTable extends Table {
         null, AxesConvention.RIGHT_HANDED, AxesConvention.POSITIVE_RANGE
     };
 
+    /**
+     * The object to use for reading and writing Well Known Text.
+     * Created when first needed.
+     *
+     * @see #getWKTFormat()
+     */
+    private WKTFormat wktFormat;
+
     SpatialReferencingTable(Transaction transaction) {
         super(transaction);
     }
@@ -65,13 +79,13 @@ public class SpatialReferencingTable extends Table {
     /**
      * Finds a {@code spatial_ref_sys} code for the given coordinate reference system.
      */
-    int findOrInsertCRS(final CoordinateReferenceSystem crs) throws FactoryException, IllegalUpdateException, SQLException {
+    final int findOrInsert(final CoordinateReferenceSystem crs) throws FactoryException, IllegalUpdateException, SQLException {
         final IdentifiedObjectFinder finder = IdentifiedObjects.newFinder(Constants.EPSG);
         finder.setIgnoringAxes(true);
         final CoordinateReferenceSystem found = (CoordinateReferenceSystem) finder.findSingleton(crs);
         if (found != null) {
             AbstractCS expected = AbstractCS.castOrCopy(crs.getCoordinateSystem());
-            AbstractCS actual = AbstractCS.castOrCopy(found.getCoordinateSystem());
+            AbstractCS actual   = AbstractCS.castOrCopy(found.getCoordinateSystem());
             for (final AxesConvention convention : CHANGES_TO_TRY) {
                 if (convention != null) {
                     expected = expected.forConvention(convention);
@@ -97,10 +111,11 @@ public class SpatialReferencingTable extends Table {
                 return 4326;
             }
         }
-
-        // search user custom crs list
+        /*
+         * Search user custom CRS list.
+         */
         try (Statement stmt = getConnection().createStatement()) {
-            final ResultSet rs = stmt.executeQuery("SELECT srid, srtext FROM public.spatial_ref_sys WHERE srid > 909999");
+            final ResultSet rs = stmt.executeQuery("SELECT srid, srtext FROM spatial_ref_sys WHERE srid >= " + USER_RANGE_START);
             if (rs.next()) {
                 int srid = rs.getInt(1);
                 String srtext = rs.getString(2);
@@ -111,40 +126,37 @@ public class SpatialReferencingTable extends Table {
                 }
             }
         }
-
-        //store new crs
-        return insertCrs(crs);
+        /*
+         * Store new CRS.
+         */
+        return insert(crs);
     }
 
-    private int insertCrs(final CoordinateReferenceSystem crs) throws FactoryException, SQLException {
+    private int insert(final CoordinateReferenceSystem crs) throws FactoryException, SQLException {
 
         if (!(crs instanceof SingleCRS)) {
             throw new FactoryException("CoordinateReferenceSystem must be a SingleCRS");
         }
 
-        //format to WKT-1
-        final WKTFormat format = new WKTFormat(null, null);
-        format.setIndentation(WKTFormat.SINGLE_LINE);
-        format.setConvention(Convention.WKT1_COMMON_UNITS);
-        String srtext = format.format(crs);
-        if (format.getWarnings() != null) {
-            //try WKT-2
-            format.setConvention(Convention.WKT2);
-            srtext = format.format(crs);
-            if (format.getWarnings() != null) {
-                throw new FactoryException("No valid WKT-1 or WKT-2 for given CRS.");
-            }
+        // format to WKT-1
+        final WKTFormat wktFormat = getWKTFormat();
+        String srtext = wktFormat.format(crs);
+        if (wktFormat.getWarnings() != null) try {
+            // try WKT-2
+            srtext = crs.toWKT();
+        } catch (UnsupportedOperationException e) {
+            throw new FactoryException("No valid WKT-1 or WKT-2 for given CRS.", e);
         }
-
-        int srid = nextSrid();
+        int srid = nextSRID();
         String auth_name = "coveragesql";
         int auth_srid = srid;
         String proj4text = "";
 
-        PreparedStatement stmt = getConnection().prepareStatement("INSERT INTO public.spatial_ref_sys(srid, auth_name, auth_srid, srtext, proj4text) VALUES (?, ?, ?, ?, ?)");
-        stmt.setInt(1, srid);
+        // Following statement will be closed by Table.close().
+        PreparedStatement stmt = prepareStatement("INSERT INTO spatial_ref_sys(srid, auth_name, auth_srid, srtext, proj4text) VALUES (?, ?, ?, ?, ?)");
+        stmt.setInt   (1, srid);
         stmt.setString(2, auth_name);
-        stmt.setInt(3, auth_srid);
+        stmt.setInt   (3, auth_srid);
         stmt.setString(4, srtext);
         stmt.setString(5, proj4text);
 
@@ -154,14 +166,15 @@ public class SpatialReferencingTable extends Table {
 
     /**
      * The range of SRIDs reserved for user custom SRIDs is from 910000 to 998999.
-     * ref : https://gis.stackexchange.com/questions/145017/why-is-there-an-upper-limit-to-the-srid-value-in-the-spatial-ref-sys-table-in-po
+     *
+     * @see <a href="https://gis.stackexchange.com/questions/145017/why-is-there-an-upper-limit-to-the-srid-value-in-the-spatial-ref-sys-table-in-po">Stackexchange</a>
      */
-    private int nextSrid() throws SQLException {
+    private int nextSRID() throws SQLException {
         try (Statement stmt = getConnection().createStatement()) {
-            final ResultSet rs = stmt.executeQuery("SELECT max(srid) FROM public.spatial_ref_sys WHERE srid >= " + USER_RANGE_START);
+            final ResultSet rs = stmt.executeQuery("SELECT max(srid) FROM spatial_ref_sys WHERE srid >= " + USER_RANGE_START);
             if (rs.next()) {
                 int max = rs.getInt(1);
-                if (max >= USER_RANGE_START) { //can be 0 if no records exist
+                if (max >= USER_RANGE_START) {          // can be 0 if no records exist
                     return max + 1;
                 }
             }
@@ -169,25 +182,53 @@ public class SpatialReferencingTable extends Table {
         return USER_RANGE_START;
     }
 
-    CoordinateReferenceSystem getCRS(int srid) throws FactoryException, SQLException {
+    /**
+     * After insertion of a new entry, verify if the given {@code gridToCRS} needs to be adjusted for axis order.
+     *
+     * @todo it is probably to perform a cheaper test.
+     */
+    final Matrix adjustGridToCRS(Matrix gridToCRS, final CoordinateReferenceSystem crs, final int srid)
+            throws FactoryException, SQLException, ParseException
+    {
+        final CoordinateReferenceSystem actual = getCRS(srid);
+        if (!Utilities.equalsIgnoreMetadata(crs, actual)) {
+            Matrix adjust = MathTransforms.getMatrix(CRS.findOperation(crs, actual, null).getMathTransform());
+            if (adjust == null) {
+                throw new FactoryException("Unexpected non-linear transform with SRID " + srid);
+            }
+            if (!adjust.isIdentity()) {
+                gridToCRS = MatrixSIS.castOrCopy(adjust).multiply(gridToCRS);
+            }
+        }
+        return gridToCRS;
+    }
+
+    CoordinateReferenceSystem getCRS(int srid) throws FactoryException, SQLException, ParseException {
         if (srid >= USER_RANGE_START) {
             try (Statement stmt = getConnection().createStatement()) {
-                final ResultSet rs = stmt.executeQuery("SELECT srtext FROM public.spatial_ref_sys WHERE srid = " + srid);
+                final ResultSet rs = stmt.executeQuery("SELECT srtext FROM spatial_ref_sys WHERE srid = " + srid);
                 if (rs.next()) {
-                    return CRS.fromWKT(rs.getString(1));
+                    return (CoordinateReferenceSystem) getWKTFormat().parseObject(rs.getString(1));
                 } else {
-                    throw new FactoryException("Unknown srid " + srid);
+                    throw new NoSuchAuthorityCodeException("Unknown srid " + srid, null, String.valueOf(srid), null);
                 }
             }
         }
-
         /*
-        * TODO: the CRS codes are PostGIS codes, not EPSG codes. For now we simulate PostGIS codes
-        * by changing axis order after decoding, but we should really use a PostGIS factory instead.
-        */
-       CoordinateReferenceSystem crs;
-       crs = transaction.database.getCRSAuthorityFactory().createCoordinateReferenceSystem(String.valueOf(srid));
-       return AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED);
+         * TODO: the CRS codes are PostGIS codes, not EPSG codes. For now we simulate PostGIS codes
+         * by changing axis order after decoding, but we should really use a PostGIS factory instead.
+         */
+        CoordinateReferenceSystem crs;
+        crs = transaction.database.getCRSAuthorityFactory().createCoordinateReferenceSystem(String.valueOf(srid));
+        return AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED);
     }
 
+    private WKTFormat getWKTFormat() {
+        if (wktFormat == null) {
+            wktFormat = new WKTFormat(null, null);
+            wktFormat.setIndentation(WKTFormat.SINGLE_LINE);
+            wktFormat.setConvention(Convention.WKT1_COMMON_UNITS);
+        }
+        return wktFormat;
+    }
 }

@@ -28,6 +28,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.ParseException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,6 +93,13 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
      */
     private static final Area GEOGRAPHIC_AREA = new Area(new IntervalRectangle(
             Longitude.MIN_VALUE, Latitude.MIN_VALUE, Longitude.MAX_VALUE, Latitude.MAX_VALUE));
+
+    /**
+     * Tables of coordinate reference systems, created when first needed.
+     *
+     * @see #getReferencingTable()
+     */
+    private SpatialReferencingTable referencingTable;
 
     /**
      * Tables of additional axes, created when first needed.
@@ -165,9 +173,9 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
             refs.free();
         }
         try {
-            CoordinateReferenceSystem crs = new SpatialReferencingTable(transaction).getCRS(srid);
+            CoordinateReferenceSystem crs = getReferencingTable().getCRS(srid);
             return new GridGeometryEntry(width, height, gridToCRS, approximate, crs, temporalAxis, otherAxes, otherDimName, transaction.database);
-        } catch (FactoryException | TransformException exception) {
+        } catch (FactoryException | TransformException | ParseException exception) {
             throw new IllegalRecordException(exception, results, 10, identifier);
         }
     }
@@ -476,7 +484,9 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                     } else {
                         axes = getConnection().createArrayOf("VARCHAR", additionalAxes.toArray());
                     }
-                    final int srid = new SpatialReferencingTable(transaction).findOrInsertCRS(crs2D);
+                    final SpatialReferencingTable ref = getReferencingTable();
+                    final int srid = ref.findOrInsert(crs2D);
+                    gridToCRS = ref.adjustGridToCRS(gridToCRS, crs2D, srid);
                     return findOrInsert(extent, gridToCRS, !isLinear, srid, axes, () -> {
                         IntervalRectangle area = new IntervalRectangle(
                                 extent.getLow(0), extent.getLow(1),
@@ -516,6 +526,18 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
     }
 
     /**
+     * Returns the table of coordinate reference systems, creating it when first needed.
+     * We do not create this table at construction time in case caller is only interested
+     * by {@link #listTimeOffsets(int)}.
+     */
+    private SpatialReferencingTable getReferencingTable() {
+        if (referencingTable == null) {
+            referencingTable = new SpatialReferencingTable(transaction);
+        }
+        return referencingTable;
+    }
+
+    /**
      * Returns the table of axis, creating it when first needed. We do not create this table at
      * construction time because it is not uncommon to have rasters without vertical dimension.
      */
@@ -532,7 +554,12 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
     @Override
     public void close() throws SQLException {
         super.close();
-        final AdditionalAxisTable t = axisTable;
+        Table t = referencingTable;
+        if (t != null) {
+            referencingTable = null;
+            t.close();
+        }
+        t = axisTable;
         if (t != null) {
             axisTable = null;
             t.close();
