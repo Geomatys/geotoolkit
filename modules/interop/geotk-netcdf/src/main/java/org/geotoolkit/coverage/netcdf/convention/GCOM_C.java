@@ -32,7 +32,7 @@ import org.apache.sis.measure.NumberRange;
  * @author Alexis Manin (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  */
-public final class JAXA extends Convention {
+public final class GCOM_C extends Convention {
     /**
      * Name of the attribute used as a sentinel value.
      */
