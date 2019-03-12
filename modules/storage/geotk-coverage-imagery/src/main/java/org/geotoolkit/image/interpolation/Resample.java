@@ -282,7 +282,14 @@ public class Resample {
         destCoords = new double[2];
         //-- interpolation creation --//
         PixelIterator pix = PixelIteratorFactory.createDefaultIterator(imageSrc);
-        interpol          = Interpolation.create(pix, interpolation, lanczosWindow, rbc, fillValue);
+
+        Rectangle boundary = pix.getBoundary(false);
+        if (lanczosWindow > boundary.width || lanczosWindow > boundary.height) {
+            //image is too small for interpolation, switch to neareast neighor
+            lanczosWindow = 1;
+            interpolation = InterpolationCase.NEIGHBOR;
+        }
+        interpol = Interpolation.create(pix, interpolation, lanczosWindow, rbc, fillValue);
 
         this.rbc   = rbc;
         this.clamp = getClamp(imageDest.getSampleModel().getDataType());

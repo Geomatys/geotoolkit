@@ -135,9 +135,13 @@ public class FXLayerStructure extends FXPropertyPane {
                 final List<SampleDimension> dimensions = ref.getSampleDimensions();
 
                 // GRID GEOMETRY PART //////////////////////////////////////////
+                sb.append("<h1>").append("Coordinate Reference System").append("</h1><br/>");
+                final CoordinateReferenceSystem crs = gridgeom.getCoordinateReferenceSystem();
+                sb.append(formatWKT(crs));
+                sb.append("<br>");
+
                 sb.append("<h1>").append("Grid geometry").append("</h1><br/>");
 
-                final CoordinateReferenceSystem crs = gridgeom.getCoordinateReferenceSystem();
                 final Envelope geoEnv = gridgeom.getEnvelope();
                 final GridExtent gridEnv = gridgeom.getExtent();
                 final MathTransform gridToCrs = gridgeom.getGridToCRS(PixelInCell.CELL_CENTER);
