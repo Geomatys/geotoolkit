@@ -25,8 +25,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.apache.sis.util.Numbers;
-import org.apache.sis.measure.NumberRange;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.storage.DataStoreException;
@@ -93,24 +91,6 @@ final class FormatTable extends CachedTable<String,FormatEntry> {
      */
     private static int size(final List<?> list) {
         return (list != null) ? list.size() : 0;
-    }
-
-    /**
-     * Gets the range of sample values from the given category, with inclusive bounds for consistency
-     * with the database definition. We use this method for comparing the sample value range (not the
-     * real value range) because the former is definitive in the database.
-     */
-    private static NumberRange<?> getRange(final Category category) {
-        NumberRange<?> range = category.getSampleRange();
-        final Class<?> type = range.getElementType();
-        if (Numbers.isInteger(type)) {
-            if (!range.isMaxIncluded() || !range.isMinIncluded() || type != Integer.class) {
-                range = new NumberRange<>(Integer.class,
-                        (int) Math.floor(range.getMinDouble(true)), true,
-                        (int) Math.ceil (range.getMaxDouble(true)), true);
-            }
-        }
-        return range;
     }
 
     /**
@@ -219,10 +199,7 @@ next:           while (results.next()) {
                             }
                             // Do not compare names. We allow user to rename categories in the database.
                             if (!ignoreTransferFunction) {
-                                if (!getRange(category1).equals(getRange(category2))) {
-                                    continue next;
-                                }
-                                if (!category1.getTransferFunction().equals(category2.getTransferFunction())) {
+                                if (!TransferFunction.equals(category1, category2)) {
                                     continue next;
                                 }
                             }

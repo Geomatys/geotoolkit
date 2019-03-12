@@ -65,8 +65,8 @@ final class TransferFunction extends org.apache.sis.referencing.operation.transf
      */
     TransferFunction(final Category category, final Locale locale) {
         final NumberRange<?> range = category.getSampleRange();
-        minimum = (int) Math.round(range.getMinDouble(true));
-        maximum = (int) Math.round(range.getMaxDouble(true));
+        minimum = getLower(range);
+        maximum = getUpper(range);
         Optional<MathTransform1D> function = category.getTransferFunction();
         if (function.isPresent()) {
             MathTransform1D tr = function.get();
@@ -78,5 +78,37 @@ final class TransferFunction extends org.apache.sis.referencing.operation.transf
                 warning = Exceptions.getLocalizedMessage(e, locale);
             }
         }
+    }
+
+    /**
+     * Verifies if two categories should be considered equals, ignoring the exact range type.
+     * We have to be tolerant to the fact that the category of a data store may use {@link Double} type
+     * and may have exclusive bounds while the category from the database uses the {@link Integer} type
+     * always with inclusive bounds. The rounding is okay even if the values are not integer because it
+     * would happen when storing the categories in the database, so the result would be equal categories.
+     * We ignore the category name because users are allowed to rename the categories in the database.
+     */
+    static boolean equals(final Category category1, final Category category2) {
+        final NumberRange<?> range1 = category1.getSampleRange();
+        final NumberRange<?> range2 = category2.getSampleRange();
+        if (getLower(range1) != getLower(range2)) return false;
+        if (getUpper(range1) != getUpper(range2)) return false;
+        return category1.getTransferFunction().equals(category2.getTransferFunction());
+    }
+
+    /**
+     * Gets the lower value (inclusive) of the given range.
+     * Defined as a method for ensuring consistency between constructor and {@code equals}.
+     */
+    private static int getLower(final NumberRange<?> range) {
+        return (int) Math.round(range.getMinDouble(true));
+    }
+
+    /**
+     * Gets the upper value (inclusive) of the given range.
+     * Defined as a method for ensuring consistency between constructor and {@code equals}.
+     */
+    private static int getUpper(final NumberRange<?> range) {
+        return (int) Math.round(range.getMaxDouble(true));
     }
 }
