@@ -22,15 +22,19 @@ import org.apache.sis.storage.netcdf.AttributeNames;
 import org.apache.sis.internal.netcdf.Convention;
 import org.apache.sis.internal.netcdf.Decoder;
 import org.apache.sis.internal.netcdf.Variable;
+import org.apache.sis.internal.netcdf.VariableRole;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.measure.NumberRange;
 
 
 /**
- * Customization of Apache SIS netCDF reader for conventions used in GCOM-C files produced by JAXA.
+ * Global Change Observation Mission - Climate (GCOM-C) conventions.
+ * This class provides customization to Apache SIS netCDF reader for conventions used in GCOM-C files produced by JAXA.
  *
  * @author Alexis Manin (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
+ *
+ * @see <a href="https://en.wikipedia.org/wiki/Global_Change_Observation_Mission">GCOM-C on Wikipedia</a>
  */
 public final class GCOM_C extends Convention {
     /**
@@ -151,6 +155,28 @@ public final class GCOM_C extends Convention {
             n = "Pixel grids";
         }
         return n;
+    }
+
+    /**
+     * Returns whether the given variable is used as a coordinate system axis, a coverage or something else.
+     *
+     * @param  variable  the variable for which to get the role, or {@code null}.
+     * @return role of the given variable, or {@code null} if the given variable was null.
+     */
+    @Override
+    public VariableRole roleOf(final Variable variable) {
+        VariableRole role = super.roleOf(variable);
+        if (role == VariableRole.COVERAGE) {
+            /*
+             * Exclude (for now) some variables associated to longitude and latitude: Obs_time, Sensor_zenith, Solar_zenith.
+             * If a future version we should probably keep them but store them in their own resource aggregate.
+             */
+            final String group = variable.getGroupName();
+            if ("Geometry_data".equalsIgnoreCase(group)) {
+                role = VariableRole.OTHER;
+            }
+        }
+        return role;
     }
 
     /**
