@@ -34,6 +34,7 @@ import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.metadata.sql.ScriptRunner;
 import org.apache.sis.internal.util.Constants;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
@@ -428,18 +429,26 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
      * If this method fails to add the given grid coverage files, then the database if left unchanged
      * (i.e. this method is a "all or nothing" operation).
      *
-     * @param  product  name of the product for which to add grid coverage files.
-     * @param  option   specifies if non-existing product should be created.
-     * @param  files    the files to add to the specified product.
+     * <p>The {@code exportedGrid} parameter specifies the grid geometry of the datacube containing all data
+     * for this product. It may be useful to specify this parameter if the coverage files have heterogynous
+     * grid geometries. This parameter is used only if the product does not already exists in the database.
+     * If unspecified ({@code null}), an arbitrary grid geometry will be selected.</p>
+     *
+     * @param  product       name of the product for which to add grid coverage files.
+     * @param  exportedGrid  a grid encompassing all files that may be added for this product, or {@code null}.
+     * @param  option        specifies if non-existing product should be created.
+     * @param  files         the files to add to the specified product.
      * @throws DataStoreException if an error occurred while reading the grid coverages or adding them to the database.
      */
-    public synchronized void addRaster(final String product, final AddOption option, final Path... files) throws DataStoreException {
+    public synchronized void addRaster(final String product, final GridGeometry exportedGrid, final AddOption option,
+            final Path... files) throws DataStoreException
+    {
         final Map<String,List<NewRaster>> rasters = NewRaster.list(product, option, files);
         if (!rasters.isEmpty()) {
             try (Transaction transaction = database.transaction()) {
                 transaction.writeStart();
                 try (ProductTable table = new ProductTable(transaction)) {
-                    table.addCoverageReferences(product, option, rasters);
+                    table.addCoverageReferences(product, exportedGrid, option, rasters);
                 }
                 transaction.writeEnd();
             } catch (SQLException e) {

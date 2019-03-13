@@ -187,7 +187,9 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
      * @param  rasters  the rasters from which to fetch a grid geometry if a new entry needs to be created, or {@code null}.
      * @throws Exception if the operation failed (many checked exceptions possible).
      */
-    private void createIfAbsent(final AddOption option, final String name, final String parent, final List<NewRaster> rasters) throws Exception {
+    private void createIfAbsent(final AddOption option, final String name, final String parent,
+            GridGeometry exportedGrid, final List<NewRaster> rasters) throws Exception
+    {
         if (option != AddOption.NO_CREATE) {
             boolean exists;
             try {
@@ -204,8 +206,10 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
                 } else {
                     statement.setNull(2, Types.VARCHAR);
                 }
-                if (rasters != null && !rasters.isEmpty()) {
-                    final GridGeometry exportedGrid = rasters.get(0).geometry;                        // TODO: make a better choice.
+                if (exportedGrid == null && rasters != null && !rasters.isEmpty()) {
+                    exportedGrid = rasters.get(0).geometry;                        // TODO: make a better choice.
+                }
+                if (exportedGrid != null) {
                     final int gridID = gridGeometries.findOrInsert(exportedGrid, new Instant[2], name);
                     statement.setInt(3, gridID);
                 } else {
@@ -225,7 +229,9 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
      * Adds entries in the {@code "GridCoverages"} table for this product.
      * This method adds sub-products if the rasters to add have more than one component.
      */
-    void addCoverageReferences(String product, final AddOption option, final Map<String,List<NewRaster>> rasters) throws DataStoreException {
+    void addCoverageReferences(String product, final GridGeometry exportedGrid, final AddOption option,
+            final Map<String,List<NewRaster>> rasters) throws DataStoreException
+    {
         ArgumentChecks.ensureNonNull("product", product);
         try (final GridCoverageTable table = new GridCoverageTable(transaction, seriesTable, gridGeometries)) {
             final String parent;
@@ -233,14 +239,14 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
                 parent = null;
             } else {
                 parent = product;
-                createIfAbsent(option, parent, null, null);
+                createIfAbsent(option, parent, null, null, null);
             }
             for (final Map.Entry<String,List<NewRaster>> entry : rasters.entrySet()) {
                 final List<NewRaster> list = entry.getValue();
                 if (parent != null) {
                     product = parent + DefaultNameSpace.DEFAULT_SEPARATOR + entry.getKey();
                 }
-                createIfAbsent(option, product, parent, list);
+                createIfAbsent(option, product, parent, exportedGrid, list);
                 for (final NewRaster r : list) {
                     table.add(product, r);
                 }
