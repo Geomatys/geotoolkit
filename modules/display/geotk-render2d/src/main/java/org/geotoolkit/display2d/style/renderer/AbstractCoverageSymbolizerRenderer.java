@@ -62,6 +62,7 @@ import static org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.MapBuilder;
@@ -312,7 +313,10 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 //interpolate in geophysic
                 coverage = coverage.view(ViewType.GEOPHYSICS);
             }
-            return new ResampleProcess(coverage, crs2d, resampleGrid, InterpolationCase.BILINEAR, fill).executeNow();
+            ResampleProcess process = new ResampleProcess(coverage, crs2d, resampleGrid, InterpolationCase.BILINEAR, fill);
+            //do not extrapolate values, can cause large areas of incorrect values
+            process.getInput().parameter(ResampleDescriptor.IN_BORDER_COMPORTEMENT_TYPE.getName().getCode()).setValue(ResampleBorderComportement.FILL_VALUE);
+            return process.executeNow();
         }
 
     }

@@ -330,10 +330,16 @@ public class ResampleProcess extends AbstractProcess {
          * If this condition is meets, then we verify if an "integer version" of the image
          * is available as a source of the source coverage (i.e. the floating-point image
          * is derived from the integer image, not the converse).
+         *
+         * TODO : this functionality should be reenabled to optimize performances
+         *        fill value must be converted back to native and if not possible
+         *        view type should remain unchanged.
          */
-        final ViewType processingView = preferredViewForOperation(
-                                        sourceCoverage, interpolationType, false, hints);
+//        final ViewType processingView = preferredViewForOperation(
+//                                        sourceCoverage, interpolationType, false, hints);
+
         final ViewType finalView = CoverageUtilities.preferredViewAfterOperation(sourceCoverage);
+        final ViewType processingView = finalView;
         sourceCoverage = sourceCoverage.view(processingView);
         RenderedImage sourceImage = sourceCoverage.getRenderedImage();
         assert sourceCoverage.getCoordinateReferenceSystem() == sourceCRS : sourceCoverage;
