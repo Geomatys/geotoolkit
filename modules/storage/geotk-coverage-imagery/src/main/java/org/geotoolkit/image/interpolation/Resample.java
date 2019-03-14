@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.image.interpolation;
 
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.DataBuffer;
@@ -24,11 +25,11 @@ import java.awt.image.WritableRenderedImage;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.math.XMath;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -85,7 +86,7 @@ public class Resample {
     /**
      * Iterator use to fill destination image from interpolation of source image pixel value.
      */
-    final PixelIterator destIterator;
+    final WritablePixelIterator destIterator;
 
     /**
      * Minimum and maximum values authorized for pixels. All interpolated value outside this interval will be clamped.
@@ -251,23 +252,13 @@ public class Resample {
         ArgumentChecks.ensureNonNull("mathTransform", mathTransform);
         ArgumentChecks.ensureNonNull("imageSrc", imageSrc);
         ArgumentChecks.ensureNonNull("ResampleBorderComportement", rbc);
-        if (imageDest == null) {
-            final Envelope2D srcGrid = new Envelope2D();
-            srcGrid.setFrame(imageSrc.getMinX() + 0.5, imageSrc.getMinY() + 0.5, imageSrc.getWidth() - 1, imageSrc.getHeight() - 1);
-            final GeneralEnvelope dest = Envelopes.transform(mathTransform.inverse(), srcGrid);
-            final int minx = (int) dest.getLower(0);
-            final int miny = (int) dest.getLower(1);
-            final int w    = (int) dest.getSpan(0);
-            final int h    = (int) dest.getSpan(1);
-            this.imageDest = new WritableLargeRenderedImage(minx, miny, w, h, null, 0, 0, imageSrc.getColorModel(), imageSrc.getSampleModel());
-        } else {
-            /*
-             * If a user give a destination image he should hope that his image boundary stay unchanged.
-             */
-            if (rbc == ResampleBorderComportement.CROP)
-                throw new IllegalArgumentException("It is impossible to define appropriate border comportement with a given image and crop request.");
-            this.imageDest = imageDest;
-        }
+        ArgumentChecks.ensureNonNull("imageDest", imageDest);
+        /*
+        * If a user give a destination image he should hope that his image boundary stay unchanged.
+        */
+        if (rbc == ResampleBorderComportement.CROP)
+            throw new IllegalArgumentException("It is impossible to define appropriate border comportement with a given image and crop request.");
+        this.imageDest = imageDest;
         this.numBands = imageSrc.getSampleModel().getNumBands();
         this.fillValue = fillValue;
         if (fillValue != null)
@@ -275,15 +266,15 @@ public class Resample {
                 throw new IllegalArgumentException("fillValue table length and numbands are different : "+fillValue.length+" numbands = "+this.numBands);
         assert(numBands == imageDest.getWritableTile(imageDest.getMinTileX(), imageDest.getMinTileY()).getNumBands())
                 : "destination image numbands different from source image numbands";
-        this.destIterator              = PixelIteratorFactory.createDefaultWriteableIterator(this.imageDest, this.imageDest, resampleArea);
+        this.destIterator              = new WritablePixelIterator.Builder().setRegionOfInterest(resampleArea).createWritable(this.imageDest);
         this.destToSourceMathTransform = mathTransform;
 
         srcCoords  = new double[2];
         destCoords = new double[2];
         //-- interpolation creation --//
-        PixelIterator pix = PixelIteratorFactory.createDefaultIterator(imageSrc);
+        PixelIterator pix = PixelIterator.create(imageSrc);
 
-        Rectangle boundary = pix.getBoundary(false);
+        Rectangle boundary = pix.getDomain();
         if (lanczosWindow > boundary.width || lanczosWindow > boundary.height) {
             //image is too small for interpolation, switch to neareast neighor
             lanczosWindow = 1;
@@ -316,24 +307,14 @@ public class Resample {
             Interpolation interpol, double[] fillValue, ResampleBorderComportement rbc) throws NoninvertibleTransformException, TransformException {
         ArgumentChecks.ensureNonNull("mathTransform", mathTransform);
         ArgumentChecks.ensureNonNull("interpolation", interpol);
+        ArgumentChecks.ensureNonNull("imageDest", imageDest);
         final Rectangle bound    = interpol.getBoundary();
-        if (imageDest == null) {
-            final Envelope2D srcGrid = new Envelope2D();
-            srcGrid.setFrame(bound.x + 0.5, bound.y + 0.5, bound.width - 1, bound.height - 1);
-            final GeneralEnvelope dest = Envelopes.transform(mathTransform.inverse(), srcGrid);
-            final int minx = (int) dest.getLower(0);
-            final int miny = (int) dest.getLower(1);
-            final int w    = (int) dest.getSpan(0);
-            final int h    = (int) dest.getSpan(1);
-            this.imageDest = new WritableLargeRenderedImage(minx, miny, w, h, null, 0, 0, interpol.pixelIterator.getRenderedImage().getColorModel(), interpol.pixelIterator.getRenderedImage().getSampleModel());
-        } else {
-            /*
-             * If a user give a destination image he should hope that his image boundary stay unchanged.
-             */
-            if (rbc == ResampleBorderComportement.CROP)
-                throw new IllegalArgumentException("It is impossible to define appropriate border comportement with a given image and crop request.");
-            this.imageDest = imageDest;
-        }
+        /*
+         * If a user give a destination image he should hope that his image boundary stay unchanged.
+         */
+        if (rbc == ResampleBorderComportement.CROP)
+            throw new IllegalArgumentException("It is impossible to define appropriate border comportement with a given image and crop request.");
+        this.imageDest = imageDest;
         this.numBands  = interpol.getNumBands();
         this.fillValue = fillValue;
         if (fillValue != null)
@@ -341,7 +322,7 @@ public class Resample {
                 throw new IllegalArgumentException("fillValue table length and numbands are different : "+fillValue.length+" numbands = "+this.numBands);
         assert(numBands == imageDest.getWritableTile(imageDest.getMinTileX(), imageDest.getMinTileY()).getNumBands())
                 : "destination image numbands different from source image numbands";
-        this.destIterator              = PixelIteratorFactory.createDefaultWriteableIterator(this.imageDest, this.imageDest, resampleArea);
+        this.destIterator              = new WritablePixelIterator.Builder().setRegionOfInterest(resampleArea).createWritable(this.imageDest);
         this.destToSourceMathTransform = mathTransform;
         this.interpol                  = interpol;
         srcCoords  = new double[2];
@@ -377,7 +358,7 @@ public class Resample {
         final int minGridYIndex      = theGrid.getMinGridYIndex();
 
         //-- destination area traveled by destination iterator.
-        Rectangle rectBound  = destIterator.getBoundary(true);
+        Rectangle rectBound  = destIterator.getDomain();
 
         //-- destination raster dimensions.
         final int tileWidth  = imageDest.getTileWidth();
@@ -578,19 +559,18 @@ public class Resample {
                         //-- interpolation on Y coordinates
                         final double srcY = tx_t0x * (coeff1Y + v10Y - v00Y) + (1 - tx_t0x) * coeff0Y + v00Y;
 
-                        int band = 0;
                         //-- pixel value interpolation
                         //-- if destination coordinate transformation is out of source boundary.
+                        destIterator.next();
                         if (!interpol.checkInterpolate(srcX, srcY)) {
-                            while (band < numBands && destIterator.next()) {
-                                if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
-                                band++;
+                            if (fillValue != null) {
+                                destIterator.setPixel(fillValue);
                             }
                         } else {
-                            while (band < numBands && destIterator.next()) {
-                                double sample = interpol.interpolate(srcX, srcY, band++);
+                            for (int band=0; band<numBands; band++) {
+                                double sample = interpol.interpolate(srcX, srcY, band);
                                 if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
-                                destIterator.setSampleDouble(sample);
+                                destIterator.setSample(band, sample);
                             }
                         }
                         px++;
@@ -613,31 +593,21 @@ public class Resample {
      * @throws TransformException
      */
     private void fillImageByAffineTransform(AffineTransform destCoordToSource) throws TransformException {
-        int band;
         while (destIterator.next()) {
-            band = 0;
             //-- Compute source coordinate from destination coordinate and mathtransform.
-            destCoords[0] = destIterator.getX();
-            destCoords[1] = destIterator.getY();
+            final Point position = destIterator.getPosition();
+            destCoords[0] = position.x;
+            destCoords[1] = position.y;
             destCoordToSource.transform(destCoords, 0, srcCoords, 0, 1);
 
             //-- if destination coordinate transformation is out of source boundary.
             if (!interpol.checkInterpolate(srcCoords[0], srcCoords[1])) {
-
-                if (fillValue != null) destIterator.setSampleDouble(fillValue[band]); //Todo : find a way to avoid code duplication
-                while (++band < numBands) {
-                    destIterator.next();
-                    if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
-                }
+                if (fillValue != null) destIterator.setPixel(fillValue);
             } else {
-                double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);//Todo : find a way to avoid code duplication
-                if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
-                destIterator.setSampleDouble(sample);
-                while (++band < numBands) {
-                    destIterator.next();
-                    sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
+                for (int band = 0; band < numBands; band++) {
+                    double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
                     if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
-                    destIterator.setSampleDouble(sample);
+                    destIterator.setSample(band, sample);
                 }
             }
         }
@@ -649,12 +619,11 @@ public class Resample {
      * @throws TransformException
      */
     private void fillImageByTransform() throws TransformException {
-        int band;
         while (destIterator.next()) {
-            band = 0;
             //-- Compute source coordinate from destination coordinate and mathtransform.
-            destCoords[0] = destIterator.getX();
-            destCoords[1] = destIterator.getY();
+            final Point position = destIterator.getPosition();
+            destCoords[0] = position.x;
+            destCoords[1] = position.y;
             try {
                 destToSourceMathTransform.transform(destCoords, 0, srcCoords, 0, 1);
             } catch (ProjectionException ex) {
@@ -665,20 +634,12 @@ public class Resample {
 
             //-- if destination coordinate transformation is out of source boundary.
             if (!interpol.checkInterpolate(srcCoords[0], srcCoords[1])) {
-                if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);  //Todo : find a way to avoid code duplication
-                while (++band < numBands) {
-                    destIterator.next();
-                    if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
-                }
+                if (fillValue != null) destIterator.setPixel(fillValue);
             } else {
-                double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);  //Todo : find a way to avoid code duplication
-                if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
-                destIterator.setSampleDouble(sample);
-                while (++band < numBands) {
-                    destIterator.next();
-                    sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
+                for (int band = 0; band < numBands; band++) {
+                    double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
                     if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
-                    destIterator.setSampleDouble(sample);
+                    destIterator.setSample(band, sample);
                 }
             }
         }
@@ -695,7 +656,7 @@ public class Resample {
         if (canUseGrid && destToSourceMathTransform instanceof MathTransform2D) {
             try {
                 final GridFactory gridFact = new GridFactory(0.125);
-                final Object object = gridFact.create((MathTransform2D) destToSourceMathTransform, destIterator.getBoundary(false));
+                final Object object = gridFact.create((MathTransform2D) destToSourceMathTransform, destIterator.getDomain());
                 if (object instanceof AffineTransform) {
                     fillImageByAffineTransform((AffineTransform) object);
                 } else {
@@ -720,30 +681,21 @@ public class Resample {
      */
     @Deprecated
     public void fillImagePx() throws TransformException {
-        int band;
         while (destIterator.next()) {
-            band = 0;
             //-- Compute source coordinate from destination coordinate and mathtransform.
-            destCoords[0] = destIterator.getX();
-            destCoords[1] = destIterator.getY();
+            final Point position = destIterator.getPosition();
+            destCoords[0] = position.x;
+            destCoords[1] = position.y;
             destToSourceMathTransform.transform(destCoords, 0, srcCoords, 0, 1);
 
             //-- if destination coordinate transformation is out of source boundary.
             if (!interpol.checkInterpolate(srcCoords[0], srcCoords[1])) {
-                if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
-                while (++band < numBands) {
-                    destIterator.next();
-                    if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
-                }
+                if (fillValue != null) destIterator.setPixel(fillValue);
             } else {
-                double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
-                if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
-                destIterator.setSampleDouble(sample);
-                while (++band < numBands) {
-                    destIterator.next();
-                    sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
+                for (int band = 0; band < numBands; band++) {
+                    double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
                     if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
-                    destIterator.setSampleDouble(sample);
+                    destIterator.setSample(band, sample);
                 }
             }
         }

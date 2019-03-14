@@ -26,6 +26,7 @@ import java.awt.image.WritableRaster;
 import java.util.Collection;
 import javax.measure.IncommensurableException;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -38,10 +39,9 @@ import org.geotoolkit.display3d.utils.TextureUtils;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -177,7 +177,7 @@ public class PyramidImageLoader implements ImageLoader{
 
         //resample image
         final double[] fillValue = new double[targetImage.getData().getNumBands()];
-        final PixelIterator it = PixelIteratorFactory.createRowMajorIterator(dataRenderedImage);
+        final PixelIterator it = new  PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(dataRenderedImage);
         final Interpolation interpol = Interpolation.create(it, InterpolationCase.NEIGHBOR, 2);
         final Resample resampler = new Resample(sourceToTarget, targetImage, interpol, fillValue);
         resampler.fillImage();

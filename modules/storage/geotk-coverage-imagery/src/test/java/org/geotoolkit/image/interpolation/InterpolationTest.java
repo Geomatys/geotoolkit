@@ -19,8 +19,7 @@ package org.geotoolkit.image.interpolation;
 import java.awt.image.BandedSampleModel;
 import java.awt.image.DataBuffer;
 import javax.media.jai.TiledImage;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.apache.sis.image.PixelIterator;
 
 /**
  * Test any interpolation.
@@ -59,6 +58,6 @@ public abstract class InterpolationTest extends org.geotoolkit.test.TestBase {
                 renderedImage.setSample(x, y, 0, val++);
             }
         }
-        pixIterator = PixelIteratorFactory.createDefaultIterator(renderedImage);
+        pixIterator = PixelIterator.create(renderedImage);
     }
 }

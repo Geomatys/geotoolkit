@@ -20,11 +20,11 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+import org.apache.sis.image.PixelIterator;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.opengis.coverage.grid.SequenceType;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
@@ -46,7 +46,7 @@ public final class TextureUtils {
 
         final ColorModel colorModel = imgSrc.getColorModel();
 
-        final PixelIterator it = PixelIteratorFactory.createRowMajorIterator(imgSrc);
+        final PixelIterator it = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(imgSrc);
         final Interpolation interpol = Interpolation.create(it, InterpolationCase.NEIGHBOR, 2);
 //        final Rectangle area = new Rectangle(0, startRow, width, Math.min(tile_size_y - startRow, threadHeight));
         final WritableRaster raster = colorModel.createCompatibleWritableRaster(imgSrc.getWidth(), imgSrc.getHeight());

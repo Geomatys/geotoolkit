@@ -24,8 +24,8 @@ import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.geometry.Envelopes;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.referencing.CRS;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -377,7 +377,7 @@ public class ResampleTest extends org.geotoolkit.test.TestBase {
         final double[] feedBack = new double[destImgHeight * destImgWidth];
         int fbid = 0;
 
-        final Interpolation interpol = Interpolation.create(PixelIteratorFactory.createDefaultIterator(sourceImg),
+        final Interpolation interpol = Interpolation.create(PixelIterator.create(sourceImg),
                 InterpolationCase.BICUBIC, 0, ResampleBorderComportement.EXTRAPOLATION, new double[]{0});
 
         double[] grid = testedGrid.getGrid();
@@ -469,10 +469,10 @@ public class ResampleTest extends org.geotoolkit.test.TestBase {
         final ImageTypeSpecifier imgTypeSpec = new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1));
         targetImage = imgTypeSpec.createBufferedImage(width, height);
 
-        final PixelIterator pix = PixelIteratorFactory.createDefaultWriteableIterator(targetImage, targetImage);
+        final WritablePixelIterator pix = WritablePixelIterator.create(targetImage);
 
         while (pix.next()) {
-            pix.setSampleDouble(value);
+            pix.setSample(0, value);
         }
     }
 

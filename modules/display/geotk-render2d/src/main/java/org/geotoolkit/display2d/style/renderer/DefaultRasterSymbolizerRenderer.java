@@ -39,6 +39,8 @@ import javax.media.jai.RenderedOp;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -65,8 +67,6 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Rescaler;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
@@ -91,6 +91,7 @@ import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.locationtech.jts.geom.Geometry;
+import org.opengis.coverage.grid.SequenceType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -957,7 +958,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
         // Store min and max value for each band, along with the pixel where we've found the position.
         final double[] minMax = new Rescaler(
-                Interpolation.create(PixelIteratorFactory.createRowMajorIterator(source), InterpolationCase.NEIGHBOR, 2), 0, 255).getMinMaxValue(null);
+                Interpolation.create(new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(source), InterpolationCase.NEIGHBOR, 2), 0, 255).getMinMaxValue(null);
 
         // Compute transformation to apply on pixel values. We want to scale the pixel range in [0..255]
         final int numBands = srcModel.getNumComponents();
@@ -1001,12 +1002,13 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 destination = BufferedImages.createImage(source.getWidth(), source.getHeight(), source);
             }
 
-            final PixelIterator pxIt = PixelIteratorFactory.createRowMajorWriteableIterator(source, destination);
-            int band = 0;
+            final PixelIterator pxIt = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(source);
+            final WritablePixelIterator wIt = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(destination);
+
             while (pxIt.next()) {
-                pxIt.setSampleDouble(pxIt.getSampleDouble() * scale[band] + translation[band]);
-                if (++band >= numBands) {
-                    band = 0;
+                wIt.next();
+                for (int band = 0; band < numBands; band++) {
+                    wIt.setSample(band, pxIt.getSampleDouble(band) * scale[band] + translation[band]);
                 }
             }
             return destination;

@@ -17,9 +17,8 @@
 package org.geotoolkit.image.interpolation;
 
 import java.awt.Rectangle;
-import java.awt.image.DataBuffer;
 import static java.lang.Math.sin;
-import org.geotoolkit.image.iterator.PixelIterator;
+import org.apache.sis.image.PixelIterator;
 
 /**
  * Define Lanczos interpolation.
@@ -63,28 +62,8 @@ public class LanczosInterpolation extends Interpolation {
         if (lanczosWindow > boundary.width || lanczosWindow > boundary.height)
             throw new IllegalArgumentException("lanczosWindow more longer");
         this.lanczosWindow = lanczosWindow;
-        switch (pixelIterator.getSourceDatatype()) {
-            case DataBuffer.TYPE_BYTE : {
-                minValue = 0;
-                maxValue = 255;
-            }break;
-            case DataBuffer.TYPE_SHORT : {
-                minValue = -32768;
-                maxValue = 32767;
-            }break;
-            case DataBuffer.TYPE_INT : {
-                minValue = -2147483648;
-                maxValue = 2147483647;
-            }break;
-            case DataBuffer.TYPE_FLOAT : {
-                minValue = -3.40282347E38;
-                maxValue = 3.40282347E38;
-            }break;
-            default : {//double limits
-                minValue = -1.79769313486231E308;
-                maxValue = 1.79769313486231E308;
-            }
-        }
+        minValue = pixelIterator.getSampleRange().getMinDouble();
+        maxValue = pixelIterator.getSampleRange().getMaxDouble();
     }
 
     /**
@@ -137,8 +116,8 @@ public class LanczosInterpolation extends Interpolation {
         double interpol = 0;
         for (dy = minY; dy < hY; dy++) {
             for (dx = minX; dx < wX; dx++) {
-                pixelIterator.moveTo(dx, dy, b);
-                interpol += pixelIterator.getSampleDouble() * getLCZt(dx, x) * getLCZt(dy, y);
+                pixelIterator.moveTo(dx, dy);
+                interpol += pixelIterator.getSampleDouble(b) * getLCZt(dx, x) * getLCZt(dy, y);
             }
         }
         if (interpol < minValue) {

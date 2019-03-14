@@ -31,6 +31,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.image.PixelIterator;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -39,7 +40,6 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.referencing.GeodeticCalculator;
@@ -47,6 +47,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.opengis.coverage.grid.SequenceType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -204,7 +205,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             final CoordinateSystem destCS  = covCrs.getCoordinateSystem();
             final RenderedImage mnt        = dem.getRenderedImage();
 
-            final Interpolation interpol   = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(mnt), interpolationChoice, 0, ResampleBorderComportement.EXTRAPOLATION, null);
+            final Interpolation interpol   = Interpolation.create(new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(mnt), interpolationChoice, 0, ResampleBorderComportement.EXTRAPOLATION, null);
 
             final MathTransform gridToGeom = MathTransforms.concatenate(gridToCrs, covToGeomCRS);
             final StepPixelAreaCalculator stePixCalculator;
