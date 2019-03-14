@@ -85,9 +85,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-netcdf</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.apache.sis.storage</groupId>
+      <artifactId>sis-earth-observation</artifactId>
+      <version>${sis.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

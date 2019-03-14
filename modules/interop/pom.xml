@@ -65,7 +65,6 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
-    <module>geotk-netcdf</module>
     <module>geotk-mapfile</module>
   </modules>
 
