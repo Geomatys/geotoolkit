@@ -30,6 +30,7 @@ import javax.measure.Unit;
 
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.image.PixelIterator;
 import org.geotoolkit.coverage.SampleDimensionBuilder;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 
@@ -37,8 +38,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.TypeMap;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 
 import org.geotoolkit.coverage.SampleDimensionType;
 
@@ -132,7 +131,7 @@ final class RenderedSampleDimension implements Serializable {
                         names = new CharSequence[numBands];
                         Arrays.fill(names, name);
                     }
-                    create(names, PixelIteratorFactory.createDefaultIterator(image),
+                    create(names, PixelIterator.create(image),
                             model, null, null, null, null, defaultSD, null);
                 }
                 sd = defaultSD[i];
@@ -187,7 +186,7 @@ final class RenderedSampleDimension implements Serializable {
     {
         final SampleModel model = image.getSampleModel();
         final SampleDimension[] dst = new SampleDimension[model.getNumBands()];
-        create(names, (min == null || max == null) ? PixelIteratorFactory.createDefaultIterator(image) : null,
+        create(names, (min == null || max == null) ? PixelIterator.create(image) : null,
                model, min, max, units, colors, dst, hints);
         return dst;
     }
@@ -222,7 +221,7 @@ final class RenderedSampleDimension implements Serializable {
                                     final RenderingHints hints)
     {
         final SampleDimension[] dst = new SampleDimension[raster.getNumBands()];
-        create(names, (min == null || max == null) ? PixelIteratorFactory.createDefaultIterator(raster) : null,
+        create(names, (min == null || max == null) ? new PixelIterator.Builder().create(raster) : null,
                raster.getSampleModel(), min, max, units, colors, dst, hints);
         return dst;
     }
@@ -333,18 +332,18 @@ final class RenderedSampleDimension implements Serializable {
                 max = new double[numBands];
                 Arrays.fill(max, Double.NEGATIVE_INFINITY);
             }
-            int b = 0;
             while (iterator.next()) {
-                final double z = iterator.getSampleDouble();
-                if (computeMin && z < min[b]) min[b] = z;
-                if (computeMax && z > max[b]) max[b] = z;
-                if (computeMin && computeMax) {
-                    if (!(min[b] < max[b])) {
-                        min[b] = 0;
-                        max[b] = 1;
+                for (int b = 0; b < numBands; b++) {
+                    final double z = iterator.getSampleDouble(b);
+                    if (computeMin && z < min[b]) min[b] = z;
+                    if (computeMax && z > max[b]) max[b] = z;
+                    if (computeMin && computeMax) {
+                        if (!(min[b] < max[b])) {
+                            min[b] = 0;
+                            max[b] = 1;
+                        }
                     }
                 }
-                if (++b == numBands) b = 0;
             }
         }
         /*

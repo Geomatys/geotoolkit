@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -38,8 +39,6 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.lang.Setup;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -50,6 +49,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -119,24 +119,25 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
         final int srcMinX = sourceImage.getMinX();
         final int srcMinY = sourceImage.getMinY();
         assertTrue(numband == resultImage.getSampleModel().getNumBands());
-        final PixelIterator srcPix  = PixelIteratorFactory.createRowMajorIterator(sourceImage);
-        final PixelIterator destPix = PixelIteratorFactory.createRowMajorIterator(resultImage);
+        final PixelIterator srcPix  = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(sourceImage);
+        final PixelIterator destPix = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(resultImage);
         assertTrue(Math.abs(resultImage.getWidth()  - sourceImage.getWidth()  * proportionalityCoefficient) <= EPSILON);
         assertTrue(Math.abs(resultImage.getHeight() - sourceImage.getHeight() * proportionalityCoefficient) <= EPSILON);
-        int b = 0;
         while (srcPix.next()) {
-            final double srcValue = srcPix.getSampleDouble();
-            final int srcX        = srcPix.getX() - srcMinX;
-            final int srcY        = srcPix.getY() - srcMinY;
+            final int srcX        = srcPix.getPosition().x - srcMinX;
+            final int srcY        = srcPix.getPosition().y - srcMinY;
             final int destX       = proportionalityCoefficient * srcX;
             final int destY       = proportionalityCoefficient * srcY;
-            for(int dy = destY; dy < destY + proportionalityCoefficient; dy++) {
-                for(int dx = destX; dx < destX + proportionalityCoefficient; dx++) {
-                    destPix.moveTo(dx, dy, b);
-                    assertTrue("At pixel "+dx+","+dy+","+b,Math.abs(srcValue-destPix.getSampleDouble()) <= EPSILON);
+            
+            for (int b = 0; b < numband; b++) {
+                final double srcValue = srcPix.getSampleDouble(b);
+                for(int dy = destY; dy < destY + proportionalityCoefficient; dy++) {
+                    for(int dx = destX; dx < destX + proportionalityCoefficient; dx++) {
+                        destPix.moveTo(dx, dy);
+                        assertTrue("At pixel "+dx+","+dy+","+b,Math.abs(srcValue-destPix.getSampleDouble(b)) <= EPSILON);
+                    }
                 }
             }
-            if (++b == numband) b = 0;
         }
     }
 

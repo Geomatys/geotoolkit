@@ -59,6 +59,8 @@ import javax.xml.bind.annotation.XmlElement;
 import net.iharder.Base64;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
@@ -73,8 +75,6 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
@@ -266,11 +266,11 @@ public class XMLMosaic implements Mosaic {
                         }
                     }
 
-                    final PixelIterator pix = PixelIteratorFactory.createDefaultWriteableIterator(emptyTile, emptyTile);
-                    int d = 0;
+                    final WritablePixelIterator pix = new PixelIterator.Builder().createWritable(emptyTile);
                     while (pix.next()) {
-                        if (nodataExists[d]) pix.setSampleDouble(nodatas[d++]);
-                        if (d == dimsSize)   d = 0;
+                        for (int d=0; d < dimsSize; d++) {
+                            if (nodataExists[d]) pix.setSample(d, nodatas[d]);
+                        }
                     }
                 }
             } else {

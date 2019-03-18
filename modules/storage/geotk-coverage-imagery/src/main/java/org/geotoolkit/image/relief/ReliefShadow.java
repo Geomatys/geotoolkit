@@ -20,11 +20,12 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.opengis.coverage.grid.SequenceType;
 import org.opengis.referencing.cs.AxisDirection;
 
 /**
@@ -64,12 +65,12 @@ public final class ReliefShadow {
     /**
      * {@link PixelIterator} which travel on dem image.
      */
-    private  PixelIterator mntIter;
+    private PixelIterator mntIter;
 
     /**
      * {@link PixelIterator} which travel on destination image which is resulting image from shadow computing.
      */
-    private  PixelIterator destIter;
+    private WritablePixelIterator destIter;
 
     /**
      * Source image minimum position on X axis.
@@ -295,8 +296,8 @@ public final class ReliefShadow {
         //-- define step altitude, when iterator travel up along v axis.
         pasz                   = pash * scaleZ;
         final BufferedImage imgDest = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_ARGB);
-        mntIter                     = PixelIteratorFactory.createRowMajorIterator(dem);
-        destIter                    = PixelIteratorFactory.createRowMajorWriteableIterator(imgDest, imgDest);
+        mntIter                     = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(dem);
+        destIter                    = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(imgDest);
 
         //-- iteration attribut
         final int iterBeginX;
@@ -341,7 +342,7 @@ public final class ReliefShadow {
         while (iterBeginY >= minY && iterBeginY < maxY) {
             int x = iterBeginX;
             while (x >= minX && x < maxX) {
-                destIter.moveTo(x, iterBeginY, 0);
+                destIter.moveTo(x, iterBeginY);
                 final Object pix = srcRaster.getDataElements(x, iterBeginY, null);
 
                 //-- get pixel
@@ -350,7 +351,7 @@ public final class ReliefShadow {
                 final int green = (pixel & 0x0000FF00) >> 8;
                 final int blue  = (pixel & 0x000000FF);
 
-                if (destIter.getSample() == 1) {
+                if (destIter.getSample(0) == 1) {
                     //-- already define as a shadow
                     //-- set alpha transparency
                     int color = (pixel & 0xFF000000)
@@ -367,8 +368,8 @@ public final class ReliefShadow {
                               | (((int) (green * brightness)) << 8)
                               | (((int) (blue  * brightness)));
                     imgDest.setRGB(x, iterBeginY, color);
-                    mntIter.moveTo(x, iterBeginY, 0);
-                    final double z = mntIter.getSampleDouble();
+                    mntIter.moveTo(x, iterBeginY);
+                    final double z = mntIter.getSampleDouble(0);
                     if (Double.isNaN(z)) {
                         x += iterPasX;
                         continue;
@@ -403,13 +404,13 @@ public final class ReliefShadow {
 
         while (ordX >= minX && ordX < maxX && ordY >= minY && ordY < maxY) {
 
-            mntIter.moveTo(ordX, ordY, 0);
-            final double currentZ = mntIter.getSampleDouble() * axisDirection;
+            mntIter.moveTo(ordX, ordY);
+            final double currentZ = mntIter.getSampleDouble(0) * axisDirection;
             if (!Double.isNaN(currentZ)) {
                 if (currentZ > sz) return;
-                destIter.moveTo(ordX, ordY, 0);
+                destIter.moveTo(ordX, ordY);
                 // set an arbitrary value just to define a shadow pixel.
-                destIter.setSample(1);
+                destIter.setSample(0, 1);
             }
             TABV[0] += pasv;
             TABV[1] += pasfv;

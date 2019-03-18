@@ -27,8 +27,8 @@ import java.awt.image.TileObserver;
 import java.awt.image.WritableRaster;
 import java.awt.image.WritableRenderedImage;
 import java.util.Vector;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 
 /**
  * A l'arrache.com
@@ -404,11 +404,12 @@ public class WritableMemoryRenderedImage implements WritableRenderedImage {
                 final Raster r = tiles[ty][tx];
                 rect.setBounds(mx, my, tileWidth, tileHeight);
                 //recopie
-                final PixelIterator copix = PixelIteratorFactory.createDefaultWriteableIterator(wr, wr, rect);
-                final PixelIterator pix   = PixelIteratorFactory.createDefaultIterator(r, rect);
+                final WritablePixelIterator copix = new PixelIterator.Builder().setRegionOfInterest(rect).createWritable(wr);
+                final PixelIterator pix = new PixelIterator.Builder().setRegionOfInterest(rect).create(r);
+                final double[] pixel = new double[copix.getNumBands()];
                 while (copix.next()) {
                     pix.next();
-                    copix.setSampleDouble(pix.getSampleDouble());
+                    copix.setPixel(pix.getPixel(pixel));
                 }
                 mx += tileWidth;
             }

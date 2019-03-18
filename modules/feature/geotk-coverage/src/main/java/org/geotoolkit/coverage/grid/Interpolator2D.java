@@ -23,8 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.media.jai.Interpolation;
 import javax.media.jai.InterpolationNearest;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.apache.sis.image.PixelIterator;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -235,7 +234,7 @@ public final class Interpolator2D extends Calculator2D {
 
     private void initIterator() {
         if(iterator==null){
-            iterator = PixelIteratorFactory.createDefaultIterator(image);
+            iterator = PixelIterator.create(image);
         }
     }
 
@@ -437,8 +436,8 @@ public final class Interpolator2D extends Calculator2D {
         for (; band<bandUp; band++) {
             for(int py=bounds.y,yn=bounds.y+bounds.height,j=0; py<yn; py++,j++){
                 for(int px=bounds.x,xn=bounds.x+bounds.width,i=0; px<xn; px++,i++){
-                    iterator.moveTo(px,py,band);
-                    samples[j][i] = iterator.getSample();
+                    iterator.moveTo(px,py);
+                    samples[j][i] = iterator.getSample(band);
                 }
             }
 
@@ -500,8 +499,8 @@ public final class Interpolator2D extends Calculator2D {
         for (; band<bandUp; band++) {
             for(int py=bounds.y,yn=bounds.y+bounds.height,j=0; py<yn; py++,j++){
                 for(int px=bounds.x,xn=bounds.x+bounds.width,i=0; px<xn; px++,i++){
-                    iterator.moveTo(px,py,band);
-                    samples[j][i] = iterator.getSampleFloat();
+                    iterator.moveTo(px,py);
+                    samples[j][i] = iterator.getSampleFloat(band);
                 }
             }
 
@@ -574,8 +573,8 @@ public final class Interpolator2D extends Calculator2D {
         for (; band<bandUp; band++) {
             for(int py=bounds.y,yn=bounds.y+bounds.height,j=0; py<yn; py++,j++){
                 for(int px=bounds.x,xn=bounds.x+bounds.width,i=0; px<xn; px++,i++){
-                    iterator.moveTo(px,py,band);
-                    samples[j][i] = iterator.getSampleDouble();
+                    iterator.moveTo(px,py);
+                    samples[j][i] = iterator.getSampleDouble(band);
                 }
             }
 

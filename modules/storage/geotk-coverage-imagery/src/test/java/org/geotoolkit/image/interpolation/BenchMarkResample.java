@@ -23,10 +23,10 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.math.Statistics;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.SampleType;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.apache.sis.referencing.CRS;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -151,9 +151,9 @@ public class BenchMarkResample {
 
 
         source    = ImageUtils.createGreyScaledBandedImage(SRC_WIDTH, SRC_HEIGHT, SampleType.INTEGER, 1);
-        final PixelIterator pix = PixelIteratorFactory.createDefaultWriteableIterator(source, source);
+        final WritablePixelIterator pix = new PixelIterator.Builder().createWritable(source);
         while (pix.next()) {
-            pix.setSample(RANDOM.nextInt());
+            pix.setSample(0, RANDOM.nextInt());
         }
 
         target    = ImageUtils.createGreyScaledBandedImage(SRC_WIDTH, SRC_HEIGHT, SampleType.INTEGER, 1);

@@ -6,14 +6,13 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.image.PixelIterator;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -55,7 +54,7 @@ public class CoverageReaderDemo {
         if (coverage instanceof GridCoverage2D) {
             // ... You will acquire iterator for fast and safe browsing.
             final RenderedImage cvgData = ((GridCoverage2D) coverage).getRenderedImage();
-            final PixelIterator pxIterator = PixelIteratorFactory.createDefaultIterator(cvgData);
+            final PixelIterator pxIterator = PixelIterator.create(cvgData);
 
             // What should you avoid to do with deferred reading ?
 

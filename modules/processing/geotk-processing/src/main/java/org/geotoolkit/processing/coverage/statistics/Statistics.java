@@ -27,6 +27,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.*;
@@ -37,8 +38,6 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.image.internal.SampleType;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -307,7 +306,7 @@ public class Statistics extends AbstractProcess {
                 for (int x = startX; x < endX; x++) {
                     if (!gridMosaic.isMissing(x,y)) {
                         tile = mosaicImage.getTile(x, y);
-                        pix = PixelIteratorFactory.createDefaultIterator(tile);
+                        pix = new PixelIterator.Builder().create(tile);
 
                         analyseRange(pix, stats, bands, excludeNoData);
                         pix.rewind();
@@ -341,7 +340,7 @@ public class Statistics extends AbstractProcess {
                         ++step;
                         try {
                             final Raster tile       = image.getTile(x, y);
-                            final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(tile);
+                            final PixelIterator pix = new PixelIterator.Builder().create(tile);
                             analyseRange(pix, stats, bands, excludeNoData);
                             pix.rewind();
 
@@ -447,22 +446,20 @@ public class Statistics extends AbstractProcess {
             }
         }
 
-        int b = 0;
         while (pix.next()) {
-            final double d = pix.getSampleDouble();
-            if (Double.isNaN(d) || Double.isInfinite(d)) {
-                continue;
+            for (int b = 0; b < stats.length; b++) {
+                final double d = pix.getSampleDouble(b);
+                if (Double.isNaN(d) || Double.isInfinite(d)) {
+                    continue;
+                }
+
+                //remove noData from stats
+                if (noDatas != null && noDatas[b] != null && Arrays.binarySearch(noDatas[b], d) >= 0) {
+                    continue;
+                }
+
+                stats[b].accept(d);
             }
-
-            //remove noData from stats
-            if (noDatas != null && noDatas[b] != null && Arrays.binarySearch(noDatas[b], d) >= 0) {
-                continue;
-            }
-
-            stats[b].accept(d);
-
-            //reset b to loop on first band
-            if (++b == stats.length) b = 0;
         }
     }
 
@@ -487,28 +484,25 @@ public class Statistics extends AbstractProcess {
 
         //second pass to compute histogram
         // this int permit to loop on images band.
-        int b = 0;
         if (excludeNoData) {
             while (pix.next()) {
-                final double d = pix.getSampleDouble();
+                for (int b = 0; b < nbBands; b++) {
+                    final double d = pix.getSampleDouble(b);
 
-                //add value if not NaN or is flag as no-data
-                if (!Double.isNaN(d) &&
-                        (bands[b].getNoData() == null || !(Arrays.binarySearch(bands[b].getNoData(), d) >= 0))) {
-                    histograms[b].addValue(d);
+                    //add value if not NaN or is flag as no-data
+                    if (!Double.isNaN(d) &&
+                            (bands[b].getNoData() == null || !(Arrays.binarySearch(bands[b].getNoData(), d) >= 0))) {
+                        histograms[b].addValue(d);
+                    }
                 }
-
-                //reset b to loop on first band
-                if (++b == nbBands) b = 0;
             }
         } else {
             //iter on each pixel band by band to add values on each band.
             while (pix.next()) {
-                final double d = pix.getSampleDouble();
-                histograms[b].addValue(d);
-
-                //reset b to loop on first band
-                if (++b == nbBands) b = 0;
+                for (int b = 0; b < nbBands; b++) {
+                    final double d = pix.getSampleDouble(b);
+                    histograms[b].addValue(d);
+                }
             }
         }
         return histograms;

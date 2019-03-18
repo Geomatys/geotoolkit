@@ -21,19 +21,17 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
-
 import java.io.File;
 import java.io.IOException;
-
 import javax.imageio.ImageTypeSpecifier;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.geotoolkit.image.internal.PhotometricInterpretation;
 import org.geotoolkit.image.internal.SampleType;
-
 import org.geotoolkit.image.io.plugin.TiffImageWriter;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 //import org.junit.Ignore;
 import org.junit.Test;
+import org.opengis.coverage.grid.SequenceType;
 
 /**
  * {@link TestTiffImageWriter} implementation which write image without any compression.
@@ -372,12 +370,14 @@ public strictfp class UncompressedTiffWriterTest extends TestTiffImageWriter {
         assert repRect.x >= 0;
         assert repRect.y >= 0;
 
-        final PixelIterator sourcePix  = PixelIteratorFactory.createRowMajorWriteableIterator(sourceImage, sourceImage, sourceInter);
-        final PixelIterator replacePix = PixelIteratorFactory.createRowMajorIterator(replaceImage, repRect);
+        final WritablePixelIterator sourcePix = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).setRegionOfInterest(sourceInter).createWritable(sourceImage);
+        final PixelIterator replacePix = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).setRegionOfInterest(repRect).create(replaceImage);
 
+        double[] pixel = null;
         while (sourcePix.next()) {
             replacePix.next();
-            sourcePix.setSampleDouble(replacePix.getSampleDouble());
+            pixel = replacePix.getPixel(pixel);
+            sourcePix.setPixel(pixel);
         }
     }
 }

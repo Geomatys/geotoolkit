@@ -48,6 +48,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.image.PixelIterator;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -57,8 +58,6 @@ import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PlanarConfiguration;
 import org.geotoolkit.image.internal.SampleType;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.util.NamesExt;
@@ -659,14 +658,18 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
 //                }
             //-- now to be in accordance with ScaledColorSpace properties
             //-- travel all current image to find minimum and maximum raster values
-            final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(image);
+            final PixelIterator pix = PixelIterator.create(image);
+            double[] pixel = new double[pix.getNumBands()];
             while (pix.next()) {
-                //-- to avoid unexpected NAN values comportement don't use StrictMath class.
-                final double value = pix.getSampleDouble();
-                if (value < minColorSampleValue) {
-                    minColorSampleValue = value;
-                } else if (value > maxColorSampleValue) {
-                    maxColorSampleValue = value;
+                pix.getPixel(pixel);
+                for (int b = 0; b < pixel.length; b++) {
+                    //-- to avoid unexpected NAN values comportement don't use StrictMath class.
+                    final double value = pixel[b];
+                    if (value < minColorSampleValue) {
+                        minColorSampleValue = value;
+                    } else if (value > maxColorSampleValue) {
+                        maxColorSampleValue = value;
+                    }
                 }
             }
             //-- to refresh min and max of current stored color model

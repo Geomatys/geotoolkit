@@ -30,6 +30,7 @@ import org.apache.sis.feature.AbstractAssociation;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
@@ -44,8 +45,6 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -434,7 +433,7 @@ public final class CoverageFeature {
         private GridCoverage2DRecordIterator(FeatureType recordType, GridCoverage2D coverage) {
             this.recordType = recordType;
             this.coverage = coverage.view(ViewType.GEOPHYSICS);
-            this.pixelIterator = PixelIteratorFactory.createDefaultIterator(this.coverage.getRenderedImage());
+            this.pixelIterator = new PixelIterator.Builder().create(this.coverage.getRenderedImage());
             final GridGeometry2D gridGeometry = this.coverage.getGridGeometry();
             this.gridToCrs2D = gridGeometry.getGridToCRS2D(PixelOrientation.LOWER_LEFT);
             this.envelope = gridGeometry.getEnvelope();
@@ -450,8 +449,6 @@ public final class CoverageFeature {
             }
             this.properties = properties.toArray(new String[properties.size()]);
 
-            //move to first pixel
-            iteNext = pixelIterator.next();
         }
 
         @Override
@@ -479,11 +476,11 @@ public final class CoverageFeature {
         private void findNext(){
             if(next != null) return;
 
-            while (next == null && iteNext) {
+            while (next == null && pixelIterator.next()) {
                 next = recordType.newInstance();
                 //build geometry
-                final int x = pixelIterator.getX();
-                final int y = pixelIterator.getY();
+                final int x = pixelIterator.getPosition().x;
+                final int y = pixelIterator.getPosition().y;
 
                 final double[] poly = new double[]{
                     x  ,y,
@@ -503,8 +500,7 @@ public final class CoverageFeature {
                 next.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
                 //read sample values
                 for (int i=0;i<properties.length;i++) {
-                    next.setPropertyValue(properties[i], pixelIterator.getSampleDouble());
-                    iteNext = pixelIterator.next();
+                    next.setPropertyValue(properties[i], pixelIterator.getSampleDouble(i));
                 }
 
                 //if the CRS has more the 2 dimensions, we convert the envelope operation

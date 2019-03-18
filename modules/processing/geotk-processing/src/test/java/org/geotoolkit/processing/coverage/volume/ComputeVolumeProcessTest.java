@@ -28,6 +28,8 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.Names;
@@ -38,8 +40,6 @@ import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.coverage.ColoredCategory;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
@@ -48,6 +48,7 @@ import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -135,10 +136,10 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
 
         // create image adapted to test.
         final BufferedImage buff = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_BYTE_GRAY);
-        PixelIterator pixIter = PixelIteratorFactory.createRowMajorWriteableIterator(buff, buff);
+        WritablePixelIterator pixIter = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(buff);
         // fill image with value 1.
         while (pixIter.next()) {
-            pixIter.setSample(1);
+            pixIter.setSample(0, 1);
         }
 
         // create coverage reader adapted for test.
@@ -189,9 +190,9 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
      */
     private void altitudesTest(final CoordinateReferenceSystem crs, final double ...expectedResults) throws ProcessException {
         final BufferedImage buff = new BufferedImage(7, 7, BufferedImage.TYPE_BYTE_GRAY);
-        PixelIterator pixIter = PixelIteratorFactory.createRowMajorWriteableIterator(buff, buff);
+        WritablePixelIterator pixIter = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(buff);
         while (pixIter.next()) {
-            pixIter.setSample(1);
+            pixIter.setSample(0, 1);
         }
         GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setEnvelope(0 ,0, 7, 7);
@@ -376,12 +377,12 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
         int idMinY = img.getMinY();
         int idMaxY = idMinY + img.getHeight();
         int value  = basicValue;
-        final PixelIterator pixIter = PixelIteratorFactory.createRowMajorWriteableIterator(img, img);
+        final WritablePixelIterator pixIter = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(img);
         while (idMinX < idMaxX && idMinY < idMaxY) {
             for (int y = idMinY; y < idMaxY; y++) {
                 for (int x = idMinX; x < idMaxX; x++) {
-                    pixIter.moveTo(x, y, 0);
-                    pixIter.setSample(value);
+                    pixIter.moveTo(x, y);
+                    pixIter.setSample(0, value);
                 }
             }
             idMinX++;
@@ -456,11 +457,11 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
                                                (int) Math.ceil(gridEnvelope.getSpan(0)), (int) Math.ceil(gridEnvelope.getSpan(1)));
 
                 final BufferedImage newImage = new BufferedImage(covImg.getColorModel(), covImg.getColorModel().createCompatibleWritableRaster(rect.width, rect.height), false, null);
-                final PixelIterator pix      = PixelIteratorFactory.createRowMajorIterator(covImg, rect);
-                final PixelIterator copypix  = PixelIteratorFactory.createRowMajorWriteableIterator(newImage, newImage);
+                final PixelIterator pix      = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).setRegionOfInterest(rect).create(covImg);
+                final WritablePixelIterator copypix  = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(newImage);
                 while (pix.next()) {
                     copypix.next();
-                    copypix.setSampleDouble(pix.getSampleDouble());
+                    copypix.setSample(0, pix.getSampleDouble(0));
                 }
 
                 final GridCoverageBuilder gcb = new GridCoverageBuilder();

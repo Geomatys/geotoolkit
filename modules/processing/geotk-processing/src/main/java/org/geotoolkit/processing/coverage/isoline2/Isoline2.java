@@ -33,6 +33,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
@@ -49,8 +50,6 @@ import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -137,7 +136,7 @@ public class Isoline2 extends AbstractProcess {
                 }
                 coverageRef.recycle(reader);
 
-                final PixelIterator ite = PixelIteratorFactory.createDefaultIterator(image);
+                final PixelIterator ite = PixelIterator.create(image);
                 final int width = image.getWidth();
                 final int height = image.getHeight();
 
@@ -184,7 +183,7 @@ public class Isoline2 extends AbstractProcess {
                                 LOGGER.log(Level.WARNING, "Can't compute isoline, ImageReader can't be found.");
                                 return;
                             }
-                            final PixelIterator ite = PixelIteratorFactory.createDefaultIterator(image);
+                            final PixelIterator ite = PixelIterator.create(image);
                             final int width = image.getWidth();
                             final int height = image.getHeight();
                             final BlockRunnable runnable = new BlockRunnable(gridtoCRS, ite, width, height, 0);
@@ -298,7 +297,7 @@ public class Isoline2 extends AbstractProcess {
                 for (int y=0; y<height; y++) {
                     for (int x=0; x<width; x++) {
                         ite.next();
-                        line1[x] = ite.getSampleDouble();
+                        line1[x] = ite.getSampleDouble(0);
 
                         //calculate lines
                         if (y>0 && x>0) {

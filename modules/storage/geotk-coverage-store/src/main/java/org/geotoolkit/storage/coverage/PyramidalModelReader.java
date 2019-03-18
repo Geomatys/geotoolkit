@@ -38,6 +38,8 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
@@ -50,8 +52,6 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.MultiResolutionModel;
 import org.geotoolkit.data.multires.Pyramids;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.Cancellable;
@@ -451,10 +451,10 @@ public class PyramidalModelReader extends AbstractGridCoverageReader{
                             cm = pyramRef.getColorModel();
                             sm = pyramRef.getSampleModel();
                         }
-                        if(cm==null) {
+                        if (cm == null) {
                             cm = tileImage.getColorModel();
                         }
-                        if(sm==null){
+                        if (sm == null) {
                             //if sample model is null, we need to have a coherent relation with
                             //the color model. we reuse the tile models.
                             cm = tileImage.getColorModel();
@@ -468,11 +468,13 @@ public class PyramidalModelReader extends AbstractGridCoverageReader{
                     }
                     //-- write current features tile into destination image.
                     final Rectangle tileBound = new Rectangle(offset.x, offset.y, tileImage.getWidth(), tileImage.getHeight());
-                    final PixelIterator destPix = PixelIteratorFactory.createDefaultWriteableIterator((BufferedImage)image, (BufferedImage)image, tileBound);
-                    final PixelIterator tilePix = PixelIteratorFactory.createDefaultIterator(tileImage);
-                    while(destPix.next()) {
+                    final WritablePixelIterator destPix = new PixelIterator.Builder().setRegionOfInterest(tileBound).createWritable((BufferedImage)image);
+                    final PixelIterator tilePix = new PixelIterator.Builder().create(tileImage);
+                    double[] pixel = null;
+                    while (destPix.next()) {
                         tilePix.next();
-                        destPix.setSampleDouble(tilePix.getSampleDouble());
+                        pixel = tilePix.getPixel(pixel);
+                        destPix.setPixel(pixel);
                     }
                     assert !tilePix.next();
                 }
