@@ -89,6 +89,10 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
      * Name of temporal datum for forecasts.
      */
     private static final String FORECAST_DATUM = "Forecast";
+    /**
+     * Name of temporal datum for runtime, interpreted as parametric.
+     */
+    private static final String RUNTIME_DATUM = "Runtime";
 
     /**
      * Datum name for time relative to the start time of a {@link GridCoverageEntry}.
@@ -260,7 +264,8 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
          * as a template if possible.
          */
         final boolean isTemporal = AxisDirections.isTemporal(direction);
-        if (isTemporal && !(Entry.HACK && FORECAST_DATUM.equalsIgnoreCase(name))) {
+        if (isTemporal && !(Entry.HACK && FORECAST_DATUM.equalsIgnoreCase(name))
+                       && !(Entry.HACK && RUNTIME_DATUM.equalsIgnoreCase(name)) ) {
             if (RELATIVE_TIME_DATUM.equalsIgnoreCase(name)) {
                 return RELATIVE_TIME;
             }
