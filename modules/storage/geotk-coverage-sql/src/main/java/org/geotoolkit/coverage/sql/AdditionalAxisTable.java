@@ -89,6 +89,7 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
      * Name of temporal datum for forecasts.
      */
     private static final String FORECAST_DATUM = "Forecast";
+
     /**
      * Name of temporal datum for runtime, interpreted as parametric.
      */
@@ -300,19 +301,16 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
          */
         final ParametricDatum datum = factories.getDatumFactory().createParametricDatum(properties(name));
         final CSFactory csFactory = factories.getCSFactory();
-        final Map<String,?> csName;
-        CoordinateSystemAxis axis;
+        final String axisName, abbreviation;
         if (isTemporal) {
-            axis = RELATIVE_TIME.getCoordinateSystem().getAxis(0);
-            csName = properties(axis.getName());
-            if (!axis.getDirection().equals(direction) || !axis.getUnit().equals(units)) {
-                axis = csFactory.createCoordinateSystemAxis(csName, axis.getAbbreviation(), direction, units);
-            }
+            axisName = RUNTIME_DATUM;
+            abbreviation = "rt";
         } else {
-            axis = csFactory.createCoordinateSystemAxis(properties("Parametric"), "p", direction, units);
-            csName = properties(axis.getName());
+            axisName = "Parametric";
+            abbreviation = "p";
         }
-        final ParametricCS cs = csFactory.createParametricCS(csName, axis);
+        final CoordinateSystemAxis axis = csFactory.createCoordinateSystemAxis(properties(axisName), abbreviation, direction, units);
+        final ParametricCS cs = csFactory.createParametricCS(properties(axis.getName()), axis);
         return factories.getCRSFactory().createParametricCRS(properties(datum.getName()), datum, cs);
     }
 
