@@ -21,6 +21,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.action.ActionUtils;
+import org.geotoolkit.gui.javafx.render2d.tool.FXInfoAction;
 import org.geotoolkit.gui.javafx.render2d.tool.FXMesureAreaAction;
 import org.geotoolkit.gui.javafx.render2d.tool.FXMesureLengthAction;
 
@@ -39,9 +40,11 @@ public class FXGeoToolBar extends ToolBar {
 
         final ToggleButton butLength = new FXMesureLengthAction(map).createToggleButton(ActionUtils.ActionTextBehavior.HIDE);
         final ToggleButton butArea = new FXMesureAreaAction(map).createToggleButton(ActionUtils.ActionTextBehavior.HIDE);
+        final ToggleButton butInfo = new FXInfoAction(map).createToggleButton(ActionUtils.ActionTextBehavior.HIDE);
         butLength.getStyleClass().add(LEFT);
-        butArea.getStyleClass().add(RIGHT);
-        final HBox hboxAction = new HBox(butLength,butArea);
+        butArea.getStyleClass().add(CENTER);
+        butInfo.getStyleClass().add(RIGHT);
+        final HBox hboxAction = new HBox(butLength,butArea,butInfo);
 
         getItems().add(hboxAction);
 
