@@ -10,7 +10,7 @@ import org.opengis.geometry.Envelope;
 
 /**
  * A simple aggregator to rely on for data source evaluation. We currently use only wind and current as drift factors.
- * 
+ *
  * TODO : use a more generic approach using a list of factors applicable on a drifting object.
  *
  * @author Alexis Manin (Geomatys)

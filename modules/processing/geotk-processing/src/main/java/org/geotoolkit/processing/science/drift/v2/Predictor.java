@@ -55,7 +55,7 @@ import ucar.ma2.InvalidRangeException;
 /**
  * It's a port of {@link DriftPredictor}. The aim is to use arbitrary UV data source as meteo dataset, instead of hard-
  * coded data used by the original process. Other attempts are:
- * 
+ *
  * <ol>
  * <li>Increase maintainability by providing better abstractions</li>
  * <li>Ease configuration by using standard process inputs instead of static configuration file</li>
