@@ -19,6 +19,7 @@ package org.geotoolkit.image.interpolation;
 import java.awt.Rectangle;
 import static java.lang.Math.sin;
 import org.apache.sis.image.PixelIterator;
+import org.apache.sis.measure.NumberRange;
 
 /**
  * Define Lanczos interpolation.
@@ -62,8 +63,9 @@ public class LanczosInterpolation extends Interpolation {
         if (lanczosWindow > boundary.width || lanczosWindow > boundary.height)
             throw new IllegalArgumentException("lanczosWindow more longer");
         this.lanczosWindow = lanczosWindow;
-        minValue = pixelIterator.getSampleRange().getMinDouble();
-        maxValue = pixelIterator.getSampleRange().getMaxDouble();
+        NumberRange<?> range = pixelIterator.getSampleRanges()[0];
+        minValue = range.getMinDouble();
+        maxValue = range.getMaxDouble();
     }
 
     /**

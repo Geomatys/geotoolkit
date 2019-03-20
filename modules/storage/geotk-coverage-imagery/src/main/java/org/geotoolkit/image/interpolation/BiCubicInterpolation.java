@@ -18,6 +18,7 @@ package org.geotoolkit.image.interpolation;
 
 import java.awt.Rectangle;
 import org.apache.sis.image.PixelIterator;
+import org.apache.sis.measure.NumberRange;
 
 /**
  * Define BiCubic Interpolation.
@@ -48,8 +49,9 @@ abstract class BiCubicInterpolation extends SeparableInterpolation {
      */
     public BiCubicInterpolation(PixelIterator pixelIterator, ResampleBorderComportement borderChoice, double[] fillValue) {
         super(pixelIterator, 4, borderChoice, fillValue);
-        minValue = pixelIterator.getSampleRange().getMinDouble();
-        maxValue = pixelIterator.getSampleRange().getMaxDouble();
+        NumberRange<?> range = pixelIterator.getSampleRanges()[0];
+        minValue = range.getMinDouble();
+        maxValue = range.getMaxDouble();
         if (boundary.width < 4)
             throw new IllegalArgumentException("iterate object width too smaller" + boundary.width);
         if (boundary.height < 4)
