@@ -30,6 +30,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -43,7 +44,6 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.statistics.StatisticsDescriptor.*;
 import org.geotoolkit.storage.coverage.CoverageUtilities;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
@@ -149,40 +149,30 @@ public class Statistics extends AbstractProcess {
      * @return ImageStatistics
      * @throws ProcessException
      */
-    public static ImageStatistics analyse(GridCoverageResource ref, boolean excludeNoData, int imageSize) throws ProcessException, DataStoreException{
-        GridCoverageReader reader = null;
-        try {
-            reader = ref.acquireReader();
-            final GridGeometry gridGeom = reader.getGridGeometry();
-            final Envelope env = gridGeom.getEnvelope();
-            final GridExtent ext = gridGeom.getExtent();
+    public static ImageStatistics analyse(GridCoverageResource ref, boolean excludeNoData, int imageSize)
+            throws ProcessException, DataStoreException {
+        final GridGeometry gridGeom = ref.getGridGeometry();
+        final Envelope env = gridGeom.getEnvelope();
+        final GridExtent ext = gridGeom.getExtent();
 
-            final double[] res = new double[ext.getDimension()];
-            double max = 0;
-            for(int i=0;i<res.length;i++){
-                res[i] = (env.getSpan(i) / imageSize);
-                max = Math.max(max,res[i]);
-            }
-            Arrays.fill(res, max);
-
-
-            final GridCoverageReadParam param = new GridCoverageReadParam();
-            param.setEnvelope(env);
-            param.setResolution(res);
-            GridCoverage coverage = reader.read(param);
-            if(coverage instanceof GridCoverage2D){
-                //we want the statistics on the real data values
-                coverage = ((GridCoverage2D)coverage).view(ViewType.GEOPHYSICS);
-            }
-            org.geotoolkit.process.Process process = new Statistics((GridCoverage2D)coverage, excludeNoData);
-            Parameters out = Parameters.castOrWrap(process.call());
-            return out.getValue(OUTCOVERAGE);
-
-        } finally {
-            if(reader!=null){
-                ref.recycle(reader);
-            }
+        final double[] res = new double[ext.getDimension()];
+        double max = 0;
+        for(int i=0;i<res.length;i++){
+            res[i] = (env.getSpan(i) / imageSize);
+            max = Math.max(max,res[i]);
         }
+        Arrays.fill(res, max);
+
+
+        final GridGeometry query = gridGeom.derive().subgrid(env, res).sliceByRatio(0.5, 0, 1).build();
+        GridCoverage2D coverage = org.geotoolkit.internal.coverage.CoverageUtilities.toGeotk(ref.read(query));
+        if (coverage instanceof GridCoverage2D) {
+            //we want the statistics on the real data values
+            coverage = ((GridCoverage2D)coverage).view(ViewType.GEOPHYSICS);
+        }
+        org.geotoolkit.process.Process process = new Statistics((GridCoverage2D)coverage, excludeNoData);
+        Parameters out = Parameters.castOrWrap(process.call());
+        return out.getValue(OUTCOVERAGE);
     }
 
 
@@ -523,11 +513,7 @@ public class Statistics extends AbstractProcess {
      */
     private GridCoverage2D getCoverage(GridCoverageResource ref) throws ProcessException {
         try {
-            final GridCoverageReader reader = ref.acquireReader();
-            GridCoverage2D coverage = getCoverage(reader);
-            ref.recycle(reader);
-            return coverage;
-
+            return org.geotoolkit.internal.coverage.CoverageUtilities.toGeotk(ref.read(null, null));
         } catch (DataStoreException e) {
             throw new ProcessException(e.getMessage(), this, e);
         }
