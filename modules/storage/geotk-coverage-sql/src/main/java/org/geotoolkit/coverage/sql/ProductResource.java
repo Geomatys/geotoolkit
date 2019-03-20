@@ -20,6 +20,7 @@ import java.awt.Image;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.storage.DataStore;
@@ -28,6 +29,7 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -139,6 +141,8 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
                     gg = gg.derive().rounding(GridRoundingMode.ENCLOSING).subgrid(envelope, resolution).build();
                 }
                 return CoverageUtilities.toGeotk(product.read(gg, null));
+            } catch (DisjointExtentException e) {
+                throw new DisjointCoverageDomainException(e.getMessage(), e);
             } catch (CoverageStoreException e) {
                 throw e;
             } catch (DataStoreException e) {

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -168,11 +169,11 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final JTSEnvelope2D searchEnv = JTS.toEnvelope(geom);
 
         GridGeometry searchGrid = renderingContext.getGridGeometry().reduce(0,1);
-        searchGrid = searchGrid.derive().subgrid(searchEnv).build();
         try {
+            searchGrid = searchGrid.derive().subgrid(searchEnv).build();
             GridCoverage2D coverage = getObjectiveCoverage(projectedCoverage, searchGrid, false);
             return coverage != null;
-        } catch (DataStoreException | TransformException | FactoryException | ProcessException ex) {
+        } catch (DataStoreException | TransformException | FactoryException | ProcessException | DisjointExtentException ex) {
             return false;
         }
     }
@@ -303,6 +304,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                     .subgrid(ge)
                     .build()
                     .reduce(0,1);
+            } catch (DisjointExtentException ex) {
+                //don't log, still continue
             } catch (IllegalGridGeometryException ex) {
                 LOGGER.log(Level.INFO, ex.getMessage(), ex);
             }
@@ -346,6 +349,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                     .rounding(GridRoundingMode.ENCLOSING)
                     .subgrid(canvasEnv, resolution)
                     .build();
+        } catch (DisjointExtentException ex) {
+            //don't log, still continue
         } catch (IllegalGridGeometryException ex) {
             LOGGER.log(Level.INFO, ex.getMessage(), ex);
         }

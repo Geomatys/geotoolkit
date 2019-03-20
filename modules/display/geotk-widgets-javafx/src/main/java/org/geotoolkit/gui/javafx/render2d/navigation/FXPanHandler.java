@@ -31,6 +31,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -164,6 +165,8 @@ public class FXPanHandler extends AbstractNavigationHandler {
                     System.out.println("Value = " + entry.getValue());
                 }
 
+            } catch (DisjointExtentException ex) {
+                System.out.println("Out of coverage extent.");
             } catch (DataStoreException ex) {
                 ex.printStackTrace();
             }

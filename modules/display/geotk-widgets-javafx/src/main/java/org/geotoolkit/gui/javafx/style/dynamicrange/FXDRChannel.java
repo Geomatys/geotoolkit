@@ -121,7 +121,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                 final List<SampleDimension> dims = ref.getSampleDimensions();
 
                 final int nbdim;
-                if(dims==null){
+                if (dims == null) {
                     //read a very low resolution image to extract bands from it
                     final GridGeometry gg = ref.getGridGeometry();
                     final Envelope env = gg.getEnvelope();
@@ -135,13 +135,13 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                     final GridCoverage cov = ref.read(query);
                     final RenderedImage ri = cov.render(cov.getGridGeometry().derive().sliceByRatio(0.5, 0, 1).build().getExtent());
                     nbdim = ri.getSampleModel().getNumBands();
-                }else{
+                } else {
                     nbdim = dims.size();
                 }
 
                 final ObservableList<String> bvals = FXCollections.observableArrayList();
                 bvals.add("none");
-                for(int i=0;i<nbdim;i++){
+                for (int i = 0; i < nbdim; i++) {
                     bvals.add(""+i);
                 }
                 uiBands.setItems(bvals);

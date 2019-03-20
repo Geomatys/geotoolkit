@@ -25,6 +25,7 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
+import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.CommonCRS;
@@ -267,6 +268,8 @@ public final class Portrayer {
             ////////////////////////////////////////////////////////////////////
 
             writeCoverage(coverage, env, resolution, outputDef, canvasDef.getBackground());
+        } catch (DisjointExtentException ex) {
+            return false;
         } catch (DataStoreException | ProcessException ex) {
             throw new PortrayalException(ex);
         }

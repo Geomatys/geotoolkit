@@ -55,6 +55,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
+import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
@@ -587,7 +588,9 @@ public final class DefaultPortrayalService implements PortrayalService{
             ////////////////////////////////////////////////////////////////////
 
             writeCoverage(coverage, env, resolution, outputDef, canvasDef.getBackground());
-        } catch(DataStoreException | ProcessException ex) {
+        } catch (DisjointExtentException ex) {
+            return false;
+        } catch (DataStoreException | ProcessException ex) {
             throw new PortrayalException(ex);
         }
         return true;
