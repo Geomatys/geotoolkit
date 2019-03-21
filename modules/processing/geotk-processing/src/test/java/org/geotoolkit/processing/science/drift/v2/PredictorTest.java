@@ -3,18 +3,6 @@
  */
 package org.geotoolkit.processing.science.drift.v2;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -46,14 +34,31 @@ import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.spatial.DimensionNameType;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.GenericName;
 import org.opengis.util.NoSuchIdentifierException;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.DataStores;
+import org.apache.sis.storage.StorageConnector;
+
 import static org.opengis.metadata.spatial.DimensionNameType.*;
-import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
@@ -114,7 +119,7 @@ public class PredictorTest {
         input.getOrCreate(PredictorDescriptor.MAX_POINTS).setValue(200);
         addWeight(input, 0.5f, 0.5f, 0.5f);
         addWeight(input, 0.2f, 0.8f, 0.8f);
-        //input.getOrCreate(PredictorDescriptor.TARGET_RESOLUTION).setValue(1);
+        input.getOrCreate(PredictorDescriptor.TARGET_RESOLUTION).setValue(1);
         input.getOrCreate(PredictorDescriptor.TARGET_WIDTH).setValue(256);
         input.getOrCreate(PredictorDescriptor.TARGET_HEIGHT).setValue(256);
         input.getOrCreate(PredictorDescriptor.TIMESTEP).setValue(1);
@@ -153,11 +158,26 @@ public class PredictorTest {
         final long outTime = output.getMandatoryValue(DriftPredictionDescriptor.ACTUAL_END_TIMESTAMP);
         final Path netcdf = output.getMandatoryValue(DriftPredictionDescriptor.OUTPUT_DATA);
 
-        Assert.assertEquals("Expected time of ending", expectedEndTime, outTime);
-        Assert.assertNotNull("Output file path", netcdf);
-        Assert.assertTrue("Output file is not readable", Files.isRegularFile(netcdf));
+        try {
+            Assert.assertEquals("Expected time of ending", expectedEndTime, outTime);
+            Assert.assertNotNull("Output file path", netcdf);
+            Assert.assertTrue("Output file is not readable", Files.isRegularFile(netcdf));
+            // TODO: activate
+            //checkContent(netcdf);
+        } finally {
+            Files.delete(netcdf);
+        }
+    }
 
-        // TODO : check output value
+    private void checkContent(final Path netcdf) throws DataStoreException {
+
+        final StorageConnector connector = new StorageConnector(netcdf);
+
+        // Translate to geometries
+        try (final DataStore myStore = DataStores.open(connector)) {
+            final Collection<GridCoverageResource> resources = org.geotoolkit.storage.DataStores.flatten(myStore, true, GridCoverageResource.class);
+            Assert.assertEquals("Number of coverage resources", 2, resources.size());
+        }
     }
 
     private static void addWeight(final ParameterValueGroup processInput, final float wind, final float current, final float proba) {

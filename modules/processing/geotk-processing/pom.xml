@@ -114,6 +114,14 @@
             <groupId>edu.ucar</groupId>
             <artifactId>cdm</artifactId>
         </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.sis.storage</groupId>
+            <artifactId>sis-netcdf</artifactId>
+            <version>${sis.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>
