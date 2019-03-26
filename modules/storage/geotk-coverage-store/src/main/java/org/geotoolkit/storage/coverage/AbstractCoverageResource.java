@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.content.DefaultAttributeGroup;
@@ -40,8 +41,14 @@ import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.storage.AbstractFeatureSet;
+import org.geotoolkit.storage.AbstractResource;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.metadata.extent.Extent;
+import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.metadata.extent.GeographicExtent;
+import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.datum.PixelInCell;
@@ -53,7 +60,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  */
 @XmlTransient
-public abstract class AbstractCoverageResource extends AbstractFeatureSet implements GridCoverageResource {
+public abstract class AbstractCoverageResource extends AbstractResource implements GridCoverageResource {
 
     private static final int DEFAULT_SUBSET_SIZE = 256;
 
@@ -154,6 +161,42 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
         }
 
         return desc;
+    }
+
+    /**
+     * Returns the spatio-temporal envelope of this resource.
+     * The default implementation computes the union of all {@link GeographicBoundingBox} in the resource metadata,
+     * assuming the {@linkplain org.apache.sis.referencing.CommonCRS#defaultGeographic() default geographic CRS}
+     * (usually WGS 84).
+     *
+     * @return the spatio-temporal resource extent.
+     * @throws DataStoreException if an error occurred while reading or computing the envelope.
+     */
+    @Override
+    public Envelope getEnvelope() throws DataStoreException {
+        final Metadata metadata = getMetadata();
+        GeneralEnvelope bounds = null;
+        if (metadata != null) {
+            for (final Identification identification : metadata.getIdentificationInfo()) {
+                if (identification != null) {                                               // Paranoiac check.
+                    for (final Extent extent : identification.getExtents()) {
+                        if (extent != null) {                                               // Paranoiac check.
+                            for (final GeographicExtent ge : extent.getGeographicElements()) {
+                                if (ge instanceof GeographicBoundingBox) {
+                                    final GeneralEnvelope env = new GeneralEnvelope((GeographicBoundingBox) ge);
+                                    if (bounds == null) {
+                                        bounds = env;
+                                    } else {
+                                        bounds.add(env);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return bounds;
     }
 
     /**

@@ -33,7 +33,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel
  */
-public class DefaultCoverageResource extends AbstractCoverageResource{
+public class DefaultCoverageResource extends AbstractCoverageResource {
 
     private final GridCoverage2D coverage;
     private final Object input;

@@ -18,30 +18,16 @@ package org.geotoolkit.storage.coverage;
 
 import java.awt.Image;
 import java.util.List;
-import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.data.FeatureSet;
-import org.geotoolkit.geometry.GeometricUtilities;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.internal.feature.CoverageFeature;
-import org.geotoolkit.internal.feature.TypeConventions;
-import org.locationtech.jts.geom.Geometry;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureAssociationRole;
-import org.opengis.feature.FeatureType;
-import org.opengis.geometry.Envelope;
 import org.opengis.metadata.content.CoverageDescription;
 
 /**
@@ -50,7 +36,7 @@ import org.opengis.metadata.content.CoverageDescription;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface GridCoverageResource extends FeatureSet, org.apache.sis.storage.GridCoverageResource, StoreResource {
+public interface GridCoverageResource extends org.apache.sis.storage.GridCoverageResource, StoreResource {
 
     /**
      * Same as {@link org.apache.sis.storage.Resource} without exception.
@@ -98,46 +84,6 @@ public interface GridCoverageResource extends FeatureSet, org.apache.sis.storage
      * Return the used writer, they can be reused later.
      */
     void recycle(GridCoverageWriter writer);
-
-    @Override
-    public default FeatureType getType() throws DataStoreException {
-        final GridCoverageReader reader = acquireReader();
-        try {
-            final FeatureType type = CoverageFeature.createCoverageType(reader);
-            recycle(reader);
-            return type;
-        } catch (CoverageStoreException ex) {
-            try {
-                reader.dispose();
-            } catch (CoverageStoreException ex2) {
-                ex.addSuppressed(ex2);
-            }
-            throw ex;
-        }
-    }
-
-    @Override
-    public default Stream<Feature> features(boolean parallal) throws DataStoreException {
-        final FeatureType type = getType();
-        final FeatureAssociationRole role = (FeatureAssociationRole) type.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
-        final Feature feature = type.newInstance();
-
-        try {
-            final GridGeometry gridGeom = getGridGeometry();
-            Envelope envelope = gridGeom.getEnvelope();
-            if (envelope != null) {
-                Geometry geom = GeometricUtilities.toJTSGeometry(envelope, GeometricUtilities.WrapResolution.SPLIT);
-                if (geom != null) {
-                    JTS.setCRS(geom, gridGeom.getCoordinateReferenceSystem());
-                    feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
-                }
-            }
-        } catch (CoverageStoreException ex) {
-            throw ex;
-        }
-        feature.setProperty(CoverageFeature.coverageRecords(this,role));
-        return Stream.of(feature);
-    }
 
     @Override
     default GridCoverage read(org.apache.sis.coverage.grid.GridGeometry domain, int... range) throws DataStoreException {
