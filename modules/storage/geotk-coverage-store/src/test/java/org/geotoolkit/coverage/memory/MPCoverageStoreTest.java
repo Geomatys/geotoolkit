@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.coverage.memory;
 
-import org.geotoolkit.storage.coverage.CoverageStore;
+import org.apache.sis.storage.DataStore;
 import org.geotoolkit.coverage.AbstractPyramidalModelStoreTest;
 
 /**
@@ -25,7 +25,7 @@ import org.geotoolkit.coverage.AbstractPyramidalModelStoreTest;
 public class MPCoverageStoreTest extends AbstractPyramidalModelStoreTest {
 
     @Override
-    protected CoverageStore createStore() throws Exception{
+    protected DataStore createStore() throws Exception{
         final MPCoverageStore store = new MPCoverageStore();
         return store;
     }

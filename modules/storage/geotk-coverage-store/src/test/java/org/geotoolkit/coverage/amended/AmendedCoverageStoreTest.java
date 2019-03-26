@@ -32,7 +32,6 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.memory.MemoryCoverageStore;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.util.NamesExt;
@@ -73,7 +72,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         }
     }
 
-    private static CoverageStore createStore() throws DataStoreException{
+    private static MemoryCoverageStore createStore() throws DataStoreException{
         final GenericName name = NamesExt.create("coverage");
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
@@ -100,10 +99,10 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
 
         //create a coverage store with an unreferenced coverage
         final GenericName name = NamesExt.create("coverage");
-        final CoverageStore store = createStore();
+        final MemoryCoverageStore store = createStore();
 
         //decorate this coverage
-        final CoverageStore decorated = new AmendedCoverageStore(store);
+        final AmendedCoverageStore decorated = new AmendedCoverageStore(store);
         assertEquals(1,decorated.getNames().size());
         final AmendedCoverageResource decoratedRef = (AmendedCoverageResource) decorated.findResource(name.toString());
         assertNotNull(decoratedRef);
@@ -128,10 +127,10 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
 
         //create a coverage store with an unreferenced coverage
         final GenericName name = NamesExt.create("coverage");
-        final CoverageStore store = createStore();
+        final MemoryCoverageStore store = createStore();
 
         //decorate this coverage
-        final CoverageStore decorated = new AmendedCoverageStore(store);
+        final AmendedCoverageStore decorated = new AmendedCoverageStore(store);
         assertEquals(1,decorated.getNames().size());
         final AmendedCoverageResource decoratedRef = (AmendedCoverageResource) decorated.findResource(name.toString());
         assertNotNull(decoratedRef);
@@ -169,7 +168,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         ref.acquireWriter().write(coverage, null);
 
         //decorate this coverage
-        final CoverageStore decorated = new AmendedCoverageStore(store);
+        final AmendedCoverageStore decorated = new AmendedCoverageStore(store);
         final AmendedCoverageResource decoratedRef = (AmendedCoverageResource) decorated.findResource(name.toString());
 
         //override grid to crs

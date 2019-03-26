@@ -30,6 +30,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.SimpleInternationalString;
@@ -46,7 +47,6 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.RandomStyleBuilder;
@@ -176,13 +176,19 @@ public class WMCUtilities {
                 continue;
             }
 
-            if (server instanceof CoverageStore) {
-                final CoverageStore cs = (CoverageStore) server;
+            if (server instanceof FeatureStore) {
+                final FeatureStore wfs = (FeatureStore) server;
+                final Session storeSession = wfs.createSession(true);
+                final FeatureCollection collection = storeSession.getFeatureCollection(QueryBuilder.all(layerName));
+                final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getType());
+                final MapLayer layer = MapBuilder.createFeatureLayer(collection, style);
+                context.layers().add(layer);
+            } else {
                 try {
-                    for (GenericName n : cs.getNames()) {
-                        if (n.tip().toString().equalsIgnoreCase(layerName.tip().toString())) {
-                            final Resource ref = cs.findResource(n.toString());
-                            final MapLayer mapLayer = MapBuilder.createCoverageLayer(ref,
+                    for (Resource r : DataStores.flatten(server, true)) {
+                        GenericName n = r.getIdentifier();
+                        if (n != null && n.tip().toString().equalsIgnoreCase(layerName.tip().toString()) && r instanceof GridCoverageResource) {
+                            final MapLayer mapLayer = MapBuilder.createCoverageLayer(r,
                                     GO2Utilities.STYLE_FACTORY.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
                             context.layers().add(mapLayer);
                         }
@@ -192,13 +198,6 @@ public class WMCUtilities {
                     continue;
                 }
 
-            } else if (server instanceof FeatureStore) {
-                final FeatureStore wfs = (FeatureStore) server;
-                final Session storeSession = wfs.createSession(true);
-                final FeatureCollection collection = storeSession.getFeatureCollection(QueryBuilder.all(layerName));
-                final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getType());
-                final MapLayer layer = MapBuilder.createFeatureLayer(collection, style);
-                context.layers().add(layer);
             }
         }
         return context;

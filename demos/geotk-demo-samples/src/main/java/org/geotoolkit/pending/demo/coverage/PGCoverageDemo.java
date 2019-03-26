@@ -17,6 +17,7 @@
 package org.geotoolkit.pending.demo.coverage;
 
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.postgresql.PGCoverageStore;
@@ -27,7 +28,6 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -57,7 +57,7 @@ public class PGCoverageDemo {
         params.getOrCreate(PGCoverageStoreFactory.USER).setValue("*****");
         params.getOrCreate(PGCoverageStoreFactory.PASSWORD).setValue("*****");
 
-        final CoverageStore store = (CoverageStore) DataStores.open(params);
+        final DataStore store = DataStores.open(params);
         if (!(store instanceof PGCoverageStore)) {
             throw new DataStoreException("Wrong parameters");
         }

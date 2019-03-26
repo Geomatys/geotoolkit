@@ -38,6 +38,7 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.Classes;
@@ -61,7 +62,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractCoverageStore extends DataStore implements CoverageStore {
+public abstract class AbstractCoverageStore extends DataStore implements AutoCloseable, Resource {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
     protected final Parameters parameters;
@@ -216,7 +217,11 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         md.getReferenceSystemInfo().addAll((Collection)crss);
     }
 
-    @Override
+    /**
+     * Get the parameters used to initialize this source from it's factory.
+     *
+     * @return source configuration parameters
+     */
     public ParameterValueGroup getOpenParameters() {
         return parameters;
     }
@@ -235,7 +240,12 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
     // Convinient methods, fallback on getRootResource                            //
     ////////////////////////////////////////////////////////////////////////////
 
-    @Override
+    /**
+     * Get a collection of all available coverage names.
+     *
+     * @return Set<GenericName> , never null, but can be empty.
+     * @throws DataStoreException
+     */
     public final Set<GenericName> getNames() throws DataStoreException {
         final GenericNameIndex<GridCoverageResource> map = listReferences();
         return map.getNames();

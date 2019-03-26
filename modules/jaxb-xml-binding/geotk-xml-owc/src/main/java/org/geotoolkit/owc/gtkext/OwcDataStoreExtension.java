@@ -40,7 +40,6 @@ import org.geotoolkit.owc.xml.OwcExtension;
 import org.geotoolkit.owc.xml.v10.OfferingType;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
@@ -104,15 +103,15 @@ public class OwcDataStoreExtension extends OwcExtension {
         }
 
         final DataStoreFactory ff = DataStores.getFactoryById(factoryName);
-        if(ff!=null){
+        if (ff != null) {
             final DataStore store = DataStores.open(ff,params);
-            if(store instanceof FeatureStore){
+            if (store instanceof FeatureStore) {
                 final Session session = ((FeatureStore)store).createSession(true);
                 final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(NamesExt.valueOf(typeName)));
                 final MapLayer layer = MapBuilder.createFeatureLayer(col);
                 return layer;
-            }else if(store instanceof CoverageStore){
-                final Resource covref = ((CoverageStore)store).findResource(NamesExt.valueOf(typeName).toString());
+            } else {
+                final Resource covref = store.findResource(NamesExt.valueOf(typeName).toString());
                 final MapLayer layer = MapBuilder.createCoverageLayer(covref);
                 return layer;
             }
