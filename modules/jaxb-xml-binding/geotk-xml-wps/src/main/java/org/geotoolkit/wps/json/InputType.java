@@ -138,7 +138,7 @@ public class InputType extends InputTypeChoice {
                 this.maxOccurs = Integer.toString(desc.getMaxOccurs());
             }
             this.minOccurs = Integer.toString(desc.getMinOccurs());
-            
+
             if (desc.getAdditionalParameters() != null && !desc.getAdditionalParameters().isEmpty()) {
                 this.additionalParameters = new ArrayList<>();
                 for (AbstractAdditionalParameters params : desc.getAdditionalParameters()) {

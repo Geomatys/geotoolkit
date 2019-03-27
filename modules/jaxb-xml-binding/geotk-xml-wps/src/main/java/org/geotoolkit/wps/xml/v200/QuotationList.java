@@ -36,7 +36,7 @@ public class QuotationList implements WPSResponse{
     public QuotationList(List<String> quotations) {
         this.quotations = quotations;
     }
-    
+
     /**
      * @return the quotations
      */

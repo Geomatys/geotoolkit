@@ -55,7 +55,7 @@ public class Quotation implements WPSJSONResponse {
     public Quotation() {
 
     }
-    
+
     public Quotation(org.geotoolkit.wps.xml.v200.Quotation xml) {
         if (xml != null) {
             this.id = xml.getId();

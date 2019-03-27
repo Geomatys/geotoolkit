@@ -32,7 +32,7 @@ public class DescriptionTypeOwsContextOfferingContent {
     public DescriptionTypeOwsContextOfferingContent(String href) {
         this.href = href;
     }
-    
+
     public DescriptionTypeOwsContextOfferingContent href(String href) {
         this.href = href;
         return this;

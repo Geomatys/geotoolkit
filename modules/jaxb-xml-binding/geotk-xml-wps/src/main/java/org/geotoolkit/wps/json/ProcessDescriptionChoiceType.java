@@ -245,6 +245,4 @@ public class ProcessDescriptionChoiceType {
     public void setOutputTransmission(List<DataTransmissionMode> outputTransmission) {
         this.outputTransmission = outputTransmission;
     }
-
-
 }
