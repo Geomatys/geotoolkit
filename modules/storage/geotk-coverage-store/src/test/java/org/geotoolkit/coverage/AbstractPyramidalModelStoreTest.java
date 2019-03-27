@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -43,7 +44,6 @@ import org.geotoolkit.data.multires.DefiningPyramid;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
@@ -65,7 +65,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
 
     private static final double DELTA = 0.00000001;
 
-    private CoverageStore store;
+    private DataStore store;
     private DirectPosition corner;
     private CoordinateReferenceSystem crs;
 
@@ -77,9 +77,9 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
     private PyramidalCoverageResource float1bCoverageRef;
     private ColorModel float1bColorModel;
 
-    protected abstract CoverageStore createStore() throws Exception ;
+    protected abstract DataStore createStore() throws Exception ;
 
-    private CoverageStore getCoverageStore() throws Exception {
+    private DataStore getCoverageStore() throws Exception {
 
         if(store != null){
             return store;

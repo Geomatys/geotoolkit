@@ -40,6 +40,8 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Resource;
@@ -65,7 +67,7 @@ import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescripto
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.STORE_OUT;
 import org.geotoolkit.processing.coverage.reducetodomain.ReduceToDomainDescriptor;
 import org.geotoolkit.processing.coverage.straighten.StraightenDescriptor;
-import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
@@ -104,11 +106,11 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      * @param erase erase output data before insert
      * @param reduce reduce to data domain
      */
-    public CopyCoverageStoreProcess(CoverageStore inStore,CoverageStore outStore,boolean erase, boolean reduce){
+    public CopyCoverageStoreProcess(DataStore inStore,DataStore outStore,boolean erase, boolean reduce){
         super(INSTANCE, asParameters(inStore,outStore,erase,reduce));
     }
 
-    private static ParameterValueGroup asParameters(CoverageStore inStore,CoverageStore outStore,boolean erase, boolean reduce){
+    private static ParameterValueGroup asParameters(DataStore inStore, DataStore outStore,boolean erase, boolean reduce){
         final Parameters params = Parameters.castOrWrap(CopyCoverageStoreDescriptor.INPUT_DESC.createValue());
         params.getOrCreate(CopyCoverageStoreDescriptor.STORE_IN).setValue(inStore);
         params.getOrCreate(CopyCoverageStoreDescriptor.STORE_OUT).setValue(outStore);
@@ -131,8 +133,8 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      */
     @Override
     protected void execute() throws ProcessException {
-        final CoverageStore inStore  = inputParameters.getValue(STORE_IN);
-        final CoverageStore outStore = inputParameters.getValue(STORE_OUT);
+        final DataStore     inStore  = inputParameters.getValue(STORE_IN);
+        final DataStore     outStore = inputParameters.getValue(STORE_OUT);
         final Boolean       erase    = inputParameters.getValue(ERASE);
         final Boolean       reduce   = inputParameters.getValue(REDUCE_TO_DOMAIN);
 
@@ -142,10 +144,11 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         final WritableAggregate outAggregate = (WritableAggregate) outStore;
 
         try {
-            final float size = inStore.getNames().size();
+            final Collection<GridCoverageResource> gcrs = DataStores.flatten(inStore, true, GridCoverageResource.class);
+            final float size = gcrs.size();
             int inc = 0;
-            for(GenericName n : inStore.getNames()){
-
+            for(GridCoverageResource gcr : gcrs){
+                NamedIdentifier n = gcr.getIdentifier();
                 fireProgressing("Copying "+n+".", (int)((inc*100f)/size), false);
                 final Resource resource = inStore.findResource(n.toString());
                 if (resource instanceof GridCoverageResource) {

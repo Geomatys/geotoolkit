@@ -17,7 +17,7 @@
 package org.geotoolkit.processing.coverage.copy;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.storage.coverage.CoverageStore;
+import org.apache.sis.storage.DataStore;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -41,20 +41,20 @@ public class CopyCoverageStoreDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - CoverageStore
      */
-    public static final ParameterDescriptor<CoverageStore> STORE_IN = new ParameterBuilder()
+    public static final ParameterDescriptor<DataStore> STORE_IN = new ParameterBuilder()
             .addName("store_in")
             .setRemarks("Input coverage store")
             .setRequired(true)
-            .create(CoverageStore.class, null);
+            .create(DataStore.class, null);
 
     /**
      * Mandatory - CoverageStore
      */
-    public static final ParameterDescriptor<CoverageStore> STORE_OUT = new ParameterBuilder()
+    public static final ParameterDescriptor<DataStore> STORE_OUT = new ParameterBuilder()
             .addName("store_out")
             .setRemarks("Output coverage store")
             .setRequired(true)
-            .create(CoverageStore.class, null);
+            .create(DataStore.class, null);
 
     /**
      * Mandatory - drop before insertion or not.
