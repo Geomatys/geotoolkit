@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.ComparisonOperator;
 import org.opengis.filter.Filter;
 
 
@@ -46,7 +47,7 @@ import org.opengis.filter.Filter;
              BinaryComparisonOpType.class,
              PropertyIsLikeType.class,
              PropertyIsBetweenType.class})
-public abstract class ComparisonOpsType implements Filter {
+public abstract class ComparisonOpsType implements Filter, ComparisonOperator {
 
     @Override
     public String toString() {

@@ -16,7 +16,10 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.opengis.filter.spatial.Disjoint;
 
@@ -25,6 +28,9 @@ import org.opengis.filter.spatial.Disjoint;
  * @author Guilhem Legal
  * @module
  */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "Disjoint")
+@XmlRootElement(name = "Disjoint")
 public class DisjointType extends BinarySpatialOpType implements Disjoint {
 
     /**
@@ -55,5 +61,10 @@ public class DisjointType extends BinarySpatialOpType implements Disjoint {
     @Override
     public SpatialOpsType getClone() {
         return new DisjointType(this);
+    }
+
+    @Override
+    public String getOperator() {
+        return "Disjoint";
     }
 }

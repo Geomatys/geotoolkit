@@ -116,11 +116,11 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
             }
 
             if (that.any != null) {
-                this.any = new ArrayList<Object>();
+                this.any = new ArrayList<>();
                 for (Object obj : that.any) {
                     if (obj instanceof AbstractTimeObjectType) {
                         this.any.add(((AbstractTimeObjectType)obj).getClone());
-                    } else {
+                    } else if (obj != null){
                         this.any.add(obj);
                         LOGGER.log(Level.INFO, "Unable to clone:{0}", obj.getClass().getName());
                     }
@@ -215,7 +215,7 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
 
     public void cleanAny() {
         if (this.any != null) {
-            final List<Object> toRemove = new ArrayList<Object>();
+            final List<Object> toRemove = new ArrayList<>();
             int i = 0;
             for (Object element : any) {
                 if (element instanceof String) {
@@ -247,27 +247,10 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
 
     @Override
     public Expression getExpression1() {
-        return new PropertyName(){
-            @Override
-            public String getPropertyName() {
-                return valueReference;
-            }
-
-            @Override
-            public Object evaluate(Object o) {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-
-            @Override
-            public <T> T evaluate(Object o, Class<T> type) {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-
-            @Override
-            public Object accept(ExpressionVisitor ev, Object o) {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-        };
+        if (valueReference != null) {
+            return new InternalPropertyName(valueReference);
+        }
+        return null;
     }
 
     @Override

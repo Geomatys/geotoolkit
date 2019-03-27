@@ -33,6 +33,10 @@ public class TouchesType extends BinarySpatialOpType {
 
     }
 
+    public TouchesType(String propertyName, Object geometry) {
+        super(propertyName, geometry);
+    }
+
     public TouchesType(final TouchesType that) {
         super(that);
     }
@@ -40,5 +44,10 @@ public class TouchesType extends BinarySpatialOpType {
     @Override
     public SpatialOpsType getClone() {
         return new TouchesType(this);
+    }
+
+    @Override
+    public String getOperator() {
+        return "Touches";
     }
 }

@@ -133,6 +133,7 @@ public class QueryType extends AbstractQueryType implements Query{
      * Gets the value of the elementSetName property.
      *
      */
+    @Override
     public ElementSetNameType getElementSetName() {
         return elementSetName;
     }
@@ -149,9 +150,10 @@ public class QueryType extends AbstractQueryType implements Query{
      * Gets the value of the elementName property.
      *
      */
+    @Override
     public List<QName> getElementName() {
         if (elementName == null) {
-            elementName = new ArrayList<QName>();
+            elementName = new ArrayList<>();
         }
         return this.elementName;
     }
@@ -160,6 +162,7 @@ public class QueryType extends AbstractQueryType implements Query{
      * Gets the value of the constraint property.
      *
      */
+    @Override
     public QueryConstraintType getConstraint() {
         return constraint;
     }
@@ -167,6 +170,7 @@ public class QueryType extends AbstractQueryType implements Query{
     /**
      * Sets the value of the constraint property.
      */
+    @Override
     public void setConstraint(final QueryConstraint value) {
         if (value instanceof QueryConstraint) {
             this.constraint = (QueryConstraintType) value;
@@ -177,13 +181,15 @@ public class QueryType extends AbstractQueryType implements Query{
     /**
      * Gets the value of the typeNames property.
      */
+    @Override
     public List<QName> getTypeNames() {
         if (typeNames == null) {
-            typeNames = new ArrayList<QName>();
+            typeNames = new ArrayList<>();
         }
         return this.typeNames;
     }
 
+    @Override
     public void setTypeNames(final List<QName> typeNames) {
         this.typeNames = typeNames;
     }
@@ -193,6 +199,7 @@ public class QueryType extends AbstractQueryType implements Query{
      *
      * @return null.
      */
+    @Override
     public SortBy getSortBy() {
         return null;
     }

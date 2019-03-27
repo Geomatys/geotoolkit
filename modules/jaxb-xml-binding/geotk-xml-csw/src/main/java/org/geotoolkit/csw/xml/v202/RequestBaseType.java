@@ -104,6 +104,7 @@ public abstract class RequestBaseType implements RequestBase, AbstractCswRequest
     /**
      * Sets the value of the service property.
      */
+    @Override
     public void setService(final String service) {
         this.service = service;
     }
@@ -122,6 +123,7 @@ public abstract class RequestBaseType implements RequestBase, AbstractCswRequest
     /**
      * Gets the value of the version property.
      */
+    @Override
     public void setVersion(final String version) {
         this.version = version;
     }

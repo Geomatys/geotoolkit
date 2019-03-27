@@ -65,6 +65,9 @@ public class CSWClassesContext {
         //ISO 19115 French profile class
         classeList.addAll(FRA_CLASSES);
 
+        // DIF classes
+        classeList.add(org.geotoolkit.dif.xml.v102.ObjectFactory.class);
+
         // Inspire classes
         classeList.add(org.geotoolkit.inspire.xml.ObjectFactory.class);
 
@@ -76,6 +79,10 @@ public class CSWClassesContext {
                                         ExceptionReport.class,
                                         org.geotoolkit.ows.xml.v110.ExceptionReport.class, // TODO remove
                                         org.geotoolkit.dublincore.xml.v2.terms.ObjectFactory.class));
+
+        //CSW 3.0.0 classes
+        classeList.addAll(Arrays.asList(org.geotoolkit.csw.xml.v300.ObjectFactory.class,
+                                        org.geotoolkit.ows.xml.v200.ExceptionReport.class));
 
         //CSW 2.0.0 classes
         classeList.addAll(Arrays.asList(org.geotoolkit.csw.xml.v200.ObjectFactory.class,
@@ -132,6 +139,10 @@ public class CSWClassesContext {
 
     public static List<Class> getCSWClassesList() {
         final List<Class> classeList = new ArrayList<>();
+
+        //CSW 3.0.0 classes
+        classeList.addAll(Arrays.asList(org.geotoolkit.csw.xml.v300.ObjectFactory.class,
+                                        org.geotoolkit.ows.xml.v200.ExceptionReport.class));
 
         //CSW 2.0.2 classes
         classeList.addAll(Arrays.asList(org.geotoolkit.csw.xml.v202.LimitedObjectFactory.class,

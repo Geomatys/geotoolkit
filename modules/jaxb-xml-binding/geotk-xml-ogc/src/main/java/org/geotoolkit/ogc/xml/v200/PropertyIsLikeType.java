@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.PropertyIsLike;
+import org.opengis.filter.expression.Expression;
 
 
 /**
@@ -56,7 +58,7 @@ import org.opengis.filter.FilterVisitor;
 @XmlType(name = "PropertyIsLikeType", propOrder = {
     "expression"
 })
-public class PropertyIsLikeType extends ComparisonOpsType {
+public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsLike {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private List<JAXBElement<?>> expression;
@@ -79,7 +81,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
      */
     public PropertyIsLikeType(final String expr, final String pattern, final String wildcard, final String singleChar, final String escape) {
         this.escapeChar = escape;
-        this.expression = new ArrayList<JAXBElement<?>>();
+        this.expression = new ArrayList<>();
         if (expr != null) {
             final ObjectFactory factory = new ObjectFactory();
             this.expression.add(factory.createValueReference(expr));
@@ -95,7 +97,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
     public PropertyIsLikeType(final PropertyIsLikeType that) {
         if (that != null) {
             if (that.expression != null) {
-                this.expression = new ArrayList<JAXBElement<?>>();
+                this.expression = new ArrayList<>();
                 final ObjectFactory factory = new ObjectFactory();
                 for (JAXBElement jb : that.expression) {
                     final Object exp = jb.getValue();
@@ -118,6 +120,15 @@ public class PropertyIsLikeType extends ComparisonOpsType {
         }
     }
 
+    @Override
+    public Expression getExpression() {
+        String pname = getPropertyName();
+        if (pname != null) {
+            return new InternalPropertyName(pname);
+        }
+        return null;
+    }
+
     /**
      * Gets the value of the expression property.
      *
@@ -129,9 +140,9 @@ public class PropertyIsLikeType extends ComparisonOpsType {
      *
      *
      */
-    public List<JAXBElement<?>> getExpression() {
+    public List<JAXBElement<?>> getExpressions() {
         if (expression == null) {
-            expression = new ArrayList<JAXBElement<?>>();
+            expression = new ArrayList<>();
         }
         return this.expression;
     }
@@ -147,7 +158,33 @@ public class PropertyIsLikeType extends ComparisonOpsType {
         return null;
     }
 
-    public LiteralType getLiteral() {
+     /**
+     * Gets the value of the literal property.
+     */
+    @Override
+    public String getLiteral() {
+        if (expression != null) {
+            for (JAXBElement<?> elem : expression) {
+                if (elem.getValue() instanceof LiteralType) {
+                    LiteralType lit = (LiteralType) elem.getValue();
+                    return lit.getStringValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    public void setLiteral(final String literal) {
+        if (literal != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            this.expression.add(factory.createLiteral(new LiteralType(literal)));
+        }
+    }
+
+    /**
+     * Gets the value of the literal property.
+     */
+    public LiteralType getLiteralType() {
         if (expression != null) {
             for (JAXBElement<?> elem : expression) {
                 if (elem.getValue() instanceof LiteralType) {
@@ -166,6 +203,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
      *     {@link String }
      *
      */
+    @Override
     public String getWildCard() {
         return wildCard;
     }
@@ -190,6 +228,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
      *     {@link String }
      *
      */
+    @Override
     public String getSingleChar() {
         return singleChar;
     }
@@ -214,7 +253,8 @@ public class PropertyIsLikeType extends ComparisonOpsType {
      *     {@link String }
      *
      */
-    public String getEscapeChar() {
+    @Override
+    public String getEscape() {
         return escapeChar;
     }
 
@@ -226,8 +266,13 @@ public class PropertyIsLikeType extends ComparisonOpsType {
      *     {@link String }
      *
      */
-    public void setEscapeChar(String value) {
+    public void setEscape(String value) {
         this.escapeChar = value;
+    }
+
+    @Override
+    public boolean isMatchingCase() {
+        return false;
     }
 
     @Override

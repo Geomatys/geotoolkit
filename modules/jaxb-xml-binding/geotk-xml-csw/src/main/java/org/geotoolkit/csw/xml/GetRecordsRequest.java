@@ -18,7 +18,7 @@ package org.geotoolkit.csw.xml;
 
 import java.util.List;
 import javax.xml.namespace.QName;
-import org.geotoolkit.ogc.xml.v110.FilterType;
+import org.geotoolkit.ogc.xml.XMLFilter;
 
 
 /**
@@ -99,7 +99,7 @@ public interface GetRecordsRequest extends AbstractCswRequest {
      * This method set a query constraint by a filter.
      * @param filter FilterType
      */
-    public void setFilterConstraint(FilterType filter);
+    public void setFilterConstraint(XMLFilter filter);
 
     /**
      * Get the output result type.

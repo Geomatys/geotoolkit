@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.csw.xml.GetRecordsRequest;
 import org.geotoolkit.csw.xml.ResultType;
+import org.geotoolkit.ogc.xml.XMLFilter;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 
 
@@ -161,6 +162,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * Gets the value of the distributedSearch property.
      *
      */
+    @Override
     public DistributedSearchType getDistributedSearch() {
         return distributedSearch;
     }
@@ -188,6 +190,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * Gets the value of the abstractQuery property.
      *
      */
+    @Override
     public AbstractQueryType getAbstractQuery() {
         return abstractQuery;
     }
@@ -210,6 +213,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
     /**
      * Gets the value of the requestId property.
      */
+    @Override
     public String getRequestId() {
         return requestId;
     }
@@ -218,6 +222,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * Sets the value of the requestId property.
      *
      */
+    @Override
     public void setRequestId(final String value) {
         this.requestId = value;
     }
@@ -225,6 +230,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
     /**
      * Gets the value of the resultType property.
      */
+    @Override
     public ResultType getResultType() {
         if (resultType == null) {
             return ResultType.HITS;
@@ -244,6 +250,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
     /**
      * Sets the value of the resultType property which is a string.
      */
+    @Override
     public void setResultType(final String resultType) {
         this.resultType = ResultType.fromValue(resultType);
     }
@@ -252,6 +259,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * Gets the value of the outputFormat property.
      *
      */
+    @Override
     public String getOutputFormat() {
         if (outputFormat == null) {
             return "text/xml";
@@ -264,6 +272,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * Sets the value of the outputFormat property.
      *
      */
+    @Override
     public void setOutputFormat(final String value) {
         this.outputFormat = value;
     }
@@ -271,6 +280,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
     /**
      * Gets the value of the outputSchema property.
      */
+    @Override
     public String getOutputSchema() {
         return outputSchema;
     }
@@ -279,6 +289,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * Sets the value of the outputSchema property.
      *
      */
+    @Override
     public void setOutputSchema(final String value) {
         this.outputSchema = value;
     }
@@ -287,6 +298,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * Gets the value of the startPosition property.
      *
      */
+    @Override
     public Integer getStartPosition() {
         if (startPosition == null) {
             return new Integer("1");
@@ -299,6 +311,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * Sets the value of the startPosition property.
      *
      */
+    @Override
     public void setStartPosition(final Integer value) {
         this.startPosition = value;
     }
@@ -307,6 +320,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * Gets the value of the maxRecords property.
      *
      */
+    @Override
     public Integer getMaxRecords() {
         if (maxRecords == null) {
             return new Integer("10");
@@ -319,20 +333,24 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * Sets the value of the maxRecords property.
      *
      */
+    @Override
     public void setMaxRecords(final Integer value) {
         this.maxRecords = value;
     }
 
+    @Override
     public void setTypeNames(final List<QName> typeNames) {
         if (typeNames != null) {
             abstractQuery.setTypeNames(typeNames);
         }
     }
 
+    @Override
     public void removeConstraint() {
         abstractQuery.setConstraint(null);
     }
 
+    @Override
     public void setCQLConstraint(final String CQLQuery) {
         abstractQuery.setConstraint(new QueryConstraintType(CQLQuery, "1.1.0"));
     }
@@ -341,8 +359,13 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * This method set a query constraint by a filter.
      * @param filter FilterType
      */
-    public void setFilterConstraint(final FilterType filter) {
-        abstractQuery.setConstraint(new QueryConstraintType(filter, "1.1.0"));
+    @Override
+    public void setFilterConstraint(final XMLFilter filter) {
+        if (filter instanceof FilterType) {
+            abstractQuery.setConstraint(new QueryConstraintType((FilterType) filter, "1.1.0"));
+        } else {
+            throw new IllegalArgumentException("Not a v110 filter");
+        }
     }
 
     /**

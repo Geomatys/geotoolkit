@@ -71,7 +71,7 @@ import org.opengis.filter.spatial.DistanceBufferOperator;
     "abstractGeometry",
     "distance"
 })
-public class DistanceBufferType extends SpatialOpsType implements DistanceBufferOperator {
+public abstract class DistanceBufferType extends SpatialOpsType implements DistanceBufferOperator {
 
     @XmlElement(name = "PropertyName", required = true)
     private PropertyNameType propertyName;
@@ -281,8 +281,4 @@ public class DistanceBufferType extends SpatialOpsType implements DistanceBuffer
         return hash;
     }
 
-    @Override
-    public SpatialOpsType getClone() {
-        throw new UnsupportedOperationException("Must be overriden by sub-class.");
-    }
 }

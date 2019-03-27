@@ -30,7 +30,7 @@ import org.geotoolkit.ows.xml.v100.AbstractExtendedCapabilitiesType;
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name="")
+@XmlType(name="MultiLingualCapabilitiesType")
 @XmlRootElement(name="MultiLingualCapabilities")
 public class MultiLingualCapabilities extends AbstractExtendedCapabilitiesType {
 

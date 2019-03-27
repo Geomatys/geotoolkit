@@ -33,6 +33,10 @@ public class DisjointType extends BinarySpatialOpType {
 
     }
 
+    public DisjointType(String propertyName, Object geometry) {
+        super(propertyName, geometry);
+    }
+
     public DisjointType(final DisjointType that) {
         super(that);
     }
@@ -40,5 +44,10 @@ public class DisjointType extends BinarySpatialOpType {
     @Override
     public SpatialOpsType getClone() {
         return new DisjointType(this);
+    }
+
+    @Override
+    public String getOperator() {
+        return "Disjoint";
     }
 }

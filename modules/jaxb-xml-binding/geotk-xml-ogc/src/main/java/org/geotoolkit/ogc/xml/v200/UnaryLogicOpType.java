@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.UnaryLogicOperator;
+import org.geotoolkit.ogc.xml.XMLFilter;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 
@@ -61,7 +63,7 @@ import org.opengis.filter.FilterVisitor;
     "function",
     "id"
 })
-public class UnaryLogicOpType extends LogicOpsType {
+public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogicOperator  {
 
     @XmlElementRef(name = "comparisonOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<? extends ComparisonOpsType> comparisonOps;
@@ -120,7 +122,7 @@ public class UnaryLogicOpType extends LogicOpsType {
                  this.function = new FunctionType(that.function);
              }
              if (that.id != null) {
-                 this.id = new ArrayList<JAXBElement<? extends AbstractIdType>>();
+                 this.id = new ArrayList<>();
                  for (JAXBElement<? extends AbstractIdType> jb : that.id) {
                      AbstractIdType aid = jb.getValue();
                      if (aid instanceof ResourceIdType) {
@@ -381,7 +383,7 @@ public class UnaryLogicOpType extends LogicOpsType {
      */
     public List<JAXBElement<? extends AbstractIdType>> getId() {
         if (id == null) {
-            id = new ArrayList<JAXBElement<? extends AbstractIdType>>();
+            id = new ArrayList<>();
         }
         return this.id;
     }
@@ -406,6 +408,21 @@ public class UnaryLogicOpType extends LogicOpsType {
     }
 
     @Override
+    public Object getChild() {
+        if (comparisonOps != null) {
+            return comparisonOps.getValue();
+        } else if (logicOps != null) {
+            return logicOps.getValue();
+        } else if (spatialOps != null) {
+            return spatialOps.getValue();
+        } else if (spatialOps != null) {
+            return temporalOps.getValue();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -413,10 +430,5 @@ public class UnaryLogicOpType extends LogicOpsType {
     @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public LogicOpsType getClone() {
-        throw new UnsupportedOperationException("Must be overriden in sub-class.");
     }
 }

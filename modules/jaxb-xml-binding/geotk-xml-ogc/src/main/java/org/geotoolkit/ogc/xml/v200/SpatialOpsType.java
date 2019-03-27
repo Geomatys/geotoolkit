@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.ogc.xml.SpatialOperator;
 import org.opengis.filter.Filter;
 
 
@@ -50,7 +51,7 @@ import org.opengis.filter.Filter;
     DistanceBufferType.class,
     BBOXType.class
 })
-public abstract class SpatialOpsType implements Filter {
+public abstract class SpatialOpsType implements Filter, SpatialOperator {
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ogc.xml.v200");
 

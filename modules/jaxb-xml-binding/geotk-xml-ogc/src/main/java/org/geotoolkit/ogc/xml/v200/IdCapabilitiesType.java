@@ -61,7 +61,7 @@ public class IdCapabilitiesType implements IdCapabilities {
 
     public IdCapabilitiesType(ResourceIdentifierType resourceIdentifier) {
         if (resourceIdentifier != null) {
-            this.resourceIdentifier = new ArrayList<ResourceIdentifierType>();
+            this.resourceIdentifier = new ArrayList<>();
             this.resourceIdentifier.add(resourceIdentifier);
         }
     }
@@ -75,7 +75,7 @@ public class IdCapabilitiesType implements IdCapabilities {
      */
     public List<ResourceIdentifierType> getResourceIdentifier() {
         if (resourceIdentifier == null) {
-            resourceIdentifier = new ArrayList<ResourceIdentifierType>();
+            resourceIdentifier = new ArrayList<>();
         }
         return this.resourceIdentifier;
     }

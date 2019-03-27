@@ -15,7 +15,6 @@
  *    Lesser General Public License for more details.
  */
 
-
 package org.geotoolkit.ogc.xml.v200;
 
 import java.util.ArrayList;
@@ -25,8 +24,8 @@ import java.util.Map;
 import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.*;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.ogc.xml.XMLFilter;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 
@@ -135,8 +134,10 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
                     if (aid instanceof ResourceIdType) {
                         final ResourceIdType raid = (ResourceIdType) aid;
                         this.id.add(FACTORY.createResourceId(new ResourceIdType(raid)));
+                    } else if (aid != null) {
+                        throw new IllegalArgumentException("Unexpected ID type in filter:" + aid.getClass().getName());
                     } else {
-                        throw new IllegalArgumentException("exexpected ID type in filter:" + aid.getClass().getName());
+                        throw new NullArgumentException("ID Filter object must be specified");
                     }
                 }
             }
@@ -155,8 +156,10 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
                 final TemporalOpsType temp = that.temporalOps.getValue().getClone();
                 this.temporalOps = createTemporalOps(temp);
             }
-        } else {
+        } else if (obj != null) {
             throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
+        } else {
+            throw new NullArgumentException("Filter object must be specified");
         }
     }
 
@@ -391,7 +394,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
      */
     public List<JAXBElement<? extends AbstractIdType>> getId() {
         if (id == null) {
-            id = new ArrayList<JAXBElement<? extends AbstractIdType>>();
+            id = new ArrayList<>();
         }
         return this.id;
     }
@@ -513,6 +516,11 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
         }
     }
 
+    @Override
+    public String getVersion() {
+        return "2.0.0";
+    }
+
     /**
      * @return the prefixMapping
      */
@@ -534,7 +542,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
         if (comparisonOps != null) {
             return comparisonOps.getValue();
         } else if (id != null && !id.isEmpty()) {
-            final List<AbstractIdType> featureId = new ArrayList<AbstractIdType>();
+            final List<AbstractIdType> featureId = new ArrayList<>();
             for (JAXBElement<? extends AbstractIdType> jb : id) {
                 featureId.add(jb.getValue());
             }

@@ -75,7 +75,21 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
      * @param pos A direcPosition locating the point.
      */
     public PointType(final String id, final DirectPosition pos) {
-        super.setId(id);
+        super(id, null);
+        this.pos = (pos instanceof DirectPositionType) ? (DirectPositionType)pos : new DirectPositionType(pos, true);
+        if (this.pos.getSrsName() == null) {
+            this.pos.setSrsName(getSrsName());
+        }
+    }
+
+    /**
+     * Build a new Point with the specified identifier and DirectPositionType
+     *
+     * @param id The identifier of the point.
+     * @param pos A direcPosition locating the point.
+     */
+    public PointType(final String id, String crsName, final DirectPosition pos) {
+        super(id, crsName);
         this.pos = (pos instanceof DirectPositionType) ? (DirectPositionType)pos : new DirectPositionType(pos, true);
         if (this.pos.getSrsName() == null) {
             this.pos.setSrsName(getSrsName());

@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.ID;
 
 
 /**
@@ -45,7 +46,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     ResourceIdType.class
 })
-public abstract class AbstractIdType {
+public abstract class AbstractIdType implements ID {
 
 
 }

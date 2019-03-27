@@ -109,7 +109,7 @@ public class OGC100toGTTransformer {
 
         } else if (ops instanceof org.geotoolkit.ogc.xml.v100.DistanceBufferType) {
             final org.geotoolkit.ogc.xml.v100.DistanceBufferType dstOp = (org.geotoolkit.ogc.xml.v100.DistanceBufferType) ops;
-            final org.geotoolkit.ogc.xml.v100.DistanceType dt = dstOp.getDistance();
+            final org.geotoolkit.ogc.xml.v100.DistanceType dt = dstOp.getDistanceType();
             final JAXBElement<? extends org.geotoolkit.gml.xml.v212.AbstractGeometryType> geom = dstOp.getGeometry();
             final org.geotoolkit.ogc.xml.v100.PropertyNameType pnt = dstOp.getPropertyName();
 
@@ -130,13 +130,13 @@ public class OGC100toGTTransformer {
         } else if (ops instanceof org.geotoolkit.ogc.xml.v100.BBOXType) {
             final org.geotoolkit.ogc.xml.v100.BBOXType binary = (org.geotoolkit.ogc.xml.v100.BBOXType) ops;
             final org.geotoolkit.gml.xml.v212.BoxType box = binary.getBox();
-            final org.geotoolkit.ogc.xml.v100.PropertyNameType pnt = binary.getPropertyName();
+            final org.geotoolkit.ogc.xml.v100.PropertyNameType pnt = binary.getPropertyNameType();
 
             final Expression geom = filterFactory.property(pnt.getContent());
-            final double minx = box.getCoord().get(0).getX().doubleValue();
-            final double maxx = box.getCoord().get(1).getX().doubleValue();
-            final double miny = box.getCoord().get(0).getY().doubleValue();
-            final double maxy = box.getCoord().get(1).getY().doubleValue();
+            final double minx = box.getCoord().get(0).getX();
+            final double maxx = box.getCoord().get(1).getX();
+            final double miny = box.getCoord().get(0).getY();
+            final double maxy = box.getCoord().get(1).getY();
             final String srs =  box.getSrsName();
 
             if (OGCJAXBStatics.FILTER_SPATIAL_BBOX.equalsIgnoreCase(OpName)) {
@@ -247,7 +247,7 @@ public class OGC100toGTTransformer {
             final org.geotoolkit.ogc.xml.v100.PropertyIsLikeType property = (org.geotoolkit.ogc.xml.v100.PropertyIsLikeType) ops;
 
             final Expression expr = filterFactory.property(property.getPropertyName().getContent());
-            final String pattern = visitExpression(property.getLiteral()).toString();
+            final String pattern = visitExpression(property.getLiteralType()).toString();
             final String wild = property.getWildCard();
             final String single = property.getSingleChar();
             final String escape = property.getEscape();

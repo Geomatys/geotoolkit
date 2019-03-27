@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.Boundary;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
 
@@ -51,7 +52,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
 @XmlType(name = "UpperBoundaryType", propOrder = {
     "expression"
 })
-public class UpperBoundaryType implements Expression {
+public class UpperBoundaryType implements Expression, Boundary {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private JAXBElement<?> expression;
@@ -167,6 +168,7 @@ public class UpperBoundaryType implements Expression {
     /**
      * Gets the value of the literal property.
      */
+    @Override
     public LiteralType getLiteral() {
         final Object value = expression.getValue();
         if (value instanceof LiteralType) {
@@ -186,14 +188,17 @@ public class UpperBoundaryType implements Expression {
         return null;
     }
 
+    @Override
     public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public <T> T evaluate(final Object object, final Class<T> context) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         return extraData;
     }

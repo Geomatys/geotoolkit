@@ -33,6 +33,10 @@ public class CrossesType extends BinarySpatialOpType {
 
     }
 
+    public CrossesType(String propertyName, Object geometry) {
+        super(propertyName, geometry);
+    }
+
     public CrossesType(final CrossesType that) {
         super(that);
     }
@@ -40,5 +44,10 @@ public class CrossesType extends BinarySpatialOpType {
     @Override
     public SpatialOpsType getClone() {
         return new CrossesType(this);
+    }
+
+    @Override
+    public String getOperator() {
+        return "Crosses";
     }
 }

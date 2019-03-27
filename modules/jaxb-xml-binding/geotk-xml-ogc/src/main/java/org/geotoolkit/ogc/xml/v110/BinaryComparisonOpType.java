@@ -61,7 +61,7 @@ import org.opengis.filter.expression.Expression;
 @XmlType(name = "BinaryComparisonOpType", propOrder = {
     "expression"
 })
-public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryComparisonOperator {
+public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryComparisonOperator, org.geotoolkit.ogc.xml.BinaryComparisonOperator {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     protected List<JAXBElement<?>> expression;
@@ -221,6 +221,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
         return null;
     }
 
+    @Override
     public LiteralType getLiteral() {
         for (JAXBElement<?> elem : getExpression()) {
             if (elem.getValue() instanceof LiteralType) {
@@ -247,6 +248,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
         this.getExpression().add(FACTORY.createExpression(expression));
     }
 
+    @Override
     public String getPropertyName() {
         for (JAXBElement<?> elem : getExpression()) {
                 final Object value = elem.getValue();

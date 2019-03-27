@@ -28,29 +28,34 @@ import org.opengis.filter.Or;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Or")
-public class OrType extends  BinaryLogicOpType implements Or  {
+public class OrType extends BinaryLogicOpType implements Or {
 
-     /**
+    /**
      * An empty constructor used by JAXB
      */
-     public OrType() {
+    public OrType() {
 
-     }
+    }
 
-     /**
-      * Build a new Binary logic operator
-      */
-     public OrType(final Object... operators) {
-         super(operators);
+    /**
+     * Build a new Binary logic operator
+     */
+    public OrType(final Object... operators) {
+        super(operators);
 
-     }
+    }
 
-     public OrType(final BinaryLogicOpType that) {
-         super(that);
-     }
+    public OrType(final BinaryLogicOpType that) {
+        super(that);
+    }
 
-     @Override
-     public LogicOpsType getClone() {
+    @Override
+    public LogicOpsType getClone() {
         return new OrType(this);
-     }
+    }
+
+    @Override
+    public String getOperator() {
+        return "OR";
+    }
 }

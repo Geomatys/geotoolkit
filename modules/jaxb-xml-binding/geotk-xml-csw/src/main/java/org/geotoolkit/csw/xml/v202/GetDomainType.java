@@ -94,6 +94,7 @@ public class GetDomainType extends RequestBaseType implements GetDomain {
     /**
      * Gets the value of the propertyName property.
      */
+    @Override
     public String getPropertyName() {
         return propertyName;
     }
@@ -105,6 +106,7 @@ public class GetDomainType extends RequestBaseType implements GetDomain {
     /**
      * Gets the value of the parameterName property.
      */
+    @Override
     public String getParameterName() {
         return parameterName;
     }
@@ -113,10 +115,12 @@ public class GetDomainType extends RequestBaseType implements GetDomain {
         this.parameterName = parameterName;
     }
 
+    @Override
     public String getOutputFormat() {
         return "application/xml";
     }
 
+    @Override
     public void setOutputFormat(final String value) {}
 
     /**

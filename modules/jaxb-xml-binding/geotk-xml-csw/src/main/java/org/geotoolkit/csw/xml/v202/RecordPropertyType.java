@@ -18,6 +18,7 @@ package org.geotoolkit.csw.xml.v202;
 
 import java.util.Objects;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -63,6 +64,7 @@ import org.w3c.dom.Node;
     "value"
 })
 public class RecordPropertyType implements RecordProperty{
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.csw.xml.v202");
 
     @XmlElement(name = "Name", required = true)
     private String name;
@@ -95,7 +97,7 @@ public class RecordPropertyType implements RecordProperty{
             e.setTextContent(s);
             return e;
         } catch (ParserConfigurationException ex) {
-            Logging.getLogger("org.geotoolkit.csw.xml.v202").log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -113,7 +115,7 @@ public class RecordPropertyType implements RecordProperty{
             CSWMarshallerPool.getInstance().recycle(m);
             return e;
         } catch (ParserConfigurationException | JAXBException ex) {
-            Logging.getLogger("org.geotoolkit.csw.xml.v202").log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -130,7 +132,7 @@ public class RecordPropertyType implements RecordProperty{
             e.appendChild(clone);
             return e;
         } catch (ParserConfigurationException ex) {
-            Logging.getLogger("org.geotoolkit.csw.xml.v202").log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
         return null;
     }

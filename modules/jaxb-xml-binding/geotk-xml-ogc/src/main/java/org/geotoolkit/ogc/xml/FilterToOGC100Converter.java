@@ -24,9 +24,8 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.gml.xml.v212.BoxType;
 import org.geotoolkit.gml.xml.v212.CoordType;
+import org.geotoolkit.ogc.xml.v100.AndType;
 import org.geotoolkit.ogc.xml.v100.BBOXType;
-import org.geotoolkit.ogc.xml.v100.BinaryComparisonOpType;
-import org.geotoolkit.ogc.xml.v100.BinaryLogicOpType;
 import org.geotoolkit.ogc.xml.v100.BinaryOperatorType;
 import org.geotoolkit.ogc.xml.v100.ComparisonOpsType;
 import org.geotoolkit.ogc.xml.v100.FilterType;
@@ -34,9 +33,17 @@ import org.geotoolkit.ogc.xml.v100.FunctionType;
 import org.geotoolkit.ogc.xml.v100.LiteralType;
 import org.geotoolkit.ogc.xml.v100.LogicOpsType;
 import org.geotoolkit.ogc.xml.v100.LowerBoundaryType;
+import org.geotoolkit.ogc.xml.v100.NotType;
 import org.geotoolkit.ogc.xml.v100.ObjectFactory;
+import org.geotoolkit.ogc.xml.v100.OrType;
 import org.geotoolkit.ogc.xml.v100.PropertyIsBetweenType;
+import org.geotoolkit.ogc.xml.v100.PropertyIsEqualToType;
+import org.geotoolkit.ogc.xml.v100.PropertyIsGreaterThanOrEqualToType;
+import org.geotoolkit.ogc.xml.v100.PropertyIsGreaterThanType;
+import org.geotoolkit.ogc.xml.v100.PropertyIsLessThanOrEqualToType;
+import org.geotoolkit.ogc.xml.v100.PropertyIsLessThanType;
 import org.geotoolkit.ogc.xml.v100.PropertyIsLikeType;
+import org.geotoolkit.ogc.xml.v100.PropertyIsNotEqualToType;
 import org.geotoolkit.ogc.xml.v100.PropertyIsNullType;
 import org.geotoolkit.ogc.xml.v100.PropertyNameType;
 import org.geotoolkit.ogc.xml.v100.SpatialOpsType;
@@ -175,6 +182,7 @@ public class FilterToOGC100Converter implements FilterToOGCConverter<FilterType>
         return jax;
     }
 
+    @Override
     public JAXBElement<?> visit(final Filter filter) {
         if (filter.equals(Filter.INCLUDE)) {
             return null;
@@ -197,31 +205,31 @@ public class FilterToOGC100Converter implements FilterToOGCConverter<FilterType>
             return ogc_factory.createPropertyIsBetween(bot);
         } else if (filter instanceof PropertyIsEqualTo) {
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
-            final BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
+            final PropertyIsEqualToType bot = new PropertyIsEqualToType();
             bot.getExpression().add(extract(pit.getExpression1()));
             bot.getExpression().add(extract(pit.getExpression2()));
             return ogc_factory.createPropertyIsEqualTo(bot);
         } else if (filter instanceof PropertyIsGreaterThan) {
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
-            final BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
+            final PropertyIsGreaterThanType bot =  new PropertyIsGreaterThanType();
             bot.getExpression().add(extract(pit.getExpression1()));
             bot.getExpression().add(extract(pit.getExpression2()));
             return ogc_factory.createPropertyIsGreaterThan(bot);
         } else if (filter instanceof PropertyIsGreaterThanOrEqualTo) {
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
-            final BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
+            final PropertyIsGreaterThanOrEqualToType bot = new PropertyIsGreaterThanOrEqualToType();
             bot.getExpression().add(extract(pit.getExpression1()));
             bot.getExpression().add(extract(pit.getExpression2()));
             return ogc_factory.createPropertyIsGreaterThanOrEqualTo(bot);
         } else if (filter instanceof PropertyIsLessThan) {
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
-            final BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
+            final PropertyIsLessThanType bot = new PropertyIsLessThanType();
             bot.getExpression().add(extract(pit.getExpression1()));
             bot.getExpression().add(extract(pit.getExpression2()));
             return ogc_factory.createPropertyIsLessThan(bot);
         } else if (filter instanceof PropertyIsLessThanOrEqualTo) {
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
-            final BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
+            final PropertyIsLessThanOrEqualToType bot = new PropertyIsLessThanOrEqualToType();
             bot.getExpression().add(extract(pit.getExpression1()));
             bot.getExpression().add(extract(pit.getExpression2()));
             return ogc_factory.createPropertyIsLessThanOrEqualTo(bot);
@@ -242,7 +250,7 @@ public class FilterToOGC100Converter implements FilterToOGCConverter<FilterType>
             return ogc_factory.createPropertyIsLike(bot);
         } else if (filter instanceof PropertyIsNotEqualTo) {
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
-            final BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
+            final PropertyIsNotEqualToType bot = new PropertyIsNotEqualToType();
             bot.getExpression().add(extract(pit.getExpression1()));
             bot.getExpression().add(extract(pit.getExpression2()));
             return ogc_factory.createPropertyIsNotEqualTo(bot);
@@ -261,21 +269,21 @@ public class FilterToOGC100Converter implements FilterToOGCConverter<FilterType>
             return ogc_factory.createPropertyIsNull(bot);
         } else if (filter instanceof And) {
             final And and = (And) filter;
-            final BinaryLogicOpType lot = ogc_factory.createBinaryLogicOpType();
+            final AndType lot = new AndType();
             for (final Filter f : and.getChildren()) {
                 lot.getComparisonOpsOrSpatialOpsOrLogicOps().add(visit(f));
             }
             return ogc_factory.createAnd(lot);
         } else if (filter instanceof Or) {
             final Or or = (Or) filter;
-            final BinaryLogicOpType lot = ogc_factory.createBinaryLogicOpType();
+            final OrType lot = new OrType();
             for (final Filter f : or.getChildren()) {
                 lot.getComparisonOpsOrSpatialOpsOrLogicOps().add(visit(f));
             }
             return ogc_factory.createOr(lot);
         } else if (filter instanceof Not) {
             final Not not = (Not) filter;
-            final UnaryLogicOpType lot = ogc_factory.createUnaryLogicOpType();
+            final NotType lot = new NotType();
             JAXBElement<?> sf = visit(not.getFilter());
 
             if (sf.getValue() instanceof ComparisonOpsType) {

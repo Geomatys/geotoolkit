@@ -21,6 +21,9 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.DirectPosition;
+import org.geotoolkit.gml.xml.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -55,7 +58,7 @@ import javax.xml.bind.annotation.XmlType;
     "coord",
     "coordinates"
 })
-public class BoxType extends AbstractGeometryType {
+public class BoxType extends AbstractGeometryType implements Envelope{
 
     private List<CoordType> coord;
     private CoordinatesType coordinates;
@@ -76,7 +79,7 @@ public class BoxType extends AbstractGeometryType {
                 this.coordinates = new CoordinatesType(that.coordinates);
             }
             if (that.coord != null) {
-                this.coord = new ArrayList<CoordType>();
+                this.coord = new ArrayList<>();
                 for (CoordType c : that.coord) {
                     this.coord.add(new CoordType(c));
                 }
@@ -94,7 +97,7 @@ public class BoxType extends AbstractGeometryType {
      */
     public List<CoordType> getCoord() {
         if (coord == null) {
-            coord = new ArrayList<CoordType>();
+            coord = new ArrayList<>();
         }
         return this.coord;
     }
@@ -107,6 +110,7 @@ public class BoxType extends AbstractGeometryType {
      *     {@link CoordinatesType }
      *
      */
+    @Override
     public CoordinatesType getCoordinates() {
         return coordinates;
     }
@@ -126,6 +130,82 @@ public class BoxType extends AbstractGeometryType {
     @Override
     public AbstractGeometryType getClone() {
         return new BoxType(this);
+    }
+
+    @Override
+    public void setSrsDimension(Integer dim) {
+        // do nothing
+    }
+
+    @Override
+    public List<String> getAxisLabels() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void setAxisLabels(List<String> axisLabels) {
+        // do nothing
+    }
+
+    @Override
+    public List<String> getUomLabels() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<? extends DirectPosition> getPos() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isCompleteEnvelope2D() {
+         return getLowerCorner() != null && getUpperCorner() != null &&
+               getLowerCorner().getDimension() == 2 && getUpperCorner().getDimension() == 2;
+    }
+
+    @Override
+    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getDimension() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public org.opengis.geometry.DirectPosition getLowerCorner() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public org.opengis.geometry.DirectPosition getUpperCorner() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double getMinimum(int dimension) throws IndexOutOfBoundsException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double getMaximum(int dimension) throws IndexOutOfBoundsException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double getMedian(int dimension) throws IndexOutOfBoundsException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double getSpan(int dimension) throws IndexOutOfBoundsException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Integer getSrsDimension() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

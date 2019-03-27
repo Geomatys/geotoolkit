@@ -115,7 +115,7 @@ public class HarvestType extends RequestBaseType implements Harvest {
         this.source          = source;
         this.resourceType    = resourceType;
         this.resourceFormat  = resourceFormat;
-        this.responseHandler = new ArrayList<String>();
+        this.responseHandler = new ArrayList<>();
         this.responseHandler.add(handler);
         this.harvestInterval = harvestInterval;
 
@@ -124,6 +124,7 @@ public class HarvestType extends RequestBaseType implements Harvest {
     /**
      * Gets the value of the source property.
      */
+    @Override
     public String getSource() {
         return source;
     }
@@ -138,6 +139,7 @@ public class HarvestType extends RequestBaseType implements Harvest {
     /**
      * Gets the value of the resourceType property.
      */
+    @Override
     public String getResourceType() {
         return resourceType;
     }
@@ -152,6 +154,7 @@ public class HarvestType extends RequestBaseType implements Harvest {
     /**
      * Gets the value of the resourceFormat property.
      */
+    @Override
     public String getResourceFormat() {
         return resourceFormat;
     }
@@ -167,6 +170,7 @@ public class HarvestType extends RequestBaseType implements Harvest {
     /**
      * Gets the value of the harvestInterval property.
      */
+    @Override
     public Duration getHarvestInterval() {
         return harvestInterval;
     }
@@ -181,9 +185,10 @@ public class HarvestType extends RequestBaseType implements Harvest {
     /**
      * Gets the value of the responseHandler property.
      */
+    @Override
     public List<String> getResponseHandler() {
         if (responseHandler == null) {
-            responseHandler = new ArrayList<String>();
+            responseHandler = new ArrayList<>();
         }
         return Collections.unmodifiableList(responseHandler);
     }
@@ -192,10 +197,12 @@ public class HarvestType extends RequestBaseType implements Harvest {
         this.responseHandler = responseHandler;
     }
 
+    @Override
     public String getOutputFormat() {
         return "application/xml";
     }
 
+    @Override
     public void setOutputFormat(final String value) {}
 
     /**

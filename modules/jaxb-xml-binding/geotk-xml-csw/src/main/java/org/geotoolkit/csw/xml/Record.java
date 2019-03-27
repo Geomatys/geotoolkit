@@ -29,4 +29,6 @@ public interface Record extends DCMIRecord {
      */
     public Object getBoundingBox();
 
+    long[] getTemporalExtentRange();
+
 }

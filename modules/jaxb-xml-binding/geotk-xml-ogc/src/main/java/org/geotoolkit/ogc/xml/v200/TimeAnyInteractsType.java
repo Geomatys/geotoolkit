@@ -26,6 +26,21 @@ import org.opengis.filter.temporal.AnyInteracts;
  */
 public class TimeAnyInteractsType extends BinaryTemporalOpType implements AnyInteracts {
 
+    /**
+     * An empty constructor used by JAXB
+     */
+    public TimeAnyInteractsType() {
+
+    }
+
+    public TimeAnyInteractsType(final String propertyName, final Object temporal) {
+        super(propertyName, temporal);
+    }
+
+    public TimeAnyInteractsType(final TimeAnyInteractsType that) {
+        super(that);
+    }
+
     @Override
     public boolean evaluate(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -34,13 +49,6 @@ public class TimeAnyInteractsType extends BinaryTemporalOpType implements AnyInt
     @Override
     public Object accept(FilterVisitor fv, Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public TimeAnyInteractsType() {
-
-    }
-    public TimeAnyInteractsType(final TimeAnyInteractsType that) {
-        super(that);
     }
 
     @Override

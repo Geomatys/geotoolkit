@@ -73,9 +73,10 @@ public class ListOfValuesType implements ListOfValues {
      * Gets the value of the value property.
      *
      */
+    @Override
     public List<String> getValue() {
         if (value == null) {
-            value = new ArrayList<String>();
+            value = new ArrayList<>();
         }
         return this.value;
     }

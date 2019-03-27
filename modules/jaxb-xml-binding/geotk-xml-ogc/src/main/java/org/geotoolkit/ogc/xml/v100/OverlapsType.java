@@ -33,6 +33,10 @@ public class OverlapsType extends BinarySpatialOpType {
 
     }
 
+    public OverlapsType(String propertyName, Object geometry) {
+        super(propertyName, geometry);
+    }
+
     public OverlapsType(final OverlapsType that) {
         super(that);
     }
@@ -40,5 +44,10 @@ public class OverlapsType extends BinarySpatialOpType {
     @Override
     public SpatialOpsType getClone() {
         return new OverlapsType(this);
+    }
+
+    @Override
+    public String getOperator() {
+        return "Overlaps";
     }
 }

@@ -17,6 +17,7 @@
 package org.geotoolkit.csw.xml;
 
 import java.util.List;
+import javax.xml.namespace.QName;
 
 /**
  *
@@ -26,7 +27,7 @@ public interface Insert {
 
      List<Object> getAny();
 
-     String getTypeName();
+     QName getTypeName();
 
      String getHandle();
 }
