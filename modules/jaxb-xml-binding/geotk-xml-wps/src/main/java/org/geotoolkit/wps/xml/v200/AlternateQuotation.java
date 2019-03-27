@@ -168,5 +168,4 @@ public class AlternateQuotation {
         this.estimatedTime = estimatedTime;
     }
 
-    
 }

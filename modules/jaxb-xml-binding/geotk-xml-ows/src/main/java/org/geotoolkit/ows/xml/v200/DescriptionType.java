@@ -268,7 +268,7 @@ public class DescriptionType implements AbstractDescription {
 
     /**
      * not implemented
-     * 
+     *
      * @return
      */
     @Override

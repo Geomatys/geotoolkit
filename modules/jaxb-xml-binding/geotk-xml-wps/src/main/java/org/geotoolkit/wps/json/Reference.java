@@ -38,7 +38,7 @@ public class Reference {
     public Reference(String href) {
         this.href = href;
     }
-    
+
     public Reference href(String href) {
         this.href = href;
         return this;

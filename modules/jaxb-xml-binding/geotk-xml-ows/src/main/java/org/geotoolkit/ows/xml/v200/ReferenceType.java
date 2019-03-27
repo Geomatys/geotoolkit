@@ -81,14 +81,11 @@ public class ReferenceType extends AbstractReferenceBaseType {
     public ReferenceType(String href) {
         super(href);
     }
-    
+
     /**
-     * Optional unique identifier of the referenced
-     *               resource.
+     * Optional unique identifier of the referenced resource.
      *
-     * @return
-     *     possible object is
-     *     {@link CodeType }
+     * @return possible object is {@link CodeType }
      *
      */
     public CodeType getIdentifier() {
