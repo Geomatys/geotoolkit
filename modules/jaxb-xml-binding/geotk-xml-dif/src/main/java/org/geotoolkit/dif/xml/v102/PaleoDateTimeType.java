@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  *
- *                 Was a top level field in DIF 9 but is now one of the choices within the Temporal_Coverage field.
+ * Was a top level field in DIF 9 but is now one of the choices within the Temporal_Coverage field.
  *
- *                 | DIF 9                   | ECHO     | UMM                   | DIF 10          | Notes                               |
- * 		        | ----------------------- |----------| --------------------- | --------------- | ------------------------------------|
- * 		        | Paleo_Temporal_Coverage |     -    | PaleoTemporalCoverage | Paleo_Date_Time | Moved to Temporal_Coverage choice   |
+ * | DIF 9                   | ECHO     | UMM                   | DIF 10          | Notes                               |
+ * | ----------------------- |----------| --------------------- | --------------- | ------------------------------------|
+ * | Paleo_Temporal_Coverage |     -    | PaleoTemporalCoverage | Paleo_Date_Time | Moved to Temporal_Coverage choice   |
  *
  *
  *

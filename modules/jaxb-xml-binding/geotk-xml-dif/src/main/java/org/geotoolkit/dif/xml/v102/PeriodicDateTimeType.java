@@ -27,27 +27,30 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  *
- * 		        This entity contains the name of the temporal period in addition
- * 		        to the date, time, duration unit, and value, and cycle duration
- * 		        unit and value. Used at the collection level to describe a
- * 		        collection having granules, which cover a regularly occurring
- * 		        period.
+ * This entity contains the name of the temporal period in addition to the date,
+ * time, duration unit, and value, and cycle duration unit and value. Used at
+ * the collection level to describe a collection having granules, which cover a
+ * regularly occurring period.
  *
- *                 * Name : The name given to the recurring time period. e.g. 'spring - north hemi.'
- *                 * Start_Date : This attribute provides the date (day and time) of the first occurrence of this regularly occurring period which is relevant to the collection, granule, or event coverage.
- *                 * End_Date : This attribute provides the date (day and time) of the last occurrence of this regularly occurring period which is relevant to the collection, granule, or event coverage.
- *                 * Duration_Unit : The unit specification for the period duration.
+ *                 * Name : The name given to the recurring time period. e.g. 'spring - north
+ * hemi.' * Start_Date : This attribute provides the date (day and time) of the
+ * first occurrence of this regularly occurring period which is relevant to the
+ * collection, granule, or event coverage. * End_Date : This attribute provides
+ * the date (day and time) of the last occurrence of this regularly occurring
+ * period which is relevant to the collection, granule, or event coverage. *
+ * Duration_Unit : The unit specification for the period duration.
  *
- *                 Duration_Value : The number of PeriodDurationUnits in the RegularPeriodic period. e.g. the RegularPeriodic event 'Spring-North Hemi' might have a:
- *                 * PeriodDurationUnit='MONTH',
- *                 * PeriodDurationValue='3' ,
- *                 * PeriodCycleDurationUnit='YEAR',
- *                 * PeriodCycleDurationValue='1',
+ * Duration_Value : The number of PeriodDurationUnits in the RegularPeriodic
+ * period. e.g. the RegularPeriodic event 'Spring-North Hemi' might have a: *
+ * PeriodDurationUnit='MONTH', * PeriodDurationValue='3' , *
+ * PeriodCycleDurationUnit='YEAR', * PeriodCycleDurationValue='1',
  *
- *                 indicating that Spring-North Hemi lasts for 3 months and has a cycle duration of 1 year. The unit for the attribute is the value of the attribute PeriodDurationValue.
+ * indicating that Spring-North Hemi lasts for 3 months and has a cycle duration
+ * of 1 year. The unit for the attribute is the value of the attribute
+ * PeriodDurationValue.
  *
- *                 * Period_Cycle_Duration_Unit : The unit specification of the period cycle duration.
- *                 * Period_Cycle_Duration_Value  : The value of the attribute.
+ *                 * Period_Cycle_Duration_Unit : The unit specification of the period cycle
+ * duration. * Period_Cycle_Duration_Value : The value of the attribute.
  *
  *
  *
