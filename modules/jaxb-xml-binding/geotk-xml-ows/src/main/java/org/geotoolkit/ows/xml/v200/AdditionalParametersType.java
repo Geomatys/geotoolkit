@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.geotoolkit.ows.xml.AbstractAdditionalParameters;
 import static org.geotoolkit.ows.xml.v200.ObjectFactory._AdditionalParameter_QNAME;
 
 
@@ -53,15 +54,29 @@ import static org.geotoolkit.ows.xml.v200.ObjectFactory._AdditionalParameter_QNA
 @XmlType(name = "AdditionalParametersType", propOrder = {
     "additionalParameter"
 })
-public class AdditionalParametersType extends AdditionalParametersBaseType {
+public class AdditionalParametersType extends AdditionalParametersBaseType implements AbstractAdditionalParameters {
 
     @XmlElement(name = "AdditionalParameter")
     private List<AdditionalParameter> additionalParameter;
+
+    public AdditionalParametersType() {
+
+    }
+
+    public AdditionalParametersType(List<AdditionalParameter> additionalParameter) {
+        this.additionalParameter = additionalParameter;
+    }
+
+    public AdditionalParametersType(String role, List<AdditionalParameter> additionalParameter) {
+        super(role);
+        this.additionalParameter = additionalParameter;
+    }
 
     /**
      * Gets the value of the additionalParameter property.
      *
      */
+    @Override
     public List<AdditionalParameter> getAdditionalParameter() {
         final List<AdditionalParameter> results = new ArrayList<>();
         if (additionalParameter != null) {

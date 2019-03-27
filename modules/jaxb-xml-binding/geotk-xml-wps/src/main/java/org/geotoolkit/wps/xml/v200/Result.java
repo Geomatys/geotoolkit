@@ -24,9 +24,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.atom.xml.Link;
 import org.geotoolkit.wps.xml.WPSResponse;
 import org.geotoolkit.wps.xml.v100.LegacyStatus;
 
@@ -78,6 +80,9 @@ public class Result extends DocumentBase  implements WPSResponse{
      * compliant ProcessOutputs form.
      */
     protected List<DataOutput> output;
+
+    @XmlTransient
+    private List<Link> links;
 
     public Result() {
 
@@ -399,5 +404,19 @@ public class Result extends DocumentBase  implements WPSResponse{
         private void setOutputs(final List<OutputDefinition> outputs) {
             this.outputs = outputs;
         }
+    }
+
+    /**
+     * @return the links
+     */
+    public List<Link> getLinks() {
+        return links;
+    }
+
+    /**
+     * @param links the links to set
+     */
+    public void setLinks(List<Link> links) {
+        this.links = links;
     }
 }

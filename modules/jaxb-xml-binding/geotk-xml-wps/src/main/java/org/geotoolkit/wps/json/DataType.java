@@ -27,6 +27,24 @@ public class DataType {
 
   private Format format = null;
 
+  public DataType() {
+
+  }
+
+  public DataType(DataType that) {
+      if (that != null) {
+          this.id = that.id;
+          if (that.format != null) {
+              this.format = new Format(that.format);
+          }
+      }
+  }
+
+  public DataType(String id, Format format) {
+      this.format = format;
+      this.id = id;
+  }
+
   public DataType id(String id) {
     this.id = id;
     return this;

@@ -93,10 +93,22 @@ public class Reference {
 
     public Reference() {}
 
+    public Reference(String href) {
+        this.href = href;
+    }
+
+
     public Reference(String href, String mimeType, String encoding) {
         this.href = href;
         this.mimeType = mimeType;
         this.encoding = encoding;
+    }
+
+    public Reference(String href, String mimeType, String encoding, String schema) {
+        this.href = href;
+        this.mimeType = mimeType;
+        this.encoding = encoding;
+        this.schema = schema;
     }
 
     /**

@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.ows.xml.v200.CodeType;
 import org.geotoolkit.ows.xml.v200.KeywordsType;
 import org.geotoolkit.ows.xml.v200.LanguageStringType;
+import org.geotoolkit.ows.xml.v200.OwsContextDescriptionType;
 import static org.geotoolkit.wps.xml.WPSMarshallerPool.WPS_1_0_NAMESPACE;
-import static org.geotoolkit.wps.xml.WPSMarshallerPool.WPS_2_0_NAMESPACE;
 
 
 /**
@@ -71,13 +71,15 @@ public class ProcessDescription extends Description {
     @XmlAttribute(name = "lang", namespace = "http://www.w3.org/XML/1998/namespace")
     protected String lang;
 
+
     public ProcessDescription() {
 
     }
 
     public ProcessDescription(CodeType identifier, final LanguageStringType title,  final List<LanguageStringType> _abstract,
-            final List<KeywordsType> keywords, List<InputDescription> input, List<OutputDescription> output, String processVersion) {
-        super(identifier, title, _abstract, keywords);
+            final List<KeywordsType> keywords, List<InputDescription> input, List<OutputDescription> output, String processVersion,
+            final OwsContextDescriptionType owsContext) {
+        super(identifier, title, _abstract, keywords, owsContext);
         this.input = input;
         this.output = output;
         this.processVersion = processVersion;
@@ -89,6 +91,20 @@ public class ProcessDescription extends Description {
         this.input = input;
         this.output = output;
         this.processVersion = processVersion;
+    }
+
+    public ProcessDescription(org.geotoolkit.wps.json.Process process) {
+        super(process);
+
+        this.input = new ArrayList<>();
+        for (org.geotoolkit.wps.json.InputType in : process.getInputs()) {
+           this.input.add(new InputDescription(in));
+        }
+
+        this.output = new ArrayList<>();
+        for (org.geotoolkit.wps.json.OutputDescription out : process.getOutputs()) {
+            this.output.add(new OutputDescription(out));
+        }
     }
 
     /**
@@ -159,7 +175,7 @@ public class ProcessDescription extends Description {
         this.lang = value;
     }
 
-        ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
     //
     // Following section is boilerplate code for WPS v1 retro-compatibility.
     //

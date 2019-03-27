@@ -48,5 +48,12 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class AdditionalParametersBaseType extends MetadataType {
 
+    public AdditionalParametersBaseType() {
+
+    }
+
+    public AdditionalParametersBaseType(String role) {
+        super(null, role);
+    }
 
 }

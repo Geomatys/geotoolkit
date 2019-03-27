@@ -19,6 +19,8 @@ package org.geotoolkit.wps.json;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.wps.xml.v200.Execute.Response;
+import org.geotoolkit.wps.xml.v200.Execute.Mode;
 
 /**
  * Execute
@@ -28,6 +30,39 @@ public class Execute implements WPSJSONResponse {
     private List<Input> inputs = null;
 
     private List<Output> outputs = new ArrayList<>();
+
+    private Mode mode = null;
+
+    private Response response = null;
+
+    public Execute() {
+
+    }
+
+    public Execute(Execute that) {
+        if (that != null) {
+            if (that.inputs != null) {
+                this.inputs = new ArrayList<>();
+                for (Input thatIn : that.inputs) {
+                    this.inputs.add(new Input(thatIn));
+                }
+            }
+            if (that.outputs != null) {
+                this.outputs = new ArrayList<>();
+                for (Output thatOut : that.outputs) {
+                    this.outputs.add(new Output(thatOut));
+                }
+            }
+            this.mode = that.mode;
+            this.response = that.response;
+        }
+
+    }
+
+    public Execute(List<Input> inputs, List<Output> outputs) {
+        this.inputs = inputs;
+        this.outputs = outputs;
+    }
 
     public Execute inputs(List<Input> inputs) {
         this.inputs = inputs;
@@ -58,6 +93,19 @@ public class Execute implements WPSJSONResponse {
         this.inputs = inputs;
     }
 
+    public List<Input> getInputs(String inputId) {
+        List<Input> results = new ArrayList<>();
+        if (inputs != null) {
+            for (Input in : inputs) {
+                if (in.getId().equals(inputId)) {
+                    results.add(in);
+                }
+            }
+        }
+        return results;
+    }
+
+
     public Execute outputs(List<Output> outputs) {
         this.outputs = outputs;
         return this;
@@ -67,6 +115,18 @@ public class Execute implements WPSJSONResponse {
 
         this.outputs.add(outputsItem);
         return this;
+    }
+
+    public Execute subRequest(List<String> stepInputs) {
+        Execute result = new Execute(this);
+        List<Input> subInputs = new ArrayList<>();
+        for (Input in : result.inputs) {
+            if (stepInputs.contains(in.getId())) {
+                subInputs.add(in);
+            }
+        }
+        result.setInputs(subInputs);
+        return result;
     }
 
     /**
@@ -81,6 +141,22 @@ public class Execute implements WPSJSONResponse {
 
     public void setOutputs(List<Output> outputs) {
         this.outputs = outputs;
+    }
+
+    public Mode getMode() {
+        return mode;
+    }
+
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
+
+    public Response getResponse() {
+        return response;
+    }
+
+    public void setResponse(Response response) {
+        this.response = response;
     }
 
     @Override
@@ -108,6 +184,8 @@ public class Execute implements WPSJSONResponse {
 
         sb.append("    inputs: ").append(toIndentedString(inputs)).append("\n");
         sb.append("    outputs: ").append(toIndentedString(outputs)).append("\n");
+        sb.append("    mode: ").append(toIndentedString(mode)).append("\n");
+        sb.append("    response: ").append(toIndentedString(response)).append("\n");
         sb.append("}");
         return sb.toString();
     }

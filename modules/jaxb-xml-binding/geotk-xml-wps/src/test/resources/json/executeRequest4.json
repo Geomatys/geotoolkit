@@ -6,7 +6,7 @@
                 "schema": "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd",
                 "encoding": "UTF8"
             },
-            "value": "not a Execute"
+            "data" : "not a Execute"
         },
     {
             "id": "urn:ogc:cstl:wps:jts:intersection:input:geom2",
@@ -15,11 +15,10 @@
                 "schema": "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd",
                 "encoding": "UTF8"
             },
-            "value": "not a Execute"
+            "data" : "not a Execute"
         }],
     "outputs": [{
             "id": "urn:ogc:cstl:wps:jts:intersection:output:result_geom",
-            "format": null,
-            "transmissionMode": "REFERENCE"
+            "transmissionMode": "reference"
         }]
 }

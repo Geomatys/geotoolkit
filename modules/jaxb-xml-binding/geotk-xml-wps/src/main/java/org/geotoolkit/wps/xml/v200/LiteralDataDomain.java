@@ -19,6 +19,7 @@ package org.geotoolkit.wps.xml.v200;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v200.AllowedValues;
 import org.geotoolkit.ows.xml.v200.AnyValue;
@@ -83,6 +84,9 @@ public class LiteralDataDomain {
     protected ValueType defaultValue;
     @XmlAttribute(name = "default")
     protected Boolean _default;
+
+    @XmlTransient
+    private AllowedValues allowedRanges;
 
     public LiteralDataDomain() {
 
@@ -276,6 +280,20 @@ public class LiteralDataDomain {
         this._default = value;
     }
 
+    /**
+     * @return the allowedRanges
+     */
+    public AllowedValues getAllowedRanges() {
+        return allowedRanges;
+    }
+
+    /**
+     * @param allowedRanges the allowedRanges to set
+     */
+    public void setAllowedRanges(AllowedValues allowedRanges) {
+        this.allowedRanges = allowedRanges;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
@@ -341,6 +359,4 @@ public class LiteralDataDomain {
         hash = 11 * hash + Objects.hashCode(this._default);
         return hash;
     }
-
-
 }

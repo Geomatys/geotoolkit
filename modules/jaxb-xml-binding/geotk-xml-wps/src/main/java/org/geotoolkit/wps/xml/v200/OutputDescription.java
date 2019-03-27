@@ -22,9 +22,12 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.v200.AdditionalParameter;
+import org.geotoolkit.ows.xml.v200.AdditionalParametersType;
 import org.geotoolkit.ows.xml.v200.CodeType;
 import org.geotoolkit.ows.xml.v200.KeywordsType;
 import org.geotoolkit.ows.xml.v200.LanguageStringType;
+import org.geotoolkit.wps.json.FormatDescription;
 
 
 /**
@@ -77,6 +80,31 @@ public class OutputDescription extends Description {
             KeywordsType keywords, DataDescription dataDescription) {
         super(identifier, title, _abstract, keywords);
         this.dataDescription = dataDescription;
+    }
+
+    public OutputDescription(CodeType identifier, LanguageStringType title, LanguageStringType _abstract,
+            KeywordsType keywords, List<AdditionalParametersType> additionalParams, DataDescription dataDescription) {
+        super(identifier, title, _abstract, keywords, additionalParams);
+        this.dataDescription = dataDescription;
+    }
+
+    public OutputDescription(org.geotoolkit.wps.json.OutputDescription out) {
+        super(out);
+        // here we need to determine the kind of data we want from the format..
+        // we do a wild guess for now between complex / literal
+        List<Format> formats = new ArrayList<>();
+        boolean complex = true; // default choice
+        for (FormatDescription format : out.getFormats()) {
+            if ("text/plain".equals(format.getMimeType())) {
+                complex = false;
+            }
+            formats.add(new Format(format));
+        }
+        if (complex) {
+            this.dataDescription = new ComplexData(formats);
+        } else {
+            this.dataDescription = new LiteralData(formats, null, null, null);
+        }
     }
 
     public DataDescription getDataDescription() {

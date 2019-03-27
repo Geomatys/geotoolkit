@@ -1,0 +1,12 @@
+{
+    "inputs": [{
+            "id": "inout-1",
+            "data": "somevalue"
+        }],
+    "outputs": [{
+            "id": "out-1",
+            "transmissionMode": "value"
+        }],
+    "mode": "sync",
+    "response": "raw"
+}

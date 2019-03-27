@@ -69,6 +69,17 @@ public class Link {
     @XmlSchemaType(name = "anySimpleType")
     private String length;
 
+    public Link() {
+
+    }
+
+    public Link(String href, String rel, String type, String title) {
+        this.href = href;
+        this.rel = rel;
+        this.type = type;
+        this.title = title;
+    }
+
     /**
      * Gets the value of the href property.
      *

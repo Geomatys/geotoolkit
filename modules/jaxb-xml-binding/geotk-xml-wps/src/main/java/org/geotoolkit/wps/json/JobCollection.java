@@ -23,16 +23,24 @@ import java.util.List;
 /**
  * JobList
  */
-public class JobList implements WPSJSONResponse {
+public class JobCollection implements WPSJSONResponse {
 
   private List<String> jobs = null;
 
-  public JobList jobs(List<String> jobs) {
+  public JobCollection() {
+
+  }
+
+  public JobCollection(List<String> jobs) {
+    this.jobs = jobs;
+  }
+
+  public JobCollection jobs(List<String> jobs) {
     this.jobs = jobs;
     return this;
   }
 
-  public JobList addJobsItem(String jobsItem) {
+  public JobCollection addJobsItem(String jobsItem) {
 
     if (this.jobs == null) {
       this.jobs = new ArrayList<>();
@@ -61,7 +69,7 @@ public class JobList implements WPSJSONResponse {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    JobList jobList = (JobList) o;
+    JobCollection jobList = (JobCollection) o;
     return Objects.equals(this.jobs, jobList.jobs);
   }
 

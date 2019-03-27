@@ -23,8 +23,8 @@ import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractAdditionalParameter;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
@@ -54,7 +54,7 @@ import org.w3c.dom.Text;
     "name",
     "value"
 })
-public class AdditionalParameter {
+public class AdditionalParameter implements AbstractAdditionalParameter {
 
     @XmlElement(name = "Name", required = true)
     private CodeType name;
@@ -77,6 +77,7 @@ public class AdditionalParameter {
      *     {@link CodeType }
      *
      */
+    @Override
     public CodeType getName() {
         return name;
     }
@@ -97,6 +98,7 @@ public class AdditionalParameter {
      * Gets the value of the value property.
      *
      */
+    @Override
     public List<Object> getValue() {
         if (value == null) {
             value = new ArrayList<>();

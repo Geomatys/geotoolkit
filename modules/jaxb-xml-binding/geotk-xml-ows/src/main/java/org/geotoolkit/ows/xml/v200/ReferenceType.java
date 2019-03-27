@@ -74,6 +74,14 @@ public class ReferenceType extends AbstractReferenceBaseType {
     @XmlElementRef(name = "Metadata", namespace = "http://www.opengis.net/ows/2.0", type = JAXBElement.class)
     private List<JAXBElement<? extends MetadataType>> metadata;
 
+    public ReferenceType() {
+
+    }
+
+    public ReferenceType(String href) {
+        super(href);
+    }
+    
     /**
      * Optional unique identifier of the referenced
      *               resource.

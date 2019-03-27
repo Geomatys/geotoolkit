@@ -17,17 +17,23 @@
 package org.geotoolkit.wps.xml.v200;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractDescription;
+import org.geotoolkit.ows.xml.v200.AdditionalParameter;
+import org.geotoolkit.ows.xml.v200.AdditionalParametersType;
 import org.geotoolkit.ows.xml.v200.BasicIdentificationType;
 import org.geotoolkit.ows.xml.v200.CodeType;
 import org.geotoolkit.ows.xml.v200.KeywordsType;
 import org.geotoolkit.ows.xml.v200.LanguageStringType;
 import org.geotoolkit.ows.xml.v200.MetadataType;
+import org.geotoolkit.ows.xml.v200.OwsContextDescriptionType;
+import org.geotoolkit.ows.xml.v200.OwsContextOfferingType;
 import static org.geotoolkit.wps.xml.WPSMarshallerPool.OWS_1_1_NAMESPACE;
 
 import static org.geotoolkit.wps.xml.WPSMarshallerPool.OWS_2_0_NAMESPACE;
@@ -91,6 +97,12 @@ public class Description implements AbstractDescription {
     @XmlElement(name = "Metadata", namespace=OWS_2_0_NAMESPACE)
     private List<MetadataType> metadata;
 
+    @XmlTransient
+    private OwsContextDescriptionType owsContext;
+
+    @XmlTransient
+    private List<AdditionalParametersType> additionalParameters;
+
     public Description() {}
 
     public Description(
@@ -106,10 +118,34 @@ public class Description implements AbstractDescription {
     }
 
     public Description(
+            final CodeType identifier,
+            final LanguageStringType title,
+            final List<LanguageStringType> _abstract,
+            final List<KeywordsType> keywords,
+            final OwsContextDescriptionType owsContext
+    ) {
+        this.identifier = identifier;
+        this.title = title;
+        this._abstract = _abstract;
+        this.keywords = keywords;
+        this.owsContext = owsContext;
+    }
+
+    public Description(
             CodeType identifier,
             final LanguageStringType title,
             final LanguageStringType _abstract,
             final KeywordsType keywords
+    ) {
+        this(identifier, title, _abstract, keywords, null);
+    }
+
+    public Description(
+            CodeType identifier,
+            final LanguageStringType title,
+            final LanguageStringType _abstract,
+            final KeywordsType keywords,
+            final List<AdditionalParametersType> additionalParameters
     ) {
         this.identifier = identifier;
         this.title = title;
@@ -120,6 +156,47 @@ public class Description implements AbstractDescription {
         if (keywords != null) {
             this.keywords = new ArrayList<>();
             this.keywords.add(keywords);
+        }
+        this.additionalParameters = additionalParameters;
+    }
+
+    public Description(Description desc) {
+        this(desc.getIdentifier(), desc.getTitle(), desc.getAbstract(), desc.getKeywords());
+    }
+
+    public Description(org.geotoolkit.wps.json.DescriptionType desc) {
+        this(new CodeType(desc.getId()), new LanguageStringType(desc.getTitle()), new LanguageStringType(desc.getAbstract()), new KeywordsType(desc.getKeywords()));
+        if (desc.getAdditionalParameters() != null) {
+            this.additionalParameters = new ArrayList<>();
+            for (org.geotoolkit.wps.json.AdditionalParameters addParams : desc.getAdditionalParameters()) {
+                List<AdditionalParameter> params = new ArrayList<>();
+                for (org.geotoolkit.wps.json.AdditionalParameter addParam : addParams.getParameters()) {
+                    params.add(new AdditionalParameter(new CodeType(addParam.getName()), new ArrayList<>(addParam.getValues())));
+                }
+                this.additionalParameters.add(new AdditionalParametersType(addParams.getRole(), params));
+            }
+        }
+        if (desc.getOwsContext() != null && desc.getOwsContext().getOffering() != null) {
+            String code = desc.getOwsContext().getOffering().getCode();
+            String href = null;
+            if (desc.getOwsContext().getOffering().getContent() != null) {
+                href = desc.getOwsContext().getOffering().getContent().getHref();
+            }
+            this.owsContext = new OwsContextDescriptionType(new OwsContextOfferingType(code, href));
+        }
+    }
+
+    public Description(org.geotoolkit.wps.json.InputType desc) {
+        this(new CodeType(desc.getId()), new LanguageStringType(desc.getTitle()), new LanguageStringType(desc.getAbstract()), new KeywordsType(desc.getKeywords()));
+        if (desc.getAdditionalParameters() != null) {
+            this.additionalParameters = new ArrayList<>();
+            for (org.geotoolkit.wps.json.AdditionalParameters addParams : desc.getAdditionalParameters()) {
+                List<AdditionalParameter> params = new ArrayList<>();
+                for (org.geotoolkit.wps.json.AdditionalParameter addParam : addParams.getParameters()) {
+                    params.add(new AdditionalParameter(new CodeType(addParam.getName()), new ArrayList<>(addParam.getValues())));
+                }
+                this.additionalParameters.add(new AdditionalParametersType(addParams.getRole(),params));
+            }
         }
     }
 
@@ -163,6 +240,7 @@ public class Description implements AbstractDescription {
         return _abstract;
     }
 
+    @Override
     public List<KeywordsType> getKeywords() {
         if (keywords == null) {
             keywords = new ArrayList<>();
@@ -170,6 +248,7 @@ public class Description implements AbstractDescription {
         return keywords;
     }
 
+    @Override
     public List<MetadataType> getMetadata() {
         if (metadata == null) {
             metadata = new ArrayList<>();
@@ -187,6 +266,21 @@ public class Description implements AbstractDescription {
         final List<LanguageStringType> a = getAbstract();
         if (a.isEmpty()) return null;
         return a.get(0).getValue();
+    }
+
+    /**
+     * @return the additionalParameters
+     */
+    @Override
+    public List<AdditionalParametersType> getAdditionalParameters() {
+        return additionalParameters;
+    }
+
+    /**
+     * @param additionalParameters the additionalParameters to set
+     */
+    public void setAdditionalParameters(List<AdditionalParametersType> additionalParameters) {
+        this.additionalParameters = additionalParameters;
     }
 
     @Override
@@ -249,5 +343,19 @@ public class Description implements AbstractDescription {
         hash = 97 * hash + Objects.hashCode(this.metadata);
         hash = 97 * hash + Objects.hashCode(this.title);
         return hash;
+    }
+
+    /**
+     * @return the owsContext
+     */
+    public OwsContextDescriptionType getOwsContext() {
+        return owsContext;
+    }
+
+    /**
+     * @param owsContext the owsContext to set
+     */
+    public void setOwsContext(OwsContextDescriptionType owsContext) {
+        this.owsContext = owsContext;
     }
 }

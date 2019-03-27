@@ -19,46 +19,27 @@ package org.geotoolkit.wps.json;
 import java.util.Objects;
 
 /**
- * Exception
+ * InlineValue
  */
-public class Exception implements WPSJSONResponse {
+public class InlineValue extends DataEncodingAttributes {
 
-  private String code = null;
+  private String data = null;
 
-  private String description = null;
-
-  public Exception code(String code) {
-    this.code = code;
+  public InlineValue data(String data) {
+    this.data = data;
     return this;
   }
 
 
   /**
-  * Get code
-  * @return code
+  * Get data
+  * @return data
   **/
-  public String getCode() {
-    return code;
+  public String getData() {
+    return data;
   }
-  public void setCode(String code) {
-    this.code = code;
-  }
-
-  public Exception description(String description) {
-    this.description = description;
-    return this;
-  }
-
-
-  /**
-  * Get description
-  * @return description
-  **/
-  public String getDescription() {
-    return description;
-  }
-  public void setDescription(String description) {
-    this.description = description;
+  public void setData(String data) {
+    this.data = data;
   }
 
   @Override
@@ -69,23 +50,22 @@ public class Exception implements WPSJSONResponse {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Exception exception = (Exception) o;
-    return Objects.equals(this.code, exception.code) &&
-        Objects.equals(this.description, exception.description);
+    InlineValue inlineValue = (InlineValue) o;
+    return Objects.equals(this.data, inlineValue.data) &&
+        super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(code, description);
+    return java.util.Objects.hash(data, super.hashCode());
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Exception {\n");
-
-    sb.append("    code: ").append(toIndentedString(code)).append("\n");
-    sb.append("    description: ").append(toIndentedString(description)).append("\n");
+    sb.append("class InlineValue {\n");
+    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("    data: ").append(toIndentedString(data)).append("\n");
     sb.append("}");
     return sb.toString();
   }

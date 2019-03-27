@@ -17,130 +17,101 @@
 package org.geotoolkit.wps.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 import java.util.Objects;
-import org.geotoolkit.wps.xml.v200.InputDescription;
 
 /**
- * LiteralInputType
+ * LiteralInputType unused anyùore
  */
-public class LiteralInputType extends DataDescriptionType {
+public class LiteralInputType {
 
-  private Integer minOccurs = null;
+    @JsonProperty("literalDataDomains")
+    private List<LiteralDataDomain> literalDataDomains = null;
 
-  private Integer maxOccurs = null;
+    public LiteralInputType() {
 
-  @JsonProperty("LiteralDataDomain")
-  private Object literalDataDomain = null;
-
-  public LiteralInputType() {
-
-  }
-
-  public LiteralInputType(InputDescription in) {
-      super(in);
-      if (in != null) {
-          this.minOccurs = in.getMinOccurs();
-          this.maxOccurs = in.getMaxOccurs();
-          this.literalDataDomain = null; // TODO
-      }
-  }
-
-  public LiteralInputType minOccurs(Integer minOccurs) {
-    this.minOccurs = minOccurs;
-    return this;
-  }
-
-
-  /**
-  * Get minOccurs
-  * @return minOccurs
-  **/
-  public Integer getMinOccurs() {
-    return minOccurs;
-  }
-  public void setMinOccurs(Integer minOccurs) {
-    this.minOccurs = minOccurs;
-  }
-
-  public LiteralInputType maxOccurs(Integer maxOccurs) {
-    this.maxOccurs = maxOccurs;
-    return this;
-  }
-
-
-  /**
-  * Get maxOccurs
-  * @return maxOccurs
-  **/
-  public Integer getMaxOccurs() {
-    return maxOccurs;
-  }
-  public void setMaxOccurs(Integer maxOccurs) {
-    this.maxOccurs = maxOccurs;
-  }
-
-  public LiteralInputType literalDataDomain(Object literalDataDomain) {
-    this.literalDataDomain = literalDataDomain;
-    return this;
-  }
-
-
-  /**
-  * Get literalDataDomain
-  * @return literalDataDomain
-  **/
-  public Object getLiteralDataDomain() {
-    return literalDataDomain;
-  }
-  public void setLiteralDataDomain(Object literalDataDomain) {
-    this.literalDataDomain = literalDataDomain;
-  }
-
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    /*public LiteralInputType(String id, String title, String _abstract, List<String> keywords,
+            List<Metadata> metadata, List<AdditionalParameters> additionalParameters,
+            List<FormatDescription> formats, Integer minOccurs, Object maxOccurs,
+            LiteralDataDomain literalDataDomain) {
+        super(id, title, _abstract, keywords, metadata, additionalParameters, formats);
+        this.minOccurs = minOccurs;
+        this.maxOccurs = maxOccurs;
+        this.literalDataDomain = literalDataDomain;
+
     }
-    LiteralInputType literalInputType = (LiteralInputType) o;
-    return Objects.equals(this.minOccurs, literalInputType.minOccurs) &&
-        Objects.equals(this.maxOccurs, literalInputType.maxOccurs) &&
-        Objects.equals(this.literalDataDomain, literalInputType.literalDataDomain) &&
-        super.equals(o);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(minOccurs, maxOccurs, literalDataDomain, super.hashCode());
-  }
+    public LiteralInputType(InputDescription in) {
+        super(in);
+        if (in != null) {
+            this.minOccurs = in.getMinOccurs();
+            if (in.getMaxOccurs() == Integer.MAX_VALUE) {
+                this.maxOccurs = "unbounded";
+            } else {
+                this.maxOccurs = Integer.toString(in.getMaxOccurs());
+            }
+            this.literalDataDomain = null; // TODO
+        }
+    }*/
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class LiteralInputType {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    minOccurs: ").append(toIndentedString(minOccurs)).append("\n");
-    sb.append("    maxOccurs: ").append(toIndentedString(maxOccurs)).append("\n");
-    sb.append("    literalDataDomain: ").append(toIndentedString(literalDataDomain)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
+    public LiteralInputType literalDataDomain(List<LiteralDataDomain> literalDataDomains) {
+        this.literalDataDomains = literalDataDomains;
+        return this;
     }
-    return o.toString().replace("\n", "\n    ");
-  }
 
+    /**
+     * Get literalDataDomain
+     *
+     * @return literalDataDomain
+  *
+     */
+    public List<LiteralDataDomain> getLiteralDataDomains() {
+        return literalDataDomains;
+    }
+
+    public void setLiteralDataDomains(List<LiteralDataDomain> literalDataDomains) {
+        this.literalDataDomains = literalDataDomains;
+    }
+
+    @Override
+    public boolean equals(java.lang.Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        LiteralInputType literalInputType = (LiteralInputType) o;
+        return Objects.equals(this.literalDataDomains, literalInputType.literalDataDomains)
+                && super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(literalDataDomains, super.hashCode());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class LiteralInputType {\n");
+        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+        sb.append("    literalDataDomains: ").append(toIndentedString(literalDataDomains)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(java.lang.Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
 
 }
-
-
-
