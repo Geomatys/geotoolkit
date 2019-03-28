@@ -93,7 +93,7 @@ public class ReprojectTest extends org.geotoolkit.test.TestBase {
         //check it does not raise any error
         GF.createLinearRing(sq);
 
-        sq = GF.getCoordinateSequenceFactory().create(5,2);
+        sq = GF.getCoordinateSequenceFactory().create(5,3);
         sq.setOrdinate(0,0,29.5314900850289);sq.setOrdinate(0, 1, 67.6621244561062);sq.setOrdinate(0, 2, 0);
         sq.setOrdinate(1,0,29.5314900850289);sq.setOrdinate(1, 1, 80.8837216369139);sq.setOrdinate(1, 2, 1);
         sq.setOrdinate(2,0,42.7530872658366);sq.setOrdinate(2, 1, 80.8837216369139);sq.setOrdinate(2, 2, 2);
@@ -108,7 +108,7 @@ public class ReprojectTest extends org.geotoolkit.test.TestBase {
         //check it does not raise any error
         GF.createLinearRing(sq);
 
-        sq = GF.getCoordinateSequenceFactory().create(5,2);
+        sq = GF.getCoordinateSequenceFactory().create(5,3);
         sq.setOrdinate(0,0,29.5314900850289);sq.setOrdinate(0, 1, 67.6621244561062);sq.setOrdinate(0, 2, 0);
         sq.setOrdinate(1,0,29.5314900850289);sq.setOrdinate(1, 1, 80.8837216369139);sq.setOrdinate(1, 2, 1);
         sq.setOrdinate(2,0,42.7530872658366);sq.setOrdinate(2, 1, 80.8837216369139);sq.setOrdinate(2, 2, 2);

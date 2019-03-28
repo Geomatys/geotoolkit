@@ -71,12 +71,12 @@ public class MIFArcBuilder extends MIFRectangleBuilder {
                 try {
                 double[] afterT = new double[4];
                 toApply.transform(linePts, 0, afterT, 0, 2);
-                seq = new PackedCoordinateSequence.Double(afterT, 2);
+                seq = new PackedCoordinateSequence.Double(afterT, 2, 0);
                 } catch (Exception e) {
                     throw new DataStoreException("Unable to transform geometry", e);
                 }
             } else {
-                seq = new PackedCoordinateSequence.Double(linePts, 2);
+                seq = new PackedCoordinateSequence.Double(linePts, 2, 0);
             }
             final Envelope line = new Envelope(seq.getCoordinate(0), seq.getCoordinate(1));
             toFill.setPropertyValue(FeatureExt.getDefaultGeometry(toFill.getType()).getName().tip().toString(), JTS.toGeometry(line));

@@ -46,6 +46,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
      *
      */
     public LiteCoordinateSequence(final double[] coords) {
+        super(2, 0);
         this.dimension = 2;
         if (coords.length % dimension != 0) {
             throw new IllegalArgumentException("Packed array does not contain " + "an integral number of coordinates");
@@ -60,6 +61,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
      * @param coordinates
      */
     public LiteCoordinateSequence(final float[] coordinates) {
+        super(2, 0);
         this.coords = new double[coordinates.length];
         this.dimension = 2;
         this.size = coords.length / dimension;
@@ -72,6 +74,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
      * @param coordinates
      */
     public LiteCoordinateSequence(Coordinate[] coordinates) {
+        super(2, 0);
         if (coordinates == null) {
             coordinates = new Coordinate[0];
         }
@@ -93,6 +96,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
      *
      */
     public LiteCoordinateSequence(final int size, final int dimension) {
+        super(2, 0);
         if (dimension != 2) {
             throw new IllegalArgumentException("This type of sequence is always 2 dimensional");
         }
@@ -106,6 +110,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
      * @param seq
      */
     public LiteCoordinateSequence(final LiteCoordinateSequence seq) {
+        super(seq.dimension, 0);
         // a trivial benchmark can show that cloning arrays like this is actually faster
         // than calling clone on the array.
         this.dimension = seq.dimension;

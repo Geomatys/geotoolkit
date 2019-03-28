@@ -66,12 +66,12 @@ public class MIFRegionBuilder extends MIFGeometryBuilder {
                 try {
                     double[] afterT = new double[numCoords];
                     toApply.transform(polygonPts, 0, afterT, 0, numCoords / 2);
-                    seq = new PackedCoordinateSequence.Double(afterT, 2);
+                    seq = new PackedCoordinateSequence.Double(afterT, 2, 0);
                 } catch (Exception e) {
                     throw new DataStoreException("Unable to transform geometry", e);
                 }
             } else {
-                seq = new PackedCoordinateSequence.Double(polygonPts, 2);
+                seq = new PackedCoordinateSequence.Double(polygonPts, 2, 0);
             }
             final LinearRing ring = GEOMETRY_FACTORY.createLinearRing(seq);
             polygons[polygonCount] = GEOMETRY_FACTORY.createPolygon(ring, null);
