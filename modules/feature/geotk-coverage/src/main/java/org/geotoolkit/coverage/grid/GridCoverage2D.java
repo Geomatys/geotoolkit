@@ -19,16 +19,10 @@ package org.geotoolkit.coverage.grid;
 
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
-import java.io.IOException;
-import java.io.InvalidClassException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,13 +30,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import javax.measure.Unit;
 import javax.media.jai.Interpolation;
 import javax.media.jai.OperationNode;
 import javax.media.jai.PlanarImage;
-import javax.media.jai.RenderedImageAdapter;
 import javax.media.jai.remote.SerializableRenderedImage;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -53,7 +44,6 @@ import org.geotoolkit.geometry.TransformedDirectPosition;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Loggings;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
@@ -798,19 +788,6 @@ public class GridCoverage2D extends GridCoverage {
     }
 
     /**
-     * Hints that the given area may be needed in the near future. Some implementations
-     * may spawn a thread or threads to compute the tiles while others may ignore the hint.
-     * TODO implement it
-     * @param area A rectangle indicating which geographic area to prefetch.
-     *             This area's coordinates must be expressed according the
-     *             grid coverage's coordinate reference system, as given by
-     *             {@link #getCoordinateReferenceSystem}.
-     * @deprecated do not use anymore
-     */
-    public void prefetch(final Rectangle2D area) {
-    }
-
-    /**
      * Returns a view of the specified type. Valid types are:
      * <ul>
      *   <li><p>
@@ -957,57 +934,6 @@ public class GridCoverage2D extends GridCoverage {
     }
 
     /**
-     * Constructs the {@link PlanarImage} from the {@linkplain SerializableRenderedImage}
-     * after deserialization.
-     */
-    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        try {
-            /*
-             * Set the 'image' field using reflection, because this field is final.
-             * This is a legal usage for deserialization according Field.set(...)
-             * documentation in J2SE 1.5.
-             */
-            final Field field = GridCoverage2D.class.getDeclaredField("image");
-            field.setAccessible(true);
-            field.set(this, PlanarImage.wrapRenderedImage(serializedImage));
-        } catch (ReflectiveOperationException cause) {
-            InvalidClassException e = new InvalidClassException(getClass().getCanonicalName(), cause.getLocalizedMessage());
-            e.initCause(cause);
-            throw e;
-        }
-    }
-
-    /**
-     * Serializes this grid coverage. Before serialization, a {@linkplain SerializableRenderedImage
-     * serializable rendered image} is created if it was not already done.
-     */
-    private void writeObject(final ObjectOutputStream out) throws IOException {
-        if (serializedImage == null) {
-            RenderedImage source = image;
-            while (source instanceof RenderedImageAdapter) {
-                source = ((RenderedImageAdapter) source).getWrappedImage();
-            }
-            if (source instanceof SerializableRenderedImage) {
-                serializedImage = (SerializableRenderedImage) source;
-            } else {
-                if (tileEncoding == null) {
-                    tileEncoding = "gzip";
-                }
-                serializedImage = new SerializableRenderedImage(source, false, null,
-                                                                tileEncoding, null, null);
-                final LogRecord record = Loggings.format(Level.FINE,
-                        Loggings.Keys.CreatedSerializableImage_2, getName(), tileEncoding);
-                record.setSourceClassName(GridCoverage2D.class.getName());
-                record.setSourceMethodName("writeObject");
-                record.setLoggerName(LOGGER.getName());
-                LOGGER.log(record);
-            }
-        }
-        out.defaultWriteObject();
-    }
-
-    /**
      * Provides a hint that a coverage will no longer be accessed from a reference in user space.
      * This method {@linkplain PlanarImage#dispose disposes} the {@linkplain #image} only if at
      * least one of the following conditions is true (otherwise this method do nothing):
@@ -1036,20 +962,8 @@ public class GridCoverage2D extends GridCoverage {
                 return false;
             }
             views = null;
-        } else if (!disposeImage(force)) {
-            return false;
         }
         return super.dispose(force);
-    }
-
-    /**
-     * Disposes only the {@linkplain #image}, not the views. This method is invoked by
-     * {@link ViewsManager#dispose}. This method checks the set of every sinks,
-     * which may or may not be {@link RenderedImage}s. If there is no sinks, we can process.
-     * @deprecated do not use anymore
-     */
-    final synchronized boolean disposeImage(final boolean force) {
-        return true;
     }
 
     /**

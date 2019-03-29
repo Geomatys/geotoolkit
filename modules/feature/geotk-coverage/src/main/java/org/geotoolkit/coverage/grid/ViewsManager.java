@@ -748,10 +748,8 @@ testLinear: for (int i=0; i<numBands; i++) {
             disposed = 0;
             for (final Iterator<GridCoverage2D> it=views.values().iterator(); it.hasNext();) {
                 final GridCoverage2D coverage = it.next();
-                if (coverage.disposeImage(force)) {
-                    it.remove();
-                    disposed++;
-                }
+                it.remove();
+                disposed++;
             }
         } while (disposed != 0);
         return views.values();
