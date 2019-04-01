@@ -508,6 +508,15 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
         return properties;
     }
 
+    /**
+     * Replacement for ViewType.
+     * TODO : to move in SIS.
+     *
+     * @param converted
+     * @return
+     */
+    public abstract GridCoverage forConvertedValues(boolean converted);
+
     /////////////////////////////////////////////////////////////////////////
     ////////////////                                         ////////////////
     ////////////////     RenderableImage / ImageFunction     ////////////////

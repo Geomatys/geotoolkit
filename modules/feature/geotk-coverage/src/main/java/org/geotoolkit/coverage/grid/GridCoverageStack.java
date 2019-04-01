@@ -22,6 +22,7 @@ import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.NaN;
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.isNaN;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -1806,6 +1807,27 @@ public class GridCoverageStack extends GridCoverage {
     @Override
     public List<GridCoverage> getSources() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public GridCoverage forConvertedValues(boolean converted) {
+        final List<Element> celements = new ArrayList<>();
+        for (Element ele : elements) {
+            if (ele instanceof Adapter) {
+                final Adapter ad = (Adapter) ele;
+                final GridCoverage cv = ad.coverage.forConvertedValues(converted);
+                final Adapter adap = new Adapter(cv, ad.range, ad.center);
+                celements.add(adap);
+            } else {
+                throw new BackingStoreException("Only Adapter element instanced supported");
+            }
+        }
+
+        try {
+            return new GridCoverageStack(getName(), getCoordinateReferenceSystem(), celements, zDimension);
+        } catch (IOException | TransformException | FactoryException ex) {
+            throw new BackingStoreException(ex.getMessage(), ex);
+        }
     }
 
 }

@@ -313,7 +313,7 @@ public final class BufferedGridCoverage extends org.apache.sis.coverage.grid.Gri
             } catch (TransformException ex) {
                 s = Double.NaN;
             }
-            super.setSample(x, y, b, s, data);
+            base.setSample(x, y, b, s, data);
         }
 
         @Override

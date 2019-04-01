@@ -68,8 +68,15 @@ public class BufferedGridCoverageTest {
 
         //test converted values
         org.apache.sis.coverage.grid.GridCoverage convertedCoverage = coverage.forConvertedValues(true);
-        RenderedImage converted = (BufferedImage) convertedCoverage.render(null);
+        BufferedImage converted = (BufferedImage) convertedCoverage.render(null);
         testSamples(converted, new double[][]{{100,102.5},{97.5,95}});
+
+        //test writing in geophysic
+        converted.getRaster().setSample(0, 0, 0, 70); // 70 = x * 0.5 + 100 // (70-100)/0.5 = x // x = -60
+        converted.getRaster().setSample(1, 0, 0, 2.5);
+        converted.getRaster().setSample(0, 1, 0, -8);
+        converted.getRaster().setSample(1, 1, 0, -90);
+        testSamples(notConverted, new double[][]{{-60,-195},{-216,-380}});
 
     }
 

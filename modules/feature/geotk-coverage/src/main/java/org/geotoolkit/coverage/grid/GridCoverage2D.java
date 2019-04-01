@@ -856,6 +856,15 @@ public class GridCoverage2D extends GridCoverage {
         return views.get(this, type, hints);
     }
 
+    @Override
+    public GridCoverage2D forConvertedValues(boolean converted) {
+        if (converted) {
+            return view(ViewType.GEOPHYSICS);
+        } else {
+            return getNativeView();
+        }
+    }
+
     /**
      * Returns the native view to be given to a newly created {@link ViewsManager}.  For
      * {@link GridCoverage2D}, this is always {@code this} because the first coverage to
