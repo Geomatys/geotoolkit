@@ -200,6 +200,79 @@ final class GridCoverageTable extends Table {
     }
 
     /**
+     * Remove coverages that intersect the given envelope
+     *
+     * @param product
+     * @param areaOfInterest
+     * @throws Exception
+     */
+    final void remove(final String product, final Envelope areaOfInterest) throws Exception {
+        String sql = "DELETE FROM " + SCHEMA + ".\"" + TABLE + "\""
+                   + " USING " + SCHEMA + ".\"" + SeriesTable.TABLE + "\" s, " + SCHEMA + ".\"" + GridGeometryTable.TABLE + "\" g "
+                   + " WHERE \"product\"=?"
+                   + " AND \"series\" = s.\"identifier\""
+                   + " AND \"grid\" = g.\"identifier\""
+                   + " AND ST_Intersects(extent, ST_GeomFromText(?,4326))"
+                   + " AND \"endTime\" >= ? AND \"startTime\" <= ?";
+        /*
+         * Note: we could write    ("startTime", "endTime") OVERLAPS (?,?)    but our tests
+         * with EXPLAIN on PostgreSQL 10.5 suggests that >= and <= make better use of index.
+         */
+        final Instant tmin, tmax;
+        final CoordinateReferenceSystem crs = areaOfInterest.getCoordinateReferenceSystem();
+
+        // note : we do not use CRS.getTemporalCRS with AxisDirections.indexOfColinear
+        // because of forecast axes who are colinear but not temporal
+        DefaultTemporalCRS temporalCRS = null;
+        int index = 0;
+        for (SingleCRS cdt : CRS.getSingleComponents(crs)) {
+            if (cdt instanceof TemporalCRS) {
+                temporalCRS = (DefaultTemporalCRS) DefaultTemporalCRS.castOrCopy(cdt);
+                break;
+            }
+            index += cdt.getCoordinateSystem().getDimension();
+        }
+
+        if (temporalCRS != null) {
+            tmin = temporalCRS.toInstant(areaOfInterest.getMinimum(index));     // May be null if the value is NaN.
+            tmax = temporalCRS.toInstant(areaOfInterest.getMaximum(index));
+        } else {
+            tmin = null;
+            tmax = null;
+        }
+        if (tmin == null || tmax == null) {
+            sql = sql.substring(0, sql.lastIndexOf(" AND \"endTime\""));        // Stop the query after the intersect condition.
+        }
+        /*
+         * Compute the WKT of the geographic area in the [-180 … +180]° range. It may be a multipolygon
+         * if we had to split in two parts an area that cross the anti-meridian.
+         */
+        final String extentWKT;
+        final SingleCRS horizontalCRS = CRS.getHorizontalComponent(crs);
+        if (horizontalCRS != null) {
+            final int d = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), horizontalCRS.getCoordinateSystem());
+            IntervalRectangle area = new IntervalRectangle(areaOfInterest.getMinimum(d), areaOfInterest.getMinimum(d + 1),
+                                                           areaOfInterest.getMaximum(d), areaOfInterest.getMaximum(d + 1));
+            extentWKT = gridGeometries.geographicAreaWKT(area, (MathTransform2D) MathTransforms.identity(2), horizontalCRS);
+        } else {
+            throw new CatalogException("Horizontal CRS not identified in " + crs.getName().getCode());
+        }
+        /*
+         * SQL query part.
+         */
+        final PreparedStatement statement = prepareStatement(sql);
+        final Calendar calendar = newCalendar();
+        statement.setString(1, product);
+        statement.setString(2, extentWKT);
+        if (tmin != null && tmax != null) {
+            statement.setTimestamp(3, new Timestamp(tmin.toEpochMilli()), calendar);
+            statement.setTimestamp(4, new Timestamp(tmax.toEpochMilli()), calendar);
+        }
+        statement.executeUpdate();
+    }
+
+
+    /**
      * Adds a coverage having the specified grid geometry.
      *
      * @param  product  name of the product for which to add a raster.

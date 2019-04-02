@@ -55,6 +55,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
+import org.opengis.geometry.Envelope;
 
 
 /**
@@ -506,6 +507,32 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
             throw new CatalogException("Not a resource from this data store.");
         }
         product.remove();
+    }
+
+    /**
+     * Removes the coverages in the resource which intersect the given envelope.
+     *
+     * @param resource
+     * @param areaOfInterest
+     * @throws DataStoreException
+     */
+    public void remove(Resource resource, Envelope areaOfInterest) throws DataStoreException {
+        ArgumentChecks.ensureNonNull("areaOfInterest", areaOfInterest);
+
+        if(resource instanceof ProductResource) {
+            final ProductResource pr = (ProductResource) resource;
+            areaOfInterest = pr.getGridGeometry().derive().subgrid(areaOfInterest).build().getEnvelope();
+
+            try (Transaction transaction = database.transaction();
+                GridCoverageTable table = new GridCoverageTable(transaction)) {
+                table.remove(pr.toString(), areaOfInterest);
+
+            } catch (DataStoreException exception) {
+                throw exception;
+            } catch (Exception exception) {
+                throw new CatalogException(exception);
+            }
+        }
     }
 
     @Override
