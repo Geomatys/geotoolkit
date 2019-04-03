@@ -26,6 +26,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.DatabaseMetaData;
+import java.util.Set;
 import javax.sql.DataSource;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
@@ -444,7 +445,39 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     public synchronized void addRaster(final String product, final GridGeometry exportedGrid, final AddOption option,
             final Path... files) throws DataStoreException
     {
+        addRaster(product, exportedGrid, option, null, files);
+    }
+
+    /**
+     * Registers the given grid coverages to the database. The coverages are specified as files.
+     * The format will be detected automatically and the files added to the given product.
+     * If this method fails to add the given grid coverage files, then the database if left unchanged
+     * (i.e. this method is a "all or nothing" operation).
+     *
+     * <p>The {@code exportedGrid} parameter specifies the grid geometry of the datacube containing all data
+     * for this product. It may be useful to specify this parameter if the coverage files have heterogynous
+     * grid geometries. This parameter is used only if the product does not already exists in the database.
+     * If unspecified ({@code null}), an arbitrary grid geometry will be selected.</p>
+     *
+     * @param  product       name of the product for which to add grid coverage files.
+     * @param  exportedGrid  a grid encompassing all files that may be added for this product, or {@code null}.
+     * @param  option        specifies if non-existing product should be created.
+     * @param  datasets      array of datasets to insert, null for all
+     * @param  files         the files to add to the specified product.
+     * @throws DataStoreException if an error occurred while reading the grid coverages or adding them to the database.
+     */
+    public synchronized void addRaster(final String product, final GridGeometry exportedGrid, final AddOption option,
+            final Set<String> datasets, final Path... files) throws DataStoreException
+    {
         final Map<String,List<NewRaster>> rasters = NewRaster.list(product, option, files);
+        if (datasets != null) {
+            for (String ds : rasters.keySet().toArray(new String[0])) {
+                if (!datasets.contains(ds)) {
+                    rasters.remove(ds);
+                }
+            }
+        }
+
         if (!rasters.isEmpty()) {
             try (Transaction transaction = database.transaction()) {
                 transaction.writeStart();
@@ -516,7 +549,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
      * @param areaOfInterest
      * @throws DataStoreException
      */
-    public void remove(Resource resource, Envelope areaOfInterest) throws DataStoreException {
+    public synchronized void remove(Resource resource, Envelope areaOfInterest) throws DataStoreException {
         ArgumentChecks.ensureNonNull("areaOfInterest", areaOfInterest);
 
         if(resource instanceof ProductResource) {
@@ -532,6 +565,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
             } catch (Exception exception) {
                 throw new CatalogException(exception);
             }
+            components = null;
         }
     }
 
