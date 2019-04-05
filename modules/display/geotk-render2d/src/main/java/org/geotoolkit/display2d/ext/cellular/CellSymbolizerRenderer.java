@@ -35,7 +35,6 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.DefaultCachedRule;
@@ -278,7 +277,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
             throw new PortrayalException(ex);
         }
         if(coverage!=null){
-            coverage = coverage.view(ViewType.GEOPHYSICS);
+            coverage = coverage.forConvertedValues(true);
         }
         if(coverage == null){
             LOGGER.log(Level.WARNING, "Reprojected coverage is null.");

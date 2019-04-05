@@ -55,7 +55,6 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -350,7 +349,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             } else {
                 if (coverage.getSampleDimensions() != null && !coverage.getSampleDimensions().isEmpty()) {
                     //interpolate in geophysic
-                    coverage = coverage.view(ViewType.GEOPHYSICS);
+                    coverage = coverage.forConvertedValues(true);
                 }
                 ResampleProcess process = new ResampleProcess(coverage, crs2d, resampleGrid, InterpolationCase.BILINEAR, fill);
                 //do not extrapolate values, can cause large areas of incorrect values
@@ -381,7 +380,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         if (coverage.getSampleDimensions() != null && !coverage.getSampleDimensions().isEmpty()) {
             //interpolate in geophysic
-            coverage = coverage.view(ViewType.GEOPHYSICS);
+            coverage = coverage.forConvertedValues(true);
         }
 
         //reduce the canvas grid to 2D

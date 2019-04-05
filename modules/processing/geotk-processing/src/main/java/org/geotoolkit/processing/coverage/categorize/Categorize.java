@@ -22,7 +22,6 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
@@ -155,7 +154,7 @@ public class Categorize extends AbstractProcess {
                 // If the reader has not returned a coverage fitting queried
                 // geometry, we have to resample input ourselves.
                 GridCoverage2D source2D = (GridCoverage2D) sourceCvg;
-                source2D = source2D.view(ViewType.GEOPHYSICS);
+                source2D = source2D.forConvertedValues(true);
                 final boolean compliantCrs = Utilities.equalsApproximatively(expectedSliceEnvelope.getCoordinateReferenceSystem(), source2D.getCoordinateReferenceSystem());
                 final boolean compliantEnvelope = expectedSliceEnvelope.contains(source2D.getEnvelope(), true);
                 if (!(compliantCrs && compliantEnvelope)) {

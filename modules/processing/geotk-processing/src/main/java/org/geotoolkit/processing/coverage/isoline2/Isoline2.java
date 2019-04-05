@@ -38,7 +38,6 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
@@ -131,8 +130,8 @@ public class Isoline2 extends AbstractProcess {
 
                 if (image == null) {
                     GridCoverage2D coverage = (GridCoverage2D) reader.read(readParam);
-                    coverage = coverage = coverage.view(ViewType.GEOPHYSICS);
-                    image = coverage.getRenderedImage();
+                    coverage = coverage = coverage.forConvertedValues(true);
+                    image = coverage.render(null);
                 }
                 coverageRef.recycle(reader);
 

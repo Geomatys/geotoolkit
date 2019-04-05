@@ -469,7 +469,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             if (sampleDims != null && sampleDims.size() == 1)
 
             //if there is no geophysic, the same coverage is returned
-            coverage = hasQuantitativeCategory(coverage) ? coverage.view(ViewType.GEOPHYSICS) : coverage;
+            coverage = hasQuantitativeCategory(coverage) ? coverage.forConvertedValues(true) : coverage;
 
             final RenderedImage ri = coverage.getRenderedImage();
             final SampleModel sampleMod = ri.getSampleModel();
@@ -597,7 +597,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
             //color map is applied on geophysics view
             //if there is no geophysic, the same coverage is returned
-            coverage = hasQuantitativeCategory(coverage) ? coverage.view(ViewType.GEOPHYSICS) : coverage;
+            coverage = hasQuantitativeCategory(coverage) ? coverage.forConvertedValues(true) : coverage;
             resultImage        = recolor.getFunction().evaluate(coverage.getRenderedImage(), RenderedImage.class);
         } else {
             //no color map, used the default image rendered view

@@ -34,7 +34,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.Mosaic;
@@ -168,7 +167,7 @@ public class Statistics extends AbstractProcess {
         GridCoverage2D coverage = org.geotoolkit.internal.coverage.CoverageUtilities.toGeotk(ref.read(query));
         if (coverage instanceof GridCoverage2D) {
             //we want the statistics on the real data values
-            coverage = ((GridCoverage2D)coverage).view(ViewType.GEOPHYSICS);
+            coverage = ((GridCoverage2D)coverage).forConvertedValues(true);
         }
         org.geotoolkit.process.Process process = new Statistics((GridCoverage2D)coverage, excludeNoData);
         Parameters out = Parameters.castOrWrap(process.call());
@@ -230,9 +229,9 @@ public class Statistics extends AbstractProcess {
                 }
             }
 
-            if(candidate instanceof GridCoverage2D){
+            if (candidate instanceof GridCoverage2D) {
                 //we want the statistics on the real data values
-                candidate = ((GridCoverage2D)candidate).view(ViewType.GEOPHYSICS);
+                candidate = ((GridCoverage2D)candidate).forConvertedValues(true);
             }
 
             if (candidate == null) {

@@ -186,7 +186,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             }
 
             if (dataCoverage.getViewTypes().contains(ViewType.GEOPHYSICS)) {
-                dataCoverage = dataCoverage.view(ViewType.GEOPHYSICS);
+                dataCoverage = dataCoverage.forConvertedValues(true);
             }
             final RenderedImage ri = dataCoverage.getRenderedImage();
 

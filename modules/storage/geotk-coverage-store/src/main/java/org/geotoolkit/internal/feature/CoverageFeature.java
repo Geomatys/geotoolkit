@@ -38,7 +38,6 @@ import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -432,7 +431,7 @@ public final class CoverageFeature {
 
         private GridCoverage2DRecordIterator(FeatureType recordType, GridCoverage2D coverage) {
             this.recordType = recordType;
-            this.coverage = coverage.view(ViewType.GEOPHYSICS);
+            this.coverage = coverage.forConvertedValues(true);
             this.pixelIterator = new PixelIterator.Builder().create(this.coverage.getRenderedImage());
             final GridGeometry2D gridGeometry = this.coverage.getGridGeometry();
             this.gridToCrs2D = gridGeometry.getGridToCRS2D(PixelOrientation.LOWER_LEFT);

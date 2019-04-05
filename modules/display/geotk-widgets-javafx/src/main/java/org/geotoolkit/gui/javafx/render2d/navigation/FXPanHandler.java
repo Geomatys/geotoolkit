@@ -39,7 +39,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -130,7 +129,7 @@ public class FXPanHandler extends AbstractNavigationHandler {
                 //convert image to geophysic
                 //TODO replace by SIS API when available
                 if (coverage.getSampleDimensions() != null && !coverage.getSampleDimensions().isEmpty()) {
-                    coverage = org.geotoolkit.internal.coverage.CoverageUtilities.toGeotk(coverage).view(ViewType.GEOPHYSICS);
+                    coverage = org.geotoolkit.internal.coverage.CoverageUtilities.toGeotk(coverage).forConvertedValues(true);
                 }
 
                 //pick first slice if several are available

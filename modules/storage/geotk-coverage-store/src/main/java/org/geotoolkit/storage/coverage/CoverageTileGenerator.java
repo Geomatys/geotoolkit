@@ -35,7 +35,6 @@ import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -213,9 +212,8 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             throw new DataStoreException("Unexpected coverage type : "+coverage.getClass().getName());
         }
 
-        GridCoverage2D coverage2d = (GridCoverage2D) coverage;
-        coverage2d = coverage2d.view(ViewType.GEOPHYSICS);
-        final RenderedImage image = coverage2d.getRenderedImage();
+        coverage = coverage.forConvertedValues(true);
+        final RenderedImage image = coverage.render(null);
         return new DefaultImageTile(image, tileCoord);
     }
 

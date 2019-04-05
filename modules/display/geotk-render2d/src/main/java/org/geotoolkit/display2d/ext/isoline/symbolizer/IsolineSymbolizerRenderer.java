@@ -26,7 +26,6 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.memory.MemoryCoverageStore;
@@ -135,7 +134,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
 
                     final GridCoverageReader reader = coverageReference.acquireReader();
                     GridCoverage2D inCoverage = (GridCoverage2D) reader.read(param);
-                    inCoverage = inCoverage.view(ViewType.GEOPHYSICS);
+                    inCoverage = inCoverage.forConvertedValues(true);
                     coverageReference.recycle(reader);
 
                     final Rectangle rec = renderingContext.getPaintingDisplayBounds();
