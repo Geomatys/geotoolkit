@@ -17,23 +17,6 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.time.Duration;
-import java.sql.SQLException;
-
-import org.opengis.util.NameSpace;
-import org.opengis.util.GenericName;
-import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedReferenceSystemException;
-import org.opengis.referencing.operation.TransformException;
-
-import org.apache.sis.storage.Aggregate;
-import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.DataStoreReferencingException;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -42,10 +25,25 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.internal.util.CollectionsExt;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreReferencingException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-
 import org.geotoolkit.resources.Errors;
+import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.GenericName;
+import org.opengis.util.NameSpace;
+
+import java.sql.SQLException;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -301,6 +299,11 @@ final class ProductEntry extends Entry {
     }
 
     public GridCoverage read(GridGeometry areaOfInterest, int... bands) throws DataStoreException {
+        // SIS API (GridCoverageResource#read) specifies that a null area should fallback to entire domain.
+        if (areaOfInterest == null) {
+            areaOfInterest = getGridGeometry();
+        }
+
         /*
          * Modify envelope: when we encounter a slice, use the median value instead of the slice width
          * to avoid multiple coverage occurence of coverages at envelope border intersections.
