@@ -23,6 +23,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.geotoolkit.coverage.grid.ConvertedGridCoverage;
 
 
 /**
@@ -53,5 +54,10 @@ final class ProductCoverage extends GridCoverage {
         } catch (DataStoreException e) {
             throw new BackingStoreException(e);
         }
+    }
+
+    @Override
+    public GridCoverage forConvertedValues(boolean converted) {
+        return converted ? ConvertedGridCoverage.convert(this) : this;
     }
 }
