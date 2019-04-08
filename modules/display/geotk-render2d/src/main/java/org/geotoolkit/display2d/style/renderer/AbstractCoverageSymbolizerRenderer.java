@@ -326,7 +326,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             /////// HACK FOR 0/360 /////////////////////////////////////////
 
             final MathTransform gridToCRS = coverage.getGridGeometry().getGridToCRS(PixelOrientation.CENTER);
-            if (false && isNonLinear(gridToCRS)) {
+            if (isNonLinear(gridToCRS)) {
 
                 final GridGeometry slice2 = extractSlice(ref.getGridGeometry(), canvasGrid, false);
 
