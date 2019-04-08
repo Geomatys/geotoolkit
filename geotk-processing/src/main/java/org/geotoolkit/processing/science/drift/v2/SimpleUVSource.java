@@ -15,11 +15,13 @@ import java.util.logging.Level;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridDerivation;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import static org.apache.sis.coverage.grid.GridRoundingMode.ENCLOSING;
 import org.apache.sis.geometry.DirectPosition1D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.AxisDirections;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -37,11 +39,7 @@ import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.TransformException;
+import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
 
 /**
@@ -256,12 +254,16 @@ class SimpleUVSource implements UVSource {
                     GridGeometry snapshotGeom = sliceGeom.derive()
                             .rounding(ENCLOSING)
                             .subgrid(target)
-                            .build()
-                            .reduce(horizontalAxisIdx, horizontalAxisIdx+1);
+                            .build();
                     final GridCoverage snapshot = source.read(snapshotGeom, uvIndices.x, uvIndices.y);
-                    snapshotGeom = snapshot.getGridGeometry();
-                    dataCrs2Grid = snapshotGeom.getGridToCRS(PixelInCell.CELL_CENTER).inverse();
-                    snapshotImg = snapshot.render(snapshotGeom.getExtent());
+                    snapshotGeom = snapshot.getGridGeometry()
+                            .reduce(horizontalAxisIdx, horizontalAxisIdx+1);
+                    final GridExtent extent2d = snapshotGeom.getExtent();
+                    dataCrs2Grid = MathTransforms.concatenate(
+                            snapshotGeom.getGridToCRS(PixelInCell.CELL_CENTER).inverse(),
+                            new AffineTransform2D(1, 0, 0, 1, -extent2d.getLow(0), -extent2d.getLow(1))
+                    );
+                    snapshotImg = snapshot.render(null);
                 } catch (TransformException e) {
                     throw new BackingStoreException("Cannot project input envelope: " + target, e);
                 } catch (DataStoreException e) {
@@ -270,7 +272,7 @@ class SimpleUVSource implements UVSource {
 
                 if (dataCrs2Grid instanceof MathTransform2D) {
                     final MathTransform2D targetCrs2Grid = MathTransforms.concatenate(
-                            (MathTransform2D) target2Data, (MathTransform2D)dataCrs2Grid
+                            (MathTransform2D) target2Data, (MathTransform2D) dataCrs2Grid
                     );
 
                     lastSnapshot = new Snapshot(snapshotImg, sourceCrs2d, targetCrs2Grid);
@@ -301,7 +303,7 @@ class SimpleUVSource implements UVSource {
 
         @Override
         public Optional<Vector2d> evaluate(Point2D.Double location) {
-                final Point2D tmpLoc;
+            final Point2D tmpLoc;
             try {
                 tmpLoc = pointConverter.transform(location, null);
             } catch (TransformException e) {
