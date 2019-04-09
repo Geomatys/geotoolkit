@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.factory.FactoryFinder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.se.xml.v110.FontType;
 import org.geotoolkit.se.xml.v110.ParameterValueType;
@@ -46,6 +46,7 @@ import org.opengis.style.Font;
 import org.opengis.style.Stroke;
 import org.opengis.style.StyleVisitor;
 import org.apache.sis.measure.Units;
+import org.opengis.filter.FilterFactory;
 
 /**
  * Draw graduation along a LineStrings or polygon boundary.
@@ -128,7 +129,7 @@ public class GraduationSymbolizer extends SymbolizerType implements ExtensionSym
 
         int i=0;
         for(String str : properties){
-            config.put(String.valueOf(i++), FactoryFinder.getFilterFactory(null).property(str));
+            config.put(String.valueOf(i++), DefaultFactories.forBuildin(FilterFactory.class).property(str));
         }
         return config;
     }

@@ -6,12 +6,12 @@ import java.net.URL;
 import javax.imageio.ImageReader;
 import javax.measure.Unit;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.filestore.FileCoverageStore;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.map.ElevationModel;
@@ -44,7 +44,7 @@ import org.opengis.style.Symbolizer;
  */
 public class ReliefShadowDemo {
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
-    protected static final FilterFactory FF    = FactoryFinder.getFilterFactory(null);
+    protected static final FilterFactory FF    = DefaultFactories.forBuildin(FilterFactory.class);
 
     /**
      * Create {@link GridCoverageReader} which will be return by {@link ElevationModel} to read DEM.

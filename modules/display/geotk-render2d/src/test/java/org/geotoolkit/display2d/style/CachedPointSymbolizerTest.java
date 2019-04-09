@@ -22,14 +22,13 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.style.MutableStyleFactory;
 import static org.geotoolkit.style.StyleConstants.*;
 import static org.junit.Assert.*;
@@ -41,6 +40,7 @@ import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.Mark;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.Stroke;
+import org.opengis.style.StyleFactory;
 
 /**
  *
@@ -50,9 +50,8 @@ public class CachedPointSymbolizerTest extends org.geotoolkit.test.TestBase {
 
     private static final float DELTA = 0.0000001f;
 
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
-    private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
-                                                   new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
 
     @Test
     public void testMargin(){

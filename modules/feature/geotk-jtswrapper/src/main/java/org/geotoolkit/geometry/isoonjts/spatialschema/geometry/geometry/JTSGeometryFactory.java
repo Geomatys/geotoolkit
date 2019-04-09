@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.geotoolkit.factory.Factory;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSEnvelope;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPrimitive;
@@ -59,7 +58,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  * @version $Revision $
  * @module
  */
-public class JTSGeometryFactory extends Factory implements GeometryFactory {
+public class JTSGeometryFactory implements GeometryFactory {
 
     private final CoordinateReferenceSystem crs;
 

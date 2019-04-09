@@ -25,7 +25,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import org.geotoolkit.factory.FactoryFinder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.ogc.xml.v110.BinaryComparisonOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryLogicOpType;
@@ -62,6 +62,7 @@ import org.opengis.filter.spatial.Overlaps;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import static org.junit.Assert.*;
+import org.opengis.filter.FilterFactory;
 
 /**
  * Test class for Filter and Expression jaxb marshelling and unmarshelling.
@@ -78,7 +79,7 @@ public class OGC110Test {
     static{
         final Hints hints = new Hints();
         hints.put(Hints.FILTER_FACTORY, FilterFactory2.class);
-        FILTER_FACTORY = (FilterFactory2) FactoryFinder.getFilterFactory(hints);
+        FILTER_FACTORY = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
     }
 
     private static MarshallerPool POOL;

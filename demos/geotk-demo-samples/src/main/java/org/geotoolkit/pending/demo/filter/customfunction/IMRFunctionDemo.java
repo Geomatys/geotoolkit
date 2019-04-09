@@ -4,15 +4,12 @@ package org.geotoolkit.pending.demo.filter.customfunction;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
-
 import java.util.Date;
-
-import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.pending.demo.filter.customaccessor.Pojo;
 import org.apache.sis.referencing.CommonCRS;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory;
@@ -21,7 +18,7 @@ import org.opengis.filter.expression.Expression;
 
 public class IMRFunctionDemo {
 
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     public static void main(String[] args) {
         Demos.init();

@@ -30,12 +30,10 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.factory.Factory;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
@@ -66,6 +64,7 @@ import org.opengis.style.PointSymbolizer;
 import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.Rule;
 import org.opengis.style.Stroke;
+import org.opengis.style.StyleFactory;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -75,7 +74,7 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
-public class CategoryStyleBuilder extends Factory {
+public class CategoryStyleBuilder {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.style");
 
@@ -98,13 +97,13 @@ public class CategoryStyleBuilder extends Factory {
 
     public CategoryStyleBuilder(final MutableStyleFactory styleFactory, final FilterFactory filterFactory){
         if(styleFactory == null){
-             sf = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
+             sf = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
         }else{
             sf = styleFactory;
         }
 
         if(filterFactory == null){
-             ff = FactoryFinder.getFilterFactory(null);
+             ff = DefaultFactories.forBuildin(FilterFactory.class);
         }else{
             ff = filterFactory;
         }

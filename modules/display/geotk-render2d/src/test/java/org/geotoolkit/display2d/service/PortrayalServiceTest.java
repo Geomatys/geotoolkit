@@ -37,6 +37,7 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -59,7 +60,6 @@ import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.control.StopOnErrorMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GraphicVisitor;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -109,7 +109,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  */
 public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
     private static final GeometryFactory GF = new GeometryFactory();
     private static final GridCoverageBuilder GCF = new GridCoverageBuilder();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();

@@ -19,18 +19,15 @@ package org.geotoolkit.filter.javascript;
 
 import java.util.List;
 import javax.script.ScriptException;
-
-import org.geotoolkit.factory.FactoryFinder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.filter.FilterTestConstants;
 import org.geotoolkit.filter.function.javascript.JavaScriptFunctionFactory;
 import static org.geotoolkit.test.Assert.*;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
@@ -63,9 +60,9 @@ public class JavaScriptTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void simpleScriptTest() throws ScriptException{
+    public void simpleScriptTest() throws ScriptException {
 
-        final FilterFactory ff = FactoryFinder.getFilterFactory(null);
+        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
 
         Expression exp = ff.literal("2 + 3");
         Function jsFunction = ff.function(JavaScriptFunctionFactory.JAVASCRIPT, exp);

@@ -33,8 +33,6 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.geotoolkit.geometry.DefaultBoundingBox;
@@ -53,6 +51,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.DefaultSelectorFeatureCollection;
@@ -60,6 +59,7 @@ import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.filter.FilterFactory;
 
 /**
  *
@@ -68,8 +68,7 @@ import org.opengis.feature.FeatureType;
  */
 public class DefaultSession extends AbstractSession {
 
-    protected static final FilterFactory2 FF = (FilterFactory2)
-            FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
+    protected static final FilterFactory2 FF = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
 
     private final DefaultSessionDiff diff;
     private final boolean async;

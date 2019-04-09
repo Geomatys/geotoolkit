@@ -40,8 +40,6 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 
 // Geotoolkit dependencies
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.ogc.xml.OGC200toGTTransformer;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.sld.DefaultSLDFactory;
@@ -65,17 +63,18 @@ import org.opengis.sld.StyledLayerDescriptor;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
 import org.opengis.style.Style;
-
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
-
 import static java.nio.file.StandardOpenOption.*;
+import org.apache.sis.internal.system.DefaultFactories;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.ogc.xml.FilterMarshallerPool;
 import org.geotoolkit.ogc.xml.FilterToOGC200Converter;
 import org.geotoolkit.ogc.xml.FilterVersion;
 import org.geotoolkit.ogc.xml.v200.ObjectFactory;
+import org.opengis.filter.FilterFactory;
+import org.opengis.style.StyleFactory;
 
 /**
  * Utility class to handle XML reading and writing for OGC SLD, SE and Filter.
@@ -99,14 +98,9 @@ public final class StyleXmlIO {
     private GTtoSLD100Transformer transformerXMLv100 = null;
     private GTtoSLD110Transformer transformerXMLv110 = null;
 
-
-
     public StyleXmlIO() {
-        final Hints hints = new Hints();
-        hints.put(Hints.STYLE_FACTORY, MutableStyleFactory.class);
-        hints.put(Hints.FILTER_FACTORY, FilterFactory2.class);
-        this.styleFactory = (MutableStyleFactory)FactoryFinder.getStyleFactory(hints);
-        this.filterFactory = (FilterFactory2) FactoryFinder.getFilterFactory(hints);
+        this.styleFactory = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+        this.filterFactory = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
         this.sldFactory = new DefaultSLDFactory();
     }
 

@@ -18,8 +18,8 @@
 
 package org.geotoolkit.data.query;
 
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
 import org.junit.Test;
 import org.opengis.filter.Filter;
@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  */
 public class QueryTest {
 
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
     private static final double DELTA = 0.00001;
 
     /**

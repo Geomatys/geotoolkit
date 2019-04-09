@@ -3,9 +3,9 @@
 package org.geotoolkit.pending.demo.filter;
 
 import java.util.Collection;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.function.FunctionFactory;
 import org.geotoolkit.filter.function.Functions;
 import org.geotoolkit.filter.function.math.MathFunctionFactory;
@@ -20,7 +20,7 @@ import org.opengis.filter.expression.Function;
 
 public class ExpressionDemo {
 
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     public static void main(String[] args) {
         Demos.init();

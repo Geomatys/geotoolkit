@@ -43,6 +43,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataSet;
 import org.apache.sis.util.ArgumentChecks;
@@ -51,7 +52,6 @@ import org.geotoolkit.util.collection.CloseableIterator;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.memory.GenericMappingFeatureCollection;
 import org.geotoolkit.data.memory.mapping.DefaultFeatureMapper;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -396,7 +396,7 @@ public class FeatureStoreUtilities {
      */
     public static FeatureCollection[] decomposeByGeometryType(FeatureCollection col, GenericName geomPropName, boolean adaptType, Class ... geomClasses) throws DataStoreException{
 
-        final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+        final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
         final FeatureType baseType = col.getType();
         final GenericName name = baseType.getName();
         final PropertyType geomDesc = baseType.getProperty(geomPropName.toString());

@@ -24,8 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.io.SimpleFileFilter;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -39,6 +38,7 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.style.ColorMap;
+import org.opengis.style.StyleFactory;
 
 /**
  * Palette reader based on pattern.
@@ -57,9 +57,8 @@ public class PaletteReader {
 
     public static final SimpleFileFilter FILE_FILTER = new SimpleFileFilter("Palette",false,new String[]{"clr","cpt","pal"});
 
-    protected static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
-    protected static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
-                                                   new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
+    protected static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    protected static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
 
     private class Row implements Comparable<Row>{
         Double v1 = null;

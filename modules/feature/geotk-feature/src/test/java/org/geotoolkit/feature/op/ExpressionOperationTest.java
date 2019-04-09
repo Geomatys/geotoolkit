@@ -19,13 +19,12 @@ package org.geotoolkit.feature.op;
 
 import java.util.Set;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.geotoolkit.factory.FactoryFinder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.util.NamesExt;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -40,7 +39,7 @@ import org.opengis.filter.expression.Expression;
  */
 public class ExpressionOperationTest {
 
-    private final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     public ExpressionOperationTest() {
     }

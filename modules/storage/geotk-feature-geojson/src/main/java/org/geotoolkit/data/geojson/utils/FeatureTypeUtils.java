@@ -10,8 +10,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.PropertyType;
@@ -42,8 +40,10 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
+import org.opengis.filter.FilterFactory;
 
 /**
  * An utility class to handle read/write of FeatureType into a JSON schema file.
@@ -61,8 +61,7 @@ import org.opengis.feature.FeatureType;
 public final class FeatureTypeUtils extends Static {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.geojson.utils");
-    private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
-            new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
+    private static final FilterFactory2 FF = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
 
     private static final String TITLE = "title";
     private static final String TYPE = "type";

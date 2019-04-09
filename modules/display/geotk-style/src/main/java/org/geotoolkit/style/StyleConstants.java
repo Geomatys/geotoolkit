@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.measure.Unit;
+import org.apache.sis.internal.system.DefaultFactories;
 
-import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.filter.DefaultLiteral;
@@ -215,7 +215,7 @@ public final class StyleConstants {
 
     static {
         final MutableStyleFactory SF = new DefaultStyleFactory();
-        final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+        final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
         LITERAL_ZERO_FLOAT = FF.literal(0);
         LITERAL_HALF_FLOAT = FF.literal(0.5f);
         LITERAL_ONE_FLOAT = FF.literal(1);

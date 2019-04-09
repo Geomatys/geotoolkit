@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.factory.Factories;
 import org.geotoolkit.pending.demo.Demos;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
@@ -34,7 +34,7 @@ public class ExtractAllCoordinateReferenceSystemDemo {
         Demos.init();
 
         //get the EPSG factory, other might exist, CRS, IGNF, AUTO ...
-        final CRSAuthorityFactory factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", null);
+        final CRSAuthorityFactory factory = Factories.getCRSAuthorityFactory("EPSG");
 
         //get allcodes, the EPSG factory contain several types of object, elipsoid, datum, CoordinateSystem, ...
         //we extract each one to make some replacement, to obtain a more compact properties file

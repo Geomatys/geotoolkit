@@ -32,6 +32,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
@@ -41,7 +42,6 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.NamesExt;
@@ -87,7 +87,7 @@ public class WMSCoverageReader extends AbstractGridCoverageReader {
 
     @Override
     public GenericName getCoverageName() throws DataStoreException, CancellationException {
-        final NameFactory dnf = FactoryFinder.getNameFactory(null);
+        final NameFactory dnf = DefaultFactories.forBuildin(NameFactory.class);
         final GenericName name = getInput().getIdentifier();
         NameSpace ns = null;
         if (NamesExt.getNamespace(name) != null) {

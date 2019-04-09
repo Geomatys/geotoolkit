@@ -37,6 +37,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
@@ -52,7 +53,6 @@ import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -259,7 +259,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
                     tempImage = BufferedImages.createImage((int) sizeX, (int) sizeY, coverages.get(0).getRenderedImage());
                 }
 
-                final MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
+                final MathTransformFactory mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
                 final MathTransform targetGridToCrs = gridGeom.getGridToCRS(PixelInCell.CELL_CENTER);
 
                 //resample all coverages in target image

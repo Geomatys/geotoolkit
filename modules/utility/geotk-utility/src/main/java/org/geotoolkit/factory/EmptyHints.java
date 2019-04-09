@@ -29,11 +29,14 @@ import java.awt.RenderingHints;
  * @since 2.4
  * @module
  */
-final class EmptyHints extends Hints {
+public final class EmptyHints extends Hints {
+
+    public static final Hints INSTANCE = new EmptyHints();
+
     /**
      * Creates an empty instance.
      */
-    EmptyHints() {
+    private EmptyHints() {
         super(false);
     }
 

@@ -21,6 +21,7 @@ import java.awt.image.BufferedImage;
 import java.util.Collections;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.cs.DefaultCartesianCS;
@@ -31,12 +32,12 @@ import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.memory.MemoryCoverageStore;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ImageCRS;
 import org.opengis.referencing.cs.AxisDirection;
@@ -54,7 +55,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
     private static final ImageCRS IMAGECRS;
     static {
         try {
-            IMAGECRS = FactoryFinder.getCRSFactory(null).createImageCRS(
+            IMAGECRS = DefaultFactories.forBuildin(CRSFactory.class).createImageCRS(
                     Collections.singletonMap(CoordinateReferenceSystem.NAME_KEY,"ImageCRS"),
                     new DefaultImageDatum(
                             Collections.singletonMap(CoordinateReferenceSystem.NAME_KEY,"ImageDatum"),

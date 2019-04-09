@@ -41,6 +41,7 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.coverage.grid.GridCoverage;
@@ -58,7 +59,6 @@ import org.geotoolkit.db.reverse.MetaDataConstants.ImportedKey;
 import org.geotoolkit.db.reverse.MetaDataConstants.Index;
 import org.geotoolkit.db.reverse.MetaDataConstants.Schema;
 import org.geotoolkit.db.reverse.MetaDataConstants.Table;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
@@ -87,7 +87,7 @@ public final class DataBaseModel {
     /**
      * Custom factory where types can be modified after they are created.
      */
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     /**
      * Feature type used to mark types which are sub types of others.

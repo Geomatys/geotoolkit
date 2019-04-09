@@ -16,13 +16,12 @@
  */
 package org.geotoolkit.map;
 
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.coverage.DefaultCoverageResource;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -30,6 +29,7 @@ import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.style.StyleFactory;
 
 /**
  * Utility class to create MapLayers, MapContexts and Elevation models from different sources.
@@ -76,9 +76,7 @@ public final class MapBuilder {
      * @return EmptyMapLayer
      */
     public static EmptyMapLayer createEmptyMapLayer(){
-        final Hints hints = new Hints();
-        hints.put(Hints.STYLE_FACTORY, MutableStyleFactory.class);
-        final MutableStyleFactory factory = (MutableStyleFactory)FactoryFinder.getStyleFactory(hints);
+        final MutableStyleFactory factory = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
         return new EmptyMapLayer(factory.style());
     }
 
@@ -95,7 +93,7 @@ public final class MapBuilder {
             name = type.getName().toString();
             style = RandomStyleBuilder.createDefaultVectorStyle(type);
         } catch (DataStoreException ex) {
-            style = ((MutableStyleFactory)FactoryFinder.getStyleFactory(null)).style(RandomStyleBuilder.createRandomPointSymbolizer());
+            style = ((MutableStyleFactory)DefaultFactories.forBuildin(StyleFactory.class)).style(RandomStyleBuilder.createRandomPointSymbolizer());
         }
         final DefaultFeatureMapLayer maplayer = new DefaultFeatureMapLayer(collection, style);
         maplayer.setName(name);

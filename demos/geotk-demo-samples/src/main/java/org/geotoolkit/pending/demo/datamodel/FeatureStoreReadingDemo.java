@@ -6,7 +6,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -15,12 +15,10 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStores;
-
 import org.opengis.util.GenericName;
 import org.opengis.filter.FilterFactory;
 import org.opengis.parameter.ParameterValueGroup;
@@ -29,7 +27,7 @@ import org.opengis.util.FactoryException;
 
 public class FeatureStoreReadingDemo {
 
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     public static void main(String[] args) throws DataStoreException, NoSuchAuthorityCodeException, FactoryException, URISyntaxException {
         Demos.init();

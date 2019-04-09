@@ -28,7 +28,7 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.geotoolkit.factory.FactoryFinder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -186,7 +186,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
         matrix.setIdentity();
         matrix.setElement(2, 3, z);
 
-        final MathTransformFactory mf = FactoryFinder.getMathTransformFactory(null);
+        final MathTransformFactory mf = DefaultFactories.forBuildin(MathTransformFactory.class);
         final MathTransform gridtoCrs = mf.createAffineTransform(matrix);
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
@@ -207,7 +207,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
         matrix.setElement(2, 4, z);
         matrix.setElement(3, 4, t);
 
-        final MathTransformFactory mf = FactoryFinder.getMathTransformFactory(null);
+        final MathTransformFactory mf = DefaultFactories.forBuildin(MathTransformFactory.class);
         final MathTransform gridtoCrs = mf.createAffineTransform(matrix);
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();

@@ -25,6 +25,7 @@ import java.io.File;
 import java.util.Arrays;
 import javax.imageio.ImageIO;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -33,7 +34,6 @@ import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -44,7 +44,6 @@ import org.geotoolkit.style.StyleConstants;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.filter.FilterFactory;
 
 /**
@@ -55,9 +54,8 @@ import org.opengis.filter.FilterFactory;
  */
 public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
-    private static final GeometryFactory GF = new GeometryFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    protected static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    protected static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     /**
      * Check proper image reprojection in UTM

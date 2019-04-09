@@ -18,6 +18,7 @@
 package org.geotoolkit.processing.coverage.mathcalc;
 
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -25,11 +26,11 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.WrapFilterFactory2;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
@@ -110,10 +111,10 @@ public class MathCalcProcess extends AbstractProcess {
     }
 
     //TODO, for later, handle offsets on axis with syntax U(x,y+10,z) and U(gx-20,gy,gz)
-    private static class ExtFilterFactory extends WrapFilterFactory2{
+    private static class ExtFilterFactory extends WrapFilterFactory2 {
 
         public ExtFilterFactory() {
-            super((FilterFactory2)FactoryFinder.getFilterFactory(null));
+            super((FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class));
         }
 
         @Override

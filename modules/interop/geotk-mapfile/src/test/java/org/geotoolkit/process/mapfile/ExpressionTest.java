@@ -18,17 +18,12 @@ package org.geotoolkit.process.mapfile;
 
 import org.opengis.filter.Filter;
 import java.io.IOException;
-
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.process.ProcessException;
 import org.junit.Test;
-
 import org.geotoolkit.process.Process;
-import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.style.DefaultStyleFactory;
-
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.parameter.Parameters;
 import org.opengis.filter.FilterFactory;
@@ -46,8 +41,7 @@ import static org.geotoolkit.process.mapfile.MapfileFilterToOGCFilterDescriptor.
  */
 public class ExpressionTest extends org.geotoolkit.test.TestBase {
 
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     private final ProcessDescriptor desc;
 

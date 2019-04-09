@@ -13,9 +13,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
-
 import net.sf.jasperreports.engine.JasperReport;
-
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
@@ -34,8 +32,6 @@ import org.geotoolkit.display2d.service.OutputDef;
 import org.geotoolkit.display2d.service.PortrayalExtension;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -51,27 +47,18 @@ import org.geotoolkit.report.graphic.northarrow.NorthArrowDef;
 import org.geotoolkit.report.graphic.scalebar.ScaleBarDef;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.util.GenericName;
-import org.opengis.filter.FilterFactory;
 import org.apache.sis.geometry.Envelopes;
 import org.opengis.filter.Filter;
 
 public class ReportDemo {
-
-    private static final MutableStyleFactory SF = (MutableStyleFactory)FactoryFinder.getStyleFactory(
-                 new Hints(Hints.STYLE_FACTORY,MutableStyleFactory.class));
-    private static final FilterFactory FIF = FactoryFinder.getFilterFactory(null);
-
 
     public static void main(String[] args) throws Exception {
         Demos.init();

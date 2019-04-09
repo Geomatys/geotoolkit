@@ -23,7 +23,7 @@ import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
 import java.util.HashMap;
 import java.util.Map;
-import org.geotoolkit.factory.FactoryFinder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.referencing.cs.PredefinedCS;
@@ -126,15 +126,15 @@ public class ReprojectTest extends org.geotoolkit.test.TestBase {
 
     public static ProjectedCRS getLocalLambertCRS(double central_meridan, double latitude_of_origin) {
         try {
-            MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
+            MathTransformFactory mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);;
             ParameterValueGroup parameters = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_1SP");
             parameters.parameter("central_meridian").setValue(central_meridan);
             parameters.parameter("latitude_of_origin").setValue(latitude_of_origin);
             String scentralMeridian = ((Integer) ((int) (Math.floor(central_meridan)))).toString();
             String slatitudeOfOrigin = ((Integer) ((int) (Math.floor(latitude_of_origin)))).toString();
             DefiningConversion conversion = new DefiningConversion("My conversion", parameters);
-            CRSFactory crsFactory = FactoryFinder.getCRSFactory(null);
-            final Map<String, Object> properties = new HashMap<String, Object>();
+            CRSFactory crsFactory = DefaultFactories.forBuildin(CRSFactory.class);
+            final Map<String, Object> properties = new HashMap<>();
             properties.put(ProjectedCRS.NAME_KEY, "LambertCC_" + slatitudeOfOrigin + "_" + scentralMeridian);
             ProjectedCRS targetCRS = crsFactory.createProjectedCRS(properties, CommonCRS.WGS84.normalizedGeographic(), conversion, PredefinedCS.PROJECTED);
             return targetCRS;

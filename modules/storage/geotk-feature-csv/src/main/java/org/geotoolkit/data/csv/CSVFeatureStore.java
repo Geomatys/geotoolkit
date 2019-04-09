@@ -35,6 +35,7 @@ import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
@@ -45,7 +46,6 @@ import org.geotoolkit.data.*;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.query.QueryUtilities;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureExt;
@@ -79,7 +79,7 @@ import org.opengis.util.GenericName;
 public class CSVFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
 
     public static final Charset UTF8_ENCODING = Charset.forName("UTF-8");
-    protected final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    protected final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     static final String BUNDLE_PATH = "org/geotoolkit/csv/bundle";
 

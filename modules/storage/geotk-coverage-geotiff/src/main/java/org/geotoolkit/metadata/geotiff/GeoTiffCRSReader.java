@@ -41,9 +41,7 @@ import java.util.HashMap;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.measure.Unit;
-
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CRSFactory;
@@ -63,7 +61,6 @@ import org.opengis.referencing.crs.GeodeticCRS;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.util.FactoryException;
-
 import org.apache.sis.measure.Units;
 import org.apache.sis.internal.referencing.Formulas;
 import org.apache.sis.internal.referencing.provider.AlbersEqualArea;
@@ -90,9 +87,7 @@ import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
 import org.apache.sis.util.logging.Logging;
-
 import org.apache.sis.internal.referencing.ReferencingFactoryContainer;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.referencing.cs.PredefinedCS;
@@ -105,7 +100,6 @@ import org.apache.sis.internal.referencing.provider.ObliqueMercator;
 import org.geotoolkit.referencing.operation.provider.Orthographic;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
 import org.geotoolkit.resources.Vocabulary;
-
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
@@ -127,7 +121,7 @@ final class GeoTiffCRSReader {
      * Cached {@link MathTransformFactory} for building {@link MathTransform}
      * objects.
      */
-    private final static MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
+    private final static MathTransformFactory mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
 
     /**
      * Logger to diffuse no blocking error message.
@@ -153,8 +147,8 @@ final class GeoTiffCRSReader {
         }
 
         // factory = new ThreadedEpsgFactory(hints);
-        datumObjFactory = FactoryFinder.getDatumFactory(null);
-        crsFactory = FactoryFinder.getCRSFactory(null);
+        datumObjFactory = DefaultFactories.forBuildin(DatumFactory.class);
+        crsFactory = DefaultFactories.forBuildin(CRSFactory.class);;
         factories = new ReferencingFactoryContainer();
     }
 

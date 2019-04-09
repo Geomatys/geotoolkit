@@ -26,18 +26,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.storage.DataStoreException;
-
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CRS;
 import org.junit.Test;
-
 import org.opengis.util.GenericName;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
@@ -49,7 +47,6 @@ import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
-
 import static org.junit.Assert.*;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.Utilities;
@@ -65,7 +62,7 @@ import org.opengis.feature.Operation;
 public abstract class AbstractReadingTests {
 
     protected static final double DELTA = 0.000000001d;
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     public static class ExpectedResult{
 

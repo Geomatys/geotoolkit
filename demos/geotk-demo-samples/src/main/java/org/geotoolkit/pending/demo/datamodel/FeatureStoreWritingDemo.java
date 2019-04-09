@@ -15,8 +15,8 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.referencing.CommonCRS;
@@ -29,7 +29,7 @@ import org.opengis.filter.identity.Identifier;
 
 public class FeatureStoreWritingDemo {
 
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     public static void main(String[] args) throws  DataStoreException {
         Demos.init();

@@ -51,6 +51,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.storage.MetadataBuilder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.ModifiableMetadata;
 import org.apache.sis.metadata.iso.DefaultMetadata;
@@ -72,7 +73,6 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.ImageMetadataException;
@@ -306,7 +306,7 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
     public ImageCoverageReader(final Hints hints) {
         ignoreGridTransforms = true;
         coverageBuilder = new GridCoverageBuilder(hints);
-        nameFactory = FactoryFinder.getNameFactory(hints);
+        nameFactory = DefaultFactories.forBuildin(NameFactory.class);
         imageMetadataIndex = -1;
     }
 

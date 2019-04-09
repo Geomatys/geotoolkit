@@ -17,8 +17,7 @@
 
 package org.geotoolkit.style;
 
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.lang.Static;
@@ -27,7 +26,6 @@ import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.sld.MutableUserLayer;
 import org.apache.sis.util.ArgumentChecks;
-
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.sld.Layer;
@@ -43,6 +41,7 @@ import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Rule;
 import org.opengis.style.Stroke;
 import org.opengis.style.Style;
+import org.opengis.style.StyleFactory;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 
@@ -54,9 +53,8 @@ import org.opengis.style.TextSymbolizer;
  */
 public final class StyleUtilities extends Static {
 
-    private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
-                                            new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
     private static final MutableSLDFactory SLDF = new DefaultSLDFactory();
 
     private StyleUtilities(){}

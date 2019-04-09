@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation.provider;
 
 import java.util.*;
+import org.apache.sis.internal.system.DefaultFactories;
 
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
@@ -28,13 +29,10 @@ import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.apache.sis.util.ArraysExt;
-
 import org.apache.sis.util.Deprecable;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.apache.sis.metadata.iso.citation.Citations;
+import org.geotoolkit.factory.Factories;
 import org.geotoolkit.test.TestBase;
-
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
@@ -67,7 +65,7 @@ public final strictfp class ConformanceTest extends TestBase {
     public void testEPSG() throws FactoryException {
         assumeTrue(false /*isEpsgFactoryAvailable()*/);
         assumeTrue(false /*isEpsgDatabaseUpToDate()*/);
-        run(Citations.EPSG, AuthorityFactoryFinder.getCoordinateOperationAuthorityFactory("EPSG", null));
+        run(Citations.EPSG, Factories.getCoordinateOperationAuthorityFactory("EPSG"));
     }
 
     /**
@@ -101,7 +99,7 @@ public final strictfp class ConformanceTest extends TestBase {
          */
         final Map<String, OperationMethod> codes = new LinkedHashMap<>();
         final Map<String, Map<OperationMethod,OperationMethod>> names = new LinkedHashMap<>();
-        final MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
+        final MathTransformFactory mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
 skip:   for (final OperationMethod method : mtFactory.getAvailableMethods(SingleOperation.class)) {
             if (method.getClass().getName().endsWith("Mock")) {
                 continue;  // Skip mock providers defined in sis-referencing test jar.

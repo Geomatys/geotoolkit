@@ -40,8 +40,6 @@ import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.factory.Factory;
-import org.geotoolkit.factory.Hints;
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
 import org.geotoolkit.nio.PathFilterVisitor;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
@@ -57,18 +55,17 @@ import org.geotoolkit.resources.Errors;
  * @since 2.5
  * @module
  */
-public class TileManagerFactory extends Factory {
+public class TileManagerFactory {
     /**
      * The default instance.
      */
-    public static final TileManagerFactory DEFAULT = new TileManagerFactory(EMPTY_HINTS);
+    public static final TileManagerFactory DEFAULT = new TileManagerFactory();
 
     /**
      * Creates a new factory from the specified hints.
      *
-     * @param hints Optional hints, or {@code null} if none.
      */
-    protected TileManagerFactory(final Hints hints) {
+    protected TileManagerFactory() {
         // We have no usage for those hints at this time, but some may be added later.
     }
 

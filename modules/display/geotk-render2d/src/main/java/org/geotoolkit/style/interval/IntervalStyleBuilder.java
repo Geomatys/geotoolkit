@@ -31,9 +31,8 @@ import java.util.Set;
 import java.util.stream.Stream;
 import javax.swing.table.AbstractTableModel;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
@@ -68,6 +67,7 @@ import org.opengis.style.Mark;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.Stroke;
+import org.opengis.style.StyleFactory;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -100,7 +100,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
     private boolean genericAnalyze = false;
     private boolean analyze = false;
-    private final List<PropertyName> properties = new ArrayList<PropertyName>();
+    private final List<PropertyName> properties = new ArrayList<>();
     private long count = 0;
     private double minimum = 0;
     private double maximum = 0;
@@ -115,13 +115,13 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
     public IntervalStyleBuilder(final MutableStyleFactory styleFactory, final FilterFactory filterFactory){
         if(styleFactory == null){
-             sf = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
+             sf = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
         }else{
             sf = styleFactory;
         }
 
         if(filterFactory == null){
-             ff = FactoryFinder.getFilterFactory(null);
+             ff = DefaultFactories.forBuildin(FilterFactory.class);
         }else{
             ff = filterFactory;
         }

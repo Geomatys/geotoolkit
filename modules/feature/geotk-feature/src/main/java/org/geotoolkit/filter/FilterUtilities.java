@@ -19,8 +19,8 @@ package org.geotoolkit.filter;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.sis.internal.system.DefaultFactories;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.PrepareFilterVisitor;
 import org.geotoolkit.lang.Static;
@@ -92,7 +92,7 @@ public final class FilterUtilities extends Static {
      * @return Not filter
      */
     public static Not orToAnd(final Or filter, FilterFactory ff) {
-        if(ff==null) ff = FactoryFinder.getFilterFactory(null);
+        if(ff==null) ff = DefaultFactories.forBuildin(FilterFactory.class);
 
         final List<Filter> children = filter.getChildren();
         final int size = children.size();
