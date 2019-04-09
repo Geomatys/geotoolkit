@@ -315,8 +315,8 @@ class SimpleUVSource implements UVSource {
             }
 
             // TODO: interpolation. Here we only pick nearest neighbor;
-            final int x = (int) tmpLoc.getX();
-            final int y = (int) tmpLoc.getY();
+            final int x = Math.toIntExact(Math.round(tmpLoc.getX()));
+            final int y = Math.toIntExact(Math.round(tmpLoc.getY()));
             if (x < 0 || y < 0 || x >= slice.getWidth() || y >= slice.getHeight()) {
                 LOGGER.log(Level.FINE, "Following point is outside data envelope: {0}", location);
                 return Optional.empty();

@@ -161,16 +161,15 @@ public class Predictor extends AbstractProcess {
         // past a configured maximum, we have to purge available points before each computing pass.
         final int maxAllowedPoints = ctx.points.maxPts / (ctx.weights.length + 1);
         do {
-            final Instant newStepTime = ctx.step(stepTime);
-            stepTime = newStepTime;
-
             final long timePassed = startTime.until(stepTime, ChronoUnit.SECONDS);
 
             fireProgressing("Drifting: "+stepTime, (float) (timePassed / totalSeconds) * 100f, false);
 
             MeteoDataset.Snapshot snapshot = meteo.setTime(stepTime)
                     .map(calibration -> calibration.setHorizontalComponent(ctx.grid.model.getEnvelope()))
-                    .orElseThrow(() -> new ProcessException("No data available at time: "+newStepTime, this));
+                    .orElse(null);
+
+            if (snapshot == null) break;
 
             ctx.points.removeLeastProbable(maxAllowedPoints);
             final double[] stepProba = advance(ctx, snapshot);
@@ -192,8 +191,11 @@ public class Predictor extends AbstractProcess {
                 outputs.add(new Output(dayProba, ctx.grid.width, ctx.grid.height));
                 Arrays.fill(dayProba, 0);
             }
-        } while (stepTime.isBefore(endTime));
+        } while ((stepTime = ctx.step(stepTime)).isBefore(endTime));
 
+        if (stepTime.equals(startTime)) {
+            throw new ProcessException("No data available for time: "+stepTime, this);
+        }
         if (!newDay) {
             outputs.add(new Output(dayProba, ctx.grid.width, ctx.grid.height));
         }
