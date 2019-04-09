@@ -169,7 +169,6 @@ public class Predictor extends AbstractProcess {
             fireProgressing("Drifting: "+stepTime, (float) (timePassed / totalSeconds) * 100f, false);
 
             MeteoDataset.Snapshot snapshot = meteo.setTime(stepTime)
-                    // TODO : horizontal component should not be geographic
                     .map(calibration -> calibration.setHorizontalComponent(ctx.grid.model.getEnvelope()))
                     .orElseThrow(() -> new ProcessException("No data available at time: "+newStepTime, this));
 

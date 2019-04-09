@@ -17,6 +17,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridDerivation;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import static org.apache.sis.coverage.grid.GridRoundingMode.ENCLOSING;
 import org.apache.sis.geometry.DirectPosition1D;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -157,7 +158,10 @@ class SimpleUVSource implements UVSource {
         final DefaultTemporalCRS timeCrs = DefaultTemporalCRS.castOrCopy((TemporalCRS) timeEnv.getCoordinateReferenceSystem());
         timeEnv.getLowerCorner().setOrdinate(0, timeCrs.toValue(time));
 
-        final GridDerivation subgrid = gg.derive().subgrid(env);
+        final GridDerivation subgrid = gg.derive()
+                .rounding(GridRoundingMode.ENCLOSING)
+                .subgrid(env);
+
         // Note: If input data has an elevation, we'll try to freeze it on a slice : either the one specified at origin, or an arbitrary one.
         final GridGeometry subGrid = freezeElevation(env, origin)
                 .map(subgrid::slice)
