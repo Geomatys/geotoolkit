@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.time.Instant;
 import java.sql.SQLException;
@@ -119,12 +120,16 @@ final class GridCoverageEntry extends Entry {
         return series.format.sampleDimensions;
     }
 
+    final Path getDataPath() {
+        return series.path(filename);
+    }
+
     /**
      * Loads the data if needed and returns the coverage.
      * Current implementation reads only the first resource.
      */
     final GridCoverage coverage(final GridGeometry targetGeometry, final int... bands) throws DataStoreException {
-        try (DataStore store = series.format.open(series.path(filename))) {
+        try (DataStore store = series.format.open(getDataPath())) {
             final String dataset = series.dataset;
             final GridCoverageResource r;
             if (dataset != null) {

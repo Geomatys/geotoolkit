@@ -26,6 +26,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.DatabaseMetaData;
+import java.util.ArrayList;
 import java.util.Set;
 import javax.sql.DataSource;
 import org.opengis.util.FactoryException;
@@ -547,17 +548,24 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
      *
      * @param resource
      * @param areaOfInterest
+     * @return list of remove data Paths
      * @throws DataStoreException
      */
-    public synchronized void remove(Resource resource, Envelope areaOfInterest) throws DataStoreException {
+    public synchronized List<Path> remove(Resource resource, Envelope areaOfInterest) throws DataStoreException {
         ArgumentChecks.ensureNonNull("areaOfInterest", areaOfInterest);
 
+        final List<Path> removed = new ArrayList<>();
         if(resource instanceof ProductResource) {
             final ProductResource pr = (ProductResource) resource;
             areaOfInterest = pr.getGridGeometry().derive().subgrid(areaOfInterest).build().getEnvelope();
 
             try (Transaction transaction = database.transaction();
                 GridCoverageTable table = new GridCoverageTable(transaction)) {
+
+                final List<GridCoverageEntry> entries = table.find(pr.toString(), areaOfInterest);
+                for (GridCoverageEntry entry : entries) {
+                    removed.add(entry.getDataPath());
+                }
                 table.remove(pr.toString(), areaOfInterest);
 
             } catch (DataStoreException exception) {
@@ -567,6 +575,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
             }
             components = null;
         }
+        return removed;
     }
 
     @Override
