@@ -26,7 +26,6 @@ import java.awt.Color;
 import org.opengis.style.LabelPlacement;
 import org.opengis.style.Font;
 import org.opengis.filter.FilterFactory;
-import org.geotoolkit.factory.FactoryFinder;
 import org.opengis.filter.expression.Expression;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -47,6 +46,7 @@ import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.measure.Units;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -54,7 +54,6 @@ import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.junit.Test;
 import org.opengis.style.Description;
-
 import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 import static org.geotoolkit.style.StyleConstants.*;
@@ -71,7 +70,7 @@ public class TextSymbolizerTest extends org.geotoolkit.test.TestBase {
 
     private static final GeometryFactory GF = new GeometryFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    protected static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    protected static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     /**
      * Render a label at check it is correctly located in the image.

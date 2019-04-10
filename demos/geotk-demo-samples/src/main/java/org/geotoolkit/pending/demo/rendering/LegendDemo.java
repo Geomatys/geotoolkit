@@ -14,14 +14,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.xml.bind.JAXBException;
-
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.DefaultBackgroundTemplate;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendService;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendTemplate;
 import org.geotoolkit.display2d.ext.legend.LegendTemplate;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -33,13 +31,13 @@ import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.opengis.style.StyleFactory;
 import org.opengis.util.FactoryException;
 
 
 public class LegendDemo {
 
-    private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
-                                                   new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
+    private static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
 
     public static void main(String[] args) throws PortrayalException, JAXBException, FactoryException, URISyntaxException {
         Demos.init();

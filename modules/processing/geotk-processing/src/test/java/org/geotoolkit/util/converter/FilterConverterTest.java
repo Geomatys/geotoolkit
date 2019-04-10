@@ -16,20 +16,18 @@
  */
 package org.geotoolkit.util.converter;
 
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.ObjectConverter;
-
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
-
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.opengis.filter.FilterFactory;
 
 /**
  * Junit test for StringToFilterConverter
@@ -52,8 +50,7 @@ public class FilterConverterTest extends org.geotoolkit.test.TestBase {
 
     private Filter buildResultFilter() throws FactoryException {
 
-        FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(
-            new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
+        FilterFactory2 ff = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
 
         final Filter filter1 = ff.equals(ff.property(NamesExt.create("name")), ff.literal("Smith"));
         final Filter filter2 = ff.equals(ff.property(NamesExt.create("age")), ff.literal(30));

@@ -21,7 +21,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import org.geotoolkit.factory.FactoryRegistry;
+import java.util.ServiceLoader;
+import org.apache.sis.internal.system.DefaultFactories;
 
 /**
  * Utility class to access bindings.
@@ -35,10 +36,10 @@ public final class Bindings {
     private Bindings() {}
 
     static{
-        final FactoryRegistry fr = new FactoryRegistry(Binding.class);
-        final Iterator<Binding> factories = fr.getServiceProviders(Binding.class, null, null, null);
+        final ServiceLoader<Binding> sl = DefaultFactories.createServiceLoader(Binding.class);
+        final Iterator<Binding> factories = sl.iterator();
 
-        final List<Binding> lst = new ArrayList<Binding>();
+        final List<Binding> lst = new ArrayList<>();
         while(factories.hasNext()){
             lst.add(factories.next());
         }

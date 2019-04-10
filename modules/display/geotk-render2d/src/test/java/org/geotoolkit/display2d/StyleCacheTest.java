@@ -20,7 +20,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.display2d.style.CachedExternal;
 import org.geotoolkit.display2d.style.CachedFill;
 import org.geotoolkit.display2d.style.CachedGraphic;
@@ -28,7 +28,6 @@ import org.geotoolkit.display2d.style.CachedMark;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.display2d.style.CachedStroke;
 import org.geotoolkit.display2d.style.VisibilityState;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -38,11 +37,9 @@ import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.ExternalGraphic;
@@ -52,7 +49,6 @@ import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.Mark;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.Stroke;
-
 import static org.junit.Assert.*;
 import static org.geotoolkit.style.StyleConstants.*;
 
@@ -64,7 +60,7 @@ import static org.geotoolkit.style.StyleConstants.*;
 public class StyleCacheTest extends org.geotoolkit.test.TestBase {
 
     private final MutableStyleFactory SF = new DefaultStyleFactory();
-    private final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     public StyleCacheTest() {
     }

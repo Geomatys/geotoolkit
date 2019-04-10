@@ -20,6 +20,7 @@ package org.geotoolkit.factory;
 import java.awt.RenderingHints;
 import javax.swing.event.ChangeListener; // For javadoc
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
 import java.nio.file.Files;
@@ -35,6 +36,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import javax.naming.Name;
 import javax.sql.DataSource;
+import org.apache.sis.io.TableAppender;
 
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.cs.AxisDirection;
@@ -806,7 +808,52 @@ public class Hints extends RenderingHints {
      */
     @Override
     public String toString() {
-        return Factory.toString(this);
+        return toString(this);
+    }
+
+
+    /**
+     * Returns a string representation of the specified hints. This is used by
+     * {@link Hints#toString} in order to share the code provided in this class.
+     */
+    private static String toString(final Map<?,?> hints) {
+        return format(hints);
+    }
+
+    /**
+     * Formats the specified hints. This method is just the starting
+     * point for {@link #format(Writer, Map, String, Map)} below.
+     */
+    private static String format(final Map<?,?> hints) {
+        final TableAppender table;
+        try {
+            table = new TableAppender(" ");
+            format(table, hints, "  ");
+        } catch (IOException e) {
+            // Should never happen, since we are writing in a buffer.
+            throw new AssertionError(e);
+        }
+        return table.toString();
+    }
+
+    /**
+     * Formats recursively the tree. This method invoke itself.
+     */
+    private static void format(final TableAppender table, final Map<?,?> hints, final String indent) throws IOException {
+        for (final Map.Entry<?,?> entry : hints.entrySet()) {
+            final Object k = entry.getKey();
+            String key = (k instanceof RenderingHints.Key) ?
+                    Hints.nameOf((RenderingHints.Key) k) : String.valueOf(k);
+            Object value = entry.getValue();
+            table.append(indent);
+            table.append(key);
+            char separator = ':';
+            table.nextColumn();
+            table.append(separator);
+            table.append(' ');
+            table.append(String.valueOf(value));
+            table.nextLine();
+        }
     }
 
     /**

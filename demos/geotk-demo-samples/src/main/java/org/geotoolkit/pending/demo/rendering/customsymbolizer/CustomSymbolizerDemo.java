@@ -4,9 +4,8 @@ package org.geotoolkit.pending.demo.rendering.customsymbolizer;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.map.MapBuilder;
@@ -15,11 +14,11 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.opengis.style.StyleFactory;
 
 public class CustomSymbolizerDemo {
 
-     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
-                                                   new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
+     private static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
 
     public static void main(String[] args) throws Exception {
         Demos.init();

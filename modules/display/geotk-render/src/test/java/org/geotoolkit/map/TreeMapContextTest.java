@@ -19,13 +19,14 @@ package org.geotoolkit.map;
 
 import java.beans.PropertyChangeEvent;
 import java.util.EventObject;
-import org.geotoolkit.factory.FactoryFinder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.opengis.style.StyleFactory;
 
 /**
  *
@@ -34,7 +35,7 @@ import static org.junit.Assert.*;
  */
 public class TreeMapContextTest extends org.geotoolkit.test.TestBase {
 
-    private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(null);
+    private static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
 
     public TreeMapContextTest() {
     }

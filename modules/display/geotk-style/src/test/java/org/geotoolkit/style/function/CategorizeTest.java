@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.style.StyleConstants;
 import org.junit.Test;
@@ -31,6 +30,7 @@ import org.opengis.filter.expression.Expression;
 import static org.junit.Assert.*;
 import static java.awt.Color.*;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -47,7 +47,7 @@ public class CategorizeTest extends org.geotoolkit.test.TestBase {
     public void categorize(){
         final String attribut = "att_value";
 
-        final FilterFactory ff = FactoryFinder.getFilterFactory(null);
+        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
 
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("test");

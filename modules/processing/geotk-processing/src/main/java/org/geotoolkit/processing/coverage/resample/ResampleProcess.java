@@ -34,6 +34,7 @@ import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
@@ -44,7 +45,6 @@ import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.Interpolation;
@@ -354,8 +354,8 @@ public class ResampleProcess extends AbstractProcess {
         ////                                                                                ////
         ////////////////////////////////////////////////////////////////////////////////////////
 
-        final CoordinateOperationFactory factory = FactoryFinder.getCoordinateOperationFactory(hints);
-        final MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(hints);
+        final CoordinateOperationFactory factory = DefaultFactories.forBuildin(CoordinateOperationFactory.class);
+        final MathTransformFactory mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
         /*
          * Computes the INVERSE of the math transform from [Source Grid] to [Target Grid].
          * The transform will be computed using the following path:

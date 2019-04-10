@@ -17,10 +17,8 @@
 
 package org.geotoolkit.data;
 
-import org.geotoolkit.factory.FactoryFinder;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.opengis.filter.FilterFactory;
 
 /**
  * Generic writing tests for datastore.
@@ -30,9 +28,6 @@ import org.opengis.filter.FilterFactory;
  * todo make generic tests
  */
 public abstract class AbstractWritingTests {
-
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
-
 
     protected abstract FeatureStore getDataStore();
 

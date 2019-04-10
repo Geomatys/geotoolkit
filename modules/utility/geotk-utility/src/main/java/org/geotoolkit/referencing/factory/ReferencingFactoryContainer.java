@@ -22,7 +22,6 @@ import java.awt.RenderingHints;
 import javax.measure.IncommensurableException;
 import javax.measure.quantity.Length;
 import javax.measure.Unit;
-
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
@@ -32,15 +31,14 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.util.FactoryException;
 import org.opengis.util.Factory;
-
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.internal.referencing.Identifier3D;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.internal.metadata.VerticalDatumTypes;
 import org.apache.sis.internal.simple.SimpleCitation;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.cs.Axes;
@@ -51,8 +49,8 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.cs.CoordinateSystems;
-
 import org.apache.sis.referencing.operation.DefaultConversion;
+import org.geotoolkit.factory.EmptyHints;
 import static org.geotoolkit.internal.FactoryUtilities.addImplementationHints;
 
 
@@ -86,8 +84,38 @@ import static org.geotoolkit.internal.FactoryUtilities.addImplementationHints;
  * @deprecated Replaced by {@link org.apache.sis.internal.referencing.ReferencingFactoryContainer}.
  */
 @Deprecated
-public class ReferencingFactoryContainer extends org.geotoolkit.factory.Factory implements Factory {
+public class ReferencingFactoryContainer implements Factory {
     // "ReferencingFactoryContainer" name is LGPL.
+
+    /**
+     * The {@linkplain #getImplementationHints implementation hints}. This map should be filled by
+     * subclasses at construction time. If possible, constructors should not copy blindly all
+     * user-provided hints. They should select only the relevant hints and resolve them as of
+     * {@linkplain #getImplementationHints implementation hints} contract. For example if a
+     * {@linkplain org.opengis.referencing.datum.DatumAuthorityFactory datum authority factory}
+     * uses an ordinary {@linkplain org.opengis.referencing.datum.DatumFactory datum factory},
+     * its method could be implemented as below (note that we should not check if the datum
+     * factory is null, since key with null value is the expected behavior in this case).
+     *
+     * {@preformat java
+     *     hints.put(Hints.DATUM_FACTORY, datumFactory);
+     * }
+     *
+     * This field is not an instance of {@code Hints} because:
+     * <ul>
+     *   <li>The primary use of this map is to check if this factory can be reused.
+     *       It is not for creating new factories.</li>
+     *   <li>This map needs to allow {@code null} values, as of
+     *       {@link #getImplementationHints} contract.</li>
+     * </ul>
+     */
+    protected final Map<RenderingHints.Key, Object> hints = new LinkedHashMap<>();
+    /**
+     * An unmodifiable view of {@link #hints}. This is the actual map to be returned
+     * by {@link #getImplementationHints}. Its content reflects the {@link #hints}
+     * map even if the later is modified.
+     */
+    private final Map<RenderingHints.Key, Object> unmodifiableHints = Collections.unmodifiableMap(hints);
 
     private static ReferencingFactoryContainer cache;
 
@@ -234,13 +262,12 @@ public class ReferencingFactoryContainer extends org.geotoolkit.factory.Factory 
      * {@link Hints#CRS_FACTORY CRS}, {@link Hints#CS_FACTORY CS}, {@link Hints#DATUM_FACTORY DATUM}
      * and {@link Hints#MATH_TRANSFORM_FACTORY MATH_TRANSFORM} {@code FACTORY} hints.
      */
-    @Override
     public synchronized Map<RenderingHints.Key, ?> getImplementationHints() {
         if (hints.isEmpty()) {
             fetchAllFactories();
             declaredFactoryHints(hints);
         }
-        return super.getImplementationHints();
+        return unmodifiableHints;
     }
 
     /**
@@ -249,7 +276,7 @@ public class ReferencingFactoryContainer extends org.geotoolkit.factory.Factory 
      * do not force fetching of factories that were not already obtained.
      */
     private Hints getCurrentHints() {
-        final Hints completed = EMPTY_HINTS.clone();
+        final Hints completed = EmptyHints.INSTANCE.clone();
         assert Thread.holdsLock(this);
         completed.putAll(hints);
         declaredFactoryHints(completed);
@@ -263,7 +290,7 @@ public class ReferencingFactoryContainer extends org.geotoolkit.factory.Factory 
      */
     public synchronized DatumFactory getDatumFactory() {
         if (datumFactory == null) {
-            datumFactory = FactoryFinder.getDatumFactory(getCurrentHints());
+            datumFactory = DefaultFactories.forBuildin(DatumFactory.class);
         }
         return datumFactory;
     }
@@ -275,7 +302,7 @@ public class ReferencingFactoryContainer extends org.geotoolkit.factory.Factory 
      */
     public synchronized CSFactory getCSFactory() {
         if (csFactory == null) {
-            csFactory = FactoryFinder.getCSFactory(getCurrentHints());
+            csFactory = DefaultFactories.forBuildin(CSFactory.class);
         }
         return csFactory;
     }
@@ -287,7 +314,7 @@ public class ReferencingFactoryContainer extends org.geotoolkit.factory.Factory 
      */
     public synchronized CRSFactory getCRSFactory() {
         if (crsFactory == null) {
-            crsFactory = FactoryFinder.getCRSFactory(getCurrentHints());
+            crsFactory = DefaultFactories.forBuildin(CRSFactory.class);
         }
         return crsFactory;
     }
@@ -299,7 +326,7 @@ public class ReferencingFactoryContainer extends org.geotoolkit.factory.Factory 
      */
     public synchronized MathTransformFactory getMathTransformFactory() {
         if (mtFactory == null) {
-            mtFactory = FactoryFinder.getMathTransformFactory(getCurrentHints());
+            mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
         }
         return mtFactory;
     }

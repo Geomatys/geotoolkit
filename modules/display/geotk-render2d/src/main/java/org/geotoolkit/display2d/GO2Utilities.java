@@ -48,6 +48,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
@@ -73,8 +74,6 @@ import org.geotoolkit.display2d.primitive.iso.ISOGeometryJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
@@ -107,6 +106,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
@@ -131,6 +131,7 @@ import org.opengis.style.SelectedChannelType;
 import org.opengis.style.SemanticType;
 import org.opengis.style.Stroke;
 import org.opengis.style.Style;
+import org.opengis.style.StyleFactory;
 import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
 import org.opengis.util.GenericName;
@@ -189,11 +190,8 @@ public final class GO2Utilities {
             RENDERERS.put(renderer.getCachedSymbolizerClass(), renderer);
         }
 
-        final Hints hints = new Hints();
-        hints.put(Hints.STYLE_FACTORY, MutableStyleFactory.class);
-        hints.put(Hints.FILTER_FACTORY, FilterFactory2.class);
-        STYLE_FACTORY = (MutableStyleFactory)FactoryFinder.getStyleFactory(hints);
-        FILTER_FACTORY = (FilterFactory2) FactoryFinder.getFilterFactory(hints);
+        STYLE_FACTORY = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+        FILTER_FACTORY = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
 
         //LINE -----------------------------------------------------------------
         final float x2Points[] = {0,    0.4f,   0.6f,   1f};

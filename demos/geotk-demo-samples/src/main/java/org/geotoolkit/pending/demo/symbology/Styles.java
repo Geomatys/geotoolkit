@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.measure.Unit;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
@@ -19,8 +20,6 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
@@ -69,6 +68,7 @@ import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.ShadedRelief;
 import org.opengis.style.Stroke;
+import org.opengis.style.StyleFactory;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 
@@ -81,10 +81,9 @@ public class Styles {
     /**
      * Factories used in all symbology exemples.
      */
-    protected static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    protected static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
     protected static final MutableSLDFactory SLDF = new DefaultSLDFactory();
-    protected static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
-                                                   new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
+    protected static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
 
     //////////////////////////////////////////////////////////////////////
     // POINT SYMBOLIZER //////////////////////////////////////////////////

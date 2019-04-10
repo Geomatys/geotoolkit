@@ -19,19 +19,11 @@ package org.geotoolkit.data.query;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.apache.sis.referencing.NamedIdentifier;
-import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.NullArgumentException;
-import org.geotoolkit.data.DefaultSelectorFeatureCollection;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.session.Session;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
@@ -43,7 +35,7 @@ import org.opengis.filter.sort.SortBy;
  */
 public class QueryUtilities {
 
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     private QueryUtilities(){}
 

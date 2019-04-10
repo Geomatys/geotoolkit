@@ -44,7 +44,6 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -69,6 +68,7 @@ import java.util.Iterator;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
 
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -82,6 +82,7 @@ import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
+import org.opengis.filter.FilterFactory;
 
 /**
  *
@@ -270,7 +271,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         Set<String> expectedFids = new HashSet<>();
         final Filter fidFilter;
         try {
-            FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(null);
+            FilterFactory2 ff = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
             Set<FeatureId> fids = new HashSet<>();
             while (indexIter.hasNext()) {
                 Feature newFeature = indexIter.next();
@@ -314,7 +315,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             IOException, DataStoreException {
         FeatureCollection features;
         FeatureIterator indexIter;
-        FilterFactory2 fac = (FilterFactory2) FactoryFinder.getFilterFactory(null);
+        FilterFactory2 fac = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
         String geometryName = FeatureExt.getDefaultGeometry(indexedDS.getFeatureType()).getName().tip().toString();
 
         Filter filter = fac.bbox(fac.property(geometryName), newBounds);
@@ -743,7 +744,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             invalidFid1 = "_" + FeatureExt.getId(features.next()).getID();
             invalidFid2 = FeatureExt.getId(features.next()).getID()+ "abc";
         }
-        FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(null);
+        FilterFactory2 ff = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
         Set<Identifier> ids = new HashSet<>();
         ids.add(ff.featureId(validFid1));
         ids.add(ff.featureId(validFid2));

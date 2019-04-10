@@ -20,6 +20,7 @@ package org.geotoolkit.internal;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import org.apache.sis.internal.system.DefaultFactories;
 
 import org.opengis.temporal.Period;
 import org.opengis.temporal.Instant;
@@ -30,7 +31,6 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.Exceptions;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 
 
@@ -74,7 +74,7 @@ public final class TemporalUtilities extends Static {
      * @throws FactoryNotFoundException If the temporal factory is not available on the classpath.
      */
     public static Instant createInstant(final Date time) throws FactoryNotFoundException {
-        return createInstant(FactoryFinder.getTemporalFactory(null), time);
+        return createInstant(DefaultFactories.forBuildin(TemporalFactory.class), time);
     }
 
     /**
@@ -88,7 +88,7 @@ public final class TemporalUtilities extends Static {
      * @throws FactoryNotFoundException If the temporal factory is not available on the classpath.
      */
     public static Period createPeriod(final Date begin, final Date end) throws FactoryNotFoundException {
-        final TemporalFactory factory = FactoryFinder.getTemporalFactory(null);
+        final TemporalFactory factory = DefaultFactories.forBuildin(TemporalFactory.class);
         return factory.createPeriod(createInstant(factory, begin), createInstant(factory, end));
     }
 
@@ -113,7 +113,7 @@ public final class TemporalUtilities extends Static {
             final InternationalString days, final InternationalString hours, final InternationalString minutes, final InternationalString seconds)
             throws FactoryNotFoundException
     {
-        final TemporalFactory factory = FactoryFinder.getTemporalFactory(null);
+        final TemporalFactory factory = DefaultFactories.forBuildin(TemporalFactory.class);
         return factory.createPeriodDuration(years, months, weeks, days, hours, minutes, seconds);
     }
 

@@ -26,11 +26,11 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.gml.JTStoGeometry;
@@ -44,6 +44,7 @@ import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.util.FactoryException;
 
@@ -117,7 +118,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
         final FeatureType type = feature.getType();
 
         //write properties in the type order
-        Expression exp = FactoryFinder.getFilterFactory(null).property(valueReference);
+        Expression exp = DefaultFactories.forBuildin(FilterFactory.class).property(valueReference);
         Object valueA = exp.evaluate(feature);
 
         if (valueA instanceof Collection) {

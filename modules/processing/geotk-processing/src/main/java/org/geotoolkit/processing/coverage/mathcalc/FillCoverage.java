@@ -31,6 +31,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
@@ -42,7 +43,6 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.HyperCubeIterator;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
@@ -125,7 +125,7 @@ public class FillCoverage {
         final HyperCubeIterator ite = new HyperCubeIterator(mins, maxs, maxSize);
 
         //loop on all slices pieces
-        final MathTransformFactory mathFactory = FactoryFinder.getMathTransformFactory(null);
+        final MathTransformFactory mathFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
         while(ite.hasNext()){
             final HyperCubeIterator.HyperCube cube = ite.next();
             final long[] hcubeLower = cube.getLower();

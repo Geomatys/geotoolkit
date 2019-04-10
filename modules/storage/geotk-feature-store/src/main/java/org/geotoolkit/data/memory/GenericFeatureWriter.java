@@ -28,17 +28,16 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.util.Classes;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
-import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
 
 /**
  * Basic support for a  FeatureWriter that redicts it's calls to
@@ -50,7 +49,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
  */
 public class GenericFeatureWriter implements FeatureWriter {
 
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     protected final FeatureStore store;
     protected final String typeName;

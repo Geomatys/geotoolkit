@@ -23,9 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.parameter.Parameters;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.cql.CQL;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.function.groovy.GroovyFunctionFactory;
 import org.geotoolkit.filter.function.javascript.JavaScriptFunctionFactory;
 import org.geotoolkit.processing.AbstractProcess;
@@ -245,7 +244,7 @@ public class ChainProcess extends AbstractProcess {
     }
 
     private boolean executeConditionalElement(final ElementCondition condition, final ParameterValueGroup inputs) throws ProcessException {
-        final FilterFactory ff = FactoryFinder.getFilterFactory(null);
+        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
         final String statement = condition.getExpression();
         final String syntax = condition.getSyntax();
 

@@ -28,21 +28,17 @@ import java.util.Map;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
-
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.apache.sis.referencing.CommonCRS;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import org.opengis.util.GenericName;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
@@ -50,11 +46,12 @@ import org.opengis.filter.sort.SortOrder;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
-
 import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.opengis.filter.FilterFactory;
 
 /**
  *
@@ -66,7 +63,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
 
     private static final GeometryFactory GF = new GeometryFactory();
 
-    private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory2 FF = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
 
     private MemoryFeatureStore store = new MemoryFeatureStore();
 

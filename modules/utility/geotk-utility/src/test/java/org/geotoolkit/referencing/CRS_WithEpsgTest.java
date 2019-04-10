@@ -35,7 +35,6 @@ import org.opengis.util.FactoryException;
 
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
@@ -54,6 +53,7 @@ import static org.geotoolkit.referencing.Assert.*;
 import static org.geotoolkit.test.Commons.*;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static java.util.Collections.singletonMap;
+import org.geotoolkit.factory.Factories;
 
 
 /**
@@ -208,7 +208,7 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
         Citation authority;
 
         // Tests the official factory.
-        factory   = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", null);
+        factory   = Factories.getCRSAuthorityFactory("EPSG");
         authority = factory.getAuthority();
         assertNotNull(authority);
         assertEquals("EPSG Geodetic Parameter Dataset", authority.getTitle().toString(Locale.US));

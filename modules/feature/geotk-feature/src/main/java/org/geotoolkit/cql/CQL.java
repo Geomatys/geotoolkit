@@ -32,8 +32,7 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.temporal.object.TemporalUtilities;
@@ -43,6 +42,7 @@ import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Or;
 import org.opengis.filter.expression.Expression;
 import static org.geotoolkit.cql.CQLParser.*;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.PropertyName;
 
 /**
@@ -128,8 +128,7 @@ public final class CQL {
         if(obj instanceof ExpressionContext){
             tree = (ParseTree)obj;
             if(factory == null){
-                factory = (FilterFactory2) FactoryFinder
-                    .getFilterFactory(new Hints(Hints.FILTER_FACTORY,FilterFactory2.class));
+                factory = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
             }
             result = convertExpression(tree, factory);
         }
@@ -156,8 +155,7 @@ public final class CQL {
         if(obj instanceof FilterContext){
             tree = (FilterContext)obj;
             if(factory == null){
-                factory = (FilterFactory2) FactoryFinder
-                    .getFilterFactory(new Hints(Hints.FILTER_FACTORY,FilterFactory2.class));
+                factory = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
             }
             result = convertFilter(tree, factory);
         }

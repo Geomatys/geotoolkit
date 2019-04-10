@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import org.apache.sis.internal.system.DefaultFactories;
 
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.FeatureType;
@@ -169,7 +169,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      * @param parent The FeatureType that this filter involves. Why is this needed?
      */
     public CapabilitiesFilterSplitter(final DefaultFilterCapabilities fcs, final FeatureType parent) {
-        this.ff = FactoryFinder.getFilterFactory(null);
+        this.ff = DefaultFactories.forBuildin(FilterFactory.class);
         this.fcs = fcs;
         this.parent = parent;
     }

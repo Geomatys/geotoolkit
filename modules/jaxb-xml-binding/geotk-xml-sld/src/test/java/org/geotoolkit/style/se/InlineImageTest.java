@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.Collections;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import org.geotoolkit.factory.FactoryFinder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.style.MutableStyle;
@@ -21,6 +21,8 @@ import org.opengis.style.PointSymbolizer;
 import org.opengis.style.Symbolizer;
 import org.apache.sis.measure.Units;
 import static org.junit.Assert.*;
+import org.opengis.filter.FilterFactory;
+import org.opengis.style.StyleFactory;
 
 /**
  *
@@ -28,8 +30,8 @@ import static org.junit.Assert.*;
  */
 public class InlineImageTest extends org.geotoolkit.test.TestBase {
 
-    public static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(null);
-    public static final MutableStyleFactory SF = (MutableStyleFactory)FactoryFinder.getStyleFactory(null);
+    public static final FilterFactory2 FF = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
+    public static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
 
     @Test
     public void readImage() throws Exception{

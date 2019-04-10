@@ -25,18 +25,14 @@ import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
-
-import org.geotoolkit.factory.FactoryFinder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.CharSequences;
-
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
-
 import org.opengis.filter.expression.PropertyName;
 import static org.geotoolkit.process.mapfile.MapfileTypes.*;
 import org.opengis.feature.AttributeType;
@@ -53,7 +49,7 @@ import org.opengis.feature.PropertyType;
 public class MapfileReader {
 
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     private Object in = null;
 

@@ -18,9 +18,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex;
 
 import java.util.List;
 
-import org.geotoolkit.factory.Factory;
 import org.apache.sis.referencing.CommonCRS;
-
 import org.opengis.geometry.complex.ComplexFactory;
 import org.opengis.geometry.complex.CompositeCurve;
 import org.opengis.geometry.complex.CompositePoint;
@@ -33,7 +31,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class JTSComplexFactory extends Factory implements ComplexFactory {
+public class JTSComplexFactory implements ComplexFactory {
 
     private final CoordinateReferenceSystem crs;
 

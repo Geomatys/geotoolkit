@@ -44,7 +44,6 @@ import org.apache.sis.feature.AbstractOperation;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -69,6 +68,7 @@ import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
@@ -172,7 +172,7 @@ public final class VectorProcessUtils extends Static {
             semiMinorAxis = converter.convert(semiMinorAxis);
         }
 
-        final MathTransformFactory f = AuthorityFactoryFinder.getMathTransformFactory(null);
+        final MathTransformFactory f = DefaultFactories.forBuildin(MathTransformFactory.class);
         ParameterValueGroup p;
         if (conicProjection) {
             p = f.getDefaultParameters("Albers_Conic_Equal_Area");

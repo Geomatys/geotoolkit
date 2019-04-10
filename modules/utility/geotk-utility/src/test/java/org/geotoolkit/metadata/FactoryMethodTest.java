@@ -26,13 +26,13 @@ import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.util.FactoryException;
 
-import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultVerticalCRS;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 import static java.util.Collections.singletonMap;
+import org.apache.sis.internal.system.DefaultFactories;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 
@@ -51,7 +51,7 @@ public final strictfp class FactoryMethodTest extends org.geotoolkit.test.TestBa
      */
     @Test
     public void testFind() {
-        final Object[] crsFactory = Collections.singleton(FactoryFinder.getCRSFactory(null)).toArray();
+        final Object[] crsFactory = Collections.singleton(DefaultFactories.forBuildin(CRSFactory.class)).toArray();
         FactoryMethod fm;
 
         fm = FactoryMethod.find(Citation.class, crsFactory);
@@ -69,7 +69,7 @@ public final strictfp class FactoryMethodTest extends org.geotoolkit.test.TestBa
      */
     @Test
     public void testCreate() throws FactoryException {
-        final Object[] crsFactory =Collections.singleton(FactoryFinder.getCRSFactory(null)).toArray();
+        final Object[] crsFactory =Collections.singleton(DefaultFactories.forBuildin(CRSFactory.class)).toArray();
         final FactoryMethod fm = FactoryMethod.find(VerticalCRS.class, crsFactory);
         final Map<String,Object> properties = new HashMap<>();
         assertNull(properties.put("datum", CommonCRS.Vertical.MEAN_SEA_LEVEL.datum()));

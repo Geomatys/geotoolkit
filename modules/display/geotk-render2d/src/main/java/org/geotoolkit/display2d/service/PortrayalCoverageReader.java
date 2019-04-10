@@ -26,6 +26,7 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -33,7 +34,6 @@ import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -65,7 +65,7 @@ public class PortrayalCoverageReader extends AbstractGridCoverageReader {
             contextName = "portrayal";
         }
 
-        final NameFactory dnf = FactoryFinder.getNameFactory(null);
+        final NameFactory dnf = DefaultFactories.forBuildin(NameFactory.class);
         final NameSpace ns = dnf.createNameSpace(dnf.createGenericName(null, contextName), null);
         name = dnf.createLocalName(ns, contextName);
     }

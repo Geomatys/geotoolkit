@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.logging.Logger;
-import org.geotoolkit.factory.FactoryRegistry;
 
 /**
  * Searches for all available {@link ExternalGraphicFactory} and
@@ -57,12 +56,6 @@ public final class DynamicSymbolFactoryFinder {
         ServiceLoader.load(MarkFactory.class).iterator().forEachRemaining(MARK_FACTORIES::add);
         ServiceLoader.load(ExternalGraphicFactory.class).iterator().forEachRemaining(EXT_FACTORIES::add);
     }
-
-    /**
-     * The service registry for this manager. Will be initialized only when
-     * first needed.
-     */
-    private static FactoryRegistry registry;
 
     private DynamicSymbolFactoryFinder() {
     }

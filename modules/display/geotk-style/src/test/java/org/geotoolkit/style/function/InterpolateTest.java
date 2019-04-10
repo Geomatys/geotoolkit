@@ -22,17 +22,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
-
 import static org.junit.Assert.*;
 import static java.awt.Color.*;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -49,7 +48,7 @@ public class InterpolateTest extends org.geotoolkit.test.TestBase {
     public void interpolate(){
         final String attribut = "att_value";
 
-        final FilterFactory ff = FactoryFinder.getFilterFactory(null);
+        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
         final MutableStyleFactory sf = new DefaultStyleFactory();
 
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();

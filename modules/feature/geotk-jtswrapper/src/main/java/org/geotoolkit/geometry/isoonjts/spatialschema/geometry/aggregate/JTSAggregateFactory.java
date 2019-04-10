@@ -18,7 +18,6 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate;
 
 import java.util.Set;
 
-import org.geotoolkit.factory.Factory;
 import org.apache.sis.referencing.CommonCRS;
 
 import org.opengis.geometry.aggregate.AggregateFactory;
@@ -35,7 +34,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class JTSAggregateFactory extends Factory implements AggregateFactory {
+public class JTSAggregateFactory implements AggregateFactory {
 
     private final CoordinateReferenceSystem crs;
 

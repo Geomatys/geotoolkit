@@ -41,6 +41,7 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -59,8 +60,6 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.BufferedImages;
@@ -115,6 +114,7 @@ import org.opengis.style.ContrastMethod;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.SelectedChannelType;
 import org.opengis.style.ShadedRelief;
+import org.opengis.style.StyleFactory;
 import org.opengis.util.FactoryException;
 
 /**
@@ -131,9 +131,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      *
      * @see #applyColorMapStyle(CoverageReference, GridCoverage2D, RasterSymbolizer)
      */
-    public static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
-            new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
-
+    public static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
 
 
     public DefaultRasterSymbolizerRenderer(final SymbolizerRendererService service, final CachedRasterSymbolizer symbol, final RenderingContext2D context){

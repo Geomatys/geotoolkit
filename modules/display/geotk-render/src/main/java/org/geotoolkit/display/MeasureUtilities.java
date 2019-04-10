@@ -33,9 +33,9 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.util.logging.Logging;
 
 import org.opengis.geometry.MismatchedDimensionException;
@@ -118,7 +118,7 @@ public class MeasureUtilities {
 
             final Ellipsoid ellipsoid = geoCRS.getDatum().getEllipsoid();
 
-            MathTransformFactory f = AuthorityFactoryFinder.getMathTransformFactory(null);
+            MathTransformFactory f = DefaultFactories.forBuildin(MathTransformFactory.class);
 
             ParameterValueGroup p;
             p = f.getDefaultParameters("Albers_Conic_Equal_Area");

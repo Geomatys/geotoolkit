@@ -21,16 +21,18 @@ import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.ObjectFactory;
 import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.metadata.KeyNamePolicy;
 import org.apache.sis.metadata.ValueExistencePolicy;
-import org.geotoolkit.factory.Factory;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import org.opengis.referencing.crs.CRSFactory;
+import org.opengis.referencing.cs.CSFactory;
+import org.opengis.referencing.datum.DatumFactory;
 
 
 /**
@@ -61,7 +63,7 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
  * @since 3.03
  * @module
  */
-public class MetadataFactory extends Factory {
+public class MetadataFactory {
     /**
      * An optional set of factories to try before to create the metadata objects directly.
      * This is {@code null} if there is no such factory.
@@ -130,9 +132,9 @@ public class MetadataFactory extends Factory {
                  * implementation, CRS and CS factories are also Datum factory and we don't
                  * want them to hide the default DatumFactory.
                  */
-                case 0: factory = FactoryFinder.getDatumFactory(null); break;
-                case 1: factory = FactoryFinder.getCSFactory   (null); break;
-                case 2: factory = FactoryFinder.getCRSFactory  (null); break;
+                case 0: factory = DefaultFactories.forBuildin(DatumFactory.class); break;
+                case 1: factory = DefaultFactories.forBuildin(CSFactory.class); break;
+                case 2: factory = DefaultFactories.forBuildin(CRSFactory.class); break;
                 default: return factories;
             }
             factories.add(factory);

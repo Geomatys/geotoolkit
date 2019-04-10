@@ -29,11 +29,11 @@ import java.util.List;
 import net.iharder.Base64;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.util.Version;
 import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.PrimaryKey;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.filter.DefaultPropertyIsLike;
 import org.apache.sis.util.ObjectConverters;
@@ -351,7 +351,7 @@ public class MySQLFilterToSQL implements FilterToSQL {
     public StringBuilder visit(Id candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
         sb.append('(');
-        final FilterFactory ff = FactoryFinder.getFilterFactory(null);
+        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
         final List<ColumnMetaModel> columns = pkey.getColumns();
 
         //we must split this in a serie of OR
@@ -813,7 +813,7 @@ public class MySQLFilterToSQL implements FilterToSQL {
             final Object obj = geometry.getValue();
             if (obj instanceof Envelope) {
                 final Envelope env = (Envelope) obj;
-                final FilterFactory ff = FactoryFinder.getFilterFactory(null);
+                final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
                 final GeometryFactory gf = new GeometryFactory();
                 final Coordinate[] coords = new Coordinate[5];
                 double minx = checkInfinites(env.getMinimum(0));
