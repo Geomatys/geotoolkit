@@ -160,7 +160,7 @@ final class SeriesTable extends CachedTable<Integer,SeriesEntry> {
         double[] times = new double[500];
         int count = 0;
         final PreparedStatement statement = prepareStatement(
-                "SELECT \"grid\", \"startTime\", \"startTime\" + (\"endTime\" - \"startTime\")/2 " +
+                "SELECT \"grid\", \"startTime\", (\"startTime\" + (\"endTime\" - \"startTime\")/2) AS \"medianTime\"" +
                 "FROM " + SCHEMA + ".\"" + GridCoverageTable.TABLE + "\" " +
                 "INNER JOIN " + SCHEMA + ".\"" + TABLE + "\" ON (\"series\" = \"identifier\") " +
                 "WHERE \"product\"=? AND \"startTime\" IS NOT NULL");

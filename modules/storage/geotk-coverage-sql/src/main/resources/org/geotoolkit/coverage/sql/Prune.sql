@@ -1,12 +1,14 @@
 --
 -- Delete unused entries.
 --
-DELETE FROM rasters."GridGeometries" WHERE "identifier" IN
-  (SELECT "identifier" FROM rasters."GridGeometries" EXCEPT SELECT "extent" FROM rasters."GridCoverages");
+DELETE FROM rasters."Formats" WHERE "name" IN
+  (SELECT "name" FROM rasters."Formats" EXCEPT SELECT "format" FROM rasters."Series");
 
---
--- Identify entries that should be unique.
--- This query should return an empty result.
---
-SELECT "format", "band", "name", "lower", "upper", "scale", "offset" FROM rasters."Categories"
-  GROUP BY ("format", "band", "name", "lower", "upper", "scale", "offset") HAVING COUNT("format") > 1
+DELETE FROM rasters."GridGeometries" WHERE "identifier" IN
+  (SELECT "identifier" FROM rasters."GridGeometries" EXCEPT
+    (SELECT "grid" FROM rasters."GridCoverages" UNION
+     SELECT "exportedGrid" FROM rasters."Products"));
+
+DELETE FROM rasters."AdditionalAxes" WHERE "name" IN
+  (SELECT "name" FROM rasters."AdditionalAxes" EXCEPT
+   SELECT UNNEST("additionalAxes") FROM rasters."GridGeometries");
