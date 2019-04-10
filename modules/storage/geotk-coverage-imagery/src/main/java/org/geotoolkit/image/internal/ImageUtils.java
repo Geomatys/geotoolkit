@@ -34,7 +34,7 @@ import java.awt.image.SampleModel;
 
 import javax.imageio.ImageTypeSpecifier;
 
-import org.apache.sis.internal.raster.ScaledColorSpace;
+import org.apache.sis.internal.raster.ColorModelFactory;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 import org.geotoolkit.lang.Static;
 
@@ -665,7 +665,7 @@ public class ImageUtils extends Static {
         final ColorSpace cs = cm.getColorSpace();
 
         //-- to do : if we need we can also define 1 for an ScaledColorSpace --//
-        if (cs.equals(ColorSpace.getInstance(ColorSpace.CS_GRAY)) || cs instanceof ScaledColorSpace) {
+        if (cs.equals(ColorSpace.getInstance(ColorSpace.CS_GRAY)) || cs.getClass().getSimpleName().equals("ScaledColorSpace")) {
             // return 0 or 1
             // return 0 for min is white
             // return 1 for min is black
@@ -935,7 +935,7 @@ public class ImageUtils extends Static {
                  || dataBufferType == DataBuffer.TYPE_DOUBLE) {
                     final double minCs = (minSampleValue != null) ? minSampleValue : Double.MIN_VALUE;
                     final double maxCs = (maxSampleValue != null) ? maxSampleValue : Double.MAX_VALUE;
-                    cs = new ScaledColorSpace(numBand, 0, minCs, maxCs);//-- attention au choix de la bande !!!!
+                    cs = ColorModelFactory.createColorSpace(numBand, 0, minCs, maxCs);//-- attention au choix de la bande !!!!
                 } else {
                     cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
                 }

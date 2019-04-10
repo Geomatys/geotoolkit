@@ -69,7 +69,7 @@ import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.metadata.AxisDirections;
-import org.apache.sis.internal.raster.ScaledColorSpace;
+import org.apache.sis.internal.raster.ColorModelFactory;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.util.Classes;
@@ -744,7 +744,7 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
                 sampleModel = colorModel.createCompatibleSampleModel(tileSize.width, tileSize.height);
             } else {
                 sampleModel = new BandedSampleModel(DataBuffer.TYPE_DOUBLE, tileSize.width, tileSize.height, nbBand);
-                final ColorSpace colors = new ScaledColorSpace(nbBand, 0, 0, 1);
+                final ColorSpace colors = ColorModelFactory.createColorSpace(nbBand, 0, 0, 1);
                 colorModel = new ComponentColorModel(colors, false, false, Transparency.OPAQUE, DataBuffer.TYPE_DOUBLE);
             }
 

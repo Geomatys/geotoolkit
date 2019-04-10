@@ -41,7 +41,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import org.apache.sis.internal.raster.ScaledColorSpace;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
@@ -297,14 +296,18 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
         return set.getPyramids();
     }
 
+    private static boolean isScaledColorSpace(final ColorSpace cs) {
+        return (cs != null) && cs.getClass().getSimpleName().equals("ScaledColorSpace");        // TODO: hopefully temporary hack.
+    }
+
     private void checkColorModel(){
         if (minColorSampleValue == null) {
             assert maxColorSampleValue == null;
             if (colorModel != null)
-            assert !(colorModel.getColorSpace() instanceof ScaledColorSpace) : "with min and max NULL sample value color space should not be instance of ScaledColorSpace.";
+            assert !isScaledColorSpace(colorModel.getColorSpace()) : "with min and max NULL sample value color space should not be instance of ScaledColorSpace.";
         } else {
             assert maxColorSampleValue != null;
-            assert (colorModel.getColorSpace() instanceof ScaledColorSpace) : "with NOT NULL min and max sample value color space must be instance of ScaledColorSpace.";
+            assert isScaledColorSpace(colorModel.getColorSpace()) : "with NOT NULL min and max sample value color space must be instance of ScaledColorSpace.";
             assert Double.isFinite(minColorSampleValue) : "To write minColorSampleValue into XML Pyramid File, it should be finite. Found : "+minColorSampleValue;
             assert Double.isFinite(maxColorSampleValue) : "To write maxColorSampleValue into XML Pyramid File, it should be finite. Found : "+maxColorSampleValue;
         }
@@ -473,10 +476,10 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
                 if (minColorSampleValue == null) {
                     assert maxColorSampleValue == null;
                     if (colorModel != null)
-                    assert !(colorModel.getColorSpace() instanceof ScaledColorSpace) : "with min and max NULL sample value color space should not be instance of ScaledColorSpace.";
+                    assert !isScaledColorSpace(colorModel.getColorSpace()) : "with min and max NULL sample value color space should not be instance of ScaledColorSpace.";
                 } else {
                     assert maxColorSampleValue != null;
-                    //assert (colorModel.getColorSpace() instanceof ScaledColorSpace) : "with NOT NULL min and max sample value color space must be instance of ScaledColorSpace.";
+                    //assert isScaledColorSpace(colorModel.getColorSpace()) : "with NOT NULL min and max sample value color space must be instance of ScaledColorSpace.";
                     assert Double.isFinite(minColorSampleValue) : "To write minColorSampleValue into XML Pyramid File, it should be finite. Found : "+minColorSampleValue;
                     assert Double.isFinite(maxColorSampleValue) : "To write maxColorSampleValue into XML Pyramid File, it should be finite. Found : "+maxColorSampleValue;
                 }
@@ -641,9 +644,9 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
 
         //-- each tile may have different min and max value in its internal colorspace but it must be same type class.
         final ColorSpace imgCmCS = imgCm.getColorSpace();
-        if (imgCmCS instanceof ScaledColorSpace) {
+        if (isScaledColorSpace(imgCmCS)) {
 
-            if (cm != null && (!(cm.getColorSpace() instanceof ScaledColorSpace)))
+            if (cm != null && (!isScaledColorSpace(cm.getColorSpace())))
                 throw new IllegalArgumentException(String.format("Mismatch color space."));
 
             if (minColorSampleValue == null) minColorSampleValue = Double.POSITIVE_INFINITY;

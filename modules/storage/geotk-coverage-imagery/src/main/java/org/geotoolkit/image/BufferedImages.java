@@ -36,7 +36,7 @@ import java.util.Hashtable;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.util.Static;
-import org.apache.sis.internal.raster.ScaledColorSpace;
+import org.apache.sis.internal.raster.ColorModelFactory;
 
 /**
  *
@@ -115,7 +115,7 @@ public class BufferedImages extends Static {
     }
 
     public static ColorModel createGrayScaleColorModel(int dataType, int nbBand, int visibleBand, double min, double max){
-        final ColorSpace colors = new ScaledColorSpace(nbBand, visibleBand, min, max);
+        final ColorSpace colors = ColorModelFactory.createColorSpace(nbBand, visibleBand, min, max);
         final ColorModel cm = new ComponentColorModel(colors, false, false, Transparency.OPAQUE, dataType);
         return cm;
     }

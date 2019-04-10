@@ -24,7 +24,7 @@ import java.awt.color.ColorSpace;
 import javax.imageio.ImageTypeSpecifier;
 
 import org.geotoolkit.util.Utilities;
-import org.apache.sis.internal.raster.ScaledColorSpace;
+import org.apache.sis.internal.raster.ColorModelFactory;
 
 
 /**
@@ -104,7 +104,7 @@ final class ContinuousPalette extends Palette {
     protected ImageTypeSpecifier createImageTypeSpecifier() throws IOException {
         final ColorSpace colorSpace;
         if (minimum < maximum && !Float.isInfinite(minimum) && !Float.isInfinite(maximum)) {
-            colorSpace = new ScaledColorSpace(numBands, visibleBand, minimum, maximum);
+            colorSpace = ColorModelFactory.createColorSpace(numBands, visibleBand, minimum, maximum);
         } else {
             colorSpace = ColorSpace.getInstance(ColorSpace.CS_GRAY);
         }
