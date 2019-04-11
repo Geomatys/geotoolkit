@@ -29,24 +29,7 @@ import static org.junit.Assert.*;
  * @author Legal Guilhem (Geomatys)
  */
 public class RequestsUtilitiesTest extends org.geotoolkit.test.TestBase {
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
-
-     /**
+    /**
      * @throws java.lang.Exception
      */
     @Test

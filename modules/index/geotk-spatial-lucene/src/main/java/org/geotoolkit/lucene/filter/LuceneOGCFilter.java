@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.*;
-
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DocsEnum;
 import org.apache.lucene.index.LeafReader;
@@ -30,20 +29,18 @@ import org.apache.lucene.search.DocIdSet;
 import org.apache.lucene.util.BitDocIdSet;
 import org.apache.lucene.util.Bits;
 import org.apache.lucene.util.FixedBitSet;
-
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.SpatialFilterType;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.index.tree.Tree;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.TreeElementMapper;
 import org.geotoolkit.index.tree.TreeX;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
-
 import static org.geotoolkit.lucene.LuceneUtils.*;
-
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.*;
@@ -60,7 +57,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
 
     public static final String GEOMETRY_FIELD_NAME     = "idx_lucene_geometry";
     public static final String IDENTIFIER_FIELD_NAME   = "id";
-    public static final PropertyName GEOMETRY_PROPERTY = FactoryFinder.getFilterFactory(null).property(GEOMETRY_FIELD_NAME);
+    public static final PropertyName GEOMETRY_PROPERTY = DefaultFactories.forBuildin(FilterFactory.class).property(GEOMETRY_FIELD_NAME);
     public static final Term GEOMETRY_FIELD            = new Term(GEOMETRY_FIELD_NAME);
     public static final Term META_FIELD                = new Term("metafile", "doc");
 

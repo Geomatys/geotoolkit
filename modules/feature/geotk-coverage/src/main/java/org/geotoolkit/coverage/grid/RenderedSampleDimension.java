@@ -21,41 +21,35 @@ import java.util.Arrays;
 import java.awt.Color;
 import java.awt.RenderingHints;
 import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import java.io.Serializable;
 import javax.measure.Unit;
-import javax.media.jai.iterator.RectIter;
-import javax.media.jai.iterator.RectIterFactory;
 
-import org.opengis.coverage.SampleDimensionType;
-import org.opengis.coverage.ColorInterpretation;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.image.PixelIterator;
+import org.geotoolkit.coverage.SampleDimensionBuilder;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.TypeMap;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
+
+import org.geotoolkit.coverage.SampleDimensionType;
 
 
 /**
  * Describes the band values for a grid coverage.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
- *
- * @since 2.1
- * @module
+ * @deprecated To be removed.
  */
-final class RenderedSampleDimension extends GridSampleDimension {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = 946331925096804779L;
+@Deprecated
+final class RenderedSampleDimension implements Serializable {
+    final SampleDimension dimension;
 
     /**
      * Band number for this sample dimension.
@@ -70,7 +64,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
     /**
      * The grid value data type.
      */
-    private final SampleDimensionType type;
+    final SampleDimensionType type;
 
     /**
      * Constructs a sample dimension with a set of categories from an other sample dimension.
@@ -79,10 +73,8 @@ final class RenderedSampleDimension extends GridSampleDimension {
      * @param model The sample model of the image to be wrapped by {@link GridCoverage}.
      * @param bandNumber The band number.
      */
-    private RenderedSampleDimension(final GridSampleDimension band,
-            final SampleModel model, final int bandNumber)
-    {
-        super(band);
+    private RenderedSampleDimension(final SampleDimension band, final SampleModel model, final int bandNumber) {
+        this.dimension = band;
         this.band     = bandNumber;
         this.numBands = model.getNumBands();
         this.type     = TypeMap.getSampleDimensionType(model, bandNumber);
@@ -102,24 +94,10 @@ final class RenderedSampleDimension extends GridSampleDimension {
      */
     static boolean create(final CharSequence  name,
                           final RenderedImage image,
-                          final GridSampleDimension[] src,
-                          final GridSampleDimension[] dst)
+                          final SampleDimension[] src,
+                          final RenderedSampleDimension[] dst)
     {
-        return create(name, image, null, image.getSampleModel(), src, dst);
-    }
-
-    /**
-     * @deprecated Remove after we deleted {@link GridCoverageFactory}.
-     *             Move the body in the above un-deprecated method.
-     */
-    @Deprecated
-    static boolean create(final CharSequence        name,
-                          final RenderedImage       image,
-                          final Raster              raster,
-                          final SampleModel         model,
-                          final GridSampleDimension[] src,
-                          final GridSampleDimension[] dst)
-    {
+        final SampleModel model = image.getSampleModel();
         final int numBands = model.getNumBands();
         if (src != null && src.length != numBands) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.MismatchedNumberOfBands_3,
@@ -137,9 +115,9 @@ final class RenderedSampleDimension extends GridSampleDimension {
          */
         int countGeophysics = 0;
         int countIndexed    = 0;
-        GridSampleDimension[] defaultSD = null;
+        SampleDimension[] defaultSD = null;
         for (int i=0; i<numBands; i++) {
-            GridSampleDimension sd = (src!=null) ? src[i] : null;
+            SampleDimension sd = (src!=null) ? src[i] : null;
             if (sd == null) {
                 /*
                  * If the user didn't provided explicitly a SampleDimension, create a default one.
@@ -147,27 +125,26 @@ final class RenderedSampleDimension extends GridSampleDimension {
                  * of them are required.
                  */
                 if (defaultSD == null) {
-                    defaultSD = new GridSampleDimension[numBands];
+                    defaultSD = new SampleDimension[numBands];
                     CharSequence[] names = null;
                     if (name != null) {
                         names = new CharSequence[numBands];
                         Arrays.fill(names, name);
                     }
-                    create(names, (image != null) ? PixelIteratorFactory.createDefaultIterator(image)
-                                                  : PixelIteratorFactory.createDefaultIterator(raster),
+                    create(names, PixelIterator.create(image),
                             model, null, null, null, null, defaultSD, null);
                 }
                 sd = defaultSD[i];
             }
-            sd = new RenderedSampleDimension(sd, model, i);
-            dst[i] = sd;
+            RenderedSampleDimension rs = new RenderedSampleDimension(sd, model, i);
+            dst[i] = rs;
             /*
              * We use a equality test and not == because in some cases
              * the inverse sample dimension can be the original sample dimension
              * inverse, which is a GridSample dimension and not a RenderedSampleDimension.
              */
-            if (sd.geophysics(true ).equals(sd)) countGeophysics++;
-            if (sd.geophysics(false).equals(sd)) countIndexed++;
+            if (sd.forConvertedValues(true ).equals(sd)) countGeophysics++;
+            if (sd.forConvertedValues(false).equals(sd)) countIndexed++;
         }
         if (countGeophysics == numBands) {
             return true;
@@ -199,17 +176,17 @@ final class RenderedSampleDimension extends GridSampleDimension {
      *         {@link SampleDimensionType#USHORT USHORT}.
      * @return The sample dimension for the given image.
      */
-    static GridSampleDimension[] create(final CharSequence[] names,
-                                        final RenderedImage  image,
-                                        final double[]       min,
-                                        final double[]       max,
-                                        final Unit<?>[]      units,
-                                        final Color[][]      colors,
-                                        final RenderingHints hints)
+    static SampleDimension[] create(final CharSequence[] names,
+                                    final RenderedImage  image,
+                                    final double[]       min,
+                                    final double[]       max,
+                                    final Unit<?>[]      units,
+                                    final Color[][]      colors,
+                                    final RenderingHints hints)
     {
         final SampleModel model = image.getSampleModel();
-        final GridSampleDimension[] dst = new GridSampleDimension[model.getNumBands()];
-        create(names, (min == null || max == null) ? PixelIteratorFactory.createDefaultIterator(image) : null,
+        final SampleDimension[] dst = new SampleDimension[model.getNumBands()];
+        create(names, (min == null || max == null) ? PixelIterator.create(image) : null,
                model, min, max, units, colors, dst, hints);
         return dst;
     }
@@ -235,16 +212,16 @@ final class RenderedSampleDimension extends GridSampleDimension {
      *         {@link SampleDimensionType#USHORT USHORT}.
      * @return The sample dimension for the given raster.
      */
-    static GridSampleDimension[] create(final CharSequence[] names,
-                                        final Raster         raster,
-                                        final double[]       min,
-                                        final double[]       max,
-                                        final Unit<?>[]      units,
-                                        final Color[][]      colors,
-                                        final RenderingHints hints)
+    static SampleDimension[] create(final CharSequence[] names,
+                                    final Raster         raster,
+                                    final double[]       min,
+                                    final double[]       max,
+                                    final Unit<?>[]      units,
+                                    final Color[][]      colors,
+                                    final RenderingHints hints)
     {
-        final GridSampleDimension[] dst = new GridSampleDimension[raster.getNumBands()];
-        create(names, (min == null || max == null) ? PixelIteratorFactory.createDefaultIterator(raster) : null,
+        final SampleDimension[] dst = new SampleDimension[raster.getNumBands()];
+        create(names, (min == null || max == null) ? new PixelIterator.Builder().create(raster) : null,
                raster.getSampleModel(), min, max, units, colors, dst, hints);
         return dst;
     }
@@ -280,7 +257,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
                                double[]                    max,
                                final Unit<?>[]             units,
                                final Color[][]             colors,
-                               final GridSampleDimension[] dst,
+                               final SampleDimension[] dst,
                                final RenderingHints        hints)
     {
         final int numBands = dst.length;
@@ -297,7 +274,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
                     numBands, colors.length, "colors[i]"));
         }
         /*
-         * Arguments are know to be valids. We now need to compute two ranges:
+         * Arguments are known to be valid. We now need to compute two ranges:
          *
          * STEP 1: Range of target (sample) values. This is computed in the following block.
          * STEP 2: Range of source (geophysics) values. It will be computed one block later.
@@ -308,6 +285,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
          * source raster use integer numbers instead, then we will rescale samples only if they
          * would not fit in the target data type.
          */
+        boolean addNoData = false;
         final SampleDimensionType sourceType = TypeMap.getSampleDimensionType(model, 0);
         final boolean          sourceIsFloat = TypeMap.isFloatingPoint(sourceType);
         SampleDimensionType targetType = null;
@@ -321,7 +299,6 @@ final class RenderedSampleDimension extends GridSampleDimension {
         // Default setting: no scaling
         final boolean  targetIsFloat = TypeMap.isFloatingPoint(targetType);
         NumberRange<?> targetRange   = TypeMap.getRange(targetType);
-        Category[]     categories    = new Category[1];
         final boolean needScaling;
         if (targetIsFloat) {
             // Never rescale if the target is floating point numbers.
@@ -331,9 +308,8 @@ final class RenderedSampleDimension extends GridSampleDimension {
             // Use 0 value as a "no data" category for unsigned data type only.
             needScaling = true;
             if (!TypeMap.isSigned(targetType)) {
-                categories    = new Category[2];
-                categories[1] = Category.NODATA;
-                targetRange   = TypeMap.getPositiveRange(targetType);
+                addNoData = true;
+                targetRange = TypeMap.getPositiveRange(targetType);
             }
         } else {
             // In "integer to integer" conversions, rescale only if
@@ -356,18 +332,18 @@ final class RenderedSampleDimension extends GridSampleDimension {
                 max = new double[numBands];
                 Arrays.fill(max, Double.NEGATIVE_INFINITY);
             }
-            int b = 0;
             while (iterator.next()) {
-                final double z = iterator.getSampleDouble();
-                if (computeMin && z < min[b]) min[b] = z;
-                if (computeMax && z > max[b]) max[b] = z;
-                if (computeMin && computeMax) {
-                    if (!(min[b] < max[b])) {
-                        min[b] = 0;
-                        max[b] = 1;
+                for (int b = 0; b < numBands; b++) {
+                    final double z = iterator.getSampleDouble(b);
+                    if (computeMin && z < min[b]) min[b] = z;
+                    if (computeMax && z > max[b]) max[b] = z;
+                    if (computeMin && computeMax) {
+                        if (!(min[b] < max[b])) {
+                            min[b] = 0;
+                            max[b] = 1;
+                        }
                     }
                 }
-                if (++b == numBands) b = 0;
             }
         }
         /*
@@ -376,8 +352,12 @@ final class RenderedSampleDimension extends GridSampleDimension {
          * if the user plan to have NaN values. Even if the current image doesn't have NaN values,
          * it could have NaN later if the image uses a writable raster.
          */
+        final SampleDimensionBuilder builder = new SampleDimensionBuilder();
         CharSequence untitled = null;
         for (int b=0; b<numBands; b++) {
+            if (addNoData) {
+                builder.addQualitative(null, 0);
+            }
             CharSequence name = (names != null) ? names[b] : null;
             if (name == null) {
                 if (untitled == null) {
@@ -393,37 +373,23 @@ final class RenderedSampleDimension extends GridSampleDimension {
             if (needScaling) {
                 final NumberRange<Double> range = NumberRange.create(min[b], true, max[b], true);
                 sourceRange = range.castTo((Class) sourceRange.getElementType());   // TODO
-                categories[0] = new Category(name, c, targetRange, sourceRange);
+                builder.addQuantitative(name, targetRange, sourceRange);
+                builder.setLastCategoryColors(c);
             }
-            dst[b] = new GridSampleDimension(name, needScaling ? categories : null,
-                    (units != null) ? units[b] : null).geophysics(true);
+            builder.setName(name);
+            dst[b] = builder.build().forConvertedValues(true);
+            builder.clear();
         }
-    }
-
-    /**
-     * Returns a code value indicating grid value data type.
-     * This will also indicate the number of bits for the data type.
-     *
-     * @return a code value indicating grid value data type.
-     */
-    @Override
-    public SampleDimensionType getSampleDimensionType() {
-        return type;
-    }
-
-    /**
-     * Returns the color interpretation of the sample dimension.
-     */
-    @Override
-    public ColorInterpretation getColorInterpretation() {
-        return TypeMap.getColorInterpretation(getColorModel(), band);
     }
 
     /**
      * Returns a color model for this sample dimension.
      */
-    @Override
     public ColorModel getColorModel() {
-        return getColorModel(band, numBands);
+        if (SampleDimensionUtils.isGeophysics(dimension) && SampleDimensionUtils.hasQualitative(dimension)) {
+            // Data likely to have NaN values, which require a floating point type.
+            return SampleDimensionUtils.getColorModel(dimension, band, numBands, DataBuffer.TYPE_FLOAT);
+        }
+        return SampleDimensionUtils.getColorModel(dimension, band, numBands);
     }
 }

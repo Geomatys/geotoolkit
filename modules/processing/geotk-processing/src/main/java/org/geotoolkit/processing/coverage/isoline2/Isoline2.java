@@ -29,15 +29,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
@@ -49,8 +49,6 @@ import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -104,9 +102,7 @@ public class Isoline2 extends AbstractProcess {
         }
 
         try {
-            final int imgIndex = coverageRef.getImageIndex();
-            final GridCoverageReader reader  = coverageRef.acquireReader();
-            final GeneralGridGeometry gridgeom = reader.getGridGeometry(imgIndex);
+            final GridGeometry gridgeom = coverageRef.getGridGeometry();
             crs = gridgeom.getCoordinateReferenceSystem();
             type = getOrCreateIsoType(featureStore, featureTypeName, crs);
             col = featureStore.createSession(false).getFeatureCollection(QueryBuilder.all(type.getName()));
@@ -118,33 +114,34 @@ public class Isoline2 extends AbstractProcess {
             } else {
                 final MathTransform gridtoCRS = gridgeom.getGridToCRS(PixelInCell.CELL_CENTER);
 
+                final GridCoverageReader reader  = coverageRef.acquireReader();
                 RenderedImage image = null;
                 if (readParam == null) {
                     final Object obj = reader.getInput();
                     if (obj instanceof RenderedImage) {
                         image = (RenderedImage) obj;
                     } else if (obj instanceof ImageReader) {
-                        image = ((ImageReader) obj).read(imgIndex);
+                        image = ((ImageReader) obj).read(0);
                     } else if (obj instanceof ImageInputStream) {
                         final ImageReader imgReader = XImageIO.getReader(obj, false, false);
-                        image = imgReader.read(imgIndex);
+                        image = imgReader.read(0);
                     }
                 }
 
                 if (image == null) {
-                    GridCoverage2D coverage = (GridCoverage2D) reader.read(coverageRef.getImageIndex(), readParam);
-                    coverage = coverage = coverage.view(ViewType.GEOPHYSICS);
-                    image = coverage.getRenderedImage();
+                    GridCoverage2D coverage = (GridCoverage2D) reader.read(readParam);
+                    coverage = coverage = coverage.forConvertedValues(true);
+                    image = coverage.render(null);
                 }
+                coverageRef.recycle(reader);
 
-                final PixelIterator ite = PixelIteratorFactory.createDefaultIterator(image);
+                final PixelIterator ite = PixelIterator.create(image);
                 final int width = image.getWidth();
                 final int height = image.getHeight();
 
                 final BlockRunnable runnable = new BlockRunnable(gridtoCRS, ite, width, height, 0);
                 runnable.run();
             }
-            coverageRef.recycle(reader);
 
         } catch (Exception ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
@@ -185,7 +182,7 @@ public class Isoline2 extends AbstractProcess {
                                 LOGGER.log(Level.WARNING, "Can't compute isoline, ImageReader can't be found.");
                                 return;
                             }
-                            final PixelIterator ite = PixelIteratorFactory.createDefaultIterator(image);
+                            final PixelIterator ite = PixelIterator.create(image);
                             final int width = image.getWidth();
                             final int height = image.getHeight();
                             final BlockRunnable runnable = new BlockRunnable(gridtoCRS, ite, width, height, 0);
@@ -299,7 +296,7 @@ public class Isoline2 extends AbstractProcess {
                 for (int y=0; y<height; y++) {
                     for (int x=0; x<width; x++) {
                         ite.next();
-                        line1[x] = ite.getSampleDouble();
+                        line1[x] = ite.getSampleDouble(0);
 
                         //calculate lines
                         if (y>0 && x>0) {

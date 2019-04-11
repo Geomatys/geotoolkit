@@ -41,7 +41,7 @@ public final strictfp class GridTileManagerTest extends TileManagerTest {
      */
     @Override
     protected TileManagerFactory getTileManagerFactory() throws IOException {
-        return new TileManagerFactory(null) {
+        return new TileManagerFactory() {
             @Override
             protected TileManager createGeneric(final Tile[] tiles) throws IOException {
                 return new GridTileManager(tiles);

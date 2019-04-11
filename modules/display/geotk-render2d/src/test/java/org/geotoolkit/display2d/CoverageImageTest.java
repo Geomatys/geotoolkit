@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageIO;
@@ -37,18 +39,17 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.lang.Setup;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -118,24 +119,25 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
         final int srcMinX = sourceImage.getMinX();
         final int srcMinY = sourceImage.getMinY();
         assertTrue(numband == resultImage.getSampleModel().getNumBands());
-        final PixelIterator srcPix  = PixelIteratorFactory.createRowMajorIterator(sourceImage);
-        final PixelIterator destPix = PixelIteratorFactory.createRowMajorIterator(resultImage);
+        final PixelIterator srcPix  = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(sourceImage);
+        final PixelIterator destPix = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(resultImage);
         assertTrue(Math.abs(resultImage.getWidth()  - sourceImage.getWidth()  * proportionalityCoefficient) <= EPSILON);
         assertTrue(Math.abs(resultImage.getHeight() - sourceImage.getHeight() * proportionalityCoefficient) <= EPSILON);
-        int b = 0;
         while (srcPix.next()) {
-            final double srcValue = srcPix.getSampleDouble();
-            final int srcX        = srcPix.getX() - srcMinX;
-            final int srcY        = srcPix.getY() - srcMinY;
+            final int srcX        = srcPix.getPosition().x - srcMinX;
+            final int srcY        = srcPix.getPosition().y - srcMinY;
             final int destX       = proportionalityCoefficient * srcX;
             final int destY       = proportionalityCoefficient * srcY;
-            for(int dy = destY; dy < destY + proportionalityCoefficient; dy++) {
-                for(int dx = destX; dx < destX + proportionalityCoefficient; dx++) {
-                    destPix.moveTo(dx, dy, b);
-                    assertTrue("At pixel "+dx+","+dy+","+b,Math.abs(srcValue-destPix.getSampleDouble()) <= EPSILON);
+            
+            for (int b = 0; b < numband; b++) {
+                final double srcValue = srcPix.getSampleDouble(b);
+                for(int dy = destY; dy < destY + proportionalityCoefficient; dy++) {
+                    for(int dx = destX; dx < destX + proportionalityCoefficient; dx++) {
+                        destPix.moveTo(dx, dy);
+                        assertTrue("At pixel "+dx+","+dy+","+b,Math.abs(srcValue-destPix.getSampleDouble(b)) <= EPSILON);
+                    }
                 }
             }
-            if (++b == numband) b = 0;
         }
     }
 
@@ -147,7 +149,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
      * @param cml {@link CoverageMapLayer} use to build {@link MapContext}.
      * @throws PortrayalException
      */
-    private void testImageLayer(RenderedImage sourceImage, CoverageMapLayer cml) throws PortrayalException{
+    private void testImageLayer(RenderedImage sourceImage, MapLayer cml) throws PortrayalException{
         //create a mapcontext
         final MapContext context  = MapBuilder.createContext();
         context.layers().add(cml);
@@ -178,7 +180,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
         final double[] envelope = new double[]{-180, -90, 180, 90};
         final GridCoverage2D gc2D = createCoverage(img, crs, envelope);
 
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(gc2D, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "raster");
+        final MapLayer cl = MapBuilder.createCoverageLayer(gc2D, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "raster");
 
         //Envelope result
         GeneralEnvelope resuEnv = new GeneralEnvelope(crs);
@@ -199,7 +201,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
      * @throws IOException
      */
     @Test
-    public void coverageReaderTest() throws PortrayalException, CoverageStoreException, IOException {
+    public void coverageReaderTest() throws PortrayalException, DataStoreException, IOException {
 
         ImageIO.scanForPlugins();
         Setup.initialize(null);
@@ -208,11 +210,11 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
         final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
 
         final BufferedImage img = ImageIO.read(input);
-        final GridCoverage2D gridcov = (GridCoverage2D) reader.read(0, null);
+        final GridCoverage2D gridcov = (GridCoverage2D) reader.read(null);
 
         proportionalityCoefficient = 2;
 
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(input);
+        final MapLayer cl = MapBuilder.createCoverageLayer(input);
 
         //Envelope result
         resEnv = gridcov.getEnvelope();

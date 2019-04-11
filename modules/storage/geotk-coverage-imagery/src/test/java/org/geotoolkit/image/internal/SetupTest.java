@@ -24,7 +24,7 @@ import javax.media.jai.JAI;
 import javax.media.jai.OperationRegistry;
 import javax.media.jai.RegistryElementDescriptor;
 
-//import org.geotoolkit.coverage.GridSampleDimension;
+//import org.apache.sis.coverage.SampleDimension;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -48,10 +48,10 @@ public final strictfp class SetupTest {
 ////    public void testInteral() {
 ////        /*
 ////         * In current Geotk implementation, the "SampleTranscoder" operation is registered
-////         * when the GridSampleDimension class is initialized. Create a dummy instance just
+////         * when the SampleDimension class is initialized. Create a dummy instance just
 ////         * for making sure that this class has been initialized.
 ////         */
-////        assertFalse(new GridSampleDimension("Dummy").toString().isEmpty());
+////        assertFalse(new SampleDimension("Dummy").toString().isEmpty());
 ////        assertTrue(countGeotkOperations() != 0);
 ////        final Setup setup = new Setup();
 ////        setup.shutdown();
@@ -69,7 +69,7 @@ public final strictfp class SetupTest {
 //    @Test
 //    @Ignore("Setup class will be removed.")
 //    public void testPublic() {
-//        assertFalse(new GridSampleDimension("Dummy").toString().isEmpty());
+//        assertFalse(new SampleDimension("Dummy").toString().isEmpty());
 //        org.geotoolkit.lang.Setup.initialize(null);
 //        assertTrue(countGeotkOperations() != 0);
 //        org.geotoolkit.lang.Setup.shutdown();

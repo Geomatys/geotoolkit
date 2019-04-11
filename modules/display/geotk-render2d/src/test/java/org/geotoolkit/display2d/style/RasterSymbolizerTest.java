@@ -16,37 +16,35 @@
  */
 package org.geotoolkit.display2d.style;
 
-import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.apache.sis.referencing.CommonCRS;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.File;
-import java.awt.Color;
-import org.opengis.filter.FilterFactory;
-import org.geotoolkit.factory.FactoryFinder;
-import org.locationtech.jts.geom.GeometryFactory;
-import java.awt.Dimension;
-import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import javax.imageio.ImageIO;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.apache.sis.referencing.CRS;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.StyleConstants;
+import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
+import org.opengis.filter.FilterFactory;
 
 /**
  * Test that raster symbolizer are properly rendered.
@@ -56,9 +54,8 @@ import static org.junit.Assert.*;
  */
 public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
-    private static final GeometryFactory GF = new GeometryFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    protected static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    protected static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     /**
      * Check proper image reprojection in UTM
@@ -88,7 +85,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
 
         final MapContext context = MapBuilder.createContext();
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
+        final MapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.layers().add(cl);
 
         final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:32632"));

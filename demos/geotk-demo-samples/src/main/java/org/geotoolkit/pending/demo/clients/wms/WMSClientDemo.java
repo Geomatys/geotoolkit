@@ -4,7 +4,7 @@ package org.geotoolkit.pending.demo.clients.wms;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
@@ -34,7 +34,7 @@ public class WMSClientDemo {
         context.layers().add(layer);
         context.layers().add(layer2);
         //context.layers().add(layer3);
-        JMap2DFrame.show(context);
+        FXMapFrame.show(context);
     }
 
 }

@@ -27,10 +27,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.coverage.Category;
+import org.apache.sis.coverage.Category;
 import org.apache.sis.util.ObjectConverters;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
+import org.geotoolkit.internal.coverage.ColoredCategory;
 
 /**
  *
@@ -154,31 +155,30 @@ public class XMLCategory {
         }
         final Category cat;
         if (Double.isNaN(lower) || lower == upper) {
-            cat = new Category(name, cols[0], range);
+            cat = new ColoredCategory(name, cols[0], range);
         } else {
-            cat = new Category(name, cols, range, sampleToGeophysics);//-- sampletogeophysic may be null.
+            cat = new ColoredCategory(name, cols, range, sampleToGeophysics);//-- sampletogeophysic may be null.
         }
         return cat;
     }
 
     /**
-     * Copy informations from given category.
-     * @param category
+     * Copy information from given category.
      */
     public void fill(Category category){
         //we store the category in packed type
-        category = category.geophysics(false);
-        final Color[] cols = category.getColors();
+        //category = category.geophysics(false);
+        final Color[] cols = ColoredCategory.getColors(category);
         colors = new String[cols.length];
         for(int i=0;i<cols.length;i++){
             colors[i] = toString(cols[i]);
         }
         name = category.getName().toString();
-        final NumberRange range = category.getRange();
+        final NumberRange range = category.getSampleRange();
         lower = range.getMinDouble(true);
         upper = range.getMaxDouble(true);
 
-        final MathTransform1D trs = category.getSampleToGeophysics();
+        final MathTransform1D trs = category.getTransferFunction().orElse(null);
         if (trs != null) { //-- if category != NODATA. trs == null for nodata is expected comportement
             final TransferFunction f = new TransferFunction();
             f.setTransform(trs);

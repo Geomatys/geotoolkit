@@ -17,7 +17,7 @@
 
 package org.geotoolkit.coverage.memory;
 
-import org.geotoolkit.storage.coverage.CoverageStore;
+import org.apache.sis.storage.DataStore;
 import org.geotoolkit.storage.coverage.AbstractCoverageStoreEventTest;
 
 /**
@@ -27,7 +27,7 @@ import org.geotoolkit.storage.coverage.AbstractCoverageStoreEventTest;
 public class MemoryEventTest extends AbstractCoverageStoreEventTest {
 
     @Override
-    protected CoverageStore createStore() throws Exception {
+    protected DataStore createStore() throws Exception {
         return new MPCoverageStore();
     }
 

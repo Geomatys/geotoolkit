@@ -17,28 +17,25 @@
  */
 package org.geotoolkit.coverage.io;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.io.File;
 import java.nio.file.Path;
 import java.util.Collections;
-
-import org.geotoolkit.internal.image.io.CheckedImageInputStream;
-import org.geotoolkit.internal.image.io.CheckedImageOutputStream;
-import org.geotoolkit.resources.Errors;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.geotoolkit.lang.Static;
-
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-
+import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.internal.image.io.CheckedImageInputStream;
+import org.geotoolkit.internal.image.io.CheckedImageOutputStream;
+import org.geotoolkit.lang.Static;
+import org.geotoolkit.resources.Errors;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -80,12 +77,12 @@ public final class CoverageIO extends Static {
      *
      * @param  input The input to read (typically a {@link File}).
      * @return A coverage read from the given input.
-     * @throws CoverageStoreException If the coverage can not be read.
+     * @throws DataStoreException If the coverage can not be read.
      */
-    public static GridCoverage read(final Object input) throws CoverageStoreException {
+    public static GridCoverage read(final Object input) throws DataStoreException {
         final GridCoverageReader reader = createSimpleReader(input);
         try {
-            return reader.read(0, null);
+            return reader.read(null);
         } finally {
             reader.dispose();
         }
@@ -102,10 +99,10 @@ public final class CoverageIO extends Static {
      * @param formatName The image format as one of the Image I/O plugin name (e.g. {@code "png"}),
      *                   or {@code null} for auto-detection from the output file suffix.
      * @param output     The output where to write the image (typically a {@link File} or a {@link java.nio.file.Path}).
-     * @throws CoverageStoreException If the coverage can not be written.
+     * @throws DataStoreException If the coverage can not be written.
      */
     public static void write(final GridCoverage coverage, final String formatName, final Object output)
-            throws CoverageStoreException
+            throws DataStoreException
     {
         ensureNonNull("coverage", coverage);
         write(Collections.singleton(coverage), formatName, output);
@@ -122,12 +119,12 @@ public final class CoverageIO extends Static {
      * @param formatName The image format as one of the Image I/O plugin name (e.g. {@code "png"}),
      *                   or {@code null} for auto-detection from the output file suffix.
      * @param output     The output where to write the image (typically a {@link File} or a {@link java.nio.file.Path}).
-     * @throws CoverageStoreException If the coverages can not be written.
+     * @throws DataStoreException If the coverages can not be written.
      *
      * @since 3.20
      */
     public static void write(final Iterable<? extends GridCoverage> coverages,
-            final String formatName, final Object output) throws CoverageStoreException
+            final String formatName, final Object output) throws DataStoreException
     {
         ensureNonNull("coverages", coverages);
         ensureNonNull("output", output);
@@ -156,9 +153,9 @@ public final class CoverageIO extends Static {
      *
      * @param  input The input to read (typically a {@link File} or a {@link java.nio.file.Path}).
      * @return A coverage reader for the given input.
-     * @throws CoverageStoreException If the reader can not be created for the given file.
+     * @throws DataStoreException If the reader can not be created for the given file.
      */
-    public static GridCoverageReader createSimpleReader(final Object input) throws CoverageStoreException {
+    public static GridCoverageReader createSimpleReader(final Object input) throws DataStoreException {
         ensureNonNull("input", input);
         final ImageCoverageReader reader = new ImageCoverageReader();
         reader.setInput(input);
@@ -176,11 +173,11 @@ public final class CoverageIO extends Static {
      *
      * @param  output The output where to write (typically a {@link File} or a {@link java.nio.file.Path}).
      * @return A coverage writer for the given output.
-     * @throws CoverageStoreException If the writer can not be created for the given file.
+     * @throws DataStoreException If the writer can not be created for the given file.
      *
      * @since 3.20
      */
-    public static GridCoverageWriter createSimpleWriter(final Object output) throws CoverageStoreException {
+    public static GridCoverageWriter createSimpleWriter(final Object output) throws DataStoreException {
         ensureNonNull("output", output);
         final ImageCoverageWriter writer = new ImageCoverageWriter();
         writer.setOutput(output);
@@ -201,10 +198,10 @@ public final class CoverageIO extends Static {
      * @param  input The file, tiles or tile manager to use a input.
      * @param  crs The coordinate reference system of the mosaic image.
      * @return A mosaic reader for the given tiles and CRS.
-     * @throws CoverageStoreException If the reader can not be created for the given tiles.
+     * @throws DataStoreException If the reader can not be created for the given tiles.
      */
     public static GridCoverageReader createMosaicReader(final Object input,
-            final CoordinateReferenceSystem crs) throws CoverageStoreException
+            final CoordinateReferenceSystem crs) throws DataStoreException
     {
         ensureNonNull("input", input);
         if (crs == null && (input instanceof File || input instanceof Path)) {
@@ -226,11 +223,11 @@ public final class CoverageIO extends Static {
      *
      * @param  input The input to read.
      * @return A coverage reader for the given file.
-     * @throws CoverageStoreException If the reader can not be created for the given file.
+     * @throws DataStoreException If the reader can not be created for the given file.
      * @deprecated use {@link #writeOrReuseMosaic(Path)} instead
      */
     @Deprecated
-    public static GridCoverageReader writeOrReuseMosaic(final File input) throws CoverageStoreException {
+    public static GridCoverageReader writeOrReuseMosaic(final File input) throws DataStoreException {
        return writeOrReuseMosaic(input.toPath());
     }
 
@@ -245,9 +242,9 @@ public final class CoverageIO extends Static {
      *
      * @param  input The input to read.
      * @return A coverage reader for the given file.
-     * @throws CoverageStoreException If the reader can not be created for the given file.
+     * @throws DataStoreException If the reader can not be created for the given file.
      */
-    public static GridCoverageReader writeOrReuseMosaic(final Path input) throws CoverageStoreException {
+    public static GridCoverageReader writeOrReuseMosaic(final Path input) throws DataStoreException {
         ensureNonNull("input", input);
         return new MosaicCoverageReader(input, true);
     }

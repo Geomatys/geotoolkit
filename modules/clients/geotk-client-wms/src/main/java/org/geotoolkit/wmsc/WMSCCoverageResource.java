@@ -36,7 +36,7 @@ public class WMSCCoverageResource extends AbstractPyramidalCoverageResource {
 
     public WMSCCoverageResource(final WebMapClientCached server,
             final GenericName name) throws CapabilitiesException{
-        super(server, name, 0);
+        super(server, name);
         set = new WMSCPyramidSet(server, name.tip().toString());
     }
 

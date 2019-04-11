@@ -68,7 +68,8 @@ import org.apache.sis.internal.storage.io.ChannelImageInputStream;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.io.InputStreamAdapter;
@@ -883,12 +884,12 @@ public class TiffImageReader extends SpatialImageReader {
             final SpatialMetadata sm = getImageMetadata(imageIndex);
 
             final DimensionAccessor accessor = new DimensionAccessor(sm);
-            final List<GridSampleDimension> sampleDimensions = accessor.getGridSampleDimensions();
+            final List<SampleDimension> sampleDimensions = accessor.getSampleDimensions();
             if (sampleDimensions == null || sampleDimensions.size() != 1) break rewrite;
 
             //check if we have a numeric noData value
-            final GridSampleDimension sd = sampleDimensions.get(0);
-            final double[] noDataValues = sd.getNoDataValues();
+            final SampleDimension sd = sampleDimensions.get(0);
+            final double[] noDataValues = SampleDimensionUtils.getNoDataValues(sd);
             if (noDataValues == null || noDataValues.length != 1) break rewrite;
 
             boolean replace = false;

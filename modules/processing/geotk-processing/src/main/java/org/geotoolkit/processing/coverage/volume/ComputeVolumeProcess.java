@@ -16,35 +16,39 @@
  */
 package org.geotoolkit.processing.coverage.volume;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 import java.awt.image.RenderedImage;
 import javax.measure.IncommensurableException;
+import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.measure.Units;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.image.PixelIterator;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.process.ProcessException;
-import org.opengis.parameter.ParameterValueGroup;
-
-import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.GeodeticCalculator;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.AbstractProcess;
+import org.geotoolkit.referencing.GeodeticCalculator;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.opengis.coverage.grid.SequenceType;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.cs.CartesianCS;
@@ -54,9 +58,6 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
-import javax.measure.Unit;
-import org.apache.sis.measure.Units;
-import org.apache.sis.parameter.Parameters;
 
 /**
  * Process which compute volume from DEM (Digital Elevation Model) got
@@ -71,7 +72,6 @@ import org.apache.sis.parameter.Parameters;
  * @author Remi Marechal (Geomatys).
  */
 public class ComputeVolumeProcess extends AbstractProcess {
-
     /**
      * Default measure unit use to compute volume (Meter).
      */
@@ -117,7 +117,6 @@ public class ComputeVolumeProcess extends AbstractProcess {
      * Execute process now.
      *
      * @return result volume
-     * @throws ProcessException
      */
     public Geometry[] executeNow() throws ProcessException {
         execute();
@@ -148,7 +147,6 @@ public class ComputeVolumeProcess extends AbstractProcess {
         }
 
         try {
-
             /*
              * geomCRS attribut should be null, we looking for find another way to define geometry CoordinateReferenceSystem.
              * It may be already stipulate in JTS geometry.
@@ -156,9 +154,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             if (geomCRS == null) {
                 geomCRS = JTS.findCoordinateReferenceSystem(jtsGeom);
             }
-
-            final GeneralGridGeometry covGridGeom = gcReader.getGridGeometry(bandIndex);
-
+            final GridGeometry covGridGeom = gcReader.getGridGeometry();
             /*
              * If we have no CRS informations from geometry we consider that geometry is defined in same crs as Coverage.
              */
@@ -177,10 +173,10 @@ public class ComputeVolumeProcess extends AbstractProcess {
             gcrp.setEnvelope(envGeom2D, geomCRS);
             /*******************************************/
 
-            final GridCoverage2D dem      = (GridCoverage2D) gcReader.read(bandIndex, gcrp);
-            final GridSampleDimension gsd = dem.getSampleDimension(bandIndex);
+            final GridCoverage2D dem      = (GridCoverage2D) gcReader.read(gcrp);
+            final SampleDimension gsd = dem.getSampleDimensions().get(bandIndex);
 
-            final MathTransform1D zmt     = gsd.getSampleToGeophysics();
+            final MathTransform1D zmt     = gsd.getTransferFunction().orElse(null);
             if (zmt == null) {
                 throw new ProcessException("you should stipulate MathTransform1D from sampleDimension to geophysic.", this, null);
             }
@@ -189,9 +185,9 @@ public class ComputeVolumeProcess extends AbstractProcess {
 
             InterpolationCase interpolationChoice;
             //-- adapt interpolation in function of grid extend
-            final GridEnvelope2D gridEnv2D = gg2d.getExtent2D();
-            final int gWidth               = gridEnv2D.getSpan(0);
-            final int gHeight              = gridEnv2D.getSpan(1);
+            final GridExtent gridEnv2D = gg2d.getExtent2D();
+            final long gWidth = gridEnv2D.getSize(0);
+            final long gHeight = gridEnv2D.getSize(1);
 
             if (gWidth < 1 || gHeight < 1) {
                 outputParameters.getOrCreate(ComputeVolumeDescriptor.OUT_VOLUME_RESULT).setValue(0);
@@ -209,7 +205,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             final CoordinateSystem destCS  = covCrs.getCoordinateSystem();
             final RenderedImage mnt        = dem.getRenderedImage();
 
-            final Interpolation interpol   = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(mnt), interpolationChoice, 0, ResampleBorderComportement.EXTRAPOLATION, null);
+            final Interpolation interpol   = Interpolation.create(new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(mnt), interpolationChoice, 0, ResampleBorderComportement.EXTRAPOLATION, null);
 
             final MathTransform gridToGeom = MathTransforms.concatenate(gridToCrs, covToGeomCRS);
             final StepPixelAreaCalculator stePixCalculator;
@@ -220,7 +216,10 @@ public class ComputeVolumeProcess extends AbstractProcess {
                 if (destCS instanceof CartesianCS) {
 
                     //-- resolution
-                    final double[] resolution = gg2d.getResolution();
+                    double[] resolution = null;
+                    try {
+                        resolution = gg2d.getResolution(false);
+                    } catch (IncompleteGridGeometryException ex){}
 
                     final int dimDestCS                  = destCS.getDimension();
                     final int destDim                    = destCS.getDimension();
@@ -256,11 +255,11 @@ public class ComputeVolumeProcess extends AbstractProcess {
             double volume = 0;
 
             final UnitConverter hconverter;
-            if(gsd.getUnits() == null || Units.UNITY.equals(gsd.getUnits())){
+            if (!gsd.getUnits().isPresent() || Units.UNITY.equals(gsd.getUnits().get())) {
                 //-- unit unknowed, assume it's meters already
                 hconverter = METER.getConverterTo(METER);
-            }else{
-                hconverter = gsd.getUnits().getConverterToAny(METER);
+            } else {
+                hconverter = gsd.getUnits().get().getConverterToAny(METER);
             }
 
             while (pixPoint[1] < maxy) {

@@ -33,30 +33,28 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.CoverageStack;
-import org.geotoolkit.coverage.GridCoverageStack;
-import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
 import org.geotoolkit.coverage.grid.*;
+import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.MultiResolutionModel;
 import org.geotoolkit.data.multires.Pyramids;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.Cancellable;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -75,7 +73,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class PyramidalModelReader extends GridCoverageReader{
+public class PyramidalModelReader extends AbstractGridCoverageReader{
 
     private GridCoverageResource ref;
     private final CoverageFinder coverageFinder;
@@ -101,7 +99,7 @@ public class PyramidalModelReader extends GridCoverageReader{
     }
 
     @Override
-    public void setInput(Object input) throws CoverageStoreException {
+    public void setInput(Object input) throws DataStoreException {
         if(!(input instanceof GridCoverageResource) || !(input instanceof PyramidalCoverageResource)){
             throw new CoverageStoreException("Unsupported input type, can only be CoverageReference implementing PyramidalModel.");
         }
@@ -110,12 +108,12 @@ public class PyramidalModelReader extends GridCoverageReader{
     }
 
     @Override
-    public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-        return Collections.singletonList(getInput().getIdentifier());
+    public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
+        return getInput().getIdentifier();
     }
 
     @Override
-    public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
+    public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
         final Collection<? extends MultiResolutionModel> models;
 
         try {
@@ -136,17 +134,17 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         if (pyramid == null) {
             //-- empty pyramid set
-            return new GeneralGridGeometry(null, null, (Envelope)null);
+            return GridGeometry.UNDEFINED;
         }
 
         final List<Mosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
         if (mosaics.isEmpty()) {
             //no mosaics
-            return new GeneralGridGeometry(null, null, (Envelope)null);
+            return GridGeometry.UNDEFINED;
         }
 
         Collections.sort(mosaics, CoverageFinder.SCALE_COMPARATOR);
-        final GeneralGridGeometry gridGeom;
+        final GridGeometry gridGeom;
 
         final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
         final CoordinateSystem cs           = crs.getCoordinateSystem();
@@ -188,11 +186,9 @@ public class PyramidalModelReader extends GridCoverageReader{
         //-- size of internal pixel data recovered
         final Rectangle dataSize = mosaic.getDataExtent();
 
-        final int[] low   = new int[nbdim];
-        final int[] high  = new int[nbdim];
+        final long[] high  = new long[nbdim];
 
         for (int i = 0; i < cs.getDimension(); i++) {
-            low[i] = 0; //-- on each dimension low begin at 0
             if (i == minordi) {
                 high[i] = dataSize.width; //-- X horizontal 2D part
             } else if (i == minordi + 1) {
@@ -205,14 +201,14 @@ public class PyramidalModelReader extends GridCoverageReader{
             }
         }
 
-        final GeneralGridEnvelope ge = new GeneralGridEnvelope(low, high, false);
-        gridGeom = new GeneralGridGeometry(ge, PixelInCell.CELL_CORNER, gridToCRSds, crs);
+        final GridExtent ge = new GridExtent(null, null, high, false);
+        gridGeom = new GridGeometry(ge, PixelInCell.CELL_CORNER, gridToCRSds, crs);
 
         return gridGeom;
     }
 
     @Override
-    public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException, CancellationException {
+    public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
         try {
             return getPyramidalModel().getSampleDimensions();
         } catch (DataStoreException ex) {
@@ -221,10 +217,7 @@ public class PyramidalModelReader extends GridCoverageReader{
     }
 
     @Override
-    public GridCoverage read(int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
-        if (index != 0)
-            throw new CoverageStoreException("Invalid Image index.");
-
+    public GridCoverage read(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
         if (param == null)
             param = new GridCoverageReadParam();
 
@@ -241,7 +234,7 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         // Build proper envelope and CRS from parameters. If null, they're set from the queried coverage information.
         if (paramEnv == null)
-            paramEnv = getGridGeometry(index).getEnvelope();
+            paramEnv = getGridGeometry().getEnvelope();
 
         if (crs == null) {
             crs = paramEnv.getCoordinateReferenceSystem();
@@ -458,10 +451,10 @@ public class PyramidalModelReader extends GridCoverageReader{
                             cm = pyramRef.getColorModel();
                             sm = pyramRef.getSampleModel();
                         }
-                        if(cm==null) {
+                        if (cm == null) {
                             cm = tileImage.getColorModel();
                         }
-                        if(sm==null){
+                        if (sm == null) {
                             //if sample model is null, we need to have a coherent relation with
                             //the color model. we reuse the tile models.
                             cm = tileImage.getColorModel();
@@ -475,11 +468,13 @@ public class PyramidalModelReader extends GridCoverageReader{
                     }
                     //-- write current features tile into destination image.
                     final Rectangle tileBound = new Rectangle(offset.x, offset.y, tileImage.getWidth(), tileImage.getHeight());
-                    final PixelIterator destPix = PixelIteratorFactory.createDefaultWriteableIterator((BufferedImage)image, (BufferedImage)image, tileBound);
-                    final PixelIterator tilePix = PixelIteratorFactory.createDefaultIterator(tileImage);
-                    while(destPix.next()) {
+                    final WritablePixelIterator destPix = new PixelIterator.Builder().setRegionOfInterest(tileBound).createWritable((BufferedImage)image);
+                    final PixelIterator tilePix = new PixelIterator.Builder().create(tileImage);
+                    double[] pixel = null;
+                    while (destPix.next()) {
                         tilePix.next();
-                        destPix.setSampleDouble(tilePix.getSampleDouble());
+                        pixel = tilePix.getPixel(pixel);
+                        destPix.setPixel(pixel);
                     }
                     assert !tilePix.next();
                 }
@@ -502,15 +497,20 @@ public class PyramidalModelReader extends GridCoverageReader{
         //build the coverage ---------------------------------------------------
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName(ref.getIdentifier().tip().toString());
-        final List<GridSampleDimension> dimensions = getSampleDimensions(ref.getImageIndex());
+        final List<SampleDimension> dimensions = getSampleDimensions();
         if (dimensions != null) {
-            gcb.setSampleDimensions(dimensions.toArray(new GridSampleDimension[dimensions.size()]));
+            gcb.setSampleDimensions(dimensions.toArray(new SampleDimension[dimensions.size()]));
         }
 
-        final GridEnvelope ge = new GeneralGridEnvelope(image, wantedCRS.getCoordinateSystem().getDimension());
+        final long[] high = new long[wantedCRS.getCoordinateSystem().getDimension()];
+        Arrays.fill(high, 1);
+        high[0] = image.getWidth();
+        high[1] = image.getHeight();
+
+        final GridExtent ge = new GridExtent(null, null, high, false);
         final MathTransform gtc = Pyramids.getTileGridToCRSND(mosaic,
                 new Point((int)tileMinCol,(int)tileMinRow),wantedCRS.getCoordinateSystem().getDimension());
-        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, gtc, wantedCRS, null);
+        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, gtc, wantedCRS);
         gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);
 
@@ -594,7 +594,7 @@ public class PyramidalModelReader extends GridCoverageReader{
         final CoordinateSystem cs = crs.getCoordinateSystem();
         int nbDim = cs.getDimension();
 
-        final List<CoverageStack.Element> elements = new ArrayList<>();
+        final List<GridCoverageStack.Element> elements = new ArrayList<>();
         final List<Entry<Double,Object>> entries = new ArrayList<>(groups.entrySet());
 
         for(int k=0,kn=entries.size();k<kn;k++){
@@ -647,7 +647,7 @@ public class PyramidalModelReader extends GridCoverageReader{
                 max = z + (nextD - z) / 2.0;
             }
 
-            elements.add(new CoverageStack.Adapter(subCoverage, NumberRange.create(min, true, max, false), z));
+            elements.add(new GridCoverageStack.Adapter(subCoverage, NumberRange.create(min, true, max, false), z));
         }
 
         try {

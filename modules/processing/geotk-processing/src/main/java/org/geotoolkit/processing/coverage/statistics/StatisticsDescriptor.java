@@ -16,22 +16,21 @@
  */
 package org.geotoolkit.processing.coverage.statistics;
 
-import org.geotoolkit.metadata.ImageStatistics;
+import java.awt.image.RenderedImage;
+import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.processing.AbstractProcessDescriptor;
+import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.processing.AbstractProcessDescriptor;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.processing.ProcessBundle;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
-
-import java.awt.image.RenderedImage;
-import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.processing.GeotkProcessingRegistry;
-import org.geotoolkit.processing.ProcessBundle;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Statistic process descriptor.
@@ -89,14 +88,6 @@ public class StatisticsDescriptor extends AbstractProcessDescriptor {
             .setRequired(false)
             .create(GridCoverageReader.class, null);
 
-    public static final String IN_IMAGE_IDX_PARAM_NAME = "inImageIdx";
-    public static final InternationalString IN_IMAGE_IDX_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_statistic_inImageIdx);
-    public static final ParameterDescriptor<Integer> IMAGE_IDX = new ParameterBuilder()
-            .addName(IN_IMAGE_IDX_PARAM_NAME)
-            .setRemarks(IN_IMAGE_IDX_PARAM_REMARKS)
-            .setRequired(false)
-            .create(Integer.class, 0);
-
     /*
      * Flag to exclude no-data from distribution
      */
@@ -112,7 +103,7 @@ public class StatisticsDescriptor extends AbstractProcessDescriptor {
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(
-                    IMAGE, COVERAGE, REF, READER, IMAGE_IDX, EXCLUDE_NO_DATA);
+                    IMAGE, COVERAGE, REF, READER, EXCLUDE_NO_DATA);
 
     /*
      * Coverage result

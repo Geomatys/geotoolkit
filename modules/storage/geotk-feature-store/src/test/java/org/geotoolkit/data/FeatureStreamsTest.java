@@ -29,7 +29,6 @@ import java.util.NoSuchElementException;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.util.NamesExt;
@@ -45,7 +44,6 @@ import org.opengis.filter.sort.SortOrder;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
-
 import static org.junit.Assert.*;
 import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.TransformMapper;
@@ -57,6 +55,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.data.iterator.CheckCloseFeatureIterator;
 
 /**
@@ -67,7 +66,7 @@ import org.geotoolkit.data.iterator.CheckCloseFeatureIterator;
 public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000001d;
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
     private static final GeometryFactory GF = new GeometryFactory();
     private static final Integer COMPLEX_ID_1 = 11;
     private static final Integer COMPLEX_ID_2 = 12;

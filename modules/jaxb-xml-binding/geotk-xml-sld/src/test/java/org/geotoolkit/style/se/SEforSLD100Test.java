@@ -24,8 +24,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-
-import org.geotoolkit.factory.FactoryFinder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.sld.xml.v100.FeatureTypeStyle;
 import org.geotoolkit.sld.xml.v100.Rule;
@@ -42,8 +41,8 @@ import org.geotoolkit.sld.xml.SE100toGTTransformer;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.measure.Units;
 import static org.junit.Assert.*;
-
 import org.junit.Test;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.style.ContrastMethod;
@@ -54,6 +53,7 @@ import org.opengis.style.PointSymbolizer;
 import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.SemanticType;
+import org.opengis.style.StyleFactory;
 import org.opengis.style.TextSymbolizer;
 
 /**
@@ -73,8 +73,8 @@ public class SEforSLD100Test {
         final Hints hints = new Hints();
         hints.put(Hints.STYLE_FACTORY, MutableStyleFactory.class);
         hints.put(Hints.FILTER_FACTORY, FilterFactory2.class);
-        STYLE_FACTORY = (MutableStyleFactory)FactoryFinder.getStyleFactory(hints);
-        FILTER_FACTORY = (FilterFactory2) FactoryFinder.getFilterFactory(hints);
+        STYLE_FACTORY = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+        FILTER_FACTORY = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
         SLD_FACTORY = new DefaultSLDFactory();
     }
 

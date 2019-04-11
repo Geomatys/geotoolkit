@@ -23,8 +23,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.FeatureStore;
@@ -32,7 +30,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -44,6 +41,7 @@ import org.opengis.filter.identity.FeatureId;
 import org.locationtech.jts.geom.Envelope;
 import java.util.ArrayList;
 import java.util.Collection;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.session.Session;
@@ -53,6 +51,7 @@ import org.opengis.util.GenericName;
 import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.filter.FilterFactory;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -205,7 +204,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         params.parameter(ShapefileFeatureStoreFactory.CREATE_SPATIAL_INDEX.getName().toString()).setValue(Boolean.TRUE);
         IndexedShapefileFeatureStore ds = (IndexedShapefileFeatureStore) fac.open(params);
 
-        FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(null);
+        FilterFactory2 ff = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
 
         FeatureId featureId = ff.featureId("streams.84");
         Id filter = ff.id(Collections.singleton(featureId));

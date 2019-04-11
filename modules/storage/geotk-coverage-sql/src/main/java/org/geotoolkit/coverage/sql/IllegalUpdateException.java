@@ -53,7 +53,7 @@ public class IllegalUpdateException extends CatalogException {
      *
      * @param message the detail message.
      */
-    public IllegalUpdateException(final String message) {
+    IllegalUpdateException(final String message) {
         super(message);
     }
 }

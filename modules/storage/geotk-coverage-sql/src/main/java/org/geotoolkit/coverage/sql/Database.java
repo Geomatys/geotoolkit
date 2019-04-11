@@ -22,16 +22,10 @@ import java.util.EnumMap;
 import java.util.TimeZone;
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import javax.measure.Quantity;
-import javax.measure.Unit;
-import javax.measure.UnitConverter;
 
+import org.opengis.util.NameFactory;
 import org.opengis.util.FactoryException;
-import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.crs.CRSFactory;
-import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.apache.sis.measure.UnitFormat;
 import org.apache.sis.referencing.CRS;
@@ -39,9 +33,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.internal.metadata.AxisDirections;
-
-import org.geotoolkit.image.palette.PaletteFactory;
+import org.apache.sis.internal.referencing.ReferencingFactoryContainer;
 
 
 /**
@@ -49,11 +41,11 @@ import org.geotoolkit.image.palette.PaletteFactory;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  */
-final class Database {
+final class Database extends ReferencingFactoryContainer {
     /**
      * Provider of connections to the database. Should be pooled connections.
      */
-    private final DataSource source;
+    final DataSource source;
 
     /**
      * The two-dimensional coordinate reference system of the {@code rasters.GridGeometries.extent} column.
@@ -79,31 +71,14 @@ final class Database {
     final TimeZone timezone;
 
     /**
-     * The root directory of files.
+     * The root directory of files. Can not be null.
      */
     final Path root;
 
     /**
-     * The factory to use for creating coordinate reference systems from codes.
-     *
-     * @todo Currently an EPSG factory, but should be a PostGIS factory.
+     * The factory to use for creating names.
      */
-    final CRSAuthorityFactory authorityFactory;
-
-    /**
-     * The factory to use for creating coordinate reference systems from codes.
-     */
-    final CRSFactory crsFactory;
-
-    /**
-     * The math transform factory.
-     */
-    final MathTransformFactory mtFactory;
-
-    /**
-     * The factory for color palettes.
-     */
-    final PaletteFactory paletteFactory;
+    final NameFactory nameFactory;
 
     /**
      * The unit format for parsing and formatting unit symbols.
@@ -134,11 +109,7 @@ final class Database {
         timezone          = TimeZone.getTimeZone("UTC");
         root              = directory;
         locale            = Locale.getDefault(Locale.Category.DISPLAY);
-        authorityFactory  = CRS.getAuthorityFactory("EPSG");
-        crsFactory        = DefaultFactories.forBuildin(CRSFactory.class);
-        mtFactory         = DefaultFactories.forBuildin(MathTransformFactory.class);
-        paletteFactory    = PaletteFactory.getDefault();
-        paletteFactory.setWarningLocale(locale);
+        nameFactory       = DefaultFactories.forBuildin(NameFactory.class);
         unitFormat        = new UnitFormat(locale);
         caches            = new EnumMap<>(CachedTable.Target.class);
     }
@@ -160,16 +131,6 @@ final class Database {
             if (c == null) {
                 caches.put(table, c = new Cache<>());
             }
-        }
-        return c;
-    }
-
-    /**
-     * Returns a converter from the given unit and axis direction to standard units for cross-product comparison.
-     */
-    static <Q extends Quantity<Q>> UnitConverter toStandardUnit(final AxisDirection direction, final Unit<Q> unit) {
-        UnitConverter c = unit.getConverterTo(unit.getSystemUnit());
-        if (AxisDirections.isOpposite(direction)) {
         }
         return c;
     }

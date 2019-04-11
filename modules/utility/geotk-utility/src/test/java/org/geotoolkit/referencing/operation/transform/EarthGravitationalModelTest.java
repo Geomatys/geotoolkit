@@ -30,8 +30,8 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.test.referencing.TransformTestCase;
 
-import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.referencing.CommonCRS;
 
@@ -109,7 +109,7 @@ public final strictfp class EarthGravitationalModelTest extends TransformTestCas
      */
     @Test
     public void testMathTransform() throws FactoryException, TransformException {
-        final MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
+        final MathTransformFactory mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
         final ParameterValueGroup p = mtFactory.getDefaultParameters("Ellipsoid_To_Geoid");
         final MathTransform mt = mtFactory.createParameterizedTransform(p);
         DirectPosition pos = new GeneralDirectPosition(new double[] {45, 45, 1000});

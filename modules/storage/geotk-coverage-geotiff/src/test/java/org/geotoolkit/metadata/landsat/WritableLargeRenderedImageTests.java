@@ -25,23 +25,19 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.ImageIO;
-
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
-
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PhotometricInterpretation;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.image.io.large.ImageCacheConfiguration;
 import org.geotoolkit.image.io.large.LargeCache;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.lang.Setup;
 import org.junit.Assert;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -101,9 +97,9 @@ public final strictfp class WritableLargeRenderedImageTests {
             final byte value = (byte) (StrictMath.random() * 255);
 
             //-- fill input image by value.
-            final PixelIterator It = PixelIteratorFactory.createDefaultWriteableIterator(inputTestImg, inputTestImg);
+            final WritablePixelIterator It = new PixelIterator.Builder().createWritable(inputTestImg);
             while (It.next()) {
-                It.setSample(value);
+                It.setSample(0, value);
             }
 
             final pixelWork band0Pix = new pixelWork(inputTestImg, outPutImageTest, 0);
@@ -121,11 +117,11 @@ public final strictfp class WritableLargeRenderedImageTests {
             }
 
             //-- verify result pertinency
-            final PixelIterator createDefaultIterator = PixelIteratorFactory.createDefaultIterator(outPutImageTest);
+            final PixelIterator createDefaultIterator = PixelIterator.create(outPutImageTest);
 
             while (createDefaultIterator.next()) {
-                Assert.assertEquals("unexpected byte value : at x = "+createDefaultIterator.getX()
-                        +", y = "+createDefaultIterator.getY(), (value & 0xFF), (createDefaultIterator.getSample() & 0xFF));
+                Assert.assertEquals("unexpected byte value : at x = "+createDefaultIterator.getPosition().x
+                        +", y = "+createDefaultIterator.getPosition().y, (value & 0xFF), (createDefaultIterator.getSample(0) & 0xFF));
             }
             LOGGER.log(Level.INFO, "iteration nb : "+nb+", time : "+(System.currentTimeMillis() - t));
         }
@@ -181,19 +177,12 @@ public final strictfp class WritableLargeRenderedImageTests {
         @Override
         public Object call() throws Exception {
 
-            final PixelIterator inputPix  = PixelIteratorFactory.createDefaultIterator(input);
-            final PixelIterator outPutPix = PixelIteratorFactory.createDefaultWriteableIterator(output, output);
+            final PixelIterator inputPix  = PixelIterator.create(input);
+            final WritablePixelIterator outPutPix = new PixelIterator.Builder().createWritable(output);
 
-            int currentb = 0;
             while (outPutPix.next()) {
-                if (currentb++ == outPutBandIndex) {
-                    inputPix.next();
-                    outPutPix.setSampleDouble(inputPix.getSampleDouble());
-                }
-
-                if (currentb == outPutPix.getNumBands()) {
-                    currentb = 0;
-                }
+                inputPix.next();
+                outPutPix.setSample(outPutBandIndex, inputPix.getSampleDouble(0));
             }
             return null;
         }

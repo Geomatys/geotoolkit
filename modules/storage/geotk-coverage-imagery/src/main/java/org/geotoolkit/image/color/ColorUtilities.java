@@ -21,10 +21,9 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.awt.Color;
 import java.awt.color.ColorSpace;
-import java.awt.image.DataBuffer;
-import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
-import static java.awt.image.DataBuffer.*;
+import java.awt.image.DataBuffer;
+import org.apache.sis.internal.raster.ColorModelFactory;
 
 import org.geotoolkit.lang.Static;
 
@@ -40,22 +39,16 @@ import org.geotoolkit.lang.Static;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.14
  *
  * @since 1.2
  * @module
  */
 public final class ColorUtilities extends Static {
     /**
-     * Small number for rounding errors.
-     */
-    private static final double EPS = 1E-6;
-
-    /**
      * An index color model having only two colors, black and white.
      */
     public static final IndexColorModel BINARY_COLOR_MODEL = new IndexColorModel(
-            1, 2, new int[] {0, -1}, 0, false, -1, TYPE_BYTE);
+            1, 2, new int[] {0, -1}, 0, false, -1, DataBuffer.TYPE_BYTE);
 
     /**
      * Do not allow creation of instances of this class.
@@ -137,7 +130,7 @@ public final class ColorUtilities extends Static {
      * will be clamb into the {@code palette} range. If they are completely out of range, or if
      * they would result in an empty array, then {@code null} is returned.
      * <p>
-     * This method is used by {@link org.geotoolkit.coverage.GridSampleDimension} as an
+     * This method is used by {@link org.geotoolkit.coverage.SampleDimension} as an
      * heuristic approach for distributing palette colors into a list of categories.
      *
      * @param  palette The color array (may be {@code null}).
@@ -166,58 +159,17 @@ public final class ColorUtilities extends Static {
      * inclusive to index {@code upper} exclusive. If {@code upper-lower} is not
      * equal to the length of {@code colors} array, then colors will be interpolated.
      *
-     * {@note Profiling shows that this method is a "hot spot". It needs to be fast,
-     *        which is why the implementation is not as straight-forward as it could.}
-     *
      * @param colors Colors to copy into the {@code ARGB} array.
      * @param ARGB   Array of integer to write ARGB values to.
      * @param lower  Index (inclusive) of the first element of {@code ARGB} to change.
      * @param upper  Index (exclusive) of the last  element of {@code ARGB} to change.
      */
-    @SuppressWarnings("fallthrough")
-    public static void expand(final Color[] colors, final int[] ARGB,
-                              final int lower, final int upper)
-    {
-        /*
-         * Trivial cases.
-         */
-        switch (colors.length) {
-            case 1: Arrays.fill(ARGB, lower, upper, colors[0].getRGB()); // fall through
-            case 0: return; // Note: getRGB() is really getARGB()
+    public static void expand(final Color[] colors, final int[] ARGB, final int lower, final int upper) {
+        final int[] codes = new int[colors.length];
+        for (int i=0; i<codes.length; i++) {
+            codes[i] = colors[i].getRGB();      // Note: getRGB() is really getARGB().
         }
-        switch (upper - lower) {
-            case 1: ARGB[lower] = colors[0].getRGB(); // fall through
-            case 0: return; // Note: getRGB() is really getARGB()
-        }
-        /*
-         * Prepares the coefficients for the iteration.
-         * The non-final ones will be updated inside the loop.
-         */
-        final double scale = (double)(colors.length - 1) / (double)(upper - 1 - lower);
-        final int maxBase = colors.length - 2;
-        double index = 0;
-        int    base  = 0;
-        for (int i=lower;;) {
-            final int C0 = colors[base + 0].getRGB();
-            final int C1 = colors[base + 1].getRGB();
-            final int A0 = (C0 >>> 24) & 0xFF,   A1 = ((C1 >>> 24) & 0xFF) - A0;
-            final int R0 = (C0 >>> 16) & 0xFF,   R1 = ((C1 >>> 16) & 0xFF) - R0;
-            final int G0 = (C0 >>>  8) & 0xFF,   G1 = ((C1 >>>  8) & 0xFF) - G0;
-            final int B0 = (C0       ) & 0xFF,   B1 = ((C1       ) & 0xFF) - B0;
-            final int oldBase = base;
-            do {
-                final double delta = index - base;
-                ARGB[i] = (roundByte(A0 + delta*A1) << 24) |
-                          (roundByte(R0 + delta*R1) << 16) |
-                          (roundByte(G0 + delta*G1) <<  8) |
-                          (roundByte(B0 + delta*B1));
-                if (++i == upper) {
-                    return;
-                }
-                index = (i - lower) * scale;
-                base = Math.min(maxBase, (int)(index + EPS)); // Really want rounding toward 0.
-            } while (base == oldBase);
-        }
+        ColorModelFactory.expand(codes, ARGB, lower, upper);
     }
 
     /**
@@ -242,67 +194,7 @@ public final class ColorUtilities extends Static {
      * @return An index color model for the specified array.
      */
     public static IndexColorModel getIndexColorModel(final int[] ARGB) {
-        return getIndexColorModel(ARGB, 1, 0, -1);
-    }
-
-    /**
-     * Returns a tolerant index color model for the specified ARGB code. This color model accept
-     * image with the specified number of bands.
-     * <p>
-     * This methods caches previously created instances using weak references, because index
-     * color model may be big (up to 256 kb).
-     *
-     * @param  ARGB        An array of ARGB values.
-     * @param  numBands    The number of bands.
-     * @param  visibleBand The band to display.
-     * @param  transparent The transparent pixel, or -1 for auto-detection.
-     * @return An index color model for the specified array.
-     */
-    public static IndexColorModel getIndexColorModel(final int[] ARGB,
-            final int numBands, final int visibleBand, int transparent)
-    {
-        // No needs to scan the ARGB values in search of a transparent pixel;
-        // the IndexColorModel constructor does that for us.
-        final int length = ARGB.length;
-        final int bits = getBitCount(length);
-        final int type = getTransferType(length);
-        final IndexColorModel cm;
-        if (numBands == 1) {
-            cm = new IndexColorModel(bits, length, ARGB, 0, true, transparent, type);
-        } else {
-            cm = new MultiBandsIndexColorModel(bits, length, ARGB, 0, true, transparent,
-                                               type, numBands, visibleBand);
-        }
-        return ColorModels.unique(cm);
-    }
-
-    /**
-     * Returns a bit count for an {@link IndexColorModel} mapping {@code mapSize} colors.
-     * It is guaranteed that the following relation is hold:
-     *
-     * {@preformat java
-     *     (1 << getBitCount(mapSize)) >= mapSize
-     * }
-     *
-     * @param mapSize The number of colors in the map.
-     * @return The number of bits to use.
-     */
-    public static int getBitCount(final int mapSize) {
-        final int count = Math.max(1, 32 - Integer.numberOfLeadingZeros(mapSize - 1));
-        assert (1 << count) >= mapSize : mapSize;
-        assert (1 << (count-1)) < mapSize : mapSize;
-        return count;
-    }
-
-    /**
-     * Returns a suggered type for an {@link IndexColorModel} of {@code mapSize} colors.
-     * This method returns {@link DataBuffer#TYPE_BYTE} or {@link DataBuffer#TYPE_USHORT}.
-     *
-     * @param mapSize The number of colors in the map.
-     * @return The suggested transfer type.
-     */
-    public static int getTransferType(final int mapSize) {
-        return (mapSize <= 256) ? TYPE_BYTE : TYPE_USHORT;
+        return ColorModelFactory.createIndexColorModel(ARGB, 1, 0, -1);
     }
 
     /**
@@ -445,25 +337,6 @@ public final class ColorUtilities extends Static {
             }
         }
         return index;
-    }
-
-    /**
-     * Tries to guess the number of bands from the specified color model. The recommended approach
-     * is to invoke {@link java.awt.image.SampleModel#getNumBands}. This method should be used only
-     * as a fallback when the sample model is not available. This method uses some heuristic rules
-     * for guessing the number of bands, so the return value may not be exact in all cases.
-     *
-     * @param model The color model for which to guess the number of bands.
-     * @return The number of bands in the given color model.
-     */
-    public static int getNumBands(final ColorModel model) {
-        if (model instanceof IndexColorModel) {
-            if (model instanceof MultiBandsIndexColorModel) {
-                return ((MultiBandsIndexColorModel) model).numBands;
-            }
-            return 1;
-        }
-        return model.getNumComponents();
     }
 
     /**

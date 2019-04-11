@@ -22,6 +22,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -36,12 +37,11 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -480,7 +480,7 @@ public final class Pyramids extends Static {
      * @param gridGeom reference grid geometry
      * @return
      */
-    public static DefiningPyramid createTemplate(GeneralGridGeometry gridGeom, Dimension tileSize) throws DataStoreException {
+    public static DefiningPyramid createTemplate(GridGeometry gridGeom, Dimension tileSize) throws DataStoreException {
         ArgumentChecks.ensureNonNull("gridGeom", gridGeom);
         return createTemplate(gridGeom, gridGeom.getCoordinateReferenceSystem(), tileSize);
     }
@@ -499,7 +499,7 @@ public final class Pyramids extends Static {
 
         final GridGeometryIterator ite = new GridGeometryIterator(gridGeom, crs);
         while (ite.hasNext()) {
-            final GeneralGridGeometry slice = ite.next();
+            final GridGeometry slice = ite.next();
             final Envelope envelope = slice.getEnvelope();
 
             final DirectPosition upperLeft = new GeneralDirectPosition(crs);
@@ -510,8 +510,10 @@ public final class Pyramids extends Static {
                 upperLeft.setOrdinate(d, v);
             }
 
-            final double[] allRes = slice.getResolution();
-            if (allRes == null) {
+            final double[] allRes;
+            try {
+                allRes = slice.getResolution(true);
+            } catch (IncompleteGridGeometryException ex) {
                 throw new DataStoreException("Mosaic resolution could not be computed");
             }
             if (Double.isNaN(allRes[horizontalOrdinate])) {

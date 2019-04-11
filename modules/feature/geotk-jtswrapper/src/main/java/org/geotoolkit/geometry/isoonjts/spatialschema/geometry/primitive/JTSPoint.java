@@ -17,8 +17,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
@@ -119,7 +119,7 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
             if ((myCRS != null) && (pointCRS != null) && (!myCRS.equals(pointCRS))) {
                 // Do the conversion.
                 try {
-                    CoordinateOperationFactory cof = FactoryFinder.getCoordinateOperationFactory(null);
+                    CoordinateOperationFactory cof = DefaultFactories.forBuildin(CoordinateOperationFactory.class);
                     CoordinateOperation coordOp = cof.createOperation(pointCRS, myCRS);
                     MathTransform mt = coordOp.getMathTransform();
                     mt.transform(position, copy);

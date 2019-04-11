@@ -139,7 +139,7 @@ public final class ReferencingUtilities {
 
     private static boolean isWrapAroundCompatible(MathTransform trs) {
         for (final MathTransform step : MathTransforms.getSteps(trs)) {
-            if (!(trs instanceof LinearTransform || trs instanceof Mercator)) {
+            if (!(step instanceof LinearTransform || step instanceof Mercator)) {
                 return false;
             }
         }

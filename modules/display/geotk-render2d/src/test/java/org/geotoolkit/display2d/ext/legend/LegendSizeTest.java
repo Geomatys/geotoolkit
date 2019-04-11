@@ -25,23 +25,15 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
-import org.apache.sis.measure.Units;
 import org.geotoolkit.display2d.ext.DefaultBackgroundTemplate;
-import org.geotoolkit.display2d.ext.dimrange.DimRangeSymbolizer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.apache.sis.measure.MeasurementRange;
-import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.map.MapItem;
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.style.Symbolizer;
 
@@ -61,47 +53,8 @@ public class LegendSizeTest extends org.geotoolkit.test.TestBase {
     public LegendSizeTest() {
     }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
-    @Test
-    public void testDimRangeLegend() {
-
-        final Symbolizer dr = new DimRangeSymbolizer(new MeasurementRange(NumberRange.create(10, true, 20, true), Units.UNITY));
-        final MapLayer layer = MapBuilder.createEmptyMapLayer();
-        layer.setStyle(SF.style(dr));
-
-        final MapContext ctx = MapBuilder.createContext();
-        ctx.layers().add(layer);
-
-        Dimension dim = DefaultLegendService.legendPreferredSize(null, ctx);
-
-        assertEquals(120,dim.width);
-        assertEquals(20,dim.height);
-
-        //test with an empty template
-        dim = DefaultLegendService.legendPreferredSize(NO_MARGIN_TEMPLATE, ctx);
-        assertEquals(120,dim.width);
-        assertEquals(20,dim.height);
-
-    }
-
     @Test
     public void testRasterLegend() {
-
         final Symbolizer dr = StyleConstants.DEFAULT_RASTER_SYMBOLIZER;
         final MapLayer layer = MapBuilder.createEmptyMapLayer();
         layer.setStyle(SF.style(dr));

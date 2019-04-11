@@ -34,6 +34,7 @@ import org.opengis.filter.Id;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
+@Deprecated
 public interface FeatureMapLayer extends MapLayer {
 
     public static final String PROP_EXTRA_DIMENSIONS = "extra_dims";
@@ -43,6 +44,7 @@ public interface FeatureMapLayer extends MapLayer {
      *
      * @return The features for this layer, can not be null.
      */
+    @Override
     FeatureSet getResource();
 
     /**

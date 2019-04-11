@@ -16,9 +16,7 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import org.locationtech.jts.geom.Geometry;
 import java.awt.Color;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.awt.image.renderable.ParameterBlock;
@@ -38,14 +36,22 @@ import javax.media.jai.LookupTableJAI;
 import javax.media.jai.NullOpImage;
 import javax.media.jai.OpImage;
 import javax.media.jai.RenderedOp;
-
-import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.Resource;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.grid.*;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.display.PortrayalException;
@@ -55,34 +61,36 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.interpolation.Rescaler;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
-import org.geotoolkit.map.ElevationModel;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.shadedrelief.ShadedReliefDescriptor;
+import org.geotoolkit.processing.coverage.statistics.StatisticOp;
+import org.geotoolkit.processing.coverage.statistics.Statistics;
 import org.geotoolkit.processing.image.bandselect.BandSelectDescriptor;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
 import org.geotoolkit.referencing.operation.transform.EarthGravitationalModel;
-import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
 import org.geotoolkit.style.function.CompatibleColorModel;
+import org.geotoolkit.style.function.DefaultInterpolate;
 import org.geotoolkit.style.function.DefaultInterpolationPoint;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
-import org.geotoolkit.image.BufferedImages;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.coverage.grid.SequenceType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -90,11 +98,11 @@ import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -106,26 +114,8 @@ import org.opengis.style.ContrastMethod;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.SelectedChannelType;
 import org.opengis.style.ShadedRelief;
+import org.opengis.style.StyleFactory;
 import org.opengis.util.FactoryException;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.image.palette.PaletteFactory;
-import org.geotoolkit.metadata.ImageStatistics;
-import org.geotoolkit.processing.coverage.statistics.StatisticOp;
-import org.geotoolkit.processing.coverage.statistics.Statistics;
-import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
-import org.geotoolkit.style.MutableStyleFactory;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
-import org.geotoolkit.style.function.DefaultInterpolate;
-import org.opengis.coverage.Coverage;
-import org.opengis.coverage.SampleDimension;
-import org.opengis.metadata.content.CoverageDescription;
-import org.opengis.coverage.SampleDimensionType;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Symbolizer renderer adapted for Raster.
@@ -136,16 +126,12 @@ import org.geotoolkit.storage.coverage.GridCoverageResource;
  */
 public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedRasterSymbolizer>{
 
-
-
     /**
      * Style factory object use to generate in some case to interpret raster with no associated style.
      *
      * @see #applyColorMapStyle(CoverageReference, GridCoverage2D, RasterSymbolizer)
      */
-    public static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
-            new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
-
+    public static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
 
 
     public DefaultRasterSymbolizerRenderer(final SymbolizerRendererService service, final CachedRasterSymbolizer symbol, final RenderingContext2D context){
@@ -161,9 +147,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         boolean dataRendered = false;
         try {
             GridCoverage2D dataCoverage = getObjectiveCoverage(projectedCoverage);
-            GridCoverage2D elevationCoverage = getObjectiveElevationCoverage(projectedCoverage);
-            final CoverageMapLayer coverageLayer = projectedCoverage.getLayer();
-            final GridCoverageResource ref = coverageLayer.getCoverageReference();
+            GridCoverage2D elevationCoverage = null;//getObjectiveElevationCoverage(projectedCoverage);
+            final MapLayer coverageLayer = projectedCoverage.getLayer();
+            final GridCoverageResource ref = (GridCoverageResource) coverageLayer.getResource();
 
             assert ref != null : "CoverageMapLayer.getCoverageReference() contract don't allow null pointeur.";
 
@@ -180,7 +166,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
             //band select ----------------------------------------------------------
             //works as a JAI operation
-            final int nbDim = dataCoverage.getNumSampleDimensions();
+            final int nbDim = dataCoverage.getSampleDimensions().size();
             if (nbDim > 1) {
                 //we can change sample dimension only if we have more then one available.
                 final ChannelSelection selections = sourceSymbol.getChannelSelection();
@@ -282,10 +268,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      */
     @Override
     protected final GridCoverage2D prepareCoverageToResampling(final GridCoverage2D source, final CachedRasterSymbolizer symbolizer) {
-        final GridSampleDimension[] dims = source.getSampleDimensions();
+        final List<SampleDimension> dims = source.getSampleDimensions();
         final ColorMap cMap = symbolizer.getSource().getColorMap();
         if ((cMap != null && cMap.getFunction() != null) ||
-            (dims != null && dims.length != 0 && dims[0].getNoDataValues() != null) ||
+            (dims != null && dims.size() != 0 && dims.get(0).getNoDataValues() != null) ||
             source.getViewTypes().contains(ViewType.GEOPHYSICS)) {
             return source;
 
@@ -414,7 +400,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             //-- ReliefShadow creating --------------------
             final GridCoverage2D mntCoverage;
             if (elevationCoverage != null) {
-                mntCoverage = getDEMCoverage(coverage, elevationCoverage);
+                //TODO replace by a simple sobel effect for relief shading
+                mntCoverage = null;
             } else {
                 break shadingCase;
                 //does not have a nice result, still better then nothing
@@ -466,7 +453,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //cheat on the colormap if we have only one band and no colormap
         recolorCase:
         if ((recolor == null || recolor.getFunction() == null)) {
-            final GridSampleDimension[] sampleDims = coverage.getSampleDimensions();
+            final List<SampleDimension> sampleDims = coverage.getSampleDimensions();
             /* First, we check the coverage sample dimensions. We do so, because
              * not all coverages hold enough information into their metadata.
              * Even when it is the case, sometimes the coverage description
@@ -477,54 +464,12 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
              * building, so the result color map could be unfit to represent data
              * with sparse value distribution.
              */
-            if (sampleDims != null && sampleDims.length == 1) {
-                final GridSampleDimension packedDim = sampleDims[0].geophysics(false);
-                final double sampleMin, sampleMax;
-                final int sampleType = packedDim.getSampleDimensionType().ordinal();
-                if (sampleType == SampleDimensionType.REAL_32BITS.ordinal()) {
-                    sampleMin = -Float.MAX_VALUE;
-                    sampleMax = Float.MAX_VALUE;
-                } else if (sampleType == SampleDimensionType.REAL_64BITS.ordinal()) {
-                    sampleMin = -Double.MAX_VALUE;
-                    sampleMax = Double.MAX_VALUE;
-                } else if (sampleType == SampleDimensionType.SIGNED_16BITS.ordinal()) {
-                    sampleMin = Short.MIN_VALUE;
-                    sampleMax = Short.MAX_VALUE;
-                } else if (sampleType == SampleDimensionType.SIGNED_32BITS.ordinal()) {
-                    sampleMin = Integer.MIN_VALUE;
-                    sampleMax = Integer.MAX_VALUE;
-                } else if (sampleType == SampleDimensionType.SIGNED_8BITS.ordinal()) {
-                    sampleMin = Byte.MIN_VALUE;
-                    sampleMax = Byte.MAX_VALUE;
-                } else if (sampleType == SampleDimensionType.UNSIGNED_16BITS.ordinal()) {
-                    sampleMin = 0;
-                    sampleMax = 0xFFFF;
-                } else if (sampleType == SampleDimensionType.UNSIGNED_32BITS.ordinal()) {
-                    sampleMin = 0;
-                    sampleMax = 0xFFFFFFFF;
-                } else if (sampleType == SampleDimensionType.UNSIGNED_4BITS.ordinal()) {
-                    sampleMin = 0;
-                    sampleMax = 0xF;
-                } else if (sampleType == SampleDimensionType.UNSIGNED_8BITS.ordinal()) {
-                    sampleMin = 0;
-                    sampleMax = 0xFF;
-                } else {
-                    // If we cannot determine the sample type, it means we're not able to manage the sample dimension information.
-                    sampleMin = sampleMax = Double.NaN;
-                }
-
-                final boolean coherentSampleDimensions = packedDim.getMinimumValue() > sampleMin && packedDim.getMaximumValue() < sampleMax;
-
-                if (coherentSampleDimensions) {
-                    recolor = create(PaletteFactory.getDefault().getColors("grayscale"), sampleDims[0].getNoDataValues(), sampleDims[0].getMinimumValue(), sampleDims[0].getMaximumValue());
-                    break recolorCase;
-                }
-            }
+            if (sampleDims != null && sampleDims.size() == 1)
 
             //if there is no geophysic, the same coverage is returned
-            coverage = hasQuantitativeCategory(coverage) ? coverage.view(ViewType.GEOPHYSICS) : coverage;
+            coverage = hasQuantitativeCategory(coverage) ? coverage.forConvertedValues(true) : coverage;
 
-            final RenderedImage ri      = coverage.getRenderedImage();
+            final RenderedImage ri = coverage.getRenderedImage();
             final SampleModel sampleMod = ri.getSampleModel();
             final ColorModel riColorModel = ri.getColorModel();
 
@@ -533,15 +478,20 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
              * (which mean index color model with positive colormap array index -> DataBuffer.TYPE_BYTE || DataBuffer.TYPE_USHORT)
              * or if image has already 3 or 4 bands Byte typed.
              */
-            if (!defaultStyleIsNeeded(sampleMod, riColorModel))
+            if (!defaultStyleIsNeeded(sampleMod, riColorModel)) {
                 break recolorCase;
+            }
 
-            final CoverageDescription covRefMetadata = ref.getCoverageDescription();
+            CoverageDescription covRefMetadata = null;
+            if(ref instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
+                covRefMetadata = ((org.geotoolkit.storage.coverage.GridCoverageResource)ref).getCoverageDescription();
+            }
 
             ImageStatistics analyse = null;
 
-            if (covRefMetadata != null)
+            if (covRefMetadata != null) {
                 analyse = ImageStatistics.transform(covRefMetadata);
+            }
 
             // TODO : we should analyze a subset of the entire image instead, to
             // ensure consistency over tiled rendering (cf. OpenLayer/WMS).
@@ -645,7 +595,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
             //color map is applied on geophysics view
             //if there is no geophysic, the same coverage is returned
-            coverage = hasQuantitativeCategory(coverage) ? coverage.view(ViewType.GEOPHYSICS) : coverage;
+            coverage = hasQuantitativeCategory(coverage) ? coverage.forConvertedValues(true) : coverage;
             resultImage        = recolor.getFunction().evaluate(coverage.getRenderedImage(), RenderedImage.class);
         } else {
             //no color map, used the default image rendered view
@@ -677,7 +627,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      */
     private static boolean  hasQuantitativeCategory(final GridCoverage2D coverage) {
         ArgumentChecks.ensureNonNull("GridCoverage2D", coverage);
-        for (GridSampleDimension gs : coverage.getSampleDimensions()) {
+        for (SampleDimension gs : coverage.getSampleDimensions()) {
             final List<Category> categories = gs.getCategories();
             if (categories != null)
                 for (Category cat : categories) {
@@ -727,14 +677,15 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         return sampleSize != 8;
     }
 
-    private static int getBandIndice(final String name, final Coverage coverage) throws PortrayalException{
+    private static int getBandIndice(final String name, final GridCoverage coverage) throws PortrayalException{
         try{
             return Integer.parseInt(name);
         }catch(NumberFormatException ex){
             //can be a name
-            for(int i=0,n=coverage.getNumSampleDimensions();i<n;i++){
-                final SampleDimension sampleDim = coverage.getSampleDimension(i);
-                if (Objects.equals(String.valueOf(sampleDim.getDescription()), n)) {
+            final List<SampleDimension> dims = coverage.getSampleDimensions();
+            for(int i=0,n=dims.size();i<n;i++){
+                final SampleDimension sampleDim = dims.get(i);
+                if (Objects.equals(String.valueOf(sampleDim.getName()), n)) {
                     return i;
                 }
             }
@@ -763,35 +714,37 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     final StackTraceElement[] eles = ex.getStackTrace();
                     if(eles.length > 0 && ComponentColorModel.class.getName().equalsIgnoreCase(eles[0].getClassName())){
 
-                        try{
-                            final GridCoverageResource ref = projectedCoverage.getLayer().getCoverageReference();
-                            final GridCoverageReader reader = ref.acquireReader();
-                            final Map<String,Object> analyze = StatisticOp.analyze(reader,ref.getImageIndex());
-                            ref.recycle(reader);
-                            final double[] minArray = (double[])analyze.get(StatisticOp.MINIMUM);
-                            final double[] maxArray = (double[])analyze.get(StatisticOp.MAXIMUM);
-                            final double min = findExtremum(minArray, true);
-                            final double max = findExtremum(maxArray, false);
+                        final Resource resource = projectedCoverage.getLayer().getResource();
+                        if (resource instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
+                            try {
+                                final GridCoverageReader reader = ((org.geotoolkit.storage.coverage.GridCoverageResource) resource).acquireReader();
+                                final Map<String,Object> analyze = StatisticOp.analyze(reader);
+                                ((org.geotoolkit.storage.coverage.GridCoverageResource) resource).recycle(reader);
+                                final double[] minArray = (double[])analyze.get(StatisticOp.MINIMUM);
+                                final double[] maxArray = (double[])analyze.get(StatisticOp.MAXIMUM);
+                                final double min = findExtremum(minArray, true);
+                                final double max = findExtremum(maxArray, false);
 
-                            final List<InterpolationPoint> values = new ArrayList<>();
-                            values.add(new DefaultInterpolationPoint(Double.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
-                            values.add(new DefaultInterpolationPoint(min, GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
-                            values.add(new DefaultInterpolationPoint(max, GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
-                            final Literal lookup = StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
-                            final Literal fallback = StyleConstants.DEFAULT_FALLBACK;
-                            final Function function = GO2Utilities.STYLE_FACTORY.interpolateFunction(
-                                    lookup, values, Method.COLOR, Mode.LINEAR, fallback);
-                            final CompatibleColorModel model = new CompatibleColorModel(img.getColorModel().getPixelSize(), function);
-                            final ImageLayout layout = new ImageLayout().setColorModel(model);
-                            img = new NullOpImage(img, layout, null, OpImage.OP_COMPUTE_BOUND);
-                            g2d.drawRenderedImage(img, (AffineTransform)trs2D);
-                            dataRendered = true;
-                        }catch(Exception e){
-                            //plenty of errors can happen when painting an image
-                            monitor.exceptionOccured(e, Level.WARNING);
+                                final List<InterpolationPoint> values = new ArrayList<>();
+                                values.add(new DefaultInterpolationPoint(Double.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
+                                values.add(new DefaultInterpolationPoint(min, GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
+                                values.add(new DefaultInterpolationPoint(max, GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
+                                final Literal lookup = StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
+                                final Literal fallback = StyleConstants.DEFAULT_FALLBACK;
+                                final Function function = GO2Utilities.STYLE_FACTORY.interpolateFunction(
+                                        lookup, values, Method.COLOR, Mode.LINEAR, fallback);
+                                final CompatibleColorModel model = new CompatibleColorModel(img.getColorModel().getPixelSize(), function);
+                                final ImageLayout layout = new ImageLayout().setColorModel(model);
+                                img = new NullOpImage(img, layout, null, OpImage.OP_COMPUTE_BOUND);
+                                g2d.drawRenderedImage(img, (AffineTransform)trs2D);
+                                dataRendered = true;
+                            } catch(Exception e) {
+                                //plenty of errors can happen when painting an image
+                                monitor.exceptionOccured(e, Level.WARNING);
 
-                            //raise the original error
-                            monitor.exceptionOccured(ex, Level.WARNING);
+                                //raise the original error
+                                monitor.exceptionOccured(ex, Level.WARNING);
+                            }
                         }
                     } else {
                         //plenty of errors can happen when painting an image
@@ -878,7 +831,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @param coverageMapLayer CoverageMapLayer
      * @return a Map</String,Double> with query parameters or null
      */
-    public static Map<String, Double> extractQuery(final CoverageMapLayer coverageMapLayer) {
+    public static Map<String, Double> extractQuery(final MapLayer coverageMapLayer) {
 
         Map<String,Double> values = null;
         if (coverageMapLayer instanceof DefaultCoverageMapLayer) {
@@ -904,119 +857,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
         }
         return values;
-    }
-
-    /**
-     * Return a Digital Elevation Model from source {@link ElevationModel} parameter in function of coverage parameter properties.
-     *
-     * @param coverage
-     * @param elevationModel
-     * @return a Digital Elevation Model from source {@link ElevationModel} parameter in function of coverage parameter properties.
-     * @throws FactoryException If we cannot determine a conversion method between
-     * input coverage and DEM spaces.
-     * @throws TransformException If we cannot determine input coverage location
-     * in DEM space.
-     * @throws CoverageStoreException If an error occurs while reading DEM
-     */
-    public static GridCoverage2D getDEMCoverage(final GridCoverage2D coverage, final ElevationModel elevationModel) throws FactoryException, TransformException, CoverageStoreException {
-
-        if (elevationModel == null) return null;
-
-        // coverage attributs
-        final GridGeometry2D covGridGeom       = coverage.getGridGeometry();
-        final GridEnvelope2D covExtend         = covGridGeom.getExtent2D();
-        final CoordinateReferenceSystem covCRS = coverage.getCoordinateReferenceSystem2D();
-        final Envelope2D covEnv2d              = coverage.getGridGeometry().getEnvelope2D();
-
-        final GridCoverageReader elevationReader = elevationModel.getCoverageReader();
-        final GeneralGridGeometry elevGridGeom   = elevationReader.getGridGeometry(0);
-        if (!(elevGridGeom instanceof GridGeometry2D)) {
-            throw new IllegalArgumentException("the Digital Elevation Model should be instance of gridcoverage2D."+elevGridGeom);
-        }
-        final GridGeometry2D elevGridGeom2D    = (GridGeometry2D) elevGridGeom;
-
-        final CoordinateReferenceSystem demCRS = elevGridGeom2D.getCoordinateReferenceSystem2D();
-
-        final MathTransform demCRSToCov        = CRS.findOperation(demCRS, covCRS, null).getMathTransform(); // dem -> cov
-
-        if (elevGridGeom2D.getEnvelope2D().equals(coverage.getGridGeometry().getEnvelope2D())
-         && covExtend.equals(elevGridGeom2D.getExtent2D())) return (GridCoverage2D) elevationReader.read(0, null);
-
-        final GeneralEnvelope readParamEnv = Envelopes.transform(demCRSToCov.inverse(), covEnv2d);
-
-        final GridCoverageReadParam gcrp = new GridCoverageReadParam();
-        gcrp.setCoordinateReferenceSystem(demCRS);
-        gcrp.setEnvelope(readParamEnv);
-        // TODO : set resolution
-
-        final GridCoverage2D dem = (GridCoverage2D) elevationReader.read(0, gcrp);
-        return getDEMCoverage(coverage, dem);
-
-    }
-
-    /**
-     * Return a Digital Elevation Model from source DEM parameter in function of coverage parameter properties.
-     *
-     * @param coverage
-     * @param dem
-     * @return a Digital Elevation Model from source DEM parameter in function of coverage parameter properties.
-     * @throws FactoryException
-     * @throws TransformException
-     */
-    public static GridCoverage2D getDEMCoverage(final GridCoverage2D coverage, final GridCoverage2D dem) throws FactoryException, TransformException {
-
-        // coverage attributs
-        final GridGeometry2D covGridGeom       = coverage.getGridGeometry();
-        final GridEnvelope2D covExtend         = covGridGeom.getExtent2D();
-        final GridGeometry2D demGridGeom       = dem.getGridGeometry();
-
-        //CRS
-        final CoordinateReferenceSystem covCRS = coverage.getCoordinateReferenceSystem2D();
-        final CoordinateReferenceSystem demCRS = demGridGeom.getCoordinateReferenceSystem2D();
-
-        final MathTransform demCRSToCov = CRS.findOperation(demCRS, covCRS, null).getMathTransform(); // dem -> cov
-
-        if (demCRSToCov.isIdentity())
-            return dem;
-
-        final GeneralEnvelope demDestEnv = Envelopes.transform(demCRSToCov, demGridGeom.getEnvelope2D());
-        // coverage envelope
-        final Envelope2D covEnv = covGridGeom.getEnvelope2D();
-
-        /**
-         * if the 2 coverage don't represent the same area we can't compute shadow on coverage.
-         */
-        if (!demDestEnv.intersects(covEnv, true)) {
-            return null;
-        }
-        // get intersection to affect relief on shared area.
-        GeneralEnvelope intersec = new GeneralEnvelope(demDestEnv);
-        intersec.intersect(covEnv);
-
-        final RenderedImage demImage = dem.getRenderedImage();
-
-        // output mnt creation
-        final BufferedImage destMNT = BufferedImages.createImage(covExtend.width, covExtend.height, demImage);
-        intersec = Envelopes.transform(covGridGeom.getGridToCRS(PixelInCell.CELL_CORNER).inverse(), intersec);
-
-        final Rectangle areaIterate = new Rectangle((int) intersec.getMinimum(0), (int) intersec.getMinimum(1), (int) Math.ceil(intersec.getSpan(0)), (int) Math.ceil(intersec.getSpan(1)));
-
-        // dem source to dem dest
-        final MathTransform sourcetodest = MathTransforms.concatenate(dem.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER),
-                                                                      demCRSToCov,
-                                                                      covGridGeom.getGridToCRS(PixelInCell.CELL_CENTER).inverse());
-
-
-        final PixelIterator srcPix   = PixelIteratorFactory.createRowMajorIterator(demImage);
-        final Interpolation interpol = Interpolation.create(srcPix, InterpolationCase.BICUBIC, 2);
-        final Resample resampl       = new Resample(sourcetodest.inverse(), destMNT, areaIterate, interpol, new double[interpol.getNumBands()]);
-        resampl.fillImage();
-
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setCoordinateReferenceSystem(covCRS);
-        gcb.setRenderedImage(destMNT);
-        gcb.setEnvelope(covEnv);
-        return gcb.getGridCoverage2D();
     }
 
     /**
@@ -1074,7 +914,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @see BandSelectProcess
      */
     private static GridCoverage2D selectBand(final GridCoverage2D sourceCoverage, final int[] indices) throws ProcessException {
-        if (sourceCoverage.getNumSampleDimensions() < indices.length) {
+        final List<SampleDimension> sampleDimensions = sourceCoverage.getSampleDimensions();
+
+        if (sampleDimensions.size() < indices.length) {
             //not enough bands in the image
             LOGGER.log(Level.WARNING, "Raster Style define more bands than the data");
             return sourceCoverage;
@@ -1092,7 +934,12 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final GridCoverageBuilder builder = new GridCoverageBuilder();
             builder.setGridCoverage(sourceCoverage);
             builder.setRenderedImage(image);
-            builder.setSampleDimensions();
+
+            final List<SampleDimension> newDims = new ArrayList<>();
+            for (int i : indices) {
+                newDims.add(sampleDimensions.get(i));
+            }
+            builder.setSampleDimensions(newDims);
             return builder.getGridCoverage2D();
         }
     }
@@ -1109,7 +956,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
         // Store min and max value for each band, along with the pixel where we've found the position.
         final double[] minMax = new Rescaler(
-                Interpolation.create(PixelIteratorFactory.createRowMajorIterator(source), InterpolationCase.NEIGHBOR, 2), 0, 255).getMinMaxValue(null);
+                Interpolation.create(new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(source), InterpolationCase.NEIGHBOR, 2), 0, 255).getMinMaxValue(null);
 
         // Compute transformation to apply on pixel values. We want to scale the pixel range in [0..255]
         final int numBands = srcModel.getNumComponents();
@@ -1153,12 +1000,13 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 destination = BufferedImages.createImage(source.getWidth(), source.getHeight(), source);
             }
 
-            final PixelIterator pxIt = PixelIteratorFactory.createRowMajorWriteableIterator(source, destination);
-            int band = 0;
+            final PixelIterator pxIt = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(source);
+            final WritablePixelIterator wIt = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(destination);
+
             while (pxIt.next()) {
-                pxIt.setSampleDouble(pxIt.getSampleDouble() * scale[band] + translation[band]);
-                if (++band >= numBands) {
-                    band = 0;
+                wIt.next();
+                for (int band = 0; band < numBands; band++) {
+                    wIt.setSample(band, pxIt.getSampleDouble(band) * scale[band] + translation[band]);
                 }
             }
             return destination;

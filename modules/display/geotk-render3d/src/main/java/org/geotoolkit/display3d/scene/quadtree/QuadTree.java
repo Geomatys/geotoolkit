@@ -19,7 +19,6 @@ package org.geotoolkit.display3d.scene.quadtree;
 import java.awt.Dimension;
 import java.awt.Point;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.math.XMath;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.cs.PredefinedCS;
@@ -34,7 +33,6 @@ import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.OperationMethod;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -92,7 +90,7 @@ public class QuadTree {
 
                 final GeographicCRS geoCrs = (GeographicCRS) tmpEnv.getCoordinateReferenceSystem();
 
-                final MathTransformFactory mathTransformFactory = FactoryFinder.getMathTransformFactory(null);
+                final MathTransformFactory mathTransformFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
                 final ParameterValueGroup plate_carree = mathTransformFactory.getDefaultParameters("Plate_Carree");
 
                 final CoordinateOperationFactory coordinateOperationFactory = org.geotoolkit.referencing.CRS.getCoordinateOperationFactory(true);

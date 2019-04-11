@@ -17,34 +17,35 @@
 package org.geotoolkit.coverage.memory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
+import org.geotoolkit.coverage.io.AbstractGridCoverageWriter;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.DefaultCoverageResource;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.util.NamesExt;
-import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.GenericName;
 
@@ -153,7 +154,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
         public void setCoverage(GridCoverage2D coverage) {
             this.coverage = coverage;
             final CoverageStoreContentEvent event = fireDataUpdated();
-            ((MemoryCoverageStore)getStore()).forwardEvent(event);
+            ((MemoryCoverageStore)getOriginator()).forwardEvent(event);
         }
 
         @Override
@@ -168,7 +169,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
 
     }
 
-    private static class MemoryCoverageReader extends GridCoverageReader {
+    private static class MemoryCoverageReader extends AbstractGridCoverageReader {
 
         private final MemoryCoverageResource ref;
 
@@ -177,27 +178,27 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
         }
 
         @Override
-        public GeneralGridGeometry getGridGeometry(final int i) throws CoverageStoreException, CancellationException {
-            return (GeneralGridGeometry) ref.coverage.getGridGeometry();
+        public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
+            return (GridGeometry) ref.coverage.getGridGeometry();
         }
 
         @Override
-        public List<GridSampleDimension> getSampleDimensions(final int i) throws CoverageStoreException, CancellationException {
-            return Arrays.asList(ref.coverage.getSampleDimensions());
+        public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+            return ref.coverage.getSampleDimensions();
         }
 
         @Override
-        public GridCoverage read(final int i, final GridCoverageReadParam gcrp) throws CoverageStoreException, CancellationException {
+        public GridCoverage read(final GridCoverageReadParam gcrp) throws CoverageStoreException, CancellationException {
             return ref.coverage;
         }
 
         @Override
-        public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-            return Collections.singletonList(ref.getIdentifier());
+        public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
+            return ref.getIdentifier();
         }
     }
 
-    private static class MemoryCoverageWriter extends GridCoverageWriter{
+    private static class MemoryCoverageWriter extends AbstractGridCoverageWriter {
 
         private final MemoryCoverageResource ref;
 

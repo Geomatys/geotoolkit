@@ -86,12 +86,12 @@ public class DriftPredictor extends AbstractProcess {
          * Multiplication factor to apply on oceanic current and to wind speed when computing the drift speed.
          * Note that the {@code current} + {@code wind} sum does not need to be 1.
          */
-        final double current, wind;
+        public final double current, wind;
 
         /**
          * The probability that the current and wind scales defined by this {@code Weight} instance happen.
          */
-        final double probability;
+        public final double probability;
 
         /**
          * Specifies weights to give to oceanic current and wind speed.
@@ -537,13 +537,7 @@ public class DriftPredictor extends AbstractProcess {
      * @throws IOException if an error occurred while writing the snapshots.
      */
     public final void writeShapshots() throws IOException {
-        for (int i=0; i<outputs.size(); i++) {
-            String filename = "overall.png";
-            if (i != outputs.size() - 1) {
-                filename = "day-" + (i+1) + ".png";
-            }
-            outputs.get(i).writePNG(configuration().directory, filename);
-        }
+        Output.writeSnapshots(configuration.directory, outputs);
     }
 
     /**

@@ -24,9 +24,9 @@ import java.awt.image.*;
 import java.util.Arrays;
 import java.util.Vector;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 
 /**
  *
@@ -425,11 +425,12 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
                     final Raster r = tilecache.getTile(this, tx, ty);
                     rect.setBounds(mx, my, tileWidth, tileHeight);
                     //recopie
-                    final PixelIterator copix = PixelIteratorFactory.createDefaultWriteableIterator(wr, wr, rect);
-                    final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(r, rect);
+                    final WritablePixelIterator copix = new PixelIterator.Builder().setRegionOfInterest(rect).createWritable(wr);
+                    final PixelIterator pix = new PixelIterator.Builder().setRegionOfInterest(rect).create(r);
+                    final double[] pixel = new double[copix.getNumBands()];
                     while (copix.next()) {
                         pix.next();
-                        copix.setSampleDouble(pix.getSampleDouble());
+                        copix.setPixel(pix.getPixel(pixel));
                     }
                     mx += tileWidth;
                 }
@@ -468,11 +469,12 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
                     final int imy = Math.min(ry + rh, minY + (ty + 1 - minTileGridY) * tileHeight);
                     area.setBounds(ix, iy, imx-ix, imy-iy);
                     //recopie
-                    final PixelIterator copix = PixelIteratorFactory.createDefaultWriteableIterator(wr, wr, area);
-                    final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(r, area);
+                    final WritablePixelIterator copix = new PixelIterator.Builder().setRegionOfInterest(area).createWritable(wr);
+                    final PixelIterator pix = new PixelIterator.Builder().setRegionOfInterest(area).create(r);
+                    final double[] pixel = new double[copix.getNumBands()];
                     while (copix.next()) {
                         pix.next();
-                            copix.setSampleDouble(pix.getSampleDouble());
+                        copix.setPixel(pix.getPixel(pixel));
                     }
                 }
             }

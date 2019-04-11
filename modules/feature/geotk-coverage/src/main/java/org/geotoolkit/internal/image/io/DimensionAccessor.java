@@ -27,17 +27,17 @@ import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
 import javax.measure.Unit;
 
-import org.opengis.util.InternationalString;
-import org.opengis.coverage.SampleDimension;
 import org.opengis.metadata.content.TransferFunctionType;
 
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+import org.opengis.util.GenericName;
 
 
 /**
@@ -85,25 +85,23 @@ public final class DimensionAccessor extends MetadataNodeAccessor {
      * @since 3.17
      */
     public void setDimension(final SampleDimension band, final Locale locale) {
-        if (band instanceof GridSampleDimension) {
-            setUserObject(band);
-        }
-        final InternationalString description = band.getDescription();
+        setUserObject(band);
+        final GenericName description = band.getName();
         if (description != null) {
-            setDescriptor(description.toString(locale));
+            setDescriptor(description.toString());
         }
-        final double minimum = band.getMinimumValue();
-        final double maximum = band.getMaximumValue();
+        final double minimum = SampleDimensionUtils.getMinimumValue(band);
+        final double maximum = SampleDimensionUtils.getMaximumValue(band);
         setValueRange(minimum, maximum);
-        double[] fillValues = band.getNoDataValues();
-        if (fillValues == null && band instanceof GridSampleDimension) {
+        double[] fillValues = SampleDimensionUtils.getNoDataValues(band);
+        if (fillValues == null) {
             /*
              * This may happen if the sample dimension is geophysics.  We will accept the fill
              * values from the non-geophysics view if they are outside the range of geophysics
              * sample values, so there is no possible confusion. This is needed for example in
              * NetCDF files, where "fillValues" attribute exists even for geophysics data.
              */
-            fillValues = ((GridSampleDimension) band).geophysics(false).getNoDataValues();
+            fillValues = SampleDimensionUtils.getNoDataValues(band.forConvertedValues(false));
             if (fillValues != null) {
                 int n = 0;
                 for (int i=0; i<fillValues.length; i++) {
@@ -116,8 +114,10 @@ public final class DimensionAccessor extends MetadataNodeAccessor {
             }
         }
         setFillSampleValues(fillValues);
-        setTransfertFunction(band.getScale(), band.getOffset(), null); // TODO: declare transfer function.
-        setUnits(band.getUnits());
+        band.getTransferFunctionFormula().ifPresent((f) -> {
+            setTransfertFunction(f.getScale(), f.getOffset(), f.getType());
+        });
+        band.getUnits().ifPresent((u) -> setUnits(u));
     }
 
     /**
@@ -404,12 +404,12 @@ nextPixel:          do {
      * @param i
      * @return
      */
-    public GridSampleDimension getGridSampleDimension(int i) {
+    public SampleDimension getSampleDimension(int i) {
         selectParent();
         selectChild(i);
         final Object userObject = getUserObject();
-        if (userObject != null && userObject instanceof GridSampleDimension) {
-            return (GridSampleDimension) userObject;
+        if (userObject != null && userObject instanceof SampleDimension) {
+            return (SampleDimension) userObject;
         }
         return null;
     }
@@ -419,18 +419,18 @@ nextPixel:          do {
      *
      * @return list of SampleDimension or null
      */
-    public List<GridSampleDimension> getGridSampleDimensions() {
+    public List<SampleDimension> getSampleDimensions() {
         selectParent();
         final Object userObj = getUserObject();
-        if (userObj != null && userObj instanceof List) return (List<GridSampleDimension>) userObj;
+        if (userObj != null && userObj instanceof List) return (List<SampleDimension>) userObj;
 
         final int nbC = childCount();
         if (nbC == 0) return null;
-        final List<GridSampleDimension> gsD = new ArrayList<>(nbC);
+        final List<SampleDimension> gsD = new ArrayList<>(nbC);
         for (int i = 0; i < nbC; i++) {
             selectChild(i);
             final Object obj = getUserObject();
-            if (obj != null) gsD.add((GridSampleDimension) obj);
+            if (obj != null) gsD.add((SampleDimension) obj);
         }
         return (gsD.isEmpty()) ? null : gsD;
     }

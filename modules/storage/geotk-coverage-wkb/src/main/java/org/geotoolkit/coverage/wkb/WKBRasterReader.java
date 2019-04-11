@@ -39,7 +39,7 @@ import static org.geotoolkit.coverage.wkb.WKBRasterConstants.*;
 import org.geotoolkit.io.LEDataInputStream;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.image.color.ScaledColorSpace;
+import org.apache.sis.internal.raster.ColorModelFactory;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.operation.MathTransform;
@@ -335,7 +335,7 @@ public class WKBRasterReader {
 
 
     private static ColorModel createGrayScaleColorModel(int dataType, int nbBand, int visibleBand, double min, double max) {
-        final ColorSpace colors = new ScaledColorSpace(nbBand, visibleBand, min, max);
+        final ColorSpace colors = ColorModelFactory.createColorSpace(nbBand, visibleBand, min, max);
         final ColorModel cm = new ComponentColorModel(colors, false, false, Transparency.OPAQUE, dataType);
         return cm;
     }

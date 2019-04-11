@@ -30,12 +30,14 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Lookup and caches font definitions for faster retrieval
@@ -45,73 +47,71 @@ import java.util.logging.Logger;
  * @module
  */
 public class FontCache {
+
     /** The logger for the rendering module. */
-    private static final Logger LOGGER = org.apache.sis.util.logging.Logging
-            .getLogger("org.geotoolkit.renderer.style");
+    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.renderer.style");
 
     private static FontCache defaultInstance;
 
     /** Set containing the font families known of this machine */
-    private Set<String> fontFamilies = null;
+    private Set<String> fontFamilies;
 
     /** Fonts already loaded */
-    private Map<String, Font> loadedFonts = new HashMap<String, Font>();
+    private final Map<String, Font> loadedFonts = new ConcurrentHashMap<>();
 
     /**
-     * Returns the default, system wide font cache
+     * @return the default, system wide font cache
      */
-    public static FontCache getDefaultInsance() {
+    public static synchronized FontCache getDefaultInsance() {
         if (defaultInstance == null) {
             defaultInstance = new FontCache();
-            defaultInstance.loadedFonts.put(IconBuilder.FONT.getFamily(),IconBuilder.FONT);
+            IconBuilder.FONT.ifPresent(font -> {
+                // HACK for JMDA-361 : Font awesome object naming differs from received one. TODO: find a better strategy
+                defaultInstance.loadedFonts.put(font.getFamily(), font);
+                defaultInstance.loadedFonts.put(font.getPSName(), font);
+                defaultInstance.loadedFonts.put(font.getName(), font);
+                defaultInstance.loadedFonts.put("FontAwesome", font);
+                defaultInstance.loadedFonts.put("Font Awesome", font);
+            });
         }
         return defaultInstance;
     }
 
-    public synchronized Font getFont(final String requestedFont) {
-        // make sure we load the known font families once
-        if (fontFamilies == null) {
-            final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            fontFamilies = new HashSet<String>(Arrays.asList(ge.getAvailableFontFamilyNames()));
-
-            if (LOGGER.isLoggable(Level.FINEST)) {
-                LOGGER.finest("there are " + fontFamilies.size() + " fonts available");
-            }
-        }
-
+    public Font getFont(final String requestedFont) {
         // see if the font has already been loaded
-        if (LOGGER.isLoggable(Level.FINEST)) {
-            LOGGER.finest("trying to load " + requestedFont);
-        }
+        LOGGER.log(Level.FINEST, "trying to load {0}", requestedFont);
 
-        if (loadedFonts.containsKey(requestedFont)) {
+        Font result = loadedFonts.get(requestedFont);
+        if (result != null) {
             return loadedFonts.get(requestedFont);
         }
 
-        if (LOGGER.isLoggable(Level.FINEST)) {
-            LOGGER.finest("not already loaded");
+        LOGGER.finest("not already loaded");
+
+        // if not, try to load from the java runtime or as an URL. We start by checking system font families are loaded.
+        synchronized (this) {
+            if (fontFamilies == null) {
+                final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+                fontFamilies = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(ge.getAvailableFontFamilyNames())));
+
+                LOGGER.log(Level.FINEST, "there are {0} fonts available", fontFamilies.size());
+            }
         }
 
-        // if not, try to load from the java runtime or as an URL
-        final Font javaFont;
         if (fontFamilies.contains(requestedFont)) {
-            javaFont = new Font(requestedFont, Font.PLAIN, 12);
+            result = new Font(requestedFont, Font.PLAIN, 12);
         } else {
-            if (LOGGER.isLoggable(Level.FINEST)) {
-                LOGGER.finest("not a system font");
-            }
-            javaFont = loadFromUrl(requestedFont);
+            LOGGER.finest("not a system font");
+            result = loadFromUrl(requestedFont);
         }
 
         // log the result and exit
-        if(javaFont == null) {
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine("Could not load font " + requestedFont);
-            }
+        if(result == null) {
+            LOGGER.log(Level.FINE, "Could not load font {0}", requestedFont);
         } else {
-            loadedFonts.put(requestedFont, javaFont);
+            loadedFonts.put(requestedFont, result);
         }
-        return javaFont;
+        return result;
     }
 
     /**

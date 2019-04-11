@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.processing.coverage.compose;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -27,6 +25,8 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.List;
 import java.util.Map.Entry;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -40,10 +40,9 @@ import org.apache.sis.referencing.operation.matrix.Matrix3;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import static org.apache.sis.referencing.operation.transform.MathTransforms.concatenate;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.GeometricUtilities.WrapResolution;
@@ -53,8 +52,10 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.GridFactory;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.referencing.ReferencingUtilities;
 import static org.geotoolkit.processing.coverage.compose.ComposeDescriptor.*;
+import org.geotoolkit.referencing.ReferencingUtilities;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
@@ -117,7 +118,7 @@ public class Compose extends AbstractProcess {
         final List<ParameterValueGroup> imageParams = inputParameters.groups(LAYER_PARAM.getName().getCode());
 
         RenderedImage outImageReference = null;
-        GridSampleDimension[] sampleDimensions = null;
+        SampleDimension[] sampleDimensions = null;
 
         final int nbCoverage = imageParams.size();
         final GridCoverage2D[] inGridCoverages = new GridCoverage2D[nbCoverage];
@@ -139,7 +140,7 @@ public class Compose extends AbstractProcess {
             inSizes[i][1] = covImg.getHeight()-1;
             if (outImageReference == null) {
                 outImageReference = coverage.getRenderedImage();
-                sampleDimensions = coverage.getSampleDimensions();
+                sampleDimensions = coverage.getSampleDimensions().toArray(new SampleDimension[0]);
             }
 
             includeGeometries[i] = covParam.getValue(INCLUDE_PARAM);
@@ -163,8 +164,8 @@ public class Compose extends AbstractProcess {
         } catch (TransformException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-        final int outWidth = outGridGeom.getExtent().getSpan(0);
-        final int outHeight = outGridGeom.getExtent().getSpan(1);
+        final int outWidth = Math.toIntExact(outGridGeom.getExtent().getSize(0));
+        final int outHeight = Math.toIntExact(outGridGeom.getExtent().getSize(1));
 
         //convert and convert all geometries to output crs as a bit mask
         final WritableRaster[] clips = new WritableRaster[nbCoverage];
@@ -292,7 +293,11 @@ public class Compose extends AbstractProcess {
 
         for (GridCoverage2D coverage : coverages) {
             final GridGeometry2D gridGeometry = coverage.getGridGeometry();
-            final double[] res = gridGeometry.getResolution();
+            double[] res = null;
+            try {
+                res = gridGeometry.getResolution(true);
+            } catch (IncompleteGridGeometryException ex) {
+            }
             final Envelope2D covEnv = gridGeometry.getEnvelope2D();
 
             final double[] cdtRes = ReferencingUtilities.convertResolution(covEnv, res, crs);
@@ -313,8 +318,8 @@ public class Compose extends AbstractProcess {
         );
         final LinearTransform gridToGeo = MathTransforms.linear(matrix);
 
-        final GridEnvelope2D extent = new GridEnvelope2D(0, 0, outWidth, outHeight);
-        return new GridGeometry2D(extent, PixelOrientation.UPPER_LEFT, gridToGeo, crs, null);
+        final GridExtent extent = new GridExtent(outWidth, outHeight);
+        return new GridGeometry2D(extent, PixelOrientation.UPPER_LEFT, gridToGeo, crs);
     }
 
     @FunctionalInterface

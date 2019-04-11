@@ -21,33 +21,25 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.TimeZone;
 import java.util.List;
 import java.util.SortedSet;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.measure.Unit;
-
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.util.FactoryException;
-
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultEngineeringCRS;
 import org.apache.sis.referencing.cs.AbstractCS;
 import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.referencing.datum.DefaultEngineeringDatum;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.referencing.CommonCRS;
-
 import org.geotoolkit.client.CapabilitiesException;
-import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.temporal.util.PeriodUtilities;
@@ -55,8 +47,11 @@ import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.Style;
-import org.apache.sis.measure.Units;
-import org.geotoolkit.referencing.ReferencingUtilities;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.util.FactoryException;
 
 /**
  * Convinient WMS methods.
@@ -275,7 +270,7 @@ public final class WMSUtilities {
                         for (int i = 0; i < dimStrArray.length; i++) {
                             dblValues[i] = Double.valueOf(dimStrArray[i]).doubleValue();
                         }
-                        dimCRS = DiscreteReferencingFactory.createDiscreteCRS(dimCRS, dblValues);
+                        dimCRS = dimCRS;
                         minVal = dblValues[0];
                         maxVal = dblValues[dblValues.length - 1];
                     }else{
@@ -312,7 +307,7 @@ public final class WMSUtilities {
                         for(int i=0;i<values.length;i++){
                             values[i] = dblValues.get(i);
                         }
-                        dimCRS = DiscreteReferencingFactory.createDiscreteCRS(dimCRS, values);
+                        dimCRS = dimCRS;
                         if(values.length>0){
                             minVal = values[0];
                             maxVal = values[values.length - 1];

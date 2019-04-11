@@ -26,10 +26,8 @@ import java.util.List;
 import java.util.logging.Level;
 import javax.measure.Unit;
 import javax.xml.bind.JAXBException;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
-
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.sld.MutableNamedLayer;
 import org.geotoolkit.sld.MutableNamedStyle;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
@@ -38,7 +36,6 @@ import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.apache.sis.util.iso.SimpleInternationalString;
-
 import org.opengis.filter.expression.Expression;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.util.FactoryException;
@@ -72,6 +69,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.PropertyIsBetween;
+import org.opengis.style.StyleFactory;
 
 /**
  * Test class for XMLUtilities.
@@ -86,11 +84,8 @@ public class XMLUtilitiesTest {
     private static final MutableSLDFactory SLD_FACTORY;
 
     static{
-        final Hints hints = new Hints();
-        hints.put(Hints.STYLE_FACTORY, MutableStyleFactory.class);
-        hints.put(Hints.FILTER_FACTORY, FilterFactory2.class);
-        STYLE_FACTORY = (MutableStyleFactory)FactoryFinder.getStyleFactory(hints);
-        FILTER_FACTORY = (FilterFactory2) FactoryFinder.getFilterFactory(hints);
+        STYLE_FACTORY = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+        FILTER_FACTORY = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
         SLD_FACTORY = new DefaultSLDFactory();
     }
 
@@ -468,7 +463,7 @@ public class XMLUtilitiesTest {
     }
 
     private static PropertyIsBetween createFilter(){
-       FilterFactory ff = FactoryFinder.getFilterFactory(null);
+       final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
        Expression field = ff.property("aFiled");
        Expression lower = ff.literal(50d);
        Expression upper = ff.literal(100d);

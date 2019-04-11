@@ -18,9 +18,9 @@ package org.geotoolkit.storage.timed;
 
 import java.nio.file.Path;
 import java.util.logging.Logger;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 
 /**
@@ -73,7 +73,7 @@ class TimedUtils {
     static class CloseableCoverageReader extends ImageCoverageReader implements AutoCloseable {
 
         @Override
-        public void close() throws CoverageStoreException {
+        public void close() throws DataStoreException {
             dispose();
         }
     }

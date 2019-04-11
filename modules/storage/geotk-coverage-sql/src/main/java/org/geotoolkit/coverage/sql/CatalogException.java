@@ -33,7 +33,7 @@ import org.geotoolkit.resources.Errors;
  * Base class for exceptions that may occur while querying the catalog.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @author Rémi Eve (IRD)
+ * @author Rémi Eve (Geomatys)
  */
 public class CatalogException extends CoverageStoreException {
     /**
@@ -64,52 +64,45 @@ public class CatalogException extends CoverageStoreException {
     /**
      * Creates an exception with no cause and no details message.
      */
-    public CatalogException() {
+    CatalogException() {
         super();
     }
 
     /**
      * Creates an exception with the specified details message.
      *
-     * @param message The detail message.
+     * @param message  the detail message.
      */
-    public CatalogException(final String message) {
+    CatalogException(final String message) {
         super(message);
     }
 
     /**
      * Creates an exception with the specified cause and no details message.
      *
-     * @param cause The cause for this exception.
+     * @param cause  the cause for this exception.
      */
-    public CatalogException(final Exception cause) {
+    CatalogException(final Exception cause) {
         super(cause);
     }
 
     /**
      * Creates an exception with the specified details message and cause.
      *
-     * @param message The detail message.
-     * @param cause The cause for this exception.
+     * @param  message  the detail message.
+     * @param  cause    the cause for this exception.
      */
-    public CatalogException(final String message, final Exception cause) {
+    CatalogException(final String message, final Exception cause) {
         super(message, cause);
-    }
-
-    /**
-     * Returns {@code true} if {@link #setMetadata} has been invoked with non-null values.
-     */
-    final boolean isMetadataInitialized() {
-        return (table != null) || (column != null) || (key != null);
     }
 
     /**
      * Sets the table and column names from the {@linkplain ResultSetMetaData result set metadata}.
      *
-     * @param results The result set in which a problem occurred, or {@code null} if none.
-     * @param column  The column index where a problem occurred (number starts at 1), or {@code 0} if unknown.
-     * @param key     The key value for the record where a problem occurred, or {@code null} if none.
-     *                The key shall be either a {@link String} or {@link Integer} instance.
+     * @param  results  the result set in which a problem occurred, or {@code null} if none.
+     * @param  column   the column index where a problem occurred (number starts at 1), or {@code 0} if unknown.
+     * @param  key      the key value for the record where a problem occurred, or {@code null} if none.
+     *                  the key shall be either a {@link String} or {@link Integer} instance.
      * @throws SQLException if the metadata can't be read from the result set.
      */
     final void setMetadata(final ResultSet results, final int column, final Object key)

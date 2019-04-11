@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.image.io.mosaic;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Transparency;
@@ -304,19 +303,8 @@ public final strictfp class MosaicReadWriteTest extends ImageTestBase {
     @org.junit.Ignore
     public void testTransparency() throws IOException {
         final TileManager targetMosaic = builder(1, 6).createTileManager();
-        /*
-         * The colors to replace by transparent pixels. There is a few occurrences of this color
-         * on the last row of the source image. This artifact provides a convenient opportunity
-         * for testing this operation. Note only a few black strips on the last row will be made
-         * transparent - some will not be changed if they do not appear on a corner of a source
-         * tile.
-         */
-        final Color[] opaqueColors = {
-            Color.BLACK,
-        };
         final MosaicImageWriter writer = new MosaicImageWriter();
         final MosaicImageWriteParam param = writer.getDefaultWriteParam();
-        param.setOpaqueBorderFilter(opaqueColors);
         writer.setOutput(targetMosaic);
         writer.writeFromInput(sourceMosaic, param);
         writer.dispose();

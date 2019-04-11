@@ -22,7 +22,6 @@ import java.awt.geom.AffineTransform;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.geotoolkit.lang.Static;
-import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 
@@ -40,37 +39,6 @@ public final class MathTransforms extends Static {
      * Do not allow instantiation of this class.
      */
     private MathTransforms() {
-    }
-
-    /**
-     * Creates an affine transform that apply the same linear conversion for all dimensions.
-     * For each dimension, input values <var>x</var> are converted into output values
-     * <var>y</var> using the following equation:
-     *
-     * <blockquote><var>y</var> &nbsp;=&nbsp; <var>x</var> &times; {@code scale} + {@code offset}</blockquote>
-     *
-     * @param dimension The input and output dimensions.
-     * @param scale  The {@code scale}  term in the linear equation.
-     * @param offset The {@code offset} term in the linear equation.
-     * @return The linear transform for the given scale and offset.
-     *
-     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
-     */
-    @Deprecated
-    public static LinearTransform linear(final int dimension, final double scale, final double offset) {
-        ensureStrictlyPositive("dimension", dimension);
-        if (offset == 0 && scale == 1) {
-            return org.apache.sis.referencing.operation.transform.MathTransforms.identity(dimension);
-        }
-        if (dimension == 1) {
-            return org.apache.sis.referencing.operation.transform.MathTransforms.linear(scale, offset);
-        }
-        final Matrix matrix = Matrices.createIdentity(dimension + 1);
-        for (int i=0; i<dimension; i++) {
-            matrix.setElement(i, i, scale);
-            matrix.setElement(i, dimension, offset);
-        }
-        return org.apache.sis.referencing.operation.transform.MathTransforms.linear(matrix);
     }
 
     /**

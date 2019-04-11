@@ -17,13 +17,13 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import org.apache.sis.internal.system.DefaultFactories;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.datum.DatumFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.referencing.operation.transform.MathTransformTestCase;
 
 import static org.geotoolkit.test.Assert.*;
@@ -53,9 +53,9 @@ public abstract strictfp class TransformTestBase extends MathTransformTestCase {
      * @param hints The hints to use for fetching factories, or {@code null} for the default ones.
      */
     protected TransformTestBase(final Class<? extends MathTransform> type, final Hints hints) {
-        this(FactoryFinder.getDatumFactory(hints),
-             FactoryFinder.getCRSFactory(hints),
-             FactoryFinder.getMathTransformFactory(hints));
+        this(DefaultFactories.forBuildin(DatumFactory.class),
+             DefaultFactories.forBuildin(CRSFactory.class),
+             DefaultFactories.forBuildin(MathTransformFactory.class));
         assertTrue("Tests should be run with assertions enabled.", type.desiredAssertionStatus());
     }
 

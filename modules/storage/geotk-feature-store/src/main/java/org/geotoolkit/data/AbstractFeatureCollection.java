@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
@@ -42,7 +43,6 @@ import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
@@ -58,6 +58,7 @@ import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.feature.PropertyType;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
@@ -210,7 +211,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
     public void update(Feature feature) throws DataStoreException {
         if(feature == null) return;
         FeatureId fid = FeatureExt.getId(feature);
-        final Filter filter = FactoryFinder.getFilterFactory(null).id(Collections.singleton(fid));
+        final Filter filter = DefaultFactories.forBuildin(FilterFactory.class).id(Collections.singleton(fid));
 
         final Map<String,Object> map = new HashMap<>();
         for(PropertyType pt : feature.getType().getProperties(true)){

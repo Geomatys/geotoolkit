@@ -39,7 +39,6 @@ import org.geotoolkit.display2d.container.stateless.StatelessCoverageLayerJ2D;
 import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.process.Process;
@@ -58,6 +57,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.Feature;
 
 /**
@@ -236,7 +236,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                     }
                 }else if(coverageStyle != null){
                     //paint with the style
-                    final CoverageMapLayer covlayer = MapBuilder.createCoverageLayer(coverage, coverageStyle, "test");
+                    final MapLayer covlayer = MapBuilder.createCoverageLayer(coverage, coverageStyle, "test");
                     final StatelessCoverageLayerJ2D graphic = new StatelessCoverageLayerJ2D(getCanvas(), covlayer);
                     isRendered = graphic.paint(context);
                 }

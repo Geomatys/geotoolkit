@@ -19,6 +19,7 @@ package org.geotoolkit.map;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.geometry.Envelope;
 
@@ -33,6 +34,11 @@ public class EmptyMapLayer extends AbstractMapLayer{
 
     EmptyMapLayer(final MutableStyle style){
         super(style);
+    }
+
+    @Override
+    public Resource getResource() {
+        return null;
     }
 
     @Override

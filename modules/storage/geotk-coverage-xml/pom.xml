@@ -24,7 +24,7 @@
     <name>Coverage XML</name>
 
     <description>
-    File-system pyramidal coverage store. Uses XML files to describe its structure (mosaics, CRS, etc.) 
+    File-system pyramidal coverage store. Uses XML files to describe its structure (mosaics, CRS, etc.)
     </description>
 
     <licenses>
@@ -94,12 +94,6 @@
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-coverage-geotiff</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.media</groupId>
-            <artifactId>jai_codec</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -73,7 +73,7 @@ public class TTFMarkFactory extends MarkFactory {
 
         Font font = FontCache.getDefaultInsance().getFont(fontPath);
         if (font == null) {
-            throw new PortrayalException("Unkown font "+fontPath);
+            throw new PortrayalException("Unknown font "+fontPath);
         }
 
         final GlyphVector glyph = font.createGlyphVector(FONT_RENDER_CONTEXT,new String(new int[]{markIndex}, 0, 1));
@@ -90,5 +90,4 @@ public class TTFMarkFactory extends MarkFactory {
                 -bounds.getCenterY()*scale);
         return atrs.createTransformedShape(shape);
     }
-
 }

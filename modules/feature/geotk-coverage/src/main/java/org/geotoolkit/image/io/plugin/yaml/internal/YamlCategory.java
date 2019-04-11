@@ -19,7 +19,7 @@ package org.geotoolkit.image.io.plugin.yaml.internal;
 import java.util.Locale;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.Category;
+import org.apache.sis.coverage.Category;
 
 /**
  * Equivalent class of {@link Category} use during Yaml binding.
@@ -84,7 +84,7 @@ public class YamlCategory {
     public YamlCategory(final Category category) {
         ArgumentChecks.ensureNonNull("geotk category", category);
         name = category.getName().toString(Locale.ENGLISH);
-        final NumberRange numRange = category.getRange();
+        final NumberRange numRange = category.getSampleRange();
 
         final double tempminSampleValue = numRange.getMinDouble();
         final boolean tempisMinInclusive = numRange.isMinIncluded();
@@ -233,6 +233,4 @@ public class YamlCategory {
         ArgumentChecks.ensureNonNull("value", value);
         this.value = value;
     }
-
-
 }

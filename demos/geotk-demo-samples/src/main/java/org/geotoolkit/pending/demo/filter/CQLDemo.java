@@ -2,17 +2,16 @@
 
 package org.geotoolkit.pending.demo.filter;
 
-import java.util.List;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.pending.demo.Demos;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 
 public class CQLDemo {
 
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     public static void main(String[] args) throws CQLException {
         Demos.init();

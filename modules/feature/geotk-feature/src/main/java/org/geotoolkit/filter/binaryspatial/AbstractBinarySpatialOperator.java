@@ -17,42 +17,37 @@
  */
 package org.geotoolkit.filter.binaryspatial;
 
-import org.locationtech.jts.geom.Geometry;
-
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Unit;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.measure.Units;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
-
-import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.util.logging.Logging;
-
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.spatial.BinarySpatialOperator;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-
+import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.opengis.coverage.Coverage;
 import org.apache.sis.util.Utilities;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
+import org.geotoolkit.geometry.jts.JTS;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.spatial.BinarySpatialOperator;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * Immutable abstract binary spatial operator.
@@ -116,18 +111,18 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
         }
 
         Geometry candidate;
-        if(value instanceof Coverage){
+        if(value instanceof GridCoverage){
             //use the coverage envelope
-            final Coverage coverage = (Coverage) value;
+            final GridCoverage coverage = (GridCoverage) value;
             candidate = JTS.toGeometry(coverage.getEnvelope());
         }else if(value instanceof GridCoverageReader){
             //use the coverage envelope
             final GridCoverageReader reader = (GridCoverageReader) value;
             try{
-                GeneralGridGeometry gg = reader.getGridGeometry(0);
+                GridGeometry gg = reader.getGridGeometry();
                 candidate = JTS.toGeometry(gg.getEnvelope());
                 candidate.setUserData(gg.getCoordinateReferenceSystem());
-            }catch(CoverageStoreException ex){
+            }catch(DataStoreException ex){
                 LOGGER.log(Level.INFO, "Could not convert expression : "+exp+" to geometry for object : "+object+"\n"+ex.getMessage(), ex);
                 candidate = null;
             }

@@ -18,8 +18,7 @@ package org.geotoolkit.image.io.plugin.yaml.internal;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.opengis.coverage.SampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 
 /**
  * Equivalent class of {@link YamlBuilder} use during Yaml binding.
@@ -62,7 +61,7 @@ public class YamlImageInfo {
         final YamlBuilder yb = (YamlBuilder) yamlWB;
         this.sampleDimension = new ArrayList<YamlSampleDimension>();
         for (final SampleDimension gsd : yb.getSampleDimensions()) {
-            this.sampleDimension.add(new YamlSampleDimension(GridSampleDimension.castOrCopy(gsd)));
+            this.sampleDimension.add(new YamlSampleDimension(gsd));
         }
     }
 

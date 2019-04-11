@@ -25,17 +25,18 @@ import java.nio.charset.Charset;
 import java.util.Locale;
 import javax.imageio.ImageTypeSpecifier;
 
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.palette.Palette;
 import org.geotoolkit.image.palette.PaletteFactory;
 
 
 /**
- * A palette which build its {@link IndexColorModel} from a {@link GridSampleDimension}.
+ * A palette which build its {@link IndexColorModel} from a {@link SampleDimension}.
  * Instances of this class are created only by the {@link #FACTORY} singleton. The factory
- * needs a {@link GridSampleDimension} argument, which is passed in the {@link #BANDS}
+ * needs a {@link SampleDimension} argument, which is passed in the {@link #BANDS}
  * static variable. This is ugly, but there is no API in the current {@link PaletteFactory}
  * class for building a palette from a sample dimension.
  *
@@ -44,14 +45,10 @@ import org.geotoolkit.image.palette.PaletteFactory;
  *        and intentionally avoid the coverage API since its package is about image I/O. On
  *        the contrary, this <code>SampleDimensionPalette</code> does not read any file, so
  *        it is a bit a departure compared to the usual factory. In addition, creating the
- *        required <code>GridSampleDimension</code> objects require a bit of non-trivial code
+ *        required <code>SampleDimension</code> objects require a bit of non-trivial code
  *        (provided in <code>ImageCoverageReader</code>) which is out of scope of Image I/O.}
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
- *
- * @since 3.11
- * @module
  */
 final class SampleDimensionPalette extends Palette {
     /**
@@ -66,8 +63,8 @@ final class SampleDimensionPalette extends Palette {
         public Palette getPalette(final String name, final int lower, final int upper,
                 final int size, final int numBands, final int visibleBand)
         {
-            final GridSampleDimension[] bands = BANDS.get();
-            final GridSampleDimension band = bands[Math.min(visibleBand, bands.length-1)];
+            final SampleDimension[] bands = BANDS.get();
+            final SampleDimension band = bands[Math.min(visibleBand, bands.length-1)];
             if (isNullOrEmpty(band.getCategories())) {
                 return super.getPalette(name, lower, upper, size, numBands, visibleBand);
             }
@@ -80,12 +77,12 @@ final class SampleDimensionPalette extends Palette {
     /**
      * Workaround for passing the bands argument to {@code FACTORY.getPalette(...)}.
      */
-    static final ThreadLocal<GridSampleDimension[]> BANDS = new ThreadLocal<>();
+    static final ThreadLocal<SampleDimension[]> BANDS = new ThreadLocal<>();
 
     /**
      * The sample dimension to use for creating the color model.
      */
-    private final GridSampleDimension band;
+    private final SampleDimension band;
 
     /**
      * Creates a new palette for the given band.
@@ -94,7 +91,7 @@ final class SampleDimensionPalette extends Palette {
      * @param name    The palette name (actually ignored).
      */
     private SampleDimensionPalette(final PaletteFactory factory, final String name,
-            final GridSampleDimension band, final int numBands, final int visibleBand)
+            final SampleDimension band, final int numBands, final int visibleBand)
     {
         super(factory, name, numBands, visibleBand);
         this.band = band;
@@ -106,9 +103,9 @@ final class SampleDimensionPalette extends Palette {
      */
     @Override
     protected ImageTypeSpecifier createImageTypeSpecifier() throws IOException {
-        final ColorModel cm = band.getColorModel(visibleBand, numBands);
+        final ColorModel cm = SampleDimensionUtils.getColorModel(band, visibleBand, numBands);
         // 'cm' should not be null because the above factory checked
-        // that the GridSampleDimension has at least one category.
+        // that the SampleDimension has at least one category.
         return new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1));
     }
 
@@ -140,6 +137,6 @@ final class SampleDimensionPalette extends Palette {
      */
     @Override
     public String toString() {
-        return "Palette[" + band.getDescription() + ']';
+        return "Palette[" + band.getName() + ']';
     }
 }

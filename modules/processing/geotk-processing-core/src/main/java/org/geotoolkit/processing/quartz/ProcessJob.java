@@ -50,6 +50,8 @@ public class ProcessJob implements InterruptableJob {
 
     private Process process = null;
 
+    private String jobId = null;
+
     private final List<ProcessListener> listeners = new ArrayList<>();
 
     public void addListener(ProcessListener listener){
@@ -84,12 +86,7 @@ public class ProcessJob implements InterruptableJob {
         process = (Process) objProcess;
 
         if(process == null){
-            final ProcessDescriptor desc;
-            try{
-                desc = ProcessFinder.getProcessDescriptor(factoryId, processId);
-            }catch(NoSuchIdentifierException ex){
-                throw new JobExecutionException("Process not found for id : " + objFactoryId+"."+objProcessId);
-            }
+            final ProcessDescriptor desc = getProcessDescriptor(factoryId, processId);
             process = desc.createProcess(params);
         }
         final StoreExceptionMonitor monitor = new StoreExceptionMonitor();
@@ -113,11 +110,35 @@ public class ProcessJob implements InterruptableJob {
 
     }
 
+    /**
+     * Method to retrieve a process descriptor (overriden in subProject).
+     *
+     * @param factoryId
+     * @param processId
+     * @return
+     * @throws NoSuchIdentifierException
+     */
+    protected ProcessDescriptor getProcessDescriptor(final String factoryId, final String processId) throws JobExecutionException {
+        try {
+            return ProcessFinder.getProcessDescriptor(factoryId, processId);
+        } catch (NoSuchIdentifierException ex) {
+            throw new JobExecutionException("Process not found for id : " + factoryId + "." + processId);
+        }
+    }
+
     @Override
     public void interrupt() throws UnableToInterruptJobException {
         if (process != null) {
             ((AbstractProcess) process).cancelProcess();
         }
+    }
+
+    public String getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(String jobId) {
+        this.jobId = jobId;
     }
 
     private final class StoreExceptionMonitor implements ProcessListener{

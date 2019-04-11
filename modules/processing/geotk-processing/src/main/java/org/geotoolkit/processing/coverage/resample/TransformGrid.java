@@ -22,7 +22,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 
-import org.opengis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransform2D;

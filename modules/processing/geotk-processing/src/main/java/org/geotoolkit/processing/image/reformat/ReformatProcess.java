@@ -29,9 +29,8 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.util.Hashtable;
 import javax.media.jai.RasterFactory;
-
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -84,17 +83,12 @@ public class ReformatProcess extends AbstractProcess {
         final BufferedImage resultImage = new BufferedImage(graycm, raster, false, new Hashtable<Object, Object>());
 
         //copy datas
-        final PixelIterator readIte = PixelIteratorFactory.createDefaultIterator(inputImage);
-        final PixelIterator writeIte = PixelIteratorFactory.createDefaultWriteableIterator(raster, raster);
+        final PixelIterator readIte = new PixelIterator.Builder().create(inputImage);
+        final WritablePixelIterator writeIte = new PixelIterator.Builder().createWritable(raster);
 
-        int band = 0;
         while (readIte.next() && writeIte.next()) {
-            band = 0;
-            writeIte.setSampleDouble(readIte.getSampleDouble());
-            while (++band != nbBand) {
-                readIte.next();
-                writeIte.next();
-                writeIte.setSampleDouble(readIte.getSampleDouble());
+            for (int b = 0; b < nbBand; b++) {
+                writeIte.setSample(b, readIte.getSampleDouble(b));
             }
         }
 

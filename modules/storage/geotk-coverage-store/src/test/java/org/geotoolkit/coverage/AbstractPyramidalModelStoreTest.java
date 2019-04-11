@@ -32,18 +32,18 @@ import java.util.stream.Stream;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
@@ -65,7 +65,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
 
     private static final double DELTA = 0.00000001;
 
-    private CoverageStore store;
+    private DataStore store;
     private DirectPosition corner;
     private CoordinateReferenceSystem crs;
 
@@ -77,9 +77,9 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
     private PyramidalCoverageResource float1bCoverageRef;
     private ColorModel float1bColorModel;
 
-    protected abstract CoverageStore createStore() throws Exception ;
+    protected abstract DataStore createStore() throws Exception ;
 
-    private CoverageStore getCoverageStore() throws Exception {
+    private DataStore getCoverageStore() throws Exception {
 
         if(store != null){
             return store;
@@ -202,8 +202,8 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
     public void readRGBANoArgumentTest() throws Exception{
         //load the coverage store
         getCoverageStore();
-        final CoverageReader reader = rgbaCoverageRef.acquireReader();
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
+        final GridCoverageReader reader = rgbaCoverageRef.acquireReader();
+        final GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
         rgbaCoverageRef.recycle(reader);
 
         //check defined color model
@@ -250,8 +250,8 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
     public void readFloat1BNoArgumentTest() throws Exception{
         //load the coverage store
         getCoverageStore();
-        final CoverageReader reader = float1bCoverageRef.acquireReader();
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
+        final GridCoverageReader reader = float1bCoverageRef.acquireReader();
+        final GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
         float1bCoverageRef.recycle(reader);
 
         //check defined color model, do not test the colorspace
@@ -300,7 +300,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
 
         //load the coverage store
         getCoverageStore();
-        final CoverageReader reader = rgbaCoverageRef.acquireReader();
+        final GridCoverageReader reader = rgbaCoverageRef.acquireReader();
 
         final GeneralEnvelope paramEnv = new GeneralEnvelope(crs);
         paramEnv.setRange(0, corner.getOrdinate(0) +(1*10)*1, corner.getOrdinate(0) +(2*10)*1);
@@ -312,7 +312,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
         param.setResolution(1.2,1.2);
         param.setEnvelope(paramEnv);
 
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, param);
+        final GridCoverage2D coverage = (GridCoverage2D) reader.read(param);
         rgbaCoverageRef.recycle(reader);
 
         //check coverage informations

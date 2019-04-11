@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
@@ -30,7 +31,6 @@ import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
@@ -53,14 +53,14 @@ import org.opengis.util.GenericName;
  */
 public class AmendedCoverageStore extends AbstractCoverageStore implements Aggregate {
 
-    protected final CoverageStore store;
+    protected final DataStore store;
     protected List<Resource> resources;
 
     /**
      *
      * @param store wrapped store
      */
-    public AmendedCoverageStore(CoverageStore store) {
+    public AmendedCoverageStore(DataStore store) {
         super(store.getOpenParameters());
         this.store = store;
 
@@ -94,7 +94,7 @@ public class AmendedCoverageStore extends AbstractCoverageStore implements Aggre
      */
     @Override
     public DataStoreFactory getProvider() {
-        return store.getProvider();
+        return (DataStoreFactory) store.getProvider();
     }
 
     @Override

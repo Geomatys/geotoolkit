@@ -37,7 +37,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
@@ -144,8 +144,8 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         assertEquals(versions.get(0).getDate().getTime(),0);
         assertEquals(date1.getTime(),versions.get(0).getDate().getTime());
 
-        CoverageReader reader = cref.acquireReader();
-        coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
+        GridCoverageReader reader = cref.acquireReader();
+        coverage = (GridCoverage2D)reader.read(null);
         cref.recycle(reader);
         assertImageColor(coverage.getRenderedImage(), Color.RED);
 
@@ -162,7 +162,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(dimension, Color.BLUE), new Point(0, 0))), null);
 
         reader = cref.acquireReader();
-        coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
+        coverage = (GridCoverage2D)reader.read(null);
         cref.recycle(reader);
         assertImageColor(coverage.getRenderedImage(), Color.BLUE);
 
@@ -184,7 +184,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(dimension, Color.BLUE), new Point(0, 0))), null);
 
         reader = cref.acquireReader();
-        coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
+        coverage = (GridCoverage2D)reader.read(null);
         cref.recycle(reader);
         assertImageColor(coverage.getRenderedImage(), Color.GREEN);
 
@@ -199,20 +199,20 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         cref = (PyramidalCoverageResource) store.findResource(name.toString());
         //we should have the blue image
         reader = cref.acquireReader();
-        coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
+        coverage = (GridCoverage2D)reader.read(null);
         cref.recycle(reader);
         assertImageColor(coverage.getRenderedImage(), Color.BLUE);
 
         //grab by version
         cref = (PyramidalCoverageResource) store.findResource(name,versions.get(0));
         reader = cref.acquireReader();
-        coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
+        coverage = (GridCoverage2D)reader.read(null);
         assertImageColor(coverage.getRenderedImage(), Color.RED);
         cref = (PyramidalCoverageResource) store.findResource(name,versions.get(1));
-        coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
+        coverage = (GridCoverage2D)reader.read(null);
         assertImageColor(coverage.getRenderedImage(), Color.GREEN);
         cref = (PyramidalCoverageResource) store.findResource(name,versions.get(2));
-        coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
+        coverage = (GridCoverage2D)reader.read(null);
         assertImageColor(coverage.getRenderedImage(), Color.BLUE);
         reader = cref.acquireReader();
 
@@ -226,10 +226,10 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
 
         reader = cref.acquireReader();
         cref = (PyramidalCoverageResource) store.findResource(name,versions.get(0));
-        coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
+        coverage = (GridCoverage2D)reader.read(null);
         assertImageColor(coverage.getRenderedImage(), Color.RED);
         cref = (PyramidalCoverageResource) store.findResource(name,versions.get(1));
-        coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
+        coverage = (GridCoverage2D)reader.read(null);
         assertImageColor(coverage.getRenderedImage(), Color.BLUE);
         cref.recycle(reader);
 

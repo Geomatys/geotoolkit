@@ -20,7 +20,6 @@ package org.geotoolkit.image.io.metadata;
 import java.awt.Point;
 import java.util.List;
 import java.util.Locale;
-import java.util.ArrayList;
 import java.util.Objects;
 import java.text.NumberFormat;
 import java.text.FieldPosition;
@@ -51,28 +50,22 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.internal.InternalUtilities;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import org.geotoolkit.coverage.SampleDimensionBuilder;
 
 
 /**
- * Utility methods extracting commonly used informations from ISO 19115-2 or ISO 19123 objects.
+ * Utility methods extracting commonly used information from ISO 19115-2 or ISO 19123 objects.
  * Instances of ISO 19115-2 metadata are typically obtained from {@link SpatialMetadata} objects.
  * See the <a href="SpatialMetadataFormat.html#default-formats">format description</a> for a
  * description of the expected metadata tree.
- *
- * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
- *
- * @since 3.07
- * @module
  */
 public class MetadataHelper implements Localized {
     /**
@@ -129,7 +122,7 @@ public class MetadataHelper implements Localized {
      */
     private MathTransformFactory getMathTransformFactory() {
         if (mtFactory == null) {
-            mtFactory = FactoryFinder.getMathTransformFactory(null);
+            mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
         }
         return mtFactory;
     }
@@ -626,7 +619,7 @@ public class MetadataHelper implements Localized {
     }
 
     /**
-     * Converts the given {@link SampleDimension} instances to {@link GridSampleDimension} instances.
+     * Converts the given {@link SampleDimension} instances to {@link org.apache.sis.coverage.SampleDimension} instances.
      * For each input sample dimension, this method creates a qualitative {@linkplain Category
      * category} for each {@linkplain SampleDimension#getFillSampleValues() fill values} (if any)
      * and a single quantitative category for the {@linkplain SampleDimension#getValidSampleValues()
@@ -640,34 +633,32 @@ public class MetadataHelper implements Localized {
      * }
      *
      * @param  sampleDimensions The sample dimensions from Image I/O metadata, or {@code null}.
-     * @return The {@link GridSampleDimension}s, or {@code null} if the given list was null or empty.
+     * @return The {@link SampleDimension}s, or {@code null} if the given list was null or empty.
      * @throws ImageMetadataException If this method can not create the grid sample dimensions.
-     *
-     * @since 3.13
      */
-    public List<GridSampleDimension> getGridSampleDimensions(
+    public List<org.apache.sis.coverage.SampleDimension> getSampleDimensions(
             final List<? extends SampleDimension> sampleDimensions) throws ImageMetadataException
     {
         if (isNullOrEmpty(sampleDimensions)) {
             return null;
         }
         /*
-         * Now convert the SampleDimension instances to GridSampleDimension instances.
+         * Now convert the SampleDimension instances to SampleDimension instances.
          * For each sample dimension, we create a qualitative category for each fill
          * values (if any) and a single quantitative category for the range of sample
          * values.
          */
         boolean allGeophysics = true;
         InternationalString untitled = null; // To be created only if needed.
-        final List<Category> categories = new ArrayList<>();
-        final GridSampleDimension[] bands = new GridSampleDimension[sampleDimensions.size()];
+        final SampleDimensionBuilder categories = new SampleDimensionBuilder();
+        final org.apache.sis.coverage.SampleDimension[] bands = new org.apache.sis.coverage.SampleDimension[sampleDimensions.size()];
         boolean hasSampleDimensions = false;
         for (int i=0; i<bands.length; i++) {
             final SampleDimension sd = sampleDimensions.get(i);
             if (sd != null) {
                 /*
                  * Get a name for the sample dimensions. This name will be given both to the
-                 * GridSampleDimension object and to the single qualitative Category. If no
+                 * SampleDimension object and to the single qualitative Category. If no
                  * name can be found, "Untitled" will be used.
                  */
                 InternationalString dimensionName = sd.getDescriptor();
@@ -687,16 +678,13 @@ public class MetadataHelper implements Localized {
                  */
                 final double[] fillValues = sd.getFillSampleValues();
                 if (fillValues != null) {
-                    final CharSequence name = Category.NODATA.getName();
                     for (final double fv : fillValues) {
                         final int ifv = (int) fv;
-                        final Category c;
                         if (ifv == fv) {
-                            c = new Category(name, null, ifv);
+                            categories.addQualitative(null, ifv);
                         } else {
-                            c = new Category(name, null, fv);
+                            categories.addQualitative(null, fv);
                         }
-                        categories.add(c);
                     }
                 }
                 /*
@@ -709,7 +697,7 @@ public class MetadataHelper implements Localized {
                     final Double scale  = sd.getScaleFactor();
                     final Double offset = sd.getOffset();
                     final boolean isGeophysics = (scale == null && offset == null);
-                    if (!isGeophysics || !overlap(categories, range)) {
+                    if (!isGeophysics || !isOverlapping(categories, range)) {
                         final TransferFunctionType type = sd.getTransferFunctionType();
                         final MathTransformFactory mtFactory = getMathTransformFactory();
                         MathTransform tr;
@@ -737,27 +725,16 @@ public class MetadataHelper implements Localized {
                         } catch (FactoryException e) {
                             throw new ImageMetadataException(e);
                         }
-                        categories.add(new Category(dimensionName, null, range, (MathTransform1D) tr));
+                        categories.addQuantitative(dimensionName, range, (MathTransform1D) tr, sd.getUnits());
                     }
                     allGeophysics &= isGeophysics;
                 }
                 /*
-                 * Create the GridSampleDimension instance.
+                 * Create the SampleDimension instance.
                  */
-                final Category[] array;
-                if (categories.isEmpty()) {
-                    array = null;
-                } else {
-                    array = categories.toArray(new Category[categories.size()]);
-                    hasSampleDimensions = true;
-                }
-                final Unit<?> unit = sd.getUnits();
-                if (unit != null) {
-                    hasSampleDimensions = true;
-                }
-                final GridSampleDimension band;
+                final org.apache.sis.coverage.SampleDimension band;
                 try {
-                    band = new GridSampleDimension(dimensionName, array, unit);
+                    band = categories.setName(dimensionName).build();
                 } catch (IllegalArgumentException e) {
                     throw new ImageMetadataException(e);
                 }
@@ -771,11 +748,27 @@ public class MetadataHelper implements Localized {
          */
         if (hasSampleDimensions) {
             for (int i=0; i<bands.length; i++) {
-                bands[i] = bands[i].geophysics(allGeophysics);
+                bands[i] = bands[i].forConvertedValues(allGeophysics);
             }
             return UnmodifiableArrayList.wrap(bands);
         }
         return null;
+    }
+
+    /**
+     * Returns {@code true} if the given range intersects the range of a previously added category.
+     * This method can be invoked before to add a new category for checking if it would cause a range collision.
+     *
+     * @param  range  the range to test for intersection.
+     * @return whether the given range intersects at least one previously added category range.
+     */
+    private static boolean isOverlapping(final org.apache.sis.coverage.SampleDimension.Builder builder, final NumberRange<?> range) {
+        for (final Category category : builder.categories()) {
+            if (range.intersectsAny(category.getSampleRange())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -786,12 +779,12 @@ public class MetadataHelper implements Localized {
      * In some other cases (e.g. in ASCII-Grid), the range is still valid.
      * <p>
      * As an heuristic rule, we will consider the range as garbage data if it overlaps any
-     * previously defined categories. Attempt to create a {@code GridSampleDimension} with
+     * previously defined categories. Attempt to create a {@code SampleDimension} with
      * such range would thrown an exception anyway.
      */
     private static boolean overlap(final List<Category> categories, final NumberRange<?> range) {
         for (final Category category : categories) {
-            if (range.intersectsAny(category.getRange())) {
+            if (range.intersectsAny(category.getSampleRange())) {
                 return true;
             }
         }

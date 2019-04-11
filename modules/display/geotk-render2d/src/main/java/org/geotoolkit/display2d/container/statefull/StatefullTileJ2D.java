@@ -26,12 +26,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.vecmath.Point3d;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.data.multires.Mosaic;
@@ -43,9 +43,8 @@ import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.MapItem;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.storage.coverage.ImageTile;
 import org.opengis.geometry.Envelope;
@@ -76,7 +75,7 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
     private boolean loaded = false;
 
     public StatefullTileJ2D(Mosaic mosaic, Point3d coordinate, J2DCanvas canvas,
-            CoverageMapLayer item, CachedRule[] rules) {
+            MapLayer item, CachedRule[] rules) {
         super(canvas, item, false);
         this.mosaic = mosaic;
         this.coordinate = coordinate;
@@ -178,11 +177,8 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
                     for(final CachedRule rule : rules){
                         for(final CachedSymbolizer symbol : rule.symbolizers()){
                             if(symbol.getSource() instanceof RasterSymbolizer){
-                                // todo appeler method getElevationmodel le coverage a deja ete reprojeté
-                                final CoverageMapLayer layer = (CoverageMapLayer) getUserObject();
-                                final ElevationModel elevMod = layer.getElevationModel();
-                                final GridCoverage2D dem = DefaultRasterSymbolizerRenderer.getDEMCoverage(coverage, elevMod);
-                                ri = DefaultRasterSymbolizerRenderer.applyStyle(null,coverage, dem, (RasterSymbolizer)symbol.getSource());
+                                final MapLayer layer = (MapLayer) getUserObject();
+                                ri = DefaultRasterSymbolizerRenderer.applyStyle(null,coverage, null, (RasterSymbolizer)symbol.getSource());
                                 break;
                             }
                         }
@@ -239,8 +235,8 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
 
         //build the coverage
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        final GridEnvelope2D ge = new GridEnvelope2D(0, 0, image.getWidth(), image.getHeight());
-        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, trs, tileCRS, null);
+        final GridExtent ge = new GridExtent(image.getWidth(), image.getHeight());
+        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, trs, tileCRS);
         gcb.setName("tile");
         gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);

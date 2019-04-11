@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import java.util.logging.Level;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -66,7 +66,7 @@ public abstract class AbstractGeometryTest {
      * @throws FactoryException
      */
     static {
-        CRSFactory crsFact = AuthorityFactoryFinder.getCRSFactory(null);
+        CRSFactory crsFact = DefaultFactories.forBuildin(CRSFactory.class);
         try {
             crs = crsFact.createFromWKT(WGS84_WKT);
         } catch (FactoryException ex) {

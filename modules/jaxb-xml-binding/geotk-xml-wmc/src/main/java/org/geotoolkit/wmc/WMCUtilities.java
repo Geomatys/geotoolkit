@@ -20,46 +20,45 @@ package org.geotoolkit.wmc;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.logging.Level;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.data.FeatureStore;
+import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.Resource;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.util.NamesExt;
-import org.apache.sis.geometry.Envelope2D;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataStore;
+import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.style.StyleConstants;
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wmc.xml.v110.*;
-import org.apache.sis.xml.MarshallerPool;
-import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Description;
 import org.opengis.util.FactoryException;
-import javax.xml.bind.JAXBContext;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.DataStore;
-import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.DataStores;
-import org.apache.sis.referencing.crs.AbstractCRS;
-import org.apache.sis.referencing.cs.AxesConvention;
-import org.apache.sis.storage.Resource;
-import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -177,13 +176,19 @@ public class WMCUtilities {
                 continue;
             }
 
-            if (server instanceof CoverageStore) {
-                final CoverageStore cs = (CoverageStore) server;
+            if (server instanceof FeatureStore) {
+                final FeatureStore wfs = (FeatureStore) server;
+                final Session storeSession = wfs.createSession(true);
+                final FeatureCollection collection = storeSession.getFeatureCollection(QueryBuilder.all(layerName));
+                final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getType());
+                final MapLayer layer = MapBuilder.createFeatureLayer(collection, style);
+                context.layers().add(layer);
+            } else {
                 try {
-                    for (GenericName n : cs.getNames()) {
-                        if (n.tip().toString().equalsIgnoreCase(layerName.tip().toString())) {
-                            final Resource ref = cs.findResource(n.toString());
-                            final CoverageMapLayer mapLayer = MapBuilder.createCoverageLayer(ref,
+                    for (Resource r : DataStores.flatten(server, true)) {
+                        GenericName n = r.getIdentifier();
+                        if (n != null && n.tip().toString().equalsIgnoreCase(layerName.tip().toString()) && r instanceof GridCoverageResource) {
+                            final MapLayer mapLayer = MapBuilder.createCoverageLayer(r,
                                     GO2Utilities.STYLE_FACTORY.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
                             context.layers().add(mapLayer);
                         }
@@ -193,13 +198,6 @@ public class WMCUtilities {
                     continue;
                 }
 
-            } else if (server instanceof FeatureStore) {
-                final FeatureStore wfs = (FeatureStore) server;
-                final Session storeSession = wfs.createSession(true);
-                final FeatureCollection collection = storeSession.getFeatureCollection(QueryBuilder.all(layerName));
-                final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getType());
-                final MapLayer layer = MapBuilder.createFeatureLayer(collection, style);
-                context.layers().add(layer);
             }
         }
         return context;

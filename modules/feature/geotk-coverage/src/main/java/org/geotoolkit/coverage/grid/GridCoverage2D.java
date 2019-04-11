@@ -17,58 +17,46 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.Raster;
 import java.awt.image.DataBuffer;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import java.awt.image.WritableRenderedImage;
 import java.awt.image.renderable.RenderableImage;
-import java.io.IOException;
-import java.io.InvalidClassException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import javax.measure.Unit;
 import javax.media.jai.Interpolation;
 import javax.media.jai.OperationNode;
 import javax.media.jai.PlanarImage;
-import javax.media.jai.RenderedImageAdapter;
 import javax.media.jai.remote.SerializableRenderedImage;
-
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.util.Classes;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.geometry.TransformedDirectPosition;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.geotoolkit.lang.Debug;
+import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
-import org.opengis.coverage.SampleDimension;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
-
-import org.geotoolkit.factory.Hints;
-import org.apache.sis.geometry.Envelope2D;
-import org.geotoolkit.geometry.TransformedDirectPosition;
-import org.geotoolkit.coverage.AbstractCoverage;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.apache.sis.util.Classes;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Loggings;
-import org.geotoolkit.lang.Debug;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Basic access to grid data values backed by a two-dimensional
  * {@linkplain RenderedImage rendered image}. Each band in an image is represented as a
- * {@linkplain GridSampleDimension sample dimension}.
+ * {@linkplain SampleDimension sample dimension}.
  *
  * {@section Two-dimensional slice in a <var>n</var>-dimensional space}
  * Grid coverages are usually two-dimensional. However, {@linkplain #getEnvelope their envelope}
@@ -80,8 +68,8 @@ import org.geotoolkit.lang.Debug;
  * and <var>y</var>), and a third one for start time and end time (time extent along <var>t</var>).
  * </font></blockquote>
  *
- * However, the {@linkplain GeneralGridEnvelope grid envelope} for all extra-dimension
- * <strong>must</strong> have a {@linkplain GeneralGridEnvelope#getSpan span} not greater than 1.
+ * However, the {@linkplain GridExtent grid envelope} for all extra-dimension
+ * <strong>must</strong> have a {@linkplain GridExtent#getSize span} not greater than 1.
  * In other words, a {@code GridCoverage2D} can be a slice in a 3 dimensional grid coverage. Each
  * slice can have an arbitrary width and height (like any two-dimensional images), but only 1
  * voxel depth (a "voxel" is a three-dimensional pixel).
@@ -94,20 +82,12 @@ import org.geotoolkit.lang.Debug;
  * class.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
  *
  * @see GridGeometry2D
- * @see GridSampleDimension
+ * @see SampleDimension
  * @see GridCoverageBuilder
- *
- * @since 1.2
- * @module
  */
-public class GridCoverage2D extends AbstractGridCoverage implements RenderedCoverage {
-    /**
-     * For compatibility during cross-version serialization.
-     */
-    private static final long serialVersionUID = 667472989475027853L;
+public class GridCoverage2D extends GridCoverage {
 
     /**
      * Whatever default grid envelope computation should be performed on transform
@@ -126,22 +106,6 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * This image will be created only when first needed during serialization.
      */
     private RenderedImage serializedImage;
-
-    /**
-     * The grid geometry.
-     */
-    protected final GridGeometry2D gridGeometry;
-
-    /**
-     * List of sample dimension information for the grid coverage.
-     * For a grid coverage, a sample dimension is a band. The sample dimension information
-     * include such things as description, data type of the value (bit, byte, integer...),
-     * the no data values, minimum and maximum values and a color table if one is associated
-     * with the dimension. A coverage must have at least one sample dimension.
-     * <p>
-     * The content of this array should never be modified.
-     */
-    final GridSampleDimension[] sampleDimensions;
 
     /**
      * The views returned by {@link #views}. Constructed when first needed.
@@ -175,23 +139,20 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
     GridCoverage2D(final CharSequence name, final GridCoverage2D coverage) {
         super(name, coverage);
         image            = coverage.image;
-        gridGeometry     = coverage.gridGeometry;
-        sampleDimensions = coverage.sampleDimensions;
         tileEncoding     = coverage.tileEncoding;
         // Do not share the views, since subclasses will create different instances.
     }
 
     /**
      * Constructs a grid coverage with the specified {@linkplain GridGeometry2D grid geometry} and
-     * {@linkplain GridSampleDimension sample dimensions}. The {@linkplain Envelope envelope}
+     * {@linkplain SampleDimension sample dimensions}. The {@linkplain Envelope envelope}
      * (including the {@linkplain CoordinateReferenceSystem coordinate reference system}) is
      * inferred from the grid geometry.
      * <p>
      * This constructor accepts an optional map of user properties. This map is
      * useful for storing user-values like statistics. Keys shall be {@link String} or
      * {@link javax.media.jai.util.CaselessStringKey} instances, while values can be any
-     * {@link Object}. The property values can be fetched by the methods defined in the
-     * {@link javax.media.jai.PropertySource} interface.
+     * {@link Object}.
      * <p>
      * Note that {@link GridCoverageBuilder} provides more convenient ways to create
      * {@code GridCoverage2D} instances. But all those convenience methods will ultimately
@@ -222,35 +183,61 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
     public GridCoverage2D(final CharSequence             name,
                           final RenderedImage           image,
                                 GridGeometry2D   gridGeometry,
-                          final GridSampleDimension[]   bands,
+                          final SampleDimension[]       bands,
                           final GridCoverage[]        sources,
                           final Map<?,?>           properties,
                           final Hints                   hints)
             throws IllegalArgumentException
     {
-        super(name, gridGeometry.getCoordinateReferenceSystem(), sources, null, properties);
+        super(name, fillGridGeometry(image, gridGeometry), fillSampleDimensions(name, image, bands), sources, properties);
         this.image = image;
-        /*
-         * Wraps the user-supplied sample dimensions into instances of RenderedSampleDimension. This
-         * process will creates default sample dimensions if the user supplied null values. Those
-         * default will be inferred from image type (integers, floats...) and range of values. If
-         * an inconsistency is found in user-supplied sample dimensions, an IllegalArgumentException
-         * is thrown.
-         */
-        sampleDimensions = new GridSampleDimension[image.getSampleModel().getNumBands()];
+        if (hints != null) {
+            tileEncoding = (String) hints.get(Hints.TILE_ENCODING);
+        }
+    }
+
+    /**
+     * Wraps the user-supplied sample dimensions into instances of RenderedSampleDimension. This
+     * process will creates default sample dimensions if the user supplied null values. Those
+     * default will be inferred from image type (integers, floats...) and range of values. If
+     * an inconsistency is found in user-supplied sample dimensions, an IllegalArgumentException
+     * is thrown.
+     *
+     * @return
+     */
+    private static Collection<SampleDimension> fillSampleDimensions(final CharSequence name, final RenderedImage image, final SampleDimension[] bands) {
+        RenderedSampleDimension[] sampleDimensions = new RenderedSampleDimension[image.getSampleModel().getNumBands()];
         RenderedSampleDimension.create(name, image, bands, sampleDimensions);
-        /*
-         * Computes the grid envelope if it was not explicitly provided. The range will be inferred
-         * from the image size, if needed. The envelope computation (if needed) requires a valid
-         * 'gridToCRS' transform in the GridGeometry object. In any case, the envelope must be
-         * non-empty and its dimension must matches the coordinate reference system's dimension.
-         */
+        final List<SampleDimension> dims = new ArrayList<>(sampleDimensions.length);
+        for (RenderedSampleDimension rsd : sampleDimensions) {
+            dims.add(rsd.dimension);
+        }
+        return dims;
+    }
+
+    /**
+     * Computes the grid envelope if it was not explicitly provided. The range will be inferred
+     * from the image size, if needed. The envelope computation (if needed) requires a valid
+     * 'gridToCRS' transform in the GridGeometry object. In any case, the envelope must be
+     * non-empty and its dimension must matches the coordinate reference system's dimension.
+     */
+    private static GridGeometry2D fillGridGeometry(final RenderedImage image, GridGeometry2D gridGeometry) {
+        final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
         final int dimension = crs.getCoordinateSystem().getDimension();
         if (!gridGeometry.isDefined(GridGeometry2D.EXTENT)) {
-            final GridEnvelope r = new GeneralGridEnvelope(image, dimension);
+            final long[] low = new long[dimension];
+            final long[] high = new long[dimension];
+            Arrays.fill(low, 0);
+            Arrays.fill(high, 1);
+            low[0] = image.getMinX();
+            low[1] = image.getMinY();
+            high[0] = image.getWidth();
+            high[1] = image.getHeight();
+
+            final GridExtent r = new GridExtent(null, low, high, false);
             if (gridGeometry.isDefined(GridGeometry2D.GRID_TO_CRS)) {
                 gridGeometry = new GridGeometry2D(r, PIXEL_IN_CELL,
-                        gridGeometry.getGridToCRS(PIXEL_IN_CELL), crs, hints);
+                        gridGeometry.getGridToCRS(PIXEL_IN_CELL), crs);
             } else {
                 /*
                  * If the math transform was not explicitly specified by the user, then it will be
@@ -264,9 +251,8 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
              * Makes sure that the 'gridToCRS' transform is defined.
              * An exception will be thrown otherwise.
              */
-            gridGeometry.getGridToCRS();
+            gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
         }
-        this.gridGeometry = gridGeometry;
         assert gridGeometry.isDefined(GridGeometry2D.CRS        |
                                       GridGeometry2D.ENVELOPE   |
                                       GridGeometry2D.EXTENT |
@@ -280,14 +266,12 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
             throw new IllegalArgumentException(error);
         }
         if (dimension <= Math.max(gridGeometry.axisDimensionX,  gridGeometry.axisDimensionY)
-                             || !(gridGeometry.envelope.getSpan(gridGeometry.axisDimensionX) > 0)
-                             || !(gridGeometry.envelope.getSpan(gridGeometry.axisDimensionY) > 0))
+                             || !(gridGeometry.getEnvelope().getSpan(gridGeometry.axisDimensionX) > 0)
+                             || !(gridGeometry.getEnvelope().getSpan(gridGeometry.axisDimensionY) > 0))
         {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.EmptyEnvelope2d));
         }
-        if (hints != null) {
-            tileEncoding = (String) hints.get(Hints.TILE_ENCODING);
-        }
+        return gridGeometry;
     }
 
     /**
@@ -302,10 +286,10 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * method will thrown an {@link IllegalStateException} in this case.
      */
     private static String checkConsistency(final RenderedImage image, final GridGeometry2D grid) {
-        final GridEnvelope range = grid.getExtent();
+        final GridExtent range = grid.getExtent();
         final int dimension = range.getDimension();
         for (int i=0; i<dimension; i++) {
-            final int min, span;
+            final long min, span;
             final Object label;
             if (i == grid.gridDimensionX) {
                 min   = image.getMinX();
@@ -317,47 +301,25 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                 label = "\"Y\"";
             } else {
                 min   = range.getLow(i);
-                span  = Math.min(Math.max(range.getSpan(i), 0), 1);
+                span  = Math.min(Math.max(range.getSize(i), 0), 1);
                 label = Integer.valueOf(i);
             }
-            if (range.getLow(i)!=min || range.getSpan(i)!=span) {
-                return Errors.format(Errors.Keys.IllegalGridEnvelope_3, label, min, min + span);
+            long n;
+            if ((n = range.getLow(i)) != min) {
+                return Errors.format(Errors.Keys.IllegalGridEnvelope_3, label, min, min + span)
+                        + " The rendered image declares a low value of " + min + " while the grid extent declares " + n + ".";
+            }
+            if ((n = range.getSize(i)) != span) {
+                return Errors.format(Errors.Keys.IllegalGridEnvelope_3, label, min, min + span)
+                        + " The rendered image declares a span of " + span + " while the grid extent declares " + n + ".";
             }
         }
         return null;
     }
 
-    /**
-     * Returns {@code true} if grid data can be edited. The default
-     * implementation returns {@code true} if {@link #image} is an
-     * instance of {@link WritableRenderedImage}.
-     */
-    @Override
-    public boolean isDataEditable() {
-        return (image instanceof WritableRenderedImage);
-    }
-
-    /**
-     * Returns information for the grid coverage geometry. Grid geometry
-     * includes the valid range of grid coordinates and the georeferencing.
-     */
     @Override
     public GridGeometry2D getGridGeometry() {
-        final String error = checkConsistency(image, gridGeometry);
-        if (error != null) {
-            throw new IllegalStateException(error);
-        }
-        return gridGeometry;
-    }
-
-    /**
-     * Returns the bounding box for the coverage domain in coordinate reference system coordinates.
-     * The returned envelope have at least two dimensions. It may have more dimensions if the
-     * coverage has some extent in other dimensions (for example a depth, or a start and end time).
-     */
-    @Override
-    public Envelope getEnvelope() {
-        return gridGeometry.getEnvelope();
+        return (GridGeometry2D) super.getGridGeometry();
     }
 
     /**
@@ -368,14 +330,14 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * @return The two-dimensional bounding box.
      */
     public Envelope2D getEnvelope2D() {
-        return gridGeometry.getEnvelope2D();
+        return getGridGeometry().getEnvelope2D();
     }
 
     /**
      * Returns the two-dimensional part of this grid coverage CRS. If the
      * {@linkplain #getCoordinateReferenceSystem complete CRS} is two-dimensional, then this
      * method returns the same CRS. Otherwise it returns a CRS for the two first axis having
-     * a {@linkplain GridEnvelope#getSpan span} greater than 1 in the grid envelope. Note that
+     * a {@linkplain GridExtent#getSize span} greater than 1 in the grid envelope. Note that
      * those axis are guaranteed to appears in the same order than in the complete CRS.
      *
      * @return The two-dimensional part of the grid coverage CRS.
@@ -383,36 +345,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * @see #getCoordinateReferenceSystem
      */
     public CoordinateReferenceSystem getCoordinateReferenceSystem2D() {
-        return gridGeometry.getCoordinateReferenceSystem2D();
-    }
-
-    /**
-     * Returns the number of bands in the grid coverage.
-     */
-    @Override
-    public int getNumSampleDimensions() {
-        return sampleDimensions.length;
-    }
-
-    /**
-     * Retrieve sample dimension information for the coverage.
-     * For a grid coverage, a sample dimension is a band. The sample dimension information
-     * include such things as description, data type of the value (bit, byte, integer...),
-     * the no data values, minimum and maximum values and a color table if one is associated
-     * with the dimension. A coverage must have at least one sample dimension.
-     */
-    @Override
-    public GridSampleDimension getSampleDimension(final int index) {
-        return sampleDimensions[index];
-    }
-
-    /**
-     * Returns all sample dimensions for this grid coverage.
-     *
-     * @return All sample dimensions.
-     */
-    public GridSampleDimension[] getSampleDimensions() {
-        return sampleDimensions.clone();
+        return getGridGeometry().getCoordinateReferenceSystem2D();
     }
 
     /**
@@ -555,7 +488,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
          * geometry and copy in a new Point2D instance.
          */
         final int actual   = point.getDimension();
-        final int expected = crs.getCoordinateSystem().getDimension();
+        final int expected = getCoordinateReferenceSystem().getCoordinateSystem().getDimension();
         if (actual != expected) {
             throw new MismatchedDimensionException(Errors.format(
                     Errors.Keys.MismatchedDimension_2, actual, expected));
@@ -563,6 +496,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
         if (point instanceof Point2D) {
             return (Point2D) point;
         }
+        final GridGeometry2D gridGeometry = getGridGeometry();
         assert gridGeometry.axisDimensionX < gridGeometry.axisDimensionY;
         return new Point2D.Double(point.getOrdinate(gridGeometry.axisDimensionX),
                                   point.getOrdinate(gridGeometry.axisDimensionY));
@@ -581,6 +515,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
     public int[] evaluate(final Point2D coord, final int[] dest)
             throws CannotEvaluateException
     {
+        final GridGeometry2D gridGeometry = getGridGeometry();
         final Point2D pixel = gridGeometry.inverseTransform(coord);
         final double fx = pixel.getX();
         final double fy = pixel.getY();
@@ -607,6 +542,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
     public float[] evaluate(final Point2D coord, final float[] dest)
             throws CannotEvaluateException
     {
+        final GridGeometry2D gridGeometry = getGridGeometry();
         final Point2D pixel = gridGeometry.inverseTransform(coord);
         final double fx = pixel.getX();
         final double fy = pixel.getY();
@@ -633,6 +569,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
     public double[] evaluate(final Point2D coord, final double[] dest)
             throws CannotEvaluateException
     {
+        final GridGeometry2D gridGeometry = getGridGeometry();
         final Point2D pixel = gridGeometry.inverseTransform(coord);
         final double fx = pixel.getX();
         final double fy = pixel.getY();
@@ -661,6 +598,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      */
     @Debug
     public synchronized String getDebugString(final DirectPosition coord) {
+        final GridGeometry2D gridGeometry = getGridGeometry();
         Point2D pixel = toPoint2D(coord);
         pixel         = gridGeometry.inverseTransform(pixel);
         final int   x = (int) Math.round(pixel.getX());
@@ -681,7 +619,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                     case DataBuffer.TYPE_FLOAT : buffer.append((float) sample); break;
                     default                    : buffer.append(  (int) sample); break;
                 }
-                final String formatted = sampleDimensions[band].getLabel(sample, null);
+                final String formatted = null; // TODO sampleDimensions[band].getLabel(sample, null);
                 if (formatted != null) {
                     buffer.append("\u00A0(").append(formatted).append(')');
                 }
@@ -692,26 +630,28 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
     }
 
     /**
-     * Returns the optimal size to use for each dimension when accessing grid values.
-     * The default implementation returns the image's tiles size.
-     */
-    @Override
-    public int[] getOptimalDataBlockSizes() {
-        final int[] size = new int[getDimension()];
-        Arrays.fill(size, 1);
-        size[gridGeometry.gridDimensionX] = image.getTileWidth();
-        size[gridGeometry.gridDimensionY] = image.getTileHeight();
-        return size;
-    }
-
-    /**
      * Returns grid data as a rendered image.
      *
      * @return The grid data as a rendered image.
      */
-    @Override
     public RenderedImage getRenderedImage() {
         return image;
+    }
+
+    @Override
+    public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
+        if (sliceExtent != null) {
+            final GridGeometry2D gridGeometry = getGridGeometry();
+            int[] dims = sliceExtent.getSubspaceDimensions(2);
+            if (dims[0] != gridGeometry.axisDimensionX && dims[1] != gridGeometry.axisDimensionY) {
+                throw new CannotEvaluateException("Unsupported axis");
+            }
+            final GridExtent extent = getGridGeometry().getExtent();
+            if (sliceExtent.getSize(dims[0]) != extent.getSize(dims[0]) || sliceExtent.getSize(dims[1]) != extent.getSize(dims[1])) {
+                throw new CannotEvaluateException("Slice size must match coverage extent");
+            }
+        }
+        return getRenderedImage();
     }
 
     /**
@@ -724,6 +664,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      */
     @Override
     public RenderableImage getRenderableImage(final int xAxis, final int yAxis) {
+        final GridGeometry2D gridGeometry = getGridGeometry();
         if (xAxis == gridGeometry.axisDimensionX  &&  yAxis == gridGeometry.axisDimensionY) {
             return new Renderable();
         } else {
@@ -780,10 +721,10 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
         if (title == null || (title = title.trim()).isEmpty()) {
             final StringBuilder buffer = new StringBuilder(String.valueOf(getName()));
             final int visibleBandIndex = CoverageUtilities.getVisibleBand(this);
-            final SampleDimension visibleBand = getSampleDimension(visibleBandIndex);
-            final Unit<?> unit = visibleBand.getUnits();
-            buffer.append(" - ").append(String.valueOf(visibleBand.getDescription()));
-            if (unit != null) {
+            final SampleDimension visibleBand = getSampleDimensions().get(visibleBandIndex);
+            final Optional<Unit<?>> unit = visibleBand.getUnits();
+            buffer.append(" - ").append(String.valueOf(visibleBand.getName()));
+            if (unit.isPresent()) {
                 buffer.append(" (").append(unit).append(')');
             }
             title = buffer.toString();
@@ -796,6 +737,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      */
     @Override
     public void show(final String title) {
+        final GridGeometry2D gridGeometry = getGridGeometry();
         show(title, gridGeometry.axisDimensionX, gridGeometry.axisDimensionY);
     }
 
@@ -815,7 +757,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * @todo Override {@link #createRendering} and use the affine transform operation.
      *       Also uses the JAI's "Transpose" operation is x and y axis are interchanged.
      */
-    protected class Renderable extends AbstractCoverage.Renderable {
+    protected class Renderable extends GridCoverage.Renderable {
         /**
          * For compatibility during cross-version serialization.
          */
@@ -825,7 +767,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
          * Constructs a renderable image.
          */
         public Renderable() {
-            super(gridGeometry.axisDimensionX, gridGeometry.axisDimensionY);
+            super(getGridGeometry().axisDimensionX, getGridGeometry().axisDimensionY);
         }
 
         /**
@@ -835,6 +777,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
          */
         @Override
         public RenderedImage createDefaultRendering() {
+            final GridGeometry2D gridGeometry = getGridGeometry();
             if (xAxis == gridGeometry.axisDimensionX &&
                 yAxis == gridGeometry.axisDimensionY)
             {
@@ -842,19 +785,6 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
             }
             return super.createDefaultRendering();
         }
-    }
-
-    /**
-     * Hints that the given area may be needed in the near future. Some implementations
-     * may spawn a thread or threads to compute the tiles while others may ignore the hint.
-     * TODO implement it
-     * @param area A rectangle indicating which geographic area to prefetch.
-     *             This area's coordinates must be expressed according the
-     *             grid coverage's coordinate reference system, as given by
-     *             {@link #getCoordinateReferenceSystem}.
-     * @deprecated do not use anymore
-     */
-    public void prefetch(final Rectangle2D area) {
     }
 
     /**
@@ -902,7 +832,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * @param  type The kind of view wanted.
      * @return The grid coverage. Never {@code null}, but may be {@code this}.
      *
-     * @see GridSampleDimension#geophysics
+     * @see SampleDimension#geophysics
      * @see org.geotoolkit.coverage.Category#geophysics
      * @see javax.media.jai.operator.LookupDescriptor
      * @see javax.media.jai.operator.RescaleDescriptor
@@ -924,6 +854,15 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
         // are shared among many GridCoverage2D instances.
         final Hints hints = null; // We may revisit that later.
         return views.get(this, type, hints);
+    }
+
+    @Override
+    public GridCoverage2D forConvertedValues(boolean converted) {
+        if (converted) {
+            return view(ViewType.GEOPHYSICS);
+        } else {
+            return getNativeView();
+        }
     }
 
     /**
@@ -1004,57 +943,6 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
     }
 
     /**
-     * Constructs the {@link PlanarImage} from the {@linkplain SerializableRenderedImage}
-     * after deserialization.
-     */
-    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        try {
-            /*
-             * Set the 'image' field using reflection, because this field is final.
-             * This is a legal usage for deserialization according Field.set(...)
-             * documentation in J2SE 1.5.
-             */
-            final Field field = GridCoverage2D.class.getDeclaredField("image");
-            field.setAccessible(true);
-            field.set(this, PlanarImage.wrapRenderedImage(serializedImage));
-        } catch (ReflectiveOperationException cause) {
-            InvalidClassException e = new InvalidClassException(getClass().getCanonicalName(), cause.getLocalizedMessage());
-            e.initCause(cause);
-            throw e;
-        }
-    }
-
-    /**
-     * Serializes this grid coverage. Before serialization, a {@linkplain SerializableRenderedImage
-     * serializable rendered image} is created if it was not already done.
-     */
-    private void writeObject(final ObjectOutputStream out) throws IOException {
-        if (serializedImage == null) {
-            RenderedImage source = image;
-            while (source instanceof RenderedImageAdapter) {
-                source = ((RenderedImageAdapter) source).getWrappedImage();
-            }
-            if (source instanceof SerializableRenderedImage) {
-                serializedImage = (SerializableRenderedImage) source;
-            } else {
-                if (tileEncoding == null) {
-                    tileEncoding = "gzip";
-                }
-                serializedImage = new SerializableRenderedImage(source, false, null,
-                                                                tileEncoding, null, null);
-                final LogRecord record = Loggings.format(Level.FINE,
-                        Loggings.Keys.CreatedSerializableImage_2, getName(), tileEncoding);
-                record.setSourceClassName(GridCoverage2D.class.getName());
-                record.setSourceMethodName("writeObject");
-                record.setLoggerName(LOGGER.getName());
-                LOGGER.log(record);
-            }
-        }
-        out.defaultWriteObject();
-    }
-
-    /**
      * Provides a hint that a coverage will no longer be accessed from a reference in user space.
      * This method {@linkplain PlanarImage#dispose disposes} the {@linkplain #image} only if at
      * least one of the following conditions is true (otherwise this method do nothing):
@@ -1083,20 +971,8 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                 return false;
             }
             views = null;
-        } else if (!disposeImage(force)) {
-            return false;
         }
         return super.dispose(force);
-    }
-
-    /**
-     * Disposes only the {@linkplain #image}, not the views. This method is invoked by
-     * {@link ViewsManager#dispose}. This method checks the set of every sinks,
-     * which may or may not be {@link RenderedImage}s. If there is no sinks, we can process.
-     * @deprecated do not use anymore
-     */
-    final synchronized boolean disposeImage(final boolean force) {
-        return true;
     }
 
     /**

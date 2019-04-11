@@ -79,14 +79,12 @@ import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
  *
  * @module
  * @since 2.2
- * @version $Id$
  * @author Jody Garnett
  * @author Martin Desruisseaux
  * @author Simone Giannecchini, GeoSolutions
  * @author Quentin Boileau (Geomatys).
  */
 public final class JTS {
-
     /**
      * A pool of direct positions for use in {@link #orthodromicDistance}.
      */
@@ -97,6 +95,7 @@ public final class JTS {
             POSITIONS[i] = new GeneralDirectPosition(i);
         }
     }
+
     /**
      * Geodetic calculators already created for a given coordinate reference
      * system. For use in {@link #orthodromicDistance}.
@@ -219,11 +218,9 @@ public final class JTS {
         if (targetEnvelope == null) {
             targetEnvelope = new Envelope();
         }
-
         for (int t = 0; t < offset;) {
             targetEnvelope.expandToInclude(coordinates[t++], coordinates[t++]);
         }
-
         return targetEnvelope;
     }
 
@@ -268,7 +265,6 @@ public final class JTS {
             g.setUserData(null);
             return g;
         }
-
         final CoordinateSequenceTransformer cstrs = new CoordinateSequenceMathTransformer(transform);
         final GeometryCSTransformer transformer = new GeometryCSTransformer(cstrs);
         return transformer.transform(geom);
@@ -309,7 +305,6 @@ public final class JTS {
             case 0:
                 break;
         }
-
         return dest;
     }
 
@@ -329,15 +324,12 @@ public final class JTS {
         if (Utilities.equalsIgnoreMetadata(crs, CommonCRS.WGS84.normalizedGeographic())) {
             return envelope;
         }
-
         final MathTransform transform;
-
         try {
             transform = CRS.findOperation(crs, CommonCRS.WGS84.normalizedGeographic(), null).getMathTransform();
         } catch (FactoryException exception) {
             throw new TransformException(Errors.format(Errors.Keys.CantTransformEnvelope, exception));
         }
-
         return transform(envelope, transform);
     }
 
@@ -358,17 +350,13 @@ public final class JTS {
     public static void xform(final MathTransform transform, final double[] src, final double[] dest)
             throws TransformException {
         ensureNonNull("transform", transform);
-
         final int sourceDim = transform.getSourceDimensions();
         final int targetDim = transform.getTargetDimensions();
-
         if (targetDim != sourceDim) {
             throw new MismatchedDimensionException();
         }
-
         TransformException firstError = null;
         boolean startPointTransformed = false;
-
         for (int i = 0; i < src.length; i += sourceDim) {
             try {
                 transform.transform(src, i, dest, i, 1);
@@ -390,7 +378,6 @@ public final class JTS {
                 }
             }
         }
-
         if (!startPointTransformed && (firstError != null)) {
             throw firstError;
         }
@@ -422,14 +409,12 @@ public final class JTS {
         ensureNonNull("p1", p1);
         ensureNonNull("p2", p2);
         ensureNonNull("crs", crs);
-
         /*
          * Need to synchronize because we use a single instance of a Map (CALCULATORS) as well as
          * shared instances of GeodeticCalculator and GeneralDirectPosition (POSITIONS). None of
          * them are thread-safe.
          */
         GeodeticCalculator gc = (GeodeticCalculator) CALCULATORS.get(crs);
-
         if (gc == null) {
             gc = new GeodeticCalculator(crs);
             CALCULATORS.put(crs, gc);
@@ -443,7 +428,6 @@ public final class JTS {
         gc.setStartingPosition(pos);
         copy(p2, pos.ordinates);
         gc.setDestinationPosition(pos);
-
         return gc.getOrthodromicDistance();
     }
 
@@ -489,7 +473,6 @@ public final class JTS {
      * @return The JTS geometry.
      */
     public static Geometry shapeToGeometry(final Shape shape, final GeometryFactory factory) {
-
         if (shape instanceof JTSGeometryJ2D) {
             final JTSGeometryJ2D jtsgeom = (JTSGeometryJ2D) shape;
             Geometry geometry = jtsgeom.getGeometry();
@@ -503,8 +486,6 @@ public final class JTS {
             }
             return geometry;
         }
-
-
         ensureNonNull("shape", shape);
         ensureNonNull("factory", factory);
 
@@ -512,7 +493,6 @@ public final class JTS {
         final double[] buffer = new double[6];
         final List<Coordinate> coords = new ArrayList<Coordinate>();
         final List<LineString> lines = new ArrayList<LineString>();
-
         while (!iterator.isDone()) {
             switch (iterator.currentSegment(buffer)) {
                 /*
@@ -528,7 +508,6 @@ public final class JTS {
                     }
                     break;
                 }
-
                 /*
                  * General case: A LineString is created from previous
                  * points, and a new LineString begin for next points.
@@ -542,20 +521,16 @@ public final class JTS {
 
                     // Fall through
                 }
-
                 case PathIterator.SEG_LINETO: {
                     coords.add(new Coordinate(buffer[0], buffer[1]));
 
                     break;
                 }
-
                 default:
                     throw new IllegalPathStateException();
             }
-
             iterator.next();
         }
-
         /*
          * End of loops: create the last LineString if any, then create the MultiLineString.
          */
@@ -563,14 +538,11 @@ public final class JTS {
             lines.add(factory.createLineString(
                     (Coordinate[]) coords.toArray(new Coordinate[coords.size()])));
         }
-
         switch (lines.size()) {
             case 0:
                 return null;
-
             case 1:
                 return (LineString) lines.get(0);
-
             default:
                 return factory.createMultiLineString(GeometryFactory.toLineStringArray(lines));
         }
@@ -596,7 +568,6 @@ public final class JTS {
         ensureNonNull("envelope", envelope);
         ensureNonNull("crs", crs);
 
-
         // Ensure the CRS is 2D and retrieve the new envelope
         final CoordinateReferenceSystem crs2D = CRS.getHorizontalComponent(crs);
         if (crs2D == null) {
@@ -604,15 +575,12 @@ public final class JTS {
                     Errors.format(
                     Errors.Keys.CantSeparateCrs_1, crs));
         }
-
-
         return new Envelope2D(crs2D, envelope.getMinX(), envelope.getMinY(), envelope.getWidth(),
                 envelope.getHeight());
     }
 
     public static Polygon toGeometry(final Rectangle envelope) {
         GeometryFactory gf = new GeometryFactory();
-
         return gf.createPolygon(gf.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(envelope.getMinX(), envelope.getMinY()),
@@ -634,7 +602,6 @@ public final class JTS {
      */
     public static Polygon toGeometry(final Envelope envelope) {
         GeometryFactory gf = new GeometryFactory();
-
         return gf.createPolygon(gf.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(envelope.getMinX(), envelope.getMinY()),
@@ -648,8 +615,6 @@ public final class JTS {
     /**
      * This method is not correct when dealing with antemeridian.
      *
-     * @param env
-     * @return
      * @deprecated Use GeometricUtilities.toGeometryJTS(Envelope, WrapResolution.NONE) for exact same behavior
      */
     @Deprecated
@@ -698,18 +663,11 @@ public final class JTS {
                 // e.printStackTrace();
             }
         }
-
         return new JTSEnvelope2D(geom.getEnvelopeInternal(), crs);
     }
 
     /**
      * Create an empty geometry of given type.
-     *
-     * @param <T>
-     * @param geomClass
-     * @param crs
-     * @param factory
-     * @return
      */
     public static <T extends Geometry> T emptyGeometry(Class<T> geomClass, CoordinateReferenceSystem crs, GeometryFactory factory) {
         ArgumentChecks.ensureNonNull("geometry class", geomClass);
@@ -749,7 +707,6 @@ public final class JTS {
      */
     public static Polygon toGeometry(final BoundingBox envelope) {
         GeometryFactory gf = new GeometryFactory();
-
         return gf.createPolygon(gf.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(envelope.getMinX(), envelope.getMinY()),
@@ -780,19 +737,15 @@ public final class JTS {
         // is needed
         boolean xUnbounded = Double.isInfinite(x.getMinimumValue()) && Double.isInfinite(x.getMaximumValue());
         boolean yUnbounded = Double.isInfinite(y.getMinimumValue()) && Double.isInfinite(y.getMaximumValue());
-
         if (xUnbounded && yUnbounded) {
             return;
         }
-
         // check each coordinate
         Coordinate[] c = geom.getCoordinates();
-
         for (int i = 0; i < c.length; i++) {
             if (!xUnbounded && ((c[i].x < x.getMinimumValue()) || (c[i].x > x.getMaximumValue()))) {
                 throw new ProjectionException(c[i].x + " outside of (" + x.getMinimumValue() + "," + x.getMaximumValue() + ")");
             }
-
             if (!yUnbounded && ((c[i].y < y.getMinimumValue()) || (c[i].y > y.getMaximumValue()))) {
                 throw new ProjectionException(c[i].y + " outside of (" + y.getMinimumValue() + "," + y.getMaximumValue() + ")");
             }
@@ -804,15 +757,13 @@ public final class JTS {
      * if user data is a Map, add an entry with the crs
      *
      * @param geom, should not be null
-     * @param crs, if null method has no effect
+     * @param crs if null method has no effect
      */
     public static void setCRS(Geometry geom, final CoordinateReferenceSystem crs) {
         ArgumentChecks.ensureNonNull("geometry", geom);
-
         if (crs == null) {
             return;
         }
-
         int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
         Object userData = geom.getUserData();
         if (userData instanceof CoordinateReferenceSystem) {
@@ -827,7 +778,6 @@ public final class JTS {
         if (userData == null) {
             userData = crs;
         }
-
         geom.setUserData(userData);
         geom.setSRID(srid);
     }
@@ -894,13 +844,11 @@ public final class JTS {
         final int size = cs.size();
         for (int t = size - 1; t >= 0; t--) {
             z = cs.getOrdinate(t, 2);
-
             if (!(Double.isNaN(z))) {
                 if (validZFound) {
                     if (z < zmin) {
                         zmin = z;
                     }
-
                     if (z > zmax) {
                         zmax = z;
                     }
@@ -911,7 +859,6 @@ public final class JTS {
                 }
             }
         }
-
         if (!Double.isNaN(zmin)) {
             target[0] = zmin;
         }
@@ -927,16 +874,12 @@ public final class JTS {
      * @return A new ring with the reversed Coordinates.
      */
     public static LinearRing reverseRing(final LinearRing lr) {
-
         final GeometryFactory gf = new GeometryFactory();
-
         final int numPoints = lr.getNumPoints() - 1;
         final Coordinate[] newCoords = new Coordinate[numPoints + 1];
-
         for (int t = numPoints; t >= 0; t--) {
             newCoords[t] = lr.getCoordinateN(numPoints - t);
         }
-
         return gf.createLinearRing(newCoords);
     }
 
@@ -950,11 +893,9 @@ public final class JTS {
      * @return The "nice" Polygon.
      */
     public static <T extends Geometry> T ensureClockWise(final T g) {
-
         if (!(g instanceof MultiPolygon) && !(g instanceof Polygon)) {
             return g;
         }
-
         final GeometryFactory gf = new GeometryFactory();
 
         boolean isMultiPolygon = false;
@@ -964,44 +905,33 @@ public final class JTS {
             nbPolygon = g.getNumGeometries();
             isMultiPolygon = true;
         }
-
         final Polygon[] ps = new Polygon[nbPolygon];
-
         for (int i = 0; i < nbPolygon; i++) {
-
             final Polygon p;
-
             if (isMultiPolygon) {
                 p = (Polygon) g.getGeometryN(i);
             } else {
                 p = (Polygon) g;
             }
-
             final LinearRing outer;
             final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
             Coordinate[] coords;
-
             coords = p.getExteriorRing().getCoordinates();
-
             if (Orientation.isCCW(coords)) {
                 outer = reverseRing((LinearRing) p.getExteriorRing());
             } else {
                 outer = (LinearRing) p.getExteriorRing();
             }
-
             for (int t = 0, tt = p.getNumInteriorRing(); t < tt; t++) {
                 coords = p.getInteriorRingN(t).getCoordinates();
-
                 if (!(Orientation.isCCW(coords))) {
                     holes[t] = reverseRing((LinearRing) p.getInteriorRingN(t));
                 } else {
                     holes[t] = (LinearRing) p.getInteriorRingN(t);
                 }
             }
-
             ps[i] = gf.createPolygon(outer, holes);
         }
-
         if (isMultiPolygon) {
             return (T) gf.createMultiPolygon(ps);
         } else {
@@ -1019,11 +949,9 @@ public final class JTS {
      * @return The "nice" Polygon.
      */
     public static <T extends Geometry> T ensureCounterClockWise(final T g) {
-
         if (!(g instanceof MultiPolygon) && !(g instanceof Polygon)) {
             return g;
         }
-
         final GeometryFactory gf = new GeometryFactory();
 
         boolean isMultiPolygon = false;
@@ -1033,45 +961,33 @@ public final class JTS {
             nbPolygon = g.getNumGeometries();
             isMultiPolygon = true;
         }
-
         final Polygon[] ps = new Polygon[nbPolygon];
-
         for (int i = 0; i < nbPolygon; i++) {
-
             final Polygon p;
-
             if (isMultiPolygon) {
                 p = (Polygon) g.getGeometryN(i);
             } else {
                 p = (Polygon) g;
             }
-
-
             final LinearRing outer;
             final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
             Coordinate[] coords;
-
             coords = p.getExteriorRing().getCoordinates();
-
             if (Orientation.isCCW(coords)) {
                 outer = (LinearRing) p.getExteriorRing();
             } else {
                 outer = reverseRing((LinearRing) p.getExteriorRing());
             }
-
             for (int t = 0, tt = p.getNumInteriorRing(); t < tt; t++) {
                 coords = p.getInteriorRingN(t).getCoordinates();
-
                 if (!(Orientation.isCCW(coords))) {
                     holes[t] = (LinearRing) p.getInteriorRingN(t);
                 } else {
                     holes[t] = reverseRing((LinearRing) p.getInteriorRingN(t));
                 }
             }
-
             ps[i] = gf.createPolygon(outer, holes);
         }
-
         if (isMultiPolygon) {
             return (T) gf.createMultiPolygon(ps);
         } else {
@@ -1088,11 +1004,9 @@ public final class JTS {
      * @return The "nice" Polygon.
      */
     public static <T extends Geometry> T ensureClockWise3D(final T g) {
-
         if (!(g instanceof MultiPolygon) && !(g instanceof Polygon)) {
             return g;
         }
-
         final GeometryFactory gf = new GeometryFactory();
 
         boolean isMultiPolygon = false;
@@ -1102,44 +1016,33 @@ public final class JTS {
             nbPolygon = g.getNumGeometries();
             isMultiPolygon = true;
         }
-
         final Polygon[] ps = new Polygon[nbPolygon];
-
         for (int i = 0; i < nbPolygon; i++) {
-
             final Polygon p;
-
             if (isMultiPolygon) {
                 p = (Polygon) g.getGeometryN(i);
             } else {
                 p = (Polygon) g;
             }
-
             final LinearRing outer;
             final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
             Coordinate[] coords;
-
             coords = p.getExteriorRing().getCoordinates();
-
             if (isCCW3D(coords)) {
                 outer = reverseRing((LinearRing) p.getExteriorRing());
             } else {
                 outer = (LinearRing) p.getExteriorRing();
             }
-
             for (int t = 0, tt = p.getNumInteriorRing(); t < tt; t++) {
                 coords = p.getInteriorRingN(t).getCoordinates();
-
                 if (!(isCCW3D(coords))) {
                     holes[t] = reverseRing((LinearRing) p.getInteriorRingN(t));
                 } else {
                     holes[t] = (LinearRing) p.getInteriorRingN(t);
                 }
             }
-
             ps[i] = gf.createPolygon(outer, holes);
         }
-
         if (isMultiPolygon) {
             return (T) gf.createMultiPolygon(ps);
         } else {
@@ -1156,59 +1059,43 @@ public final class JTS {
      * @return The "nice" Polygon.
      */
     public static <T extends Geometry> T ensureCounterClockWise3D(final T g) {
-
         if (!(g instanceof MultiPolygon) && !(g instanceof Polygon)) {
             return g;
         }
-
         final GeometryFactory gf = new GeometryFactory();
-
         boolean isMultiPolygon = false;
         int nbPolygon = 1;
-
         if (g instanceof MultiPolygon) {
             nbPolygon = g.getNumGeometries();
             isMultiPolygon = true;
         }
-
         final Polygon[] ps = new Polygon[nbPolygon];
-
         for (int i = 0; i < nbPolygon; i++) {
-
             final Polygon p;
-
             if (isMultiPolygon) {
                 p = (Polygon) g.getGeometryN(i);
             } else {
                 p = (Polygon) g;
             }
-
-
             final LinearRing outer;
             final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
             Coordinate[] coords;
-
             coords = p.getExteriorRing().getCoordinates();
-
             if (isCCW3D(coords)) {
                 outer = (LinearRing) p.getExteriorRing();
             } else {
                 outer = reverseRing((LinearRing) p.getExteriorRing());
             }
-
             for (int t = 0, tt = p.getNumInteriorRing(); t < tt; t++) {
                 coords = p.getInteriorRingN(t).getCoordinates();
-
                 if (!(isCCW3D(coords))) {
                     holes[t] = (LinearRing) p.getInteriorRingN(t);
                 } else {
                     holes[t] = reverseRing((LinearRing) p.getInteriorRingN(t));
                 }
             }
-
             ps[i] = gf.createPolygon(outer, holes);
         }
-
         if (isMultiPolygon) {
             return (T) gf.createMultiPolygon(ps);
         } else {
@@ -1223,11 +1110,8 @@ public final class JTS {
      * @return true if ring is CCW, false if ring is CW.
      */
     public static boolean isCCW3D(Coordinate[] ring) {
-
         final int nbCoords = ring.length - 1;
-
         double buff = 0.0;
-
         for (int i = 1; i < nbCoords; i++) {
             final Vector3d v1 = new Vector3d((ring[i].x - ring[i - 1].x), (ring[i].y - ring[i - 1].y), (ring[i].z - ring[i - 1].z));
             final Vector3d v2 = new Vector3d((ring[i + 1].x - ring[i].x), (ring[i + 1].y - ring[i].y), (ring[i + 1].z - ring[i].z));
@@ -1235,13 +1119,11 @@ public final class JTS {
             v1.normalize();
             buff += (v1.x + v1.y + v1.z);
         }
-
         if (buff > 0.0) {
             return true;
         } else {
             return false;
         }
-
     }
 
     /**
@@ -1251,14 +1133,9 @@ public final class JTS {
      * geometry CRS that will be returned. If first and second geometries CRS
      * are null, null CRS will be returned.
      *
-     * @param geom1
-     * @param geom2
      * @return the CRS keeped for the geometries.
-     * @throws FactoryException
-     * @throws TransformException
      */
     public static CoordinateReferenceSystem getCommonCRS(final Geometry geom1, final Geometry geom2) throws FactoryException, TransformException {
-
         CoordinateReferenceSystem resultCRS = null;
 
         //get geometies CRS
@@ -1274,7 +1151,6 @@ public final class JTS {
                 resultCRS = crs2;
             }
         }
-
         return resultCRS;
     }
 
@@ -1284,9 +1160,6 @@ public final class JTS {
      * @param geom a geometry to convert. (Not null)
      * @param crsTarget the target CoordinateReferenceSystem (Not null)
      * @return the geometry converted with targetCRS as geometry CRS.
-     * @throws MismatchedDimensionException
-     * @throws TransformException
-     * @throws FactoryException
      */
     public static Geometry convertToCRS(final Geometry geom, final CoordinateReferenceSystem crsTarget)
             throws MismatchedDimensionException, TransformException, FactoryException {
@@ -1309,18 +1182,12 @@ public final class JTS {
 
     /**
      * This method check if two geometries have a different CRS.
-     * @param geom1
-     * @param geom2
+     *
      * @return true if geom1 and geom2 have different CRS.
-     * @throws FactoryException
      */
     public static boolean isConversionNeeded(final Geometry geom1, final Geometry geom2) throws FactoryException {
-
         final CoordinateReferenceSystem crs1 = findCoordinateReferenceSystem(geom1);
         final CoordinateReferenceSystem crs2 = findCoordinateReferenceSystem(geom2);
-
         return crs1 != null && crs2 != null && (!crs1.equals(crs2));
-
     }
-
 }

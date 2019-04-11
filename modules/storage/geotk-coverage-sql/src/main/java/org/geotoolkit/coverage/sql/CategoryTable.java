@@ -17,27 +17,24 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.awt.Color;
-import java.io.IOException;
-import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.Types;
-import javax.swing.ComboBoxModel;
+import javax.measure.Unit;
 
+import org.opengis.util.NameFactory;
 import org.opengis.util.FactoryException;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.metadata.content.TransferFunctionType;
 
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
-
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.image.palette.PaletteFactory;
 
 
 /**
@@ -54,20 +51,6 @@ final class CategoryTable extends Table {
     private static final String TABLE = "Categories";
 
     /**
-     * A transparent color for missing data.
-     */
-    private static final Color[] TRANSPARENT = new Color[] {
-        new Color(0,0,0,0)
-    };
-
-    /**
-     * The choices of available palette names. Build only when first needed and cached
-     * in order to avoid reloading the colors from the files for every images inserted
-     * in the database.
-     */
-    private transient ComboBoxModel<ColorPalette> paletteChoices;
-
-    /**
      * Creates a category table.
      */
     CategoryTable(final Transaction transaction) {
@@ -77,65 +60,56 @@ final class CategoryTable extends Table {
     /**
      * Returns the list of categories for the given format.
      *
-     * @param  format  the name of the format for which the categories are defined.
-     * @return the categories for each sample dimension in the given format.
+     * @param  format       the name of the format for which the categories are defined.
+     * @param  bands        the sample dimension names.
+     * @param  units        the unit of measurement of quantitative categories for each sample dimension.
+     * @param  isPacked     {@code true} if sample values are packed, or {@code false} if they are real values.
+     * @param  backgrounds  the background sample values, or {@code null} if none.
+     * @return the sample dimension for the given format.
      * @throws SQLException if an error occurred while reading the database.
      */
-    public SampleDimensionTable.Entry query(final String format) throws SQLException, CatalogException {
-        String paletteName = null;
-        int paletteRange = 0;
-        final List<Category> categories = new ArrayList<>();
-        final Map<Integer,Category[]> dimensions = new HashMap<>();
-        int bandOfPreviousCategory = Integer.MIN_VALUE;
+    final SampleDimension[] query(final String format, final String[] bands, final Unit<?>[] units, final boolean[] isPacked,
+            final Integer[] backgrounds)  throws SQLException, FactoryException
+    {
+        final NameFactory factory = transaction.database.nameFactory;
+        final List<SampleDimension> dimensions = new ArrayList<>();
+        final class Builder extends SampleDimension.Builder {
+            public void build(final int i) {
+                final Integer bg = backgrounds[i];
+                if (bg != null) setBackground(null, bg);
+                dimensions.add(setName(factory.createLocalName(null, bands[i])).build().forConvertedValues(!isPacked[i]));
+            }
+        }
+        final Builder categories = new Builder();
+        int bandOfPreviousCategory = 0;
         final PreparedStatement statement = prepareStatement("SELECT "
-                + "\"band\", \"name\", \"lower\", \"upper\", \"scale\", \"offset\", \"function\", \"colors\""
-                + " FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"format\" = ? ORDER BY \"band\"");
+                + "\"band\", \"name\", \"lower\", \"upper\", \"scale\", \"offset\", \"function\""
+                + " FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"format\"=? ORDER BY \"band\"");
         statement.setString(1, format);
         try (ResultSet results = statement.executeQuery()) {
             while (results.next()) {
                 boolean isQuantifiable = true;
-                final int        band = results.getInt   (1);
+                final int        band = results.getInt   (1) - 1;   // Numbering starts at 1 in the database.
                 final String     name = results.getString(2);
                 final int       lower = results.getInt   (3);
                 final int       upper = results.getInt   (4);
                 final double    scale = results.getDouble(5); isQuantifiable &= !results.wasNull();
                 final double   offset = results.getDouble(6); isQuantifiable &= !results.wasNull();
                 final String function = results.getString(7);
-                final String  colorID = results.getString(8);
                 /*
-                 * Decode the "colors" value. This string is either the RGB numeric code starting
-                 * with '#" (as in "#D2C8A0"), or the name of a color palette (as "rainbow").
+                 * If we are beginning a new band, stores the previous categories in the 'dimensions' map.
                  */
-                Color[] colors = null;
-                if (colorID != null) {
-                    final String id = colorID.trim();
-                    if (!id.isEmpty()) try {
-                        if (colorID.charAt(0) == '#') {
-                            colors = new Color[] {Color.decode(id)};
-                         } else {
-                            colors = transaction.database.paletteFactory.getColors(colorID);
-                            final int range = upper - lower;
-                            if (paletteName == null || range > paletteRange) {
-                                paletteName = colorID;
-                                paletteRange = range;
-                            }
-                         }
-                    } catch (IOException | NumberFormatException exception) {
-                        throw new IllegalRecordException(exception, results, 8, name);
-                    }
+                if (band != bandOfPreviousCategory) {
+                    categories.build(bandOfPreviousCategory);
+                    bandOfPreviousCategory = band;
+                    categories.clear();
                 }
                 /*
                  * Creates a category for the current record. A category can be 1) qualitive,
                  * 2) quantitative and linear, or 3) quantitative and logarithmic.
                  */
                 final NumberRange<?> range = NumberRange.create(lower, true, upper, true);
-                MathTransform1D tr = null;
-                if (!isQuantifiable) {
-                    // Qualitative category.
-                    if (colors == null) {
-                        colors = TRANSPARENT;
-                    }
-                } else {
+                if (isQuantifiable) {
                     // Quantitative category.
                     TransferFunctionType type = org.apache.sis.util.iso.Types.forCodeName(TransferFunctionType.class, function, false);
                     if (type == null) type = TransferFunctionType.LINEAR;
@@ -143,39 +117,21 @@ final class CategoryTable extends Table {
                     trf.setScale(scale);
                     trf.setOffset(offset);
                     trf.setType(type);
-                    try {
-                        tr = (MathTransform1D) trf.createTransform(transaction.database.mtFactory);
-                    } catch (FactoryException | ClassCastException e) {
-                        throw new CatalogException(e);
+                    final MathTransform tr = trf.createTransform(transaction.database.getMathTransformFactory());
+                    categories.addQuantitative(name, range, (MathTransform1D) tr, units[band]);
+                } else {
+                    final Integer bg = backgrounds[band];
+                    if (bg != null && lower == bg && upper == bg) {
+                        categories.setBackground(name, bg);
+                        backgrounds[band] = null;
+                    } else {
+                        categories.addQualitative(name, range);
                     }
                 }
-                final Category category = new Category(name, colors, range, tr);
-                /*
-                 * Add the new category to the list. If we are beginning a new band,
-                 * stores the previous categories in the 'dimensions' map.
-                 */
-                if (band != bandOfPreviousCategory) {
-                    store(dimensions, bandOfPreviousCategory, categories);
-                    bandOfPreviousCategory = band;
-                }
-                categories.add(category);
             }
         }
-        store(dimensions, bandOfPreviousCategory, categories);
-        return new SampleDimensionTable.Entry(dimensions, paletteName);
-    }
-
-    /**
-     * Puts the categories from the given list in the given map.
-     */
-    private static void store(final Map<Integer,Category[]> dimensions, final int band, final List<Category> categories) {
-        final int size = categories.size();
-        if (size != 0) {
-            if (dimensions.put(band, categories.toArray(new Category[size])) != null) {
-                throw new AssertionError(band);         // Should never happen (TODO: replace by InternalDataStoreException).
-            }
-            categories.clear();
-        }
+        categories.build(bandOfPreviousCategory);
+        return dimensions.toArray(new SampleDimension[dimensions.size()]);
     }
 
     /**
@@ -185,16 +141,15 @@ final class CategoryTable extends Table {
      * @param  categories  the categories to add for each band.
      * @throws SQLException if an error occurred while writing to the database.
      */
-    public void insert(final String format, final List<List<Category>> categories) throws SQLException, IllegalUpdateException {
+    final void insert(final String format, final List<List<Category>> categories) throws SQLException, IllegalUpdateException {
         final PreparedStatement statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\" ("
-                + "\"format\", \"band\", \"name\", \"lower\", \"upper\", \"scale\", \"offset\", \"function\", \"colors\")"
-                + " VALUES (?,?,?,?,?,?,?,?,?)");
+                + "\"format\", \"band\", \"name\", \"lower\", \"upper\", \"scale\", \"offset\", \"function\")"
+                + " VALUES (?,?,?,?,?,?,?,CAST(? AS metadata.\"TransferFunctionTypeCode\"))");
         statement.setString(1, format);
         int bandNumber = 0;
         for (final List<Category> list : categories) {
             statement.setInt(2, ++bandNumber);
-            for (Category category : list) {
-                category = category.geophysics(false);
+            for (final Category category : list) {
                 final org.geotoolkit.coverage.sql.TransferFunction tf =
                         new org.geotoolkit.coverage.sql.TransferFunction(category, transaction.database.locale);
                 if (tf.warning != null) {
@@ -212,15 +167,9 @@ final class CategoryTable extends Table {
                         statement.setNull(8, Types.VARCHAR);
                     }
                 } else {
+                    statement.setNull(6, Types.DOUBLE);
                     statement.setNull(7, Types.DOUBLE);
-                    statement.setNull(8, Types.DOUBLE);
                     statement.setNull(8, Types.VARCHAR);
-                }
-                final String paletteName = getPaletteName(category.getColors());
-                if (paletteName != null) {
-                    statement.setString(9, paletteName);
-                } else {
-                    statement.setNull(9, Types.VARCHAR);
                 }
                 final int count = statement.executeUpdate();
                 if (count != 1) {
@@ -228,20 +177,5 @@ final class CategoryTable extends Table {
                 }
             }
         }
-    }
-
-    /**
-     * Returns the name of the color palette for the given colors, or {@code null} if none.
-     * This method is invoked only during the insertion of new entries.
-     */
-    private String getPaletteName(final Color... colors) {
-        if (colors != null && colors.length != 0) {
-            final PaletteFactory paletteFactory = transaction.database.paletteFactory;
-            if (paletteChoices == null) {
-                paletteChoices = ColorPalette.getChoices(paletteFactory);
-            }
-            return ColorPalette.findName(colors, paletteChoices, paletteFactory);
-        }
-        return null;
     }
 }

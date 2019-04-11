@@ -16,10 +16,6 @@
  */
 package org.geotoolkit.image.io.plugin;
 
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.stream.ImageInputStream;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
@@ -35,21 +31,25 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.sis.measure.Units;
-import org.apache.sis.internal.storage.io.ChannelImageInputStream;
-import org.geotoolkit.image.io.SpatialImageReader;
-import org.opengis.metadata.content.TransferFunctionType;
-import org.opengis.metadata.spatial.CellGeometry;
-import org.opengis.referencing.crs.GeographicCRS;
-import org.opengis.referencing.datum.PixelInCell;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.stream.ImageInputStream;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.storage.io.ChannelImageInputStream;
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
+import org.opengis.metadata.content.TransferFunctionType;
+import org.opengis.metadata.spatial.CellGeometry;
+import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.datum.PixelInCell;
 
 
 /**
@@ -192,7 +192,7 @@ public class HGTReader extends SpatialImageReader {
                 final ReferencingBuilder builder = new ReferencingBuilder(md);
                 builder.setCoordinateReferenceSystem(geographicCRS);
 
-                final GridEnvelope2D gridEnv = new GridEnvelope2D(0, 0, getWidth(imageIndex), getHeight(imageIndex));
+                final GridExtent gridEnv = new GridExtent(getWidth(imageIndex), getHeight(imageIndex));
                 final GeneralEnvelope envelope = new GeneralEnvelope(geographicCRS);
                 final int latitude = matcher.group(1).toLowerCase().startsWith("n")?
                         Integer.parseInt(matcher.group(2)) : -Integer.parseInt(matcher.group(2));

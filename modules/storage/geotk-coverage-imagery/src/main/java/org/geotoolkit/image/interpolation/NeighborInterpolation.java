@@ -17,7 +17,7 @@
 package org.geotoolkit.image.interpolation;
 
 import java.awt.Rectangle;
-import org.geotoolkit.image.iterator.PixelIterator;
+import org.apache.sis.image.PixelIterator;
 
 /**
  * Define Interpolation from neighbor.
@@ -39,7 +39,7 @@ public class NeighborInterpolation extends Interpolation {
      */
     public NeighborInterpolation(PixelIterator pixelIterator, double[] fillValue) {
         super(pixelIterator, 0, ResampleBorderComportement.EXTRAPOLATION, fillValue);
-        Rectangle rect = pixelIterator.getBoundary(false);
+        Rectangle rect = pixelIterator.getDomain();
         maxxId = rect.x + rect.width  - 1;
         maxyId = rect.y + rect.height - 1;
     }
@@ -62,8 +62,8 @@ public class NeighborInterpolation extends Interpolation {
 //        if (x < bminX || x > bmaxX || y < bminY || y > bmaxY) return fillValue[band];//-- no interpolation available
         x = Math.round(x);
         y = Math.round(y);
-        pixelIterator.moveTo((int) Math.min(maxxId, x), (int) Math.min(maxyId, y), band);
-        return pixelIterator.getSampleDouble();
+        pixelIterator.moveTo((int) Math.min(maxxId, x), (int) Math.min(maxyId, y));
+        return pixelIterator.getSampleDouble(band);
     }
 
     /**
@@ -74,12 +74,8 @@ public class NeighborInterpolation extends Interpolation {
 //        if (x < bminX || x > bmaxX || y < bminY || y > bmaxY) return fillValue;//-- no interpolation available
         x = Math.round(x);
         y = Math.round(y);
-        pixelIterator.moveTo((int) Math.min(maxxId, x), (int) Math.min(maxyId, y), 0);
-        result[0] = pixelIterator.getSampleDouble();
-        for (int band = 1; band < numBands; band++) {
-            pixelIterator.next();
-            result[band] = pixelIterator.getSampleDouble();
-        }
+        pixelIterator.moveTo((int) Math.min(maxxId, x), (int) Math.min(maxyId, y));
+        pixelIterator.getPixel(result);
         return result;
     }
 }

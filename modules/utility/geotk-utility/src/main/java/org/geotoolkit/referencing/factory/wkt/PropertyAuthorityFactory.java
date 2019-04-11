@@ -88,8 +88,6 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
      * identifier}, each with the same code but different namespace.
      * See {@link WKTParsingAuthorityFactory} for more details.
      *
-     * @param userHints
-     *          An optional set of hints, or {@code null} for the default ones.
      * @param definitionFile
      *          URL to the definition file. This is typically a value returned by
      *          {@link Class#getResource(String)}.
@@ -100,10 +98,10 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
      *
      * @since 3.00
      */
-    public PropertyAuthorityFactory(final Hints userHints, final URL definitionFile,
+    public PropertyAuthorityFactory(final URL definitionFile,
             final Citation... authorities) throws IOException
     {
-        this(userHints, authorities);
+        this(authorities);
         if (definitionFile != null) {
             load(Collections.singleton(definitionFile));
         }
@@ -116,8 +114,6 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
      * first occurrence is used. This is consistent with the usual rule saying that the first item
      * in a class-path has precedence.
      *
-     * @param userHints
-     *          An optional set of hints, or {@code null} for the default ones.
      * @param definitionFiles
      *          URL to the definition file(s). This is typically built from the
      *          values returned by {@link ClassLoader#getResources(String)}.
@@ -128,10 +124,10 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
      *
      * @since 3.00
      */
-    public PropertyAuthorityFactory(final Hints userHints, final Collection<URL> definitionFiles,
+    public PropertyAuthorityFactory(final Collection<URL> definitionFiles,
             final Citation... authorities) throws IOException
     {
-        this(userHints, authorities);
+        this(authorities);
         load(definitionFiles);
     }
 
@@ -179,7 +175,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
             final Class<?> resourceLoader, final String filename, final Citation... authorities)
             throws IOException
     {
-        this(userHints, authorities);
+        this(authorities);
         /*
          * Gets the directory, or null if none. If the user requested us to look for the
          * directory, then we must save what we found in the super.hints map even if that
@@ -262,16 +258,14 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
      * only. Subclasses must invoke {@link #load(Collection)} in their constructor in order to
      * populate the factory before it is used.
      *
-     * @param userHints
-     *          An optional set of hints, or {@code null} for the default ones.
      * @param authorities
      *          The organizations or parties responsible for definition and maintenance of the database.
      *
      * @since 3.00
      */
     @SuppressWarnings({"unchecked","rawtypes"})
-    protected PropertyAuthorityFactory(final Hints userHints, final Citation... authorities) {
-        super(userHints, (Map) new Properties(), authorities);
+    protected PropertyAuthorityFactory(final Citation... authorities) {
+        super((Map) new Properties(), authorities);
     }
 
     /**

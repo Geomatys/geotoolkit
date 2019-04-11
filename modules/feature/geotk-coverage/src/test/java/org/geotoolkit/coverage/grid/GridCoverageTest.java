@@ -17,10 +17,10 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.io.IOException;
-
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -56,26 +56,8 @@ public final strictfp class GridCoverageTest extends GridCoverageTestBase {
         assertSame(coverage,     geophysics.view(ViewType.PACKED));
         assertSame(geophysics,   geophysics.view(ViewType.GEOPHYSICS));
         assertFalse( coverage.equals(geophysics));
-        assertFalse( coverage.getSampleDimension(0).getSampleToGeophysics().isIdentity());
-        assertTrue(geophysics.getSampleDimension(0).getSampleToGeophysics().isIdentity());
+        assertFalse( coverage.getSampleDimensions().get(0).getTransferFunction().get().isIdentity());
+        assertTrue(geophysics.getSampleDimensions().get(0).getTransferFunction().get().isIdentity());
     }
 
-    /**
-     * Tests the serialization of a grid coverage.
-     *
-     * @throws IOException if an I/O operation was needed and failed.
-     * @throws ClassNotFoundException Should never happen.
-     */
-    @Test
-    public void testSerialization() throws IOException, ClassNotFoundException {
-        loadSampleCoverage(SampleCoverage.SST);
-        GridCoverage2D serial = serialize();
-        assertNotSame(coverage, serial);
-        assertEquals(GridCoverage2D.class, serial.getClass());
-        // Compares the geophysics view for working around the
-        // conversions of NaN values which may be the expected ones.
-        coverage = coverage.view(ViewType.GEOPHYSICS);
-        serial   = serial  .view(ViewType.GEOPHYSICS);
-        assertRasterEquals(coverage, serial);
-    }
 }

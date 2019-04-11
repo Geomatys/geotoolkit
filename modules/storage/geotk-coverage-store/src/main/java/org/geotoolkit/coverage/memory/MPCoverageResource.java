@@ -22,9 +22,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.data.multires.MultiResolutionModel;
@@ -43,12 +43,12 @@ public class MPCoverageResource extends AbstractPyramidalCoverageResource {
     private final DefaultPyramidSet pyramidSet;
     final AtomicLong mosaicID = new AtomicLong(0);
     private ViewType viewType;
-    private List<GridSampleDimension> dimensions;
+    private List<SampleDimension> dimensions;
     private SampleModel sampleModel;
     private ColorModel colorModel;
 
     public MPCoverageResource(final MPCoverageStore store, final GenericName name) {
-        super(store,name,0);
+        super(store,name);
         this.pyramidSet = new DefaultPyramidSet();
     }
 
@@ -79,7 +79,7 @@ public class MPCoverageResource extends AbstractPyramidalCoverageResource {
      * {@inheritDoc }.
      */
     @Override
-    public List<GridSampleDimension> getSampleDimensions() throws DataStoreException {
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
         return dimensions;
     }
 
@@ -87,7 +87,7 @@ public class MPCoverageResource extends AbstractPyramidalCoverageResource {
      * {@inheritDoc }.
      */
     @Override
-    public void setSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
+    public void setSampleDimensions(List<SampleDimension> dimensions) throws DataStoreException {
         this.dimensions = dimensions;
     }
 
@@ -172,5 +172,4 @@ public class MPCoverageResource extends AbstractPyramidalCoverageResource {
         }
         throw new DataStoreException("Identifier "+identifier+" not found in models.");
     }
-
 }

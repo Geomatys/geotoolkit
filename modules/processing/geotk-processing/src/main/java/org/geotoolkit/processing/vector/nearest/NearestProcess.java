@@ -21,19 +21,15 @@ import org.locationtech.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
 import org.apache.sis.storage.DataStoreException;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.PropertyType;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -47,6 +43,8 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.opengis.filter.FilterFactory;
 
 /**
  * Process return the nearest Feature(s) form a FeatureCollection to a geometry
@@ -55,8 +53,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
  */
 public class NearestProcess extends AbstractProcess {
 
-    private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
-            new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
+    private static final FilterFactory2 FF = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
 
     /**
      * Default constructor

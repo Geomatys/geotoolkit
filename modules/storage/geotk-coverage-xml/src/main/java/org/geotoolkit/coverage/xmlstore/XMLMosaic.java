@@ -59,6 +59,8 @@ import javax.xml.bind.annotation.XmlElement;
 import net.iharder.Base64;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
@@ -66,14 +68,13 @@ import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Tile;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
@@ -174,7 +175,7 @@ public class XMLMosaic implements Mosaic {
         // If we create a new mosaic, behavior for tile state management has not been determined yet, we try to get it from store parameters.
         if (cacheTileState == null) {
             try {
-                cacheTileState = ((XMLCoverageStore) pyramid.getPyramidSet().getRef().getStore()).cacheTileState;
+                cacheTileState = ((XMLCoverageStore) pyramid.getPyramidSet().getRef().getOriginator()).cacheTileState;
             } catch (Exception e) {
                 // If we've got a problem retrieving cache state parameter, we use default behavior (flushing tile states).
                 cacheTileState = false;
@@ -258,18 +259,18 @@ public class XMLMosaic implements Mosaic {
                     Arrays.fill(nodataExists, false);
                     final double[] nodatas = new double[dimsSize];
                     for (int i = 0; i < dimsSize; i++) {
-                        final double[] nodat = dims.get(i).buildSampleDimension().getNoDataValues();
+                        final double[] nodat = SampleDimensionUtils.getNoDataValues(dims.get(i).buildSampleDimension());
                         if (nodat != null) {
                             nodataExists[i] = true;
                             nodatas[i] = nodat[0];//-- only one value by band is supported
                         }
                     }
 
-                    final PixelIterator pix = PixelIteratorFactory.createDefaultWriteableIterator(emptyTile, emptyTile);
-                    int d = 0;
+                    final WritablePixelIterator pix = new PixelIterator.Builder().createWritable(emptyTile);
                     while (pix.next()) {
-                        if (nodataExists[d]) pix.setSampleDouble(nodatas[d++]);
-                        if (d == dimsSize)   d = 0;
+                        for (int d=0; d < dimsSize; d++) {
+                            if (nodataExists[d]) pix.setSample(d, nodatas[d]);
+                        }
                     }
                 }
             } else {

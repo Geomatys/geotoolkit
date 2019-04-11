@@ -55,15 +55,18 @@ import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.util.Callback;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.filter.DefaultLiteral;
-import org.apache.sis.geometry.GeneralEnvelope;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getFilterFactory;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.gui.javafx.util.FXNumberSpinner;
@@ -74,9 +77,6 @@ import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.processing.coverage.statistics.StatisticOp;
-import org.apache.sis.geometry.Envelopes;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.style.StyleConstants;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
@@ -89,18 +89,15 @@ import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.geotoolkit.style.interval.Palette;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.metadata.content.AttributeGroup;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
-import org.opengis.metadata.content.SampleDimension;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.ColorMap;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -244,7 +241,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         if(!(layer instanceof CoverageMapLayer)) return;
 
         final CoverageMapLayer cml = (CoverageMapLayer)layer;
-        final GridCoverageResource cref = cml.getCoverageReference();
+        final GridCoverageResource cref = cml.getResource();
 
         final Double[] range = findMinMaxInMeta();
         if(range!=null && range[0]!=null && range[1]!=null){
@@ -253,21 +250,13 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
             return;
         }
 
-
-        GridCoverageReader reader = null;
-        GeneralGridGeometry gridGeometry = null;
-        GridCoverageReadParam readParam = null;
-        GridCoverage coverage = null;
-        GridCoverage2D coverage2D = null;
-        RenderedImage image = null;
         try {
-            reader = cref.acquireReader();
-            gridGeometry = reader.getGridGeometry(cref.getImageIndex());
+            GridGeometry gridGeometry = cref.getGridGeometry();
 
-            if (gridGeometry.isDefined(GeneralGridGeometry.GRID_TO_CRS)
-                    && gridGeometry.isDefined(GeneralGridGeometry.EXTENT)) {
-                MathTransform gridToCRS = gridGeometry.getGridToCRS();
-                GridEnvelope extent = gridGeometry.getExtent();
+            if (gridGeometry.isDefined(GridGeometry.GRID_TO_CRS)
+                    && gridGeometry.isDefined(GridGeometry.EXTENT)) {
+                MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
+                GridExtent extent = gridGeometry.getExtent();
                 int dim = extent.getDimension();
                 double[] low = new double[dim];
                 double[] high = new double[dim];
@@ -280,14 +269,10 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                     sliceExtent.setRange(i, low[i], high[i]);
                 }
 
-                readParam = new GridCoverageReadParam();
-                readParam.setEnvelope(Envelopes.transform(gridToCRS, sliceExtent));
-                readParam.setResolution(high[0]-low[0], high[1]-low[1]);
-                readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
+                GridGeometry query = gridGeometry.derive().sliceByRatio(0.5, 0, 1).build();
 
-                coverage = reader.read(cref.getImageIndex(), readParam);
-                coverage2D = CoverageUtilities.firstSlice(coverage);
-                image = coverage2D.getRenderedImage();
+                GridCoverage coverage = cref.read(query);
+                RenderedImage image = coverage.render(query.getExtent());
                 final Map<String, Object> an = StatisticOp.analyze(image);
                 final double[] minArray = (double[]) an.get(StatisticOp.MINIMUM);
                 final double[] maxArray = (double[]) an.get(StatisticOp.MAXIMUM);
@@ -296,13 +281,10 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                 uiMinimum.valueProperty().setValue(minArray[index]);
                 uiMaximum.valueProperty().setValue(maxArray[index]);
             }
-            cref.recycle(reader);
         } catch (CoverageStoreException ex) {
             Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(),ex);
         } catch (DataStoreException ex) {
             Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(),ex);
-        } catch (TransformException ex) {
-            Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
         }
     }
 
@@ -314,19 +296,22 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
      */
     private Double[] findMinMaxInMeta(){
         final CoverageMapLayer cml = (CoverageMapLayer)layer;
-        final GridCoverageResource cref = cml.getCoverageReference();
-        final CoverageDescription covdesc = cref.getCoverageDescription();
-        if(covdesc==null) return null;
+        final GridCoverageResource cref = cml.getResource();
+        CoverageDescription covdesc = null;
+        if (cref instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
+            covdesc = ((org.geotoolkit.storage.coverage.GridCoverageResource) cref).getCoverageDescription();
+        }
+        if (covdesc == null) return null;
         final Integer index = uiBand.valueProperty().get().intValue();
 
         //search for band statistics
         search:
-        for(AttributeGroup attg : covdesc.getAttributeGroups()){
-            for(RangeDimension rd : attg.getAttributes()){
-                if(!(rd instanceof SampleDimension)) continue;
+        for (AttributeGroup attg : covdesc.getAttributeGroups()) {
+            for (RangeDimension rd : attg.getAttributes()) {
+                if (!(rd instanceof org.opengis.metadata.content.SampleDimension)) continue;
                 final int i = Integer.parseInt(rd.getSequenceIdentifier().tip().toString());
-                if(i==index){
-                    final SampleDimension sd = (SampleDimension) rd;
+                if (i == index) {
+                    final org.opengis.metadata.content.SampleDimension sd = (org.opengis.metadata.content.SampleDimension) rd;
                     return new Double[]{sd.getMinValue(),sd.getMaxValue()};
                 }
             }
@@ -669,14 +654,13 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         //update nbBands spinner
         try {
             if (layer instanceof CoverageMapLayer) {
-                final GridCoverageResource covRef = ((CoverageMapLayer) layer).getCoverageReference();
-                final GridCoverageReader reader = covRef.acquireReader();
-                final GeneralGridGeometry gridGeometry = reader.getGridGeometry(covRef.getImageIndex());
+                final GridCoverageResource covRef = ((CoverageMapLayer) layer).getResource();
+                final GridGeometry gridGeometry = covRef.getGridGeometry();
 
-                if (gridGeometry.isDefined(GeneralGridGeometry.GRID_TO_CRS)
-                        && gridGeometry.isDefined(GeneralGridGeometry.EXTENT)) {
-                    MathTransform gridToCRS = gridGeometry.getGridToCRS();
-                    GridEnvelope extent = gridGeometry.getExtent();
+                if (gridGeometry.isDefined(GridGeometry.GRID_TO_CRS)
+                        && gridGeometry.isDefined(GridGeometry.EXTENT)) {
+                    MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
+                    GridExtent extent = gridGeometry.getExtent();
                     int dim = extent.getDimension();
                     double[] low = new double[dim];
                     double[] high = new double[dim];
@@ -696,19 +680,15 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                     readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
                     readParam.setResolution(res);
 
-                    final List<GridSampleDimension> sd = reader.getSampleDimensions(covRef.getImageIndex());
+                    final List<SampleDimension> sd = covRef.getSampleDimensions();
                     int nbBands = 10;
                     if (sd != null && !sd.isEmpty()) {
                         nbBands = sd.size();
                     } else {
-                        final GridCoverage coverage = reader.read(covRef.getImageIndex(), readParam);
-                        if(coverage != null) {
-                            nbBands = coverage.getNumSampleDimensions() - 1;
-                        }
+                        nbBands = 1;
                     }
                     uiBand.getSpinner().setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, nbBands, 0, 1));
                 }
-                covRef.recycle(reader);
             }
         } catch (CoverageStoreException ex) {
             Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);

@@ -17,37 +17,35 @@
  */
 package org.geotoolkit.coverage.io;
 
+import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
-import java.awt.geom.AffineTransform;
 import java.nio.file.Path;
 import javax.imageio.ImageIO;
-
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridGeometry;
-import org.opengis.coverage.grid.GridEnvelope;
-
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.test.DependsOn;
-import org.geotoolkit.test.TestData;
-import org.geotoolkit.test.image.ImageTestBase;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.image.io.mosaic.TileTest;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.image.io.mosaic.MosaicReadWriteTest;
 import org.geotoolkit.image.io.mosaic.TileManager;
+import org.geotoolkit.image.io.mosaic.TileTest;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
-import org.geotoolkit.image.io.mosaic.MosaicReadWriteTest;
-
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.test.TestData;
+import org.geotoolkit.test.image.ImageTestBase;
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import org.opengis.referencing.datum.PixelInCell;
 
 
 /**
  * Tests the {@link CoverageIO} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
- *
- * @since 3.18
  */
 @DependsOn(MosaicReadWriteTest.class)
 public final strictfp class CoverageIOTest extends ImageTestBase {
@@ -83,7 +81,7 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
      * @throws CoverageStoreException If an error occurred while reading of writing the file.
      */
     @Test
-    public void testReadWrite() throws IOException, CoverageStoreException {
+    public void testReadWrite() throws IOException, DataStoreException {
         final GridCoverage coverage = CoverageIO.read(TestData.file(TileTest.class, "A2.png"));
         verify(coverage.getGridGeometry(), 90, 90, 0);
         /*
@@ -110,24 +108,23 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
      *               upper-left corner.
      */
     private static void verify(final GridGeometry geom, final int width, final int height, final int ty) {
-        final AffineTransform gridToCRS = (AffineTransform) geom.getGridToCRS();
+        final AffineTransform gridToCRS = (AffineTransform) geom.getGridToCRS(PixelInCell.CELL_CENTER);
         assertEquals("scaleX",        1.0, gridToCRS.getScaleX(),     0);
         assertEquals("scaleY",       -1.0, gridToCRS.getScaleY(),     0);
         assertEquals("translateX", -179.5, gridToCRS.getTranslateX(), 0);
         assertEquals("translateY", ty-0.5, gridToCRS.getTranslateY(), 0);
 
-        final GridEnvelope range = geom.getExtent();
-        assertEquals("Width",  width,  range.getSpan(0));
-        assertEquals("Height", height, range.getSpan(1));
+        final GridExtent range = geom.getExtent();
+        assertEquals("Width",  width,  range.getSize(0));
+        assertEquals("Height", height, range.getSize(1));
     }
 
     /**
      * Verifies the metadata provided by the given reader.
      */
-    private void verify(final GridCoverageReader reader) throws CoverageStoreException {
-        assertEquals("Number of expected images.", 1, reader.getCoverageNames().size());
-        verify(reader.getGridGeometry(0), 360, 180, 90);
-        image = reader.read(0, null).getRenderableImage(0, 1).createDefaultRendering();
+    private void verify(final GridCoverageReader reader) throws DataStoreException {
+        verify(reader.getGridGeometry(), 360, 180, 90);
+        image = reader.read(null).getRenderableImage(0, 1).createDefaultRendering();
         assertCurrentChecksumEquals("verify", MosaicReadWriteTest.IMAGE_CHECKSUMS);
     }
 
@@ -139,7 +136,7 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
      * @throws CoverageStoreException If an error occurred while building the mosaic.
      */
     @Test
-    public void testCreateMosaic() throws IOException, CoverageStoreException {
+    public void testCreateMosaic() throws IOException, DataStoreException {
         final File directory = TestData.file(TileTest.class, null);
         final GridCoverageReader reader = CoverageIO.createMosaicReader(directory, null);
         final TileManager manager = (TileManager) reader.getInput();
@@ -158,7 +155,7 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
      * @throws CoverageStoreException If an error occurred while building the mosaic.
      */
     @Test
-    public void testWriteOrReuseMosaic() throws IOException, CoverageStoreException {
+    public void testWriteOrReuseMosaic() throws IOException, DataStoreException {
         boolean cleaned = false;
         final File directory = TestData.file(TileTest.class, null);
         final File cacheDirectory = new File(directory.getPath() + MosaicCoverageReader.CACHE_EXTENSION);

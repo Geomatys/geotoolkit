@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.internal.feature;
 
-import org.locationtech.jts.geom.GeometryFactory;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
@@ -26,28 +25,30 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.operation.matrix.Matrix4;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.geotoolkit.coverage.GridCoverageStack;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.SampleDimensionBuilder;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
 import org.geotoolkit.image.BufferedImages;
+import static org.junit.Assert.*;
 import org.junit.Test;
-import org.opengis.coverage.grid.GridCoverage;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
-import static org.junit.Assert.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -63,10 +64,10 @@ public class CoverageFeatureTest {
     /**
      * Test coverage 2D mapped as a feature.
      *
-     * @throws CoverageStoreException
+     * @throws DataStoreException
      */
     @Test
-    public void coverageRecord2DTest() throws CoverageStoreException {
+    public void coverageRecord2DTest() throws DataStoreException {
 
         //create coverage
         final BufferedImage image = BufferedImages.createImage(2, 2, 2, DataBuffer.TYPE_INT);
@@ -76,15 +77,14 @@ public class CoverageFeatureTest {
         raster.setPixel(0, 1, new int[]{50,6});
         raster.setPixel(1, 1, new int[]{70,8});
 
-        SampleDimensionBuilder sdb = new SampleDimensionBuilder(DataBuffer.TYPE_INT);
-        sdb.setDescription("values");
-        sdb.add("valuesCat", null, NumberRange.create(0, true, 1000, true), 10, -5);
-        final GridSampleDimension sdim1 = sdb.build();
-        sdb = new SampleDimensionBuilder(DataBuffer.TYPE_INT);
-        sdb.setDescription("quality");
-        sdb.add("qualityCat", null, NumberRange.create(0, true, 100, true), 1, 0);
-        final GridSampleDimension sdim2 = sdb.build();
-
+        SampleDimensionBuilder sdb = new SampleDimensionBuilder();
+        sdb.setName("values");
+        sdb.addQuantitative("valuesCat", NumberRange.create(0, true, 1000, true), (MathTransform1D) MathTransforms.linear(10, -5), null);
+        final SampleDimension sdim1 = sdb.build();
+        sdb.clear();
+        sdb.setName("quality");
+        sdb.addQuantitative("qualityCat", NumberRange.create(0, true, 100, true), (MathTransform1D) MathTransforms.linear(1, 0), null);
+        final SampleDimension sdim2 = sdb.build();
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName("MyCoverage");
@@ -137,10 +137,10 @@ public class CoverageFeatureTest {
     /**
      * Test coverage 3D mapped as a feature.
      *
-     * @throws CoverageStoreException
+     * @throws DataStoreException
      */
     @Test
-    public void coverageRecord3DTest() throws CoverageStoreException, IOException, TransformException, FactoryException {
+    public void coverageRecord3DTest() throws DataStoreException, IOException, TransformException, FactoryException {
 
         //create CRS
         final CoordinateReferenceSystem crs3d = new DefaultCompoundCRS(Collections.singletonMap("name", "crs3d"),
@@ -148,14 +148,14 @@ public class CoverageFeatureTest {
                 CommonCRS.Vertical.DEPTH.crs());
 
         //create sample dimensions
-        SampleDimensionBuilder sdb = new SampleDimensionBuilder(DataBuffer.TYPE_INT);
-        sdb.setDescription("values");
-        sdb.add("valuesCat", null, NumberRange.create(0, true, 1000, true), 10, -5);
-        final GridSampleDimension sdim1 = sdb.build();
-        sdb = new SampleDimensionBuilder(DataBuffer.TYPE_INT);
-        sdb.setDescription("quality");
-        sdb.add("qualityCat", null, NumberRange.create(0, true, 100, true), 1, 0);
-        final GridSampleDimension sdim2 = sdb.build();
+        SampleDimensionBuilder sdb = new SampleDimensionBuilder();
+        sdb.setName("values");
+        sdb.addQuantitative("valuesCat", NumberRange.create(0, true, 1000, true), (MathTransform1D) MathTransforms.linear(10, -5), null);
+        final SampleDimension sdim1 = sdb.build();
+        sdb.clear();
+        sdb.setName("quality");
+        sdb.addQuantitative("qualityCat", NumberRange.create(0, true, 100, true), (MathTransform1D) MathTransforms.linear(1, 0), null);
+        final SampleDimension sdim2 = sdb.build();
 
         final GridCoverage slice1;
         {//create first slice
@@ -172,7 +172,7 @@ public class CoverageFeatureTest {
                     0, 0, 1, 100,
                     0, 0, 0, 1);
             final MathTransform gridToCrs = MathTransforms.linear(matrix);
-            final GridGeometry2D gg = new GridGeometry2D(new GeneralGridEnvelope(new int[]{0,0,0}, new int[]{2,2,1}, false), gridToCrs, crs3d);
+            final GridGeometry2D gg = new GridGeometry2D(new GridExtent(null, null, new long[]{2,2,1}, false), gridToCrs, crs3d);
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setName("Slice1");
@@ -197,7 +197,7 @@ public class CoverageFeatureTest {
                     0, 0, 1, 101,
                     0, 0, 0, 1);
             final MathTransform gridToCrs = MathTransforms.linear(matrix);
-            final GridGeometry2D gg = new GridGeometry2D(new GeneralGridEnvelope(new int[]{0,0,0}, new int[]{2,2,1}, false), gridToCrs, crs3d);
+            final GridGeometry2D gg = new GridGeometry2D(new GridExtent(null, null, new long[]{2,2,1}, false), gridToCrs, crs3d);
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setName("Slice2");

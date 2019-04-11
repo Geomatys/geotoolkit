@@ -18,31 +18,31 @@
 package org.geotoolkit.internal.image.io;
 
 import java.awt.Rectangle;
-import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import javax.imageio.metadata.IIOMetadata;
-
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.coverage.grid.GridGeometry;
-import org.opengis.metadata.spatial.CellGeometry;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.operation.Matrix;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.datum.PixelInCell;
-
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.PixelTranslation;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridGeometry;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
-import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
-import org.apache.sis.coverage.grid.PixelTranslation;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.resources.Errors;
-
-import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingError;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.geotoolkit.resources.Errors;
+import org.opengis.metadata.spatial.CellGeometry;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -60,7 +60,6 @@ import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingErro
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
  *
  * @since 3.06
  * @module
@@ -131,16 +130,16 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
     public void setGridGeometry(final GridGeometry geometry, final PixelInCell pixelInCell,
             final CellGeometry cellGeometry, final int axisToReverse)
     {
-        final GridEnvelope gridEnvelope = geometry.getExtent();
+        final GridExtent gridEnvelope = geometry.getExtent();
         if (gridEnvelope != null) {
             final int gridDimension = gridEnvelope.getDimension();
             final int[] lower = new int[gridDimension];
             final int[] upper = new int[gridDimension];
             for (int i=0; i<gridDimension; i++) {
-                lower[i] = gridEnvelope.getLow (i);
-                upper[i] = gridEnvelope.getHigh(i);
+                lower[i] = (int) gridEnvelope.getLow (i);
+                upper[i] = (int) gridEnvelope.getHigh(i);
             }
-            final MathTransform gridToCRS = geometry.getGridToCRS(); // Really want pixel center.
+            final MathTransform gridToCRS = geometry.getGridToCRS(PixelInCell.CELL_CENTER); // Really want pixel center.
             if (gridToCRS != null) {
                 final int crsDimension = gridToCRS.getTargetDimensions();
                 double[] center = new double[Math.max(crsDimension, gridDimension)];
@@ -150,6 +149,19 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
                 try {
                     gridToCRS.transform(center, 0, center, 0, 1);
                     center = fixRoundingError(ArraysExt.resize(center, crsDimension));
+                    for (int i=0; i<center.length; i++) {
+                        if (Double.isNaN(center[i])) {
+                            CoordinateReferenceSystem crs;
+                            if (geometry instanceof GridGeometry) {
+                                crs = ((GridGeometry) geometry).getCoordinateReferenceSystem();
+                            } else if (geometry instanceof CoordinateReferenceSystem) {
+                                crs = (CoordinateReferenceSystem) geometry;
+                            } else {
+                                continue;
+                            }
+                            CoordinateSystemAxis axis = crs.getCoordinateSystem().getAxis(i);
+                        }
+                    }
                     setSpatialRepresentation(center, cellGeometry, PixelTranslation.getPixelOrientation(pixelInCell));
                 } catch (TransformException e) {
                     // Should not happen. If it happen anyway, this is not a fatal error.
@@ -164,13 +176,13 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
          * Now set the origin and offset vectors, which are inferred from the gridToCRS matrix.
          * This is possible only if the transform is affine.
          */
-        final Matrix matrix = DiscreteReferencingFactory.getAffineTransform(geometry, pixelInCell);
+        final Matrix matrix = getAffineTransform(geometry, pixelInCell);
         if (matrix != null) {
             if (axisToReverse >= 0) {
                 if (gridEnvelope == null) {
                     return; // Can't write a correct origin without this information.
                 }
-                int span = gridEnvelope.getSpan(axisToReverse);
+                long span = gridEnvelope.getSize(axisToReverse);
                 if (pixelInCell == null || pixelInCell.equals(PixelInCell.CELL_CENTER)) {
                     span--;
                 }
@@ -491,4 +503,35 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
         }
         return value;
     }
+
+    private static Matrix getAffineTransform(final GridGeometry geometry, PixelInCell pixelInCell) {
+        MathTransform tr;
+        if (pixelInCell != null && geometry instanceof GridGeometry) {
+            tr = ((GridGeometry) geometry).getGridToCRS(pixelInCell);
+            pixelInCell = null; // Indicates that the offset is already applied.
+        } else {
+            tr = geometry.getGridToCRS(PixelInCell.CELL_CENTER);
+        }
+        Matrix gridToCRS = MathTransforms.getMatrix(tr);
+        /*
+         * If the caller asked for the pixel corner rather than pixel center,
+         * applies a translation of 0.5 pixel along all dimensions.
+         */
+        if (gridToCRS != null && pixelInCell != null) {
+            final double offset = PixelTranslation.getPixelTranslation(pixelInCell);
+            if (offset != 0) {
+                final int lastColumn = gridToCRS.getNumCol() - 1;
+                for (int j=gridToCRS.getNumRow(); --j>=0;) {
+                    double sum = 0;
+                    for (int i=0; i<lastColumn; i++) {
+                        sum += offset * gridToCRS.getElement(j, i);
+                    }
+                    sum += gridToCRS.getElement(j, lastColumn); // Do it last for reducing rounding errors.
+                    gridToCRS.setElement(j, lastColumn, sum);
+                }
+            }
+        }
+        return gridToCRS;
+    }
+
 }

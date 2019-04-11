@@ -1,16 +1,18 @@
 package org.geotoolkit.coverage.grid;
 
+import java.awt.Rectangle;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.metadata.AxisDirections;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.datum.PixelInCell;
 
 /**
  * Try to generate subsets of a grid. The aim is to create slices over specified
@@ -18,7 +20,7 @@ import org.opengis.referencing.crs.SingleCRS;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
+public class GridGeometryIterator implements Iterator<GridGeometry> {
 
     /**
      * Source grid. It defines the entire space this iterator will move into.
@@ -30,7 +32,7 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
      */
     private final GridIterator gridIterator;
 
-    private final Function<GridEnvelope, GeneralGridGeometry> generator;
+    private final Function<GridExtent, GridGeometry> generator;
 
     /**
      * Create an iterator which will try to split given geometry as a series of
@@ -44,7 +46,7 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
      * which won't make any analysis of the geometry, and just iterate over
      * specified dimensions.
      */
-    public GridGeometryIterator(final GeneralGridGeometry source) throws IllegalArgumentException {
+    public GridGeometryIterator(final GridGeometry source) throws IllegalArgumentException {
         this(source, source.getCoordinateReferenceSystem());
     }
 
@@ -75,7 +77,7 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
      * @param source The geometry to split.
      * @param movableIndices indices for the dimensions to split and move along.
      */
-    public GridGeometryIterator(final GeneralGridGeometry source, final int... movableIndices) {
+    public GridGeometryIterator(final GridGeometry source, final int... movableIndices) {
         this(source, source.getCoordinateReferenceSystem(), movableIndices);
     }
 
@@ -113,9 +115,9 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
         }
 
         if (fixed < 3) {
-            generator = grid -> new GridGeometry2D(grid, source.getGridToCRS(), crs);
+            generator = grid -> new GridGeometry2D(grid, source.getGridToCRS(PixelInCell.CELL_CENTER), crs);
         } else {
-            generator = grid -> new GeneralGridGeometry(grid, source.getGridToCRS(), crs);
+            generator = grid -> new GridGeometry(grid, PixelInCell.CELL_CENTER, source.getGridToCRS(PixelInCell.CELL_CENTER), crs);
         }
     }
 
@@ -125,7 +127,7 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
     }
 
     @Override
-    public GeneralGridGeometry next() {
+    public GridGeometry next() {
         if (hasNext()) {
             return generator.apply(gridIterator.next());
         }
@@ -149,7 +151,7 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
      */
     static int[] buildSteps(final GridGeometry source, CoordinateReferenceSystem crs) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("Source grid", source);
-        final GridEnvelope extent = source.getExtent();
+        final GridExtent extent = source.getExtent();
         if (crs != null) {
             final SingleCRS horizontal = CRS.getHorizontalComponent(crs);
             if (horizontal != null) {
@@ -184,4 +186,70 @@ public class GridGeometryIterator implements Iterator<GeneralGridGeometry> {
 
         return steps;
     }
+
+    public static long[] getLow(GridExtent extent) {
+        final long[] array = new long[extent.getDimension()];
+        for (int i=0;i<array.length;i++) {
+            array[i] = extent.getLow(i);
+        }
+        return array;
+    }
+
+    public static long[] getHigh(GridExtent extent) {
+        final long[] array = new long[extent.getDimension()];
+        for (int i=0;i<array.length;i++) {
+            array[i] = extent.getHigh(i);
+        }
+        return array;
+    }
+
+    public static Rectangle toRectangle(GridExtent extent) {
+        return new Rectangle(
+                (int) extent.getLow(0),
+                (int) extent.getLow(1),
+                (int) extent.getSize(0),
+                (int) extent.getSize(1));
+    }
+
+    /**
+     * Note : logic copied from Rectangle class, long primitive type variant
+     * @param parent
+     * @param child
+     * @return
+     */
+    public static boolean isContained2D(GridExtent parent, GridExtent child) {
+
+        long X = child.getLow(0);
+        long Y = child.getLow(1);
+        long W = child.getSize(0);
+        long H = child.getSize(1);
+
+        long x = parent.getLow(0);
+        long y = parent.getLow(1);
+        long w = parent.getSize(0);
+        long h = parent.getSize(1);
+
+        if ((w | h | W | H) < 0) {
+            return false;
+        }
+        if (X < x || Y < y) {
+            return false;
+        }
+        w += x;
+        W += X;
+        if (W <= X) {
+            if (w >= x || W > w) return false;
+        } else {
+            if (w >= x && W > w) return false;
+        }
+        h += y;
+        H += Y;
+        if (H <= Y) {
+            if (h >= y || H > h) return false;
+        } else {
+            if (h >= y && H > h) return false;
+        }
+        return true;
+    }
+
 }

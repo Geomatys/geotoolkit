@@ -147,7 +147,9 @@ public abstract class DataStoreFactory extends DataStoreProvider {
             if (canProcess(params)) {
                 return open(params);
             }
-        } catch(IllegalArgumentException ex) {}
+        } catch(IllegalArgumentException ex) {
+            throw new DataStoreException("Unsupported input:" + ex.getMessage());
+        }
 
         throw new DataStoreException("Unsupported input");
     }

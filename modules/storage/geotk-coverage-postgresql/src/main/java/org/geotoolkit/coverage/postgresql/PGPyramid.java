@@ -62,7 +62,7 @@ public class PGPyramid extends AbstractPyramid {
         final DirectPosition upperleft = template.getUpperLeftCorner();
         final double pixelscale = template.getScale();
 
-        final PGCoverageStore pgstore = ref.getStore();
+        final PGCoverageStore pgstore = ref.getOriginator();
         long mosaicId = 0;
 
         Connection cnx = null;
@@ -134,7 +134,7 @@ public class PGPyramid extends AbstractPyramid {
 
     @Override
     public void deleteMosaic(String mosaicId) throws DataStoreException {
-        final PGCoverageStore pgstore = ref.getStore();
+        final PGCoverageStore pgstore = ref.getOriginator();
 
         Connection cnx = null;
         Statement stmt = null;

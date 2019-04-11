@@ -17,82 +17,81 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.awt.Point;
+import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Color;
 import java.awt.Image;
-import java.awt.image.Raster;
-import java.awt.image.DataBufferFloat;
-import java.awt.image.ColorModel;
-import java.awt.image.SampleModel;
-import java.awt.image.RenderedImage;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
-import java.awt.image.renderable.RenderableImage;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import static java.awt.image.DataBuffer.*;
+import java.awt.image.DataBufferFloat;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
+import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
 import javax.measure.Unit;
 import javax.media.jai.*;
 import javax.media.jai.operator.ImageFunctionDescriptor;
-
-import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.util.FactoryException;
-import org.opengis.coverage.SampleDimension;
-import org.opengis.coverage.SampleDimensionType;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridGeometry;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.metadata.content.TransferFunctionType;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.Matrix;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.referencing.operation.TransformException;
-
-import org.geotoolkit.lang.Builder;
-import org.geotoolkit.util.Cloneable;
-import org.apache.sis.measure.NumberRange;
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.factory.Hints;
-import org.apache.sis.measure.Units;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.ImmutableEnvelope;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
-import org.apache.sis.coverage.grid.PixelTranslation;
-import org.geotoolkit.resources.Errors;
-
-import org.apache.sis.referencing.operation.transform.TransferFunction;
-import static java.awt.image.DataBuffer.*;
-import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
-import org.geotoolkit.image.internal.ImageUtilities;
-import org.geotoolkit.image.palette.PaletteFactory;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.TransferFunction;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.collection.BackingStoreException;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import org.geotoolkit.coverage.SampleDimensionBuilder;
+import org.geotoolkit.coverage.SampleDimensionType;
+import org.geotoolkit.coverage.SampleDimensionUtils;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.image.internal.ImageUtilities;
+import org.geotoolkit.image.palette.PaletteFactory;
+import org.geotoolkit.lang.Builder;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.Cloneable;
+import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.metadata.content.TransferFunctionType;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 
 
 /**
  * Helper class for the creation of {@link GridCoverage2D} instances. This builder can creates the
  * parameters to be given to {@linkplain GridCoverage2D#GridCoverage2D(CharSequence, PlanarImage,
- * GridGeometry2D, GridSampleDimension[], GridCoverage[], Map, Hints) grid coverage constructor}
+ * GridGeometry2D, SampleDimension[], GridCoverage[], Map, Hints) grid coverage constructor}
  * from simpler parameters given to this builder.
  * <p>
  * The builder supports the following properties:
@@ -114,7 +113,7 @@ import org.apache.sis.referencing.cs.AxesConvention;
  *     <td>&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link #extent}&nbsp;</td>
- *     <td>&nbsp;{@linkplain #setExtent(GridEnvelope) Grid envelope instance} or
+ *     <td>&nbsp;{@linkplain #setExtent(GridExtent) Grid envelope instance} or
  *               {@linkplain #setExtent(int[]) spans}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #image Image} width and height&nbsp;</td>
  *   </tr><tr>
@@ -129,7 +128,7 @@ import org.apache.sis.referencing.cs.AxesConvention;
  *   </tr><tr>
  *     <td>&nbsp;{@link #gridGeometry}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setGridGeometry(GridGeometry) Grid geometry instance}&nbsp;</td>
- *     <td>&nbsp;{@linkplain GridGeometry2D#GridGeometry2D(GridEnvelope, PixelInCell, MathTransform, CoordinateReferenceSystem, Hints) Computed} from the above&nbsp;</td>
+ *     <td>&nbsp;{@linkplain GridGeometry2D#GridGeometry2D(GridExtent, PixelInCell, MathTransform, CoordinateReferenceSystem, Hints) Computed} from the above&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link #numBands}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setNumBands(int) Positive integer}&nbsp;</td>
@@ -266,10 +265,6 @@ import org.apache.sis.referencing.cs.AxesConvention;
  * }
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @since 2.5
- *
- * @version 3.20
- * @module
  */
 public class GridCoverageBuilder extends Builder<GridCoverage> {
     /**
@@ -279,8 +274,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @see #getName()
      * @see #setName(CharSequence)
-     *
-     * @since 3.20
      */
     protected CharSequence name;
 
@@ -293,8 +286,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @see #getCoordinateReferenceSystem()
      * @see #setCoordinateReferenceSystem(CoordinateReferenceSystem)
      * @see #setCoordinateReferenceSystem(String)
-     *
-     * @since 3.20
      */
     protected CoordinateReferenceSystem crs;
 
@@ -306,23 +297,19 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @see #getEnvelope()
      * @see #setEnvelope(Envelope)
      * @see #setEnvelope(double[])
-     *
-     * @since 3.20 (derived from 2.5)
      */
     protected Envelope envelope;
 
     /**
      * The grid extent, or {@code null} if unspecified. This field is non-null only if the extent
-     * has been {@linkplain #setExtent(GridEnvelope) explicitely specified} by the user. The values
+     * has been {@linkplain #setExtent(GridExtent) explicitely specified} by the user. The values
      * inferred from other attributes are not stored in this field.
      *
      * @see #getExtent()
-     * @see #setExtent(GridEnvelope)
+     * @see #setExtent(GridExtent)
      * @see #setExtent(int[])
-     *
-     * @since 3.20
      */
-    protected GridEnvelope extent;
+    protected GridExtent extent;
 
     /**
      * The <cite>grid to CRS</cite> transform, or {@code null} if unspecified. This field is non-null
@@ -332,8 +319,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @see #getGridToCRS()
      * @see #setGridToCRS(MathTransform)
      * @see #setGridToCRS(double, double, double, double, double, double)
-     *
-     * @since 3.20
      */
     protected MathTransform gridToCRS;
 
@@ -344,8 +329,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @see #getPixelAnchor()
      * @see #setPixelAnchor(PixelInCell)
-     *
-     * @since 3.20
      */
     protected PixelInCell pixelAnchor;
 
@@ -356,15 +339,11 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @see #getGridGeometry()
      * @see #setGridGeometry(GridGeometry)
-     *
-     * @since 3.20
      */
     protected GridGeometry gridGeometry;
 
     /**
      * The grid geometry calculated from other properties, or {@code null} if none.
-     *
-     * @since 3.20
      */
     private transient GridGeometry cachedGridGeometry;
 
@@ -376,36 +355,30 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @see #getNumBands()
      * @see #setNumBands(int)
-     *
-     * @since 3.20
      */
     protected int numBands;
 
     /**
      * The list of variables created by the user, or {@code null} if unspecified. If non-null,
-     * each element in this list will determine a {@linkplain GridSampleDimension grid sample
+     * each element in this list will determine a {@linkplain SampleDimension grid sample
      * dimension} in the coverage to create.
      *
      * @see #variable(int)
-     *
-     * @since 3.20 (derived from 2.5)
      */
     private Variable[] variables;
 
     /**
      * The sample dimensions created from the {@link #variables} array, or {@code null}
      * if none or not yet computed. If every sample dimensions are actually instances of
-     * {@link GridSampleDimension}, then the array type is {@code GridSampleDimension[]}.
+     * {@link SampleDimension}, then the array type is {@code SampleDimension[]}.
      *
      * @see #getSampleDimensions()
-     *
-     * @since 3.20
      */
     private transient SampleDimension[] sampleDimensions;
 
     /**
      * The {@linkplain #image} tile size and grid offset, or {@code null} if the image is untiled.
-     * This field is non-null only if the tile size or grid offset has been explicitely specified
+     * This field is non-null only if the tile size or grid offset has been explicitly specified
      * by the user. The values inferred from other attributes are not stored in this field.
      * <p>
      * The rectangle can be understood as the bounds of tile at index (0,0). Note that this tile
@@ -415,16 +388,12 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @see #setTileSize(Dimension)
      * @see #getTileGridOffset()
      * @see #setTileGridOffset(Point)
-     *
-     * @since 3.20
      */
     private TileLayout tileLayout;
 
     /**
      * The aggregation of tile size and tile grid offset. This can be understood as the bounds
      * of the tile at tile index (0,0). Note that this tile doesn't need to exist.
-     *
-     * @since 3.20
      */
     @SuppressWarnings("serial")
     private static final class TileLayout extends Rectangle {
@@ -521,8 +490,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @see #getRenderedImage()
      * @see #setRenderedImage(RenderedImage)
-     *
-     * @since 3.20 (derived from 2.5)
      */
     protected RenderedImage image;
 
@@ -535,13 +502,11 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * An optional array of sources to be associated with the grid coverage,
      * or {@code null} if none. Those sources will be given to the
      * {@linkplain GridCoverage2D#GridCoverage2D(CharSequence, PlanarImage, GridGeometry2D,
-     * GridSampleDimension[], GridCoverage[], Map, Hints) grid coverage constructor} without
+     * SampleDimension[], GridCoverage[], Map, Hints) grid coverage constructor} without
      * any processing by this class.
      *
      * @see #getSources()
      * @see #setSources(GridCoverage[])
-     *
-     * @since 3.20
      */
     protected GridCoverage[] sources;
 
@@ -549,21 +514,17 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * An optional map of properties to be associated with the grid coverage,
      * or {@code null} if none. Those properties will be given to the
      * {@linkplain GridCoverage2D#GridCoverage2D(CharSequence, PlanarImage, GridGeometry2D,
-     * GridSampleDimension[], GridCoverage[], Map, Hints) grid coverage constructor} without
+     * SampleDimension[], GridCoverage[], Map, Hints) grid coverage constructor} without
      * any processing by this builder class.
      *
      * @see #getProperties()
      * @see #setProperties(Map)
-     *
-     * @since 3.20
      */
     protected Map<?,?> properties;
 
     /**
      * Optional hints for fetching factories, or {@code null} if none. Those hints can be
      * specified at {@linkplain #GridCoverageBuilder(Hints) builder construction time}.
-     *
-     * @since 3.20
      */
     protected final Hints hints;
 
@@ -589,8 +550,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * </ul>
      *
      * @param hints Optional hints for fetching factories, or {@code null} if none.
-     *
-     * @since 3.20
      */
     public GridCoverageBuilder(final Hints hints) {
         if (isNullOrEmpty(hints)) {
@@ -612,13 +571,11 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * <p>
      * As a consequence of the above, the {@linkplain GridCoverage2D#getName() coverage name} will
      * be the name of the first {@linkplain #getSampleDimensions() sample dimension}, unless a
-     * coverage name is explicitely given.
+     * coverage name is explicitly given.
      *
      * @return The coverage name, or {@code null}.
      *
      * @see GridCoverage2D#getName()
-     *
-     * @since 3.20
      */
     public CharSequence getName() {
         CharSequence value = name;
@@ -642,8 +599,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * {@link String} or {@link org.opengis.util.InternationalString} instance.
      *
      * @param name The new name, or {@code null}.
-     *
-     * @since 3.20
      */
     public void setName(final CharSequence name) {
         this.name = name;
@@ -670,11 +625,11 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
 
     /**
      * Returns {@code true} if the property identified by the given flag is defined in the
-     * grid geometry. If the grid geometry is not an instance of {@link GeneralGridGeometry},
+     * grid geometry. If the grid geometry is not an instance of {@link GridGeometry},
      * then only the {@code EXTENT} and {@code GRID_TO_CRS} properties are assumed defined.
      *
      * @param  gridGeometry The grid geometry to test, or {@code null}.
-     * @param  flag One of the {@link GeneralGridGeometry} constants.
+     * @param  flag One of the {@link GridGeometry} constants.
      * @return {@code true} if the given property is defined.
      */
     private boolean isDefined(final int flag) {
@@ -682,10 +637,10 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         if (gridGeometry == null) {
             return false;
         }
-        if (gridGeometry instanceof GeneralGridGeometry) {
-            return ((GeneralGridGeometry) gridGeometry).isDefined(flag);
+        if (gridGeometry instanceof GridGeometry) {
+            return ((GridGeometry) gridGeometry).isDefined(flag);
         } else {
-            return (flag & (GeneralGridGeometry.EXTENT | GeneralGridGeometry.GRID_TO_CRS)) == flag;
+            return (flag & (GridGeometry.EXTENT | GridGeometry.GRID_TO_CRS)) == flag;
         }
     }
 
@@ -716,8 +671,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             if (envelope != null) {
                 return envelope.getCoordinateReferenceSystem();
             }
-            if (isDefined(GeneralGridGeometry.CRS)) {
-                return ((GeneralGridGeometry) gridGeometry).getCoordinateReferenceSystem();
+            if (isDefined(GridGeometry.CRS)) {
+                return ((GridGeometry) gridGeometry).getCoordinateReferenceSystem();
             }
             if (hints != null) {
                 return (CoordinateReferenceSystem) hints.get(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM);
@@ -733,7 +688,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * {@section Precedence}
      * If a grid geometry has been {@linkplain #setGridGeometry(GridGeometry) explicitely set}
-     * and {@linkplain GeneralGridGeometry#getCoordinateReferenceSystem() contains a CRS}, then
+     * and {@link GridGeometry#getCoordinateReferenceSystem() contains a CRS}, then
      * that later CRS will have precedence for the creation of {@link GridCoverage2D} instances.
      *
      * @param  crs The new CRS to use, or {@code null}.
@@ -757,16 +712,16 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
              * its main fields (namely GridToCRS and extent) before to clear the geometry in
              * order to rebuild later a new instance with the new CRS.
              */
-            if (isDefined(GeneralGridGeometry.CRS)) {
+            if (isDefined(GridGeometry.CRS)) {
                 if (gridToCRS == null) {
-                    this.gridToCRS = gridGeometry.getGridToCRS();
+                    this.gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
                     pixelAnchor = null;
                 }
                 if (extent == null) {
                     extent = gridGeometry.getExtent();
                 }
                 gridGeometry = null;
-            } else if (isDefined(GeneralGridGeometry.ENVELOPE)) {
+            } else if (isDefined(GridGeometry.ENVELOPE)) {
                 gridGeometry = null;
             }
             /*
@@ -841,8 +796,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                 return (Envelope) ((Cloneable) envelope).clone();
             }
         } else {
-            if (isDefined(GeneralGridGeometry.ENVELOPE)) {
-                return ((GeneralGridGeometry) gridGeometry).getEnvelope();
+            if (isDefined(GridGeometry.ENVELOPE)) {
+                return ((GridGeometry) gridGeometry).getEnvelope();
             }
         }
         return envelope;
@@ -862,7 +817,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * {@section Precedence}
      * If a grid geometry has been {@linkplain #setGridGeometry(GridGeometry) explicitely set}
-     * and {@linkplain GeneralGridGeometry#getEnvelope() contains an envelope}, then that later
+     * and {@link GridGeometry#getEnvelope() contains an envelope}, then that later
      * envelope will have precedence for the creation of {@link GridCoverage2D} instances.
      *
      * @param  envelope The new envelope to use, or {@code null}.
@@ -934,7 +889,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * This method returns the first non-null value in the above choices, in preference order:
      * <p>
      * <ul>
-     *   <li>The value defined by the last call to {@link #setExtent(GridEnvelope)}.</li>
+     *   <li>The value defined by the last call to {@link #setExtent(GridExtent)}.</li>
      *   <li>The {@linkplain #gridGeometry grid geometry} extent.</li>
      *   <li>The {@linkplain #image} bounds (including {@linkplain RenderedImage#getMinX() minX}
      *       and {@linkplain RenderedImage#getMinY() minY} values).</li>
@@ -945,23 +900,28 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @see #extent
      * @see GridGeometry2D#getExtent()
      * @see org.opengis.coverage.grid.Grid#getExtent()
-     *
-     * @since 3.20
      */
-    public GridEnvelope getExtent() {
-        final GridEnvelope extent = this.extent;
+    public GridExtent getExtent() {
+        final GridExtent extent = this.extent;
         if (extent != null) {
-            if (extent instanceof Cloneable) {
-                return (GridEnvelope) ((Cloneable) extent).clone();
-            }
+            return extent;
         } else {
-            if (isDefined(GeneralGridGeometry.EXTENT)) {
+            if (isDefined(GridGeometry.EXTENT)) {
                 return gridGeometry.getExtent();
             }
             final RenderedImage image = this.image;
             if (image != null) {
                 final Envelope envelope = this.envelope;
-                return new GeneralGridEnvelope(image, getGridDimension(envelope != null ? envelope.getDimension() : 2));
+                final int dimension = getGridDimension(envelope != null ? envelope.getDimension() : 2);
+                final long[] low = new long[dimension];
+                final long[] high = new long[dimension];
+                Arrays.fill(low, 0);
+                Arrays.fill(high, 1);
+                low[0] = image.getMinX();
+                low[1] = image.getMinY();
+                high[0] = image.getWidth();
+                high[1] = image.getHeight();
+                return new GridExtent(null, low, high, false);
             }
         }
         return extent;
@@ -972,16 +932,14 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * {@section Precedence}
      * If a grid geometry has been {@linkplain #setGridGeometry(GridGeometry) explicitely set}
-     * and {@linkplain GeneralGridGeometry#getExtent() contains an extent}, then that later extent
+     * and {@link GridGeometry#getExtent() contains an extent}, then that later extent
      * will have precedence for the creation of {@link GridCoverage2D} instances.
      *
      * @param  extent The new grid extent to use, or {@code null}.
      * @throws MismatchedDimensionException If the extent dimension is not equal to the
      *         <cite>grid to CRS</cite> source dimensions.
-     *
-     * @since 3.20
      */
-    public void setExtent(final GridEnvelope extent) throws MismatchedDimensionException {
+    public void setExtent(final GridExtent extent) throws MismatchedDimensionException {
         if (extent != null) {
             final int dim = getGridDimension(-1);
             if (dim >= 0) {
@@ -994,7 +952,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
 
     /**
      * Sets the grid extent to a grid envelope having the given span.
-     * The {@linkplain GridEnvelope#getLow() low ordinate values} are set to 0.
+     * The {@linkplain GridExtent#getLow() low ordinate values} are set to 0.
      * <p>
      * This method is typically invoked for defining image dimension as below:
      *
@@ -1002,16 +960,21 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *     setExtent(width, height);
      * }
      *
-     * See {@link #setExtent(GridEnvelope)} for information about precedence.
+     * See {@link #setExtent(GridExtent)} for information about precedence.
      *
      * @param  span The span values for all dimensions, or {@code null}.
      * @throws MismatchedDimensionException If the arguments contain negative span values, or the
      *         number of values is not equal to the <cite>grid to CRS</cite> source dimensions.
-     *
-     * @since 3.20
      */
     public void setExtent(final int... span) throws MismatchedDimensionException {
-        setExtent(span != null ? new GeneralGridEnvelope(new int[span.length], span, false) : null);
+        if (span == null) setExtent((GridExtent) null);
+
+        final long[] low = new long[span.length];
+        final long[] high = new long[span.length];
+        for (int i=0;i<span.length;i++) {
+            high[i] = span[i];
+        }
+        setExtent(new GridExtent(null, low, high, false));
     }
 
     /**
@@ -1023,10 +986,10 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         MathTransform tr = null;
         final GridGeometry gridGeometry = this.gridGeometry;
         if (gridGeometry != null) {
-            if (gridGeometry instanceof GeneralGridGeometry) {
-                return ((GeneralGridGeometry) gridGeometry).getDimension();
+            if (gridGeometry instanceof GridGeometry) {
+                return ((GridGeometry) gridGeometry).getDimension();
             } else {
-                tr = gridGeometry.getGridToCRS();
+                tr = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
             }
         }
         if (tr == null) {
@@ -1086,8 +1049,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @return The <cite>grid to CRS</cite> transform, or {@code null} if unspecified and can not
      *         be inferred.
      * @throws IllegalStateException If a transform exists but that transform is not affine.
-     *
-     * @since 3.20
      */
     public AffineTransform getAffineGridToCRS() throws IllegalStateException {
         return getAffineGridToCRS(PixelTranslation.getPixelOrientation(pixelAnchor), false);
@@ -1110,8 +1071,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @see #gridToCRS
      * @see GridGeometry2D#getGridToCRS()
-     *
-     * @since 3.20
      */
     public MathTransform getGridToCRS() {
         final MathTransform gridToCRS = this.gridToCRS;
@@ -1120,9 +1079,9 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             if (gridGeometry != null) {
                 final PixelInCell pixelAnchor = this.pixelAnchor;
                 if (pixelAnchor == null) {
-                    return gridGeometry.getGridToCRS();
-                } else if (gridGeometry instanceof GeneralGridGeometry) {
-                    return ((GeneralGridGeometry) gridGeometry).getGridToCRS(pixelAnchor);
+                    return gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
+                } else {
+                    return gridGeometry.getGridToCRS(pixelAnchor);
                 }
             }
         }
@@ -1143,19 +1102,17 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * {@section Precedence}
      * If a grid geometry has been {@linkplain #setGridGeometry(GridGeometry) explicitely set}
-     * and {@linkplain GeneralGridGeometry#getGridToCRS() contains a transform}, then that later
+     * and {@link GridGeometry#getGridToCRS() contains a transform}, then that later
      * transform will have precedence for the creation of {@link GridCoverage2D} instances.
      *
      * @param  gridToCRS The new <cite>grid to CRS</cite> transform, or {@code null}.
      * @throws MismatchedDimensionException If the given transform is invalid, for example if the
      *         dimensions don't match.
-     *
-     * @since 3.20
      */
     public void setGridToCRS(final MathTransform gridToCRS) throws MismatchedDimensionException {
         if (gridToCRS != null) {
             final CoordinateReferenceSystem crs = this.crs;
-            final GridEnvelope extent = this.extent;
+            final GridExtent extent = this.extent;
             if (extent != null) {
                 ensureDimensionMatch("gridToCRS", gridToCRS.getSourceDimensions(), extent.getDimension());
             }
@@ -1178,8 +1135,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @param  gridToCRS The new <cite>grid to CRS</cite> transform, or {@code null}.
      * @throws MismatchedDimensionException If the current {@linkplain #extent} and
      *         {@linkplain #envelope} (if any) are not two-dimensional.
-     *
-     * @since 3.20
      */
     public void setGridToCRS(final Matrix gridToCRS) throws MismatchedDimensionException {
         setGridToCRS(gridToCRS != null ? MathTransforms.linear(gridToCRS) : null);
@@ -1194,8 +1149,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @param  gridToCRS The new <cite>grid to CRS</cite> transform, or {@code null}.
      * @throws MismatchedDimensionException If the current {@linkplain #extent} and
      *         {@linkplain #envelope} (if any) are not two-dimensional.
-     *
-     * @since 3.20
      */
     public void setGridToCRS(final AffineTransform gridToCRS) throws MismatchedDimensionException {
         setGridToCRS(gridToCRS != null ? org.geotoolkit.referencing.operation.MathTransforms.linear(gridToCRS) : null);
@@ -1219,8 +1172,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @throws MismatchedDimensionException If the current {@linkplain #extent} and
      *         {@linkplain #envelope} (if any) are not two-dimensional.
-     *
-     * @since 3.20
      */
     public void setGridToCRS(double m00, double m10, double m01, double m11, double m02, double m12)
             throws MismatchedDimensionException
@@ -1237,9 +1188,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *         {@link PixelInCell#CELL_CENTER}.
      *
      * @see #pixelAnchor
-     * @see GeneralGridGeometry#GeneralGridGeometry(GridEnvelope, PixelInCell, MathTransform, CoordinateReferenceSystem)
-     *
-     * @since 3.20
+     * @see GridGeometry#GeneralGridGeometry(GridExtent, PixelInCell, MathTransform, CoordinateReferenceSystem)
      */
     public PixelInCell getPixelAnchor() {
         final PixelInCell pixelAnchor = this.pixelAnchor;
@@ -1252,8 +1201,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * is not used (for example because the {@link #gridGeometry} attribute has precedence).
      *
      * @param anchor The new "pixel in cell" policy, or {@code null}.
-     *
-     * @since 3.20
      */
     public void setPixelAnchor(final PixelInCell anchor) {
         this.pixelAnchor = anchor;
@@ -1281,7 +1228,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * </ul></td></tr></table>
      * <p>
      * Note that creation of grid geometries from the parameters listed in the right column use heuristic
-     * rules documented {@linkplain GeneralGridGeometry#GeneralGridGeometry(GridEnvelope,Envelope) here}.
+     * rules documented {@link GridGeometry#GeneralGridGeometry(GridExtent, Envelope) here}.
      * In order to keep grid geometry creations more determinist, we recommend to specify the parameters
      * listed in the left column instead.
      *
@@ -1289,8 +1236,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @see #gridGeometry
      * @see GridCoverage2D#getGridGeometry()
-     *
-     * @since 3.20
      */
     public GridGeometry getGridGeometry() {
         return getGridGeometry(true);
@@ -1307,11 +1252,11 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         if (geom == null) {
             geom = cachedGridGeometry;
             if (geom == null) {
-                final GridEnvelope extent = getExtent();
+                final GridExtent extent = getExtent();
                 final MathTransform gridToCRS;
                 if (useGridToCRS && (gridToCRS = getGridToCRS()) != null) {
                     geom = new GridGeometry2D(extent, getPixelAnchor(),
-                            gridToCRS, getCoordinateReferenceSystem(), hints);
+                            gridToCRS, getCoordinateReferenceSystem());
                 } else {
                     final Envelope envelope = getEnvelope();
                     if (extent != null || envelope != null) { // Its okay to have 1 null value.
@@ -1338,8 +1283,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *        needs to ensure that the <code>gridToCRS</code> property is <code>null</code>.}
      *
      * @param geom The new grid geometry, or {@code null}.
-     *
-     * @since 3.20
      */
     public void setGridGeometry(final GridGeometry geom) {
         gridGeometry = geom;
@@ -1348,8 +1291,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
 
     /**
      * Invoked when a property used for computing the grid geometry has been changed.
-     *
-     * @since 3.20
      */
     private void gridGeometryChanged() {
         cachedGridGeometry = null;
@@ -1358,8 +1299,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
 
     /**
      * Invoked when a property used for computing the sample dimensions has been changed.
-     *
-     * @since 3.20
      */
     final void sampleDimensionsChanged() {
         sampleDimensions = null;
@@ -1381,8 +1320,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @see #numBands
      * @see SampleModel#getNumBands()
-     *
-     * @since 3.20
      */
     public int getNumBands() {
         int n = numBands;
@@ -1405,8 +1342,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @param n Number of sample dimensions, or 0 to unspecify.
      * @throws IllegalArgumentException If the given value is negative.
-     *
-     * @since 3.20
      */
     public void setNumBands(final int n) throws IllegalArgumentException {
         ArgumentChecks.ensurePositive("n", n);
@@ -1419,7 +1354,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
-     * Returns the {@linkplain GridSampleDimension sample dimension} builder for the given
+     * Returns the {@linkplain SampleDimension sample dimension} builder for the given
      * band index. If a {@code Variable} instance exists at the given index, it will be
      * returned. Otherwise a new instance will be created.
      * <p>
@@ -1429,8 +1364,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @param  band The index of the sample dimension for which to get the variable.
      * @return The builder for the given sample dimension.
      * @throws IllegalArgumentException If the given band index is negative.
-     *
-     * @since 3.20
      */
     public Variable variable(final int band) throws IllegalArgumentException {
         ArgumentChecks.ensurePositive("band", band);
@@ -1462,8 +1395,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @param  band The index of the sample dimension for which to get the new variable.
      * @return The new variable.
-     *
-     * @since 3.20
      */
     protected Variable newVariable(final int band) {
         return new Variable(band);
@@ -1496,13 +1427,11 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *   <li>The variables do not contain "no data" value or range of sample values.
      *       Note however that they may contain name, units and colors information.</li>
      *   <li>The user overrode the {@link Variable#getSampleDimension()} method and returns
-     *       {@code null} for whatever raison of his choice.</li>
+     *       {@code null} for whatever reason of his choice.</li>
      * </ul>
      * <p>
      * This method gets the names, colors, ranges of sample values and units for each band
      * (if available), then delegates the actual work to {@link RenderedSampleDimension}.
-     *
-     * @since 3.20
      */
     private SampleDimension[] getDefaultSampleDimensions() {
         Color[][]     colors = null;
@@ -1549,12 +1478,10 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
 
     /**
      * Returns the sample dimensions, or {@code null} if none. If all sample dimensions
-     * are actually instances of {@link GridSampleDimension}, then the array type is
-     * {@code GridSampleDimension[]}.
+     * are actually instances of {@link SampleDimension}, then the array type is
+     * {@code SampleDimension[]}.
      *
      * @return The sample dimensions, or {@code null} if none.
-     *
-     * @since 3.20
      */
     public SampleDimension[] getSampleDimensions() {
         SampleDimension[] bands = sampleDimensions;
@@ -1564,18 +1491,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             for (int i=numBands; --i>=0;) {
                 final SampleDimension band = variable(i).getSampleDimension();
                 if (band != null) {
-                    if (band instanceof GridSampleDimension) {
-                        if (bands == null) {
-                            bands = new GridSampleDimension[numBands];
-                        }
-                    } else {
-                        if (bands == null) {
-                            bands = new SampleDimension[numBands];
-                        } else if (bands instanceof GridSampleDimension[]) {
-                            final SampleDimension[] old = bands;
-                            bands = new SampleDimension[numBands];
-                            System.arraycopy(old, 0, bands, 0, numBands);
-                        }
+                    if (bands == null) {
+                        bands = new SampleDimension[numBands];
                     }
                     bands[i] = band;
                 }
@@ -1583,15 +1500,24 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             if (bands == null) {
                 // If the were no variables, build default sample dimensions.
                 bands = getDefaultSampleDimensions();
-            } else if (bands instanceof GridSampleDimension[]) {
+            } else {
                 final boolean isGeophysics = isGeophysics();
                 for (int i=0; i<bands.length; i++) {
-                    bands[i] = ((GridSampleDimension[]) bands)[i].geophysics(isGeophysics);
+                    bands[i] = bands[i].forConvertedValues(isGeophysics);
                 }
             }
             sampleDimensions = bands;
         }
         return (bands != null) ? bands.clone() : null;
+    }
+
+    /**
+     * Sets all sample dimensions.
+     *
+     * @param bands The new sample dimensions, or {@code null}.
+     */
+    public void setSampleDimensions(final Collection<? extends SampleDimension> bands) {
+        setSampleDimensions(bands != null ? bands.toArray(new SampleDimension[bands.size()]) : null);
     }
 
     /**
@@ -1601,8 +1527,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * for each element.
      *
      * @param bands The new sample dimensions, or {@code null}.
-     *
-     * @since 3.20
      */
     public void setSampleDimensions(final SampleDimension... bands) {
         setNumBands(bands != null ? bands.length : 0);
@@ -1625,8 +1549,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @param units     The units, or {@code null} if unknown.
      * @param colors    The colors to use for values from {@code minValues} to {@code maxValues}
      *                  for each bands, or {@code null}. Can contains null elements.
-     *
-     * @since 3.20
      */
     public void setSampleDimensions(final double[]   minValues,
                                     final double[]   maxValues,
@@ -1658,15 +1580,13 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * This method returns the first non-null value in the above choices, in preference order:
      * <p>
      * <ul>
-     *   <li>A color model created by one of the {@link GridSampleDimension#getColorModel(int, int)
-     *       getColorModel(...)} methods invoked on the first {@link GridSampleDimension} instance
+     *   <li>A color model created by one of the {@link SampleDimension#getColorModel(int, int)
+     *       getColorModel(...)} methods invoked on the first {@link SampleDimension} instance
      *       returned by {@linkplain #getSampleDimensions()}.</li>
      *   <li>The {@linkplain #image} color model.</li>
      * </ul>
      *
      * @return The color model, or {@code null} if none.
-     *
-     * @since 3.20
      */
     public ColorModel getColorModel() {
         ColorModel cm = null;
@@ -1674,16 +1594,16 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         if (bands != null) {
             for (int i=0; i<bands.length; i++) {
                 final SampleDimension band = bands[i];
-                if (band instanceof GridSampleDimension) {
+                if (band != null) {
                     final int dataType = getDataType();
                     if (dataType != TYPE_UNDEFINED) {
-                        cm = ((GridSampleDimension) band).getColorModel(i, bands.length, dataType);
+                        cm = SampleDimensionUtils.getColorModel(band, i, bands.length, dataType);
                     } else {
-                        cm = ((GridSampleDimension) band).getColorModel(i, bands.length);
+                        cm = SampleDimensionUtils.getColorModel(band, i, bands.length);
                     }
-                    if (cm != null) {
-                        return cm;
-                    }
+                }
+                if (cm != null) {
+                    return cm;
                 }
             }
         }
@@ -1739,8 +1659,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         for (int i=numBands; --i>=0;) {
             final SampleDimension band = variable(i).sampleDimension;
             if (band != null) {
-                final MathTransform1D sampleToGeophysics = band.getSampleToGeophysics();
-                if (sampleToGeophysics == null || !sampleToGeophysics.isIdentity()) {
+                final Optional<MathTransform1D> sampleToGeophysics = band.getTransferFunction();
+                if (!sampleToGeophysics.isPresent() || !sampleToGeophysics.get().isIdentity()) {
                     return false;
                 }
                 isGeophysics = true;
@@ -1763,8 +1683,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @throws UnsupportedOperationException If the rendered image does not support drawing,
      *         or if {@code crsUnit} is {@code true} and the graphics is not an instance of
      *         {@link Graphics2D}.
-     *
-     * @since 3.20
      */
     public Graphics createGraphics(final boolean crsUnit) throws UnsupportedOperationException {
         RenderedImage image = getRenderedImage();
@@ -1814,13 +1732,16 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *         grid geometry} or no extent associated to that grid geometry.
      *
      * @see GridGeometry2D#getExtent2D()
-     *
-     * @since 3.20
      */
     public Rectangle getImageBounds() throws IncompleteGridGeometryException {
         final GridGeometry2D gridGeometry = GridGeometry2D.castOrCopy(getGridGeometry());
         if (gridGeometry != null) {
-            return gridGeometry.getExtent2D();
+            GridExtent ext = gridGeometry.getExtent2D();
+            return new Rectangle(
+                    (int) ext.getLow(0),
+                    (int) ext.getLow(1),
+                    (int) ext.getSize(0),
+                    (int) ext.getSize(1));
         }
         final RenderedImage image = this.image;
         if (image != null) {
@@ -1842,8 +1763,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @see RenderedImage#getTileWidth()
      * @see RenderedImage#getTileHeight()
-     *
-     * @since 3.20
      */
     public Dimension getTileSize() {
         final TileLayout tileLayout = this.tileLayout;
@@ -1873,8 +1792,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * {@link GridCoverage2D} instances (i.e. this method does not retile existing images).
      *
      * @param size The new tile size, or {@code null} for untiled image.
-     *
-     * @since 3.20
      */
     public void setTileSize(final Dimension size) {
         final TileLayout layout = tileLayout;
@@ -1898,8 +1815,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @see RenderedImage#getTileGridXOffset()
      * @see RenderedImage#getTileGridYOffset()
-     *
-     * @since 3.20
      */
     public Point getTileGridOffset() {
         final TileLayout layout = tileLayout;
@@ -1923,8 +1838,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * {@link GridCoverage2D} instances (i.e. this method does not retile existing images).
      *
      * @param offset The new tile offset, or {@code null} if none.
-     *
-     * @since 3.20
      */
     public void setTileGridOffset(final Point offset) {
         final TileLayout layout = tileLayout;
@@ -1941,14 +1854,12 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * first time this method is invoked. Users can modify the pixel values in this image before
      * to create the grid coverage.
      * <p>
-     * In the common case of untiled image having a {@linkplain GridEnvelope#getLow() lower corner}
+     * In the common case of untiled image having a {@linkplain GridExtent#getLow() lower corner}
      * located at (0,0), this method returns an instance of {@link BufferedImage}. If the builder
      * settings do not allow the creation of a {@code BufferedImage} instance, then the default
      * implementation fallbacks on a {@link TiledImage} instance.
      *
      * @return The rendered image to be wrapped by {@code GridCoverage2D}.
-     *
-     * @since 3.20 (derived from 2.5)
      */
     public RenderedImage getRenderedImage() {
         if (image == null) {
@@ -2000,8 +1911,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * Sets the rendered image.
      *
      * @param image The rendered image to be wrapped by {@code GridCoverage2D}, or {@code null}.
-     *
-     * @since 3.20 (derived from 2.5)
      */
     public void setRenderedImage(final RenderedImage image) {
         this.image = image;
@@ -2016,8 +1925,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * the result in argument.
      *
      * @param raster The raster to be wrapped by {@code GridCoverage2D}, or {@code null}.
-     *
-     * @since 3.20
      */
     public void setRenderedImage(final WritableRaster raster) {
         image = null;
@@ -2045,8 +1952,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @param matrix The matrix data in a {@code [row][column]} layout.
      *        Can contains {@code null} elements (missing rows).
-     *
-     * @since 3.20 (derived from 2.2)
      */
     public void setRenderedImage(final float[][] matrix) {
         WritableRaster data = null;
@@ -2087,8 +1992,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @param function The image function, or {@code null}.
      *
      * @see ImageFunctionDescriptor
-     *
-     * @since 3.20 (derived from 2.2)
      */
     public void setRenderedImage(final ImageFunction function) {
         RenderedImage data = null;
@@ -2108,11 +2011,11 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             final double yScale =  at.getScaleY();
             final double xTrans = -at.getTranslateX() / xScale;
             final double yTrans = -at.getTranslateY() / yScale;
-            final GridEnvelope extent = gridGeometry.getExtent();
+            final GridExtent extent = gridGeometry.getExtent();
             data = ImageFunctionDescriptor.create(
                     function,
-                    extent.getSpan(0), // width
-                    extent.getSpan(1), // height
+                    (int) extent.getSize(0), // width
+                    (int) extent.getSize(1), // height
                     (float) xScale,
                     (float) yScale,
                     (float) xTrans,
@@ -2127,7 +2030,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * (omitting the conversions of some argument types):
      *
      * <blockquote><pre>return new {@linkplain GridCoverage2D#GridCoverage2D(CharSequence,
-     * PlanarImage, GridGeometry2D, GridSampleDimension[], GridCoverage[], Map, Hints) GridCoverage2D}(
+     * PlanarImage, GridGeometry2D, SampleDimension[], GridCoverage[], Map, Hints) GridCoverage2D}(
      *         {@linkplain #getName()},
      *         {@linkplain #getRenderedImage()},
      *         {@linkplain #getGridGeometry()},
@@ -2140,21 +2043,11 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      */
     public GridCoverage2D getGridCoverage2D() {
         if (coverage == null) {
-            final SampleDimension[] sd = getSampleDimensions();
-            final GridSampleDimension[] bands;
-            if (sd == null || sd instanceof GridSampleDimension[]) {
-                bands = (GridSampleDimension[]) sd;
-            } else {
-                bands = new GridSampleDimension[sd.length];
-                for (int i=0; i<bands.length; i++) {
-                    bands[i] = GridSampleDimension.castOrCopy(sd[i]);
-                }
-            }
             coverage = new GridCoverage2D(
                     getName(),
                     getRenderedImage(),
                     GridGeometry2D.castOrCopy(getGridGeometry()),
-                    bands,
+                    getSampleDimensions(),
                     getSources(),
                     getProperties(),
                     hints);
@@ -2171,32 +2064,22 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *   <li>{@link #setRenderedImage(RenderedImage)}</li>
      *   <li>{@link #setGridGeometry(GridGeometry)}</li>
      *   <li>{@link #setGridToCRS(MathTransform)}</li>
-     *   <li>{@link #setExtent(GridEnvelope)}</li>
+     *   <li>{@link #setExtent(GridExtent)}</li>
      *   <li>{@link #setCoordinateReferenceSystem(CoordinateReferenceSystem)}</li>
      *   <li>{@link #setSampleDimensions(SampleDimension[])}</li>
      *   <li>{@link #setSources(GridCoverage[])}</li>
-     *   <li>{@link #setProperties(PropertySource)} (for instances of {@link PropertySource} only)</li>
      * </ul>
      *
      * @param coverage The coverage to set.
-     *
-     * @since 3.20
      */
     public void setGridCoverage(final GridCoverage coverage) {
         setCoordinateReferenceSystem(coverage.getCoordinateReferenceSystem());
         final GridGeometry gridGeometry = coverage.getGridGeometry();
         setGridGeometry(gridGeometry);
-        final SampleDimension[] bands = new SampleDimension[coverage.getNumSampleDimensions()];
-        for (int i=0; i<bands.length; i++) {
-            bands[i] = coverage.getSampleDimension(i);
-        }
-        setSampleDimensions(bands);
+        setSampleDimensions(coverage.getSampleDimensions());
         final List<GridCoverage> sources = coverage.getSources();
         if (sources != null) {
             setSources(sources.toArray(new GridCoverage[sources.size()]));
-        }
-        if (coverage instanceof PropertySource) {
-            setProperties((PropertySource) coverage);
         }
         if (coverage instanceof GridCoverage2D) {
             final GridCoverage2D c2 = (GridCoverage2D) coverage;
@@ -2223,7 +2106,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          */
         if (gridGeometry != null) {
             setExtent(gridGeometry.getExtent());
-            setGridToCRS(gridGeometry.getGridToCRS());
+            setGridToCRS(gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER));
             this.gridGeometry = null;
             cachedGridGeometry = gridGeometry;
         }
@@ -2243,8 +2126,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @see #sources
      * @see GridCoverage2D#getSources()
-     *
-     * @since 3.20
      */
     public GridCoverage[] getSources() {
         return sources; // NOSONAR
@@ -2256,12 +2137,10 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * {@section Implementation note}
      * The given array is not cloned at this method invocation time. The array will be cloned by
      * the {@linkplain GridCoverage2D#GridCoverage2D(CharSequence, PlanarImage, GridGeometry2D,
-     * GridSampleDimension[], GridCoverage[], Map, Hints) grid coverage constructor}. This builder
+     * SampleDimension[], GridCoverage[], Map, Hints) grid coverage constructor}. This builder
      * does nothing but passing the array to that constructor.
      *
      * @param sources Optional grid coverage sources, or {@code null} or an empty array if none.
-     *
-     * @since 3.20
      */
     public void setSources(GridCoverage... sources) {
         if (sources != null && sources.length == 0) {
@@ -2283,8 +2162,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @see #properties
      * @see GridCoverage2D#getProperties()
      * @see GridCoverage2D#getPropertyNames()
-     *
-     * @since 3.20
      */
     public Map<?,?> getProperties() {
         return properties; // NOSONAR
@@ -2296,44 +2173,18 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * {@section Reference to the given map}
      * The given map is not cloned at this method invocation time. The map will be cloned by
      * the {@linkplain GridCoverage2D#GridCoverage2D(CharSequence, PlanarImage, GridGeometry2D,
-     * GridSampleDimension[], GridCoverage[], Map, Hints) grid coverage constructor}. This builder
+     * SampleDimension[], GridCoverage[], Map, Hints) grid coverage constructor}. This builder
      * does nothing but passing the map to that constructor.
      *
      * @param properties Optional map of coverage properties, or {@code null}.
-     *
-     * @since 3.20
      */
     public void setProperties(final Map<?,?> properties) {
         this.properties = properties; // NOSONAR
     }
 
     /**
-     * Inherits all the properties from the given source. This convenience methods copies the
-     * properties in a new {@link Map} object, then invokes {@link #setProperties(Map)}.
-     *
-     * @param source The source from which to get the properties, {@code null}.
-     *
-     * @since 3.20
-     */
-    public void setProperties(final PropertySource source) {
-        Map<String,Object> map = null;
-        if (source != null) {
-            final String[] names = source.getPropertyNames();
-            if (names != null && names.length != 0) {
-                map = new LinkedHashMap<>();
-                for (final String name : names) {
-                    map.put(name, source.getProperty(name));
-                }
-            }
-        }
-        setProperties(map);
-    }
-
-    /**
      * Creates the grid coverage. Current implementation delegates to {@link #getGridCoverage2D()},
      * but future implementations may instantiate different coverage types.
-     *
-     * @since 3.20
      */
     @Override
     public GridCoverage build() {
@@ -2343,8 +2194,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     /**
      * Resets this builder to its initial state. This method can be invoked in order to
      * reuse this builder for creating new {@link GridCoverage2D} instances.
-     *
-     * @since 3.20
      */
     public void reset() {
         name               = null;
@@ -2389,7 +2238,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
 
     /**
      * Helper class for the creation of {@link SampleDimension} instances.
-     * A variable to be mapped to a {@linkplain GridSampleDimension sample dimension}.
+     * A variable to be mapped to a {@linkplain SampleDimension sample dimension}.
      *
      * {@note This class is named <cite>variable</cite> because it is usually not needed for
      * Red/Green/Blue bands. <code>Variable</code> is typically used for describing the
@@ -2403,21 +2252,13 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * Implementors who wish to create their own {@code Variable} subclass will probably
      * need to override the {@link GridCoverageBuilder#newVariable(int)} method as well.
      *
-     * @author Martin Desruisseaux (IRD, Geomatys)
-     * @version 3.20
-     *
      * @see GridCoverageBuilder#variable(int)
      * @see ucar.nc2.Variable
-     *
-     * @since 2.5
-     * @module
      */
     public class Variable extends Builder<SampleDimension> {
         /**
          * The band index for this variable. This is the {@code band} argument given
          * to the {@link GridCoverageBuilder#variable(int)} method.
-         *
-         * @since 3.20
          */
         protected final int band;
 
@@ -2428,8 +2269,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          *
          * @see #getName()
          * @see #setName(CharSequence)
-         *
-         * @since 3.20 (derived from 2.5)
          */
         protected CharSequence name;
 
@@ -2440,8 +2279,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          *
          * @see #getUnit()
          * @see #setUnit(Unit)
-         *
-         * @since 3.20 (derived from 2.5)
          */
         protected Unit<?> unit;
 
@@ -2453,8 +2290,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * @see #getSampleRange()
          * @see #setSampleRange(NumberRange)
          * @see #setSampleRange(int, int)
-         *
-         * @since 3.20 (derived from 2.5)
          */
         protected NumberRange<?> sampleRange;
 
@@ -2466,8 +2301,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * @see #getGeophysicsRange()
          * @see #setGeophysicsRange(NumberRange)
          * @see #setGeophysicsRange(double, double)
-         *
-         * @since 3.20
          */
         protected NumberRange<?> geophysicsRange;
 
@@ -2488,16 +2321,12 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * @see #setSampleToUnit(MathTransform1D)
          * @see #setLinearTransform(double, double)
          * @see #setLogarithmicTransform(double, double)
-         *
-         * @since 3.20 (derived from 2.5)
          */
         protected MathTransform1D sampleToUnit;
 
         /**
          * The colors to associate to values in the {@linkplain #sampleRange sample range}, or
          * {@code null} if unspecified.
-         *
-         * @since 3.20
          */
         protected Color[] colors;
 
@@ -2509,16 +2338,12 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          *
          * @see #getSampleDimension()
          * @see #setSampleDimension(SampleDimension)
-         *
-         * @since 3.20 (derived from 2.5)
          */
         protected SampleDimension sampleDimension;
 
         /**
          * The sample dimension calculated from other attributes. Will be created when first
          * needed and cleared when attributes change.
-         *
-         * @since 3.20
          */
         private transient SampleDimension cached;
 
@@ -2530,8 +2355,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          *
          * @see GridCoverageBuilder#variable(int)
          * @see GridCoverageBuilder#newVariable(int)
-         *
-         * @since 3.20
          */
         protected Variable(final int band) {
             this.band = band;
@@ -2559,17 +2382,15 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          *
          * @see Category#getName()
          * @see SampleDimension#getDescription()
-         *
-         * @since 3.20
          */
         public CharSequence getName() {
             CharSequence value = name;
             if (value == null) {
                 final SampleDimension sampleDimension = this.sampleDimension;
                 if (sampleDimension != null) {
-                    value = sampleDimension.getDescription();
-                    if (value != null) {
-                        return value;
+                    GenericName name = sampleDimension.getName();
+                    if (name != null) {
+                        return name.toString();
                     }
                 }
                 value = GridCoverageBuilder.this.name;
@@ -2582,8 +2403,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * given to the geophysics category (if any) and to the sample dimension as a whole.
          *
          * @param name The new name, or {@code null}.
-         *
-         * @since 3.20
          */
         public void setName(final CharSequence name) {
             this.name = name;
@@ -2598,15 +2417,13 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * @return The units of measurement of geophysics values, or {@code null}.
          *
          * @see SampleDimension#getUnits()
-         *
-         * @since 3.20
          */
         public Unit<?> getUnit() {
             Unit<?> value = unit;
             if (value == null) {
                 final SampleDimension sampleDimension = this.sampleDimension;
                 if (sampleDimension != null) {
-                    value = sampleDimension.getUnits();
+                    value = sampleDimension.getUnits().orElse(null);
                 }
             }
             return value;
@@ -2618,8 +2435,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * been applied on sample values.
          *
          * @param unit The new units of measurement of geophysics values, or {@code null}.
-         *
-         * @since 3.20
          */
         public void setUnit(final Unit<?> unit) {
             this.unit = unit;
@@ -2632,8 +2447,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * to {@link #setUnit(Unit)}.
          *
          * @param symbol The new units symbol, or {@code null}.
-         *
-         * @since 3.20
          */
         public void setUnit(final String symbol) {
             setUnit(Units.valueOf(symbol));
@@ -2656,15 +2469,12 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * </ul>
          *
          * @return The range of sample values, or {@code null}.
-         *
-         * @since 3.20 (derived from 2.5)
          */
         public NumberRange<?> getSampleRange() {
             NumberRange<?> range = sampleRange;
             if (range == null) {
-                final SampleDimension sampleDimension = this.sampleDimension;
-                if (sampleDimension instanceof GridSampleDimension) {
-                    range = ((GridSampleDimension) sampleDimension).getRange();
+                if (sampleDimension != null) {
+                    range = sampleDimension.getSampleRange().orElse(null);
                     if (range == null) {
                         final double[] minimum = getArrayProperty("minimum");
                         if (minimum != null && minimum.length > band) {
@@ -2685,12 +2495,10 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          *
          * {@note We allow only one range of values per <code>Variable</code> instance, because
          * sample dimensions with multi-ranges of values are very rare. If such case happen, a
-         * <code>GridSampleDimension</code> instance will need to be created from outside this
+         * <code>SampleDimension</code> instance will need to be created from outside this
          * helper class.}
          *
          * @param range The new range of sample values, or {@code null}.
-         *
-         * @since 3.20 (derived from 2.5)
          */
         public void setSampleRange(final NumberRange<?> range) {
             sampleRange = range;
@@ -2704,8 +2512,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          *
          * @param  lower The lower sample value (inclusive), typically 0.
          * @param  upper The upper sample value (exclusive), typically 256.
-         *
-         * @since 3.20 (derived from 2.5)
          */
         public void setSampleRange(final int lower, final int upper) {
             setSampleRange(NumberRange.create(lower, true, upper, false));
@@ -2723,15 +2529,12 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * </ul>
          *
          * @return The range of geophysics values, or {@code null}.
-         *
-         * @since 3.20
          */
         public NumberRange<?> getGeophysicsRange() {
             NumberRange<?> range = geophysicsRange;
             if (range == null) {
-                final SampleDimension sampleDimension = this.sampleDimension;
-                if (sampleDimension instanceof GridSampleDimension) {
-                    range = ((GridSampleDimension) sampleDimension).geophysics(true).getRange();
+                if (sampleDimension != null) {
+                    range = sampleDimension.forConvertedValues(true).getSampleRange().orElse(null);
                 }
             }
             return range;
@@ -2742,7 +2545,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          *
          * {@note We allow only one range of values per <code>Variable</code> instance, because
          * sample dimensions with multi-ranges of values are very rare. If such case happen, a
-         * <code>GridSampleDimension</code> instance will need to be created from outside this
+         * <code>SampleDimension</code> instance will need to be created from outside this
          * helper class.}
          *
          * {@section Precedence}
@@ -2751,8 +2554,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * {@link SampleDimension} instances.
          *
          * @param range The new range of geophysics values, or {@code null}.
-         *
-         * @since 3.20
          */
         public void setGeophysicsRange(final NumberRange<?> range) {
             geophysicsRange = range;
@@ -2766,8 +2567,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          *
          * @param  minimum The minimum value (inclusive).
          * @param  maximum The maximum value (exclusive).
-         *
-         * @since 3.20
          */
         public void setGeophysicsRange(final double minimum, final double maximum) {
             setGeophysicsRange(NumberRange.create(minimum, true, maximum, false));
@@ -2789,7 +2588,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             if (value == null) {
                 final SampleDimension sampleDimension = this.sampleDimension;
                 if (sampleDimension != null) {
-                    value = sampleDimension.getSampleToGeophysics();
+                    value = sampleDimension.getTransferFunction().orElse(null);
                 }
             }
             return value;
@@ -2874,8 +2673,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * this array.
          *
          * @return The colors ramp, or {@code null} if none.
-         *
-         * @since 3.20
          */
         public Color[] getColors() {
             return colors; // NOSONAR
@@ -2891,8 +2688,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * category constructor}. This builder does nothing but passing the array to that constructor.
          *
          * @param colors The new colors ramp (any length), or {@code null} if none.
-         *
-         * @since 3.20
          */
         public void setColors(Color... colors) {
             if (colors != null && colors.length == 0) {
@@ -2911,8 +2706,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * @param palette The name of the new colors ramp.
          *
          * @see PaletteFactory#getColors(String)
-         *
-         * @since 3.20
          */
         public void setColors(final String palette) {
             try {
@@ -2934,19 +2727,14 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             if (sd == null) {
                 sd = cached;
                 if (sd == null) {
-                    Category[] categories;
-                    int count = 0; // Number of categories.
+                    final SampleDimensionBuilder categories = new SampleDimensionBuilder();
                     final CharSequence bandName = getName();
                     final NumberRange<?> range = getSampleRange();
                     final Map<Integer,NoData> nodata = this.nodata;
                     /*
-                     * Creates the categories for "no data" values, if any. We may keep an empty
-                     * slot at the end of the category array for the "quantitative" category.
+                     * Creates the categories for "no data" values, if any.
                      */
-                    if (isNullOrEmpty(nodata)) {
-                        categories = (range != null) ? new Category[1] : null;
-                    } else {
-                        categories = new Category[nodata.size() + (range != null ? 1 : 0)];
+                    if (!isNullOrEmpty(nodata)) {
                         for (final Map.Entry<Integer,NoData> entry : nodata.entrySet()) {
                             final int sample = entry.getKey();
                             if (range != null) {
@@ -2956,7 +2744,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                                 }
                             }
                             final NoData n = entry.getValue();
-                            categories[count++] = new Category(n.name, n.color, sample);
+                            categories.addQualitative(n.name, sample);
+                            categories.setLastCategoryColors(n.color);
                         }
                     }
                     /*
@@ -2973,22 +2762,16 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                                 sampleToUnit = (MathTransform1D) MathTransforms.identity(1);
                             } else {
                                 // Let the Category constructor create a "sample to unit" transform.
-                                categories[count] = new Category(bandName, colors, range, target);
+                                categories.addQuantitative(bandName, range, target);
+                                categories.setLastCategoryColors(colors);
                             }
                         }
                         if (sampleToUnit != null) {
-                            categories[count] = new Category(bandName, colors, range, sampleToUnit);
+                            categories.addQuantitative(bandName, range, sampleToUnit, getUnit());
+                            categories.setLastCategoryColors(colors);
                         }
                     }
-                    /*
-                     * Creates the sample dimension only if there is at least one attribute set.
-                     * Note that the units are ignored if there is not at least one category, so
-                     * we don't need to test it. We test the name field (not the local variable)
-                     * because the local variable may contain a generated name.
-                     */
-                    if (categories != null || this.name != null) {
-                        cached = sd = new GridSampleDimension(bandName, categories, getUnit());
-                    }
+                    cached = sd = categories.setName(bandName).build();
                 }
             }
             return sd;
@@ -2999,8 +2782,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * all other attributes specified in this class.
          *
          * @param dim The new sample dimension, or {@code null}.
-         *
-         * @since 3.20
          */
         public void setSampleDimension(final SampleDimension dim) {
             sampleDimension = dim;

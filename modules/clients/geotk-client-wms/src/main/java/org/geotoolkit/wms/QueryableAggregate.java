@@ -17,21 +17,20 @@
 package org.geotoolkit.wms;
 
 import java.awt.Image;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.CoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.content.CoverageDescription;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -61,9 +60,15 @@ public class QueryableAggregate extends WMSAggregate implements GridCoverageReso
         return name;
     }
 
+
     @Override
-    public int getImageIndex() {
-        return queryableResource.getImageIndex();
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        final GridCoverageReader reader = acquireReader();
+        try {
+            return reader.getGridGeometry();
+        } finally {
+            recycle(reader);
+        }
     }
 
     @Override
@@ -77,8 +82,8 @@ public class QueryableAggregate extends WMSAggregate implements GridCoverageReso
     }
 
     @Override
-    public DataStore getStore() {
-        return queryableResource.getStore();
+    public DataStore getOriginator() {
+        return queryableResource.getOriginator();
     }
 
     @Override
@@ -92,12 +97,12 @@ public class QueryableAggregate extends WMSAggregate implements GridCoverageReso
     }
 
     @Override
-    public void recycle(CoverageReader reader) {
+    public void recycle(GridCoverageReader reader) {
         queryableResource.recycle(reader);
     }
 
     @Override
-    public void recycle(CoverageWriter writer) {
+    public void recycle(GridCoverageWriter writer) {
         queryableResource.recycle(writer);
     }
 

@@ -32,9 +32,6 @@ import static org.junit.Assert.*;
  * Tests the {@link ViewsManager} class.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.02
- *
- * @since 2.5
  */
 public final strictfp class ViewsManagerTest extends GridCoverageTestBase {
     /**

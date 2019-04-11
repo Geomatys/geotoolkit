@@ -32,7 +32,6 @@ import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
@@ -102,17 +101,17 @@ public class CoverageToVectorProcess extends AbstractProcess {
 
     public Geometry[] toPolygon(GridCoverage2D coverage, final NumberRange[] ranges, final int band)
             throws IOException, TransformException {
-        coverage = coverage.view(ViewType.GEOPHYSICS);
+        coverage = coverage.forConvertedValues(true);
 
         //add a range for Nan values.
         NumberRange NaNRange = new NaNRange();
-        polygons.put(NaNRange, new ArrayList<Polygon>());
+        polygons.put(NaNRange, new ArrayList<>());
 
         for (final NumberRange range : ranges) {
-            polygons.put(range, new ArrayList<Polygon>());
+            polygons.put(range, new ArrayList<>());
         }
 
-        final RenderedImage image = coverage.getRenderedImage();
+        final RenderedImage image = coverage.render(null);
         final RectIter iter = RectIterFactory.create(image, null);
         final MathTransform2D gridToCRS = coverage.getGridGeometry().getGridToCRS2D();
         final Point gridPosition = new Point(0, 0);

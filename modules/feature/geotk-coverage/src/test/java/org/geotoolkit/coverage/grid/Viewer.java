@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.util.Locale;
-import java.io.PrintWriter;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -26,18 +24,17 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
-
-import javax.swing.JPanel;
-import javax.swing.JFrame;
-import javax.swing.JComponent;
+import java.io.PrintWriter;
+import java.util.Locale;
 import javax.media.jai.GraphicsJAI;
 import javax.media.jai.PlanarImage;
-
-import org.opengis.util.InternationalString;
-
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -61,7 +58,7 @@ public strictfp class Viewer extends JPanel {
      * The main sample dimension, or {@code null} if none.
      * Used by {@link #printPalette} for printing categories.
      */
-    private GridSampleDimension categories;
+    private SampleDimension categories;
 
     /**
      * The transform from grid to coordinate system.
@@ -92,7 +89,7 @@ public strictfp class Viewer extends JPanel {
      */
     public Viewer(final GridCoverage2D coverage) {
         this(coverage.getRenderedImage());
-        categories = coverage.getSampleDimension(0);
+        categories = coverage.getSampleDimensions().get(0);
     }
 
     /**
@@ -216,13 +213,6 @@ public strictfp class Viewer extends JPanel {
                 format(out, R[i]); out.print(',');
                 format(out, G[i]); out.print(',');
                 format(out, R[i]); out.print(']');
-                if (categories != null) {
-                    final String label = categories.getLabel(i, locale);
-                    if (label != null) {
-                        out.print("    ");
-                        out.print(label);
-                    }
-                }
                 out.println();
             }
         } else {

@@ -22,35 +22,34 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Locale;
-
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
+import org.apache.sis.coverage.grid.PixelTranslation;
+import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.operation.transform.TransformSeparator;
+import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
+import org.geotoolkit.referencing.operation.MathTransforms;
+import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
+import org.geotoolkit.resources.Errors;
+import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.coverage.grid.GridGeometry;
-import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.util.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.geotoolkit.factory.Hints;
-import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.geometry.ImmutableEnvelope;
-import org.apache.sis.geometry.Shapes2D;
-import org.apache.sis.coverage.grid.PixelTranslation;
-import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
-import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
-import org.geotoolkit.referencing.operation.transform.DimensionFilter;
-import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.resources.Errors;
+import org.opengis.util.FactoryException;
 
 
 /**
- * A {@link GeneralGridGeometry} where only 2 dimensions have more than 1 cell.
+ * A {@link GridGeometry} where only 2 dimensions have more than 1 cell.
  * For example a grid size of 512&times;512&times;1 pixels can be represented by this
  * {@code GridGeometry2D} class (some peoples said 2.5D) because a two-dimensional grid
  * coordinate is enough for referencing a pixel without ambiguity. But a grid size of
@@ -61,9 +60,9 @@ import org.geotoolkit.resources.Errors;
  * {@section Constructors}
  * The most complete way to create a {@code GridGeometry2D} instance is to provide all the
  * following information:
- * <p>
+ *
  * <ul>
- *   <li>An optional {@linkplain GridEnvelope grid envelope} - See the constraints documented below.</li>
+ *   <li>An optional {@linkplain GridExtent grid envelope} - See the constraints documented below.</li>
  *   <li>An optional "<cite>grid to CRS</cite>" {@linkplain MathTransform transform}.</li>
  *   <li>An optional {@link PixelInCell} or {@link PixelOrientation} code, which specify whatever
  *       the source of the "<cite>grid to CRS</cite>" transform maps a pixel corner or the pixel
@@ -71,39 +70,25 @@ import org.geotoolkit.resources.Errors;
  *   <li>An optional {@linkplain CoordinateReferenceSystem coordinate reference system} (CRS)
  *       which is the target of the <cite>grid to CRS</cite> transform.</li>
  * </ul>
- * <p>
+ *
  * This class defines also some convenience constructors for inferring the math transform from a
  * {@linkplain Envelope geodetic envelope}. However those convenience constructors use heuristic
  * rules which try to guess whatever an axis should be reversed according common practice. Users
- * should alway prefer the above listed argument types when possible.
+ * should always prefer the above listed argument types when possible.
  *
  * {@section Constraints}
  * The above-listed arguments shall comply with the following constraints:
- * <p>
+ *
  * <ul>
  *   <li>Only two dimensions in the grid envelope can have a
- *       {@linkplain GridEnvelope#getSpan(int) span} larger than 1.</li>
+ *       {@linkplain GridExtent#getSize(int) span} larger than 1.</li>
  *   <li>If the grid geometry describes a {@link java.awt.image.BufferedImage}, then the
- *       {@linkplain GridEnvelope#getLow() lowest valid grid ordinates} shall be zero.
+ *       {@linkplain GridExtent#getLow() lowest valid grid ordinates} shall be zero.
  *       For other kind of {@link java.awt.image.RenderedImage}, the lowest ordinates
  *       may be non-zero.</li>
  * </ul>
- *
- * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
- *
- * @see ImageGeometry
- * @see GeneralGridGeometry
- *
- * @since 2.1
- * @module
  */
-public class GridGeometry2D extends GeneralGridGeometry {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = -3989363771504614419L;
-
+public class GridGeometry2D extends GridGeometry {
     /**
      * Helpers methods for 2D CRS creation. Will be constructed only when first needed.
      */
@@ -119,10 +104,10 @@ public class GridGeometry2D extends GeneralGridGeometry {
     /**
      * Index of column ({@link #gridDimensionX}) and row ({@link #gridDimensionY}) ordinates
      * in a grid point. They are the index of the first two dimensions with a {@linkplain
-     * GridEnvelope#getSpan(int) span} greater than 1 in the {@linkplain #getExtent() grid extent}.
+     * GridExtent#getSpan(int) span} greater than 1 in the {@linkplain #getExtent() grid extent}.
      * Their values are usually 0 and 1 respectively.
-     * <p>
-     * Notes:
+     *
+     * <p>Notes:</p>
      * <ul>
      *   <li>It is guaranteed that {@link #gridDimensionX} &lt; {@link #gridDimensionY}.</li>
      * </ul>
@@ -133,8 +118,8 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * The ({@link #gridDimensionX}, {@link #gridDimensionY}) dimensions in the envelope space.
      * They are index of (<var>x</var>, <var>y</var>) ordinates in a direct position after the
      * {@linkplain #gridToCRS grid to CRS} transform.
-     * <p>
-     * Notes:
+     *
+     * <p>Notes:</p>
      * <ul>
      *   <li>It is guaranteed that {@link #axisDimensionX} &lt; {@link #axisDimensionY}.</li>
      *   <li>There is no guarantee that {@link #gridDimensionX} maps to {@link #axisDimensionX} and
@@ -164,44 +149,6 @@ public class GridGeometry2D extends GeneralGridGeometry {
     private MathTransform2D cornerToCRS2D;
 
     /**
-     * Tests the validity of this grid geometry.
-     */
-    private boolean isValid() {
-        if (gridToCRS != null) {
-            final int sourceDim = gridToCRS.getSourceDimensions();
-            final int targetDim = gridToCRS.getTargetDimensions();
-            assert gridToCRS.equals(gridToCRS2D) == (sourceDim == 2 && targetDim == 2);
-            assert !gridToCRS2D.equals(cornerToCRS2D);
-            assert extent   == null || sourceDim == extent  .getDimension() : extent;
-            assert envelope == null || targetDim == envelope.getDimension() : envelope;
-            assert gridDimensionY < sourceDim : gridDimensionY;
-            assert axisDimensionY < targetDim : axisDimensionY;
-        }
-        assert gridDimensionX < gridDimensionY : gridDimensionX;
-        assert axisDimensionX < axisDimensionY : axisDimensionX;
-        return crs2D == null || crs2D.getCoordinateSystem().getDimension() == 2;
-    }
-
-    /**
-     * Constructs a new grid geometry identical to the specified one except for the CRS.
-     * Note that this constructor just defines the CRS; it does <strong>not</strong> reproject
-     * the envelope. For this reason, this constructor should not be public. It is for internal
-     * use by {@link GridCoverageFactory} only.
-     */
-    GridGeometry2D(final GridGeometry2D gm, final CoordinateReferenceSystem crs) {
-        super(gm, crs);
-        gridDimensionX = gm.gridDimensionX;
-        gridDimensionY = gm.gridDimensionY;
-        axisDimensionX = gm.axisDimensionX;
-        axisDimensionY = gm.axisDimensionY;
-        gridFromCRS2D  = gm.gridFromCRS2D;
-        gridToCRS2D    = gm.gridToCRS2D;
-        cornerToCRS2D  = gm.cornerToCRS2D;
-        crs2D          = createCRS2D();
-        assert isValid() : this;
-    }
-
-    /**
      * Creates a new grid geometry with the same values than the given grid geometry. This
      * is a copy constructor useful when the instance must be a {@code GridGeometry2D}.
      *
@@ -210,8 +157,6 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *         constraints documented in the class javadoc.
      *
      * @see #castOrCopy(GridGeometry)
-     *
-     * @since 2.5
      */
     public GridGeometry2D(final GridGeometry other) throws IllegalArgumentException {
         super(other);
@@ -228,7 +173,9 @@ public class GridGeometry2D extends GeneralGridGeometry {
         } else {
             final int[] dimensions;
             dimensions     = new int[4];
-            gridToCRS2D    = getMathTransform2D(gridToCRS, extent, dimensions, null);
+            gridToCRS2D    = getMathTransform2D(
+                    isDefined(GRID_TO_CRS) ? getGridToCRS(PixelInCell.CELL_CENTER) : null,
+                    getExtent(), dimensions);
             gridFromCRS2D  = inverse(gridToCRS2D);
             gridDimensionX = dimensions[0];
             gridDimensionY = dimensions[1];
@@ -236,14 +183,13 @@ public class GridGeometry2D extends GeneralGridGeometry {
             axisDimensionY = dimensions[3];
             crs2D          = createCRS2D();
         }
-        assert isValid() : this;
     }
 
     /**
      * Constructs a new grid geometry from a grid envelope and a math transform. The arguments are
-     * passed unchanged to the {@linkplain GeneralGridGeometry#GeneralGridGeometry(GridEnvelope,
-     * MathTransform, CoordinateReferenceSystem) super-class constructor}. However, they must
-     * obey to the additional constraints documented in the class javadoc.
+     * passed unchanged to the {@link GridGeometry#GeneralGridGeometry(GridExtent, MathTransform,
+     * CoordinateReferenceSystem) super-class constructor}. However, they must obey to the additional
+     * constraints documented in the class javadoc.
      *
      * @param  extent The extent of grid coordinates in a grid coverage, or {@code null} if none.
      * @param  gridToCRS The math transform which allows for the transformations
@@ -254,34 +200,32 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * @throws MismatchedDimensionException if the math transform and the CRS don't have
      *         consistent dimensions.
      * @throws IllegalArgumentException if {@code extent} has more than 2 dimensions with
-     *         a {@linkplain GridEnvelope#getSpan(int) span} larger than 1, or if the math transform
+     *         a {@linkplain GridExtent#getSize(int) span} larger than 1, or if the math transform
      *         can't transform coordinates in the domain of the specified grid envelope.
      *
-     * @see #GridGeometry2D(GridEnvelope, PixelInCell, MathTransform, CoordinateReferenceSystem, Hints)
-     * @see #GridGeometry2D(GridEnvelope, PixelOrientation, MathTransform, CoordinateReferenceSystem, Hints)
-     *
-     * @since 2.2
+     * @see #GridGeometry2D(GridExtent, PixelInCell, MathTransform, CoordinateReferenceSystem)
+     * @see #GridGeometry2D(GridExtent, PixelOrientation, MathTransform, CoordinateReferenceSystem)
      */
-    public GridGeometry2D(final GridEnvelope  extent,
+    public GridGeometry2D(final GridExtent  extent,
                           final MathTransform gridToCRS,
                           final CoordinateReferenceSystem crs)
             throws IllegalArgumentException, MismatchedDimensionException
     {
-        this(extent, PixelInCell.CELL_CENTER, gridToCRS, crs, null);
+        this(extent, PixelInCell.CELL_CENTER, gridToCRS, crs);
     }
 
     /**
      * Constructs a new grid geometry from a math transform. This constructor is similar to
-     * <code>{@linkplain #GridGeometry2D(GridEnvelope, MathTransform, CoordinateReferenceSystem)
+     * <code>{@linkplain #GridGeometry2D(GridExtent, MathTransform, CoordinateReferenceSystem)
      * GridGeometry2D}(extent, gridToCRS, crs)</code> with the addition of an explicit anchor
      * and an optional set of hints giving more control on the {@link MathTransform2D} to be
      * inferred from the <var>n</var>-dimensional transform.
-     * <p>
-     * The {@code anchor} argument tells whatever the {@code gridToCRS} transform maps {@linkplain
+     *
+     * <p>The {@code anchor} argument tells whatever the {@code gridToCRS} transform maps {@linkplain
      * PixelInCell#CELL_CENTER cell center} (OGC convention) or {@linkplain PixelInCell#CELL_CORNER
      * cell corner} (Java2D/JAI convention). At the opposite of the constructor expecting a {@link
      * PixelOrientation} argument, the translation (if any) applies to every dimensions, not just
-     * the ones mapping the 2D part.
+     * the ones mapping the 2D part.</p>
      *
      * @param extent    The extent of grid coordinates in a grid coverage, or {@code null} if none.
      * @param anchor    Whatever the {@code gridToCRS} transform maps
@@ -292,28 +236,24 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * @param crs       The coordinate reference system for the "real world" coordinates, or
      *                  {@code null} if unknown. This CRS is given to the
      *                  {@linkplain #getEnvelope envelope}.
-     * @param hints     An optional set of hints controlling the {@link DimensionFilter} to be
-     *                  used for deriving the {@link MathTransform2D} instance from the given
-     *                  {@code gridToCRS} transform.
      *
      * @throws MismatchedDimensionException if the math transform and the CRS don't have
      *         consistent dimensions.
      * @throws IllegalArgumentException if the math transform can't transform coordinates
      *         in the domain of the specified grid envelope.
-     *
-     * @since 2.5
      */
-    public GridGeometry2D(final GridEnvelope  extent,
+    public GridGeometry2D(final GridExtent  extent,
                           final PixelInCell   anchor,
                           final MathTransform gridToCRS,
-                          final CoordinateReferenceSystem crs,
-                          final Hints hints)
+                          final CoordinateReferenceSystem crs)
             throws MismatchedDimensionException, IllegalArgumentException
     {
         super(extent, anchor, gridToCRS, crs);
         final int[] dimensions;
         dimensions     = new int[4];
-        gridToCRS2D    = getMathTransform2D(super.gridToCRS, extent, dimensions, hints);
+        gridToCRS2D    = getMathTransform2D(
+                isDefined(GRID_TO_CRS) ? getGridToCRS(PixelInCell.CELL_CENTER) : null,
+                extent, dimensions);
         gridFromCRS2D  = inverse(gridToCRS2D);
         gridDimensionX = dimensions[0];
         gridDimensionY = dimensions[1];
@@ -321,23 +261,22 @@ public class GridGeometry2D extends GeneralGridGeometry {
         axisDimensionY = dimensions[3];
         crs2D          = createCRS2D();
         if (PixelInCell.CELL_CORNER.equals(anchor)) {
-            cornerToCRS2D = getMathTransform2D(gridToCRS, extent, dimensions, hints);
+            cornerToCRS2D = getMathTransform2D(gridToCRS, extent, dimensions);
         }
-        assert isValid() : this;
     }
 
     /**
      * Constructs a new grid geometry from a math transform. This constructor is similar to
-     * <code>{@linkplain #GridGeometry2D(GridEnvelope, MathTransform, CoordinateReferenceSystem)
+     * <code>{@linkplain #GridGeometry2D(GridExtent, MathTransform, CoordinateReferenceSystem)
      * GridGeometry2D}(extent, gridToCRS, crs)</code> with the addition of an explicit anchor
      * and an optional set of hints giving more control on the {@link MathTransform2D} to be
      * inferred from the <var>n</var>-dimensional transform.
-     * <p>
-     * The {@code anchor} argument tells whatever the {@code gridToCRS} transform maps pixel
+     *
+     * <p>The {@code anchor} argument tells whatever the {@code gridToCRS} transform maps pixel
      * center or some corner. Use {@link PixelOrientation#CENTER CENTER} for OGC conventions or
      * {@link PixelOrientation#UPPER_LEFT UPPER_LEFT} for Java2D/JAI conventions. A translation
      * (if needed) is applied only on the {@link #gridDimensionX} and {@link #gridDimensionY}
-     * parts of the transform - all other dimensions are assumed mapping pixel center.
+     * parts of the transform - all other dimensions are assumed mapping pixel center.</p>
      *
      * @param  extent      The extent of grid coordinates in a grid coverage, or {@code null} if none.
      * @param  anchor      Whatever the two-dimensional part of the {@code gridToCRS} transform
@@ -345,26 +284,20 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * @param  gridToCRS   The math transform from grid coordinates to real world earth coordinates.
      * @param  crs         The coordinate reference system for the "real world" coordinates, or
      *                     {@code null} if unknown.
-     * @param  hints       An optional set of hints controlling the {@link DimensionFilter} to be
-     *                     used for deriving the {@link MathTransform2D} instance from the given
-     *                     {@code gridToCRS} transform.
      *
      * @throws MismatchedDimensionException if the math transform and the CRS don't have
      *         consistent dimensions.
      * @throws IllegalArgumentException if {@code extent} has more than 2 dimensions with
-     *         a {@linkplain GridEnvelope#getSpan span} larger than 1, or if the math transform
+     *         a {@linkplain GridExtent#getSize span} larger than 1, or if the math transform
      *         can't transform coordinates in the domain of the specified grid envelope.
-     *
-     * @since 2.5
      */
-    public GridGeometry2D(final GridEnvelope     extent,
+    public GridGeometry2D(final GridExtent       extent,
                           final PixelOrientation anchor,
                           final MathTransform    gridToCRS,
-                          final CoordinateReferenceSystem crs,
-                          final Hints hints)
+                          final CoordinateReferenceSystem crs)
             throws IllegalArgumentException, MismatchedDimensionException
     {
-        this(extent, anchor, gridToCRS, new int[4], crs, hints);
+        this(extent, anchor, gridToCRS, new int[4], crs);
     }
 
     /**
@@ -372,23 +305,22 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * call in constructors"). We could write this code in a less convolved way if only
      * this requested was honored...
      */
-    private GridGeometry2D(final GridEnvelope     extent,
+    private GridGeometry2D(final GridExtent       extent,
                            final PixelOrientation anchor,
                            final MathTransform    gridToCRS,
                            final int[]            dimensions,  // Allocated by caller.
-                           final CoordinateReferenceSystem crs,
-                           final Hints hints)
+                           final CoordinateReferenceSystem crs)
     {
         this(extent, anchor, (gridToCRS == null || PixelOrientation.CENTER.equals(anchor))
                             ? PixelInCell.CELL_CENTER : PixelInCell.CELL_CORNER, gridToCRS,
-             getMathTransform2D(gridToCRS, extent, dimensions, hints), dimensions, crs);
+             getMathTransform2D(gridToCRS, extent, dimensions), dimensions, crs);
     }
 
     /**
      * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
      * call in constructors").
      */
-    private GridGeometry2D(final GridEnvelope     extent,
+    private GridGeometry2D(final GridExtent       extent,
                            final PixelOrientation anchor,
                            final PixelInCell      anchorND,     // Computed by caller
                            final MathTransform    gridToCRS,
@@ -404,7 +336,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
         axisDimensionY = dimensions[3];
         if (gridToCRS == gridToCRS2D) {
             // Recycles existing instance if we can (common case)
-            this.gridToCRS2D = (MathTransform2D) super.gridToCRS;
+            this.gridToCRS2D = (MathTransform2D) getGridToCRS(PixelInCell.CELL_CENTER);
         } else {
             final int xdim = (gridDimensionX < gridDimensionY) ? 0 : 1;
             this.gridToCRS2D = (MathTransform2D) PixelTranslation.translate(
@@ -412,7 +344,6 @@ public class GridGeometry2D extends GeneralGridGeometry {
         }
         gridFromCRS2D = inverse(this.gridToCRS2D);
         crs2D         = createCRS2D();
-        assert isValid() : this;
     }
 
     /**
@@ -428,27 +359,21 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *                  coordinates to real world earth coordinates. May be {@code null},
      *                  but this is not recommended.
      * @param envelope  The envelope (including CRS) of a grid coverage, or {@code null} if none.
-     * @param hints     An optional set of hints controlling the {@link DimensionFilter} to be
-     *                  used for deriving the {@link MathTransform2D} instance from the given
-     *                  {@code gridToCRS} transform.
      *
      * @throws MismatchedDimensionException if the math transform and the envelope doesn't have
      *         consistent dimensions.
      * @throws IllegalArgumentException if the math transform can't transform coordinates
      *         in the domain of the grid envelope.
-     *
-     * @since 2.5
      */
     public GridGeometry2D(final PixelInCell   anchor,
                           final MathTransform gridToCRS,
-                          final Envelope      envelope,
-                          final Hints         hints)
+                          final Envelope      envelope)
             throws MismatchedDimensionException, IllegalArgumentException
     {
-        super(anchor, gridToCRS, envelope);
+        super(anchor, gridToCRS, envelope, GridRoundingMode.ENCLOSING);
         final int[] dimensions;
         dimensions     = new int[4];
-        gridToCRS2D    = getMathTransform2D(this.gridToCRS, extent, dimensions, hints);
+        gridToCRS2D    = getMathTransform2D(getGridToCRS(PixelInCell.CELL_CENTER), getExtent(), dimensions);
         gridFromCRS2D  = inverse(gridToCRS2D);
         gridDimensionX = dimensions[0];
         gridDimensionY = dimensions[1];
@@ -456,55 +381,67 @@ public class GridGeometry2D extends GeneralGridGeometry {
         axisDimensionY = dimensions[3];
         crs2D          = createCRS2D();
         if (PixelInCell.CELL_CORNER.equals(anchor)) {
-            cornerToCRS2D = getMathTransform2D(gridToCRS, extent, dimensions, hints);
+            cornerToCRS2D = getMathTransform2D(gridToCRS, getExtent(), dimensions);
         }
-        assert isValid() : this;
     }
 
     /**
      * Constructs a new grid geometry from an envelope. This constructors applies the same heuristic
-     * rules than the {@linkplain GeneralGridGeometry#GeneralGridGeometry(GridEnvelope,Envelope)
-     * super-class constructor}. However, they must obey to the same additional constraints than
-     * the {@linkplain #GridGeometry2D(GridEnvelope, MathTransform, CoordinateReferenceSystem) main
-     * constructor}.
+     * rules than the {@link GridGeometry#GeneralGridGeometry(GridExtent, Envelope) super-class constructor}.
+     * However, they must obey to the same additional constraints than the {@linkplain #GridGeometry2D(GridExtent,
+     * MathTransform, CoordinateReferenceSystem) main constructor}.
      *
      * @param extent The valid coordinate range of a grid coverage.
      * @param envelope The corresponding coordinate range in user coordinate.
      *
      * @throws IllegalArgumentException if {@code extent} has more than 2 dimensions with
-     *         a {@linkplain GridEnvelope#getSpan span} larger than 1.
+     *         a {@linkplain GridExtent#getSpan span} larger than 1.
      * @throws MismatchedDimensionException if the grid envelope and the CRS doesn't have
      *         consistent dimensions.
-     *
-     * @since 2.2
      */
-    public GridGeometry2D(final GridEnvelope extent, final Envelope envelope)
-            throws IllegalArgumentException, MismatchedDimensionException
-    {
+    public GridGeometry2D(final GridExtent extent, final Envelope envelope) {
         this(extent, envelope, null, false, true);
     }
 
     /**
      * Implementation of heuristic constructors.
      */
-    private GridGeometry2D(final GridEnvelope extent,
-                           final Envelope  evelope,
+    private GridGeometry2D(final GridExtent extent,
+                           final Envelope  envelope,
                            final boolean[] reverse,
                            final boolean   swapXY,
                            final boolean   automatic)
-            throws IllegalArgumentException, MismatchedDimensionException
     {
-        super(extent, evelope, reverse, swapXY, automatic);
+        super(extent, PixelInCell.CELL_CENTER, gridToCRS(extent, envelope, reverse, swapXY, automatic), envelope.getCoordinateReferenceSystem());
         final int[] dimensions;
         dimensions     = new int[4];
-        gridToCRS2D    = getMathTransform2D(gridToCRS, extent, dimensions, null);
+        gridToCRS2D    = getMathTransform2D(getGridToCRS(PixelInCell.CELL_CENTER), extent, dimensions);
         gridFromCRS2D  = inverse(gridToCRS2D);
         gridDimensionX = dimensions[0];
         gridDimensionY = dimensions[1];
         axisDimensionX = dimensions[2];
         axisDimensionY = dimensions[3];
         crs2D          = createCRS2D();
-        assert isValid() : this;
+    }
+
+    public static GridGeometry createND(final GridExtent extent, final Envelope envelope) {
+        return new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCRS(extent, envelope, null, false, true), envelope.getCoordinateReferenceSystem());
+    }
+
+    /**
+     * Implementation of heuristic constructors.
+     */
+    private static MathTransform gridToCRS(final GridExtent extent, final Envelope  envelope,
+            final boolean[] reverse, final boolean swapXY, final boolean automatic)
+    {
+        ArgumentChecks.ensureNonNull("extent",   extent);
+        ArgumentChecks.ensureNonNull("envelope", envelope);
+        final GridToEnvelopeMapper mapper = new GridToEnvelopeMapper(extent, envelope);
+        if (!automatic) {
+            mapper.setReverseAxis(reverse);
+            mapper.setSwapXY(swapXY);
+        }
+        return mapper.createTransform();
     }
 
     /**
@@ -525,7 +462,9 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *                 of the last pixel.
      */
     public GridGeometry2D(final Rectangle extent, final Rectangle2D envelope) {
-        this(new GeneralGridEnvelope(extent, 2), getMathTransform(extent, envelope),
+        this(new GridExtent(null,
+                new long[]{extent.x, extent.y},
+                new long[]{extent.width, extent.height}, false), getMathTransform(extent, envelope),
              (CoordinateReferenceSystem) null);
     }
 
@@ -537,8 +476,6 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *
      * @param  other The grid geometry to cast or copy.
      * @return The wrapped geometry, or {@code null} if {@code other} was null.
-     *
-     * @since 3.19 (derived from 2.5)
      */
     public static GridGeometry2D castOrCopy(final GridGeometry other) {
         if (other == null || other instanceof GridGeometry2D) {
@@ -573,14 +510,12 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *         {@link #axisDimensionY} values. This argument is actually a workaround for a
      *         Java language limitation (no multiple return values). If we could, we would
      *         have returned directly the arrays computed in the body of this method.
-     * @param  hints An optional set of hints for {@link DimensionFilter} creation.
      * @return The {@link MathTransform2D} part of {@code transform}, or {@code null}
      *         if and only if {@code gridToCRS} was null..
      * @throws IllegalArgumentException if the 2D part is not separable.
      */
     private static MathTransform2D getMathTransform2D(final MathTransform gridToCRS,
-            final GridEnvelope extent, final int[] dimensions, final Hints hints)
-            throws IllegalArgumentException
+            final GridExtent extent, final int[] dimensions) throws IllegalArgumentException
     {
         if (gridToCRS != null) {
             if (extent != null) {
@@ -595,19 +530,26 @@ public class GridGeometry2D extends GeneralGridGeometry {
          * Finds the axis for the two dimensional parts. We infer them from the grid envelope.
          * If no grid envelope were specified, then we assume that they are the 2 first dimensions.
          */
-        final DimensionFilter filter = new DimensionFilter(gridToCRS);
-        boolean isEmpty = true;
+        final TransformSeparator filter = new TransformSeparator(gridToCRS);
+        long dimAdded = 0;
         if (extent != null) {
             final int dimension = extent.getDimension();
             for (int i=0; i<dimension; i++) {
-                if (extent.getSpan(i) > 1) {
-                    filter.addSourceDimension(i);
-                    isEmpty = false;
+                if (extent.getSize(i) > 1) {
+                    if (i >= Long.SIZE) {
+                        throw new ArithmeticException();
+                    }
+                    dimAdded |= (1L << i);
                 }
             }
         }
-        if (isEmpty) {
-            filter.addSourceDimensionRange(0, 2);
+        if (dimAdded < 3) {
+            dimAdded = 3;           // If we have only one of dimension 0 and 1, or non of them, add both of them.
+        }
+        while (dimAdded != 0) {
+            final int i = Long.numberOfTrailingZeros(dimAdded);
+            filter.addSourceDimensions(i);
+            dimAdded &= ~(1L << i);
         }
         Exception cause = null;
         int[] srcDim = filter.getSourceDimensions();
@@ -687,6 +629,23 @@ public class GridGeometry2D extends GeneralGridGeometry {
     }
 
     /**
+     * Ensures that the given dimension is equals to the expected value. If not, throw an
+     * exception.
+     *
+     * @param argument  The name of the argument being tested.
+     * @param dimension The dimension of the argument value.
+     * @param expected  The expected dimension.
+     */
+    private static void ensureDimensionMatch(final String argument, final int dimension, final int expected)
+            throws MismatchedDimensionException
+    {
+        if (dimension != expected) {
+            throw new MismatchedDimensionException(Errors.format(
+                    Errors.Keys.MismatchedDimension_3, argument, dimension, expected));
+        }
+    }
+
+    /**
      * Reduces the specified envelope to a two-dimensional one. If the given envelope has
      * more than two dimensions, then a new one is created using only the coordinates at
      * ({@link #axisDimensionX}, {@link #axisDimensionY}) index.
@@ -732,7 +691,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
             return crs;
         }
         if (FACTORIES == null) {
-            FACTORIES = ReferencingFactoryContainer.instance(null);
+            FACTORIES = ReferencingFactoryContainer.instance();
             // No need to synchronize: this is not a big deal if
             // two ReferencingFactoryContainer instances are created.
         }
@@ -782,19 +741,21 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * @see #getEnvelope()
      */
     public Envelope2D getEnvelope2D() throws IncompleteGridGeometryException {
-        final ImmutableEnvelope envelope = this.envelope;
-        if (envelope != null && !envelope.isAllNaN()) {
-            assert isDefined(ENVELOPE);
-            return new Envelope2D(crs2D,
-                    envelope.getMinimum(axisDimensionX),
-                    envelope.getMinimum(axisDimensionY),
-                    envelope.getSpan   (axisDimensionX),
-                    envelope.getSpan   (axisDimensionY));
-            // Note: we didn't invoked reduce(Envelope) in order to make sure that
-            //       our privated 'envelope' field is not exposed to subclasses.
+        if (isDefined(ENVELOPE)) {
+            final GeneralEnvelope envelope = GeneralEnvelope.castOrCopy(getEnvelope());
+            if (!envelope.isAllNaN()) {
+                assert isDefined(ENVELOPE);
+                return new Envelope2D(crs2D,
+                        envelope.getMinimum(axisDimensionX),
+                        envelope.getMinimum(axisDimensionY),
+                        envelope.getSpan   (axisDimensionX),
+                        envelope.getSpan   (axisDimensionY));
+                // Note: we didn't invoked reduce(Envelope) in order to make sure that
+                //       our privated 'envelope' field is not exposed to subclasses.
+            }
         }
         assert !isDefined(ENVELOPE);
-        throw new IncompleteGridGeometryException(Errors.format(gridToCRS == null ?
+        throw new IncompleteGridGeometryException(Errors.format(!isDefined(GRID_TO_CRS) ?
                     Errors.Keys.UnspecifiedTransform : Errors.Keys.UnspecifiedImageSize));
     }
 
@@ -808,17 +769,16 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *         returned {@code false}).
      *
      * @see #getExtent()
-     *
-     * @since 3.20 (derived from 2.1)
      */
-    public GridEnvelope2D getExtent2D() throws IncompleteGridGeometryException {
-        final GridEnvelope extent = this.extent;
-        if (extent != null) {
+    public GridExtent getExtent2D() throws IncompleteGridGeometryException {
+        if (isDefined(EXTENT)) {
+            final GridExtent extent = getExtent();
             assert isDefined(EXTENT);
-            return new GridEnvelope2D(extent.getLow (gridDimensionX),
-                                      extent.getLow (gridDimensionY),
-                                      extent.getSpan(gridDimensionX),
-                                      extent.getSpan(gridDimensionY));
+            return new GridExtent(
+                    null,
+                    new long[]{extent.getLow (gridDimensionX),extent.getLow (gridDimensionY)},
+                    new long[]{extent.getHigh(gridDimensionX),extent.getHigh(gridDimensionY)},
+                    true);
         }
         assert !isDefined(EXTENT);
         throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnspecifiedImageSize));
@@ -836,8 +796,6 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *         for this grid geometry.
      *
      * @see #getGridToCRS
-     *
-     * @since 2.3
      */
     public MathTransform2D getGridToCRS2D() throws IncompleteGridGeometryException {
         if (gridToCRS2D != null) {
@@ -857,8 +815,6 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *         to real world earth coordinates.
      * @throws IncompleteGridGeometryException if a two-dimensional transform is not available
      *         for this grid geometry.
-     *
-     * @since 2.3
      */
     public MathTransform2D getGridToCRS2D(final PixelOrientation orientation) {
         if (gridToCRS2D == null) {
@@ -875,6 +831,9 @@ public class GridGeometry2D extends GeneralGridGeometry {
                  * and caches a new instance. We cache only the UPPER_LEFT case since it is
                  * widely used; the other cases are rather unusual.
                  */
+                MathTransform gridToCRS = null;
+                if (isDefined(GRID_TO_CRS)) gridToCRS = getGridToCRS(PixelInCell.CELL_CENTER);
+
                 if (gridToCRS.getSourceDimensions() == 2 && gridToCRS.getTargetDimensions() == 2) {
                     cornerToCRS2D = (MathTransform2D) super.getGridToCRS(PixelInCell.CELL_CORNER);
                 } else {
@@ -909,10 +868,10 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *
      * @see #getGridToCRS(PixelInCell)
      * @see org.apache.sis.coverage.grid.PixelTranslation
-     *
-     * @since 2.3
      */
     public MathTransform getGridToCRS(final PixelOrientation orientation) {
+        MathTransform gridToCRS = null;
+        if (isDefined(GRID_TO_CRS)) gridToCRS = getGridToCRS(PixelInCell.CELL_CENTER);
         if (gridToCRS == null) {
             throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnspecifiedTransform));
         }
@@ -935,32 +894,10 @@ public class GridGeometry2D extends GeneralGridGeometry {
                 return gridFromCRS2D.transform(point, null);
             } catch (TransformException exception) {
                 throw new CannotEvaluateException(Errors.format(Errors.Keys.CantEvaluateForCoordinate_1,
-                          AbstractGridCoverage.toString(point, Locale.getDefault(Locale.Category.FORMAT)), exception));
+                          GridCoverage.toString(point, Locale.getDefault(Locale.Category.FORMAT)), exception));
             }
         }
         throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.NoTransform2dAvailable));
-    }
-
-    /**
-     * Returns the pixel coordinate of a rectangle containing the
-     * specified geographic area. If the rectangle can't be computed,
-     * then this method returns {@code null}.
-     */
-    final Rectangle inverseTransform(Rectangle2D bounds) {
-        if (bounds!=null && gridFromCRS2D!=null) {
-            try {
-                bounds = Shapes2D.transform(gridFromCRS2D, bounds, null);
-                final int xmin = (int) Math.floor(bounds.getMinX() - 0.5);
-                final int ymin = (int) Math.floor(bounds.getMinY() - 0.5);
-                final int xmax = (int) Math.ceil (bounds.getMaxX() - 0.5);
-                final int ymax = (int) Math.ceil (bounds.getMaxY() - 0.5);
-                return new Rectangle(xmin, ymin, xmax-xmin, ymax-ymin);
-            } catch (TransformException exception) {
-                // Ignore, since this method is invoked from 'GridCoverage.prefetch' only.
-                // It doesn't matter if the transformation failed; 'prefetch' is just a hint.
-            }
-        }
-        return null;
     }
 
     /**

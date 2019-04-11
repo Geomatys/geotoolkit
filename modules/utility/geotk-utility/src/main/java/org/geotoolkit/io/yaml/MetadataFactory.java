@@ -25,7 +25,6 @@ import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.metadata.KeyNamePolicy;
 import org.apache.sis.metadata.TypeValuePolicy;
 import org.apache.sis.metadata.ValueExistencePolicy;
-import org.geotoolkit.factory.Factory;
 import org.geotoolkit.resources.Errors;
 
 
@@ -41,7 +40,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (Geomatys)
  * @module
  */
-final class MetadataFactory extends Factory {
+final class MetadataFactory {
     /**
      * The default instance.
      */

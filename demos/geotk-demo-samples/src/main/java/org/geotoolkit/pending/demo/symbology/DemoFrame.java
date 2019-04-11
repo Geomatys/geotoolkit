@@ -134,7 +134,6 @@ public class DemoFrame extends JFrame{
 
         // other demo -------------------------------------------------------
         final DefaultMutableTreeNode othersNode = new DefaultMutableTreeNode("Others");
-        othersNode.add(new PanelNode("Isolines", JIsoline.class));
         othersNode.add(new PanelNode("Vector field", Styles.createRasterContext(Styles.vectorFieldtRaster())));
         root.add(othersNode);
 
@@ -178,9 +177,6 @@ public class DemoFrame extends JFrame{
 
         @Override
         public Object getUserObject() {
-            if(context != null){
-                return new JSEStylePane(context);
-            }
 
             try {
                 return candidate.newInstance();

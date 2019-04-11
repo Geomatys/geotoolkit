@@ -21,18 +21,17 @@ import java.io.File;
 import java.net.URL;
 import java.util.logging.Level;
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.ImageCoverageReader;
-import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.process.ProcessException;
-import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.opengis.coverage.Coverage;
-import org.opengis.metadata.Metadata;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.ImageCoverageReader;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.opengis.metadata.Metadata;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
@@ -82,12 +81,12 @@ public class ExtractionProcess extends AbstractProcess {
             reader = new ImageCoverageReader();
             try {
                 ((ImageCoverageReader)reader).setInput(input);
-            } catch (CoverageStoreException ex) {
+            } catch (DataStoreException ex) {
                 Logging.getLogger("org.geotoolkit.processing.coverage.metadataextractor").log(Level.SEVERE, null, ex);
             }
         }
         //Coverage case is not supported yet
-        if (input instanceof Coverage) {
+        if (input instanceof GridCoverage) {
             //TODO : add a convenience method into coverage interface to get metadata
         } else if (input instanceof GridCoverageResource) {
             try {
@@ -106,14 +105,14 @@ public class ExtractionProcess extends AbstractProcess {
         if (reader instanceof GridCoverageReader){
             try {
                 output = ((GridCoverageReader)reader).getMetadata();
-            } catch (CoverageStoreException ex) {
+            } catch (DataStoreException ex) {
                 Logging.getLogger("org.geotoolkit.processing.coverage.metadataextractor").log(Level.SEVERE, null, ex);
             }
         }
         if (reader instanceof ImageCoverageReader){
             try {
                 output = ((ImageCoverageReader)reader).getMetadata();
-            } catch (CoverageStoreException ex) {
+            } catch (DataStoreException ex) {
                 Logging.getLogger("org.geotoolkit.processing.coverage.metadataextractor").log(Level.SEVERE, null, ex);
             }
         }

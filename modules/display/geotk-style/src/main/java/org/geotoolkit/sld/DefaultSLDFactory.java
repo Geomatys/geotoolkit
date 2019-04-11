@@ -19,7 +19,6 @@ package org.geotoolkit.sld;
 import java.util.Collection;
 import java.util.List;
 
-import org.geotoolkit.factory.Factory;
 import org.geotoolkit.style.DefaultMutableStyle;
 import org.geotoolkit.style.MutableStyle;
 
@@ -43,7 +42,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultSLDFactory extends Factory implements MutableSLDFactory{
+public class DefaultSLDFactory implements MutableSLDFactory{
 
     @Override
     public MutableStyledLayerDescriptor createSLD() {

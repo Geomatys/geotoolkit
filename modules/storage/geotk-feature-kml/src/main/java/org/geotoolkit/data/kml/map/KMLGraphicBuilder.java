@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.data.kml.map;
 
-import org.locationtech.jts.geom.Geometry;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -42,9 +40,11 @@ import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
-
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.processing.Operations;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.BalloonStyle;
@@ -71,29 +71,28 @@ import org.geotoolkit.data.kml.model.StyleState;
 import org.geotoolkit.data.kml.model.Vec2;
 import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xsd.Cdata;
-import org.geotoolkit.display.canvas.AbstractCanvas2D;
-import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.SearchArea;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.canvas.AbstractCanvas2D;
+import org.geotoolkit.display.canvas.Canvas;
+import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
 import org.geotoolkit.display2d.style.labeling.DefaultPointLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
+import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.display.SearchArea;
-import org.geotoolkit.display.VisitFilter;
-import org.geotoolkit.display.canvas.Canvas;
-import org.geotoolkit.display2d.primitive.ProjectedGeometry;
-import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
-
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.coverage.resample.ResampleProcess;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
 import org.opengis.geometry.Envelope;
@@ -511,7 +510,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             try {
                 portrayKml(cache.kml);
                 context2D.getLabelRenderer(true).portrayLabels();
-            } catch (TransformException | IOException ex) {
+            } catch (TransformException | IOException | ProcessException ex) {
                 Logging.getLogger("org.geotoolkit.data.kml.map").log(Level.SEVERE, null, ex);
             }
             cache.styles.clear();
@@ -525,13 +524,13 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             return graphics;
         }
 
-        private void portrayKml(Kml kml) throws IOException {
+        private void portrayKml(Kml kml) throws IOException, ProcessException {
             if (kml.getAbstractFeature() != null) {
                 portrayFeature(kml.getAbstractFeature());
             }
         }
 
-        private void portrayFeature(Feature feature) throws IOException {
+        private void portrayFeature(Feature feature) throws IOException, ProcessException {
             if (KmlModelConstants.TYPE_CONTAINER.isAssignableFrom(feature.getType())) {
                 portrayAbstractContainer(feature);
             } else if (KmlModelConstants.TYPE_OVERLAY.isAssignableFrom(feature.getType())) {
@@ -594,7 +593,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             }
         }
 
-        private void portrayAbstractContainer(Feature container) throws IOException {
+        private void portrayAbstractContainer(Feature container) throws IOException, ProcessException {
             if (container.getType().equals(KmlModelConstants.TYPE_FOLDER)) {
                 portrayFolder(container);
             } else if (container.getType().equals(KmlModelConstants.TYPE_DOCUMENT)) {
@@ -606,7 +605,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             portrayCommonFeature(container);
         }
 
-        private void portrayFolder(Feature folder) throws IOException {
+        private void portrayFolder(Feature folder) throws IOException, ProcessException {
             portrayCommonContainer(folder);
             Iterator<?> i = ((Iterable<?>) folder.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
             while (i.hasNext()) {
@@ -614,7 +613,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             }
         }
 
-        private void portrayDocument(Feature document) throws IOException {
+        private void portrayDocument(Feature document) throws IOException, ProcessException {
             portrayCommonContainer(document);
             Iterator<?> i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
             while (i.hasNext()) {
@@ -622,7 +621,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             }
         }
 
-        private void portrayOverlay(Feature overlay) throws IOException {
+        private void portrayOverlay(Feature overlay) throws IOException, ProcessException {
             if (overlay.getType().equals(KmlModelConstants.TYPE_GROUND_OVERLAY)) {
                 portrayGroundOverlay(overlay);
             } else if (overlay.getType().equals(KmlModelConstants.TYPE_SCREEN_OVERLAY)) {
@@ -636,7 +635,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             portrayCommonFeature(overlay);
         }
 
-        private void portrayGroundOverlay(Feature groundOverlay) throws IOException {
+        private void portrayGroundOverlay(Feature groundOverlay) throws IOException, ProcessException {
             portrayCommonOverlay(groundOverlay);
 
             context2d.switchToDisplayCRS();
@@ -660,7 +659,8 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             gcb.setEnvelope(envelope);
             gcb.setRenderedImage(image);
             final GridCoverage2D coverage = gcb.getGridCoverage2D();
-            final GridCoverage2D resampled = (GridCoverage2D) Operations.DEFAULT.resample(coverage, context2d.getObjectiveCRS2D());
+
+            final GridCoverage2D resampled = new ResampleProcess(coverage, context2d.getObjectiveCRS2D(), null, InterpolationCase.NEIGHBOR, null).executeNow();
 
             context2d.switchToObjectiveCRS();
 

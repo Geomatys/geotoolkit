@@ -16,10 +16,7 @@
  */
 package org.geotoolkit.display2d.ext.cellular;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Polygon;
+import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -28,8 +25,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.math.Statistics;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -44,9 +48,16 @@ import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRendere
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.util.ObjectConverters;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -54,18 +65,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.opengis.feature.AttributeType;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyType;
 
 /**
  * TODO : For features, compute statistics only if input symbolizer needs
@@ -272,13 +271,13 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
         GridCoverage2D coverage;
         try {
-            coverage = getObjectiveCoverage(projectedCoverage,env,renderingContext.getResolution(),
-                    renderingContext.getObjectiveToDisplay(),false);
+            coverage = getObjectiveCoverage(projectedCoverage,
+                    renderingContext.getGridGeometry(),false);
         } catch (Exception ex) {
             throw new PortrayalException(ex);
         }
         if(coverage!=null){
-            coverage = coverage.view(ViewType.GEOPHYSICS);
+            coverage = coverage.forConvertedValues(true);
         }
         if(coverage == null){
             LOGGER.log(Level.WARNING, "Reprojected coverage is null.");
@@ -300,23 +299,27 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         MathTransform2D gridToCRS = coverage.getGridGeometry().getGridToCRS2D();
 
 
-        final PixelIterator ite = PixelIteratorFactory.createDefaultIterator(image);
+        final PixelIterator ite = PixelIterator.create(image);
         int i,x,y;
         final double[] gridCoord = new double[gridToCRS.getSourceDimensions()];
         final double[] crsCoord = new double[gridToCRS.getTargetDimensions()];
+        final double[] pixel = new double[nbBand];
         try{
             while(ite.next()){
-                gridCoord[0] = ite.getX();
-                gridCoord[1] = ite.getY();
+                Point position = ite.getPosition();
+                gridCoord[0] = position.getX();
+                gridCoord[1] = position.getY();
                 gridToCRS.transform(gridCoord, 0, crsCoord, 0, 1);
                 crsCoord[0] = (crsCoord[0]-area.getMinimum(0))/objCellSize;
                 crsCoord[1] = (crsCoord[1]-area.getMinimum(1))/objCellSize;
                 x = (int) crsCoord[0];
                 y = (int) crsCoord[1];
-                for(i=0;i<nbBand;i++){
-                    if(stats[i][y][x]==null) stats[i][y][x] = new Statistics("");
-                    stats[i][y][x].accept(ite.getSampleDouble());
-                    if(i<nbBand-1) ite.next();
+                ite.getPixel(pixel);
+                for (i=0;i<nbBand;i++) {
+                    if (stats[i][y][x] == null) stats[i][y][x] = new Statistics("");
+                    if (!Double.isNaN(pixel[i])) {
+                        stats[i][y][x].accept(pixel[i]);
+                    }
                 }
             }
         }catch(TransformException ex){

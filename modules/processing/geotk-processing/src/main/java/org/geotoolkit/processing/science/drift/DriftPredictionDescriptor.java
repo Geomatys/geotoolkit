@@ -19,7 +19,7 @@ import org.opengis.util.InternationalString;
 public class DriftPredictionDescriptor extends AbstractProcessDescriptor {
 
     public static final String NAME = "driftPrediction";
-    private static final InternationalString REMARKS = new SimpleInternationalString("Aims to compute probable trajectories for a given location at a given time.");
+    public static final InternationalString REMARKS = new SimpleInternationalString("Aims to compute probable trajectories for a given location at a given time.");
 
     public static final ParameterDescriptorGroup INPUT;
     public static final ParameterDescriptor<DirectPosition> START_POINT;

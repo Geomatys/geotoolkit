@@ -18,12 +18,12 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.storage.io.ChannelImageInputStream;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.image.io.SpatialImageReader;
 import static org.geotoolkit.image.io.WarningProducer.LOGGER;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
@@ -197,11 +197,10 @@ public class VI3GReader extends SpatialImageReader {
             // HACK : a problem has been detected with Geotk rendering of latitude first data.
             // As a warkaround, we define the image as longitude first, and then roll it
             // using sheer.
-            final GridEnvelope2D gridEnv = new GridEnvelope2D(0, 0, getWidth(imageIndex), getHeight(imageIndex));
+            final GridExtent gridEnv = new GridExtent(getWidth(imageIndex), getHeight(imageIndex));
             AffineTransform2D tr = new AffineTransform2D(-180.0 / WIDTH, 0, 0, 360.0 / HEIGHT, 90.0, -180.0);
 
-            accessor.setGridGeometry(
-                    new GeneralGridGeometry(gridEnv, PixelInCell.CELL_CORNER, tr, geographicCRS),
+            accessor.setGridGeometry(new GridGeometry(gridEnv, PixelInCell.CELL_CORNER, tr, geographicCRS),
                     PixelInCell.CELL_CORNER, CellGeometry.AREA
             );
 

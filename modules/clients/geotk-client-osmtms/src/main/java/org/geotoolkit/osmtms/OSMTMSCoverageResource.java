@@ -34,7 +34,7 @@ import org.opengis.util.GenericName;
 public class OSMTMSCoverageResource extends AbstractPyramidalCoverageResource {
 
     OSMTMSCoverageResource(OSMTileMapClient server, GenericName name){
-        super(server,name,0);
+        super(server,name);
     }
 
     public OSMTMSPyramidSet getPyramidSet() {

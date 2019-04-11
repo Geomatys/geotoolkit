@@ -21,13 +21,11 @@ import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.DBF;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.SHP;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.SHX;
-
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.dbf.DbaseFileException;
@@ -37,7 +35,6 @@ import org.geotoolkit.data.shapefile.shp.JTSUtilities;
 import org.geotoolkit.data.shapefile.shp.ShapeHandler;
 import org.geotoolkit.data.shapefile.shp.ShapeType;
 import org.geotoolkit.data.shapefile.shp.ShapefileWriter;
-
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import java.util.HashSet;
@@ -46,12 +43,12 @@ import java.util.Optional;
 import java.util.Set;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
-import org.geotoolkit.factory.FactoryFinder;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -72,7 +69,7 @@ import org.opengis.filter.identity.Identifier;
  */
 public class ShapefileFeatureWriter implements FeatureWriter {
 
-    protected final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    protected final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     protected final ShapefileFeatureStore parent;
 

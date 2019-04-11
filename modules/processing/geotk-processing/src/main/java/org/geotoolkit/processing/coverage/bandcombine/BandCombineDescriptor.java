@@ -17,13 +17,13 @@
 package org.geotoolkit.processing.coverage.bandcombine;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.processing.AbstractProcessDescriptor;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.Process;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
-import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -39,12 +39,12 @@ public class BandCombineDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Coverages to combine
      */
-    public static final ParameterDescriptor<Coverage[]> IN_COVERAGES = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage[]> IN_COVERAGES = new ParameterBuilder()
                 .addName("coverages")
                 .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandcombine_inCoverages))
                 .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandcombine_inCoveragesDesc))
                 .setRequired(true)
-                .create(Coverage[].class, null);
+                .create(GridCoverage[].class, null);
 
     public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder()
             .addName(NAME + "InputParameters").createGroup(IN_COVERAGES);
@@ -52,12 +52,12 @@ public class BandCombineDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Resulting coverage.
      */
-    public static final ParameterDescriptor<Coverage> OUT_COVERAGE = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage> OUT_COVERAGE = new ParameterBuilder()
             .addName("result")
             .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandcombine_outCoverage))
             .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandcombine_outCoverageDesc))
             .setRequired(true)
-            .create(Coverage.class, null);
+            .create(GridCoverage.class, null);
 
     public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder()
             .addName(NAME + "OutputParameters").createGroup(OUT_COVERAGE);

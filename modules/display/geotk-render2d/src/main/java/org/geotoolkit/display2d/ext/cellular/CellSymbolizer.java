@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.display2d.ext.cellular;
 
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -25,30 +23,32 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.quantity.Length;
 import javax.measure.Unit;
+import javax.measure.quantity.Length;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.sis.measure.Units;
-import org.geotoolkit.feature.FeatureExt;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.measure.Units;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.se.xml.v110.RuleType;
 import org.geotoolkit.se.xml.v110.SymbolizerType;
 import org.geotoolkit.sld.xml.StyleXmlIO;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
@@ -58,7 +58,6 @@ import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.Rule;
 import org.opengis.style.StyleVisitor;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -203,44 +202,34 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
     }
 
     public static FeatureType buildCellType(CoverageMapLayer layer) throws DataStoreException{
-        return buildCellType(layer.getCoverageReference());
+        return buildCellType(layer.getResource());
     }
 
     public static FeatureType buildCellType(GridCoverageResource ref) throws DataStoreException{
-        final GridCoverageReader reader = ref.acquireReader();
-        final FeatureType sft = buildCellType(reader, ref.getImageIndex());
-        ref.recycle(reader);
-        return sft;
-    }
-
-    public static FeatureType buildCellType(GridCoverageReader reader, int imageIndex) throws DataStoreException{
-        final List<GridSampleDimension> lst = reader.getSampleDimensions(imageIndex);
-        final GeneralGridGeometry gg = reader.getGridGeometry(imageIndex);
+        final List<SampleDimension> lst = ref.getSampleDimensions();
+        final GridGeometry gg = ref.getGridGeometry();
         final CoordinateReferenceSystem crs = gg.getCoordinateReferenceSystem();
         if(lst!=null){
             final String[] names = new String[lst.size()];
             for(int i=0;i<names.length;i++){
-                names[i] = lst.get(i).getDescription().toString();
+                names[i] = lst.get(i).getName().toString();
             }
             return buildCellType(lst.size(), names, crs);
         }else{
             //we need to find the number of bands by some other way
-            final GridCoverageReadParam param = new GridCoverageReadParam();
-            param.setResolution(gg.getEnvelope().getSpan(0),gg.getEnvelope().getSpan(1));
-            final GridCoverage2D cov = (GridCoverage2D) reader.read(0, param);
-            final int nbBands = cov.getRenderedImage().getSampleModel().getNumBands();
+            GridCoverage coverage = ref.read(null);
+            int nbBands = coverage.getSampleDimensions().size();
             return buildCellType(nbBands, null, crs);
         }
     }
 
     public static FeatureType buildCellType(GridCoverage2D coverage){
-        final int nbBand = coverage.getNumSampleDimensions();
-        final GridSampleDimension[] dims = coverage.getSampleDimensions();
-        final String[] names = new String[dims.length];
+        final List<SampleDimension> dims = coverage.getSampleDimensions();
+        final String[] names = new String[dims.size()];
         for(int i=0;i<names.length;i++){
-            names[i] = dims[i].getDescription().toString();
+            names[i] = dims.get(i).getName().toString();
         }
-        return buildCellType(nbBand, names, coverage.getCoordinateReferenceSystem2D());
+        return buildCellType(dims.size(), names, coverage.getCoordinateReferenceSystem2D());
     }
 
     public static FeatureType buildCellType(int nbBand, String[] bandnames, CoordinateReferenceSystem crs){

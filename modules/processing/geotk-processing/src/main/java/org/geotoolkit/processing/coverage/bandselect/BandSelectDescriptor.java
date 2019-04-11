@@ -17,13 +17,13 @@
 package org.geotoolkit.processing.coverage.bandselect;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.processing.AbstractProcessDescriptor;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.Process;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
-import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -39,12 +39,12 @@ public class BandSelectDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Coverage.
      */
-    public static final ParameterDescriptor<Coverage> IN_COVERAGE = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage> IN_COVERAGE = new ParameterBuilder()
             .addName("coverage")
             .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandselect_inCoverage))
             .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandselect_inCoverageDesc))
             .setRequired(true)
-            .create(Coverage.class,null);
+            .create(GridCoverage.class,null);
     /**
      * Mandatory - bands to select.
      */
@@ -61,12 +61,12 @@ public class BandSelectDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Resulting coverage.
      */
-    public static final ParameterDescriptor<Coverage> OUT_COVERAGE = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage> OUT_COVERAGE = new ParameterBuilder()
             .addName("result")
             .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandselect_outCoverage))
             .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandselect_outCoverageDesc))
             .setRequired(true)
-            .create(Coverage.class,null);
+            .create(GridCoverage.class,null);
 
     public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder()
             .addName(NAME + "OutputParameters").createGroup(OUT_COVERAGE);

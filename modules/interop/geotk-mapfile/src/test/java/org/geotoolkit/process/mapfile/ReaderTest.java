@@ -18,13 +18,13 @@ package org.geotoolkit.process.mapfile;
 
 import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.filter.FilterFactory;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.style.DefaultStyleFactory;
 import java.util.Collection;
 import java.awt.Color;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Iterator;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.junit.Test;
 
 import static org.geotoolkit.test.Assert.*;
@@ -39,7 +39,7 @@ import org.opengis.feature.Feature;
 public class ReaderTest extends org.geotoolkit.test.TestBase {
 
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     public ReaderTest() {
     }

@@ -23,26 +23,29 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
+import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
+import org.geotoolkit.coverage.landsat.LandsatConstants.CoverageGroup;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.storage.coverage.GeoReferencedGridCoverageReader;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -52,8 +55,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NoSuchIdentifierException;
-import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Reader to read Landsat datas.
@@ -142,9 +143,9 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
      * @throws CancellationException
      */
     @Override
-    public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
+    public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
         final String sceneName  = metaParse.getValue(false, SCENE_ID);
-        return Arrays.asList(group.createName(sceneName));
+        return group.createName(sceneName);
     }
 
     /**
@@ -156,10 +157,9 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
      * @throws CancellationException
      */
     @Override
-    public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
-        if (index != 0) throw new CoverageStoreException("Unvalid index "+index);
+    public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
 
-        final GridEnvelope gridExtent;
+        final GridExtent gridExtent;
         final MathTransform gridToCRS;
         final CoordinateReferenceSystem crs;
         try {
@@ -169,7 +169,7 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
         } catch (Exception ex) {
             throw new CoverageStoreException(ex);
         }
-        return new GridGeometry2D(gridExtent, PixelInCell.CELL_CORNER, gridToCRS, crs, null);
+        return new GridGeometry2D(gridExtent, PixelInCell.CELL_CORNER, gridToCRS, crs);
     }
 
     /**
@@ -182,15 +182,14 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
      * @throws CancellationException
      */
     @Override
-    public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException, CancellationException {
-        if (index != 0) throw new CoverageStoreException("Unvalid index "+index);
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException, CancellationException {
 
         if (gsdLandsat != null)
             return gsdLandsat;
 
         final int[] bandId = group.bands;
 
-        final List<GridSampleDimension> gList = new ArrayList<>();
+        final List<SampleDimension> gList = new ArrayList<>();
         for (int i : bandId) {
             final String bandName = metaParse.getValue(true, BAND_NAME_LABEL + i);
             final Path resolve = parenPath.resolve(bandName);
@@ -199,7 +198,7 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
                 final ImageReader tiffReader = TIFF_SPI.createReaderInstance();
                 tiffReader.setInput(resolve);
                 imageCoverageReader.setInput(tiffReader);
-                final List<GridSampleDimension> candidates = imageCoverageReader.getSampleDimensions(0);
+                final List<SampleDimension> candidates = imageCoverageReader.getSampleDimensions();
                 if (candidates != null) gList.addAll(candidates);
             } catch (IOException ex) {
                 throw new CoverageStoreException(ex);
@@ -214,9 +213,9 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
 
     @Override
     protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, GridCoverageReadParam param)
-            throws CoverageStoreException, TransformException, CancellationException {
+            throws DataStoreException, TransformException, CancellationException {
 
-        GeneralGridGeometry geometry = GeoReferencedGridCoverageReader.getGridGeometry(getGridGeometry(0), areaLower, areaUpper, subsampling);
+        GridGeometry geometry = GeoReferencedGridCoverageReader.getGridGeometry(getGridGeometry(), areaLower, areaUpper, subsampling);
 
         //-- get all needed band to build coverage (see Landsat spec)
         final int[] bandId = group.bands;
@@ -262,7 +261,7 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setRenderedImage(outImage);
             gcb.setGridGeometry(geometry);
-            gcb.setName(getCoverageNames().get(0).toString());
+            gcb.setName(getCoverageName().toString());
 
             return gcb.build();
 

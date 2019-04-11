@@ -24,7 +24,7 @@
   <name>Timed images</name>
 
   <description>
-    A coverage store for a specific workflows : Index all image file in a 
+    A coverage store for a specific workflows : Index all image file in a
     directory as a single coverage with a temporal dimension. The time data is
     extracted from image file names, which must contain a formatted date and time.
   </description>
@@ -67,12 +67,7 @@
       <artifactId>geotk-index</artifactId>
       <version>${project.version}</version>
     </dependency>
-    
-    <dependency>
-        <groupId>javax.media</groupId>
-        <artifactId>jai_codec</artifactId>
-        <scope>test</scope>
-    </dependency>
+
     <dependency>
         <groupId>org.geotoolkit</groupId>
         <artifactId>geotk-coverage-geotiff</artifactId>

@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import javax.measure.Unit;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.sld.MutableNamedLayer;
 import org.geotoolkit.sld.MutableNamedStyle;
@@ -40,6 +40,7 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.apache.sis.util.logging.Logging;
 import org.junit.Test;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.metadata.citation.OnlineResource;
@@ -66,6 +67,7 @@ import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.ShadedRelief;
 import org.opengis.style.Stroke;
+import org.opengis.style.StyleFactory;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 
@@ -84,8 +86,8 @@ public class Tester {
         final Hints hints = new Hints();
         hints.put(Hints.STYLE_FACTORY, MutableStyleFactory.class);
         hints.put(Hints.FILTER_FACTORY, FilterFactory2.class);
-        STYLE_FACTORY = (MutableStyleFactory)FactoryFinder.getStyleFactory(hints);
-        FILTER_FACTORY = (FilterFactory2) FactoryFinder.getFilterFactory(hints);
+        STYLE_FACTORY = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+        FILTER_FACTORY = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
         SLD_FACTORY = new DefaultSLDFactory();
         SLD_UTILITIES = new JAXBSLDUtilities(FILTER_FACTORY, STYLE_FACTORY, SLD_FACTORY);
     }

@@ -21,10 +21,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.Category;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.opengis.coverage.SampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.opengis.referencing.operation.MathTransform1D;
 
 /**
  * Builder which aggregate all image information which will be write/read into/from Yaml format.
@@ -129,7 +131,7 @@ public class YamlBuilder implements YamlReaderBuilder, YamlWriterBuilder {
             final String sdDescription = (String) ysd.get("description");
             final List<Map> ylCats = (List<Map>) ysd.get("categories");
             int c = 0;
-            final Category[] cats = new Category[ylCats.size()];
+            final SampleDimension.Builder cats = new SampleDimension.Builder();
             for (Map yCat : ylCats) {
                 final String catName = (String) yCat.get("name");
                 final Double value   = (Double) yCat.get("value");
@@ -148,19 +150,18 @@ public class YamlBuilder implements YamlReaderBuilder, YamlWriterBuilder {
                 }
 
                 if (catName.equalsIgnoreCase(SampleDimensionUtils.NODATA_CATEGORY_NAME.toString(Locale.ENGLISH))) {
-                    cats[c++] = SampleDimensionUtils.buildNoDataCategory(dataType,
-                                                                         minSampleValue, isMinInclusive,
-                                                                         maxSampleValue, isMaxInclusive);
+                    cats.addQualitative(null, new NumberRange(dataType, minSampleValue, isMinInclusive,
+                                                                        maxSampleValue, isMaxInclusive));
                 } else {
                     final double scale  = (double) yCat.get("scale");
                     final double offset = (double) yCat.get("offset");
-                    cats[c++] = SampleDimensionUtils.buildCategory(catName, dataType, null,
+                    cats.addQuantitative(catName, new NumberRange(dataType,
                             minSampleValue, isMinInclusive,
-                            maxSampleValue, isMaxInclusive,
-                            scale, offset);
+                            maxSampleValue, isMaxInclusive),
+                            (MathTransform1D) MathTransforms.linear(scale, offset), null);
                 }
             }
-            destinationList.add(new GridSampleDimension(sdDescription, cats, null));
+            destinationList.add(cats.setName(sdDescription).build());
         }
     }
 }

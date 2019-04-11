@@ -49,7 +49,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
@@ -67,7 +67,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<CoverageMapLayer> implements ChangeListener<ChangeEvent> {
+public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<MapLayer> implements ChangeListener<ChangeEvent> {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d");
     protected StorageListener.Weak weakStoreListener = new StorageListener.Weak(this);
@@ -97,20 +97,20 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         }
     });
 
-    public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer) {
+    public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final MapLayer layer) {
         super(canvas, layer, true);
         this.coverageFinder = new DefaultCoverageFinder();
-        model = (PyramidalCoverageResource)layer.getCoverageReference();
+        model = (PyramidalCoverageResource)layer.getResource();
         tolerance = 0.1; // in % , TODO use a flag to allow change value
-        weakStoreListener.registerSource(layer.getCoverageReference());
+        weakStoreListener.registerSource(layer.getResource());
     }
 
-    public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer, CoverageFinder coverageFinder) {
+    public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final MapLayer layer, CoverageFinder coverageFinder) {
         super(canvas, layer, true);
         this.coverageFinder = coverageFinder;
-        model = (PyramidalCoverageResource)layer.getCoverageReference();
+        model = (PyramidalCoverageResource)layer.getResource();
         tolerance = 0.1; // in % , TODO use a flag to allow change value
-        weakStoreListener.registerSource(layer.getCoverageReference());
+        weakStoreListener.registerSource(layer.getResource());
     }
 
     /**
@@ -122,7 +122,12 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
 
         if(!item.isVisible()) return false;
 
-        final GenericName coverageName = item.getCoverageReference().getIdentifier();
+        GenericName coverageName = null;
+        try {
+            coverageName = item.getResource().getIdentifier();
+        } catch (DataStoreException ex) {
+            //do nothing
+        }
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 context2D.getSEScale(), coverageName,null);
 

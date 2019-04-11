@@ -17,17 +17,20 @@
 
 package org.geotoolkit.processing.coverage.mathcalc;
 
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.util.Utilities;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.WrapFilterFactory2;
-import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.processing.AbstractProcess;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
@@ -35,9 +38,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.util.Utilities;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -45,7 +45,7 @@ import org.geotoolkit.storage.coverage.GridCoverageResource;
  */
 public class MathCalcProcess extends AbstractProcess {
 
-    public MathCalcProcess(Coverage[] inCoverages, String inFormula, String[] inMapping, GridCoverageResource outCoverage){
+    public MathCalcProcess(GridCoverage[] inCoverages, String inFormula, String[] inMapping, GridCoverageResource outCoverage){
         this(toParameters(inCoverages, inFormula, inMapping, outCoverage));
     }
 
@@ -53,7 +53,7 @@ public class MathCalcProcess extends AbstractProcess {
         super(MathCalcDescriptor.INSTANCE, params);
     }
 
-    private static ParameterValueGroup toParameters(Coverage[] inCoverages, String inFormula, String[] inMapping, GridCoverageResource outCoverage){
+    private static ParameterValueGroup toParameters(GridCoverage[] inCoverages, String inFormula, String[] inMapping, GridCoverageResource outCoverage){
         final Parameters params = Parameters.castOrWrap(MathCalcDescriptor.INSTANCE.getInputDescriptor().createValue());
         params.getOrCreate(MathCalcDescriptor.IN_COVERAGES).setValue(inCoverages);
         params.getOrCreate(MathCalcDescriptor.IN_FORMULA).setValue(inFormula);
@@ -64,17 +64,14 @@ public class MathCalcProcess extends AbstractProcess {
 
     @Override
     protected void execute() throws ProcessException {
-        final Coverage[] inCoverages = inputParameters.getValue(MathCalcDescriptor.IN_COVERAGES);
+        final GridCoverage[] inCoverages = inputParameters.getValue(MathCalcDescriptor.IN_COVERAGES);
         final String inFormula = inputParameters.getValue(MathCalcDescriptor.IN_FORMULA);
         final String[] inMapping = inputParameters.getValue(MathCalcDescriptor.IN_MAPPING);
         final GridCoverageResource outRef = inputParameters.getValue(MathCalcDescriptor.IN_RESULT_COVERAGE);
 
-        final GeneralGridGeometry gg;
-        final GridCoverageReader outReader;
+        final GridGeometry gg;
         try {
-            outReader = outRef.acquireReader();
-            gg = outReader.getGridGeometry(outRef.getImageIndex());
-            outRef.recycle(outReader);
+            gg = outRef.getGridGeometry();
         } catch (DataStoreException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
@@ -101,7 +98,7 @@ public class MathCalcProcess extends AbstractProcess {
             if(outRef instanceof PyramidalCoverageResource){
                 filler.fill((PyramidalCoverageResource)outRef, evaluator);
             }else{
-                filler.fill(outRef, evaluator, null);
+                filler.fill((org.geotoolkit.storage.coverage.GridCoverageResource) outRef, evaluator, null);
             }
         } catch (DataStoreException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
@@ -114,10 +111,10 @@ public class MathCalcProcess extends AbstractProcess {
     }
 
     //TODO, for later, handle offsets on axis with syntax U(x,y+10,z) and U(gx-20,gy,gz)
-    private static class ExtFilterFactory extends WrapFilterFactory2{
+    private static class ExtFilterFactory extends WrapFilterFactory2 {
 
         public ExtFilterFactory() {
-            super((FilterFactory2)FactoryFinder.getFilterFactory(null));
+            super((FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class));
         }
 
         @Override

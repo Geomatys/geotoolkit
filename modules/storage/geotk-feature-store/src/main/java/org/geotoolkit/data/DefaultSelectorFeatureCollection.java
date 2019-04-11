@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.util.logging.Logging;
@@ -32,7 +33,6 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.MismatchedFeatureException;
@@ -42,6 +42,7 @@ import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.Envelope;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.filter.FilterFactory;
 
 /**
  * Feature collection that takes it's source from a single selector.
@@ -169,7 +170,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
 
         if(isWritable()){
             if(o instanceof Feature){
-                Id filter = FactoryFinder.getFilterFactory(null).id(Collections.singleton(FeatureExt.getId((Feature)o)));
+                Id filter = DefaultFactories.forBuildin(FilterFactory.class).id(Collections.singleton(FeatureExt.getId((Feature)o)));
                 try {
                     getSession().removeFeatures(query.getTypeName(), filter);
                     return true;
@@ -209,7 +210,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
             }
 
             if(!ids.isEmpty()){
-                Id filter = FactoryFinder.getFilterFactory(null).id(ids);
+                Id filter = DefaultFactories.forBuildin(FilterFactory.class).id(ids);
                 try {
                     getSession().removeFeatures(query.getTypeName(), filter);
                     return true;
@@ -246,7 +247,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
         if(filter == Filter.INCLUDE){
             getSession().updateFeatures(query.getTypeName(),query.getFilter(),values);
         }else{
-            getSession().updateFeatures(query.getTypeName(),FactoryFinder.getFilterFactory(null).and(query.getFilter(), filter),values);
+            getSession().updateFeatures(query.getTypeName(),DefaultFactories.forBuildin(FilterFactory.class).and(query.getFilter(), filter),values);
         }
     }
 
@@ -258,7 +259,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
         if(filter == Filter.INCLUDE){
             getSession().removeFeatures(query.getTypeName(),query.getFilter());
         }else{
-            getSession().removeFeatures(query.getTypeName(),FactoryFinder.getFilterFactory(null).and(query.getFilter(), filter));
+            getSession().removeFeatures(query.getTypeName(),DefaultFactories.forBuildin(FilterFactory.class).and(query.getFilter(), filter));
         }
     }
 

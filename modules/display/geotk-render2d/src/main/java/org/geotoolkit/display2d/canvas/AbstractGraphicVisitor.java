@@ -24,13 +24,17 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import javax.measure.IncommensurableException;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.coverage.CoverageExtractor;
-import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -41,8 +45,9 @@ import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.apache.sis.referencing.CRS;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.coverage.CoverageExtractor;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
@@ -50,16 +55,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.measure.Units;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * A visitor which can be applied to the
  * {@link org.opengis.display.primitive.Graphic} objects of a scene and through
  * the {@code Graphic} objects, to the underlying
  * {@link org.opengis.feature.Feature} or
- * {@link org.opengis.coverage.grid.GridCoverage}.
+ * {@link org.geotoolkit.coverage.grid.GridCoverage}.
  *
  * @author Johann Sorel (Geomatys)
  * @module
@@ -113,9 +115,9 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
      *
      * @return list : each entry contain a gridsampledimension and value associated.
      */
-    protected static List<Entry<GridSampleDimension,Object>> getCoverageValues(final ProjectedCoverage gra, final RenderingContext2D context, final SearchAreaJ2D queryArea) {
+    protected static List<Entry<SampleDimension,Object>> getCoverageValues(final ProjectedCoverage gra, final RenderingContext2D context, final SearchAreaJ2D queryArea) {
 
-        final CoverageMapLayer layer = gra.getLayer();
+        final MapLayer layer = gra.getLayer();
         Envelope objBounds = context.getCanvasObjectiveBounds();
         CoordinateReferenceSystem objCRS = objBounds.getCoordinateReferenceSystem();
         TemporalCRS temporalCRS = CRS.getTemporalComponent(objCRS);
@@ -167,13 +169,16 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         param.setEnvelope(objBounds);
         param.setResolution(resolution);
 
-        final GridCoverage2D coverage;
+        GridCoverage2D coverage = null;
         try {
-            final GridCoverageResource ref = layer.getCoverageReference();
-            final GridCoverageReader reader = ref.acquireReader();
-            coverage = (GridCoverage2D) reader.read(ref.getImageIndex(),param);
-            ref.recycle(reader);
-        } catch (CoverageStoreException ex) {
+            final Resource resource = layer.getResource();
+            if (resource instanceof GridCoverageResource) {
+                final GridCoverageResource ref = (GridCoverageResource) resource;
+                final GridCoverageReader reader = ref.acquireReader();
+                coverage = (GridCoverage2D) reader.read(param);
+                ref.recycle(reader);
+            }
+        } catch (DataStoreException ex) {
             context.getMonitor().exceptionOccured(ex, Level.INFO);
             return null;
         }
@@ -188,20 +193,21 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         dp.setOrdinate(0, bounds2D.getCenterX());
         dp.setOrdinate(1, bounds2D.getCenterY());
 
+        final List<SampleDimension> dims = coverage.getSampleDimensions();
         float[] values = null;
 
         try{
             values = coverage.evaluate(dp, values);
         }catch(CannotEvaluateException ex){
             context.getMonitor().exceptionOccured(ex, Level.INFO);
-            values = new float[coverage.getSampleDimensions().length];
+            values = new float[dims.size()];
             Arrays.fill(values, Float.NaN);
         }
 
-        final List<Entry<GridSampleDimension,Object>> results = new ArrayList<>();
+        final List<Entry<SampleDimension,Object>> results = new ArrayList<>();
         for (int i=0; i<values.length; i++){
-            final GridSampleDimension sample = coverage.getSampleDimension(i);
-            results.add(new SimpleImmutableEntry<GridSampleDimension, Object>(sample, values[i]));
+            final SampleDimension sample = dims.get(i);
+            results.add(new SimpleImmutableEntry<SampleDimension, Object>(sample, values[i]));
         }
         return results;
     }
@@ -217,7 +223,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
      * @throws TransformException
      */
     protected static CoverageExtractor.Ray rayExtraction(ProjectedCoverage projectedCoverage, RenderingContext2D context, SearchAreaJ2D area)
-            throws CoverageStoreException, TransformException {
+            throws DataStoreException, TransformException {
 
         //point in objective CRS
         final GeneralDirectPosition dp = new GeneralDirectPosition(context.getObjectiveCRS2D());
@@ -225,31 +231,36 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         dp.setOrdinate(0, bounds2D.getCenterX());
         dp.setOrdinate(1, bounds2D.getCenterY());
 
-        final CoverageMapLayer layer = projectedCoverage.getLayer();
-        final GridCoverageResource covRef = layer.getCoverageReference();
-        GridCoverageReader reader = null;
-        try {
-            reader = covRef.acquireReader();
-            final Envelope canvasObjective = context.getCanvasObjectiveBounds();
-            final int canvasNbDim = canvasObjective.getDimension();
+        final MapLayer layer = projectedCoverage.getLayer();
+        final Resource resource = layer.getResource();
+        if (resource instanceof GridCoverageResource) {
+            final GridCoverageResource covRef = (GridCoverageResource) resource;
+            GridCoverageReader reader = null;
+            try {
+                reader = covRef.acquireReader();
+                final Envelope canvasObjective = context.getCanvasObjectiveBounds();
+                final int canvasNbDim = canvasObjective.getDimension();
 
-            //fix resolution array
-            double[] resolution = new double[canvasNbDim];
-            resolution[0] = context.getResolution()[0];
-            resolution[1] = context.getResolution()[1];
-            for (int i = 2; i < canvasNbDim; i++) {
-                resolution[i] = 1.0;
-            }
+                //fix resolution array
+                double[] resolution = new double[canvasNbDim];
+                resolution[0] = context.getResolution()[0];
+                resolution[1] = context.getResolution()[1];
+                for (int i = 2; i < canvasNbDim; i++) {
+                    resolution[i] = 1.0;
+                }
 
-            final GridCoverageReadParam param = new GridCoverageReadParam();
-            param.setDeferred(true);
-            param.setEnvelope(canvasObjective);
-            param.setResolution(resolution);
-            return CoverageExtractor.rayExtraction(dp, reader, covRef.getImageIndex(), param);
-        } finally {
-            if (reader != null) {
-                covRef.recycle(reader);
+                final GridCoverageReadParam param = new GridCoverageReadParam();
+                param.setDeferred(true);
+                param.setEnvelope(canvasObjective);
+                param.setResolution(resolution);
+                return CoverageExtractor.rayExtraction(dp, reader, param);
+            } finally {
+                if (reader != null) {
+                    covRef.recycle(reader);
+                }
             }
+        } else {
+            throw new CoverageStoreException("Resource is not a coverage.");
         }
     }
 }

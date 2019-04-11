@@ -22,7 +22,7 @@ import java.awt.image.Raster;
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
 
-import org.apache.sis.internal.util.Numerics;
+import org.apache.sis.util.ArraysExt;
 
 
 /**
@@ -166,7 +166,7 @@ public abstract class SampleValues {
 
         /** Creates a new instance initialized to the given value. */
         Float(final double[] samples) {
-            this.samples = Numerics.copyAsFloats(samples);
+            this.samples = ArraysExt.copyAsFloats(samples);
         }
 
         @Override
@@ -220,7 +220,7 @@ public abstract class SampleValues {
 
         /** Creates a new instance initialized to the given value. */
         Integer(final double[] samples) {
-            this.samples = Numerics.copyAsInts(samples);
+            this.samples = copyAsInts(samples);
         }
 
         @Override
@@ -258,5 +258,22 @@ public abstract class SampleValues {
         @Override public String toString() {
             return Arrays.toString(samples);
         }
+    }
+
+    /**
+     * Returns a copy of the given array where each value has been
+     * {@linkplain Math#round(double) rounded} to the {@code int} type.
+     *
+     * @param  data  the array to copy, or {@code null}.
+     * @return a copy of the given array with values rounded to the {@code int} type,
+     *         or {@code null} if the given array was null.
+     */
+    public static int[] copyAsInts(final double[] data) {
+        if (data == null) return null;
+        final int[] result = new int[data.length];
+        for (int i=0; i<data.length; i++) {
+            result[i] = Math.toIntExact(Math.round(data[i]));
+        }
+        return result;
     }
 }

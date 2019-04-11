@@ -17,55 +17,49 @@
  */
 package org.geotoolkit.image.io;
 
-import java.util.Set;
-import java.util.List;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Collections;
-import java.util.logging.LogRecord;
-
+import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
-import java.awt.image.SampleModel;
-import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
-
+import java.awt.image.SampleModel;
 import java.io.IOException;
-import javax.imageio.ImageReader;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.LogRecord;
 import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.event.IIOReadWarningListener;
 import javax.imageio.metadata.IIOMetadataFormat;
-
-import org.opengis.coverage.grid.GridEnvelope;
-import org.apache.sis.util.ArraysExt;
-
-import org.geotoolkit.util.Utilities;
-import org.apache.sis.util.Disposable;
+import javax.imageio.spi.ImageReaderSpi;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.Disposable;
 import org.apache.sis.util.Locales;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Loggings;
-import org.apache.sis.util.resources.IndexedResourceBundle;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SampleDimension;
-import org.geotoolkit.image.io.metadata.MetadataHelper;
-import org.geotoolkit.image.io.metadata.SampleDomain;
-import org.geotoolkit.internal.image.io.Warnings;
-
-import static org.geotoolkit.image.io.SampleConversionType.*;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.resources.IndexedResourceBundle;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
+import static org.geotoolkit.image.io.SampleConversionType.*;
+import org.geotoolkit.image.io.metadata.MetadataHelper;
+import org.geotoolkit.image.io.metadata.SampleDimension;
+import org.geotoolkit.image.io.metadata.SampleDomain;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 import org.geotoolkit.image.palette.IndexedPalette;
 import org.geotoolkit.image.palette.Palette;
 import org.geotoolkit.image.palette.PaletteFactory;
+import org.geotoolkit.internal.image.io.Warnings;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.Loggings;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -295,17 +289,17 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * @since 3.19
      */
     @SuppressWarnings("fallthrough")
-    public GridEnvelope getGridEnvelope(final int imageIndex) throws IOException {
+    public GridExtent getGridEnvelope(final int imageIndex) throws IOException {
         final int dimension = getDimension(imageIndex);
-        final int[] lower = new int[dimension];
-        final int[] upper = new int[dimension];
+        final long[] lower = new long[dimension];
+        final long[] upper = new long[dimension];
         switch (dimension) {
             default:             Arrays.fill(upper, 1); // Fall through in all cases.
             case Y_DIMENSION+1:  upper[Y_DIMENSION] = getHeight(imageIndex);
             case X_DIMENSION+1:  upper[X_DIMENSION] = getWidth (imageIndex);
             case 0:              break;
         }
-        return new GeneralGridEnvelope(lower, upper, false);
+        return new GridExtent(null, lower, upper, false);
     }
 
     /**

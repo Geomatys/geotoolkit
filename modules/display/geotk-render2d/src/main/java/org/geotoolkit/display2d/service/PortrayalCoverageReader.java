@@ -20,19 +20,21 @@ import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.util.Utilities;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -40,8 +42,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.util.Utilities;
 
 /**
  * Manipulate a SceneDef as a CoverageReader.
@@ -51,7 +51,7 @@ import org.apache.sis.util.Utilities;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class PortrayalCoverageReader extends GridCoverageReader {
+public class PortrayalCoverageReader extends AbstractGridCoverageReader {
 
     private final SceneDef scene;
     private final GenericName name;
@@ -65,22 +65,22 @@ public class PortrayalCoverageReader extends GridCoverageReader {
             contextName = "portrayal";
         }
 
-        final NameFactory dnf = FactoryFinder.getNameFactory(null);
+        final NameFactory dnf = DefaultFactories.forBuildin(NameFactory.class);
         final NameSpace ns = dnf.createNameSpace(dnf.createGenericName(null, contextName), null);
         name = dnf.createLocalName(ns, contextName);
     }
 
     @Override
-    public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-        return Collections.singletonList(name);
+    public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
+        return name;
     }
 
     @Override
-    public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
+    public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
         //we only know the envelope
-        final GeneralGridGeometry gridGeom;
+        final GridGeometry gridGeom;
         try {
-            gridGeom = new GeneralGridGeometry(null, null, scene.getContext().getBounds());
+            gridGeom = new GridGeometry(null, null, scene.getContext().getBounds(), GridRoundingMode.ENCLOSING);
         } catch (IOException ex) {
             throw new CoverageStoreException(ex.getMessage(),ex);
         }
@@ -88,15 +88,12 @@ public class PortrayalCoverageReader extends GridCoverageReader {
     }
 
     @Override
-    public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException, CancellationException {
+    public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
         return null;
     }
 
     @Override
-    public GridCoverage read(int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
-        if(index != 0){
-            throw new CoverageStoreException("Invalid Image index.");
-        }
+    public GridCoverage read(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
 
         if(param == null){
             param = new GridCoverageReadParam();
@@ -117,7 +114,7 @@ public class PortrayalCoverageReader extends GridCoverageReader {
         //verify envelope and crs
         if(crs == null && paramEnv == null){
             //use the max extent
-            paramEnv = getGridGeometry(0).getEnvelope();
+            paramEnv = getGridGeometry().getEnvelope();
             crs = paramEnv.getCoordinateReferenceSystem();
         }else if(crs != null && paramEnv != null){
             //check the envelope crs matches given crs
@@ -129,7 +126,7 @@ public class PortrayalCoverageReader extends GridCoverageReader {
             crs = paramEnv.getCoordinateReferenceSystem();
         }else if(crs != null){
             //use the given crs
-            paramEnv = getGridGeometry(0).getEnvelope();
+            paramEnv = getGridGeometry().getEnvelope();
             try {
                 paramEnv = Envelopes.transform(paramEnv, crs);
             } catch (TransformException ex) {

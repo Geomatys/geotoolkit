@@ -19,11 +19,11 @@ package org.geotoolkit.processing.image.replace;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.parameter.Parameters;
 
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.processing.image.replace.ReplaceDescriptor.*;
@@ -64,17 +64,12 @@ public class ReplaceProcess extends AbstractProcess {
         //copy datas
         final int nbBand = inputImage.getSampleModel().getNumBands();
         final WritableRaster raster = inputImage.getRaster();
-        final PixelIterator readIte = PixelIteratorFactory.createDefaultIterator(inputImage);
-        final PixelIterator writeIte = PixelIteratorFactory.createDefaultWriteableIterator(raster, raster);
+        final PixelIterator readIte = PixelIterator.create(inputImage);
+        final WritablePixelIterator writeIte = new PixelIterator.Builder().createWritable(raster);
 
-        int band;
         while (readIte.next() && writeIte.next()) {
-            band = 0;
-            writeIte.setSampleDouble(replace(readIte.getSampleDouble(),band));
-            while (++band != nbBand) {
-                readIte.next();
-                writeIte.next();
-                writeIte.setSampleDouble(replace(readIte.getSampleDouble(),band));
+            for (int b = 0; b < nbBand; b++) {
+                writeIte.setSample(b, replace(readIte.getSampleDouble(b),b));
             }
         }
 

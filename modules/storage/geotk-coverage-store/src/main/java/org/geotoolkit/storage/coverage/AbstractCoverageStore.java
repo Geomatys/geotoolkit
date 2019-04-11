@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
@@ -37,18 +38,18 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.StorageEvent;
 import org.opengis.metadata.Metadata;
+import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -61,7 +62,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractCoverageStore extends DataStore implements CoverageStore {
+public abstract class AbstractCoverageStore extends DataStore implements AutoCloseable, Resource {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
     protected final Parameters parameters;
@@ -113,7 +114,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         final DefaultMetadata rootMd = new DefaultMetadata();
 
         // Queries data specific information
-        final Map<GenericName, GeneralGridGeometry> geometries = new HashMap<>();
+        final Map<GenericName, GridGeometry> geometries = new HashMap<>();
         final List<GridCoverageResource> refs = DataStores.flatten(this,true).stream()
                 .filter(node -> node instanceof GridCoverageResource)
                 .map(node -> ((GridCoverageResource) node))
@@ -121,11 +122,11 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
         for (final GridCoverageResource ref : refs) {
             final GridCoverageReader reader = ref.acquireReader();
-            final SpatialMetadata md;
-            final GeneralGridGeometry gg;
+            final Metadata md;
+            final GridGeometry gg;
             try {
-                md = reader.getCoverageMetadata(ref.getImageIndex());
-                gg = reader.getGridGeometry(ref.getImageIndex());
+                md = reader.getMetadata();
+                gg = ref.getGridGeometry();
                 ref.recycle(reader);
             } catch (Exception e) {
                 // If something turned wrong, we definitively get rid of the reader.
@@ -137,10 +138,12 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
                 geometries.put(ref.getIdentifier(), gg);
             }
 
-            if (md != null) {
-                final CoverageDescription cd = md.getInstanceForType(CoverageDescription.class); // ImageDescription
-                if (cd != null)
-                    rootMd.getContentInfo().add(cd);
+            if (md != null && md.getContentInfo() != null) {
+                for (ContentInformation ci : md.getContentInfo()) {
+                    if (ci instanceof CoverageDescription) {
+                        rootMd.getContentInfo().add(ci);
+                    }
+                }
             }
         }
 
@@ -171,7 +174,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
      * @param geometries The grid geometries of each store's reference, grouped
      * by reference name.
      */
-    protected void setSpatialInfo(final Metadata md, final Map<GenericName, GeneralGridGeometry> geometries) {
+    protected void setSpatialInfo(final Metadata md, final Map<GenericName, GridGeometry> geometries) {
         if (geometries == null || geometries.isEmpty())
             return;
 
@@ -185,14 +188,14 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
         final Set<CoordinateReferenceSystem> crss = new HashSet<>();
         geometries.forEach((name, gg) -> {
-            if (gg.isDefined(GeneralGridGeometry.ENVELOPE)) {
+            if (gg.isDefined(GridGeometry.ENVELOPE)) {
                 try {
                     extent.addElements(gg.getEnvelope());
                 } catch (TransformException | IncompleteGridGeometryException ex) {
                     LOGGER.log(Level.WARNING, "Extent cannot be computed for reference " + name, ex);
                 }
             }
-            if (gg.isDefined(GeneralGridGeometry.CRS)) {
+            if (gg.isDefined(GridGeometry.CRS)) {
                 try {
                     crss.add(gg.getCoordinateReferenceSystem());
                 } catch (IncompleteGridGeometryException ex) {
@@ -214,7 +217,11 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         md.getReferenceSystemInfo().addAll((Collection)crss);
     }
 
-    @Override
+    /**
+     * Get the parameters used to initialize this source from it's factory.
+     *
+     * @return source configuration parameters
+     */
     public ParameterValueGroup getOpenParameters() {
         return parameters;
     }
@@ -233,7 +240,12 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
     // Convinient methods, fallback on getRootResource                            //
     ////////////////////////////////////////////////////////////////////////////
 
-    @Override
+    /**
+     * Get a collection of all available coverage names.
+     *
+     * @return Set<GenericName> , never null, but can be empty.
+     * @throws DataStoreException
+     */
     public final Set<GenericName> getNames() throws DataStoreException {
         final GenericNameIndex<GridCoverageResource> map = listReferences();
         return map.getNames();

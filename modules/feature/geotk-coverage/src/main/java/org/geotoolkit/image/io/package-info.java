@@ -144,7 +144,7 @@
  * the standard types (image input or output stream) defined by the Java Image I/O specification.
  * <p>
  * The {@link org.geotoolkit.coverage.io.CoverageIO} class provides higher-level static methods
- * related to {@link org.opengis.coverage.grid.GridCoverage} I/O operations.
+ * related to {@link org.geotoolkit.coverage.grid.GridCoverage} I/O operations.
  *
  * {@section System initialization}
  * While not mandatory, it is recommended to invoke the following methods at least once before

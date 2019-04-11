@@ -17,12 +17,12 @@
  */
 package org.geotoolkit.coverage.io;
 
-import java.awt.Shape;
 import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
-import java.awt.geom.AffineTransform;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.concurrent.CancellationException;
@@ -30,49 +30,48 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.IIOParam;
-
-import org.opengis.geometry.Envelope;
-import org.opengis.util.FactoryException;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.operation.Matrix;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.cs.AxisDirection;
-
-import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.cs.EllipsoidalCS;
-import org.geotoolkit.lang.Debug;
-import org.geotoolkit.factory.Hints;
-import org.apache.sis.util.Localized;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.util.logging.LogProducer;
-import org.apache.sis.util.logging.PerformanceLevel;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.apache.sis.internal.metadata.AxisDirections;
-import org.geotoolkit.referencing.CRS;
-import org.apache.sis.referencing.cs.DefaultCompoundCS;
-import org.apache.sis.referencing.operation.matrix.Matrices;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.display.shape.XRectangle2D;
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Shapes2D;
-
+import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.cs.DefaultCompoundCS;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.Localized;
 import org.apache.sis.util.Utilities;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.logging.PerformanceLevel;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.display.shape.XRectangle2D;
+import org.geotoolkit.factory.Hints;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.lang.Debug;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.logging.LogProducer;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.cs.EllipsoidalCS;
+import org.opengis.referencing.operation.CoordinateOperation;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -485,7 +484,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             final boolean                   isNetcdfHack) // TODO: DEPRECATED: to be removed in Apache SIS.
             throws TransformException, FactoryException, CoverageStoreException
     {
-        final Rectangle       gridExtent = gridGeometry.getExtent2D();
+        final GridExtent      gridExtent = gridGeometry.getExtent2D();
         final MathTransform2D gridToCRS  = gridGeometry.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
         final MathTransform2D crsToGrid  = gridToCRS.inverse();
         /*
@@ -499,7 +498,12 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
          * than the Envelopes.transform(MathTransform, ...) method, in order to handle the cases
          * where the requested region is over a geographic pole.
          */
-        Shape shapeToRead = gridToCRS.createTransformedShape(gridExtent); // Will be clipped later.
+        final Rectangle rect = new Rectangle(
+                (int) gridExtent.getLow(0),
+                (int) gridExtent.getLow(1),
+                (int) gridExtent.getSize(0),
+                (int) gridExtent.getSize(1));
+        Shape shapeToRead = gridToCRS.createTransformedShape(rect); // Will be clipped later.
         Rectangle2D geodeticBounds = (shapeToRead instanceof Rectangle2D) ?
                 (Rectangle2D) shapeToRead : shapeToRead.getBounds2D();
         ensureNonEmpty(geodeticBounds);
@@ -564,8 +568,8 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
         final RectangularShape imageRegion = (shapeToRead instanceof RectangularShape) ?
                 (RectangularShape) shapeToRead : shapeToRead.getBounds2D();
         // 'shapeToRead' and 'imageRegion' now contain coordinates in units of source grid.
-        int width  = gridExtent.width;
-        int height = gridExtent.height;
+        long width  = gridExtent.getSize(0);
+        long height = gridExtent.getSize(1);
         final int xSubsampling;
         final int ySubsampling;
         if (resolution != null) {
@@ -587,8 +591,8 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             }
             final double sx = resolutionInDataCRS[X_DIMENSION] * (imageRegion.getWidth()  / geodeticBounds.getWidth());
             final double sy = resolutionInDataCRS[Y_DIMENSION] * (imageRegion.getHeight() / geodeticBounds.getHeight());
-            xSubsampling = Math.max(1, Math.min(width  / MIN_SIZE, (int) (sx + EPS)));
-            ySubsampling = Math.max(1, Math.min(height / MIN_SIZE, (int) (sy + EPS)));
+            xSubsampling = (int) Math.max(1, Math.min(width  / MIN_SIZE, (int) (sx + EPS)));
+            ySubsampling = (int) Math.max(1, Math.min(height / MIN_SIZE, (int) (sy + EPS)));
         } else {
             xSubsampling = 1;
             ySubsampling = 1;
@@ -602,14 +606,14 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
          * on each side of the envelope rather than expanding only the bottom and right side (this
          * is the purpose of the (delta % subsampling) - 1 part).
          */
-        int xmin = (int) Math.floor(imageRegion.getMinX() + EPS);
-        int ymin = (int) Math.floor(imageRegion.getMinY() + EPS);
-        int xmax = (int) Math.ceil (imageRegion.getMaxX() - EPS);
-        int ymax = (int) Math.ceil (imageRegion.getMaxY() - EPS);
-        int delta = xmax - xmin;
+        long xmin = (int) Math.floor(imageRegion.getMinX() + EPS);
+        long ymin = (int) Math.floor(imageRegion.getMinY() + EPS);
+        long xmax = (int) Math.ceil (imageRegion.getMaxX() - EPS);
+        long ymax = (int) Math.ceil (imageRegion.getMaxY() - EPS);
+        long delta = xmax - xmin;
         delta = Math.max(MIN_SIZE * xSubsampling - delta, (delta % xSubsampling) - 1);
         if (delta > 0) {
-            final int r = delta & 1;
+            final long r = delta & 1;
             delta >>>= 1;
             xmin -= delta;
             xmax += delta + r;
@@ -617,7 +621,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
         delta = ymax - ymin;
         delta = Math.max(MIN_SIZE * ySubsampling - delta, (delta % ySubsampling) - 1);
         if (delta > 0) {
-            final int r = delta & 1;
+            final long r = delta & 1;
             delta >>>= 1;
             ymin -= delta;
             ymax += delta + r;
@@ -632,7 +636,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
          * All the configuration in the IIOParam object happen here.
          */
         if (imageParam != null) {
-            imageParam.setSourceRegion(new Rectangle(xmin, ymin, width, height));
+            imageParam.setSourceRegion(new Rectangle((int) xmin, (int) ymin, (int) width, (int) height));
             imageParam.setSourceSubsampling(xSubsampling, ySubsampling, 0, 0);
         }
         if (ignoreGridTransforms) {
@@ -912,12 +916,12 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
     /**
      * Restores this reader or writer to its initial state.
      *
-     * @throws CoverageStoreException if an error occurs while restoring to the initial state.
+     * @throws DataStoreException if an error occurs while restoring to the initial state.
      *
      * @see javax.imageio.ImageReader#reset()
      * @see javax.imageio.ImageWriter#reset()
      */
-    public void reset() throws CoverageStoreException {
+    public void reset() throws DataStoreException {
         locale           = null;
         destGridToSource = null;
         abortRequested   = false;
@@ -930,12 +934,12 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      * Subclass implementations shall ensure that all resources, especially JCBC connections,
      * are released.
      *
-     * @throws CoverageStoreException if an error occurs while disposing resources.
+     * @throws DataStoreException if an error occurs while disposing resources.
      *
      * @see javax.imageio.ImageReader#dispose()
      * @see javax.imageio.ImageWriter#dispose()
      */
-    public void dispose() throws CoverageStoreException {
+    public void dispose() throws DataStoreException {
         locale           = null;
         destGridToSource = null;
         abortRequested   = false;

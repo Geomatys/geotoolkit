@@ -42,6 +42,8 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.data.multires.AbstractTileGenerator;
 import org.geotoolkit.data.multires.DefaultPyramid;
@@ -58,7 +60,6 @@ import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -149,6 +150,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
 
         search:
         for (MapLayer layer : sceneDef.getContext().layers()) {
+            final Resource resource = layer.getResource();
             final MutableStyle style = layer.getStyle();
             for (FeatureTypeStyle fts : style.featureTypeStyles()) {
                 for (Rule rule : fts.rules()) {
@@ -174,7 +176,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                 }
             }
 
-            if (layer instanceof CoverageMapLayer) {
+            if (resource instanceof GridCoverageResource) {
                 //ok
             } else {
                 rasterOptimisation = false;
@@ -282,7 +284,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     //modify context
                     final DefaultPyramid pm = new DefaultPyramid(pyramid.getCoordinateReferenceSystem());
                     pm.getMosaicsInternal().add(mosaic);
-                    final PyramidalCoverageResource r = new AbstractPyramidalCoverageResource(null, Names.createGenericName(null, null, "test"), 0) {
+                    final PyramidalCoverageResource r = new AbstractPyramidalCoverageResource(null, Names.createGenericName(null, null, "test")) {
                         @Override
                         public Collection<Pyramid> getModels() throws DataStoreException {
                             return Arrays.asList(pm);

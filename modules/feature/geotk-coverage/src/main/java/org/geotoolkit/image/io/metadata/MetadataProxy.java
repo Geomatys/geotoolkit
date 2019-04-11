@@ -470,6 +470,8 @@ final class MetadataProxy<T> implements InvocationHandler {
                         accessor.getAttributeAsStrings(name, false)));
             }
             if (componentType.isAssignableFrom(Citation.class)) {
+                final Citation c = accessor.getAttributeAsCitation(name);
+                if (c == null) return Collections.emptyList();
                 return Collections.singletonList(accessor.getAttributeAsCitation(name));
             }
             /*

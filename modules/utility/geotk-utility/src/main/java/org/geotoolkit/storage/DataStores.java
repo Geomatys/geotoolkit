@@ -54,7 +54,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  */
 public final class DataStores extends Static {
-
     /**
      * Do not allow instantiation of this class.
      */
@@ -67,36 +66,30 @@ public final class DataStores extends Static {
      * @param root Root resource to explore
      * @param includeRoot include the root in the stream
      * @return Collection of all resources
-     * @throws DataStoreException
      */
     public static Collection<? extends Resource> flatten(Resource root, boolean includeRoot) throws DataStoreException {
-        return flatten(root, includeRoot, null);
+        return flatten(root, includeRoot, Resource.class);
     }
 
     /**
      * List all resources in given resource.
      *
-     * @param <T>
      * @param root Root resource to explore
      * @param includeRoot include the root in the stream
      * @param resourceClass class of searched resources
      * @return Collection of all resources
-     * @throws DataStoreException
      */
     public static <T extends Resource> Collection<T> flatten(Resource root, boolean includeRoot, Class<T> resourceClass) throws DataStoreException {
-        if (resourceClass == null) {
-            resourceClass = (Class<T>) Resource.class;
-        }
-
+        ArgumentChecks.ensureNonNull("resourceClass", resourceClass);   // null not allowed because unsafe.
         if (root instanceof Aggregate) {
             final List<T> list = new ArrayList<>();
-            if (includeRoot && resourceClass.isInstance(root)) list.add((T)root);
+            if (includeRoot && resourceClass.isInstance(root)) list.add((T) root);
             list(root, list, resourceClass);
             return list;
         } else if (includeRoot && resourceClass.isInstance(root)) {
-            return Collections.singleton((T)root);
+            return Collections.singleton((T) root);
         } else {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
 
@@ -104,7 +97,7 @@ public final class DataStores extends Static {
         if (resource instanceof Aggregate) {
             final Aggregate ds = (Aggregate) resource;
             for (Resource rs : ds.components()) {
-                if (resourceClass.isInstance(rs)) list.add((T)rs);
+                if (resourceClass.isInstance(rs)) list.add((T) rs);
                 list(rs, list, resourceClass);
             }
         }
@@ -113,7 +106,6 @@ public final class DataStores extends Static {
     /**
      * Extract the {@link ResourceType} supported by the {@link DataStoreProvider}.
      *
-     * @param provider
      * @return supported resource types, never null, can be empty
      */
     public static ResourceType[] getResourceTypes(DataStoreProvider provider) {
@@ -142,17 +134,15 @@ public final class DataStores extends Static {
 
     /**
      * Returns the set of all providers, optionally filtered by class and resource types.
-     * This method ensures also that the iterator backing the set is properly synchronized.
-     * <p>
-     * Note that the iterator doesn't need to be thread-safe; this is the accesses to the
-     * underlying {@linkplain #loader}, directly or indirectly through its iterator, which
-     * need to be thread-safe.
      *
      * @param  <T>  The type of provider to be returned.
      * @param  clazz The type of factories to be returned, or {@code null} for all kind of factories.
      * @param types types of resources that must be supported by the provider, none for all
      * @return The set of factories for the given conditions.
+     *
+     * @deprecated the implementation of this method is unsafe.
      */
+    @Deprecated
     public static <T> Set<T> getProviders(final Class<T> clazz, ResourceType ... types) {
         final Set<T> results = new HashSet<>();
         loop:
@@ -293,9 +283,6 @@ public final class DataStores extends Static {
     }
 
     /**
-     * @param params
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
      * @see DataStoreFactory#create(org.opengis.parameter.ParameterValueGroup)
      */
     public static DataStore create(DataStoreFactory factory, Map<String, ? extends Serializable> params) throws DataStoreException {
@@ -336,10 +323,10 @@ public final class DataStores extends Static {
         try{
             final String expectedId = ((ParameterDescriptor<String>)factory.getOpenParameters()
                 .descriptor(DataStoreFactory.IDENTIFIER.getName().getCode())).getDefaultValue();
-            if(!expectedId.equals(id)){
+            if (!expectedId.equals(id)) {
                 return false;
             }
-        }catch(ParameterNotFoundException ex){
+        } catch(ParameterNotFoundException ex) {
             //this feature store factory does not declare a identifier id
         }
 
@@ -368,5 +355,4 @@ public final class DataStores extends Static {
         }
         return params;
     }
-
 }

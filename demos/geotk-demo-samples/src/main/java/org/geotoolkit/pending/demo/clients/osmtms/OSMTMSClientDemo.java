@@ -3,21 +3,21 @@ package org.geotoolkit.pending.demo.clients.osmtms;
 
 import java.net.URL;
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
-import org.geotoolkit.map.CoverageMapLayer;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.Resource;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.osmtms.OSMTMSClientFactory;
 import org.geotoolkit.pending.demo.Demos;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.storage.Resource;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.storage.DataStores;
-import org.opengis.util.GenericName;
 
 
 public class OSMTMSClientDemo {
@@ -29,7 +29,7 @@ public class OSMTMSClientDemo {
 
         final MapContext context = createOSMTMSContext();
 
-        JMap2DFrame.show(context,false,null);
+        FXMapFrame.show(context,false,null);
 
     }
 
@@ -42,13 +42,12 @@ public class OSMTMSClientDemo {
         params.getOrCreate(OSMTMSClientFactory.NIO_QUERIES).setValue(true);
         params.getOrCreate(OSMTMSClientFactory.MAX_ZOOM_LEVEL).setValue(18);
 
-        final CoverageStore store = (CoverageStore) DataStores.open(params);
+        final DataStore store = DataStores.open(params);
 
-        for(GenericName n : store.getNames()){
-            final Resource cr = store.findResource(n.toString());
-            final CoverageMapLayer cml = MapBuilder.createCoverageLayer(cr);
+        for (Resource cr : DataStores.flatten(store, true, GridCoverageResource.class)) {
+            final MapLayer cml = MapBuilder.createCoverageLayer(cr);
             cml.setDescription(new DefaultDescription(
-                    new SimpleInternationalString(n.tip().toString()),
+                    new SimpleInternationalString(cr.getIdentifier().tip().toString()),
                     new SimpleInternationalString("")));
             context.layers().add(cml);
         }

@@ -31,7 +31,6 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
-import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.Citations;
@@ -104,12 +103,11 @@ public class DirectPostgisFactory extends WKTParsingAuthorityFactory implements 
      * {@link org.geotoolkit.referencing.factory.ThreadedAuthorityFactory}. This approach also
      * gives concurrency and caching services in bonus.
      *
-     * @param hints The hints, or {@code null} if none.
      * @param connection The connection to the database.
      * @throws SQLException If an error occurred while fetching metadata from the database.
      */
-    public DirectPostgisFactory(final Hints hints, final Connection connection) throws SQLException {
-        super(hints, new SpatialRefSysMap(connection));
+    public DirectPostgisFactory(final Connection connection) throws SQLException {
+        super(new SpatialRefSysMap(connection));
     }
 
     /**

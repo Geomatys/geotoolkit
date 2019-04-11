@@ -17,17 +17,16 @@
 package org.geotoolkit.map;
 
 import java.util.logging.Level;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.ImmutableEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.geometry.Envelope;
@@ -61,7 +60,7 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
      * {@inheritDoc }
      */
     @Override
-    public GridCoverageResource getCoverageReference() {
+    public GridCoverageResource getResource() {
         return ref;
     }
 
@@ -109,13 +108,11 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
             }
         }
 
-        final GridCoverageResource ref = getCoverageReference();
+        final GridCoverageResource ref = getResource();
         try {
-            GridCoverageReader reader = ref.acquireReader();
-            final GeneralGridGeometry geom = reader.getGridGeometry(getCoverageReference().getImageIndex());
-            ref.recycle(reader);
+            final GridGeometry geom = ref.getGridGeometry();
             if (geom == null) {
-                LOGGER.log(Level.WARNING, "Could not access envelope of layer {0}", getCoverageReference().getIdentifier());
+                LOGGER.log(Level.WARNING, "Could not access envelope of layer {0}", getResource().getIdentifier());
                 return INFINITE;
             } else {
                 return geom.getEnvelope();

@@ -21,12 +21,9 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.media.jai.Interpolation;
 import javax.media.jai.InterpolationNearest;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
-
+import org.apache.sis.image.PixelIterator;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -47,10 +44,6 @@ import org.opengis.referencing.operation.TransformException;
  * @module
  */
 public final class Interpolator2D extends Calculator2D {
-    /**
-     * For cross-version compatibility.
-     */
-    private static final long serialVersionUID = 9028980295030908004L;
 
     /**
      * The greatest value smaller than 1 representable as a {@code float} number.
@@ -193,7 +186,7 @@ public final class Interpolator2D extends Calculator2D {
         if (fallback!=null && fallback!=this) {
             this.toGrid = fallback.toGrid;
         } else try {
-            final MathTransform2D transform = gridGeometry.getGridToCRS2D();
+            final MathTransform2D transform = getGridGeometry().getGridToCRS2D();
             // Note: If we want nearest-neighbor interpolation, we need to add the
             //       following line (assuming the transform is an 'AffineTransform'):
             //
@@ -241,7 +234,7 @@ public final class Interpolator2D extends Calculator2D {
 
     private void initIterator() {
         if(iterator==null){
-            iterator = PixelIteratorFactory.createDefaultIterator(image);
+            iterator = PixelIterator.create(image);
         }
     }
 
@@ -443,8 +436,8 @@ public final class Interpolator2D extends Calculator2D {
         for (; band<bandUp; band++) {
             for(int py=bounds.y,yn=bounds.y+bounds.height,j=0; py<yn; py++,j++){
                 for(int px=bounds.x,xn=bounds.x+bounds.width,i=0; px<xn; px++,i++){
-                    iterator.moveTo(px,py,band);
-                    samples[j][i] = iterator.getSample();
+                    iterator.moveTo(px,py);
+                    samples[j][i] = iterator.getSample(band);
                 }
             }
 
@@ -506,8 +499,8 @@ public final class Interpolator2D extends Calculator2D {
         for (; band<bandUp; band++) {
             for(int py=bounds.y,yn=bounds.y+bounds.height,j=0; py<yn; py++,j++){
                 for(int px=bounds.x,xn=bounds.x+bounds.width,i=0; px<xn; px++,i++){
-                    iterator.moveTo(px,py,band);
-                    samples[j][i] = iterator.getSampleFloat();
+                    iterator.moveTo(px,py);
+                    samples[j][i] = iterator.getSampleFloat(band);
                 }
             }
 
@@ -580,8 +573,8 @@ public final class Interpolator2D extends Calculator2D {
         for (; band<bandUp; band++) {
             for(int py=bounds.y,yn=bounds.y+bounds.height,j=0; py<yn; py++,j++){
                 for(int px=bounds.x,xn=bounds.x+bounds.width,i=0; px<xn; px++,i++){
-                    iterator.moveTo(px,py,band);
-                    samples[j][i] = iterator.getSampleDouble();
+                    iterator.moveTo(px,py);
+                    samples[j][i] = iterator.getSampleDouble(band);
                 }
             }
 

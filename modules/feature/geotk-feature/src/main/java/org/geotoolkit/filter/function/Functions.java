@@ -23,9 +23,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import org.geotoolkit.factory.FactoryRegistry;
-
+import java.util.ServiceLoader;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
@@ -41,14 +40,14 @@ public class Functions {
     private static final Collection<FunctionFactory> FACTORIES = new ArrayList<FunctionFactory>();
     private static final Map<String,FunctionFactory> MAPPING = new HashMap<String,FunctionFactory>();
 
-    static{
-        final FactoryRegistry fr = new FactoryRegistry(FunctionFactory.class);
-        final Iterator<FunctionFactory> factories = fr.getServiceProviders(FunctionFactory.class, null, null, null);
+    static {
+        final ServiceLoader sl = DefaultFactories.createServiceLoader(FunctionFactory.class);
+        final Iterator<FunctionFactory> factories = sl.iterator();
 
-        while(factories.hasNext()){
+        while (factories.hasNext()) {
             final FunctionFactory ff = factories.next();
             FACTORIES.add(ff);
-            for(String name : ff.getNames()){
+            for (String name : ff.getNames()) {
                 MAPPING.put(name, ff);
             }
         }
@@ -60,7 +59,7 @@ public class Functions {
     /**
      * @return map of all function factories, key is the factory name.
      */
-    public static Collection<FunctionFactory> getFactories(){
+    public static Collection<FunctionFactory> getFactories() {
         return Collections.unmodifiableCollection(FACTORIES);
     }
 
@@ -72,9 +71,9 @@ public class Functions {
      * @param parameters : parameters of the function
      * @return Function or null if no factory are able to create this function
      */
-    public static Function function(final String name, final Literal fallback, final Expression ... parameters){
+    public static Function function(final String name, final Literal fallback, final Expression ... parameters) {
         final FunctionFactory ff = MAPPING.get(name);
-        if(ff != null){
+        if (ff != null) {
             return ff.createFunction(name,fallback, parameters);
         }
         return null;

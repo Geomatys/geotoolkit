@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -46,18 +47,16 @@ public class FileCoverageResource extends AbstractCoverageResource {
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.filestore");
 
     private final Path file;
-    private final int imageIndex;
     private ImageReaderSpi spi;
 
     @Deprecated
-    FileCoverageResource(FileCoverageStore store, GenericName name, File file, int imageIndex) {
-        this(store, name, file.toPath(), imageIndex);
+    FileCoverageResource(FileCoverageStore store, GenericName name, File file) {
+        this(store, name, file.toPath());
     }
 
-    FileCoverageResource(FileCoverageStore store, GenericName name, Path file, int imageIndex) {
+    FileCoverageResource(FileCoverageStore store, GenericName name, Path file) {
         super(store,name);
         this.file = file;
-        this.imageIndex = imageIndex;
         this.spi = store.spi;
     }
 
@@ -75,7 +74,17 @@ public class FileCoverageResource extends AbstractCoverageResource {
     }
 
     @Override
-    public GridCoverageReader acquireReader() throws CoverageStoreException {
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        final GridCoverageReader reader = acquireReader();
+        try {
+            return reader.getGridGeometry();
+        } finally {
+            recycle(reader);
+        }
+    }
+
+    @Override
+    public GridCoverageReader acquireReader() throws DataStoreException {
         final ImageCoverageReader reader = new ImageCoverageReader();
         try {
             final ImageReader ioreader = ((FileCoverageStore)store).createReader(file, spi);
@@ -101,11 +110,6 @@ public class FileCoverageResource extends AbstractCoverageResource {
         return writer;
     }
 
-    @Override
-    public int getImageIndex() {
-        return imageIndex;
-    }
-
     /**
      * Get the input image file used for this coverage.
      * @return a {@link Path} object which point to he image file of this coverage, or null if the input has not been
@@ -119,6 +123,7 @@ public class FileCoverageResource extends AbstractCoverageResource {
         return spi;
     }
 
+    @Override
     public Image getLegend() throws DataStoreException {
         return null;
     }

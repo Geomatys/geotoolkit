@@ -18,30 +18,27 @@
 package org.geotoolkit.test.image;
 
 import java.awt.EventQueue;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ImagingOpException;
-import java.lang.reflect.InvocationTargetException;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
+import static java.lang.StrictMath.*;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import javax.imageio.ImageIO;
 import javax.imageio.IIOException;
-
-import org.opengis.coverage.Coverage;
-
+import javax.imageio.ImageIO;
 import org.geotoolkit.test.Commons;
 import org.geotoolkit.test.TestBase;
 import org.geotoolkit.test.gui.SwingTestBase;
-
 import org.junit.AfterClass;
-import static org.junit.Assume.*;
 import static org.junit.Assert.*;
-import static java.lang.StrictMath.*;
+import static org.junit.Assume.*;
+import org.opengis.coverage.Coverage;
 
 
 /**

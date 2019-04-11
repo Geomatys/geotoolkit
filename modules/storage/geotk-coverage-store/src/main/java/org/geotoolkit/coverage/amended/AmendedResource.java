@@ -71,7 +71,7 @@ final class AmendedResource extends DefaultAggregate {
      */
     private void rebuildNodes() throws DataStoreException{
         if (!components().isEmpty()) components().clear();
-        final Collection<Resource> children = base.components();
+        final Collection<? extends Resource> children = base.components();
         for (Resource n : children){
             if (n instanceof PyramidalCoverageResource){
                 //TODO : create an amended reference which declares itself as a pyramid.

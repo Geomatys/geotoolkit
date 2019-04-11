@@ -30,9 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Unit;
 import javax.swing.Icon;
-
-import org.geotoolkit.factory.Factory;
-import org.geotoolkit.factory.FactoryFinder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.DefaultCategorize;
 import org.geotoolkit.style.function.DefaultInterpolate;
@@ -45,7 +43,6 @@ import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.DefaultPropertyName;
-
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
@@ -91,7 +88,6 @@ import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
-
 import static org.geotoolkit.style.StyleConstants.*;
 import org.geotoolkit.style.function.DefaultJenks;
 import org.geotoolkit.style.function.Jenks;
@@ -104,11 +100,11 @@ import org.geotoolkit.style.function.Jenks;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultStyleFactory extends Factory implements MutableStyleFactory {
+public class DefaultStyleFactory implements MutableStyleFactory {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.style");
 
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     // TEMPORARY FIX ///////////////////////////////////////////////////////////
 

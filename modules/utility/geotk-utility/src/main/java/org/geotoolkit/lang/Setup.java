@@ -24,9 +24,9 @@ import java.util.ServiceLoader;
 import javax.imageio.spi.IIORegistry;
 import javax.sql.DataSource;
 import org.apache.sis.internal.metadata.sql.Initializer;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.logging.MonolineFormatter;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.internal.SetupService;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.io.Installation;
@@ -233,7 +233,7 @@ public final class Setup extends Static {
          * during the shutdown process, so we need to scan the classpath to re-register them.
          */
         if (reinit) {
-            FactoryFinder.scanForPlugins();
+            DefaultFactories.fireClasspathChanged();
         }
         /*
          * Now performs every module-specific initialization.

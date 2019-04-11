@@ -22,15 +22,14 @@ import java.awt.image.SampleModel;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.finder.StrictlyCoverageFinder;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.CoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.data.multires.GeneralProgressiveResource;
@@ -58,20 +57,20 @@ public final class ProgressiveCoverageResource<T extends GridCoverageResource & 
     }
 
     @Override
-    public GridCoverageReader acquireReader() throws CoverageStoreException {
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        return base.getGridGeometry();
+    }
+
+    @Override
+    public GridCoverageReader acquireReader() throws DataStoreException {
         final PyramidalModelReader reader = new PyramidalModelReader(new StrictlyCoverageFinder());
         reader.setInput(this);
         return reader;
     }
 
     @Override
-    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
+    public GridCoverageWriter acquireWriter() throws DataStoreException {
         throw new CoverageStoreException("Not supported.");
-    }
-
-    @Override
-    public int getImageIndex() {
-        return base.getImageIndex();
     }
 
     @Override
@@ -85,24 +84,24 @@ public final class ProgressiveCoverageResource<T extends GridCoverageResource & 
     }
 
     @Override
-    public DataStore getStore() {
+    public DataStore getOriginator() {
         return null;
     }
 
     @Override
-    public void recycle(CoverageReader reader) {
+    public void recycle(GridCoverageReader reader) {
         try {
             reader.dispose();
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
         }
     }
 
     @Override
-    public void recycle(CoverageWriter writer) {
+    public void recycle(GridCoverageWriter writer) {
         try {
             writer.dispose();
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
         }
     }
@@ -123,12 +122,12 @@ public final class ProgressiveCoverageResource<T extends GridCoverageResource & 
     }
 
     @Override
-    public List<GridSampleDimension> getSampleDimensions() throws DataStoreException {
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
         return base.getSampleDimensions();
     }
 
     @Override
-    public void setSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
+    public void setSampleDimensions(List<SampleDimension> dimensions) throws DataStoreException {
         base.setSampleDimensions(dimensions);
     }
 

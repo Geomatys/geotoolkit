@@ -29,17 +29,16 @@ import org.junit.Test;
 public class PaletteTest extends org.geotoolkit.test.TestBase {
 
     @Test
-    public void interpolateSingleTest(){
+    public void interpolateSingleTest() {
 
         assertEquals(Color.RED,                     Palettes.interpolate(Color.RED, Color.GREEN, 0f));
         assertEquals(Color.GREEN,                   Palettes.interpolate(Color.RED, Color.GREEN, 1f));
         assertEquals(new Color(128, 127, 0, 255), Palettes.interpolate(Color.RED, Color.GREEN, 0.5f));
         assertEquals(new Color(170,  85, 0, 255), Palettes.interpolate(Color.RED, Color.GREEN, 1f/3f));
-
     }
 
     @Test
-    public void interpolateMultipleTest(){
+    public void interpolateMultipleTest() {
 
         assertArrayEquals(new Color[]{Color.RED,Color.GREEN},
                 Palettes.interpolate(Color.RED, Color.GREEN, 2));
@@ -49,7 +48,5 @@ public class PaletteTest extends org.geotoolkit.test.TestBase {
 
         assertArrayEquals(new Color[]{Color.RED,new Color(170, 85, 0, 255),new Color(85, 170, 0, 255), Color.GREEN},
                 Palettes.interpolate(Color.RED, Color.GREEN, 4));
-
     }
-
 }

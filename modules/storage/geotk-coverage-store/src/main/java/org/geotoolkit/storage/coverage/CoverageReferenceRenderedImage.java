@@ -26,15 +26,15 @@ import java.util.EventListener;
 import java.util.Vector;
 import javax.media.jai.RasterFactory;
 import javax.swing.event.EventListenerList;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.Mosaic;
@@ -44,9 +44,9 @@ import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -76,10 +76,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
         this.ref = ref;
         this.mosaic = mosaic;
 
-
-        final GridCoverageReader reader = ref.acquireReader();
-        dataEnv = reader.getGridGeometry(ref.getImageIndex()).getEnvelope();
-        ref.recycle(reader);
+        dataEnv = ref.getGridGeometry().getEnvelope();
 
         final RenderedImage prototype = getTileCoverage(0, 0).getRenderedImage();
         colorModel = prototype.getColorModel();
@@ -268,7 +265,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
         return sampleModel;
     }
 
-    public GridCoverage2D getTileCoverage(int idx, int idy) throws CoverageStoreException, TransformException {
+    public GridCoverage2D getTileCoverage(int idx, int idy) throws DataStoreException, TransformException {
         final GridCoverageReadParam rparam = new GridCoverageReadParam();
         Envelope tenv = Pyramids.computeTileEnvelope(mosaic, idx, idy);
         final GeneralEnvelope genv = new GeneralEnvelope(tenv);
@@ -277,8 +274,8 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
         tenv = ReferencingUtilities.transform(genv, dataEnv.getCoordinateReferenceSystem());
         rparam.setEnvelope(tenv);
 
-        final CoverageReader reader = ref.acquireReader();
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, rparam);
+        final GridCoverageReader reader = ref.acquireReader();
+        final GridCoverage2D coverage = (GridCoverage2D) reader.read(rparam);
         ref.recycle(reader);
         return coverage;
     }
@@ -289,8 +286,8 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
             final GridCoverage2D coverage = getTileCoverage(idx, idy);
             final Envelope coverageEnvelope = coverage.getEnvelope2D();
             final RenderedImage image = coverage.getRenderedImage();
-            final GridSampleDimension[] sampleDimensions = coverage.getSampleDimensions();
-            Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(image), InterpolationCase.NEIGHBOR, 2);
+            final SampleDimension[] sampleDimensions = coverage.getSampleDimensions().toArray(new SampleDimension[0]);
+            Interpolation interpolation = Interpolation.create(new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(image), InterpolationCase.NEIGHBOR, 2);
 
             //create an empty tile
             final int tileWidth = getTileWidth();
@@ -300,16 +297,15 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
             final double[] fillValue = new double[nbBand];
             Arrays.fill(fillValue,Double.NaN);
             final double res = mosaic.getScale();
-            if(sampleDimensions.length>0){
-                workTile = BufferedImages.createImage(tileWidth, tileHeight, sampleDimensions.length,
-                        CoverageUtilities.getDataType(sampleDimensions[0].getSampleDimensionType()));
-                for(int i=0;i<nbBand;i++){
-                    final double[] nodata = sampleDimensions[i].geophysics(true).getNoDataValues();
-                    if(nodata!=null && nodata.length>0){
+            if (sampleDimensions.length > 0) {
+                workTile = BufferedImages.createImage(tileWidth, tileHeight, sampleDimensions.length, CoverageUtilities.getDataType(coverage));
+                for (int i=0; i<nbBand; i++) {
+                    final double[] nodata = SampleDimensionUtils.getNoDataValues(sampleDimensions[i].forConvertedValues(true));
+                    if (nodata != null && nodata.length > 0) {
                         fillValue[i] = nodata[0];
                     }
                 }
-            }else{
+            } else {
                 workTile = new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
             }
 

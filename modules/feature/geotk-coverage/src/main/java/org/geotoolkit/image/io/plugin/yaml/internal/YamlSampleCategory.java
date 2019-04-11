@@ -17,7 +17,7 @@
 package org.geotoolkit.image.io.plugin.yaml.internal;
 
 import org.apache.sis.referencing.operation.transform.TransferFunction;
-import org.geotoolkit.coverage.Category;
+import org.apache.sis.coverage.Category;
 import org.opengis.referencing.operation.MathTransform1D;
 
 /**
@@ -58,7 +58,7 @@ public class YamlSampleCategory extends YamlCategory {
     YamlSampleCategory(final Category category) {
         super(category);
 
-        final MathTransform1D mtSToGeo = category.getSampleToGeophysics();
+        final MathTransform1D mtSToGeo = category.getTransferFunction().orElse(null);
         //-- peut etre mettre un log si la function de transformation est null .
         if (mtSToGeo != null) {
             final TransferFunction tf = new TransferFunction();

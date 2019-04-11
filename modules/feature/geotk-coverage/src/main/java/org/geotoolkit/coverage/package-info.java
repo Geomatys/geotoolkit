@@ -20,11 +20,5 @@
  * {@linkplain org.geotoolkit.coverage.AbstractCoverage Coverage} implementation. An explanation
  * for this package is provided in the {@linkplain org.opengis.coverage OpenGIS&reg; javadoc}.
  * The remaining discussion on this page is specific to the Geotk implementation.
- *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
- *
- * @since 2.1
- * @module
  */
 package org.geotoolkit.coverage;

@@ -17,95 +17,30 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.Arrays;
+import java.util.Calendar;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
+import java.sql.Timestamp;
 import java.sql.Types;
+import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.util.ArraysExt;
 
 
 /**
  * Connection to a table of series.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  */
-final class SeriesTable extends CachedTable<Integer, SeriesTable.Entry> {
-    /**
-     * A series of coverages sharing common characteristics in a {@link ProductEntry}.
-     * A product often regroup all coverages in a single series, but in some cases a product may contain
-     * more than one series. For example a <cite>Sea Surface Temperature</cite> (SST) product from
-     * Nasa <cite>Pathfinder</cite> can be subdivised in two series:
-     *
-     * <ul>
-     *   <li>Final release of historical data. Those data are often two years old.</li>
-     *   <li>More recent but not yet definitive data.</li>
-     * </ul>
-     *
-     * In most cases it is sufficient to work with {@link ProductEntry} as a whole without
-     * the need to go down to the {@code SeriesTable.Entry}.
-     *
-     * @author Martin Desruisseaux (IRD, Geomatys)
-     */
-    static final class Entry {
-        /**
-         * Identifier of this series.
-         */
-        final int identifier;
-
-        /**
-         * Identifier of the product to which this series belong.
-         */
-        final String product;
-
-        /**
-         * The directory which contains the data files for this series.
-         */
-        private final Path directory;
-
-        /**
-         * The extension to add to filenames, not including the dot character.
-         */
-        private final String extension;
-
-        /**
-         * The format of all coverages in this series.
-         */
-        final Format format;
-
-        /**
-         * Creates a new series entry.
-         *
-         * @param root       the root directory or URL, or {@code null} if none.
-         * @param directory  the relative or absolute directory which contains the data files for this series.
-         * @param extension  the extension to add to filenames, not including the dot character.
-         * @param format     the format of all coverages in this series.
-         */
-        private Entry(final int identifier, final String product, final Path root, final URI directory, String extension, final Format format) {
-            this.identifier = identifier;
-            this.product    = product;
-            this.extension  = (extension != null && !(extension = extension.trim()).isEmpty()) ? extension : null;
-            this.format     = format;
-            this.directory  = directory.isAbsolute() ? Paths.get(directory) : root.resolve(directory.toString());
-        }
-
-        /**
-         * Returns the given filename as a {@link Path} in the directory of this series.
-         *
-         * @param  filename  the filename, not including the extension.
-         * @return path to the file.
-         */
-        public Path path(String filename) {
-            if (extension != null) {
-                filename = filename + '.' + extension;
-            }
-            return directory.resolve(filename);
-        }
-    }
-
+final class SeriesTable extends CachedTable<Integer,SeriesEntry> {
     /**
      * Name of this table in the database.
      */
@@ -129,7 +64,7 @@ final class SeriesTable extends CachedTable<Integer, SeriesTable.Entry> {
      */
     @Override
     String select() {
-        return "SELECT \"product\", \"directory\", \"extension\", \"format\""
+        return "SELECT \"product\", \"dataset\", \"directory\", \"extension\", \"format\""
                 + " FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"identifier\" = ?";
     }
 
@@ -142,50 +77,59 @@ final class SeriesTable extends CachedTable<Integer, SeriesTable.Entry> {
      * @throws SQLException if an error occurred while reading the database.
      */
     @Override
-    Entry createEntry(final ResultSet results, final Integer identifier) throws SQLException, CatalogException {
+    SeriesEntry createEntry(final ResultSet results, final Integer identifier) throws SQLException, DataStoreException {
         final String product   = results.getString(1);
-        final String directory = results.getString(2);
-        final String extension = results.getString(3);
-        final String formatID  = results.getString(4);
-        final Format format    = formats.getEntry(formatID);
+        final String dataset   = results.getString(2);
+        final String directory = results.getString(3);
+        final String extension = results.getString(4);
+        final String formatID  = results.getString(5);
+        final FormatEntry format = formats.getEntry(formatID);
         try {
-            return new Entry(identifier, product, transaction.database.root, new URI(directory), extension, format);
+            return new SeriesEntry(identifier, product, dataset, transaction.database.root, new URI(directory), extension, format);
         } catch (URISyntaxException e) {
             throw new IllegalRecordException(e, results, 2, identifier);
         }
     }
 
     /**
-     * Returns the identifier for a series having the specified properties. If no
-     * matching record is found, then a new one is created and added to the database.
+     * Returns the identifier for a series having the specified properties.
+     * If no matching record is found, then a new one is created and added to the database.
      *
+     * @param  product    identifier of the product to which the series belong.
      * @param  directory  the path relative to the root directory, or the base URL.
      * @param  extension  the extension to add to filenames, or {@code null} or empty if none.
-     * @param  format     the format for the series considered.
+     * @param  raster     information about the raster to be added.
      * @return the identifier of a matching entry (never {@code null}).
      * @throws SQLException if an error occurred while reading from or writing to the database.
      */
-    public int findOrCreate(final String product, final String directory, final String extension, final String format)
-            throws SQLException, IllegalUpdateException
+    final int findOrInsert(final String product, final String directory, final String extension, final NewRaster raster)
+            throws SQLException, DataStoreException
     {
+        final String format = formats.findOrInsert(raster.driver, raster.bands, raster.suggestedID(product));
         boolean insert = false;
         do {
             final PreparedStatement statement;
             if (!insert) {
                 statement = prepareStatement("SELECT \"identifier\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE "
-                        + "\"product\"=? AND \"directory\"=? AND \"extension\"=? AND \"format\"=?");
+                        + "\"product\"=? AND \"dataset\" IS NOT DISTINCT FROM ? AND "
+                        + "\"directory\"=? AND \"extension\" IS NOT DISTINCT FROM ? AND \"format\"=?");
             } else {
                 statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\"("
-                        + "\"product\", \"directory\", \"extension\", \"format\" VALUES (?,?,?,?)", "identifier");
+                        + "\"product\", \"dataset\", \"directory\", \"extension\", \"format\") VALUES (?,?,?,?,?)", "identifier");
             }
             statement.setString(1, product);
-            statement.setString(2, directory);
-            if (extension != null && !extension.isEmpty()) {
-                statement.setString(3, extension);
+            if (raster.dataset != null) {
+                statement.setString(2, raster.dataset);
             } else {
-                statement.setNull(3, Types.VARCHAR);
+                statement.setNull(2, Types.VARCHAR);
             }
-            statement.setString(4, format);
+            statement.setString(3, directory);
+            if (extension != null && !extension.isEmpty()) {
+                statement.setString(4, extension);
+            } else {
+                statement.setNull(4, Types.VARCHAR);
+            }
+            statement.setString(5, format);
             if (insert) {
                 if (statement.executeUpdate() == 0) {
                     continue;                                           // Should never happen, but we are paranoiac.
@@ -199,6 +143,99 @@ final class SeriesTable extends CachedTable<Integer, SeriesTable.Entry> {
             }
         } while ((insert = !insert) == true);
         throw new IllegalUpdateException("Can not add the series.");    // TODO: provide better error message.
+    }
+
+    /**
+     * Lists the timestamps of all rasters in the given product.
+     * This time returns <em>central</em> date of each raster.
+     * It is caller's responsibility to convert from "pixel center" to "pixel corner" convention.
+     * The returned time positions use {@link GridGeometryEntry#TEMPORAL_CRS}.
+     */
+    final double[] listAllDates(final String product, final GridGeometryTable gridGeometries)
+            throws SQLException, TransformException, DataStoreException
+    {
+        final DefaultTemporalCRS crs = transaction.database.temporalCRS;
+        final Calendar calendar = newCalendar();
+        MathTransform1D timeOffsets = null;
+        double[] times = new double[500];
+        int count = 0;
+        final PreparedStatement statement = prepareStatement(
+                "SELECT \"grid\", \"startTime\", (\"startTime\" + (\"endTime\" - \"startTime\")/2) AS \"medianTime\"" +
+                "FROM " + SCHEMA + ".\"" + GridCoverageTable.TABLE + "\" " +
+                "INNER JOIN " + SCHEMA + ".\"" + TABLE + "\" ON (\"series\" = \"identifier\") " +
+                "WHERE \"product\"=? AND \"startTime\" IS NOT NULL");
+
+        statement.setString(1, product);
+        try (ResultSet results = statement.executeQuery()) {
+            int lastGrid = Integer.MIN_VALUE;
+            int numToAdd = 0;
+            while (results.next()) {
+                final int gridId = results.getInt(1);
+                if (gridId != lastGrid) {
+                    lastGrid = gridId;
+                    final AdditionalAxisEntry axis = gridGeometries.listTimeOffsets(gridId);
+                    if (axis != null) {
+                        timeOffsets = axis.gridToCRS;
+                        numToAdd    = axis.count;
+                    } else {
+                        timeOffsets = null;
+                        numToAdd    = 1;
+                    }
+                }
+                if (count + numToAdd > times.length) {
+                    times = Arrays.copyOf(times, Math.max(times.length * 2, count + numToAdd));
+                }
+                if (timeOffsets == null) {
+                    final Timestamp time = results.getTimestamp(3, calendar);
+                    times[count++] = crs.toValue(time);
+                } else {
+                    final Timestamp startTime = results.getTimestamp(2, calendar);
+                    final double tMin = crs.toValue(startTime);
+                    for (int i=0; i<numToAdd; i++) {
+                        times[count++] = tMin + timeOffsets.transform(i + 0.5);
+                    }
+                }
+            }
+        }
+        /*
+         * Sorts, then removes duplicated values.
+         */
+        if (count == 0) {
+            return ArraysExt.EMPTY_DOUBLE;
+        }
+        Arrays.parallelSort(times, 0, count);
+        double previous = times[0];
+        int n=1;
+        for (int i=1; i<count; i++) {
+            final double t = times[i];
+            if (t != previous) {
+                times[n++] = t;
+                previous = t;
+            }
+        }
+        return ArraysExt.resize(times, n);
+    }
+
+    /**
+     * Returns what seems a commonly used format for the given product.
+     * Current implementation checks only the number of occurrences in "Series" table;
+     * we do not count the number of occurrences in "GridCoverages" table.
+     */
+    final FormatEntry getRepresentativeFormat(final String product) throws SQLException, DataStoreException {
+        String identifier = null;
+        final PreparedStatement statement = prepareStatement("SELECT \"format\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE "
+                + "\"product\"=? GROUP BY \"format\" ORDER BY COUNT(*) DESC");
+        statement.setString(1, product);
+        try (ResultSet results = statement.executeQuery()) {
+            while (results.next()) {
+                identifier = results.getString(1);
+                if (!results.wasNull()) break;      // Paranoiac check.
+            }
+        }
+        if (identifier != null) {
+            return formats.getEntry(identifier);
+        }
+        return null;
     }
 
     /**

@@ -106,7 +106,7 @@ public abstract strictfp class MosaicTestBase extends TestBase {
      * @throws IOException If an I/O operation was required and failed.
      */
     protected TileManagerFactory getTileManagerFactory() throws IOException {
-        return new TileManagerFactory(null) {
+        return new TileManagerFactory() {
             @Override
             protected TileManager createGeneric(final Tile[] tiles) throws IOException {
                 return new ComparedTileManager(tiles);

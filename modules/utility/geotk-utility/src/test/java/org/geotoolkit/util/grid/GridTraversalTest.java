@@ -31,6 +31,8 @@ import static org.geotoolkit.util.grid.GridTraversal.EPSILON;
 /**
  *
  * @author Alexis Manin (Geomatys)
+ *
+ * @todo test failure has been reported for random seed 1695120540846454768.
  */
 public class GridTraversalTest {
 

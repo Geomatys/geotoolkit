@@ -37,13 +37,13 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureCollection;
 import static org.geotoolkit.data.AbstractFeatureStore.GML_32_NAMESPACE;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.geometry.jts.JTS;
 import org.opengis.feature.Feature;
@@ -63,7 +63,7 @@ import org.opengis.feature.AttributeType;
  */
 public class XmlTestData {
 
-    public static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    public static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     public static final FeatureType simpleTypeBasic;
     public static final FeatureType simpleTypeFull;

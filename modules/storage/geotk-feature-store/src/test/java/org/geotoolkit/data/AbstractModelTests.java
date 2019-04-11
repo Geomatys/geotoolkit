@@ -23,12 +23,10 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.factory.FactoryFinder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
-import org.opengis.filter.FilterFactory;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.event.ChangeEvent;
 
@@ -40,8 +38,6 @@ import org.apache.sis.storage.event.ChangeEvent;
  * todo make more generic tests
  */
 public abstract class AbstractModelTests {
-
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     protected abstract FeatureStore getDataStore();
 

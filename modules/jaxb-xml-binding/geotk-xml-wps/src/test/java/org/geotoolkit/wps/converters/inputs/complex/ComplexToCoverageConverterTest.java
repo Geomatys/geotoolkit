@@ -19,19 +19,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.nio.IOUtilities;
-import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.converters.WPSConverterRegistry;
-import org.geotoolkit.wps.converters.WPSObjectConverter;
-import org.junit.Test;
-import static org.geotoolkit.test.Assert.*;
+import org.geotoolkit.test.Assert;
 import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
-import org.opengis.geometry.Envelope;
-import org.apache.sis.util.Utilities;
+import org.geotoolkit.wps.converters.WPSConverterRegistry;
+import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.Format;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.opengis.geometry.Envelope;
 
 /**
  *
@@ -71,6 +73,7 @@ public class ComplexToCoverageConverterTest extends AbstractWPSConverterTest {
         assertTrue(expectedEnvelope.getMinimum(1) == convertedEnvelope.getMinimum(1));
         assertTrue(expectedEnvelope.getMaximum(0) == convertedEnvelope.getMaximum(0));
         assertTrue(expectedEnvelope.getMaximum(1) == convertedEnvelope.getMaximum(1));
-        assertRasterEquals(expectedCoverage, convertedCoverage);
+        Assert.assertRasterEquals(expectedCoverage.getRenderableImage(0,1).createDefaultRendering(),
+                             convertedCoverage.getRenderableImage(0,1).createDefaultRendering());
     }
 }
