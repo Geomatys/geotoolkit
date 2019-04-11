@@ -21,25 +21,30 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.Utilities;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.factory.FactoryFinder;
-import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.NamesExt;
-import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -47,17 +52,13 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.util.Utilities;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMSCoverageReader extends GridCoverageReader{
+public class WMSCoverageReader extends AbstractGridCoverageReader {
 
     static final Dimension DEFAULT_SIZE = new Dimension(256, 256);
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
@@ -65,14 +66,14 @@ public class WMSCoverageReader extends GridCoverageReader{
     public WMSCoverageReader(final WMSCoverageResource reference) {
         try {
             setInput(reference);
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             //won't happen
             LOGGER.log(Level.WARNING, ex.getMessage(), ex);
         }
     }
 
     @Override
-    public void setInput(Object input) throws CoverageStoreException {
+    public void setInput(Object input) throws DataStoreException {
         if(!(input instanceof WMSCoverageResource)){
             throw new CoverageStoreException("Unsupported input type, can only be WMSCoverageReference.");
         }
@@ -80,41 +81,38 @@ public class WMSCoverageReader extends GridCoverageReader{
     }
 
     @Override
-    public WMSCoverageResource getInput() throws CoverageStoreException {
+    public WMSCoverageResource getInput() throws DataStoreException {
         return (WMSCoverageResource) super.getInput();
     }
 
     @Override
-    public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-        final NameFactory dnf = FactoryFinder.getNameFactory(null);
+    public GenericName getCoverageName() throws DataStoreException, CancellationException {
+        final NameFactory dnf = DefaultFactories.forBuildin(NameFactory.class);
         final GenericName name = getInput().getIdentifier();
         NameSpace ns = null;
         if (NamesExt.getNamespace(name) != null) {
             ns = dnf.createNameSpace(dnf.createGenericName(null, NamesExt.getNamespace(name)), null);
         }
         final GenericName gn = dnf.createLocalName(ns, name.tip().toString());
-        return Collections.singletonList(gn);
+        return gn;
     }
 
     @Override
-    public GeneralGridGeometry getGridGeometry(final int index) throws CoverageStoreException, CancellationException {
+    public GridGeometry getGridGeometry() throws DataStoreException, CancellationException {
         final WMSCoverageResource ref = getInput();
         //we only know the envelope,
-        final GeneralGridGeometry gridGeom = new GeneralGridGeometry(null, null, ref.getBounds());
+        final GridGeometry gridGeom = new GridGeometry(PixelInCell.CELL_CENTER, null, ref.getBounds(), GridRoundingMode.ENCLOSING);
         return gridGeom;
     }
 
     @Override
-    public List<GridSampleDimension> getSampleDimensions(final int index) throws CoverageStoreException, CancellationException {
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException, CancellationException {
         //unknowned
         return null;
     }
 
     @Override
-    public GridCoverage read(final int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
-        if(index != 0){
-            throw new CoverageStoreException("Invalid Image index.");
-        }
+    public GridCoverage read(GridCoverageReadParam param) throws DataStoreException, CancellationException {
 
         if(param == null){
             param = new GridCoverageReadParam();
@@ -127,7 +125,7 @@ public class WMSCoverageReader extends GridCoverageReader{
         }
 
         final WMSCoverageResource ref = getInput();
-        final WebMapClient server = (WebMapClient)ref.getStore();
+        final WebMapClient server = (WebMapClient)ref.getOriginator();
 
         GeneralEnvelope env;
         if (param.getEnvelope() == null) {
@@ -219,12 +217,12 @@ public class WMSCoverageReader extends GridCoverageReader{
     }
 
     @Override
-    public void dispose() throws CoverageStoreException {
+    public void dispose() throws DataStoreException {
         //nothing to dispose, we must preserve the input
     }
 
     @Override
-    public void reset() throws CoverageStoreException {
+    public void reset() throws DataStoreException {
         //nothing to reset, we must preserve the input
     }
 

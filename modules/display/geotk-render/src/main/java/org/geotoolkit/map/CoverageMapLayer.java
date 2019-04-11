@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.map;
 
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.apache.sis.storage.GridCoverageResource;
 
 /**
  * MapLayer handeling coverages.
@@ -24,12 +24,14 @@ import org.geotoolkit.storage.coverage.GridCoverageResource;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface CoverageMapLayer extends MapLayer{
+@Deprecated
+public interface CoverageMapLayer extends MapLayer {
 
     /**
      * Reference to coverage.
      * @return CoverageResource, never null.
      */
-    GridCoverageResource getCoverageReference();
+    @Override
+    GridCoverageResource getResource();
 
 }

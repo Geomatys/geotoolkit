@@ -13,7 +13,7 @@ import java.awt.image.WritableRaster;
 import javax.media.jai.RasterFactory;
 
 import org.opengis.geometry.Envelope;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.apache.sis.geometry.Envelope2D;

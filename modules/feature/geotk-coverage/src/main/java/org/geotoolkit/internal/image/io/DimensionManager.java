@@ -17,21 +17,19 @@
  */
 package org.geotoolkit.internal.image.io;
 
-import java.util.Map;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
-
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.image.io.DimensionSet;
 import org.geotoolkit.image.io.DimensionSlice;
-import org.geotoolkit.image.io.NamedImageStore;
-import org.geotoolkit.image.io.MultidimensionalImageStore;
 import org.geotoolkit.image.io.IllegalImageDimensionException;
+import org.geotoolkit.image.io.MultidimensionalImageStore;
 import org.geotoolkit.resources.Errors;
-import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.util.collection.XCollections;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 
 /**

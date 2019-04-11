@@ -24,6 +24,7 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.junit.Test;
 import org.opengis.util.GenericName;
@@ -38,7 +39,7 @@ import static org.junit.Assert.*;
  */
 public abstract class AbstractCoverageStoreEventTest extends org.geotoolkit.test.TestBase {
 
-    protected abstract CoverageStore createStore() throws Exception ;
+    protected abstract DataStore createStore() throws Exception ;
 
     /**
      * Check events

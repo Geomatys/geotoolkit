@@ -19,7 +19,7 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.logging.Logging;
 
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
@@ -97,7 +97,7 @@ public class DimapExtension extends GeoTiffExtension {
             throw new IOException(e.getMessage(), e);
         }
 
-        // add GridSampleDimensions definition to SpatialMetadata
+        // add SampleDimensions definition to SpatialMetadata
         addSampleDimensions(dimapMetadata, dimapNode);
 
         return dimapMetadata;
@@ -112,9 +112,9 @@ public class DimapExtension extends GeoTiffExtension {
         final DimensionAccessor dimAccessor = new DimensionAccessor(dimapMeta);
         dimAccessor.selectParent();
         dimAccessor.removeChildren();
-        final GridSampleDimension[] gridSampleDimensions = DimapAccessor.readSampleDimensions(dimapNode);
+        final SampleDimension[] gridSampleDimensions = DimapAccessor.readSampleDimensions(dimapNode);
 
-        for (final GridSampleDimension sampleDimension : gridSampleDimensions) {
+        for (final SampleDimension sampleDimension : gridSampleDimensions) {
             dimAccessor.selectChild(dimAccessor.appendChild()); //new child
             dimAccessor.setDimension(sampleDimension, Locale.ENGLISH);
             dimAccessor.selectParent();

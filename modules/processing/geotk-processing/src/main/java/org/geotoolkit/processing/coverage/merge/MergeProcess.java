@@ -17,22 +17,22 @@
 package org.geotoolkit.processing.coverage.merge;
 
 import java.awt.image.DataBuffer;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.coverage.bandcombine.BandCombineDescriptor;
-import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.processing.coverage.merge.MergeDescriptor.*;
 import org.geotoolkit.processing.coverage.reformat.ReformatDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
-import org.opengis.coverage.Coverage;
 import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
@@ -49,11 +49,11 @@ public class MergeProcess extends AbstractProcess {
      * @param coverages coverage to merge
      * @param env area to merge
      */
-    public MergeProcess(Coverage[] coverages, Envelope env){
+    public MergeProcess(GridCoverage[] coverages, Envelope env){
         super(MergeDescriptor.INSTANCE, asParameters(coverages,env));
     }
 
-    private static ParameterValueGroup asParameters(Coverage[] coverages, Envelope env){
+    private static ParameterValueGroup asParameters(GridCoverage[] coverages, Envelope env){
         final Parameters params = Parameters.castOrWrap(MergeDescriptor.INPUT_DESC.createValue());
         params.getOrCreate(MergeDescriptor.IN_COVERAGES).setValue(coverages);
         if(env!=null)params.getOrCreate(MergeDescriptor.IN_ENVELOPE).setValue(env);
@@ -66,9 +66,9 @@ public class MergeProcess extends AbstractProcess {
      * @return merged coverage
      * @throws ProcessException
      */
-    public Coverage executeNow() throws ProcessException {
+    public GridCoverage executeNow() throws ProcessException {
         execute();
-        return (Coverage) outputParameters.parameter(MergeDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
+        return (GridCoverage) outputParameters.parameter(MergeDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
     }
 
     @Override
@@ -76,13 +76,13 @@ public class MergeProcess extends AbstractProcess {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
 
         // PARAMETERS CHECK ////////////////////////////////////////////////////
-        final Coverage[] inputCoverage = inputParameters.getValue(IN_COVERAGES);
+        final GridCoverage[] inputCoverage = inputParameters.getValue(IN_COVERAGES);
         final Envelope inputEnvelope = inputParameters.getValue(IN_ENVELOPE);
         final double inputResolution = inputParameters.getValue(IN_RESOLUTION);
 
         //find the best data type;
         int datatype = -1;
-        for(Coverage gc : inputCoverage){
+        for(GridCoverage gc : inputCoverage){
             final int gctype = ((GridCoverage2D)gc).getRenderedImage().getSampleModel().getDataType();
             if(datatype==-1){
                 datatype = gctype;
@@ -95,11 +95,10 @@ public class MergeProcess extends AbstractProcess {
         //calculate the output grid geometry and image size
         final int sizeX = (int)(inputEnvelope.getSpan(0) / inputResolution);
         final int sizeY = (int)(inputEnvelope.getSpan(1) / inputResolution);
-        final GridGeometry2D gridGeom = new GridGeometry2D(
-                new GridEnvelope2D(0, 0, sizeX, sizeY), inputEnvelope);
+        final GridGeometry2D gridGeom = new GridGeometry2D(new GridExtent(sizeX, sizeY), inputEnvelope);
 
         //force sample type and area of each coverage
-        final Coverage[] fittedCoverages = new Coverage[inputCoverage.length];
+        final GridCoverage[] fittedCoverages = new GridCoverage[inputCoverage.length];
         for(int i=0;i<inputCoverage.length;i++){
             fittedCoverages[i] = inputCoverage[i];
 
@@ -126,7 +125,7 @@ public class MergeProcess extends AbstractProcess {
         final ParameterValueGroup resampleParams = coverageResampleDesc.getInputDescriptor().createValue();
         resampleParams.parameter("coverages").setValue(fittedCoverages);
         final Process resampleProcess = coverageResampleDesc.createProcess(resampleParams);
-        final Coverage result = (GridCoverage2D)resampleProcess.call().parameter("result").getValue();
+        final GridCoverage result = (GridCoverage2D)resampleProcess.call().parameter("result").getValue();
 
         outputParameters.getOrCreate(OUT_COVERAGE).setValue(result);
     }

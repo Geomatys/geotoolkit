@@ -152,7 +152,7 @@
  *   </tr>
  *   <tr>
  *     <td nowrap><code>&nbsp;IF_Collection&nbsp;</code></td>
- *     <td nowrap>&nbsp;Collection of {@link org.opengis.coverage.grid.GridCoverage}s&nbsp;</td>
+ *     <td nowrap>&nbsp;Collection of {@link org.geotoolkit.coverage.grid.GridCoverage}s&nbsp;</td>
  *     <td>&nbsp;A collection of <code>IF_CoverageData</code> and associated metadata.</td>
  *   </tr>
  *   <tr>

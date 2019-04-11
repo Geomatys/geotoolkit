@@ -26,8 +26,8 @@ import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.apache.sis.referencing.CommonCRS;
 
@@ -166,7 +166,7 @@ public class TransformedDirectPosition extends GeneralDirectPosition {
         super(targetCRS);
         ensureNonNull("targetCRS", targetCRS);
         defaultCRS = Utilities.equalsIgnoreMetadata(sourceCRS, targetCRS) ? null : sourceCRS;
-        factory = FactoryFinder.getCoordinateOperationFactory(hints);
+        factory = DefaultFactories.forBuildin(CoordinateOperationFactory.class);
     }
 
     /**

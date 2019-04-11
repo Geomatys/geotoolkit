@@ -53,7 +53,12 @@ public class ProcessJobDetail extends JobDetailImpl {
 
     public ProcessJobDetail(final String name, final String group, final String factoryId,
             final String processId, final ParameterValueGroup parameters){
-        super(name, group, ProcessJob.class);
+       this(name, group, factoryId, processId, parameters, ProcessJob.class);
+    }
+
+    public ProcessJobDetail(final String name, final String group, final String factoryId,
+            final String processId, final ParameterValueGroup parameters, Class processJobClass){
+        super(name, group, processJobClass);
         if(group == null){
             setGroup(Scheduler.DEFAULT_GROUP);
         }
@@ -97,7 +102,7 @@ public class ProcessJobDetail extends JobDetailImpl {
      * @param process
      * @return job name.
      */
-    private static String createJobName(final Process process){
+    protected static String createJobName(final Process process){
         ArgumentChecks.ensureNonNull("process", process);
         final ProcessDescriptor procDesc = process.getDescriptor();
         final String factory = procDesc.getIdentifier().getAuthority().getTitle().toString();
@@ -110,7 +115,7 @@ public class ProcessJobDetail extends JobDetailImpl {
      * @param process
      * @return process factory
      */
-    private static String extractFactoryName(final Process process){
+    protected static String extractFactoryName(final Process process){
         ArgumentChecks.ensureNonNull("process", process);
         return process.getDescriptor().getIdentifier().getAuthority().getTitle().toString();
     }
@@ -120,7 +125,7 @@ public class ProcessJobDetail extends JobDetailImpl {
      * @param process
      * @return process identifier
      */
-    private static String extractProcessID(final Process process){
+    protected static String extractProcessID(final Process process){
         ArgumentChecks.ensureNonNull("process", process);
         return process.getDescriptor().getIdentifier().getCode();
     }

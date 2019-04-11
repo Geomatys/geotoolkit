@@ -23,13 +23,13 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.util.Hashtable;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.util.ArgumentChecks;
 import static org.geotoolkit.image.BufferedImages.createGrayScaleColorModel;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PhotometricInterpretation;
 import org.geotoolkit.image.internal.SampleType;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.image.bandselect.BandSelectDescriptor.*;
@@ -94,30 +94,21 @@ public class BandSelectProcess extends AbstractProcess {
         final BufferedImage resultImage    = new BufferedImage(outCm, raster, false, new Hashtable<>());
 
         //copy datas
-        final PixelIterator readIte  = PixelIteratorFactory.createDefaultIterator(inputImage);
-        final PixelIterator writeIte = PixelIteratorFactory.createDefaultWriteableIterator(raster, raster);
+        final PixelIterator readIte  = new PixelIterator.Builder().create(inputImage);
+        final WritablePixelIterator writeIte = new PixelIterator.Builder().createWritable(raster);
         final double[] pixel = new double[inputNbBand];
 
-        int srcBandIdx = 0;
         int trgBandIdx = 0;
         while (readIte.next() && writeIte.next()) {
-            srcBandIdx = 0;
             trgBandIdx = 0;
 
             //read source pixels
-            pixel[srcBandIdx] = readIte.getSampleDouble();
-            while (++srcBandIdx != inputNbBand) {
-                readIte.next();
-                pixel[srcBandIdx] = readIte.getSampleDouble();
-            }
+            readIte.getPixel(pixel);
 
             //write target pixels
-            int tidx = bands[trgBandIdx];
-            if (tidx != -1) writeIte.setSampleDouble(pixel[tidx]);
-            while (++trgBandIdx != bands.length) {
-                writeIte.next();
-                tidx = bands[trgBandIdx];
-                if (tidx != -1) writeIte.setSampleDouble(pixel[tidx]);
+            for (int b=0;b<bands.length;b++) {
+                int tidx = bands[b];
+                if (tidx != -1) writeIte.setSample(b, pixel[tidx]);
             }
         }
 

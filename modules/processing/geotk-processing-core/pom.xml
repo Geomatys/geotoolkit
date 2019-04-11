@@ -68,10 +68,5 @@
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
         </dependency>
-        <dependency>
-            <groupId>javax.media</groupId>
-            <artifactId>jai_codec</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>

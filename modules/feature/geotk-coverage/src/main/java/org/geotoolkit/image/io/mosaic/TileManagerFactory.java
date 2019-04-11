@@ -17,34 +17,33 @@
  */
 package org.geotoolkit.image.io.mosaic;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
-import java.util.Map;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
+import java.util.Map;
+import java.util.Set;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
-
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.Factory;
-import org.geotoolkit.nio.PathFilterVisitor;
-import org.geotoolkit.resources.Errors;
-import org.apache.sis.util.logging.Logging;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.NullArgumentException;
-import org.geotoolkit.coverage.grid.ImageGeometry;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
+import org.geotoolkit.nio.PathFilterVisitor;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -56,18 +55,17 @@ import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
  * @since 2.5
  * @module
  */
-public class TileManagerFactory extends Factory {
+public class TileManagerFactory {
     /**
      * The default instance.
      */
-    public static final TileManagerFactory DEFAULT = new TileManagerFactory(EMPTY_HINTS);
+    public static final TileManagerFactory DEFAULT = new TileManagerFactory();
 
     /**
      * Creates a new factory from the specified hints.
      *
-     * @param hints Optional hints, or {@code null} if none.
      */
-    protected TileManagerFactory(final Hints hints) {
+    protected TileManagerFactory() {
         // We have no usage for those hints at this time, but some may be added later.
     }
 
@@ -287,9 +285,9 @@ public class TileManagerFactory extends Factory {
             if (!remainings.isEmpty()) {
                 count = 1;
             }
-            final Map<ImageGeometry,Tile[]> split = calculator.tiles();
+            final Map<GridGeometry,Tile[]> split = calculator.tiles();
             managers = new TileManager[split.size() + count];
-            for (final Map.Entry<ImageGeometry,Tile[]> entry : split.entrySet()) {
+            for (final Map.Entry<GridGeometry,Tile[]> entry : split.entrySet()) {
                 final TileManager manager = createGeneric(entry.getValue());
                 manager.setGridGeometry(entry.getKey());
                 managers[count++] = manager;
@@ -331,7 +329,13 @@ public class TileManagerFactory extends Factory {
                     gridToCRS = new AffineTransform(gridToCRS);
                     gridToCRS.scale(subsampling.width, subsampling.height);
                 }
-                manager.setGridGeometry(new ImageGeometry(imageBounds, gridToCRS));
+
+                manager.setGridGeometry(new GridGeometry2D(
+                        new GridExtent(null,
+                                new long[]{imageBounds.x, imageBounds.y},
+                                new long[]{imageBounds.width+imageBounds.x, imageBounds.height+imageBounds.y},
+                                false),
+                        new AffineTransform2D(gridToCRS), null));
             }
             managers[0] = manager;
         }

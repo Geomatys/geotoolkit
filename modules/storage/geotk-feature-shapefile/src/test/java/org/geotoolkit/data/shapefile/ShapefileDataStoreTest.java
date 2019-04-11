@@ -27,21 +27,18 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Arrays;
 import java.util.Date;
-
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
@@ -58,15 +55,16 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.test.TestData;
-
 import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
 import org.junit.Assume;
+import org.opengis.filter.FilterFactory;
 
 /**
  *
@@ -80,7 +78,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     static final String STREAM = "shapes/stream.shp";
     static final String DANISH = "shapes/danish_point.shp";
     static final String CHINESE = "shapes/chinese_poly.shp";
-    static final FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(null);
+    static final FilterFactory2 ff = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
 
     protected FeatureCollection loadFeatures(final String resource, Query query)
             throws Exception {

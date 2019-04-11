@@ -29,8 +29,6 @@ import java.util.Objects;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.awt.image.RenderedImage;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import javax.media.jai.util.Range;
 import javax.media.jai.EnumeratedParameter;
@@ -49,7 +47,7 @@ import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterNameException;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.metadata.citation.Responsibility;
 import org.opengis.util.InternationalString;
 import org.opengis.util.GenericName;
@@ -60,8 +58,6 @@ import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.factory.Factories;
-import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.internal.storage.io.IOUtilities;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.apache.sis.metadata.iso.citation.Citations;
@@ -71,6 +67,7 @@ import org.apache.sis.metadata.iso.citation.DefaultResponsibility;
 
 import static javax.media.jai.registry.RenderedRegistryMode.MODE_NAME;
 import org.apache.sis.internal.simple.SimpleCitation;
+import org.apache.sis.internal.system.DefaultFactories;
 
 
 /**
@@ -103,18 +100,6 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
             "com.sun.media.jai", JAI,
             "org.geotoolkit",    GEOTK
     };
-
-    /**
-     * The name factory. Will be created when first needed.
-     */
-    private static NameFactory nameFactory;
-    static {
-        Factories.addChangeListener(new ChangeListener() {
-            @Override public void stateChanged(ChangeEvent e) {
-                nameFactory = null;
-            }
-        });
-    }
 
     /**
      * The default <cite>source type map</cite> as a (<code>{@linkplain RenderedImage}.class</code>,
@@ -363,7 +348,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
              * the end result is fully-qualified name like "JAI:Add" and one alias like
              * "com.sun.media.jai.Add".
              */
-            final NameFactory factory = getNameFactory();
+            final NameFactory factory = DefaultFactories.forBuildin(NameFactory.class);
             final NameSpace scope = factory.createNameSpace(factory.createLocalName(null,
                     new ImagingParameterDescription(op, "Vendor", null)),
                     Collections.singletonMap("separator", "."));
@@ -527,18 +512,6 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
             range = new org.apache.sis.measure.Range(valueClass, minimum, true, maximum, true);
         }
         return new DefaultParameterDescriptor<T>(properties, 1, 1, valueClass, range, (T[]) validValues, (T) defaultValue);
-    }
-
-    /**
-     * Returns the name factory.
-     */
-    private static NameFactory getNameFactory() {
-        // No need to synchronize; this is not a big deal if we ask twice.
-        NameFactory factory = nameFactory;
-        if (factory == null) {
-            nameFactory = factory = FactoryFinder.getNameFactory(null);
-        }
-        return factory;
     }
 
     /**

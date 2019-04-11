@@ -1,27 +1,25 @@
 
 package org.geotoolkit.pending.demo.coverage;
 
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.style.MutableStyleFactory;
-import org.opengis.coverage.grid.GridCoverage;
-
 import java.awt.image.RenderedImage;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.image.PixelIterator;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageIO;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
+import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.pending.demo.Demos;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableStyleFactory;
 
 
 public class CoverageReaderDemo {
@@ -45,7 +43,7 @@ public class CoverageReaderDemo {
         readParam.setDeferred(true);
 
         final GridCoverageReader reader = CoverageIO.createSimpleReader(tempData);
-        final GridCoverage coverage = reader.read(0, readParam);
+        final GridCoverage coverage = reader.read(readParam);
 
         // Ok, so how to use it now ?
 
@@ -56,7 +54,7 @@ public class CoverageReaderDemo {
         if (coverage instanceof GridCoverage2D) {
             // ... You will acquire iterator for fast and safe browsing.
             final RenderedImage cvgData = ((GridCoverage2D) coverage).getRenderedImage();
-            final PixelIterator pxIterator = PixelIteratorFactory.createDefaultIterator(cvgData);
+            final PixelIterator pxIterator = PixelIterator.create(cvgData);
 
             // What should you avoid to do with deferred reading ?
 
@@ -94,11 +92,11 @@ public class CoverageReaderDemo {
          */
         //create a mapcontext
         final MapContext context = MapBuilder.createContext();
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(tempData);
+        final MapLayer cl = MapBuilder.createCoverageLayer(tempData);
         context.layers().add(cl);
 
         //display it
-        JMap2DFrame.show(context);
+        FXMapFrame.show(context);
 
     }
 

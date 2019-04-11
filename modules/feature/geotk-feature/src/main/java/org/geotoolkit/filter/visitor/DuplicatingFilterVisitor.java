@@ -18,11 +18,9 @@
 package org.geotoolkit.filter.visitor;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import org.apache.sis.internal.system.DefaultFactories;
 
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
@@ -30,6 +28,7 @@ import org.geotoolkit.filter.binaryspatial.LooseBBox;
 import org.opengis.filter.And;
 import org.opengis.filter.ExcludeFilter;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.Id;
@@ -100,7 +99,7 @@ public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisito
     protected final FilterFactory2 ff;
 
     public DuplicatingFilterVisitor() {
-        this((FilterFactory2) FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class)));
+        this((FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class));
     }
 
     public DuplicatingFilterVisitor(final FilterFactory2 factory) {

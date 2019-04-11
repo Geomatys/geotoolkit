@@ -33,21 +33,24 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.io.AbstractGridCoverageWriter;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
@@ -55,12 +58,10 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.opengis.coverage.InterpolationMethod;
-import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -76,7 +77,7 @@ import org.opengis.util.FactoryException;
  * @author Cédric Briançon (Geomatys)
  * @author Rémi Maréchal (Geomatys)
  */
-public class PyramidalModelWriter extends GridCoverageWriter {
+public class PyramidalModelWriter extends AbstractGridCoverageWriter {
 
     private final GridCoverageResource reference;
 
@@ -166,7 +167,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         final BlockingQueue<Runnable> tileQueue;
         try {
             //extract the 2D part of the gridtocrs transform
-            final DimensionFilter filter = new DimensionFilter(srcCRSToGrid);
+            final TransformSeparator filter = new TransformSeparator(srcCRSToGrid);
             filter.addSourceDimensionRange(0, 2);
             tileQueue = new ByTileQueue(pm, requestedEnvelope, crsCoverage2D, image, nbBand, filter.separate(), interpolation);
         } catch (DataStoreException ex) {
@@ -464,7 +465,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
             this.mosAreaMaxY = mosAreaMaxY;
             this.mosULX = mosULX;
             this.mosULY = mosULY;
-            this.interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(image), interpolation, 2);
+            this.interpolation = Interpolation.create(new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(image), interpolation, 2);
             this.nbBand = nbBand;
             this.res = res;
             this.crsDestToSrcGrid = crsDestToSrcGrid;
@@ -497,20 +498,19 @@ public class PyramidalModelWriter extends GridCoverageWriter {
 
                     }else{
                         //todo not exact
-                        final List<GridSampleDimension> dims = pm.getSampleDimensions();
+                        final List<SampleDimension> dims = pm.getSampleDimensions();
                         if(nbBand==3){
                             currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_RGB);
                         }else if(nbBand==4){
                             currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_ARGB);
                         }else{
                             currentlyTile = BufferedImages.createImage(tileWidth, tileHeight, dims.size(),
-                                    CoverageUtilities.getDataType(dims.get(0).getSampleDimensionType()));
+                                    pm.getSampleModel().getDataType());
                         }
                     }
                 } catch (DataStoreException ex) {
                     throw new RuntimeException(ex);
                 }
-
             }
 
             // define tile translation from bufferedImage min pixel position to mosaic pixel position.
@@ -538,7 +538,5 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                 throw new RuntimeException(ex);
             }
         }
-
     }
-
 }

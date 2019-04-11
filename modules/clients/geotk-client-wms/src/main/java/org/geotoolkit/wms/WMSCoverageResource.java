@@ -31,26 +31,28 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import org.geotoolkit.client.CapabilitiesException;
-import org.geotoolkit.client.Request;
-import org.geotoolkit.storage.coverage.AbstractCoverageResource;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.util.NamesExt;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.metadata.AxisDirections;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.util.StringUtilities;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.opengis.util.GenericName;
+import org.geotoolkit.client.CapabilitiesException;
+import org.geotoolkit.client.Request;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.storage.coverage.AbstractCoverageResource;
+import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -60,8 +62,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.util.Utilities;
+import org.opengis.util.GenericName;
 
 /**
  * Coverage Reference for a WMS layer.
@@ -212,11 +213,6 @@ public class WMSCoverageResource extends AbstractCoverageResource{
     @Override
     public boolean isWritable() throws CoverageStoreException {
         return false;
-    }
-
-    @Override
-    public int getImageIndex() {
-        return 0;
     }
 
     @Override
@@ -424,6 +420,16 @@ public class WMSCoverageResource extends AbstractCoverageResource{
             }
         }
         return env;
+    }
+
+    @Override
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        final GridCoverageReader reader = acquireReader();
+        try {
+            return reader.getGridGeometry();
+        } finally {
+            recycle(reader);
+        }
     }
 
     @Override

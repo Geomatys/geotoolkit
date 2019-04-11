@@ -171,11 +171,9 @@ public class FXMapFrame {
         new JFXPanel();
 
         Platform.runLater(() -> new FXMapFrame(mc,hints));
-
     }
 
     public static void main(String[] args) {
         FXMapFrame.show(null);
     }
-
 }

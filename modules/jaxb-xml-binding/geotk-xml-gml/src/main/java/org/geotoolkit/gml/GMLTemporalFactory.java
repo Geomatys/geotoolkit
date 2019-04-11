@@ -38,11 +38,6 @@ import org.opengis.util.InternationalString;
 public class GMLTemporalFactory extends DefaultTemporalFactory {
 
     @Override
-    protected void setOrdering(Organizer orgnzr) {
-        orgnzr.before(DefaultTemporalFactory.class, false);
-    }
-
-    @Override
     public Instant createInstant(final Date pstn) {
         if (pstn != null) {
             return new TimeInstantType(createPosition(pstn));

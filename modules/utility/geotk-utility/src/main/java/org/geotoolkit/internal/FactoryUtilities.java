@@ -22,7 +22,6 @@ import java.util.Objects;
 import java.awt.RenderingHints;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.Factory;
 import org.geotoolkit.lang.Static;
 
 

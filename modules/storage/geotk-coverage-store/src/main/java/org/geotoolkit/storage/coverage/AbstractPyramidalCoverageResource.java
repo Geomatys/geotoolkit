@@ -18,7 +18,6 @@
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -26,6 +25,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
@@ -34,8 +36,6 @@ import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -62,16 +62,8 @@ import org.opengis.util.GenericName;
 @XmlTransient
 public abstract class AbstractPyramidalCoverageResource extends AbstractCoverageResource implements PyramidalCoverageResource {
 
-    protected final int imageIndex;
-
-    public AbstractPyramidalCoverageResource(DataStore store, GenericName name,int imageIndex) {
+    public AbstractPyramidalCoverageResource(DataStore store, GenericName name) {
         super(store, name);
-        this.imageIndex = imageIndex;
-    }
-
-    @Override
-    public int getImageIndex() {
-        return imageIndex;
     }
 
     @Override
@@ -105,19 +97,29 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
     }
 
     @Override
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        final GridCoverageReader reader = acquireReader();
+        try {
+            return reader.getGridGeometry();
+        } finally {
+            recycle(reader);
+        }
+    }
+
+    @Override
     public Envelope getEnvelope() throws DataStoreException {
         return Pyramids.getEnvelope(this);
     }
 
     @Override
-    public GridCoverageReader acquireReader() throws CoverageStoreException {
+    public GridCoverageReader acquireReader() throws DataStoreException {
         final PyramidalModelReader reader = new PyramidalModelReader();
         reader.setInput(this);
         return reader;
     }
 
     @Override
-    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
+    public GridCoverageWriter acquireWriter() throws DataStoreException {
         if(isWritable()){
             return new PyramidalModelWriter(this);
         }else{
@@ -141,12 +143,12 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
     }
 
     @Override
-    public List<GridSampleDimension> getSampleDimensions() throws DataStoreException {
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
         return null;
     }
 
     @Override
-    public void setSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
+    public void setSampleDimensions(List<SampleDimension> dimensions) throws DataStoreException {
         throw new DataStoreException("Pyramid writing not supported.");
     }
 
@@ -172,11 +174,6 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
 
     /**
      * Get a tile as coverage.
-     * @param pyramidId
-     * @param mosaicId
-     * @param tileX
-     * @param tileY
-     * @return GridCoverage2D
      */
     public static GridCoverage2D getTileAsCoverage(PyramidalCoverageResource covRef,
             String pyramidId, String mosaicId, int tileX, int tileY) throws DataStoreException {
@@ -204,12 +201,6 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
 
     /**
      * Get a tile as coverage.
-     * @param covRef
-     * @param pyramidId
-     * @param mosaicId
-     * @param tile
-     * @return GridCoverage2D
-     * @throws org.apache.sis.storage.DataStoreException
      */
     public static GridCoverage2D getTileAsCoverage(PyramidalCoverageResource covRef,
             String pyramidId, String mosaicId, ImageTile tile) throws DataStoreException {
@@ -240,19 +231,20 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
         final CoordinateReferenceSystem tileCRS = pyramid.getCoordinateReferenceSystem();
         final MathTransform gridToCrs = Pyramids.getTileGridToCRS(mosaic,tile.getPosition());
 
-        final GeneralGridEnvelope ge = new GeneralGridEnvelope(
-                new Rectangle(image.getWidth(), image.getHeight()),tileCRS.getCoordinateSystem().getDimension());
-        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelInCell.CELL_CORNER, gridToCrs, tileCRS, null);
+        final long[] high = new long[tileCRS.getCoordinateSystem().getDimension()];
+        Arrays.fill(high, 1);
+        high[0] = image.getWidth();
+        high[1] = image.getHeight();
+
+        final GridExtent ge = new GridExtent(null, null, high, false);
+        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelInCell.CELL_CORNER, gridToCrs, tileCRS);
         gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);
 
-        final List<GridSampleDimension> dimensions = covRef.getSampleDimensions();
+        final List<SampleDimension> dimensions = covRef.getSampleDimensions();
         if(dimensions!=null){
-            gcb.setSampleDimensions(dimensions.toArray(new GridSampleDimension[0]));
+            gcb.setSampleDimensions(dimensions.toArray(new SampleDimension[0]));
         }
-
         return (GridCoverage2D) gcb.build();
     }
-
-
 }

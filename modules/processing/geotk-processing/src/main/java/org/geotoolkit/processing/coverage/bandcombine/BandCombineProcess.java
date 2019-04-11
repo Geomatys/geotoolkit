@@ -20,26 +20,21 @@ import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.parameter.Parameters;
-
-import org.opengis.coverage.Coverage;
-import org.opengis.coverage.grid.GridGeometry;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.parameter.ParameterValueGroup;
-
 import org.apache.sis.util.ArgumentChecks;
-
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.storage.coverage.CoverageUtilities;
-
+import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.bandcombine.BandCombineDescriptor.*;
+import org.geotoolkit.storage.coverage.CoverageUtilities;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Combine each first slice of each {@link Coverage} given in parameters into one
@@ -58,11 +53,11 @@ public class BandCombineProcess extends AbstractProcess {
      *
      * @param coverages Coverages to combine
      */
-    public BandCombineProcess(Coverage ... coverages){
+    public BandCombineProcess(GridCoverage ... coverages){
         super(INSTANCE, asParameters(coverages));
     }
 
-    private static ParameterValueGroup asParameters(Coverage ... coverages){
+    private static ParameterValueGroup asParameters(GridCoverage ... coverages){
         final Parameters params = Parameters.castOrWrap(BandCombineDescriptor.INPUT_DESC.createValue());
         params.getOrCreate(IN_COVERAGES).setValue(coverages);
         return params;
@@ -84,7 +79,7 @@ public class BandCombineProcess extends AbstractProcess {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
 
         // PARAMETERS CHECK ////////////////////////////////////////////////////
-        final Coverage[] inputCoverage = inputParameters.getValue(IN_COVERAGES);
+        final GridCoverage[] inputCoverage = inputParameters.getValue(IN_COVERAGES);
         if (inputCoverage.length == 0) {
             throw new ProcessException("No coverage to combine", this, null);
         } else if (inputCoverage.length == 1) {
@@ -97,12 +92,12 @@ public class BandCombineProcess extends AbstractProcess {
             // CALL IMAGE BAND COMBINE /////////////////////////////////////////////
             final StringBuilder sb = new StringBuilder();
             final RenderedImage[] images = new RenderedImage[inputCoverage.length];
-            final List<GridSampleDimension> sds = new ArrayList<>();
+            final List<SampleDimension> sds = new ArrayList<>();
 
             for (int i = 0; i < inputCoverage.length; i++) {
                 final GridCoverage2D gridCoverage2D = CoverageUtilities.firstSlice((GridCoverage) inputCoverage[i]);
 
-                final GridSampleDimension[] gsd = gridCoverage2D.getSampleDimensions();
+                final SampleDimension[] gsd = gridCoverage2D.getSampleDimensions().toArray(new SampleDimension[0]);
                 if (gsd != null) sds.addAll(Arrays.asList(gsd));
 
                 images[i] = gridCoverage2D.getRenderedImage();
@@ -123,7 +118,7 @@ public class BandCombineProcess extends AbstractProcess {
             gcb.setName(sb.toString());
             gcb.setRenderedImage(resultImage);
             gcb.setGridGeometry(gridGeometry);
-            gcb.setSampleDimensions(sds.toArray(new GridSampleDimension[sds.size()]));
+            gcb.setSampleDimensions(sds.toArray(new SampleDimension[sds.size()]));
             final GridCoverage2D resultCoverage = gcb.getGridCoverage2D();
 
             outputParameters.getOrCreate(OUT_COVERAGE).setValue(resultCoverage);

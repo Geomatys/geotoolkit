@@ -20,6 +20,7 @@ import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import org.apache.sis.util.collection.Cache;
+import org.apache.sis.storage.DataStoreException;
 
 
 /**
@@ -40,7 +41,7 @@ import org.apache.sis.util.collection.Cache;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  */
-abstract class CachedTable<K,E> extends Table {
+abstract class CachedTable<K, E extends Entry> extends Table {
     /**
      * The table for which caching is performed.
      */
@@ -76,7 +77,7 @@ abstract class CachedTable<K,E> extends Table {
      * @throws SQLException if an error occurred will reading from the database.
      * @throws NoSuchRecordException if no record was found for the specified key.
      */
-    public E getEntry(final K identifier) throws SQLException, CatalogException {
+    final E getEntry(final K identifier) throws SQLException, DataStoreException {
         if (identifier == null) {
             return null;
         }
@@ -125,7 +126,14 @@ abstract class CachedTable<K,E> extends Table {
      * @param  identifier the identifier of the entry being created.
      * @return the element for the current row in the specified {@code results}.
      * @throws SQLException if an error occurred will reading from the database.
-     * @throws CatalogException if a logical error has been detected in the database content.
+     * @throws DataStoreException if a logical error has been detected in the database content.
      */
-    abstract E createEntry(ResultSet results, K identifier) throws SQLException, CatalogException;
+    abstract E createEntry(ResultSet results, K identifier) throws SQLException, DataStoreException;
+
+    /**
+     * Removes the cached entry for the given identifier.
+     */
+    final void removeCached(final K identifier) {
+        cache.remove(identifier);
+    }
 }

@@ -20,12 +20,10 @@ import java.awt.Point;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.opengis.util.GenericName;
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.content.DefaultAttributeGroup;
@@ -34,29 +32,35 @@ import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.geotoolkit.coverage.io.CoverageWriter;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.storage.AbstractFeatureSet;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.storage.AbstractResource;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.metadata.extent.Extent;
+import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.metadata.extent.GeographicExtent;
+import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.GenericName;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 @XmlTransient
-public abstract class AbstractCoverageResource extends AbstractFeatureSet implements GridCoverageResource {
+public abstract class AbstractCoverageResource extends AbstractResource implements GridCoverageResource {
 
     private static final int DEFAULT_SUBSET_SIZE = 256;
 
@@ -75,7 +79,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
     }
 
     @Override
-    public DataStore getStore() {
+    public DataStore getOriginator() {
         return store;
     }
 
@@ -103,53 +107,35 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
 
     @Override
     public synchronized CoverageDescription getCoverageDescription() {
-        if(desc!=null) return desc;
+        if (desc!=null) return desc;
 
         //calculate image statistics
         try {
-            final GridCoverageReader reader = acquireReader();
-            // Read a subset of the coverage, to compute approximative statistics
-            GridCoverage coverage = null;
-            try {
-                GeneralGridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
-                // For multi-dimensional data, we get the first 2D slice available
-                GridGeometryIterator geometryIterator = new GridGeometryIterator(gridGeom);
-                if (geometryIterator.hasNext()) {
-                    gridGeom = geometryIterator.next();
-                }
-                if (gridGeom instanceof GridGeometry2D) {
-                    final GridGeometry2D geom2d = (GridGeometry2D) gridGeom;
-                    final double[] subsetResolution = new double[geom2d.getDimension()];
-                    Arrays.fill(subsetResolution, 1);
 
-                    subsetResolution[geom2d.gridDimensionX] = geom2d.getEnvelope().getSpan(geom2d.axisDimensionX) / DEFAULT_SUBSET_SIZE;
-                    subsetResolution[geom2d.gridDimensionY] = geom2d.getEnvelope().getSpan(geom2d.axisDimensionY) / DEFAULT_SUBSET_SIZE;
+            final GridGeometry gridGeometry = getGridGeometry();
+            // latest data slice
+            final GridExtent extent = gridGeometry.getExtent();
+            final MathTransform gridToCrs = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
 
-                    final double[] nativeResolution = geom2d.getResolution();
-                    if (nativeResolution != null) {
-                        if (Double.isFinite(nativeResolution[geom2d.gridDimensionX])) {
-                            subsetResolution[geom2d.gridDimensionX] = Math.max(subsetResolution[geom2d.gridDimensionX], nativeResolution[geom2d.gridDimensionX]);
-                        }
-                        if (Double.isFinite(nativeResolution[geom2d.gridDimensionY])) {
-                            subsetResolution[geom2d.gridDimensionY] = Math.max(subsetResolution[geom2d.gridDimensionY], nativeResolution[geom2d.gridDimensionY]);
-                        }
-                    }
-
-                    final GridCoverageReadParam param = new GridCoverageReadParam();
-                    param.setResolution(subsetResolution);
-                    coverage = reader.read(getImageIndex(), param);
-                }
-
-                recycle(reader);
-
-            } catch (Exception e) {
-                try {
-                    reader.dispose();
-                } catch (Exception bis) {
-                    e.addSuppressed(bis);
-                }
-                throw e;
+            final long[] low = new long[extent.getDimension()];
+            final long[] high = new long[extent.getDimension()];
+            low[0] = extent.getLow(0);
+            low[1] = extent.getLow(1);
+            high[0] = extent.getHigh(0);
+            high[1] = extent.getHigh(1);
+            for (int i=2,n=low.length;i<n;i++) {
+                low[i] = extent.getHigh(i);
+                high[i] = extent.getHigh(i);
             }
+            final GridExtent sliceExt = new GridExtent(null, low, high, true);
+            GridGeometry slice = new GridGeometry(sliceExt, PixelInCell.CELL_CENTER, gridToCrs, gridGeometry.getCoordinateReferenceSystem());
+            final double[] subsetResolution = new double[sliceExt.getDimension()];
+            Arrays.fill(subsetResolution, 1.0);
+            subsetResolution[0] = gridGeometry.getEnvelope().getSpan(0) / DEFAULT_SUBSET_SIZE;
+            subsetResolution[1] = gridGeometry.getEnvelope().getSpan(1) / DEFAULT_SUBSET_SIZE;
+            slice = slice.derive().subgrid(null, subsetResolution).build();
+
+            GridCoverage coverage = org.geotoolkit.internal.coverage.CoverageUtilities.toGeotk(read(slice));
 
             if (coverage instanceof GridCoverage2D) {
                 final ProcessDescriptor processDesc = ProcessFinder.getProcessDescriptor("geotoolkit", "coverage:statistic");
@@ -178,27 +164,59 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
     }
 
     /**
-     * Default recycle implementation.
-     * Dispose the reader.
+     * Returns the spatio-temporal envelope of this resource.
+     * The default implementation computes the union of all {@link GeographicBoundingBox} in the resource metadata,
+     * assuming the {@linkplain org.apache.sis.referencing.CommonCRS#defaultGeographic() default geographic CRS}
+     * (usually WGS 84).
      *
-     * @param reader
+     * @return the spatio-temporal resource extent.
+     * @throws DataStoreException if an error occurred while reading or computing the envelope.
      */
     @Override
-    public void recycle(CoverageReader reader) {
+    public Envelope getEnvelope() throws DataStoreException {
+        final Metadata metadata = getMetadata();
+        GeneralEnvelope bounds = null;
+        if (metadata != null) {
+            for (final Identification identification : metadata.getIdentificationInfo()) {
+                if (identification != null) {                                               // Paranoiac check.
+                    for (final Extent extent : identification.getExtents()) {
+                        if (extent != null) {                                               // Paranoiac check.
+                            for (final GeographicExtent ge : extent.getGeographicElements()) {
+                                if (ge instanceof GeographicBoundingBox) {
+                                    final GeneralEnvelope env = new GeneralEnvelope((GeographicBoundingBox) ge);
+                                    if (bounds == null) {
+                                        bounds = env;
+                                    } else {
+                                        bounds.add(env);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return bounds;
+    }
+
+    /**
+     * Default recycle implementation.
+     * Dispose the reader.
+     */
+    @Override
+    public void recycle(GridCoverageReader reader) {
         dispose(reader);
     }
 
     /**
      * Default recycle implementation.
      * Dispose the writer.
-     *
-     * @param writer
      */
     @Override
-    public void recycle(CoverageWriter writer) {
+    public void recycle(GridCoverageWriter writer) {
         try {
             writer.dispose();
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
         }
     }
@@ -269,7 +287,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
      *
      * @param reader
      */
-    protected void dispose(CoverageReader reader) {
+    protected void dispose(GridCoverageReader reader) {
         try {
 //            //try to close sub stream
 //            Object input = reader.getInput();
@@ -286,7 +304,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
 
             reader.dispose();
 
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
         }
     }

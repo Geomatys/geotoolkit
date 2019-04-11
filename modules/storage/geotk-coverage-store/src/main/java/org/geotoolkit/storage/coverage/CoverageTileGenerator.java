@@ -22,23 +22,22 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.CoverageStack;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.SampleDimensionUtils;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.AbstractTileGenerator;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramid;
@@ -50,9 +49,6 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.opengis.coverage.Coverage;
-import org.opengis.coverage.SampleDimension;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -65,30 +61,26 @@ import org.opengis.util.NoSuchIdentifierException;
  */
 public class CoverageTileGenerator extends AbstractTileGenerator {
 
-    private final CoverageResource resource;
+    private final GridCoverageResource resource;
     private final double[] empty;
 
     private InterpolationCase interpolation = InterpolationCase.NEIGHBOR;
     private double[] fillValues;
 
-    public CoverageTileGenerator(CoverageResource resource) throws CoverageStoreException {
+    public CoverageTileGenerator(GridCoverageResource resource) throws DataStoreException {
         ArgumentChecks.ensureNonNull("resource", resource);
 
         this.resource = resource;
 
-        final CoverageReader reader = resource.acquireReader();
+        final GridCoverageReader reader = resource.acquireReader();
         try {
-            List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(resource.getImageIndex());
+            List<SampleDimension> sampleDimensions = reader.getSampleDimensions();
 
             if (sampleDimensions == null) {
                 final GridCoverageReadParam param = new GridCoverageReadParam();
                 param.setDeferred(true);
-                Coverage coverage = reader.read(0, param);
-                final int numSampleDimensions = coverage.getNumSampleDimensions();
-                sampleDimensions = new ArrayList<>(numSampleDimensions);
-                for (int i=0;i<numSampleDimensions;i++) {
-                    sampleDimensions.add((GridSampleDimension) coverage.getSampleDimension(i));
-                }
+                GridCoverage coverage = reader.read(param);
+                sampleDimensions = coverage.getSampleDimensions();
             }
 
             empty = new double[sampleDimensions.size()];
@@ -97,11 +89,11 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             }
 
             this.resource.recycle(reader);
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             //dispose the reader, it may be in an invalid state
             try {
                 reader.dispose();
-            } catch (CoverageStoreException e) {
+            } catch (DataStoreException e) {
                 ex.addSuppressed(e);
             }
             throw ex;
@@ -126,12 +118,9 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
     }
 
     private static double getEmptyValue(SampleDimension dim){
-        if (dim instanceof GridSampleDimension) {
-            dim = ((GridSampleDimension) dim).geophysics(true);
-        }
-
+        dim = dim.forConvertedValues(true);
         double fillValue = Double.NaN;
-        final double[] nodata = dim.getNoDataValues();
+        final double[] nodata = SampleDimensionUtils.getNoDataValues(dim);
         if (nodata!=null && nodata.length>0) {
             fillValue = nodata[0];
         }
@@ -155,27 +144,26 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         final Dimension tileSize = mosaic.getTileSize();
         final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
         final LinearTransform gridToCrsNd = Pyramids.getTileGridToCRS(mosaic, tileCoord, PixelInCell.CELL_CENTER);
-        final int[] low = new int[crs.getCoordinateSystem().getDimension()];
-        final int[] high = new int[low.length];
+        final long[] high = new long[crs.getCoordinateSystem().getDimension()];
         high[0] = tileSize.width-1; //inclusive
         high[1] = tileSize.height-1; //inclusive
-        final GridEnvelope extent = new GeneralGridEnvelope(low, high, true);
-        final GeneralGridGeometry gridGeomNd = new GeneralGridGeometry(extent, gridToCrsNd, crs);
+        final GridExtent extent = new GridExtent(null, null, high, true);
+        final GridGeometry gridGeomNd = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCrsNd, crs);
 
         //extract resolution
         final Matrix matrix = gridToCrsNd.getMatrix();
-        final double[] resolution = new double[low.length];
+        final double[] resolution = new double[high.length];
         for (int i=0;i<resolution.length;i++) {
             resolution[i] = Math.abs(matrix.getElement(i, i));
         }
 
-        final CoverageReader reader = resource.acquireReader();
-        Coverage coverage;
+        final GridCoverageReader reader = resource.acquireReader();
+        GridCoverage coverage;
         try {
             final GridCoverageReadParam param = new GridCoverageReadParam();
             param.setEnvelope(gridGeomNd.getEnvelope());
             param.setResolution(resolution);
-            coverage = reader.read(resource.getImageIndex(), param);
+            coverage = reader.read(param);
             resource.recycle(reader);
         } catch (DisjointCoverageDomainException ex) {
             resource.recycle(reader);
@@ -187,11 +175,11 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             }
             ite.close();
             return new DefaultImageTile(img, tileCoord);
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             //dispose the reader, it may be in an invalid state
             try {
                 reader.dispose();
-            } catch (CoverageStoreException e) {
+            } catch (DataStoreException e) {
                 ex.addSuppressed(e);
             }
             throw ex;
@@ -212,21 +200,20 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
                 final Process process = desc.createProcess(params);
                 final ParameterValueGroup results = process.call();
-                coverage = (Coverage) results.parameter("result").getValue();
+                coverage = (GridCoverage) results.parameter("result").getValue();
             } catch (ProcessException | NoSuchIdentifierException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
             }
 
-        } else if (coverage instanceof CoverageStack) {
+        } else if (coverage instanceof GridCoverageStack) {
             throw new DataStoreException("Pyramid tile resulted in a Coverage stack from the source coverage, "
                     + "this happens when source coverage has more dimensions then the pyramid. Given source coverage can not be used with this pyramid");
         } else {
             throw new DataStoreException("Unexpected coverage type : "+coverage.getClass().getName());
         }
 
-        GridCoverage2D coverage2d = (GridCoverage2D) coverage;
-        coverage2d = coverage2d.view(ViewType.GEOPHYSICS);
-        final RenderedImage image = coverage2d.getRenderedImage();
+        coverage = coverage.forConvertedValues(true);
+        final RenderedImage image = coverage.render(null);
         return new DefaultImageTile(image, tileCoord);
     }
 

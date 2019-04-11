@@ -32,27 +32,27 @@ import javax.media.jai.JAI;
 import javax.media.jai.TileFactory;
 import javax.media.jai.TileRecycler;
 import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.VisitFilter;
-import org.geotoolkit.display.primitive.SceneNode;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.SearchArea;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.primitive.SceneNode;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.map.CollectionMapLayer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.ItemListener;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.coverage.CollectionCoverageResource;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
-import org.geotoolkit.storage.coverage.CollectionCoverageResource;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -134,15 +134,19 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
 
     protected GraphicJ2D parseChild(final MapItem child){
 
+        if (child instanceof MapLayer) {
+            final MapLayer layer = (MapLayer) child;
+            final Resource resource = layer.getResource();
+
+        }
+
         //TODO simplify
         final StatelessMapItemJ2D g2d;
         if (child instanceof FeatureMapLayer) {
             g2d = new StatelessFeatureLayerJ2D(getCanvas(), (FeatureMapLayer)child);
-        } else if (child instanceof CollectionMapLayer) {
-            g2d = new StatelessCollectionLayerJ2D(getCanvas(), (CollectionMapLayer)child);
         } else if (child instanceof CoverageMapLayer) {
             final CoverageMapLayer layer = (CoverageMapLayer) child;
-            final GridCoverageResource ref  = layer.getCoverageReference();
+            final GridCoverageResource ref  = layer.getResource();
 
             if (Boolean.TRUE.equals(canvas.getRenderingHint(GO2Hints.KEY_VIEW_TILE))) {
                  //-- if view tile by tile is activate.

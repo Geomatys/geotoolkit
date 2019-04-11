@@ -18,23 +18,22 @@ package org.geotoolkit.processing.coverage.resample;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.simple.SimpleCitation;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.parameter.ParameterBuilder;
-
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.apache.sis.metadata.iso.citation.Citations;
+import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.image.interpolation.ResampleBorderComportement;
+import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
-import org.opengis.coverage.Coverage;
-import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -93,7 +92,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *   </tr>
  *   <tr>
  *     <td>{@code "GridGeometry"}</td>
- *     <td>{@link org.opengis.coverage.grid.GridGeometry}</td>
+ *     <td>{@link org.geotoolkit.coverage.grid.GridGeometry}</td>
  *     <td>(automatic)</td>
  *     <td align="center">N/A</td>
  *     <td align="center">N/A</td>
@@ -183,7 +182,7 @@ public class ResampleDescriptor extends AbstractProcessDescriptor {
     /**
      * Output coverage result of the process execution.
      */
-    public static final ParameterDescriptor<Coverage> OUT_COVERAGE;
+    public static final ParameterDescriptor<GridCoverage> OUT_COVERAGE;
 
     /**
      * Output parameters descriptor of this process.
@@ -205,7 +204,7 @@ public class ResampleDescriptor extends AbstractProcessDescriptor {
         propertiesOut.put(IdentifiedObject.ALIAS_KEY, ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_resample_outCoverage));
         propertiesOut.put(IdentifiedObject.REMARKS_KEY, ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_resample_outCoverageDesc));
         OUT_COVERAGE = new DefaultParameterDescriptor<>(
-                propertiesOut, Coverage.class, null, null, null, null, null, true);
+                propertiesOut, GridCoverage.class, null, null, null, null, null, true);
 
         OUTPUT_DESC  = new ParameterBuilder().addName(NAME + "OutputParameters").createGroup(OUT_COVERAGE);
     }

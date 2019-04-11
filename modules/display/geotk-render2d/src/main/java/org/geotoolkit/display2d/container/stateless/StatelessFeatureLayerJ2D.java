@@ -103,14 +103,12 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import static org.geotoolkit.display2d.container.stateless.StatelessMapItemJ2D.createBufferedImage;
-import org.geotoolkit.map.CollectionMapLayer;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.opengis.style.Style;
 import org.opengis.style.TextSymbolizer;
 
 /**
@@ -1037,67 +1035,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         }
 
         return cached;
-    }
-
-    protected CachedRule[] prepareStyleRules(final RenderingContext2D renderingContext,
-            final CollectionMapLayer layer, final FeatureType type){
-        final CachedRule[] rules;
-
-        final Style style = item.getStyle();
-
-        final Filter selectionFilter = item.getSelectionFilter();
-        if(selectionFilter != null && !Filter.EXCLUDE.equals(selectionFilter)){
-            //merge the style and filter with the selection
-            final List<Rule> selectionRules;
-            final List<Rule> normalRules = GO2Utilities.getValidRules(
-                   style, renderingContext.getSEScale(), type);
-
-            final List<CachedRule> mixedRules = new ArrayList<CachedRule>();
-            final MutableStyle selectionStyle = item.getSelectionStyle();
-            if(selectionStyle == null){
-                selectionRules = GO2Utilities.getValidRules(
-                        ContextContainer2D.DEFAULT_SELECTION_STYLE, renderingContext.getSEScale(), type);
-            }else{
-                selectionRules = GO2Utilities.getValidRules(
-                        selectionStyle, renderingContext.getSEScale(), type);
-            }
-
-            //update the rules filters
-            for(final Rule rule : selectionRules){
-                final List<? extends Symbolizer> symbols = rule.symbolizers();
-                final MutableRule mixedRule = STYLE_FACTORY.rule(symbols.toArray(new Symbolizer[symbols.size()]));
-                Filter f = rule.getFilter();
-                if(f == null){
-                    f = selectionFilter;
-                }else{
-                    f = FILTER_FACTORY.and(f,selectionFilter);
-                }
-                mixedRule.setFilter(f);
-                mixedRules.add(GO2Utilities.getCached(mixedRule,type));
-            }
-
-            final Filter notSelectionFilter = FILTER_FACTORY.not(selectionFilter);
-
-            for(final Rule rule : normalRules){
-                final MutableRule mixedRule = STYLE_FACTORY.rule(rule.symbolizers().toArray(new Symbolizer[0]));
-                Filter f = rule.getFilter();
-                if(f == null){
-                    f = notSelectionFilter;
-                }else{
-                    f = FILTER_FACTORY.and(f,notSelectionFilter);
-                }
-                mixedRule.setFilter(f);
-                mixedRules.add(GO2Utilities.getCached(mixedRule,type));
-            }
-
-            rules = mixedRules.toArray(new CachedRule[mixedRules.size()]);
-
-        }else{
-            rules = GO2Utilities.getValidCachedRules(
-                style, renderingContext.getSEScale(), type);
-        }
-
-        return rules;
     }
 
     protected boolean paintVectorLayer(final CachedRule[] rules, final FeatureSet candidates, final RenderingContext2D context) {

@@ -16,9 +16,10 @@
  */
 package org.geotoolkit.image.interpolation;
 
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.Arrays;
-import org.geotoolkit.image.iterator.PixelIterator;
+import org.apache.sis.image.PixelIterator;
 
 /**
  * <p>Define standard interpolation.<br/><br/>
@@ -113,11 +114,11 @@ public abstract class Interpolation {
     public Interpolation(PixelIterator pixelIterator, int windowSize, ResampleBorderComportement borderChoice, double[] fillValue) {
         this.pixelIterator = pixelIterator;
         this.numBands   = pixelIterator.getNumBands();
-        this.boundary   = pixelIterator.getBoundary(false);
+        this.boundary   = pixelIterator.getDomain();
         if (windowSize > boundary.width || windowSize > boundary.height)
-            throw new IllegalArgumentException("windowSide argument is more "
-                    + "larger than iterate object boundary side. boundary = "
-                    +boundary+" windowSide = "+windowSize);
+            throw new IllegalArgumentException("windowSide argument is "
+                    + "larger than object boundary. boundary = "
+                    + boundary + " windowSide = " + windowSize);
 
         bminX = boundary.x - 0.5;
         bminY = boundary.y - 0.5;
@@ -234,25 +235,25 @@ public abstract class Interpolation {
          * If area is null iterate on all image area.
          */
         if (area == null) {
-            int band = 0;
-            double value;
+            double[] pixel = null;
             while(pixelIterator.next()) {
-                value = pixelIterator.getSampleDouble();
-                        final int minBandOrdinate = 6 * band;
-                        if (value < minMax[minBandOrdinate]) {
-                            //-- min value, x, y coordinates
-                            minMax[minBandOrdinate] = value;
-                            minMax[minBandOrdinate + 1] = pixelIterator.getX();
-                            minMax[minBandOrdinate + 2] = pixelIterator.getY();
-                        }
-                        if (value > minMax[minBandOrdinate + 3]) {
-                            //-- max value, x, y coordinates
-                            minMax[minBandOrdinate + 3] = value;
-                            minMax[minBandOrdinate + 4] = pixelIterator.getX();
-                            minMax[minBandOrdinate + 5] = pixelIterator.getY();
-                        }
-                if (++band >= numBands) {
-                    band = 0;
+                pixel = pixelIterator.getPixel(pixel);
+
+                for (int band = 0; band < pixel.length; band++) {
+                    final int minBandOrdinate = 6 * band;
+                    final Point position = pixelIterator.getPosition();
+                    if (pixel[band] < minMax[minBandOrdinate]) {
+                        //-- min value, x, y coordinates
+                        minMax[minBandOrdinate] = pixel[band];
+                        minMax[minBandOrdinate + 1] = position.x;
+                        minMax[minBandOrdinate + 2] = position.y;
+                    }
+                    if (pixel[band] > minMax[minBandOrdinate + 3]) {
+                        //-- max value, x, y coordinates
+                        minMax[minBandOrdinate + 3] = pixel[band];
+                        minMax[minBandOrdinate + 4] = position.x;
+                        minMax[minBandOrdinate + 5] = position.y;
+                    }
                 }
             }
         } else if (!getBoundary().contains(area)) {
@@ -267,9 +268,9 @@ public abstract class Interpolation {
                      * Call moveTo at each pixel coordinates because we don't know Iterator implementation.
                      * Iterate row by row or raster by raster has different comportements.
                      */
-                    pixelIterator.moveTo(x, y, 0);
+                    pixelIterator.moveTo(x, y);
                     for (int band = 0; band < numBands; band++) {
-                        value = pixelIterator.getSampleDouble();
+                        value = pixelIterator.getSampleDouble(band);
                         final int minBandOrdinate = 6 * band;
                         if (value < minMax[minBandOrdinate]) {
                             //-- min value, x, y coordinates
@@ -283,7 +284,6 @@ public abstract class Interpolation {
                             minMax[minBandOrdinate + 4] = x;
                             minMax[minBandOrdinate + 5] = y;
                         }
-                        pixelIterator.next();
                     }
                 }
             }

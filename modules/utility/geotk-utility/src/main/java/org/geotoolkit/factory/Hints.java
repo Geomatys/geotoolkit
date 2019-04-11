@@ -20,6 +20,7 @@ package org.geotoolkit.factory;
 import java.awt.RenderingHints;
 import javax.swing.event.ChangeListener; // For javadoc
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
 import java.nio.file.Files;
@@ -35,6 +36,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import javax.naming.Name;
 import javax.sql.DataSource;
+import org.apache.sis.io.TableAppender;
 
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.cs.AxisDirection;
@@ -442,17 +444,7 @@ public class Hints extends RenderingHints {
     public static final Key TILE_ENCODING = new Key(String.class);
 
     /**
-     * The {@link org.opengis.coverage.processing.GridCoverageProcessor} instance to use.
-     *
-     * @see org.geotoolkit.coverage.CoverageFactoryFinder#getCoverageProcessor(Hints)
-     *
-     * @category Coverage
-     */
-    public static final ClassKey GRID_COVERAGE_PROCESSOR = new ClassKey("org.opengis.coverage.processing.GridCoverageProcessor");
-
-    /**
-     * Forces the {@linkplain org.opengis.coverage.processing.GridCoverageProcessor grid coverage
-     * processor} to perform operations on the specified view.
+     * Forces the grid coverage processor to perform operations on the specified view.
      * <p>
      * Some operation when called on a {@linkplain org.geotoolkit.coverage.grid.GridCoverage2D grid
      * coverage} tries to converts to {@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS
@@ -465,7 +457,7 @@ public class Hints extends RenderingHints {
      * operations to work on {@linkplain org.geotoolkit.coverage.grid.ViewType#PHOTOGRAPHIC
      * photographic} view directly, even performing color expansions as needed. This can be
      * accomplished by setting this hint to the desired view. Be aware that interpolations
-     * after color expansions may produce colors that do not accuratly represent the geophysical
+     * after color expansions may produce colors that do not accurately represent the geophysical
      * value.
      *
      * @since 2.5
@@ -474,11 +466,11 @@ public class Hints extends RenderingHints {
     public static final Key COVERAGE_PROCESSING_VIEW = new Key("org.geotoolkit.coverage.grid.ViewType");
 
     /**
-     * The {@link org.opengis.coverage.SampleDimensionType} to use.
+     * The {@link org.geotoolkit.coverage.SampleDimensionType} to use.
      *
      * @category Coverage
      */
-    public static final Key SAMPLE_DIMENSION_TYPE = new Key("org.opengis.coverage.SampleDimensionType");
+    public static final Key SAMPLE_DIMENSION_TYPE = new Key("org.geotoolkit.coverage.SampleDimensionType");
 
 
 
@@ -816,7 +808,52 @@ public class Hints extends RenderingHints {
      */
     @Override
     public String toString() {
-        return Factory.toString(this);
+        return toString(this);
+    }
+
+
+    /**
+     * Returns a string representation of the specified hints. This is used by
+     * {@link Hints#toString} in order to share the code provided in this class.
+     */
+    private static String toString(final Map<?,?> hints) {
+        return format(hints);
+    }
+
+    /**
+     * Formats the specified hints. This method is just the starting
+     * point for {@link #format(Writer, Map, String, Map)} below.
+     */
+    private static String format(final Map<?,?> hints) {
+        final TableAppender table;
+        try {
+            table = new TableAppender(" ");
+            format(table, hints, "  ");
+        } catch (IOException e) {
+            // Should never happen, since we are writing in a buffer.
+            throw new AssertionError(e);
+        }
+        return table.toString();
+    }
+
+    /**
+     * Formats recursively the tree. This method invoke itself.
+     */
+    private static void format(final TableAppender table, final Map<?,?> hints, final String indent) throws IOException {
+        for (final Map.Entry<?,?> entry : hints.entrySet()) {
+            final Object k = entry.getKey();
+            String key = (k instanceof RenderingHints.Key) ?
+                    Hints.nameOf((RenderingHints.Key) k) : String.valueOf(k);
+            Object value = entry.getValue();
+            table.append(indent);
+            table.append(key);
+            char separator = ':';
+            table.nextColumn();
+            table.append(separator);
+            table.append(' ');
+            table.append(String.valueOf(value));
+            table.nextLine();
+        }
     }
 
     /**

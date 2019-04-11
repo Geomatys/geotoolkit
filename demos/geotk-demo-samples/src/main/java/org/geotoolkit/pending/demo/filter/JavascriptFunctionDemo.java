@@ -2,8 +2,8 @@
 
 package org.geotoolkit.pending.demo.filter;
 
-import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.filter.function.javascript.JavaScriptFunctionFactory;
 import org.geotoolkit.pending.demo.Demos;
 import org.opengis.feature.Feature;
@@ -15,7 +15,7 @@ import org.opengis.filter.expression.Literal;
 
 public class JavascriptFunctionDemo {
 
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     public static void main(String[] args) {
         Demos.init();

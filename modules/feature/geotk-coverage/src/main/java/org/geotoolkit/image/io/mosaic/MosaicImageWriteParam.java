@@ -18,19 +18,10 @@
 package org.geotoolkit.image.io.mosaic;
 
 import java.io.File;
-import java.awt.Color;
-import java.awt.image.RenderedImage;
-import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
-import java.awt.image.ComponentColorModel;
 import javax.imageio.ImageWriteParam;
 
-import org.opengis.coverage.PaletteInterpretation;
-
-import org.geotoolkit.image.ImageWorker;
-
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.image.internal.SimpleBufferedImageOp;
 
 
 /**
@@ -152,79 +143,5 @@ public class MosaicImageWriteParam extends ImageWriteParam {
      */
     public void setSourceTileFilter(final BufferedImageOp filter) {
         sourceTileFilter = filter;
-    }
-
-    /**
-     * Sets the {@linkplain #setSourceTileFilter source tile filter} to an operation that
-     * replace the given set of opaque colors by fully transparent pixels. Only the colors
-     * in the neighbor of the tile borders are replaced, as described in the
-     * {@link org.geotoolkit.image.jai.SilhouetteMask} operation.
-     * <p>
-     * This method is appropriate only for {@linkplain ComponentColorModel component color model}
-     * in RGB color space. If the source images use a different color model or space, they will be
-     * converted.
-     *
-     * @param colors The border colors to make transparent. The colors are presumed opaque,
-     *        i.e. alpha values are ignored.
-     *
-     * @since 3.00
-     */
-    public void setOpaqueBorderFilter(final Color... colors) {
-        setSourceTileFilter(new BorderFilter(colors));
-    }
-
-    /**
-     * An operation that replace opaque color by fully transparent pixels.
-     *
-     * @author Martin Desruisseaux (Geomatys)
-     * @version 3.01
-     *
-     * @since 3.00
-     * @module
-     */
-    private static final class BorderFilter extends SimpleBufferedImageOp {
-        /**
-         * For cross-version compatibility.
-         */
-        private static final long serialVersionUID = 890880010471839924L;
-
-        /**
-         * The opaque border color to make transparent.
-         */
-        private final Color[] colors;
-
-        /**
-         * Creates a new filter for the given opaque border colors to make transparent.
-         */
-        BorderFilter(final Color[] colors) {
-            this.colors = colors.clone();
-        }
-
-        /**
-         * Applies the filter, which replace opaque border colors by fully transparent pixels.
-         * This operation works only on component color model using RGB color space
-         */
-        @Override
-        @SuppressWarnings("fallthrough")
-        public RenderedImage filter(final BufferedImage src) {
-            final ImageWorker worker = new ImageWorker(src);
-            worker.setColorSpaceType(PaletteInterpretation.RGB);
-            worker.setColorModelType(ComponentColorModel.class);
-            final double[][] RGBs = new double[colors.length][worker.getNumBands()];
-            for (int i=0; i<RGBs.length; i++) {
-                final Color color = colors[i];
-                final double[] RGB = RGBs[i];
-                switch (RGB.length) {
-                    default: // Fall through in every cases.
-                    case 4: RGB[3] = color.getAlpha();
-                    case 3: RGB[2] = color.getBlue();
-                    case 2: RGB[1] = color.getGreen();
-                    case 1: RGB[0] = color.getRed();
-                    case 0: break;
-                }
-            }
-            worker.maskBackground(RGBs, null);
-            return worker.getRenderedImage();
-        }
     }
 }

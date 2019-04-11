@@ -46,7 +46,7 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -55,6 +55,7 @@ import org.w3c.dom.Node;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.opengis.referencing.crs.SingleCRS;
 
 /**
@@ -91,7 +92,8 @@ public class GeoTiffMetaDataWriter {
         //readjust gridToCRS to be the pixel corner
         final Georectified georect = spatialMD.getInstanceForType(Georectified.class);
         final CellGeometry cell = georect.getCellGeometry();
-        final PixelOrientation orientation = georect.getPointInPixel();
+        PixelOrientation orientation = georect.getPointInPixel();
+        if (orientation == null) orientation = PixelOrientation.CENTER;
 
         /*
          * FAQ GEOTIFF :
@@ -159,7 +161,7 @@ public class GeoTiffMetaDataWriter {
     }
 
     /**
-     * Fill metadata tree with {@link GridSampleDimension} properties like noData
+     * Fill metadata tree with {@link SampleDimension} properties like noData
      * or minimum and maximum sample values.<br><br>
      *
      * Note : more informations at about tiff specification :<br>
@@ -177,7 +179,7 @@ public class GeoTiffMetaDataWriter {
         ArgumentChecks.ensureNonNull("stack", stack);
         ArgumentChecks.ensureNonNull("spatialMD", spatialMD);
         final DimensionAccessor accessor                 = new DimensionAccessor(spatialMD);
-        final List<GridSampleDimension> sampleDimensions = accessor.getGridSampleDimensions();
+        final List<SampleDimension> sampleDimensions = accessor.getSampleDimensions();
 
         if (sampleDimensions == null) {
             LOGGER.log(Level.FINE, "GeotiffMetadataWriter : no gridSampleDimension setted into spatialMetadata.");
@@ -193,17 +195,17 @@ public class GeoTiffMetaDataWriter {
         int maxSVId       = 0;
 
         if (sampleDimensions != null && !sampleDimensions.isEmpty()) {
-            for (GridSampleDimension dimension : sampleDimensions) {
+            for (SampleDimension dimension : sampleDimensions) {
 
                 //-- min samplevalue
-                final double minSVd = dimension.getMinimumValue();
+                final double minSVd = SampleDimensionUtils.getMinimumValue(dimension);
                 if (checkDoubleToShort(minSVd)) minSV[minSVId++] = (short) minSVd;
 
                 //-- maxSampleValue
-                final double maxSVd = dimension.getMaximumValue();
+                final double maxSVd = SampleDimensionUtils.getMaximumValue(dimension);
                 if (checkDoubleToShort(maxSVd)) maxSV[maxSVId++] = (short) maxSVd;
 
-                final double[] dimNoData = dimension.getNoDataValues();
+                final double[] dimNoData = SampleDimensionUtils.getNoDataValues(dimension);
                 if (noData == null) {
                     noData = dimNoData;
                 } else {

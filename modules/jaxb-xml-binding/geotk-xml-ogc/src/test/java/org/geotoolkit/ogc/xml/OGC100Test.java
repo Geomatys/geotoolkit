@@ -23,8 +23,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.ogc.xml.v100.BinaryComparisonOpType;
 import org.geotoolkit.ogc.xml.v100.BinaryLogicOpType;
 import org.geotoolkit.ogc.xml.v100.BinaryOperatorType;
@@ -43,6 +42,7 @@ import org.junit.Test;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Not;
 import org.opengis.filter.Or;
@@ -68,10 +68,8 @@ public class OGC100Test {
 
     private static final FilterFactory2 FILTER_FACTORY;
 
-    static{
-        final Hints hints = new Hints();
-        hints.put(Hints.FILTER_FACTORY, FilterFactory2.class);
-        FILTER_FACTORY = (FilterFactory2) FactoryFinder.getFilterFactory(hints);
+    static {
+        FILTER_FACTORY = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
     }
 
     private static MarshallerPool POOL;

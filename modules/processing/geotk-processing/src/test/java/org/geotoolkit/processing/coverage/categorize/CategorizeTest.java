@@ -7,7 +7,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.Names;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -17,14 +17,13 @@ import org.geotoolkit.coverage.memory.MemoryCoverageStore;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifierTest;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.test.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -35,11 +34,6 @@ public class CategorizeTest {
     @Test
     public void test2D() throws DataStoreException, ProcessException {
         test2D(false);
-    }
-
-    @Test
-    public void testSubset2D() throws DataStoreException, ProcessException {
-        test2D(true);
     }
 
     private void test2D(final boolean subset) throws DataStoreException, ProcessException {
@@ -98,7 +92,7 @@ public class CategorizeTest {
         final GridCoverage outCvg;
         final GridCoverageReader outReader = output.acquireReader();
         try {
-            outCvg = outReader.read(0, new GridCoverageReadParam());
+            outCvg = outReader.read(new GridCoverageReadParam());
         } finally {
             output.recycle(outReader);
         }
@@ -186,7 +180,7 @@ public class CategorizeTest {
             readEnv.setRange(1, -10, 10);
             for (int i = 0; i < expectedClassifs.length; i++) {
                 readEnv.setRange(2, i, i);
-                final GridCoverage outCvg = outReader.read(0, param);
+                final GridCoverage outCvg = outReader.read(param);
                 Assert.assertEquals("Output envelope is not conform to source data.", readEnv, outCvg.getEnvelope());
                 final RenderedImage outImage = outCvg.getRenderableImage(0, 1).createDefaultRendering();
                 final int[] pixels = outImage.getData().getPixels(0, 0, outImage.getWidth(), outImage.getHeight(), (int[]) null);

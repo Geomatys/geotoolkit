@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.db.reverse;
 
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.factory.FactoryFinder;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.PropertyName;
@@ -30,7 +30,7 @@ import org.opengis.filter.expression.PropertyName;
  */
 public class RelationMetaModel {
 
-    public static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    public static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     private final String relationName;
     private final String currentColumn;

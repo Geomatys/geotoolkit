@@ -5,6 +5,9 @@ import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
@@ -13,15 +16,12 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.CoverageStack;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
@@ -35,9 +35,7 @@ import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifier;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifierDescriptor;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.opengis.coverage.Coverage;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.parameter.ParameterValueGroup;
@@ -46,7 +44,6 @@ import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -74,22 +71,22 @@ public class Categorize extends AbstractProcess {
         final GridCoverageReader reader;
         try {
             reader = source.acquireReader();
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             throw new ProcessException("Cannot access data source", this, ex);
         }
 
         final GridCoverageWriter writer;
         try {
             writer = destination.acquireWriter();
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             throw new ProcessException("Cannot access data output", this, ex);
         }
 
         try (final UncheckedCloseable inClose = () -> source.recycle(reader);
                 final UncheckedCloseable outClose = () -> destination.recycle(writer)) {
-            final GeneralGridGeometry inputGG = reader.getGridGeometry(source.getImageIndex());
+            final GridGeometry inputGG = source.getGridGeometry();
 
-            final GeneralGridGeometry readGeom;
+            final GridGeometry readGeom;
             Envelope env = getEnvelope();
             if (env == null) {
                 env = inputGG.getEnvelope();
@@ -132,19 +129,19 @@ public class Categorize extends AbstractProcess {
                     env = tmpEnv;
                 }
 
-                readGeom = new GeneralGridGeometry(PixelInCell.CELL_CORNER, gridToCRS, env);
+                readGeom = new GridGeometry(PixelInCell.CELL_CORNER, gridToCRS, env, GridRoundingMode.ENCLOSING);
             }
 
             final GridGeometryIterator it = new GridGeometryIterator(readGeom);
             while (it.hasNext()) {
                 final GridCoverageReadParam readParam = new GridCoverageReadParam();
-                final GeneralGridGeometry sliceGeom = it.next();
+                final GridGeometry sliceGeom = it.next();
                 final GeneralEnvelope expectedSliceEnvelope = GeneralEnvelope.castOrCopy(sliceGeom.getEnvelope());
                 readParam.setEnvelope(expectedSliceEnvelope);
-                GridCoverage sourceCvg = reader.read(source.getImageIndex(), readParam);
-                if (sourceCvg instanceof CoverageStack) {
+                GridCoverage sourceCvg = reader.read(readParam);
+                if (sourceCvg instanceof GridCoverageStack) {
                     // Try to unravel expected slice
-                    final Optional<GridCoverage2D> slice = extractSlice((CoverageStack) sourceCvg, sliceGeom.getEnvelope());
+                    final Optional<GridCoverage2D> slice = extractSlice((GridCoverageStack) sourceCvg, sliceGeom.getEnvelope());
                     if (slice.isPresent()) {
                         sourceCvg = slice.get();
                     }
@@ -157,7 +154,7 @@ public class Categorize extends AbstractProcess {
                 // If the reader has not returned a coverage fitting queried
                 // geometry, we have to resample input ourselves.
                 GridCoverage2D source2D = (GridCoverage2D) sourceCvg;
-                source2D = source2D.view(ViewType.GEOPHYSICS);
+                source2D = source2D.forConvertedValues(true);
                 final boolean compliantCrs = Utilities.equalsApproximatively(expectedSliceEnvelope.getCoordinateReferenceSystem(), source2D.getCoordinateReferenceSystem());
                 final boolean compliantEnvelope = expectedSliceEnvelope.contains(source2D.getEnvelope(), true);
                 if (!(compliantCrs && compliantEnvelope)) {
@@ -180,7 +177,7 @@ public class Categorize extends AbstractProcess {
             throw new ProcessException("Cannot adapt input geometry", this, ex);
         } catch (FactoryException ex) {
             throw new ProcessException("Failure on EPSG database use", this, ex);
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             throw new ProcessException("Cannot access either input or output data source", this, ex);
         } catch (CancellationException ex) {
             throw new DismissProcessException("Process cancelled", this, ex);
@@ -194,16 +191,16 @@ public class Categorize extends AbstractProcess {
      * @return If we find a 2D data contained in the given envelope, we return it.
      * Otherwise, we return nothing.
      */
-    private static Optional<GridCoverage2D> extractSlice(final CoverageStack source, final Envelope aoi) {
+    private static Optional<GridCoverage2D> extractSlice(final GridCoverageStack source, final Envelope aoi) {
         int stackSize = source.getStackSize();
         for (int i = 0; i < stackSize; i++) {
-            final Coverage cvg = source.coverageAtIndex(i);
+            final GridCoverage cvg = source.coverageAtIndex(i);
             final GeneralEnvelope subsetEnvelope = GeneralEnvelope.castOrCopy(cvg.getEnvelope());
             if (subsetEnvelope.contains(aoi, true)) {
                 if (cvg instanceof GridCoverage2D) {
                     return Optional.of((GridCoverage2D) cvg);
-                } else if (cvg instanceof CoverageStack) {
-                    return extractSlice((CoverageStack) cvg, aoi);
+                } else if (cvg instanceof GridCoverageStack) {
+                    return extractSlice((GridCoverageStack) cvg, aoi);
                 }
             }
         }
@@ -240,7 +237,7 @@ public class Categorize extends AbstractProcess {
      * @return The resampled data, never null.
      * @throws ProcessException
      */
-    private GridCoverage2D resample(final GridCoverage2D source, final GeneralGridGeometry target) throws ProcessException, TransformException {
+    private GridCoverage2D resample(final GridCoverage2D source, final GridGeometry target) throws ProcessException, TransformException {
         if (!(target instanceof GridGeometry2D)) {
             throw new ProcessException("Subset cannot be done. Incompatible grid geometry.", this);
         }
@@ -328,9 +325,9 @@ public class Categorize extends AbstractProcess {
      * envelope.
      */
     private static GridGeometry2D hack(final GridGeometry2D source) throws TransformException {
-        final GridEnvelope sourceExtent = source.getExtent();
-        final int minX = sourceExtent.getLow(source.gridDimensionX);
-        final int minY = sourceExtent.getLow(source.gridDimensionY);
+        final GridExtent sourceExtent = source.getExtent();
+        final long minX = sourceExtent.getLow(source.gridDimensionX);
+        final long minY = sourceExtent.getLow(source.gridDimensionY);
         if (minX == 0 && minY == 0 && source.getDimension() < 3) {
             return source;
         }
@@ -340,13 +337,13 @@ public class Categorize extends AbstractProcess {
          * whose raster origin is not (0, 0). To bypass this problem, we simply
          * shift source extent, so its horizontal dimensions starts at 0.
          */
-        final int[] low = sourceExtent.getLow().getCoordinateValues();
-        final int[] high = sourceExtent.getHigh().getCoordinateValues();
+        final long[] low = GridGeometryIterator.getLow(sourceExtent);
+        final long[] high = GridGeometryIterator.getHigh(sourceExtent);
         low[source.gridDimensionX] = 0;
         high[source.gridDimensionX] = high[source.gridDimensionX] - minX;
         low[source.gridDimensionY] = 0;
         high[source.gridDimensionY] = high[source.gridDimensionY] - minY;
-        final GeneralGridEnvelope modifiedExtent = new GeneralGridEnvelope(low, high, true);
+        final GridExtent modifiedExtent = new GridExtent(null, low, high, true);
 
         /* Force empty span on dimensions. To be sure the result is correct,
          * coordinates must be reprojected from pixel centers. If not, shifts
@@ -354,17 +351,17 @@ public class Categorize extends AbstractProcess {
          */
         final GeneralEnvelope flattenEnvelope;
         if (source.getDimension() > 2) {
-            final GridEnvelope inExtent = source.getExtent();
+            final GridExtent inExtent = source.getExtent();
             final GeneralEnvelope inGridEnv = new GeneralEnvelope(source.getDimension());
             for (int i = 0; i < source.getDimension(); i++) {
-                if (inExtent.getSpan(i) > 1 || i == source.gridDimensionX || i == source.gridDimensionY) {
+                if (inExtent.getSize(i) > 1 || i == source.gridDimensionX || i == source.gridDimensionY) {
                     inGridEnv.setRange(i, inExtent.getLow(i) - 0.5, inExtent.getHigh(i) + 0.5);
                 } else {
                     inGridEnv.setRange(i, inExtent.getLow(i), inExtent.getHigh(i));
                 }
             }
 
-            flattenEnvelope = Envelopes.transform(source.getGridToCRS(), inGridEnv);
+            flattenEnvelope = Envelopes.transform(source.getGridToCRS(PixelInCell.CELL_CENTER), inGridEnv);
             flattenEnvelope.setCoordinateReferenceSystem(source.getCoordinateReferenceSystem());
         } else {
             flattenEnvelope = new GeneralEnvelope(source.getEnvelope());

@@ -57,8 +57,6 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
-import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
@@ -67,8 +65,6 @@ import org.geotoolkit.gui.javafx.util.FXOptionDialog;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreFactory;
@@ -278,12 +274,12 @@ public class FXStoreChooser extends BorderPane {
         for (Resource selection : selected) {
             if (selection instanceof GridCoverageResource) {
                 final GridCoverageResource ref = (GridCoverageResource) selection;
-                final CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref);
+                final MapLayer layer = MapBuilder.createCoverageLayer(ref);
                 layer.setName(ref.getIdentifier().tip().toString());
                 layers.add(layer);
             } else if (selection instanceof FeatureSet) {
                 final FeatureSet fs = (FeatureSet) selection;
-                final FeatureMapLayer layer = MapBuilder.createFeatureLayer(fs);
+                final MapLayer layer = MapBuilder.createFeatureLayer(fs);
                 layer.setStyle(RandomStyleBuilder.createRandomVectorStyle(fs.getType()));
                 layers.add(layer);
             }

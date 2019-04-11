@@ -48,11 +48,6 @@ import org.geotoolkit.resources.Errors;
 @Deprecated
 final class TreeFormat {
     /**
-     * For cross-version compatibility.
-     */
-    private static final long serialVersionUID = -4476366905386037025L;
-
-    /**
      * The number of spaces to add on the left margin for each indentation level.
      * The default value is 4.
      */

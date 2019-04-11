@@ -23,14 +23,11 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.test.referencing.ParameterizedTransformTest;
-
-import org.geotoolkit.factory.FactoryFinder;
-
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
 import static java.lang.StrictMath.*;
+import org.apache.sis.internal.system.DefaultFactories;
 import static org.opengis.test.Assert.*;
 
 
@@ -56,7 +53,7 @@ public final strictfp class GeoapiTest extends ParameterizedTransformTest {
      * Creates a new test suite using the singleton factory instance.
      */
     public GeoapiTest() {
-        super(FactoryFinder.getMathTransformFactory(null));
+        super(DefaultFactories.forBuildin(MathTransformFactory.class));
     }
 
     /**

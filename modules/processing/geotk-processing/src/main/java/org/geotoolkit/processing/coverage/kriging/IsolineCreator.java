@@ -24,16 +24,12 @@ import java.util.NoSuchElementException;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 import javax.vecmath.Point3d;
-
 import org.opengis.coverage.grid.SequenceType;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
-
 import static java.lang.Double.isNaN;
+import org.apache.sis.image.PixelIterator;
 
 
 /**
@@ -88,7 +84,7 @@ public class IsolineCreator {
      * @param levels Values for which to compute isolines.
      */
     public IsolineCreator(final RenderedImage image, final double... levels) {
-        this(PixelIteratorFactory.createRowMajorIterator(image), levels);
+        this(new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(image), levels);
     }
 
     /**
@@ -103,13 +99,13 @@ public class IsolineCreator {
         if (iterator.getNumBands() != 1) {
             throw new IllegalArgumentException("Image must have a single band.");
         }
-        if (!SequenceType.LINEAR.equals(iterator.getIterationDirection())) {
+        if (!SequenceType.LINEAR.equals(iterator.getIterationOrder())) {
             throw new IllegalArgumentException("PixelIterator must be row-major.");
         }
         this.iterator = iterator;
         this.levels = levels.clone();
         Arrays.sort(this.levels);
-        final Rectangle area = iterator.getBoundary(true);
+        final Rectangle area = iterator.getDomain();
         xMin   = area.x;
         yMin   = area.y;
         width  = area.width;
@@ -160,7 +156,7 @@ public class IsolineCreator {
                 if (!iterator.next()) {
                     throw new NoSuchElementException();
                 }
-                final double z = iterator.getSampleDouble();
+                final double z = iterator.getSampleDouble(0);
                 double zmin = z; // May be non-NaN even if zOnTop or zOnLeft is NaN.
                 double zmax = z;
                 final double zOnTop = zOnTopRow[x];

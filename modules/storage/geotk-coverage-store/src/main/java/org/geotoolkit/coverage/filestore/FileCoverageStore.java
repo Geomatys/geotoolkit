@@ -44,7 +44,6 @@ import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.coverage.amended.AmendedCoverageResource;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
-import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.image.io.SupportFiles;
@@ -229,65 +228,52 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
 
             final int nbImage = reader.getNumImages(true);
 
-            if (reader instanceof NamedImageStore) {
-                //try to find a proper name for each image
-                final NamedImageStore nis = (NamedImageStore) reader;
-
-                final List<String> imageNames = nis.getImageNames();
-                for (int i = 0, n = imageNames.size(); i < n; i++) {
-                    final String in = imageNames.get(i);
-                    final GenericName name = NamesExt.create(filename + "." + in);
-                    final FileCoverageResource fcr = new FileCoverageResource(this, name, candidate, i);
-                    resources.add(fcr);
+            for (int i = 0; i < nbImage; i++) {
+                final GenericName name;
+                if (nbImage == 1) {
+                    //don't number it if there is only one
+                    name = NamesExt.create(filename);
+                } else {
+                    name = NamesExt.create(filename + "." + i);
                 }
 
-            } else {
-                for (int i = 0; i < nbImage; i++) {
-                    final GenericName name;
-                    if (nbImage == 1) {
-                        //don't number it if there is only one
-                        name = NamesExt.create(filename);
-                    } else {
-                        name = NamesExt.create(filename + "." + i);
-                    }
+                GridCoverageResource fcr = new FileCoverageResource(this, name, candidate);
 
-                    GridCoverageResource fcr = new FileCoverageResource(this, name, candidate, i);
-
-                    //HACK : check if the image define a CRS, if not check if grid is within CRS:84 envelope
-                    //if so we amend the resource and define the crs
-                    ImageCoverageReader covreader = null;
-                    try {
-                        covreader = new ImageCoverageReader();
-                        covreader.setInput(reader);
-                        final GridGeometry2D gg = covreader.getGridGeometry(i);
-                        final CoordinateReferenceSystem crs = gg.getCoordinateReferenceSystem();
-                        if (crs instanceof ImageCRS && crs.getCoordinateSystem().getDimension() == 2) {
-                            final Envelope dataEnv = gg.getEnvelope();
-                            final DirectPosition lowerCorner = dataEnv.getLowerCorner();
-                            final DirectPosition upperCorner = dataEnv.getUpperCorner();
-                            if (   lowerCorner.getOrdinate(0) >= -181
-                                && lowerCorner.getOrdinate(1) >= -91
-                                && upperCorner.getOrdinate(0) <= +91
-                                && upperCorner.getOrdinate(1) <= +181) {
-                                final AmendedCoverageResource acr = new AmendedCoverageResource(fcr, this);
-                                acr.setOverrideCRS(CommonCRS.WGS84.normalizedGeographic());
-                                fcr = acr;
-                            }
-                        }
-                    } catch (Exception ex) {
-                        getLogger().log(Level.FINE, ex.getMessage(), ex);
-                        //silent exception
-                    } finally {
-                        if (covreader != null) {
-                            covreader.dispose();
+                //HACK : check if the image define a CRS, if not check if grid is within CRS:84 envelope
+                //if so we amend the resource and define the crs
+                ImageCoverageReader covreader = null;
+                try {
+                    covreader = new ImageCoverageReader();
+                    covreader.setInput(reader);
+                    final GridGeometry2D gg = covreader.getGridGeometry();
+                    final CoordinateReferenceSystem crs = gg.getCoordinateReferenceSystem();
+                    if (crs instanceof ImageCRS && crs.getCoordinateSystem().getDimension() == 2) {
+                        final Envelope dataEnv = gg.getEnvelope();
+                        final DirectPosition lowerCorner = dataEnv.getLowerCorner();
+                        final DirectPosition upperCorner = dataEnv.getUpperCorner();
+                        if (   lowerCorner.getOrdinate(0) >= -181
+                            && lowerCorner.getOrdinate(1) >= -91
+                            && upperCorner.getOrdinate(0) <= +91
+                            && upperCorner.getOrdinate(1) <= +181) {
+                            final AmendedCoverageResource acr = new AmendedCoverageResource(fcr, this);
+                            acr.setOverrideCRS(CommonCRS.WGS84.normalizedGeographic());
+                            fcr = acr;
                         }
                     }
-
-
-
-                    resources.add(fcr);
+                } catch (Exception ex) {
+                    getLogger().log(Level.FINE, ex.getMessage(), ex);
+                    //silent exception
+                } finally {
+                    if (covreader != null) {
+                        covreader.dispose();
+                    }
                 }
+
+
+
+                resources.add(fcr);
             }
+
         } finally {
             XImageIO.disposeSilently(reader);
         }
@@ -405,7 +391,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
         final String fileName = name.tip().toString();
         final URI filePath = rootPath.resolve(fileName+".tiff");
 
-        final FileCoverageResource fcr = new FileCoverageResource(this, name, Paths.get(filePath), 0);
+        final FileCoverageResource fcr = new FileCoverageResource(this, name, Paths.get(filePath));
         resources.add(fcr);
 
         return fcr;

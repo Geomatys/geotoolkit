@@ -17,9 +17,8 @@
 package org.geotoolkit.processing.image.statistics;
 
 import java.awt.image.RenderedImage;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.math.Statistics;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -46,7 +45,7 @@ public class ImageStatisticsProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
         final RenderedImage inImg = inputParameters.getValue(INPUT_IMAGE);
 
-        final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(inImg);
+        final PixelIterator pix = PixelIterator.create(inImg);
 
         final int numBand = pix.getNumBands();
         final Statistics[] stats = new Statistics[numBand];
@@ -54,10 +53,10 @@ public class ImageStatisticsProcess extends AbstractProcess {
             stats[b] = new Statistics("statistic from band "+b);
         }
 
-        int b = 0;
         while (pix.next()) {
-            stats[b].accept(pix.getSampleDouble());
-            if (++b == numBand) b = 0;
+            for (int b = 0; b < numBand; b++) {
+                stats[b].accept(pix.getSampleDouble(b));
+            }
         }
 
         outputParameters.getOrCreate(OUTPUT_STATS).setValue(stats);

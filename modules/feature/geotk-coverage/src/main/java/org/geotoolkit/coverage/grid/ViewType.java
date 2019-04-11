@@ -44,12 +44,8 @@ import org.geotoolkit.image.internal.ImageUtilities;
  * can not be processed directly by an {@linkplain IndexColorModel index color model}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
  *
  * @see GridCoverage2D#view
- *
- * @since 2.4
- * @module
  */
 public enum ViewType {
     /**
@@ -77,7 +73,7 @@ public enum ViewType {
 
     /**
      * Coverage data are packed, usually as integers convertible to geophysics values. The conversion
-     * is performed by the {@linkplain org.geotoolkit.coverage.GridSampleDimension#getSampleToGeophysics
+     * is performed by the {@linkplain org.geotoolkit.coverage.SampleDimension#getSampleToGeophysics
      * sample to geophysics} transform (called "<cite>Transfer Function</cite>" in ISO 19115-2).
      * <p>
      * This view is often synonymous to {@link #RENDERED}, but may be different for some data types

@@ -27,6 +27,7 @@ import javax.imageio.ImageTypeSpecifier;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.color.ColorUtilities;
+import org.apache.sis.internal.raster.ColorModelFactory;
 
 
 /**
@@ -207,7 +208,7 @@ public final class IndexedPalette extends Palette {
     @Override
     protected ImageTypeSpecifier createImageTypeSpecifier() throws IOException {
         final int[] ARGB = createARGB();
-        final int bits = ColorUtilities.getBitCount(ARGB.length);
+        final int bits = ColorModelFactory.getBitCount(ARGB.length);
         final int type = (bits <= 8) ? DataBuffer.TYPE_BYTE : DataBuffer.TYPE_USHORT;
         final boolean packed = (bits==1 || bits==2 || bits==4);
         final boolean dense  = (packed || bits==8 || bits==16);
@@ -240,7 +241,7 @@ public final class IndexedPalette extends Palette {
             cm = new ComponentColorModel(cs, new int[] {bits}, false, true, ColorModel.OPAQUE, type);
             sm = cm.createCompatibleSampleModel(1, 1);
         } else {
-            cm = ColorUtilities.getIndexColorModel(ARGB, numBands, visibleBand, -1);
+            cm = ColorModelFactory.createIndexColorModel(ARGB, numBands, visibleBand, -1);
             if (packed && numBands == 1) {
                 sm = new MultiPixelPackedSampleModel(type, 1, 1, bits);
             } else {

@@ -20,7 +20,7 @@ import java.awt.Point;
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
 import javax.media.jai.RasterFactory;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.apache.sis.image.PixelIterator;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -48,7 +48,7 @@ public class LanczosTest extends InterpolationTest {
                 rastertest.setSample(x, y, 0, val++);
             }
         }
-        pixIterator = PixelIteratorFactory.createDefaultIterator(rastertest);
+        pixIterator = new PixelIterator.Builder().create(rastertest);
         interpol = new LanczosInterpolation(pixIterator, 2);
     }
 

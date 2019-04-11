@@ -17,50 +17,47 @@
  */
 package org.geotoolkit.internal.coverage;
 
-import java.util.AbstractMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.List;
-import java.util.Collection;
 import java.awt.RenderingHints;
 import java.awt.image.ColorModel;
-import java.awt.image.RenderedImage;
 import java.awt.image.IndexColorModel;
+import java.awt.image.RenderedImage;
+import java.util.AbstractMap;
 import java.util.LinkedList;
-
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.media.jai.Interpolation;
 import javax.media.jai.InterpolationBilinear;
 import javax.media.jai.InterpolationNearest;
-import javax.media.jai.PropertySource;
-
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.measure.NumberRange;
-
-import org.opengis.coverage.Coverage;
-import org.opengis.coverage.SampleDimension;
-import org.opengis.coverage.grid.GridCoverage;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.lang.Static;
+import org.geotoolkit.referencing.OutOfDomainOfValidityException;
 import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
-import org.opengis.util.FactoryException;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.geometry.MismatchedDimensionException;
-
-import org.apache.sis.geometry.Envelopes;
-import org.geotoolkit.lang.Static;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.grid.RenderedCoverage;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.apache.sis.geometry.Envelope2D;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.OutOfDomainOfValidityException;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -90,7 +87,7 @@ public final class CoverageUtilities extends Static {
      * @return The two-dimensional CRS.
      * @throws TransformException if the CRS can't be reduced to two dimensions.
      */
-    public static CoordinateReferenceSystem getCRS2D(final Coverage coverage)
+    public static CoordinateReferenceSystem getCRS2D(final GridCoverage coverage)
             throws TransformException
     {
         if (coverage instanceof GridCoverage2D) {
@@ -119,7 +116,7 @@ public final class CoverageUtilities extends Static {
      * @return The two-dimensional envelope.
      * @throws MismatchedDimensionException if the envelope can't be reduced to two dimensions.
      */
-    public static Envelope2D getEnvelope2D(final Coverage coverage)
+    public static Envelope2D getEnvelope2D(final GridCoverage coverage)
             throws MismatchedDimensionException
     {
         if (coverage instanceof GridCoverage2D) {
@@ -144,28 +141,19 @@ public final class CoverageUtilities extends Static {
      *
      * @param coverage to use for guessing background values.
      * @return an array of double values to use as a background.
+     *
+     * @deprecated Replaced by {@link SampleDimension#getNoDataValues()}.
      */
+    @Deprecated
     public static double[] getBackgroundValues(final GridCoverage coverage) {
-        /*
-         * Get the sample value to use for background. We will try to fetch this
-         * value from one of "no data" categories. For geophysics images, it is
-         * usually NaN. For non-geophysics images, it is usually 0.
-         */
-        final int numBands = coverage.getNumSampleDimensions();
+        final List<SampleDimension> dims = coverage.getSampleDimensions();
+        final int numBands = dims.size();
         final double[] background = new double[numBands];
         for (int i=0; i<numBands; i++) {
-            final SampleDimension band = coverage.getSampleDimension(i);
-            if (band instanceof GridSampleDimension) {
-                final NumberRange<?> range = ((GridSampleDimension) band).getBackground().getRange();
-                final double min = range.getMinDouble();
-                final double max = range.getMaxDouble();
-                if (range.isMinIncluded()) {
-                    background[i] = min;
-                } else if (range.isMaxIncluded()) {
-                    background[i] = max;
-                } else {
-                    background[i] = 0.5 * (min + max);
-                }
+            final SampleDimension band = dims.get(i);
+            if (band != null) {
+                final int j = i;
+                band.getBackground().ifPresent((n) -> background[j] = n.doubleValue());
             }
         }
         return background;
@@ -193,16 +181,12 @@ public final class CoverageUtilities extends Static {
      */
     public static boolean hasRenderingCategories(final GridCoverage gridCoverage) {
         // getting all the SampleDimensions of this coverage, if any exist
-        final int numSampleDimensions = gridCoverage.getNumSampleDimensions();
-        if (numSampleDimensions == 0) {
+        final List<SampleDimension> dims = gridCoverage.getSampleDimensions();
+        if (dims == null || dims.isEmpty()) {
             return false;
         }
-        final SampleDimension[] sampleDimensions = new SampleDimension[numSampleDimensions];
-        for (int i=0; i<numSampleDimensions; i++) {
-            sampleDimensions[i] = gridCoverage.getSampleDimension(i);
-        }
         // do they have any transformation that is not the identity?
-        return hasTransform(sampleDimensions);
+        return hasTransform(dims.toArray(new SampleDimension[dims.size()]));
     }
 
     /**
@@ -216,39 +200,12 @@ public final class CoverageUtilities extends Static {
     public static boolean hasTransform(final SampleDimension[] sampleDimensions) {
         for (int i=sampleDimensions.length; --i>=0;) {
             SampleDimension sd = sampleDimensions[i];
-            if (sd instanceof GridSampleDimension) {
-                sd = ((GridSampleDimension) sd).geophysics(false);
+            if (sd != null) {
+                sd = sd.forConvertedValues(false);
             }
-            MathTransform1D tr = sd.getSampleToGeophysics();
+            MathTransform1D tr = sd.getTransferFunction().orElse(null);
             if (tr!=null && !tr.isIdentity()) {
                 return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Returns {@code true} if the specified grid coverage or any of its source
-     * uses the following image.
-     *
-     * @param  coverage The coverage to check for its sources.
-     * @param  image The image which may be a source of the given coverage.
-     * @return {@code true} if the coverage use the given image as a source.
-     */
-    public static boolean uses(final GridCoverage coverage, final RenderedImage image) {
-        if (coverage != null) {
-            if (coverage instanceof RenderedCoverage) {
-                if (((RenderedCoverage) coverage).getRenderedImage() == image) {
-                    return true;
-                }
-            }
-            final Collection<GridCoverage> sources = coverage.getSources();
-            if (sources != null) {
-                for (final GridCoverage source : sources) {
-                    if (uses(source, image)) {
-                        return true;
-                    }
-                }
             }
         }
         return false;
@@ -266,8 +223,6 @@ public final class CoverageUtilities extends Static {
         Object candidate = null;
         if (image instanceof RenderedImage) {
             candidate = ((RenderedImage) image).getProperty("GC_VisibleBand");
-        } else if (image instanceof PropertySource) {
-            candidate = ((PropertySource) image).getProperty("GC_VisibleBand");
         }
         if (candidate instanceof Integer) {
             return ((Integer) candidate).intValue();
@@ -567,5 +522,47 @@ public final class CoverageUtilities extends Static {
             scales[i] = scalesList.get(i);
         }
         return new AbstractMap.SimpleEntry<Envelope, double[]>(targetEnv, scales);
+    }
+
+    /**
+     * Shift lower coordinates to zero; this is what BufferedImage wants.
+     */
+    public static GridGeometry forceLowerToZero(final GridGeometry gg) {
+        if (gg != null && gg.isDefined(GridGeometry.EXTENT)) {
+            final GridExtent extent = gg.getExtent();
+            if (!extent.startsAtZero()) {
+                CoordinateReferenceSystem crs = null;
+                if (gg.isDefined(GridGeometry.CRS)) crs = gg.getCoordinateReferenceSystem();
+                final int dimension = extent.getDimension();
+                final double[] vector = new double[dimension];
+                final long[] high = new long[dimension];
+                for (int i=0; i<dimension; i++) {
+                    final long low = extent.getLow(i);
+                    high[i] = extent.getHigh(i) - low;
+                    vector[i] = low;
+                }
+                MathTransform gridToCRS = gg.getGridToCRS(PixelInCell.CELL_CENTER);
+                gridToCRS = MathTransforms.concatenate(MathTransforms.translation(vector), gridToCRS);
+                return new GridGeometry(new GridExtent(null, null, high, true), PixelInCell.CELL_CENTER, gridToCRS, crs);
+            }
+        }
+        return gg;
+    }
+
+    /**
+     * Converts SIS grid coverage to Geotk one.
+     */
+    public static GridCoverage2D toGeotk(final org.apache.sis.coverage.grid.GridCoverage coverage) {
+        if (coverage == null) return null;
+        if (coverage instanceof GridCoverage2D) return (GridCoverage2D) coverage;
+        GridGeometry gg = forceLowerToZero(coverage.getGridGeometry());
+        if (gg.getDimension() > 2) {
+            gg = gg.derive().sliceByRatio(0.5, 0, 1).build();
+        }
+        GridCoverageBuilder builder = new GridCoverageBuilder();
+        builder.setGridGeometry(gg);
+        builder.setSampleDimensions(coverage.getSampleDimensions());
+        builder.setRenderedImage(coverage.render(null));
+        return builder.getGridCoverage2D();
     }
 }

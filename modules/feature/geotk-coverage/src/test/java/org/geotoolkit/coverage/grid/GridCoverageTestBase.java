@@ -17,29 +17,27 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.util.Random;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
+import java.util.Random;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.test.image.ImageTestBase;
-import org.apache.sis.referencing.CommonCRS;
-
 import static org.apache.sis.measure.Units.*;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.test.Assert;
+import org.geotoolkit.test.image.ImageTestBase;
 import static org.junit.Assert.*;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -114,16 +112,17 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
          * left corner at 10°W 30°N.
          */
         final GridCoverage2D  coverage;  // The final grid coverage.
-        final BufferedImage      image;  // The GridCoverage's data.
-        final WritableRaster    raster;  // The image's data as a raster.
-        final Rectangle2D       bounds;  // The GridCoverage's envelope.
-        final GridSampleDimension band;  // The only image's band.
-        band = new GridSampleDimension("Temperature", new Category[] {
-            new Category("No data",     null, 0),
-            new Category("Land",        null, 1),
-            new Category("Cloud",       null, 2),
-            new Category("Temperature", null, BEGIN_VALID, 256, SCALE, OFFSET)
-        }, CELSIUS);
+        final BufferedImage   image;     // The GridCoverage's data.
+        final WritableRaster  raster;    // The image's data as a raster.
+        final Rectangle2D     bounds;    // The GridCoverage's envelope.
+        final SampleDimension band;      // The only image's band.
+        band = new SampleDimension.Builder()
+                .setName        ("Temperature")
+                .addQualitative ("No data", 0)
+                .addQualitative ("Land",    1)
+                .addQualitative ("Cloud",   2)
+                .addQuantitative("Temperature", BEGIN_VALID, 256, SCALE, OFFSET, CELSIUS)
+                .build();
         image  = new BufferedImage(120, 80, BufferedImage.TYPE_BYTE_INDEXED);
         raster = image.getRaster();
         for (int i=raster.getWidth(); --i>=0;) {
@@ -161,8 +160,8 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
         assertSame(coverage,      geophysics.view(ViewType.PACKED));
         assertSame(geophysics,    geophysics.view(ViewType.GEOPHYSICS));
         assertFalse( coverage.equals(geophysics));
-        assertFalse( coverage.getSampleDimension(0).getSampleToGeophysics().isIdentity());
-        assertTrue(geophysics.getSampleDimension(0).getSampleToGeophysics().isIdentity());
+        assertFalse( coverage.getSampleDimensions().get(0).getTransferFunction().get().isIdentity());
+        assertTrue(geophysics.getSampleDimensions().get(0).getTransferFunction().get().isIdentity());
         /*
          * Compares data.
          */
@@ -220,5 +219,42 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
         final GridCoverage2D view = read.view(ViewType.PACKED);
         assertNotSame(read, view);
         return view;
+    }
+
+    /**
+     * Compares the rendered view of two coverages for equality.
+     *
+     * @param expected The coverage containing the expected pixel values.
+     * @param actual   The coverage containing the actual pixel values.
+     */
+    public static void assertRasterEquals(final GridCoverage expected, final GridCoverage actual) {
+        Assert.assertRasterEquals(expected.getRenderableImage(0,1).createDefaultRendering(),
+                             actual.getRenderableImage(0,1).createDefaultRendering());
+    }
+
+    /**
+     * Shows the default rendering of the specified coverage.
+     * This is used for debugging only.
+     *
+     * @param coverage The coverage to display.
+     */
+    protected final synchronized void show(final GridCoverage coverage) {
+        if (!viewEnabled) {
+            return;
+        }
+        final RenderedImage image = coverage.getRenderableImage(0,1).createDefaultRendering();
+        try {
+            Class.forName("org.geotoolkit.gui.swing.image.OperationTreeBrowser")
+                 .getMethod("show", new Class<?>[] {RenderedImage.class})
+                 .invoke(null, new Object[]{image});
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            /*
+             * The OperationTreeBrowser is not part of Geotk's core. It is optional and this
+             * class should not fails if it is not presents. This is only a helper for debugging.
+             */
+            System.err.println(e);
+        }
     }
 }

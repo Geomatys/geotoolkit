@@ -35,7 +35,6 @@ import org.opengis.metadata.Identifier;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.geotoolkit.factory.Hints;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.util.collection.DerivedSet;
 import org.apache.sis.util.iso.SimpleInternationalString;
@@ -171,15 +170,13 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
      * each with the same code but different namespace. See the <a href="#skip-navbar_top">class
      * javadoc</a> for more details.
      *
-     * @param userHints
-     *          An optional set of hints, or {@code null} for the default ones.
      * @param definitions
      *          The object definitions as a map with authority codes as keys and WKT strings as values.
      * @param authorities
      *          The organizations or parties responsible for definition and maintenance of the database.
      */
-    public WKTParsingAuthorityFactory(final Hints userHints, final Map<String,String> definitions, Citation... authorities) {
-        this(userHints, definitions);
+    public WKTParsingAuthorityFactory(final Map<String,String> definitions, Citation... authorities) {
+        this(definitions);
         ensureNonNull("authorities", authorities);
         if (authorities.length == 0) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.EmptyArray));
@@ -194,8 +191,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
      * Creates a factory without authorities. This is subclass responsibility to initialize
      * the {@link #authorities} field when first needed.
      */
-    WKTParsingAuthorityFactory(final Hints userHints, final Map<String,String> definitions) {
-        super(userHints);
+    WKTParsingAuthorityFactory(final Map<String,String> definitions) {
         ensureNonNull("definitions", definitions);
         this.definitions = definitions;
     }

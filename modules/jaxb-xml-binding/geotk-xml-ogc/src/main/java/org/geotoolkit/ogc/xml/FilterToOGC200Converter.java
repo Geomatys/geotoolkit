@@ -10,10 +10,10 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.xml.bind.JAXBElement;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.gml.JTStoGeometry;
 import org.geotoolkit.gml.xml.AbstractGeometry;
@@ -112,7 +112,7 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
 
     private final ObjectFactory ogc_factory;
     private final org.geotoolkit.gml.xml.v321.ObjectFactory gml_factory;
-    private final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     public FilterToOGC200Converter() {
         this.ogc_factory = new ObjectFactory();

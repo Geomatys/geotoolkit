@@ -38,9 +38,6 @@ import static org.junit.Assert.*;
  * Tests {@link ImageReaderAdapter}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
- *
- * @since 3.14
  */
 @DependsOn(ImageCoverageReaderTest.class)
 public final strictfp class ImageReaderAdapterTest extends org.geotoolkit.test.TestBase {

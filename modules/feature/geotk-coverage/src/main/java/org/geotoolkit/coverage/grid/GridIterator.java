@@ -2,8 +2,8 @@ package org.geotoolkit.coverage.grid;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.util.ArgumentChecks;
-import org.opengis.coverage.grid.GridEnvelope;
 
 /**
  * Try to slice a given N-D grid envelope. The aim is to provide an iterator
@@ -19,7 +19,7 @@ import org.opengis.coverage.grid.GridEnvelope;
  * <pre>
  * {@code
  * // Your 3D envelope
- * final GridEnvelope grid3D = new GeneralGridEnvelope({0, 0, 0}, {2, 2, 2} true);
+ * final GridExtent grid3D = new GridExtent(null, new long[]{0, 0, 0}, new long[]{2, 2, 2}, true);
  * // This is an important structure. Each value represents the value to step by
  * // for each dimension on each move. Here, we specify that we want to move
  * // only on the third dimension, from lower to upper corner, with a step of 1
@@ -35,12 +35,12 @@ import org.opengis.coverage.grid.GridEnvelope;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class GridIterator implements Iterator<GridEnvelope> {
+public class GridIterator implements Iterator<GridExtent> {
 
     /**
      * The source gridEnvelope to decompose into ordered slices.
      */
-    final GridEnvelope source;
+    final GridExtent source;
 
     /**
      * Contains increments to apply for each dimension. Note that if an
@@ -53,17 +53,17 @@ public class GridIterator implements Iterator<GridEnvelope> {
     /**
      * Cache lower coordinates of the next grid iteration, for performance purpose.
      */
-    private final int[] nextLower;
+    private final long[] nextLower;
     /**
      * Cache upper coordinates of the next grid iteration, for performance purpose.
      */
-    private final int[] nextUpper;
+    private final long[] nextUpper;
 
     /**
      * The next element in the iteration process. Used for getting current state
      * of the iterator.
      */
-    private GridEnvelope next;
+    private GridExtent next;
 
     /**
      * Create a new iterator to move along specified dimensions of input
@@ -78,15 +78,15 @@ public class GridIterator implements Iterator<GridEnvelope> {
      * envelopes where the target dimension moves from lower to upper boundary,
      * using the given value as increment.
      */
-    public GridIterator(GridEnvelope source, int[] steps) {
+    public GridIterator(GridExtent source, int[] steps) {
         ArgumentChecks.ensureNonNull("Source grid", source);
         ArgumentChecks.ensureNonNull("Movement definition", steps);
 
         this.source = source;
         this.steps = steps;
 
-        nextLower = source.getLow().getCoordinateValues();
-        nextUpper = source.getHigh().getCoordinateValues();
+        nextLower = GridGeometryIterator.getLow(source);
+        nextUpper = GridGeometryIterator.getHigh(source);
         for (int i = 0; i < steps.length; i++) {
             if (steps[i] < 0) {
                 // TODO : reverse browsing
@@ -98,7 +98,7 @@ public class GridIterator implements Iterator<GridEnvelope> {
 
         // Prepare immediately the first element, so we do not have to apply
         // minus offset to compute initial element.
-        next = new GeneralGridEnvelope(nextLower, nextUpper, true);
+        next = new GridExtent(null, nextLower, nextUpper, true);
     }
 
     @Override
@@ -107,12 +107,12 @@ public class GridIterator implements Iterator<GridEnvelope> {
             if (steps[i] == 0) {
                 continue;
             }
-            final int nextStep = nextLower[i] + steps[i];
+            final long nextStep = nextLower[i] + steps[i];
             if (nextStep > source.getHigh(i)) {
                 nextLower[i] = nextUpper[i] = source.getLow(i);
             } else {
                 nextLower[i] = nextUpper[i] = nextStep;
-                next = new GeneralGridEnvelope(nextLower, nextUpper, true);
+                next = new GridExtent(null, nextLower, nextUpper, true);
             }
         }
 
@@ -120,9 +120,9 @@ public class GridIterator implements Iterator<GridEnvelope> {
     }
 
     @Override
-    public GridEnvelope next() {
+    public GridExtent next() {
         if (hasNext()) {
-            final GridEnvelope buffer = next;
+            final GridExtent buffer = next;
             next = null;
             return buffer;
         }

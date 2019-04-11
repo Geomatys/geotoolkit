@@ -27,40 +27,37 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.factory.FactoryFinder;
-
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.spatial.BBOX;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.data.FeatureWriter;
-
 import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
+import org.opengis.filter.FilterFactory;
 
 public class FidQueryTest extends FIDTestCase {
 
 
     private IndexedShapefileFeatureStore ds;
 
-    private static final FilterFactory2 fac = (FilterFactory2) FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory2 fac = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
     private Map<String, Feature> fids = new HashMap<>();
 
     private GenericName name;
@@ -229,7 +226,7 @@ public class FidQueryTest extends FIDTestCase {
         //
         // bboxFilter.addLeftGeometry(factory.createAttributeExpression(geom));
 
-        FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(null);
+        FilterFactory2 ff = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
         BBOX bbox = ff.bbox(ff.property(""), FeatureExt.getEnvelope(feature));
 
         features = ds.getFeatureReader(QueryBuilder.filtered(name.toString(), bbox));

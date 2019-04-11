@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.io.plugin.yaml.internal.YamlBuilder;
 import org.geotoolkit.image.io.plugin.yaml.internal.YamlSampleCategory;
-import org.opengis.coverage.SampleDimension;
+import org.apache.sis.coverage.SampleDimension;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;

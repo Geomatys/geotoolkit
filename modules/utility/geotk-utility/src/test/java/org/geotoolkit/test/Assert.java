@@ -17,21 +17,19 @@
  */
 package org.geotoolkit.test;
 
-import java.awt.image.RenderedImage;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.RectangularShape;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.RectangularShape;
+import java.awt.image.RenderedImage;
+import javax.measure.Unit;
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
-import javax.measure.Unit;
-
+import static org.geotoolkit.test.image.ImageTestBase.SAMPLE_TOLERANCE;
 import org.opengis.coverage.Coverage;
+import org.opengis.parameter.GeneralParameterValue;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.parameter.ParameterDescriptor;
-import org.opengis.parameter.GeneralParameterValue;
-
-import static org.geotoolkit.test.image.ImageTestBase.SAMPLE_TOLERANCE;
 
 
 /**

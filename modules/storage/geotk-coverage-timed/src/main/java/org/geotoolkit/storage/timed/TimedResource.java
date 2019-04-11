@@ -17,7 +17,6 @@
 package org.geotoolkit.storage.timed;
 
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -26,6 +25,10 @@ import java.util.Iterator;
 import java.util.Spliterators;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
@@ -33,15 +36,11 @@ import org.apache.sis.referencing.operation.matrix.Matrix3;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.apache.sis.coverage.grid.PixelTranslation;
 import org.geotoolkit.storage.coverage.AbstractCoverageResource;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
@@ -70,7 +69,7 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
      * The grid geometry of the total image set. Cached for faster accesses.
      * Note : the grid geometry is reset each time a new data is registered.
      */
-    GeneralGridGeometry grid;
+    GridGeometry grid;
 
     TimedResource(TimedCoverageStore store, Path directory, long delay) throws DataStoreException {
         super(store, Names.createLocalName(null, ":", directory.getFileName().toString()));
@@ -95,22 +94,17 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
     }
 
     @Override
-    public int getImageIndex() {
-        return 0;
-    }
-
-    @Override
     public boolean isWritable() throws DataStoreException {
         return false;
     }
 
     @Override
-    public GridCoverageReader acquireReader() throws CoverageStoreException {
+    public GridCoverageReader acquireReader() throws DataStoreException {
         return new TimedReader(this);
     }
 
     @Override
-    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
+    public GridCoverageWriter acquireWriter() throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -119,7 +113,8 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    GeneralGridGeometry getGridGeometry() throws CoverageStoreException {
+    @Override
+    public GridGeometry getGridGeometry() throws DataStoreException {
         final GeneralEnvelope treeEnv;
         try {
             treeEnv = index.getEnvelope()
@@ -134,7 +129,7 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
         }
 
         if (treeEnv.isEmpty() || treeEnv.isAllNaN() || index.isEmpty()) {
-            return new GeneralGridGeometry(new GeneralGridEnvelope(new Rectangle(), treeEnv.getDimension()), treeEnv);
+            return new GridGeometry(null, null, treeEnv, GridRoundingMode.NEAREST);
         }
 
         if (grid != null && treeEnv.equals(grid.getEnvelope())) {
@@ -157,16 +152,16 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
             throw new CoverageStoreException("Cannot extract times from index", ex);
         }
 
-        GridEnvelope extent;
+        GridExtent extent;
         try (TimedUtils.CloseableCoverageReader reader = new TimedUtils.CloseableCoverageReader()) {
             reader.setInput(input.toFile());
-            extent = reader.getGridGeometry(0).getExtent2D();
+            extent = reader.getGridGeometry().getExtent2D();
         }
 
         // Adapt image dimension to contain time
         final int dimension = treeEnv.getCoordinateReferenceSystem().getCoordinateSystem().getDimension();
-        final int[] low = new int[dimension];
-        final int[] high = new int[dimension];
+        final long[] low = new long[dimension];
+        final long[] high = new long[dimension];
         low[index.xIndex] = extent.getLow(0);
         low[index.xIndex + 1] = extent.getLow(1);
         low[index.timeIndex] = 0;
@@ -175,10 +170,10 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
         high[index.xIndex + 1] = extent.getHigh(1);
         high[index.timeIndex] = times.length - 1; // inclusive upper corner
 
-        extent = new GeneralGridEnvelope(low, high, true);
+        extent = new GridExtent(null, low, high, true);
 
-        final double scaleX = treeEnv.getSpan(index.xIndex) / extent.getSpan(0);
-        final double scaleY = -(treeEnv.getSpan(index.xIndex + 1) / extent.getSpan(1));
+        final double scaleX = treeEnv.getSpan(index.xIndex) / extent.getSize(0);
+        final double scaleY = -(treeEnv.getSpan(index.xIndex + 1) / extent.getSize(1));
         //final double scaleT = treeEnv.getSpan(index.timeIndex) / nbImages;
 
         final double translationX = treeEnv.getMinimum(0);
@@ -199,7 +194,7 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
         final MathTransform1D timeTransform = MathTransforms.interpolate(null, times);
         final MathTransform gridToCRS = MathTransforms.compound(geoTransform, timeTransform);
 
-        grid = new GeneralGridGeometry(extent, PixelInCell.CELL_CENTER, gridToCRS, treeEnv.getCoordinateReferenceSystem());
+        grid = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCRS, treeEnv.getCoordinateReferenceSystem());
 
         return grid;
     }

@@ -27,38 +27,39 @@ import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javax.measure.Unit;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.io.wkt.Colors;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.storage.GridCoverageResource;
+import org.geotoolkit.coverage.SampleDimensionType;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.amended.AmendedCoverageResource;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
+import org.geotoolkit.internal.coverage.ColoredCategory;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.resources.Vocabulary;
-import org.opengis.coverage.SampleDimensionType;
-import org.opengis.coverage.grid.GridEnvelope;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.content.AttributeGroup;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
-import org.opengis.metadata.content.SampleDimension;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.InternationalString;
-import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -128,20 +129,22 @@ public class FXLayerStructure extends FXPropertyPane {
 
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final GridCoverageResource ref = cml.getCoverageReference();
+            final GridCoverageResource ref = cml.getResource();
             try {
-                final GridCoverageReader reader = ref.acquireReader();
-                final GeneralGridGeometry gridgeom = reader.getGridGeometry(0);
-                final List<GridSampleDimension> dimensions = reader.getSampleDimensions(0);
-                ref.recycle(reader);
+                final GridGeometry gridgeom = ref.getGridGeometry();
+                final List<SampleDimension> dimensions = ref.getSampleDimensions();
 
                 // GRID GEOMETRY PART //////////////////////////////////////////
+                sb.append("<h1>").append("Coordinate Reference System").append("</h1><br/>");
+                final CoordinateReferenceSystem crs = gridgeom.getCoordinateReferenceSystem();
+                sb.append(formatWKT(crs));
+                sb.append("<br>");
+
                 sb.append("<h1>").append("Grid geometry").append("</h1><br/>");
 
-                final CoordinateReferenceSystem crs = gridgeom.getCoordinateReferenceSystem();
                 final Envelope geoEnv = gridgeom.getEnvelope();
-                final GridEnvelope gridEnv = gridgeom.getExtent();
-                final MathTransform gridToCrs = gridgeom.getGridToCRS();
+                final GridExtent gridEnv = gridgeom.getExtent();
+                final MathTransform gridToCrs = gridgeom.getGridToCRS(PixelInCell.CELL_CENTER);
 
                 final double[] coordGrid = new double[gridEnv.getDimension()];
                 final double[] coordGeo = new double[gridEnv.getDimension()];
@@ -193,14 +196,12 @@ public class FXLayerStructure extends FXPropertyPane {
                 // SAMPLE DIMENSIONS PART //////////////////////////////////////
                 sb.append("<h1>").append("Sample dimensions").append("</h1><br/>");
 
-
-
-                if(dimensions!=null){
-                    for(GridSampleDimension dim : dimensions){
-                        final SampleDimensionType st = dim.getSampleDimensionType();
-                        final MathTransform1D sampletoGeo = dim.getSampleToGeophysics();
-                        final Unit unit = dim.getUnits();
-                        final InternationalString desc = dim.getDescription();
+                if (dimensions!=null) {
+                    for (SampleDimension dim : dimensions) {
+                        final SampleDimensionType st = SampleDimensionUtils.getSampleDimensionType(dim);
+                        final MathTransform1D sampletoGeo = dim.getTransferFunction().orElse(null);
+                        final Unit unit = dim.getUnits().orElse(null);
+                        final InternationalString desc = dim.getName().toInternationalString();
 
                         sb.append("<b>").append(desc).append("</b><br/>");
                         sb.append("Unit : ").append(unit).append("<br/>");
@@ -220,10 +221,10 @@ public class FXLayerStructure extends FXPropertyPane {
                             sb.append("</td></tr>");
                             for(Category cat : categories){
                                 final InternationalString name = cat.getName();
-                                final NumberRange range = cat.getRange();
-                                final MathTransform1D trs = cat.getSampleToGeophysics();
+                                final NumberRange range = cat.getSampleRange();
+                                final MathTransform1D trs = cat.getTransferFunction().orElse(null);
                                 final boolean isQuant = cat.isQuantitative();
-                                final Color[] colors = cat.getColors();
+                                final Color[] colors = ColoredCategory.getColors(cat);
                                 sb.append("<tr><td>");
                                 sb.append(name);
                                 sb.append("</td><td>");
@@ -259,24 +260,26 @@ public class FXLayerStructure extends FXPropertyPane {
             tabs.getTabs().add(tabprops);
 
             //dimension editor
-            final CoverageDescription desc = ref.getCoverageDescription();
-            if(desc!=null && !desc.getAttributeGroups().isEmpty()){
-                final Tab tabbands = new Tab("Bands");
-                tabs.getTabs().add(tabbands);
+            if (ref instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
+                final CoverageDescription desc = ((org.geotoolkit.storage.coverage.GridCoverageResource) ref).getCoverageDescription();
+                if(desc!=null && !desc.getAttributeGroups().isEmpty()){
+                    final Tab tabbands = new Tab("Bands");
+                    tabs.getTabs().add(tabbands);
 
-                final VBox vbox = new VBox();
-                final ScrollPane scroll = new ScrollPane(vbox);
-                scroll.setFitToWidth(true);
-                scroll.setFitToHeight(true);
-                scroll.setPrefSize(200, 200);
-                tabbands.setContent(scroll);
+                    final VBox vbox = new VBox();
+                    final ScrollPane scroll = new ScrollPane(vbox);
+                    scroll.setFitToWidth(true);
+                    scroll.setFitToHeight(true);
+                    scroll.setPrefSize(200, 200);
+                    tabbands.setContent(scroll);
 
-                final AttributeGroup attg = desc.getAttributeGroups().iterator().next();
-                for(RangeDimension rd : attg.getAttributes()){
-                    if(rd instanceof SampleDimension){
-                        final FXCoverageBand fxcb = new FXCoverageBand();
-                        fxcb.init((SampleDimension) rd);
-                        vbox.getChildren().add(fxcb);
+                    final AttributeGroup attg = desc.getAttributeGroups().iterator().next();
+                    for (RangeDimension rd : attg.getAttributes()){
+                        if (rd instanceof org.opengis.metadata.content.SampleDimension) {
+                            final FXCoverageBand fxcb = new FXCoverageBand();
+                            fxcb.init((org.opengis.metadata.content.SampleDimension) rd);
+                            vbox.getChildren().add(fxcb);
+                        }
                     }
                 }
             }

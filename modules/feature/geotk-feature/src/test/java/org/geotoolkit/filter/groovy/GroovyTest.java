@@ -19,18 +19,15 @@ package org.geotoolkit.filter.groovy;
 
 import java.util.List;
 import javax.script.ScriptException;
-
-import org.geotoolkit.factory.FactoryFinder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.filter.FilterTestConstants;
 import org.geotoolkit.filter.function.groovy.GroovyFunctionFactory;
 import static org.geotoolkit.test.Assert.*;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
@@ -65,7 +62,7 @@ public class GroovyTest extends org.geotoolkit.test.TestBase {
     @Test
     public void simpleScriptTest() throws ScriptException{
 
-        final FilterFactory ff = FactoryFinder.getFilterFactory(null);
+        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
 
         Expression exp = ff.literal("return 2 + 3");
         Function gvFunction = ff.function(GroovyFunctionFactory.GROOVY, exp);
@@ -101,7 +98,7 @@ public class GroovyTest extends org.geotoolkit.test.TestBase {
     @Test
     public void complexeScriptTest() throws ScriptException{
 
-        final FilterFactory ff = FactoryFinder.getFilterFactory(null);
+        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
 
         Expression exp = ff.literal(
                   "x = $testString.split(\" \")[2];\n"

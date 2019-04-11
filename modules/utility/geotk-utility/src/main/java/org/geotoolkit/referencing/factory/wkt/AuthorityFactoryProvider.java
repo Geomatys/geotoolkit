@@ -26,8 +26,6 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.factory.Hints;
-
 
 /**
  * Convenience class for creating {@link CRSAuthorityFactory} instances using custom CRS definitions.
@@ -68,24 +66,9 @@ import org.geotoolkit.factory.Hints;
  */
 public class AuthorityFactoryProvider {
     /**
-     * The user hints, or {@code null} if none.
-     */
-    private final Hints hints;
-
-    /**
      * Creates a new instance which will use the default hints.
      */
     public AuthorityFactoryProvider() {
-        hints = null;
-    }
-
-    /**
-     * Creates a new instance which will use the given hints.
-     *
-     * @param hints The user hints, or {@code null} if none.
-     */
-    public AuthorityFactoryProvider(final Hints hints) {
-        this.hints = (hints != null) ? hints.clone() : null;
     }
 
     /**
@@ -104,7 +87,7 @@ public class AuthorityFactoryProvider {
     {
         final PropertyAuthorityFactory factory;
         try {
-            factory = new PropertyAuthorityFactory(hints, definitionFile, authority);
+            factory = new PropertyAuthorityFactory(definitionFile, authority);
         } catch (IOException e) {
             throw new FactoryException(e);
         }

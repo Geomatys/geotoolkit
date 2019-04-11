@@ -21,9 +21,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.SampleDimensionUtils;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.image.io.plugin.yaml.internal.YamlBuilder;
 import org.geotoolkit.image.io.plugin.yaml.internal.YamlCategory;
 import org.geotoolkit.image.io.plugin.yaml.internal.YamlImageInfo;
@@ -33,7 +34,8 @@ import org.geotoolkit.image.io.plugin.yaml.internal.YamlSampleDimension;
 import org.geotoolkit.image.io.plugin.yaml.internal.YamlWriterBuilder;
 import org.junit.Assert;
 import org.junit.Test;
-import org.opengis.coverage.SampleDimension;
+import org.opengis.referencing.operation.MathTransform1D;
+
 
 /**
  * Test reading / writing yaml image informations.
@@ -76,23 +78,18 @@ public class YamlUtilsTest extends org.geotoolkit.test.TestBase {
 
         final File fil = File.createTempFile("yamlTest", "txt");
 
-        Category[] catsb0 = new Category[2];
-        final Category noDataCatb0 = SampleDimensionUtils.buildSingleNoDataCategory(Double.class, 0);
-        final Category dataCatb0   = SampleDimensionUtils.buildCategory("data", Double.class, null, 1, true, 255, true, 1, 0);
-        catsb0[0] = noDataCatb0;
-        catsb0[1] = dataCatb0;
-        final SampleDimension sampDimb0 = new GridSampleDimension("band_0", catsb0, null);
-
+        final SampleDimension.Builder b = new SampleDimension.Builder();
+        b.addQualitative(null, 0.0);
+        b.addQuantitative("data", NumberRange.create(1d, true, 255d, true), (MathTransform1D) MathTransforms.identity(1), null);
+        final SampleDimension sampDimb0 = b.setName("band_0").build();
 
         YamlWriterBuilder yamBuild = YamlFiles.getBuilder();
 
         yamBuild.setSampleDimensions(Collections.singletonList(sampDimb0));
 
-
 //        System.out.println(YamlFiles.dump(yamBuild));
 
         Assert.assertEquals(dumpResult, YamlFiles.dump(yamBuild));
-
 
         YamlFiles.write(fil, yamBuild);
 
@@ -158,34 +155,27 @@ public class YamlUtilsTest extends org.geotoolkit.test.TestBase {
 "    offset: 0.0\n";
 
         final File fil = File.createTempFile("yamlTest", "txt");
+        final MathTransform1D identity = (MathTransform1D) MathTransforms.identity(1);
 
         //-- Sample dimension band 0
-        Category[] catsb0 = new Category[2];
-        final Category noDataCatb0 = SampleDimensionUtils.buildSingleNoDataCategory(Double.class, 0);
-        final Category dataCatb0   = SampleDimensionUtils.buildCategory("data", Double.class, null, 1, true, 255, true, 1, 0);
-        catsb0[0] = noDataCatb0;
-        catsb0[1] = dataCatb0;
-        final SampleDimension sampDimb0 = new GridSampleDimension("band_0", catsb0, null);
+        final SampleDimension.Builder b = new SampleDimension.Builder();
+        b.addQualitative(null, 0.0);
+        b.addQuantitative("data", NumberRange.create(1d, true, 255d, true), identity, null);
+        final SampleDimension sampDimb0 = b.setName("band_0").build();
 
         //-- Sample dimension band 1
-        Category[] catsb1 = new Category[3];
-        final Category noDataCatb1 = SampleDimensionUtils.buildNoDataCategory(Double.class, 125, false, 254, true);
-        final Category dataCatb10   = SampleDimensionUtils.buildCategory("data", Double.class, null, 0, true, 125, true, 1, 0);
-        final Category dataCatb11   = SampleDimensionUtils.buildCategory("data", Double.class, null, 255, true, 255, true, 1, 0);
-        catsb1[0] = noDataCatb1;
-        catsb1[1] = dataCatb10;
-        catsb1[2] = dataCatb11;
-        final SampleDimension sampDimb1 = new GridSampleDimension("band_1", catsb1, null);
+        b.clear();
+        b.addQualitative(null, NumberRange.create(125d, false, 254d, true));
+        b.addQuantitative("data", NumberRange.create(0d, true, 125d, true), identity, null);
+        b.addQuantitative("data", NumberRange.create(255d, true, 255d, true), identity, null);
+        final SampleDimension sampDimb1 = b.setName("band_1").build();
 
         //-- Sample dimension band 1
-        Category[] catsb2 = new Category[3];
-        final Category noDataCatb2 = SampleDimensionUtils.buildSingleNoDataCategory(Double.class, 254);
-        final Category dataCatb2   = SampleDimensionUtils.buildCategory("data",  Double.class, null, 0, true, 254, false, 1, 0);
-        final Category dataCatb21   = SampleDimensionUtils.buildCategory("data", Double.class, null, 255, true, 255, true, 1, 0);
-        catsb2[0] = noDataCatb2;
-        catsb2[1] = dataCatb2;
-        catsb2[2] = dataCatb21;
-        final SampleDimension sampDimb2 = new GridSampleDimension("band_2", catsb2, null);
+        b.clear();
+        b.addQualitative(null, 254d);
+        b.addQuantitative("data", NumberRange.create(0d, true, 254d, false), identity, null);
+        b.addQuantitative("data", NumberRange.create(255d, true, 255d, true), identity, null);
+        final SampleDimension sampDimb2 = b.setName("band_2").build();
 
         List<SampleDimension> sampDims = new ArrayList<>();
         sampDims.add(sampDimb0);

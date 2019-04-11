@@ -16,27 +16,47 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.Map;
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.time.Instant;
 import javax.measure.Unit;
+import javax.measure.UnitConverter;
 import javax.measure.format.ParserException;
+import javax.measure.IncommensurableException;
+
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.crs.TemporalCRS;
+import org.opengis.referencing.cs.CSFactory;
+import org.opengis.referencing.cs.TimeCS;
+import org.opengis.referencing.cs.VerticalCS;
+import org.opengis.referencing.cs.ParametricCS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.VerticalDatumType;
+import org.opengis.referencing.datum.ParametricDatum;
+import org.opengis.referencing.datum.TemporalDatum;
+import org.opengis.referencing.datum.VerticalDatum;
 import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.metadata.spatial.DimensionNameType;
+import org.opengis.referencing.operation.TransformException;
 
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.iso.Types;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.metadata.VerticalDatumTypes;
 import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.internal.referencing.ReferencingFactoryContainer;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.datum.DefaultTemporalDatum;
 
+// Use static imports for avoiding confusion with SQL Array.
 import static java.lang.reflect.Array.getDouble;
 import static java.lang.reflect.Array.getLength;
 
@@ -45,86 +65,72 @@ import static java.lang.reflect.Array.getLength;
  * Connection to a table of additional axes.
  *
  * @author Martin Desruisseaux (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
-final class AdditionalAxisTable extends CachedTable<String, AdditionalAxisTable.Entry> {
-    /**
-     * Information about an additional axes (vertical or other).
-     */
-    static final class Entry {
-        /**
-         * The coordinate reference system for this entry.
-         */
-        final SingleCRS crs;
-
-        /**
-         * The transform from grid coordinates to the {@linkplain #crs}.
-         */
-        final MathTransform1D gridToCRS;
-
-        /**
-         * Minimum and maximum values in standard units and direction. For elevation, this is metres toward up.
-         * For time axis, this is seconds toward future. For pressure, this is Pascal toward up.
-         */
-        final double standardMin, standardMax;
-
-        /**
-         * Number of values along this axis.
-         */
-        final int count;
-
-        /**
-         * Creates a new entry for an additional axis.
-         */
-        private Entry(final SingleCRS crs, final double[] values) {
-            this.crs  = crs;
-            gridToCRS = MathTransforms.interpolate(null, values);
-            double min = Double.POSITIVE_INFINITY;
-            double max = Double.NEGATIVE_INFINITY;
-            for (int i=0; i<values.length; i++) {
-                final double z = values[i];
-                if (z < min) min = z;
-                if (z > max) max = z;
-            }
-            // Transform the (min, max) in "standard" units of the database.
-            final CoordinateSystemAxis axis = crs.getCoordinateSystem().getAxis(0);
-            double scale = Units.toStandardUnit(axis.getUnit());
-            if (AxisDirections.isOpposite(axis.getDirection())) {
-                final double t = max;
-                max = min;
-                min = t;
-                scale = -scale;
-            }
-            min *= scale;
-            max *= scale;
-            standardMin = min;
-            standardMax = max;
-            count = values.length - 1;
-        }
-
-        /**
-         * Returns a standardized identifier for this axis, or {@code null} if none.
-         */
-        final DimensionNameType type() {
-            if (crs instanceof VerticalCRS) {
-                return DimensionNameType.VERTICAL;
-            } else if (crs instanceof TemporalCRS) {
-                return DimensionNameType.TIME;
-            } else {
-                return null;
-            }
-        }
-    }
-
+final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> {
     /**
      * Name of this table in the database.
      */
-    private static final String TABLE = "AdditionalAxes";
+    static final String TABLE = "AdditionalAxes";
+
+    /**
+     * Maximum number of additional axes for the same name. Current algorithm is very inefficient
+     * for a large number of name collisions, so we are better to keep this limit small.
+     */
+    private static final int MAX_AXES = 100;
+
+    /**
+     * Whether to enable the replacement of some vertical datum.
+     * This is a temporary hack while waiting for a better support of vertical transformations.
+     */
+    private static final boolean REPLACE_DATUM = false;
+
+    /**
+     * Name of temporal datum for forecasts.
+     */
+    private static final String FORECAST_DATUM = "Forecast";
+
+    /**
+     * Name of temporal datum for runtime, interpreted as parametric.
+     */
+    private static final String RUNTIME_DATUM = "Runtime";
+
+    /**
+     * Datum name for time relative to the start time of a {@link GridCoverageEntry}.
+     */
+    static final String RELATIVE_TIME_DATUM = "Days since datafile start time";
+
+    /**
+     * Coordinate reference system used to store temporal coordinates relative to datafile start time.
+     * The coordinates are in days, with day zero being the start time declared in a {@link GridCoverageEntry}.
+     * Axis unit and direction shall be the same than {@link GridGeometryEntry#TEMPORAL_CRS}.
+     */
+    private static final TemporalCRS RELATIVE_TIME;
+    static {
+        final DefaultTemporalDatum datum = new DefaultTemporalDatum(
+                Collections.singletonMap(TemporalDatum.NAME_KEY, RELATIVE_TIME_DATUM), new Date(0));
+        RELATIVE_TIME = new DefaultTemporalCRS(Collections.singletonMap(TemporalCRS.NAME_KEY, datum.getName()),
+                datum, GridGeometryEntry.TEMPORAL_CRS.getCoordinateSystem());
+    }
+
+    /**
+     * Unit of measurement of the relative time axis.
+     */
+    private static final Unit<?> TIME_UNIT = RELATIVE_TIME.getCoordinateSystem().getAxis(0).getUnit();
 
     /**
      * Creates an additional axes table.
      */
     AdditionalAxisTable(final Transaction transaction) {
         super(Target.AXES, transaction);
+    }
+
+    /**
+     * Returns {@code true} if the given axis is a temporal axis whose time coordinates are instants
+     * between the start time and end time of a {@link GridCoverageEntry}.
+     */
+    static boolean isTemporalAxis(final AdditionalAxisEntry axis) {
+        return axis.crs == RELATIVE_TIME;
     }
 
     /**
@@ -145,7 +151,7 @@ final class AdditionalAxisTable extends CachedTable<String, AdditionalAxisTable.
      * @throws SQLException if an error occurred while reading the database.
      */
     @Override
-    Entry createEntry(final ResultSet results, final String identifier) throws SQLException, IllegalRecordException {
+    AdditionalAxisEntry createEntry(final ResultSet results, final String identifier) throws SQLException, IllegalRecordException {
         final String   datum     = results.getString(1);
         final String   direction = results.getString(2);
         final String   units     = results.getString(3);
@@ -168,48 +174,241 @@ final class AdditionalAxisTable extends CachedTable<String, AdditionalAxisTable.
             throw new IllegalRecordException("Insufficient number of values in \"" + identifier + "\" entry.");
         }
         SingleCRS crs;
-        RuntimeException error;
+        Exception error;
         try {
-            crs = crs(datum, Types.forCodeName(AxisDirection.class, direction, false), Units.valueOf(units));
+            crs = crs(datum, Types.forCodeName(AxisDirection.class, direction, false), Units.valueOf(units), transaction.database);
             error = null;
-        } catch (ParserException e) {
+        } catch (ParserException | FactoryException e) {
             crs = null;
             error = e;
         }
         if (crs == null) {
             throw new IllegalRecordException("Unsupported CRS definition in \"" + identifier + "\" entry.", error);
         }
-        return new Entry(crs, values);
+        return new AdditionalAxisEntry(crs, values);
     }
 
     /**
-     * Creates a datum of the given name.
+     * Creates a coordinate reference system with datum of the given name.
      *
-     * @todo Support more types.
+     * @param  name       name of the datum, also used as the coordinate reference system name if a new CRS needs to be created.
+     * @param  direction  the axis direction.
+     * @param  units      the axis units.
+     * @param  factories  group of factories for creating geodetic objects, if needed.
      */
-    private static SingleCRS crs(final String datum, final AxisDirection direction, final Unit<?> units) {
+    private static SingleCRS crs(final String name, final AxisDirection direction, final Unit<?> units,
+            final ReferencingFactoryContainer factories) throws FactoryException
+    {
+        /*
+         * Vertical dimension (most common case). First, check if a CommonCRS.Vertical constant fits
+         * by comparing the datum type, axis units and axis direction. If CommonCRS does not suit,
+         * create a new datum.
+         */
         if (AxisDirections.isVertical(direction)) {
-            CommonCRS.Vertical code = null;
-            final VerticalDatumType type = VerticalDatumTypes.guess(datum, null, null);
+            VerticalDatumType type = VerticalDatumTypes.guess(name, null, null);
+            if (type == null) {
+                if (Units.isPressure(units)) {
+                    type = VerticalDatumType.BAROMETRIC;
+                } else if (Units.isLinear(units)) {
+                    if (AxisDirection.UP.equals(direction)) {
+                        type = VerticalDatumType.GEOIDAL;
+                    } else {
+                        type = VerticalDatumType.DEPTH;
+                    }
+                } else {
+                    return null;                // Can not build CRS with unknown vertical datum type.
+                }
+            }
+            CommonCRS.Vertical candidate = null;
             if (VerticalDatumType.GEOIDAL.equals(type) || VerticalDatumType.DEPTH.equals(type)) {
                 if (AxisDirection.UP.equals(direction)) {
-                    code = CommonCRS.Vertical.MEAN_SEA_LEVEL;
+                    candidate = CommonCRS.Vertical.MEAN_SEA_LEVEL;
                 } else if (AxisDirection.DOWN.equals(direction)) {
-                    code = CommonCRS.Vertical.DEPTH;
+                    candidate = CommonCRS.Vertical.DEPTH;
                 }
             } else if (VerticalDatumTypes.ELLIPSOIDAL.equals(type)) {
-                code = CommonCRS.Vertical.ELLIPSOIDAL;
+                candidate = CommonCRS.Vertical.ELLIPSOIDAL;
             } else if (VerticalDatumType.BAROMETRIC.equals(type)) {
-                code = CommonCRS.Vertical.BAROMETRIC;
+                candidate = CommonCRS.Vertical.BAROMETRIC;
             }
-            if (code != null) {
-                final VerticalCRS crs = code.crs();
+            final VerticalDatum datum;
+            final String abbreviation;
+            final Object axisName;
+            if (candidate != null) {
+                final VerticalCRS crs = candidate.crs();
                 final CoordinateSystemAxis axis = crs.getCoordinateSystem().getAxis(0);
-                if (direction.equals(axis.getDirection()) && axis.getUnit().equals(units)) {
+                if (axis.getDirection().equals(direction) && axis.getUnit().equals(units)) {
                     return crs;
                 }
+                /*
+                 * If an item from the CommonCRS.Vertical enumeration corresponds to the given axis units
+                 * and direction, it has been returned above.  Otherwise a new CRS will be created below,
+                 * reusing some components from the CommonCRS.Vertical if possible.
+                 */
+                abbreviation = axis.getAbbreviation();
+                axisName = axis.getName();
+                datum = crs.getDatum();
+            } else {
+                abbreviation = "h";
+                axisName = "Vertical";                            // This fallback should be rarely used.
+                datum = factories.getDatumFactory().createVerticalDatum(properties(name), type);
             }
+            final CSFactory csFactory = factories.getCSFactory();
+            final CoordinateSystemAxis axis = csFactory.createCoordinateSystemAxis(properties(axisName), abbreviation, direction, units);
+            final VerticalCS cs = csFactory.createVerticalCS(properties(axis.getName()), axis);
+            return factories.getCRSFactory().createVerticalCRS(properties(name), datum, cs);
         }
-        return null;
+        /*
+         * Temporal CRS, excluding forecast time since they would appear as a second time axis. If an item
+         * from the CommonCRS.Temporal enumeration corresponds to the given axis units and direction, that
+         * item CRS will be returned.  Otherwise we will create a new CRS, using the best enumeration item
+         * as a template if possible.
+         */
+        final boolean isTemporal = AxisDirections.isTemporal(direction);
+        if (isTemporal && !(Entry.HACK && FORECAST_DATUM.equalsIgnoreCase(name))
+                       && !(Entry.HACK && RUNTIME_DATUM.equalsIgnoreCase(name)) ) {
+            if (RELATIVE_TIME_DATUM.equalsIgnoreCase(name)) {
+                return RELATIVE_TIME;
+            }
+            TimeCS cs = null;
+            TemporalDatum datum = null;
+            for (final CommonCRS.Temporal candidate : CommonCRS.Temporal.values()) {
+                if (IdentifiedObjects.isHeuristicMatchForName(candidate.datum(), name)) {
+                    final TemporalCRS crs = candidate.crs();
+                    final CoordinateSystemAxis axis = crs.getCoordinateSystem().getAxis(0);
+                    if (axis.getDirection().equals(direction) && axis.getUnit().equals(units)) {
+                        return crs;
+                    }
+                    cs = crs.getCoordinateSystem();     // To be used as a pattern for creating a new CS below.
+                    datum = crs.getDatum();
+                }
+            }
+            if (datum == null) {
+                datum = factories.getDatumFactory().createTemporalDatum(properties(name), new Date(0));
+            }
+            final CSFactory csFactory = factories.getCSFactory();
+            if (cs == null) {
+                cs = CommonCRS.Temporal.JULIAN.crs().getCoordinateSystem();
+            }
+            CoordinateSystemAxis axis = cs.getAxis(0);
+            axis = csFactory.createCoordinateSystemAxis(properties(axis.getName()), axis.getAbbreviation(), direction, units);
+            cs = csFactory.createTimeCS(properties(cs.getName()), axis);
+            return factories.getCRSFactory().createTemporalCRS(properties(name), datum, cs);
+        }
+        /*
+         * Temporal CRS for forecast time, or any other CRS. We handle everything which is not vertical
+         * or temporal as parametric. There is no enumeration of pre-defined values for those CRS.
+         */
+        final ParametricDatum datum = factories.getDatumFactory().createParametricDatum(properties(name));
+        final CSFactory csFactory = factories.getCSFactory();
+        final String axisName, abbreviation;
+        if (isTemporal) {
+            axisName = RUNTIME_DATUM;
+            abbreviation = "rt";
+        } else {
+            axisName = "Parametric";
+            abbreviation = "p";
+        }
+        final CoordinateSystemAxis axis = csFactory.createCoordinateSystemAxis(properties(axisName), abbreviation, direction, units);
+        final ParametricCS cs = csFactory.createParametricCS(properties(axis.getName()), axis);
+        return factories.getCRSFactory().createParametricCRS(properties(datum.getName()), datum, cs);
+    }
+
+    /**
+     * Returns a singleton map with the given object as its {@code "name"} property.
+     * This helper method is used for geodetic object construction.
+     */
+    private static Map<String,?> properties(final Object name) {
+        return Collections.singletonMap(SingleCRS.NAME_KEY, name);
+    }
+
+    /**
+     * Returns an identifier for an additional axis having the given data, or inserts a new entry in the database
+     * if no suitable identifier is found.
+     *
+     * @param  suggestedID  suggested identifier if a new entry must be inserted.
+     * @param  lowerValue   the first grid coordinate values of the grid dimension to add.
+     * @param  numValues    number of values in the grid dimension to add.
+     * @param  gridToCRS    conversion from grid coordinates to "real world" coordinates, mapping cell corners.
+     * @param  crs          coordinate reference system after conversion from grid coordinates.
+     *                      Shall be an instance of {@link DefaultTemporalCRS} if {@code startTime} is non-null.
+     * @param  startTime    start time of the grid coverage for which to create relative time values, or {@code null}
+     *                      if the axis is not a temporal axis completing the start time value in the grid coverages table.
+     * @return actual name of the additional axis.
+     */
+    final String findOrInsert(String suggestedID, final long lowerValue, final int numValues,
+            final MathTransform1D gridToCRS, SingleCRS crs, final Instant startTime)
+            throws SQLException, IncommensurableException, TransformException, CatalogException
+    {
+        final UnitConverter toRelativeTime;
+        if (startTime != null) {
+            UnitConverter step1 = Units.converter(null, -((DefaultTemporalCRS) crs).toValue(startTime));
+            UnitConverter step2 = crs.getCoordinateSystem().getAxis(0).getUnit().getConverterToAny(TIME_UNIT);
+            toRelativeTime = step2.concatenate(step1);
+            crs = RELATIVE_TIME;
+        } else {
+            toRelativeTime = null;
+        }
+        final Double[] values = new Double[Math.incrementExact(numValues)];
+        for (int j=0; j<values.length; j++) {
+            double value = gridToCRS.transform(lowerValue + j);
+            if (toRelativeTime != null) {
+                value = toRelativeTime.convert(value);
+            }
+            values[j] = value;
+        }
+        final Array bounds = getConnection().createArrayOf("FLOAT8", values);
+        String datum = crs.getDatum().getName().getCode();
+        if (REPLACE_DATUM && datum.equalsIgnoreCase("Unknown datum presumably based upon Mean Sea Level")) {
+            datum = "Mean Sea Level";
+        }
+        final CoordinateSystemAxis axis = crs.getCoordinateSystem().getAxis(0);
+        final String direction = Types.getCodeName(axis.getDirection());
+        final String units     = axis.getUnit().toString();
+        boolean insert = false;
+        do {
+            final PreparedStatement statement;
+            if (!insert) {
+                statement = prepareStatement("SELECT \"name\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE "
+                        + "\"datum\"=? AND \"direction\"=CAST(? AS metadata.\"AxisDirection\") AND \"units\"=? AND \"bounds\"=?");
+            } else {
+                statement = prepareStatement("INSERT INTO " + SCHEMA + ".\"" + TABLE + "\"("
+                        + "\"datum\", \"direction\", \"units\", \"bounds\", \"name\")"
+                        + " VALUES (?,CAST(? AS metadata.\"AxisDirection\"),?,?,?) ON CONFLICT (\"name\") DO NOTHING");
+            }
+            statement.setString(1, datum);
+            statement.setString(2, direction);
+            statement.setString(3, units);
+            statement.setArray (4, bounds);
+            if (insert) {
+                /*
+                 * Attempt to insert a new record may cause a name collision.
+                 * Following algorithm is inefficient, but should be okay if
+                 * there is few additional axes for the same product.
+                 */
+                StringBuilder buffer = null;
+                for (int n=2; ; n++) {
+                    statement.setString(5, suggestedID);
+                    if (statement.executeUpdate() != 0) {
+                        return suggestedID;
+                    }
+                    if (n >= MAX_AXES) {
+                        throw new CatalogException("Axes already exist for all names up to \"" + suggestedID + "\".");
+                    }
+                    if (buffer == null) {
+                        buffer = new StringBuilder(suggestedID).append('-');
+                    }
+                    final int s = buffer.length();
+                    suggestedID = buffer.append(n).toString();
+                    buffer.setLength(s);
+                }
+            } else try (ResultSet results = statement.executeQuery()) {
+                while (results.next()) {
+                    final String name = results.getString(1);
+                    if (!results.wasNull()) return name;                // Should never be null, but we are paranoiac.
+                }
+            }
+        } while ((insert = !insert) == true);
+        throw new CatalogException();                                   // Should never reach this point.
     }
 }

@@ -33,7 +33,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.apache.sis.math.Statistics;
-import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 import org.geotoolkit.test.TestBase;
@@ -44,6 +43,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;
 import org.apache.sis.geometry.Shapes2D;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.io.TableAppender;
 
 
@@ -104,7 +104,7 @@ public final strictfp class WarpFactoryTest extends TestBase {
      * @return The math transform implementing the given projection.
      */
     private static MathTransform2D createProjection(final String name) throws FactoryException {
-        final MathTransformFactory factory = FactoryFinder.getMathTransformFactory(null);
+        final MathTransformFactory factory = DefaultFactories.forBuildin(MathTransformFactory.class);
         final ParameterValueGroup param = factory.getDefaultParameters(name);
         param.parameter("semi_major").setValue(CommonCRS.WGS84.ellipsoid().getSemiMajorAxis());
         param.parameter("semi_minor").setValue(CommonCRS.WGS84.ellipsoid().getSemiMinorAxis());

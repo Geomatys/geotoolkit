@@ -69,7 +69,7 @@
         <dependency>
             <groupId>javax.media</groupId>
             <artifactId>jai_codec</artifactId>
-            <scope>test</scope>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 

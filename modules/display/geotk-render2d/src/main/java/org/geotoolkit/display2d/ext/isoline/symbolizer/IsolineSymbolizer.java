@@ -19,7 +19,6 @@ package org.geotoolkit.display2d.ext.isoline.symbolizer;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.function.other.OtherFunctionFactory;
 import org.geotoolkit.processing.coverage.isoline2.Isoline2;
 import org.geotoolkit.se.xml.v110.*;
@@ -31,7 +30,6 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.*;
 import org.apache.sis.measure.Units;
-
 import javax.measure.quantity.Length;
 import javax.measure.Unit;
 import javax.xml.bind.annotation.*;
@@ -39,6 +37,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.apache.sis.internal.system.DefaultFactories;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -49,7 +48,7 @@ import java.util.Set;
 public class IsolineSymbolizer extends SymbolizerType implements ExtensionSymbolizer {
 
     @XmlTransient
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     @XmlElement(name = "Raster", namespace = "http://geotoolkit.org")
     public RasterSymbolizerType rasterSymbolizerType;
@@ -135,7 +134,7 @@ public class IsolineSymbolizer extends SymbolizerType implements ExtensionSymbol
 
         int i = 0;
         for (String str : properties) {
-            config.put(String.valueOf(i++), FactoryFinder.getFilterFactory(null).property(str));
+            config.put(String.valueOf(i++), DefaultFactories.forBuildin(FilterFactory.class).property(str));
         }
         return config;
     }

@@ -28,12 +28,12 @@
 
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-widgets-swing</artifactId>
+            <artifactId>geotk-widgets-javafx</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-widgets-javafx</artifactId>
+            <artifactId>geotk-jasperreport</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -89,16 +89,6 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-client-googlemaps</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-client-ignrm</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-client-wmts</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -120,11 +110,6 @@
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-coverage-postgresql</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverage-netcdf</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -201,23 +186,6 @@
             <artifactId>geotk-feature-mapinfo</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <!-- JAI -->
-    <dependency>
-      <groupId>javax.media</groupId>
-      <artifactId>jai_core</artifactId>
-      <!--version>${jai.version}</version-->
-    </dependency>
-    <dependency>
-      <groupId>javax.media</groupId>
-      <artifactId>jai_codec</artifactId>
-      <!--version>${jai.version}</version-->
-    </dependency>
-    <dependency>
-      <groupId>javax.media</groupId>
-      <artifactId>jai_imageio</artifactId>
-      <!--version>${jai-io.version}</version-->
-    </dependency>
 
     </dependencies>
 

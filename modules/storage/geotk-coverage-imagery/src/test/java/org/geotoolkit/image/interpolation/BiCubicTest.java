@@ -24,8 +24,7 @@ import java.awt.image.WritableRaster;
 import javax.media.jai.InterpolationBicubic;
 import javax.media.jai.InterpolationBicubic2;
 import javax.media.jai.RasterFactory;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.apache.sis.image.PixelIterator;
 import org.junit.Assert;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -74,7 +73,7 @@ public class BiCubicTest extends InterpolationTest {
                 rastertest.setSample(x, y, 0, val++);
             }
         }
-        pixIterator = PixelIteratorFactory.createDefaultIterator(rastertest);
+        pixIterator = new PixelIterator.Builder().create(rastertest);
         interpol = new BiCubicInterpolation1(pixIterator);
         double interpolVal;
         for (int y = miny+1; y < miny + height-2; y++) {
@@ -164,7 +163,7 @@ public class BiCubicTest extends InterpolationTest {
     @Test
     public void testFail() {
         rastertest  = RasterFactory.createBandedRaster(DataBuffer.TYPE_DOUBLE, width, height, 1, new Point(minx, miny));
-        pixIterator = PixelIteratorFactory.createDefaultIterator(rastertest);
+        pixIterator = new PixelIterator.Builder().create(rastertest);
         interpol    = new BiCubicInterpolation1(pixIterator);
         //lower corner
         try {
@@ -215,7 +214,7 @@ public class BiCubicTest extends InterpolationTest {
         double[] jaiInter;
 
         javax.media.jai.Interpolation jaiInterpol = (keys) ? new InterpolationBicubic2(8) : new InterpolationBicubic(8);
-        PixelIterator pixelIterator = PixelIteratorFactory.createDefaultIterator(raster);
+        PixelIterator pixelIterator = new PixelIterator.Builder().create(raster);
         interpol = (keys) ? new BiCubicInterpolation2(pixelIterator) : new BiCubicInterpolation1(pixelIterator);
 
         double x, y, tolerance;

@@ -34,9 +34,9 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.apache.sis.math.Plane;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.coverage.grid.PixelTranslation;
+import org.apache.sis.internal.raster.ColorModelFactory;
 
 import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
-import org.geotoolkit.image.color.ScaledColorSpace;
 
 
 /**
@@ -330,7 +330,7 @@ public class ObjectiveAnalysis {
         }
         final ColorSpace cs;
         if (min < max) {
-            cs = new ScaledColorSpace(1, 0, min, max);
+            cs = ColorModelFactory.createColorSpace(1, 0, min, max);
         } else {
             cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
         }

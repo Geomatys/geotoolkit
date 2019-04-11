@@ -17,24 +17,10 @@
  */
 package org.geotoolkit.coverage.io;
 
-import java.awt.Rectangle;
-import java.util.Iterator;
 import java.util.concurrent.CancellationException;
 import javax.imageio.ImageWriter;
-
-import org.opengis.geometry.Envelope;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.geotoolkit.resources.Errors;
-import org.apache.sis.geometry.Envelopes;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-
-import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.grid.GridCoverage;
 
 
 /**
@@ -69,26 +55,7 @@ import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
  * @since 3.14
  * @module
  */
-public abstract class GridCoverageWriter extends GridCoverageStore implements CoverageWriter<GridCoverage>{
-    /**
-     * The output (typically a {@link java.io.File}, {@link java.net.URL} or {@link String}),
-     * or {@code null} if output is not set.
-     */
-    Object output;
-
-    /**
-     * The bounds of the image requested by the user. This field is computed indirectly
-     * by the {@link #geodeticToPixelCoordinates geodeticToPixelCoordinates} method.
-     *
-     * @since 3.14
-     */
-    transient Rectangle requestedBounds;
-
-    /**
-     * Creates a new instance.
-     */
-    protected GridCoverageWriter() {
-    }
+public interface GridCoverageWriter {
 
     /**
      * Sets the output destination to the given object. The output is typically a
@@ -113,10 +80,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore implements Co
      *
      * @see ImageWriter#setOutput(Object)
      */
-    public void setOutput(Object output) throws CoverageStoreException {
-        this.output = output;
-        abortRequested = false;
-    }
+    void setOutput(Object output) throws CoverageStoreException;
 
     /**
      * Returns the output which was set by the last call to {@link #setOutput(Object)},
@@ -127,9 +91,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore implements Co
      *
      * @see ImageWriter#getOutput()
      */
-    public Object getOutput() throws CoverageStoreException {
-        return output;
-    }
+    Object getOutput() throws CoverageStoreException;
 
     /**
      * Writes a single grid coverage.
@@ -141,8 +103,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore implements Co
      * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
      *         the execution of this method.
      */
-    @Override
-    public abstract void write(GridCoverage coverage, GridCoverageWriteParam param)
+    void write(GridCoverage coverage, GridCoverageWriteParam param)
             throws CoverageStoreException, CancellationException;
 
     /**
@@ -160,53 +121,8 @@ public abstract class GridCoverageWriter extends GridCoverageStore implements Co
      *
      * @since 3.20
      */
-    @Override
-    public void write(final Iterable<? extends GridCoverage> coverages, final GridCoverageWriteParam param)
-            throws CoverageStoreException, CancellationException
-    {
-        short errorKey = Errors.Keys.NoSuchElement_1;
-        final Iterator<? extends GridCoverage> it = coverages.iterator();
-        if (it.hasNext()) {
-            final GridCoverage coverage = it.next();
-            if (!it.hasNext()) {
-                write(coverage, param);
-                return;
-            }
-            errorKey = Errors.Keys.UnsupportedMultiOccurrence_1;
-        }
-        throw new CoverageStoreException(Errors.format(errorKey, GridCoverage.class));
-    }
-
-    /**
-     * A callback invoked by {@link #geodeticToPixelCoordinates geodeticToPixelCoordinates}
-     * in order to compute the {@link #requestedBounds} value. This value is of interest to
-     * the writer only (not to {@link ImageCoverageReader}), because the reader is allowed
-     * to returns a different coverage than the requested one, while the writer have to write
-     * the image as requested.
-     */
-    @Override
-    final void computeRequestedBounds(final MathTransform destToExtractedGrid,
-            final Envelope requestEnvelope, final CoordinateReferenceSystem requestCRS)
-            throws TransformException, CoverageStoreException
-    {
-        final GridEnvelope gridEnvelope = new GeneralGridEnvelope(
-                Envelopes.transform(destToExtractedGrid.inverse(), requestEnvelope),
-                PixelInCell.CELL_CORNER, false);
-        for (int i=gridEnvelope.getDimension(); --i>=0;) {
-            if (gridEnvelope.getSpan(i) <= 0) {
-                String message = formatErrorMessage(Errors.Keys.ValueTendTowardInfinity);
-                if (requestCRS != null) {
-                    message = requestCRS.getCoordinateSystem().getAxis(i).getName().getCode() + ": " + message;
-                }
-                throw new CoverageStoreException(message);
-            }
-        }
-        requestedBounds = new Rectangle(
-                gridEnvelope.getLow (X_DIMENSION),
-                gridEnvelope.getLow (Y_DIMENSION),
-                gridEnvelope.getSpan(X_DIMENSION),
-                gridEnvelope.getSpan(Y_DIMENSION));
-    }
+    void write(final Iterable<? extends GridCoverage> coverages, final GridCoverageWriteParam param)
+            throws CoverageStoreException, CancellationException;
 
     /**
      * Restores the {@code GridCoverageWriter} to its initial state.
@@ -215,12 +131,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore implements Co
      *
      * @see ImageWriter#reset()
      */
-    @Override
-    public void reset() throws CoverageStoreException {
-        requestedBounds = null;
-        output = null;
-        super.reset();
-    }
+    void reset() throws DataStoreException;
 
     /**
      * Allows any resources held by this writer to be released. The result of calling
@@ -230,10 +141,6 @@ public abstract class GridCoverageWriter extends GridCoverageStore implements Co
      *
      * @see ImageWriter#dispose()
      */
-    @Override
-    public void dispose() throws CoverageStoreException {
-        requestedBounds = null;
-        output = null;
-        super.dispose();
-    }
+    void dispose() throws DataStoreException;
+
 }

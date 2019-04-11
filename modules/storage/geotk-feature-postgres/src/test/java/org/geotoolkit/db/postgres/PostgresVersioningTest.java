@@ -33,6 +33,7 @@ import java.util.Set;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
@@ -42,9 +43,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.junit.Test;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
-
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -64,7 +63,7 @@ import org.opengis.feature.FeatureType;
  */
 public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
     private static final GeometryFactory GF = new GeometryFactory();
     private static final FeatureType FTYPE_SIMPLE;
 

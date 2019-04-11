@@ -21,19 +21,13 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
 import java.awt.image.WritableRenderedImage;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-
 import org.opengis.parameter.ParameterValueGroup;
-
 import org.apache.sis.util.ArgumentChecks;
-
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PlanarConfiguration;
@@ -128,7 +122,7 @@ public class BandCombineProcess extends AbstractProcess {
             minXYs[i][0]   = image.getMinX();
             minXYs[i][1]   = image.getMinY();
             tilesSize[i]   = new Dimension(image.getTileWidth(), image.getTileHeight());
-            readItes[i]    = PixelIteratorFactory.createDefaultIterator(image);
+            readItes[i]    = new PixelIterator.Builder().create(image);
             nbBands[i]     = sm.getNumBands();
             nbBandIndex[i] = nbtotalbands;
             nbtotalbands  += sm.getNumBands();
@@ -204,7 +198,7 @@ public class BandCombineProcess extends AbstractProcess {
         //-- SrcTiles dimensions and src dest Dimension are equals
         if (sameTileSize) {
 
-            final PixelIterator destPix = PixelIteratorFactory.createDefaultWriteableIterator(resultImage, resultImage);
+            final WritablePixelIterator destPix = new PixelIterator.Builder().createWritable(resultImage);
 
             int itId = -1;
             while (destPix.next()) {
@@ -218,26 +212,19 @@ public class BandCombineProcess extends AbstractProcess {
                 srcPix.next();
 
                 //-- current src iterator coordinates
-                final int srcPX = srcPix.getX();
-                final int srcPY = srcPix.getY();
+                final Point position = srcPix.getPosition();
+                final int srcPX = position.x;
+                final int srcPY = position.y;
 
                 //-- current destination iterator coordinates
                 final int dstPX = srcPX - minXYs[itId][0];
                 final int dstPY = srcPY - minXYs[itId][1];
 
-                destPix.setSampleDouble(srcPix.getSampleDouble());
-
-                int b = 0;
-                while (++b < nbBands[itId]) {
+                for (int b = 0; b < nbBands[itId]; b++) {
                     assert checkPositions("Src Pix Iterator for image "+itId+" at band index : "+nbBandIndex[itId] + b, srcPix,  srcPX, srcPY);
                     assert checkPositions("Dest Pix at Band index : "+nbBandIndex[itId] + b, destPix, dstPX, dstPY);
-                    destPix.next();
-                    srcPix.next();
-                    destPix.setSampleDouble(srcPix.getSampleDouble());
+                    destPix.setSample(b, srcPix.getSampleDouble(b));
                 }
-                assert checkPositions("Src Pix Iterator for image "+itId+" at band index : "+nbBandIndex[itId] + b, srcPix,  srcPX, srcPY);
-                assert checkPositions("Dest Pix at Band index : "+nbBandIndex[itId] + b, destPix, dstPX, dstPY);
-
             }
 
         } else {
@@ -251,39 +238,28 @@ public class BandCombineProcess extends AbstractProcess {
                         final Rectangle srcArea = new Rectangle(srcMinX + tx * tilesSize[i].width, srcMinY + ty * tilesSize[i].height,
                                                                                tilesSize[i].width, tilesSize[i].height);
 
-                        final PixelIterator srcPix = PixelIteratorFactory.createDefaultIterator(srcImage, srcArea);
+                        final PixelIterator srcPix = new PixelIterator.Builder().setRegionOfInterest(srcArea).create(srcImage);
 
                         //-- dest image begin (0, 0)
                         final Rectangle destArea = new Rectangle(tx * tilesSize[i].width, ty * tilesSize[i].height,
                                                                       tilesSize[i].width, tilesSize[i].height);
 
-                        final PixelIterator destPix = PixelIteratorFactory.createDefaultWriteableIterator(resultImage, resultImage, destArea);
+                        final WritablePixelIterator destPix = new PixelIterator.Builder().setRegionOfInterest(destArea).createWritable(resultImage);
 
                         while (srcPix.next()) {
                             //-- current src iterator coordinates
-                            final int srcPX = srcPix.getX();
-                            final int srcPY = srcPix.getY();
+                            final int srcPX = srcPix.getPosition().x;
+                            final int srcPY = srcPix.getPosition().y;
 
                             //-- current destination iterator coordinates
-                            final int dstPX = srcPix.getX() - srcMinX;
-                            final int dstPY = srcPix.getY() - srcMinY;
+                            final int dstPX = srcPX - srcMinX;
+                            final int dstPY = srcPY - srcMinY;
 
-                            destPix.moveTo(dstPX, dstPY, nbBandIndex[i]);
-                            destPix.setSampleDouble(srcPix.getSampleDouble());
-
-                            //-- fork other bands writing like follow
-                            //-- to avoid unnecessary multiple pixeliterator.move() call
-                            int b = 0;
-                            while (++b < nbBands[i]) {
+                            for (int b = 0; b < nbBands[i]; b++) {
                                 assert checkPositions("Src Pix Iterator for image "+i+" at band index : "+nbBandIndex[i] + b, srcPix,  srcPX, srcPY);
                                 assert checkPositions("Dest Pix at Band index : "+nbBandIndex[i] + b, destPix, dstPX, dstPY);
-                                srcPix.next();
-                                destPix.next();
-                                destPix.setSampleDouble(srcPix.getSampleDouble());
+                                destPix.setSample(nbBandIndex[i]+b, srcPix.getSampleDouble(b));
                             }
-
-                            assert checkPositions("Src Pix Iterator for image "+i+" at band index : "+nbBandIndex[i] + b, srcPix,  srcPX, srcPY);
-                            assert checkPositions("Dest Pix at Band index : "+nbBandIndex[i] + b, destPix, dstPX, dstPY);
                         }
                     }
                 }
@@ -323,8 +299,8 @@ public class BandCombineProcess extends AbstractProcess {
      */
     private static boolean checkPositions(final String message, final PixelIterator pix, final int expectedPosX, final int expectedPosY) {
         ArgumentChecks.ensureNonNull("PixelIterator", pix);
-        assert pix.getX() == expectedPosX : message+" expected position X : "+expectedPosX+", found : "+pix.getX();
-        assert pix.getY() == expectedPosY : message+" expected position Y : "+expectedPosY+", found : "+pix.getY();
+        assert pix.getPosition().x == expectedPosX : message+" expected position X : "+expectedPosX+", found : "+pix.getPosition().x;
+        assert pix.getPosition().y == expectedPosY : message+" expected position Y : "+expectedPosY+", found : "+pix.getPosition().y;
         return true;
     }
 }

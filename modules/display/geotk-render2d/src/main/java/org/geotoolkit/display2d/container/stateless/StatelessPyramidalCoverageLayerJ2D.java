@@ -57,9 +57,9 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
@@ -83,7 +83,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer> implements ChangeListener<ChangeEvent> {
+public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> implements ChangeListener<ChangeEvent> {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d");
     protected StorageListener.Weak weakStoreListener = new StorageListener.Weak(this);
@@ -92,20 +92,20 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
     private final double tolerance;
     private final CoverageFinder coverageFinder;
 
-    public StatelessPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer){
+    public StatelessPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final MapLayer layer){
         super(canvas, layer, false);
         this.coverageFinder = new DefaultCoverageFinder();
-        model = (PyramidalCoverageResource)layer.getCoverageReference();
+        model = (PyramidalCoverageResource)layer.getResource();
         tolerance = 0.25; // in % , TODO use a flag to allow change value
-        this.weakStoreListener.registerSource(layer.getCoverageReference());
+        this.weakStoreListener.registerSource(layer.getResource());
     }
 
-    public StatelessPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer, CoverageFinder coverageFinder){
+    public StatelessPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final MapLayer layer, CoverageFinder coverageFinder){
         super(canvas, layer, false);
         this.coverageFinder = coverageFinder;
-        model = (PyramidalCoverageResource)layer.getCoverageReference();
+        model = (PyramidalCoverageResource)layer.getResource();
         tolerance = 0.25; // in % , TODO use a flag to allow change value
-        this.weakStoreListener.registerSource(layer.getCoverageReference());
+        this.weakStoreListener.registerSource(layer.getResource());
     }
 
     /**
@@ -254,7 +254,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         params.update(context2D);
 
         //search for a tile which intersects the seach area
-        final PyramidalCoverageResource covRef = (PyramidalCoverageResource) item.getCoverageReference();
+        final PyramidalCoverageResource covRef = (PyramidalCoverageResource) item.getResource();
         for(int tileCol=(int)result.tileMinCol; tileCol<result.tileMaxCol; tileCol++){
             for(int tileRow=(int)result.tileMinRow; tileRow<result.tileMaxRow; tileRow++){
                 if(result.mosaic.isMissing(tileCol, tileRow)){
@@ -284,7 +284,12 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
     private TileSetResult listTiles(RenderingContext2D context2D){
         final TileSetResult result = new TileSetResult();
 
-        final GenericName coverageName = item.getCoverageReference().getIdentifier();
+        GenericName coverageName = null;
+        try {
+            coverageName = item.getResource().getIdentifier();
+        } catch (DataStoreException ex) {
+            //do nothing
+        }
         result.rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 context2D.getSEScale(), coverageName,null);
 
@@ -413,7 +418,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             return null;
         }
 
-        final CoverageMapLayer tilelayer = MapBuilder.createCoverageLayer(coverage, getUserObject().getStyle(), getUserObject().getName());
+        final MapLayer tilelayer = MapBuilder.createCoverageLayer(coverage, getUserObject().getStyle(), getUserObject().getName());
         tilelayer.setElevationModel(getUserObject().getElevationModel());
         return new ProjectedCoverage(params, tilelayer);
     }
@@ -429,14 +434,14 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             return null;
         }
 
-        final CoverageMapLayer tilelayer = MapBuilder.createCoverageLayer(coverage, getUserObject().getStyle(), getUserObject().getName());
+        final MapLayer tilelayer = MapBuilder.createCoverageLayer(coverage, getUserObject().getStyle(), getUserObject().getName());
         tilelayer.setElevationModel(getUserObject().getElevationModel());
         return new ProjectedCoverage(params, tilelayer);
     }
 
     private boolean paintTile(final RenderingContext2D context, StatelessContextParams params, CachedRule[] rules,
             final String pyramidId, final String mosaicId, final ImageTile tile) {
-        final PyramidalCoverageResource covRef = (PyramidalCoverageResource) item.getCoverageReference();
+        final PyramidalCoverageResource covRef = (PyramidalCoverageResource) item.getResource();
 
         final ProjectedCoverage projectedCoverage = asCoverage(context,
                 params, covRef, pyramidId, mosaicId, tile);

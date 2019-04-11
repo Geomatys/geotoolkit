@@ -150,7 +150,7 @@ public final strictfp class WorldFileImageReaderTest extends TextImageReaderTest
             // with this test. Save them in order to restore them after the test.
             registry.getServiceProviderByClass(TextRecordImageReader.Spi.class)
         };
-        File file = TestData.file(org.geotoolkit.image.ImageInspector.class, "Contour.png");
+        File file = TestData.file(org.geotoolkit.image.BufferedImages.class, "Contour.png");
         try {
             Locale.setDefault(Locale.US);
             for (final ImageReaderSpi spi : disabledSpi) {

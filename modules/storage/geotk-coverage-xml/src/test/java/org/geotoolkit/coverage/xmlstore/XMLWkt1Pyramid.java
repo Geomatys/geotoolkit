@@ -18,7 +18,6 @@ package org.geotoolkit.coverage.xmlstore;
 
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.FormattableObject;
-import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -46,10 +45,6 @@ class XMLWkt1Pyramid extends XMLOldPyramid {
         this.serializedCrs = null;
         if (crs instanceof FormattableObject) {
             this.crs = ((FormattableObject)crs).toString(Convention.WKT1);
-        } else if (crs instanceof org.geotoolkit.io.wkt.Formattable) {
-            WKTFormat f = new WKTFormat(null, null);
-            f.setConvention(Convention.WKT1);
-            this.crs = f.format(crs);
         }
 
         if (this.crs == null && serializedCrs == null) {

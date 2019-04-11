@@ -33,13 +33,15 @@ import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javax.imageio.ImageIO;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.util.ArgumentChecks;
 import org.controlsfx.dialog.ExceptionDialog;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.style.StyleFactory;
 import org.opengis.util.InternationalString;
 
 /**
@@ -77,12 +79,12 @@ public final class GeotkFX {
     private static MutableStyleFactory SF;
 
     public synchronized static FilterFactory2 getFilterFactory(){
-        if(FF==null)FF = (FilterFactory2) FactoryFinder.getFilterFactory(null);
+        if(FF==null)FF = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
         return FF;
     }
 
     public synchronized static MutableStyleFactory getStyleFactory(){
-        if(SF==null)SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(null);
+        if(SF==null)SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
         return SF;
     }
 

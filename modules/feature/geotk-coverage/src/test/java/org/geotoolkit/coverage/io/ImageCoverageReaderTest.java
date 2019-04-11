@@ -26,32 +26,31 @@ import java.io.IOException;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.xml.bind.JAXBException;
-
-import org.opengis.geometry.Envelope;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.metadata.Metadata;
-import org.opengis.metadata.identification.Resolution;
-import org.opengis.metadata.identification.Identification;
-import org.opengis.metadata.identification.DataIdentification;
-
-import org.junit.*;
-
-import org.apache.sis.test.DependsOn;
-import org.geotoolkit.test.TestData;
-import org.geotoolkit.test.image.ImageTestBase;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelope2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.test.DependsOn;
+import static org.apache.sis.test.MetadataAssert.*;
+import static org.apache.sis.test.TestUtilities.getSingleton;
+import org.apache.sis.xml.XML;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
+import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReader;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageReaderTest;
-import org.geotoolkit.image.SampleModels;
-import org.apache.sis.xml.XML;
-
-import static org.apache.sis.test.MetadataAssert.*;
-import static org.apache.sis.test.TestUtilities.getSingleton;
+import org.geotoolkit.test.TestData;
+import org.geotoolkit.test.image.ImageTestBase;
+import org.junit.*;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
+import org.opengis.metadata.identification.DataIdentification;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.metadata.identification.Resolution;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.datum.PixelInCell;
 
 
 /**
@@ -60,9 +59,6 @@ import static org.apache.sis.test.TestUtilities.getSingleton;
  * is the easiest one to debug.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
- *
- * @since 3.09
  */
 @DependsOn({TextMatrixImageReaderTest.class, WorldFileImageReaderTest.class})
 public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
@@ -115,7 +111,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
      */
     @Test
     @Ignore("Need to be revisited during the migration to Apache SIS.")
-    public void testMetadata() throws IOException, CoverageStoreException, JAXBException {
+    public void testMetadata() throws IOException, DataStoreException, JAXBException {
         final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readFull");
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));
         assertEquals(WorldFileImageReader.class, reader.imageReader.getClass());
@@ -136,30 +132,30 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
      * @throws CoverageStoreException Should not happen.
      */
     @Test
-    public void readFull() throws IOException, CoverageStoreException {
+    public void readFull() throws IOException, DataStoreException {
         final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readFull");
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));
         assertEquals(WorldFileImageReader.class, reader.imageReader.getClass());
         /*
          * Check the grid geometry before to attempt to read the image.
          */
-        final GridGeometry2D gridGeometry = reader.getGridGeometry(0);
-        final GridEnvelope gridEnvelope = gridGeometry.getExtent();
+        final GridGeometry2D gridGeometry = reader.getGridGeometry();
+        final GridExtent gridEnvelope = gridGeometry.getExtent();
         assertEquals("Grid dimension", 2, gridEnvelope.getDimension());
         assertEquals("Image columns",  0, gridEnvelope.getLow(0));
         assertEquals("Image rows",     0, gridEnvelope.getLow(1));
         assertEquals("Image columns", 19, gridEnvelope.getHigh(0)); // Inclusive
         assertEquals("Image rows",    41, gridEnvelope.getHigh(1)); // Inclusive
-        assertTrue("Image bounds", new Rectangle(20,42).equals(gridGeometry.getExtent2D()));
+        assertTrue("Image bounds", new Rectangle(20,42).equals(GridGeometryIterator.toRectangle(gridGeometry.getExtent2D())));
         assertTrue("Grid to CRS (Java2D)", new AffineTransform(1000, 0, 0, -1000, -10000, 21000)
                 .equals(gridGeometry.getGridToCRS(PixelOrientation.UPPER_LEFT)));
         assertTrue("Grid to CRS (OGC)", new AffineTransform(1000, 0, 0, -1000, -9500, 20500)
-                .equals(gridGeometry.getGridToCRS())); // Equivalent to PixelOrientation.CENTER
+                .equals(gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER))); // Equivalent to PixelOrientation.CENTER
         /*
          * Read the image and check again its grid geometry, this time directly on the
          * rendered image. The grid geometry should be equivalent to the one checked above.
          */
-        final GridCoverage2D gridCoverage = reader.read(0, null);
+        final GridCoverage2D gridCoverage = reader.read(null);
         if (out != null) {
             out.println(reader);
         }
@@ -197,7 +193,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
      * @throws CoverageStoreException Should not happen.
      */
     @Test
-    public void readRegion() throws IOException, CoverageStoreException {
+    public void readRegion() throws IOException, DataStoreException {
         final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readRegion");
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));
         assertEquals(WorldFileImageReader.class, reader.imageReader.getClass());
@@ -206,7 +202,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
          */
         final GridCoverageReadParam param = new GridCoverageReadParam();
         param.setEnvelope(new Envelope2D(null, -1000, -2000, 8000 - -1000, 12000 - -2000));
-        final GridCoverage2D gridCoverage = reader.read(0, param);
+        final GridCoverage2D gridCoverage = reader.read(param);
         if (out != null) {
             out.println(reader);
         }
@@ -245,7 +241,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
      * @throws CoverageStoreException Should not happen.
      */
     @Test
-    public void readSubsampledRegion() throws IOException, CoverageStoreException {
+    public void readSubsampledRegion() throws IOException, DataStoreException {
         final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readSubsampledRegion");
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));
         assertEquals(WorldFileImageReader.class, reader.imageReader.getClass());
@@ -255,7 +251,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
         final GridCoverageReadParam param = new GridCoverageReadParam();
         param.setEnvelope(new Envelope2D(null, -1000, -2000, 8000 - -1000, 12000 - -2000));
         param.setResolution(2000, 3000);
-        final GridCoverage2D gridCoverage = reader.read(0, param);
+        final GridCoverage2D gridCoverage = reader.read(param);
         if (out != null) {
             out.println(reader);
         }
@@ -295,17 +291,17 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
      * @throws CoverageStoreException Should not happen.
      */
     @Test
-    public void readTwice() throws IOException, CoverageStoreException {
+    public void readTwice() throws IOException, DataStoreException {
         final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readTwice");
         final File file = TestData.file(SampleModels.class, "Contour.png");
         reader.setInput(file);
-        assertNotNull(reader.read(0, null));
+        assertNotNull(reader.read(null));
         if (out != null) {
             out.println(reader);
         }
         reader.reset();
         reader.setInput(file);
-        assertNotNull(reader.read(0, null));
+        assertNotNull(reader.read(null));
         if (out != null) {
             out.println(reader);
         }

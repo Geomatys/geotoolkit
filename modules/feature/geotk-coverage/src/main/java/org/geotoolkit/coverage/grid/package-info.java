@@ -25,7 +25,7 @@
  * which is a two-dimensional slice in a <var>n</var>-dimensional cube of data. Despite
  * its name, {@code GridCoverage2D} instances can be associated to <var>n</var>-dimensional
  * {@linkplain org.opengis.geometry.Envelope envelopes} providing that only two dimensions
- * have a {@link org.opengis.coverage.grid.GridEnvelope#getSpan(int) grid span} greater than 1.
+ * have a {@link org.opengis.coverage.grid.GridExtent#getSize(int) grid span} greater than 1.
  * <p>
  * The {@code GridCoverage2D} constructor is rather tedious. The
  * {@link org.geotoolkit.coverage.grid.GridCoverageBuilder} convenience class provides
@@ -41,11 +41,5 @@
  * {@link org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper}. Those rules are
  * somewhat arbitrary and are not guaranteed to produce the expected result. On the other hand,
  * the <cite>grid to CRS</cite> affine transform is fully determinist.
- *
- * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
- *
- * @since 2.1
- * @module
  */
 package org.geotoolkit.coverage.grid;

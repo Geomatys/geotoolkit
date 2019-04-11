@@ -24,7 +24,7 @@ import java.util.AbstractMap;
 import java.util.Map.Entry;
 import javax.imageio.ImageReader;
 import org.apache.sis.parameter.Parameters;
-
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -32,15 +32,12 @@ import org.geotoolkit.image.io.mosaic.MosaicBuilder;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriteParam;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-
+import static org.geotoolkit.processing.coverage.tiling.TilingDescriptor.*;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.geotoolkit.process.ProcessException;
-import static org.geotoolkit.processing.coverage.tiling.TilingDescriptor.*;
-import org.apache.sis.util.ArgumentChecks;
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -107,7 +104,7 @@ public final class TilingProcess extends AbstractProcess {
         final ImageCoverageReader reader = new ImageCoverageReader();
         try {
             reader.setInput(input);
-            final SpatialMetadata coverageMetadata = reader.getCoverageMetadata(0);
+            final SpatialMetadata coverageMetadata = reader.getCoverageMetadata();
             CoordinateReferenceSystem crs = coverageMetadata.getInstanceForType(CoordinateReferenceSystem.class);
             if(gridtoCRS == null) {
                 final RectifiedGrid grid = coverageMetadata.getInstanceForType(RectifiedGrid.class);

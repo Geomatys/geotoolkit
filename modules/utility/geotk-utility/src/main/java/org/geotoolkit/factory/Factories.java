@@ -17,19 +17,20 @@
  */
 package org.geotoolkit.factory;
 
-import java.util.Locale;
 import java.util.Iterator;
-import java.util.Collection;
-import java.io.Writer;
-import java.io.IOException;
 import java.awt.RenderingHints; // For javadoc
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.factory.MultiAuthoritiesFactory;
 
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.lang.Debug;
 import org.geotoolkit.internal.Listeners;
+import org.opengis.referencing.AuthorityFactory;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -117,68 +118,6 @@ public final class Factories extends Static {
     }
 
     /**
-     * Adds an alternative way to search for factory implementations. {@link FactoryRegistry} has
-     * a default mechanism bundled in it, which uses the content of all {@code META-INF/services}
-     * directories found on the classpath. This {@code addFactoryIteratorProvider} method allows
-     * to specify additional discovery algorithms. It may be useful in the context of some
-     * frameworks that use the <cite>constructor injection</cite> pattern, like the
-     * <a href="http://www.springframework.org/">Spring framework</a>.
-     * <p>
-     * If the given provider was not already registered, then this method notifies
-     * every listeners registered with {@link #addChangeListener(ChangeListener)}.
-     *
-     * @param provider A new provider for factory iterators.
-     *
-     * @level advanced
-     */
-    @Configuration
-    public static void addFactoryIteratorProvider(final FactoryIteratorProvider provider) {
-        if (FactoryIteratorProviders.GLOBAL.addFactoryIteratorProvider(provider)) {
-            fireConfigurationChanged(Factories.class);
-        }
-    }
-
-    /**
-     * Removes a provider that was previously {@linkplain #addFactoryIteratorProvider added}.
-     * Note that factories already obtained from the specified provider will not be
-     * {@linkplain FactoryRegistry#deregisterServiceProvider deregistered} by this method.
-     * <p>
-     * If the given provider was found, then this method notifies every listeners
-     * registered with {@link #addChangeListener(ChangeListener)}.
-     *
-     * @param provider The provider to remove.
-     *
-     * @level advanced
-     */
-    @Configuration
-    public static void removeFactoryIteratorProvider(final FactoryIteratorProvider provider) {
-        if (FactoryIteratorProviders.GLOBAL.removeFactoryIteratorProvider(provider)) {
-            fireConfigurationChanged(Factories.class);
-        }
-    }
-
-    /**
-     * Lists all available factory implementations in a tabular format. For each factory interface,
-     * the first implementation listed is the default one. This method provides a way to check the
-     * state of a system, usually for debugging purpose.
-     *
-     * @param  registries Where the factories are registered.
-     * @param  out The output stream where to format the list.
-     * @param  locale The locale for the list, or {@code null}.
-     * @throws IOException if an error occurs while writing to {@code out}.
-     *
-     * @see FactoryFinder#listProviders
-     *
-     * @since 3.00
-     */
-    @Debug
-    public static void listProviders(final Collection<FactoryRegistry> registries,
-            final Writer out, final Locale locale) throws IOException
-    {
-        new FactoryPrinter(registries).list(out, locale);
-    }
-
-    /**
      * Returns an iterator giving precedence to classes loaded by the given class loader or one
      * of its parents/children. This method is used as a safety when there is a risk that many
      * copies of the same library (for example in a web container) register the same JDK service.
@@ -214,5 +153,87 @@ public final class Factories extends Static {
             return iterator;
         }
         return new OrderedIterator<>(classLoader, iterator);
+    }
+
+    /**
+     * Returns the first implementation of {@link CRSAuthorityFactory} matching the specified
+     * hints. If no implementation matches, a new one is created if possible or an exception is
+     * thrown otherwise. If more than one implementation is registered and an
+     * {@linkplain #setVendorOrdering ordering is set}, then the preferred
+     * implementation is returned. Otherwise an arbitrary one is selected.
+     * <p>
+     * Hints that may be understood includes
+     * {@link Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER FORCE_LONGITUDE_FIRST_AXIS_ORDER},
+     * {@link Hints#FORCE_STANDARD_AXIS_UNITS        FORCE_STANDARD_AXIS_UNITS},
+     * {@link Hints#FORCE_STANDARD_AXIS_DIRECTIONS   FORCE_STANDARD_AXIS_DIRECTIONS} and
+     * {@link Hints#VERSION                          VERSION}.
+     * <p>
+     * <b>TIP:</b> The EPSG official factory and the EPSG extensions (additional CRS provided by
+     * ESRI and others) are two distinct factories. Call to {@code getCRSAuthorityFactory("EPSG",
+     * null)} returns only one of those, usually the official EPSG factory. If the union of those
+     * two factories is wanted, then a chain of fallbacks is wanted. Consider using something like:
+     *
+     * {@preformat java
+     *     FallbackAuthorityFactory.create(CRSAuthorityFactory.class, getCRSAuthorityFactories(hints));
+     * }
+     *
+     * @param  authority The desired authority (e.g. "EPSG").
+     * @return The first coordinate reference system authority factory that matches the supplied hints.
+     * @throws FactoryRegistryException if no implementation was found or can be created for the
+     *         {@link CRSAuthorityFactory} interface.
+     *
+     * @see org.geotoolkit.referencing.factory.FallbackAuthorityFactory#create(Class, java.util.Collection)
+     * @category Referencing
+     */
+    public static CRSAuthorityFactory getCRSAuthorityFactory(final String authority)
+            throws FactoryRegistryException
+    {
+        return getAuthorityFactory(CRSAuthorityFactory.class, authority, Hints.CRS_AUTHORITY_FACTORY);
+    }
+
+    /**
+     * Returns the first implementation of {@link CoordinateOperationAuthorityFactory} matching
+     * the specified hints. If no implementation matches, a new one is created if possible or an
+     * exception is thrown otherwise. If more than one implementation is registered and an
+     * {@linkplain #setVendorOrdering ordering is set}, then the preferred
+     * implementation is returned. Otherwise an arbitrary one is selected.
+     *
+     * @param  authority The desired authority (e.g. "EPSG").
+     * @return The first coordinate operation authority factory that matches the supplied hints.
+     * @throws FactoryRegistryException if no implementation was found or can be created for the
+     *         {@link CoordinateOperationAuthorityFactory} interface.
+     *
+     * @category Referencing
+     */
+    public static CoordinateOperationAuthorityFactory getCoordinateOperationAuthorityFactory(
+            final String authority) throws FactoryRegistryException
+    {
+        return getAuthorityFactory(CoordinateOperationAuthorityFactory.class, authority,
+                Hints.COORDINATE_OPERATION_AUTHORITY_FACTORY);
+    }
+
+    /**
+     * Returns the first implementation of a factory matching the specified hints. If no
+     * implementation matches, a new one is created if possible or an exception is thrown
+     * otherwise. If more than one implementation is registered and an
+     * {@linkplain #setVendorOrdering ordering is set}, then the preferred
+     * implementation is returned. Otherwise an arbitrary one is selected.
+     *
+     * @param  category  The authority factory type.
+     * @param  authority The desired authority (e.g. "EPSG").
+     * @param  key       The hint key to use for searching an implementation.
+     * @return The first authority factory that matches the supplied hints.
+     * @throws FactoryRegistryException if no implementation was found or can be created for the
+     *         specified interface.
+     */
+    private static <T extends AuthorityFactory> T getAuthorityFactory(
+            final Class<T> category, final String authority, final Hints.ClassKey key)
+            throws FactoryRegistryException
+    {
+        try {
+            return ((MultiAuthoritiesFactory) CRS.getAuthorityFactory(null)).getAuthorityFactory(category, authority, null);
+        } catch (FactoryException e) {
+            throw new FactoryRegistryException(e.getMessage(), e);
+        }
     }
 }

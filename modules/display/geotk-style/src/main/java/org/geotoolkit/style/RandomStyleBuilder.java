@@ -29,9 +29,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import javax.measure.Unit;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.geotoolkit.factory.Factory;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
@@ -53,6 +51,7 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.feature.FeatureExt;
+import org.opengis.style.StyleFactory;
 
 /**
  * Random style builder. This is a convini class if you dont need special styles.
@@ -61,7 +60,7 @@ import org.geotoolkit.feature.FeatureExt;
  * @author Johann Sorel
  * @module
  */
-public class RandomStyleBuilder extends Factory {
+public class RandomStyleBuilder {
 
     private static final Literal[] POINT_SHAPES = {
                                     StyleConstants.MARK_SQUARE,
@@ -78,9 +77,8 @@ public class RandomStyleBuilder extends Factory {
         Color.ORANGE, Color.RED, Color.YELLOW.darker()
     };
 
-    private static final MutableStyleFactory SF = (MutableStyleFactory)
-            FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     private RandomStyleBuilder() {}
 

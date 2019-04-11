@@ -20,30 +20,22 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import java.awt.*;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.vecmath.Point3d;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.apache.sis.image.PixelIterator;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.DirectPosition;
@@ -51,11 +43,10 @@ import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
-
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 
 import static org.geotoolkit.processing.coverage.kriging.KrigingDescriptor.*;
+import org.opengis.coverage.grid.SequenceType;
 
 
 /**
@@ -141,10 +132,10 @@ public class KrigingProcess extends AbstractProcess {
         final double[] cx = new double[rIWidth];
         final double[] cy = new double[rIHeight];
         final double[] cz = new double[outLength];
-        final PixelIterator it = PixelIteratorFactory.createRowMajorIterator(renderedImage);
+        final PixelIterator it = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(renderedImage);
         int comp = 0;
         while (it.next()) {
-            cz[comp++] = it.getSampleDouble();
+            cz[comp++] = it.getSampleDouble(0);
         }
         final double x0 = Math.min(cx[0], cx[cx.length-1]);
         final double y0 = Math.min(cy[0], cy[cy.length-1]);

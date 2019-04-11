@@ -18,26 +18,20 @@ package org.geotoolkit.wps.converters.outputs.references;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.UUID;
 import net.iharder.Base64;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.nio.IOUtilities;
-import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Reference;
-;
-
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-import static java.nio.file.StandardOpenOption.WRITE;
 
 /**
  * Implementation of ObjectConverter to convert a {@link GridCoverage2D coverage} into a {@link Reference reference}.
@@ -115,7 +109,7 @@ public class CoverageToReferenceConverter extends AbstractReferenceOutputConvert
             final String relLoc = getRelativeLocation(imageFile, params);
             reference.setHref((String) params.get(TMP_DIR_URL) + "/" +relLoc);
 
-        } catch (IOException | CoverageStoreException ex) {
+        } catch (IOException | DataStoreException ex) {
             throw new UnconvertibleObjectException("Error during writing the coverage in the output file.",ex);
         }
 

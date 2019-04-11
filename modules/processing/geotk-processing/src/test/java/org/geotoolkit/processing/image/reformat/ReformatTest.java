@@ -34,6 +34,7 @@ import org.opengis.util.NoSuchIdentifierException;
 import static org.junit.Assert.*;
 import org.opengis.parameter.ParameterValueGroup;
 
+
 /**
  * Test reformat process.
  *
@@ -151,5 +152,4 @@ public class ReformatTest extends org.geotoolkit.test.TestBase {
         assertEquals(100, raster3B.getWidth());
         assertEquals(100, raster3B.getHeight());
     }
-
 }

@@ -17,39 +17,35 @@
  */
 package org.geotoolkit.referencing.operation.builder;
 
+import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Objects;
-import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-
-import org.opengis.coverage.grid.GridEnvelope;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.geotoolkit.resources.Errors;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
-
-import org.apache.sis.geometry.Envelope2D;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
-import org.apache.sis.referencing.operation.matrix.Matrices;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.apache.sis.internal.metadata.AxisDirections;
-import org.geotoolkit.resources.Errors;
-
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.opengis.referencing.operation.Matrix;
 
 
 /**
  * A helper class for building <var>n</var>-dimensional {@linkplain AffineTransform affine transform}
- * mapping {@linkplain GridEnvelope grid envelopes} to georeferenced {@linkplain Envelope envelopes}.
+ * mapping {@linkplain GridExtent grid envelopes} to georeferenced {@linkplain Envelope envelopes}.
  * The affine transform will be computed automatically from the information specified by the
- * {@link #setGridExtent(GridEnvelope)} and {@link #setEnvelope(Envelope)} methods, which are
+ * {@link #setGridExtent(GridExtent)} and {@link #setEnvelope(Envelope)} methods, which are
  * mandatory. All other setter methods are optional hints about the affine transform to be created.
  * <p>
  * This builder is convenient when the following conditions are meet:
@@ -124,7 +120,7 @@ public class GridToEnvelopeMapper {
     /**
      * The grid envelope, or {@code null} if not yet specified.
      */
-    private GridEnvelope gridExtent;
+    private GridExtent gridExtent;
 
     /**
      * The geodetic envelope, or {@code null} if not yet specified.
@@ -169,7 +165,7 @@ public class GridToEnvelopeMapper {
      *         must coincide with the lower right corner of the last pixel.
      * @throws MismatchedDimensionException if the two envelopes don't have consistent dimensions.
      */
-    public GridToEnvelopeMapper(final GridEnvelope gridExtent, final Envelope envelope)
+    public GridToEnvelopeMapper(final GridExtent gridExtent, final Envelope envelope)
             throws MismatchedDimensionException
     {
         ensureNonNull("gridExtent", gridExtent);
@@ -187,7 +183,7 @@ public class GridToEnvelopeMapper {
     /**
      * Makes sure that the specified objects have the same dimension.
      */
-    private static void ensureDimensionMatch(final GridEnvelope gridExtent,
+    private static void ensureDimensionMatch(final GridExtent gridExtent,
             final Envelope envelope, final boolean checkingRange)
     {
         if (gridExtent != null && envelope != null) {
@@ -258,7 +254,7 @@ public class GridToEnvelopeMapper {
      * @return The The extent of grid coordinates in a grid coverage.
      * @throws IllegalStateException if the grid envelope has not yet been defined.
      */
-    public GridEnvelope getGridExtent() throws IllegalStateException {
+    public GridExtent getGridExtent() throws IllegalStateException {
         if (gridExtent == null) {
             throw new IllegalStateException(Errors.format(
                     Errors.Keys.NoParameterValue_1, "gridEnvelope"));
@@ -273,7 +269,7 @@ public class GridToEnvelopeMapper {
      *
      * @since 3.20 (derived from 2.3)
      */
-    public void setGridExtent(final GridEnvelope extent) {
+    public void setGridExtent(final GridExtent extent) {
         ensureNonNull("extent", extent);
         ensureDimensionMatch(extent, envelope, true);
         if (!Objects.equals(gridExtent, extent)) {
@@ -284,28 +280,24 @@ public class GridToEnvelopeMapper {
 
     /**
      * Sets the grid envelope as a two-dimensional rectangle. This convenience method
-     * creates a {@link GridEnvelope2D} from the given rectangle and delegates to the
-     * {@link #setGridExtent(GridEnvelope)} method.
+     * creates a {@link GridExtent} from the given rectangle and delegates to the
+     * {@link #setGridExtent(GridExtent)} method.
      *
      * @param extent The new grid envelope.
      *
      * @since 3.20 (derived from 3.15)
      */
     public void setGridExtent(final Rectangle extent) {
-        final GridEnvelope ge;
-        if (extent instanceof GridEnvelope) {
-            ge = (GridEnvelope) extent;
-        } else {
-            ensureNonNull("gridEnvelope", extent);
-            ge = new GridEnvelope2D(extent);
-        }
+        final GridExtent ge;
+        ensureNonNull("gridEnvelope", extent);
+        ge = new GridExtent(null, new long[]{extent.x, extent.y}, new long[]{extent.width, extent.height}, false);
         setGridExtent(ge);
     }
 
     /**
      * Sets the grid envelope as a two-dimensional rectangle. This convenience method
-     * creates a {@link GridEnvelope2D} from the given rectangle and delegates to the
-     * {@link #setGridExtent(GridEnvelope)} method.
+     * creates a {@link GridExtent} from the given rectangle and delegates to the
+     * {@link #setGridExtent(GridExtent)} method.
      *
      * @param x The minimal <var>x</var> ordinate.
      * @param y The minimal <var>y</var> ordinate.
@@ -315,7 +307,7 @@ public class GridToEnvelopeMapper {
      * @since 3.20 (derived from 3.15)
      */
     public void setGridExtent(final int x, final int y, final int width, final int height) {
-        setGridExtent((GridEnvelope) new GridEnvelope2D(x, y, width, height));
+        setGridExtent(new GridExtent(null, new long[]{x,y}, new long[]{width, height}, false));
     }
 
     /**
@@ -584,7 +576,7 @@ public class GridToEnvelopeMapper {
      */
     public MathTransform createTransform() throws IllegalStateException {
         if (transform == null) {
-            final GridEnvelope gridEnvelope = getGridExtent();
+            final GridExtent   gridEnvelope = getGridExtent();
             final Envelope     userEnvelope = getEnvelope();
             final boolean      swapXY       = getSwapXY();
             final boolean[]    reverse      = getReverseAxis();
@@ -612,7 +604,7 @@ public class GridToEnvelopeMapper {
                 if (swapXY && j<=1) {
                     j = 1-j;
                 }
-                double scale = userEnvelope.getSpan(j) / gridEnvelope.getSpan(i);
+                double scale = userEnvelope.getSpan(j) / gridEnvelope.getSize(i);
                 double offset;
                 if (reverse == null || j >= reverse.length || !reverse[j]) {
                     offset = userEnvelope.getMinimum(j);

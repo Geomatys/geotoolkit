@@ -20,16 +20,15 @@ package org.geotoolkit.processing.coverage.mathcalc;
 import java.util.AbstractMap;
 import java.util.Set;
 import java.util.logging.Level;
-
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
-import org.opengis.coverage.Coverage;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.FactoryException;
-import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -47,7 +46,7 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
         this.pick = new DynamicPick(eval.pick.coverages, eval.pick.mapping, positionGeo);
     }
 
-    public MathCalcCoverageEvaluator(Coverage[] coverages, String[] mapping,
+    public MathCalcCoverageEvaluator(GridCoverage[] coverages, String[] mapping,
             Expression exp, CoordinateReferenceSystem crs) throws FactoryException {
         // prepare dynamic pick object
         this.exp = exp;
@@ -69,18 +68,18 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
 
     private static class DynamicPick extends AbstractMap{
 
-        private final Coverage[] coverages;
+        private final GridCoverage[] coverages;
         private final String[] mapping;
         private final MathTransform[] baseToCoverage;
         private final GeneralDirectPosition[] coverageCoord;
         private final DirectPosition coord;
         private final double[] sampleBuffer;
 
-        private DynamicPick(Coverage[] coverages, String[] mapping, DirectPosition coord) throws FactoryException{
+        private DynamicPick(GridCoverage[] coverages, String[] mapping, DirectPosition coord) throws FactoryException{
             this.coverages = coverages;
             this.mapping = mapping;
             this.coord = coord;
-            this.sampleBuffer = new double[coverages[0].getNumSampleDimensions()];
+            this.sampleBuffer = new double[coverages[0].getSampleDimensions().size()];
             baseToCoverage = new MathTransform[coverages.length];
             coverageCoord = new GeneralDirectPosition[coverages.length];
             for(int i=0;i<coverages.length;i++){

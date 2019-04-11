@@ -17,14 +17,13 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
+import org.apache.sis.internal.system.DefaultFactories;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.ConcatenatedOperation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.junit.*;
 
 import static org.junit.Assume.*;
@@ -50,7 +49,7 @@ public final strictfp class OperationFactoryTest extends EpsgFactoryTestBase {
      * Creates a test suite.
      */
     public OperationFactoryTest() {
-        opFactory = AuthorityFactoryFinder.getCoordinateOperationFactory(null);
+        opFactory = DefaultFactories.forBuildin(CoordinateOperationFactory.class);
     }
 
     /**

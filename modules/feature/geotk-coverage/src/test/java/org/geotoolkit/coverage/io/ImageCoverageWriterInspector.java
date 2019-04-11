@@ -24,7 +24,7 @@ import java.awt.image.RenderedImage;
 import java.awt.geom.AffineTransform;
 import javax.imageio.metadata.IIOMetadata;
 
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -44,9 +44,6 @@ import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
  * writing process.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
- *
- * @since 3.14
  */
 final strictfp class ImageCoverageWriterInspector extends ImageCoverageWriter {
     /**

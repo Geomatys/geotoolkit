@@ -740,6 +740,8 @@ public class GeodeticCalculator {
      * starting point}. The destination point will be updated as a side effect of this call.
      * It will be recomputed the next time {@link #getDestinationGeographicPoint()} is invoked.
      *
+     * <p>The direction is relative to geographic North, with values increasing clockwise.</p>
+     *
      * @param  azimuth The azimuth in decimal degrees from -180° to 180°.
      * @param  distance The orthodromic distance in the same units as the
      *         {@linkplain #getEllipsoid ellipsoid} axis.
@@ -767,6 +769,8 @@ public class GeodeticCalculator {
      * setDestinationGeographicPoint}(...)</code> has been invoked after. In this later case, the
      * azimuth will be computed from the {@linkplain #getStartingGeographicPoint starting point}
      * to the destination point.
+     *
+     * <p>The azimuth is relative to geographic North, with values increasing clockwise.</p>
      *
      * @return The azimuth, in decimal degrees from -180° to +180°.
      * @throws IllegalStateException if the destination point has not been set.

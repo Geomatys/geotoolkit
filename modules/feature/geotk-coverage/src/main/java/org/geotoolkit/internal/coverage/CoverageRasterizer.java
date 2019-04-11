@@ -22,21 +22,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.geotoolkit.coverage.GridCoverageStack;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.coverage.CannotEvaluateException;
-import org.opengis.coverage.Coverage;
-import org.opengis.coverage.SampleDimension;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -48,15 +47,15 @@ import org.opengis.util.FactoryException;
  */
 public class CoverageRasterizer {
 
-    private Coverage source;
+    private GridCoverage source;
     private GridCoverage target;
     private CoordinateReferenceSystem targetCrs;
 
-    public void setSource(Coverage source) {
+    public void setSource(GridCoverage source) {
         this.source = source;
     }
 
-    public Coverage getSource() {
+    public GridCoverage getSource() {
         return source;
     }
 
@@ -79,7 +78,7 @@ public class CoverageRasterizer {
 
         if (dimension == 2) {
             //single slice
-            return buildSlice((GeneralGridGeometry) gridGeometry);
+            return buildSlice((GridGeometry) gridGeometry);
         } else {
             //cube
             return build(gridGeometry, 2);
@@ -94,7 +93,7 @@ public class CoverageRasterizer {
             //last dimension
             final List<GridCoverage> slices = new ArrayList<>();
             while (ite.hasNext()) {
-                final GeneralGridGeometry sliceGridGeom = ite.next();
+                final GridGeometry sliceGridGeom = ite.next();
                 final GridCoverage slice = buildSlice(sliceGridGeom);
                 slices.add(slice);
             }
@@ -110,11 +109,9 @@ public class CoverageRasterizer {
         }
     }
 
-    private GridCoverage buildSlice(GeneralGridGeometry sliceGridGeom) throws TransformException, FactoryException {
+    private GridCoverage buildSlice(GridGeometry sliceGridGeom) throws TransformException, FactoryException {
 
-        final int nbSample = source.getNumSampleDimensions();
-        final SampleDimension[] samples = new SampleDimension[nbSample];
-        for (int i=0; i<nbSample; i++) samples[i] = source.getSampleDimension(i);
+        final List<SampleDimension> samples = source.getSampleDimensions();
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName("slice");
@@ -128,7 +125,7 @@ public class CoverageRasterizer {
         final double[] fillValues = new double[pixel.length];
         Arrays.fill(fillValues, Double.NaN);
 
-        final MathTransform gridToCRS = sliceGridGeom.getGridToCRS();
+        final MathTransform gridToCRS = sliceGridGeom.getGridToCRS(PixelInCell.CELL_CENTER);
         final MathTransform crsToSource = CRS.findOperation(coverage.getCoordinateReferenceSystem(), source.getCoordinateReferenceSystem(), null).getMathTransform();
         final MathTransform gridToSource = MathTransforms.concatenate(gridToCRS, crsToSource);
         final GeneralDirectPosition pos = new GeneralDirectPosition(source.getCoordinateReferenceSystem());

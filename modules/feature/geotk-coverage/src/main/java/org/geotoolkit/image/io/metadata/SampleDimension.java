@@ -23,7 +23,6 @@ import org.opengis.metadata.content.RangeDimension;
 import org.opengis.metadata.content.TransferFunctionType;
 
 import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.coverage.GridSampleDimension;
 
 
 /**
@@ -31,24 +30,19 @@ import org.geotoolkit.coverage.GridSampleDimension;
  * {@link org.opengis.metadata.content.Band} interface defined by ISO 19115-2: {@code Band}
  * describes specifically the range of wavelengths in the electromagnetic spectrum, while
  * {@code SampleDimension} allows any kind of physical measurements.
- * <p>
  * The {@code SampleDimension} API is intentionally identical to the {@code Band} API with
  * the restriction to wavelengths removed, some methods omitted and the following method
  * added:
- * <p>
+ *
  * <ul>
  *   <li>{@link #getValidSampleValues()}</li>
  *   <li>{@link #getFillSampleValues()}</li>
  * </ul>
  *
- * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
- *
- * @see org.opengis.metadata.content.Band
- *
- * @since 3.06
- * @module
+ * @deprecated To be replaced by new {@link org.opengis.metadata.content.SampleDimension} type
+ *             defined in latest ISO 19115 revision.
  */
+@Deprecated
 public interface SampleDimension extends RangeDimension, SampleDomain {
     /**
      * The range of valid sample values in the band, not including {@linkplain #getFillSampleValues()
@@ -170,5 +164,5 @@ public interface SampleDimension extends RangeDimension, SampleDomain {
      */
     TransferFunctionType getTransferFunctionType();
 
-    GridSampleDimension getGridSampleDimension();
+    org.apache.sis.coverage.SampleDimension getSampleDimension();
 }

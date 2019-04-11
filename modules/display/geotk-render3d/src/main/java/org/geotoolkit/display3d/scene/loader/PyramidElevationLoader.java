@@ -32,7 +32,9 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.image.PixelIterator;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
@@ -42,10 +44,9 @@ import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -79,9 +80,9 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
 
         ArgumentChecks.ensureNonNull("pyramid", dataSource);
 
-        final GridSampleDimension elevationDim = ref.getSampleDimensions().get(0).geophysics(true);
-        this.minElevation = elevationDim.getMinimumValue();
-        this.maxElevation = elevationDim.getMaximumValue();
+        final SampleDimension elevationDim = ref.getSampleDimensions().get(0).forConvertedValues(true);
+        this.minElevation = SampleDimensionUtils.getMinimumValue(elevationDim);
+        this.maxElevation = SampleDimensionUtils.getMaximumValue(elevationDim);
     }
 
     @Override
@@ -208,7 +209,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
         //resample image
         final double[] fillValue = new double[targetImage.getData().getNumBands()];
         Arrays.fill(fillValue, Double.NaN);
-        final PixelIterator it = PixelIteratorFactory.createRowMajorIterator(dataRenderedImage);
+        final PixelIterator it = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(dataRenderedImage);
         final Interpolation interpol = Interpolation.create(it, InterpolationCase.NEIGHBOR, 2);
         final Resample resampler = new Resample(sourceToTarget, targetImage, interpol, fillValue);
         resampler.fillImage();

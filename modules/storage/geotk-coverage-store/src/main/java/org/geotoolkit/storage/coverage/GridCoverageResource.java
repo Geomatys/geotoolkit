@@ -16,23 +16,19 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import java.util.stream.Stream;
-import org.apache.sis.internal.feature.AttributeConvention;
+import java.awt.Image;
+import java.util.List;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.internal.feature.CoverageFeature;
-import org.geotoolkit.internal.feature.TypeConventions;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureAssociationRole;
-import org.opengis.feature.FeatureType;
-import org.geotoolkit.geometry.GeometricUtilities;
-import org.geotoolkit.geometry.jts.JTS;
-import org.locationtech.jts.geom.Geometry;
-import org.opengis.geometry.Envelope;
+import org.opengis.metadata.content.CoverageDescription;
 
 /**
  * Resource to a coverage in the coverage store.
@@ -40,7 +36,8 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface GridCoverageResource extends CoverageResource {
+public interface GridCoverageResource extends org.apache.sis.storage.GridCoverageResource, StoreResource {
+
     /**
      * Same as {@link org.apache.sis.storage.Resource} without exception.
      *
@@ -50,71 +47,82 @@ public interface GridCoverageResource extends CoverageResource {
     NamedIdentifier getIdentifier();
 
     /**
+     * Get the coverage description and statistics.
+     *
+     * @return CoverageDescripion, can be null
+     */
+    CoverageDescription getCoverageDescription();
+
+    /**
+     * @return true if coverage is writable
+     */
+    boolean isWritable() throws DataStoreException;
+
+    /**
+     * Return the legend of this coverage
+     */
+    Image getLegend() throws DataStoreException;
+
+    /**
      * Get a reader for this coverage.
      * When you have finished using it, return it using the recycle method.
-     *
-     * @return GridCoverageReader
-     * @throws CoverageStoreException
      */
-    @Override
-    GridCoverageReader acquireReader() throws CoverageStoreException;
+    GridCoverageReader acquireReader() throws DataStoreException;
 
     /**
      * Get a writer for this coverage.
      * When you have finished using it, return it using the recycle method.
-     *
-     * @return GridCoverageWriter
-     * @throws CoverageStoreException
      */
-    @Override
-    GridCoverageWriter acquireWriter() throws CoverageStoreException;
+    GridCoverageWriter acquireWriter() throws DataStoreException;
+
+    /**
+     * Return the used reader, they can be reused later.
+     */
+    void recycle(GridCoverageReader reader);
+
+    /**
+     * Return the used writer, they can be reused later.
+     */
+    void recycle(GridCoverageWriter writer);
 
     @Override
-    public default FeatureType getType() throws DataStoreException {
+    default GridCoverage read(org.apache.sis.coverage.grid.GridGeometry domain, int... range) throws DataStoreException {
         final GridCoverageReader reader = acquireReader();
         try {
-            final FeatureType type = CoverageFeature.createCoverageType(reader);
-            recycle(reader);
-            return type;
-        } catch (CoverageStoreException ex) {
-            try {
-                reader.dispose();
-            } catch (CoverageStoreException ex2) {
-                ex.addSuppressed(ex2);
+            final GridCoverageReadParam param = new GridCoverageReadParam();
+            if (range != null && range.length > 0) {
+                param.setSourceBands(range);
             }
-            throw ex;
+
+            if (domain != null && domain.isDefined(org.apache.sis.coverage.grid.GridGeometry.ENVELOPE)) {
+                param.setEnvelope(domain.getEnvelope());
+                final double[] resolution = domain.getResolution(true);
+                param.setResolution(resolution);
+            }
+
+            org.geotoolkit.coverage.grid.GridCoverage cov = reader.read(param);
+            while (cov instanceof GridCoverageStack) {
+                //pick the first slice
+                cov = (org.geotoolkit.coverage.grid.GridCoverage) ((GridCoverageStack) cov).coverageAtIndex(0);
+            }
+
+            if (!(cov instanceof GridCoverage2D)) {
+                throw new DataStoreException("Read coverage is not a GridCoverage2D");
+            }
+            return (GridCoverage2D) cov;
+        } finally {
+            recycle(reader);
         }
     }
 
     @Override
-    public default Stream<Feature> features(boolean parallal) throws DataStoreException {
-        final FeatureType type = getType();
-        final FeatureAssociationRole role = (FeatureAssociationRole) type.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
-        final Feature feature = type.newInstance();
-
+    default List<SampleDimension> getSampleDimensions() throws DataStoreException {
         final GridCoverageReader reader = acquireReader();
         try {
-            final GeneralGridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
-            Envelope envelope = gridGeom.getEnvelope();
-            if (envelope != null) {
-                Geometry geom = GeometricUtilities.toJTSGeometry(envelope, GeometricUtilities.WrapResolution.SPLIT);
-                if (geom != null) {
-                    JTS.setCRS(geom, gridGeom.getCoordinateReferenceSystem());
-                    feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
-                }
-            }
+            return reader.getSampleDimensions();
+        } finally {
             recycle(reader);
-        } catch (CoverageStoreException ex) {
-            try {
-                reader.dispose();
-            } catch (CoverageStoreException ex2) {
-                ex.addSuppressed(ex2);
-            }
-            throw ex;
         }
-
-        feature.setProperty(CoverageFeature.coverageRecords(this,role));
-        return Stream.of(feature);
     }
 
 }

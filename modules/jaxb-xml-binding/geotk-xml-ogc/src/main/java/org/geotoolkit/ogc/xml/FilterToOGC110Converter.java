@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.gml.GMLUtilities;
@@ -129,7 +129,7 @@ import org.opengis.util.FactoryException;
  */
 public class FilterToOGC110Converter implements FilterToOGCConverter<FilterType> {
 
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     protected final ObjectFactory ogc_factory;
     private final org.geotoolkit.gml.xml.v311.ObjectFactory gml_factory;

@@ -20,10 +20,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import net.iharder.Base64;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.apache.sis.util.UnconvertibleObjectException;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
 import org.geotoolkit.wps.io.WPSMimeType;
@@ -82,7 +82,7 @@ public class CoverageToComplexConverter extends AbstractComplexOutputConverter<G
             byte[] bytesOut = baos.toByteArray();
             return new Data(new Format((String)((tmpEncoding instanceof String)? tmpEncoding : null), mime, null, null), Base64.encodeBytes(bytesOut));
 
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             throw new UnconvertibleObjectException(ex.getMessage(), ex);
         } catch (IOException ex) {
             throw new UnconvertibleObjectException(ex.getMessage(), ex);

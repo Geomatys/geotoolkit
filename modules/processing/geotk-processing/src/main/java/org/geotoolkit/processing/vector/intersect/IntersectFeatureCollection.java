@@ -20,21 +20,20 @@ import org.locationtech.jts.geom.Geometry;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.data.FeatureStreams;
+import org.opengis.filter.FilterFactory;
 
 
 /**
@@ -44,7 +43,7 @@ import org.geotoolkit.data.FeatureStreams;
  */
 public class IntersectFeatureCollection extends WrapFeatureCollection {
 
-    private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
+    private static final FilterFactory2 FF = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
     private final FeatureType newFeatureType;
     private final Geometry interGeom;
 

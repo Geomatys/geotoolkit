@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.image.interpolation;
 
-import org.geotoolkit.image.iterator.PixelIterator;
+import org.apache.sis.image.PixelIterator;
 
 /**
  * Define a standard biCubic interpolation.

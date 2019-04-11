@@ -19,22 +19,19 @@ package org.geotoolkit.coverage.grid;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.io.IOException;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.junit.*;
-
 import static org.junit.Assert.*;
+import org.opengis.referencing.datum.PixelInCell;
 
 
 /**
  * Tests the {@link GridCoverageBuilder} class.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.20
- *
- * @since 2.1
  */
 public final strictfp class GridCoverageBuilderTest extends GridCoverageTestBase {
     /**
@@ -110,8 +107,6 @@ public final strictfp class GridCoverageBuilderTest extends GridCoverageTestBase
      * Tests a change of CRS.
      *
      * @see <a href="http://www.geotoolkit.org/modules/coverage/faq.html#changeCRS">How do I change the CRS of an existing GridCoverage2D?</a>
-     *
-     * @since 3.20
      */
     @Test
     public void testChangeCRS() {
@@ -122,7 +117,7 @@ public final strictfp class GridCoverageBuilderTest extends GridCoverageTestBase
         final GridCoverage2D newGC = builder.getGridCoverage2D();
         assertNotSame("Expected a new grid coverage.", coverage, newGC);
         assertSame(PredefinedCRS.CARTESIAN_2D, newGC.getCoordinateReferenceSystem());
-        assertEquals(coverage.getGridGeometry().getGridToCRS(),
-                     newGC   .getGridGeometry().getGridToCRS());
+        assertEquals(coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER),
+                     newGC   .getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER));
     }
 }

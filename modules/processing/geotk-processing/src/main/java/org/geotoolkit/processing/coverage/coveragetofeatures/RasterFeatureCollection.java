@@ -17,12 +17,10 @@
 package org.geotoolkit.processing.coverage.coveragetofeatures;
 
 import java.util.AbstractCollection;
-
+import org.apache.sis.coverage.grid.GridExtent;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureIterator;
-
-import org.opengis.coverage.grid.GridEnvelope;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.opengis.feature.Feature;
 
 /**
@@ -33,17 +31,17 @@ import org.opengis.feature.Feature;
 public abstract class RasterFeatureCollection extends AbstractCollection<Feature> {
 
     private final GridCoverageReader reader;
-    private final int minX;
-    private final int minY;
-    private final int maxX;
-    private final int maxY;
+    private final long minX;
+    private final long minY;
+    private final long maxX;
+    private final long maxY;
 
     /**
      * Constructor
      * @param reader GridCoverageReader
-     * @param range GridEnvelope
+     * @param range GridExtent
      */
-    public RasterFeatureCollection(final GridCoverageReader reader, final GridEnvelope range) {
+    public RasterFeatureCollection(final GridCoverageReader reader, final GridExtent range) {
         this.reader = reader;
 
         this.minX = range.getLow(0);
@@ -61,7 +59,7 @@ public abstract class RasterFeatureCollection extends AbstractCollection<Feature
      * @param y
      * @return Feature in cell (x,y)
      */
-    protected abstract Feature create(final int x, final int y);
+    protected abstract Feature create(final long x, final long y);
 
     /**
      * Return the reader
@@ -74,28 +72,28 @@ public abstract class RasterFeatureCollection extends AbstractCollection<Feature
     /**
      * @return the minX in the grid
      */
-    protected int getMinX() {
+    protected long getMinX() {
         return minX;
     }
 
     /**
      * @return the minY in the grid
      */
-    protected int getMinY() {
+    protected long getMinY() {
         return minY;
     }
 
     /**
      * @return the maxX in the grid
      */
-    protected int getMaxX() {
+    protected long getMaxX() {
         return maxX;
     }
 
     /**
      * @return the maxY in the grid
      */
-    protected int getMaxY() {
+    protected long getMaxY() {
         return maxY;
     }
 
@@ -145,8 +143,8 @@ public abstract class RasterFeatureCollection extends AbstractCollection<Feature
         @Override
         public Feature next() {
 
-            int x = iter % (maxX - minX);
-            int y = (int) iter / (maxX - minX);
+            long x = iter % (maxX - minX);
+            long y = (int) iter / (maxX - minX);
             iter++;
             return create(x, y);
         }
@@ -160,7 +158,7 @@ public abstract class RasterFeatureCollection extends AbstractCollection<Feature
 
         /**
          * Return hasNext() result from the the GridCoverage
-         * hasNext() function is based on the GridEnvelope range
+         * hasNext() function is based on the GridExtent range
          */
         @Override
         public boolean hasNext() {

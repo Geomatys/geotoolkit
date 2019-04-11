@@ -17,61 +17,67 @@
  */
 package org.geotoolkit.coverage.io;
 
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Iterator;
-import java.util.Collections;
-import java.util.logging.Level;
-import java.util.concurrent.CancellationException;
-import java.awt.Rectangle;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
-import javax.imageio.ImageIO;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.CancellationException;
+import java.util.logging.Level;
 import javax.imageio.IIOImage;
-import javax.imageio.ImageWriter;
-import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageIO;
 import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
-import javax.media.jai.JAI;
-import javax.media.jai.Warp;
-import javax.media.jai.PlanarImage;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.Interpolation;
+import javax.media.jai.JAI;
+import javax.media.jai.PlanarImage;
 import javax.media.jai.RenderedImageAdapter;
+import javax.media.jai.Warp;
 import javax.media.jai.operator.WarpDescriptor;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.io.TableAppender;
-
-import org.opengis.util.InternationalString;
-import org.opengis.geometry.Envelope;
-import org.opengis.coverage.SampleDimension;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.InterpolationMethod;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.util.ArraysExt;
-
-import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.image.io.MultidimensionalImageStore;
-import org.geotoolkit.image.io.mosaic.MosaicImageWriter;
-import org.geotoolkit.image.io.metadata.ReferencingBuilder;
-import org.geotoolkit.referencing.operation.transform.WarpFactory;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArraysExt;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.AbstractCoverage;
+import org.geotoolkit.image.io.MultidimensionalImageStore;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
+import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.image.io.metadata.ReferencingBuilder;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+import org.geotoolkit.image.io.mosaic.MosaicImageWriter;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.referencing.operation.transform.WarpFactory;
 import org.geotoolkit.resources.Errors;
-
-import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+import org.opengis.coverage.InterpolationMethod;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -98,12 +104,23 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.20
- *
- * @since 3.14
- * @module
  */
-public class ImageCoverageWriter extends GridCoverageWriter {
+public class ImageCoverageWriter extends GridCoverageStore implements GridCoverageWriter {
+
+    /**
+     * The output (typically a {@link java.io.File}, {@link java.net.URL} or {@link String}),
+     * or {@code null} if output is not set.
+     */
+    Object output;
+
+    /**
+     * The bounds of the image requested by the user. This field is computed indirectly
+     * by the {@link #geodeticToPixelCoordinates geodeticToPixelCoordinates} method.
+     *
+     * @since 3.14
+     */
+    transient Rectangle requestedBounds;
+
     /**
      * The {@link ImageWriter} to use for encoding {@link RenderedImage}s. This writer is initially
      * {@code null} and lazily created when first needed. Once created, it is reused for subsequent
@@ -156,6 +173,20 @@ public class ImageCoverageWriter extends GridCoverageWriter {
     }
 
     /**
+     * Returns the output which was set by the last call to {@link #setOutput(Object)},
+     * or {@code null} if none.
+     *
+     * @return The current output, or {@code null} if none.
+     * @throws CoverageStoreException If the operation failed.
+     *
+     * @see ImageWriter#getOutput()
+     */
+    @Override
+    public Object getOutput() throws CoverageStoreException {
+        return output;
+    }
+
+    /**
      * Sets the output destination to the given object. The output is typically a
      * {@link java.io.File}, {@link java.net.URL} or {@link String} object, but other
      * types (especially {@link ImageOutputStream}) may be accepted as well depending
@@ -176,7 +207,8 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(output, e, true), e);
         }
-        super.setOutput(output);
+        this.output = output;
+        abortRequested = false;
     }
 
     /**
@@ -593,8 +625,8 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                  *  - The translation or scale factors of the above transform are not integers;
                  *  - The requested envelope is greater than the coverage envelope;
                  */
-                final InternationalString name = (coverage instanceof AbstractCoverage) ?
-                        ((AbstractCoverage) coverage).getName() : null;
+                final InternationalString name = (coverage instanceof GridCoverage) ?
+                        ((GridCoverage) coverage).getName() : null;
                 final ImageLayout layout = new ImageLayout(
                         requestRegion.x,     requestRegion.y,
                         requestRegion.width, requestRegion.height);
@@ -778,10 +810,10 @@ public class ImageCoverageWriter extends GridCoverageWriter {
 
                 }
             }
-            final int n = coverage.getNumSampleDimensions();
+            final List<SampleDimension> dims = coverage.getSampleDimensions();
             final DimensionAccessor accessor = new DimensionAccessor(imageMetadata);
-            for (int i=0; i<n; i++) {
-                final SampleDimension band = coverage.getSampleDimension(i);
+            for (int i=0,n=dims.size(); i<n; i++) {
+                final SampleDimension band = dims.get(i);
                 accessor.selectChild(accessor.appendChild());
                 if (band != null) {
                     accessor.setDimension(band, locale);
@@ -895,6 +927,37 @@ public class ImageCoverageWriter extends GridCoverageWriter {
     }
 
     /**
+     * A callback invoked by {@link #geodeticToPixelCoordinates geodeticToPixelCoordinates}
+     * in order to compute the {@link #requestedBounds} value. This value is of interest to
+     * the writer only (not to {@link ImageCoverageReader}), because the reader is allowed
+     * to returns a different coverage than the requested one, while the writer have to write
+     * the image as requested.
+     */
+    @Override
+    final void computeRequestedBounds(final MathTransform destToExtractedGrid,
+            final Envelope requestEnvelope, final CoordinateReferenceSystem requestCRS)
+            throws TransformException, CoverageStoreException
+    {
+        final GeneralEnvelope envinv = Envelopes.transform(destToExtractedGrid.inverse(), requestEnvelope);
+        final GridExtent gridEnvelope = new GridGeometry(PixelInCell.CELL_CORNER,
+                MathTransforms.identity(2), envinv, GridRoundingMode.ENCLOSING).getExtent();
+        for (int i=gridEnvelope.getDimension(); --i>=0;) {
+            if (gridEnvelope.getSize(i) <= 0) {
+                String message = formatErrorMessage(Errors.Keys.ValueTendTowardInfinity);
+                if (requestCRS != null) {
+                    message = requestCRS.getCoordinateSystem().getAxis(i).getName().getCode() + ": " + message;
+                }
+                throw new CoverageStoreException(message);
+            }
+        }
+        requestedBounds = new Rectangle(
+                (int) gridEnvelope.getLow (X_DIMENSION),
+                (int) gridEnvelope.getLow (Y_DIMENSION),
+                (int) gridEnvelope.getSize(X_DIMENSION),
+                (int) gridEnvelope.getSize(Y_DIMENSION));
+    }
+
+    /**
      * Closes the output used by the {@link ImageWriter}, provided that the stream was not
      * given explicitly by the user. The {@link ImageWriter} is not disposed, so it can be
      * reused for the next image to write.
@@ -920,7 +983,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
      * @see ImageWriter#reset()
      */
     @Override
-    public void reset() throws CoverageStoreException {
+    public void reset() throws DataStoreException {
         try {
             close();
         } catch (IOException e) {
@@ -929,6 +992,8 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         if (imageWriter != null) {
             imageWriter.reset();
         }
+        requestedBounds = null;
+        output = null;
         super.reset();
     }
 
@@ -942,7 +1007,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
      * @see ImageWriter#dispose()
      */
     @Override
-    public void dispose() throws CoverageStoreException {
+    public void dispose() throws DataStoreException {
         try {
             close();
         } catch (IOException e) {
@@ -952,6 +1017,8 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             imageWriter.dispose();
             imageWriter = null;
         }
+        requestedBounds = null;
+        output = null;
         super.dispose();
     }
 }

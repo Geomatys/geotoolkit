@@ -16,28 +16,20 @@
  */
 package org.geotoolkit.map;
 
-import java.util.Collection;
-import org.geotoolkit.storage.coverage.DefaultCoverageResource;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.NamesExt;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.GridCoverageResource;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.storage.coverage.DefaultCoverageResource;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.style.MutableFeatureTypeStyle;
-import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.RandomStyleBuilder;
-import org.geotoolkit.style.StyleConstants;
-import org.opengis.filter.FilterFactory;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.FeatureType;
-import org.opengis.metadata.quality.CoverageResult;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.style.StyleFactory;
 
 /**
  * Utility class to create MapLayers, MapContexts and Elevation models from different sources.
@@ -84,59 +76,8 @@ public final class MapBuilder {
      * @return EmptyMapLayer
      */
     public static EmptyMapLayer createEmptyMapLayer(){
-        final Hints hints = new Hints();
-        hints.put(Hints.STYLE_FACTORY, MutableStyleFactory.class);
-        final MutableStyleFactory factory = (MutableStyleFactory)FactoryFinder.getStyleFactory(hints);
+        final MutableStyleFactory factory = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
         return new EmptyMapLayer(factory.style());
-    }
-
-    //geometryType
-    /**
-     * Create a default collection map layer with a collection.
-     * The style expect the default geometry property to be named 'Geometry'
-     *
-     * @param collection layer data collection
-     * @param style layer style
-     * @return CollectionMapLayer
-     */
-    public static CollectionMapLayer createCollectionLayer(final Collection<?> collection){
-        final MutableStyleFactory sf = new DefaultStyleFactory();
-        final FilterFactory ff = FactoryFinder.getFilterFactory(null);
-        final MutableStyle style = sf.style();
-        final MutableFeatureTypeStyle fts = sf.featureTypeStyle();
-
-        final MutableRule rulePoint = sf.rule(StyleConstants.DEFAULT_POINT_SYMBOLIZER);
-        rulePoint.setFilter(ff.or(
-                                ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("Point")),
-                                ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("MultiPoint"))
-                            ));
-        final MutableRule ruleLine = sf.rule(StyleConstants.DEFAULT_LINE_SYMBOLIZER);
-        ruleLine.setFilter(ff.or(
-                                ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("LineString")),
-                                ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("MultiLineString"))
-                            ));
-        final MutableRule rulePolygon = sf.rule(StyleConstants.DEFAULT_POLYGON_SYMBOLIZER);
-        rulePolygon.setFilter(ff.or(
-                                ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("Polygon")),
-                                ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("MultiPolygon"))
-                            ));
-
-        fts.rules().add(rulePoint);
-        fts.rules().add(ruleLine);
-        fts.rules().add(rulePolygon);
-        style.featureTypeStyles().add(fts);
-
-        return createCollectionLayer(collection, style);
-    }
-
-    /**
-     * Create a default collection map layer with a collection and a style.
-     * @param collection layer data collection
-     * @param style layer style
-     * @return CollectionMapLayer
-     */
-    public static CollectionMapLayer createCollectionLayer(final Collection<?> collection, final MutableStyle style){
-        return new DefaultCollectionMapLayer(collection, style);
     }
 
     /**
@@ -152,7 +93,7 @@ public final class MapBuilder {
             name = type.getName().toString();
             style = RandomStyleBuilder.createDefaultVectorStyle(type);
         } catch (DataStoreException ex) {
-            style = ((MutableStyleFactory)FactoryFinder.getStyleFactory(null)).style(RandomStyleBuilder.createRandomPointSymbolizer());
+            style = ((MutableStyleFactory)DefaultFactories.forBuildin(StyleFactory.class)).style(RandomStyleBuilder.createRandomPointSymbolizer());
         }
         final DefaultFeatureMapLayer maplayer = new DefaultFeatureMapLayer(collection, style);
         maplayer.setName(name);
@@ -239,7 +180,7 @@ public final class MapBuilder {
      * @param grid : Coverage reader holding elevation values
      * @return ElevationModel
      */
-    public static ElevationModel createElevationModel(final GridCoverageResource ref) throws CoverageStoreException {
+    public static ElevationModel createElevationModel(final GridCoverageResource ref) throws DataStoreException {
         return createElevationModel(ref, 130, 2, 55);
     }
 
@@ -251,7 +192,7 @@ public final class MapBuilder {
      * @param scale : a multiplication factor to use on the coverage values
      * @return ElevationModel
      */
-    public static ElevationModel createElevationModel(final GridCoverageResource ref, final double azimuthAngle, final double altitudeAngle, final double altitudeScale) throws CoverageStoreException {
-        return new ElevationModel(ref, azimuthAngle, altitudeAngle, altitudeScale);
+    public static ElevationModel createElevationModel(final GridCoverageResource ref, final double azimuthAngle, final double altitudeAngle, final double altitudeScale) throws DataStoreException {
+        return new ElevationModel((org.geotoolkit.storage.coverage.GridCoverageResource) ref, azimuthAngle, altitudeAngle, altitudeScale);
     }
  }

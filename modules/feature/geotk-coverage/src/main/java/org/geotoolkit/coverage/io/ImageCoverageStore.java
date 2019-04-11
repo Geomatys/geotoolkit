@@ -17,33 +17,30 @@
  */
 package org.geotoolkit.coverage.io;
 
+import java.awt.Dimension;
+import java.awt.geom.AffineTransform;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import javax.imageio.spi.ImageReaderWriterSpi;
-import java.awt.geom.AffineTransform;
-import java.awt.Dimension;
-
-import org.opengis.util.InternationalString;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.NoninvertibleTransformException;
-
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.util.Classes;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import static org.geotoolkit.coverage.io.GridCoverageStore.LOGGER;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
+import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
+import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
-import org.apache.sis.util.Classes;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.coverage.AbstractCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.apache.sis.referencing.IdentifiedObjects;
-
-import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
-import static org.geotoolkit.coverage.io.GridCoverageStore.LOGGER;
-import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.NoninvertibleTransformException;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -155,8 +152,8 @@ final class ImageCoverageStore extends Static {
          * the NetCDF format.
          */
         InternationalString name = null;
-        if (coverage instanceof AbstractCoverage) {
-            name = ((AbstractCoverage) coverage).getName();
+        if (coverage instanceof GridCoverage) {
+            name = ((GridCoverage) coverage).getName();
         }
         if (name == null) {
             name = Vocabulary.formatInternational(Vocabulary.Keys.Untitled);
@@ -177,11 +174,11 @@ final class ImageCoverageStore extends Static {
          * of the coverage, if a subregion has been supplied in the ImageWriteParam.
          * The 'actualSize' argument allows to specify the dimension actually written.
          */
-        final GridEnvelope ge = coverage.getGridGeometry().getExtent();
+        final GridExtent ge = coverage.getGridGeometry().getExtent();
         final int dimension = ge.getDimension();
         final StringBuilder buffer = new StringBuilder();
         for (int i=0; i<dimension; i++) {
-            int span = ge.getSpan(i);
+            long span = ge.getSize(i);
             if (actualSize != null) {
                 switch (i) {
                     case X_DIMENSION: span = actualSize.width;  break;

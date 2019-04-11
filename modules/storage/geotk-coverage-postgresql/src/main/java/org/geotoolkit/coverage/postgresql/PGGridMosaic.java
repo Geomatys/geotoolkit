@@ -68,14 +68,14 @@ public class PGGridMosaic extends AbstractMosaic{
         ResultSet rs = null;
         try{
 
-            cnx = ref.getStore().getDataSource().getConnection();
+            cnx = ref.getOriginator().getDataSource().getConnection();
             stmt = cnx.createStatement();
 
             final long mosaicId = getDatabaseId();
 
             final StringBuilder query = new StringBuilder();
             query.append("SELECT count(raster) FROM ");
-            query.append(ref.getStore().encodeTableName("Tile"));
+            query.append(ref.getOriginator().encodeTableName("Tile"));
             query.append(" WHERE \"mosaicId\"=").append(mosaicId);
             query.append(" AND \"positionX\"=").append(col);
             query.append(" AND \"positionY\"=").append(row);
@@ -86,7 +86,7 @@ public class PGGridMosaic extends AbstractMosaic{
         }catch(SQLException ex){
             throw new RuntimeException(ex);
         }finally{
-            ref.getStore().closeSafe(cnx, stmt, rs);
+            ref.getOriginator().closeSafe(cnx, stmt, rs);
         }
     }
 
@@ -130,7 +130,7 @@ public class PGGridMosaic extends AbstractMosaic{
     public void writeTile(Point pt, RenderedImage image) throws DataStoreException {
         final int col = pt.x;
         final int row = pt.y;
-        final PGCoverageStore pgstore = ref.getStore();
+        final PGCoverageStore pgstore = ref.getOriginator();
         Connection cnx = null;
         Statement insertStmt = null;
         Statement deleteStmt = null;
@@ -190,7 +190,7 @@ public class PGGridMosaic extends AbstractMosaic{
 
     @Override
     public void deleteTile(int col, int row) throws DataStoreException {
-        final PGCoverageStore pgstore = ref.getStore();
+        final PGCoverageStore pgstore = ref.getOriginator();
         Connection cnx = null;
         Statement stmt = null;
         ResultSet rs = null;

@@ -32,10 +32,10 @@ import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.junit.Test;
-import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.util.NoSuchIdentifierException;
 import static org.junit.Assert.*;
 import org.opengis.parameter.ParameterValueGroup;
+
 
 /**
  * Test reformat process.
@@ -107,7 +107,5 @@ public class ReformatTest extends org.geotoolkit.test.TestBase {
                 }
             }
         }
-
     }
-
 }

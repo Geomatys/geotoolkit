@@ -32,6 +32,7 @@ import javax.sql.DataSource;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Query;
@@ -50,7 +51,6 @@ import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.db.dialect.SQLQueryBuilder;
 import org.geotoolkit.db.reverse.*;
 import org.geotoolkit.db.session.JDBCSession;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
@@ -97,7 +97,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             new String[]{org.geotoolkit.data.query.Query.GEOTK_QOM, CUSTOM_SQL});
 
     protected final GeometryFactory geometryFactory = new GeometryFactory();
-    protected final FilterFactory filterFactory = FactoryFinder.getFilterFactory(null);
+    protected final FilterFactory filterFactory = DefaultFactories.forBuildin(FilterFactory.class);
 
     private final DataBaseModel dbmodel;
     private final String factoryId;

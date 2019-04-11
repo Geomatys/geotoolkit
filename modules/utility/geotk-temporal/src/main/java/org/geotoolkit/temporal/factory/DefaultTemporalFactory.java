@@ -24,7 +24,6 @@ import java.util.Map;
 import javax.measure.quantity.Time;
 import javax.measure.Unit;
 
-import org.geotoolkit.factory.Factory;
 import org.geotoolkit.temporal.object.DefaultCalendarDate;
 import org.geotoolkit.temporal.object.DefaultClockTime;
 import org.geotoolkit.temporal.object.DefaultDateAndTime;
@@ -75,7 +74,7 @@ import org.opengis.util.InternationalString;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-public class DefaultTemporalFactory extends Factory implements TemporalFactory {
+public class DefaultTemporalFactory implements TemporalFactory {
 
     /**
      * Count to ensure period unicity.

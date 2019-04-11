@@ -17,10 +17,10 @@
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Image;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -33,37 +33,29 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel
  */
-public class DefaultCoverageResource extends AbstractCoverageResource{
+public class DefaultCoverageResource extends AbstractCoverageResource {
 
     private final GridCoverage2D coverage;
     private final Object input;
-    private final int imageIndex;
 
     public DefaultCoverageResource(final DataStore store, final GridCoverage2D coverage, GenericName name) {
         super(store,name);
         this.coverage = coverage;
         this.input = null;
-        this.imageIndex = 0;
     }
 
     public DefaultCoverageResource(final GridCoverage2D coverage, GenericName name) {
         super(null,name);
         this.coverage = coverage;
         this.input = null;
-        this.imageIndex = 0;
     }
 
     public DefaultCoverageResource(final Object input, GenericName name) {
         super(null,name);
         this.coverage = null;
         this.input = input;
-        this.imageIndex = 0;
     }
 
-    @Override
-    public int getImageIndex() {
-        return imageIndex;
-    }
 
     @Override
     public boolean isWritable() throws DataStoreException {
@@ -71,7 +63,21 @@ public class DefaultCoverageResource extends AbstractCoverageResource{
     }
 
     @Override
-    public GridCoverageReader acquireReader() throws CoverageStoreException {
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        if (coverage == null) {
+            final GridCoverageReader reader = acquireReader();
+            try {
+                return reader.getGridGeometry();
+            } finally {
+                recycle(reader);
+            }
+        } else {
+            return coverage.getGridGeometry();
+        }
+    }
+
+    @Override
+    public GridCoverageReader acquireReader() throws DataStoreException {
         if (coverage != null) {
             return new MemoryCoverageReader(coverage);
         } else if (input instanceof GridCoverage2D) {
@@ -86,12 +92,12 @@ public class DefaultCoverageResource extends AbstractCoverageResource{
     }
 
     @Override
-    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
+    public GridCoverageWriter acquireWriter() throws DataStoreException {
         throw new CoverageStoreException("Writing not supported.");
     }
 
     @Override
-    public void recycle(CoverageReader reader) {
+    public void recycle(GridCoverageReader reader) {
         if (input instanceof GridCoverageReader) {
             //do not dispose it, it will be reused
         } else {

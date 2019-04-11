@@ -22,16 +22,18 @@ import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
+import org.geotoolkit.coverage.landsat.LandsatConstants.CoverageGroup;
 import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
-import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
 
 /**
  * Reader adapted to read and aggregate directly needed bands to build appropriate
@@ -77,14 +79,14 @@ public class LandsatCoverageResource extends AbstractCoverageResource implements
         this.group = group;
     }
 
-    /**
-     * {@inheritDoc }
-     *
-     * @return 0.
-     */
     @Override
-    public int getImageIndex() {
-        return 0;
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        final GridCoverageReader reader = acquireReader();
+        try {
+            return reader.getGridGeometry();
+        } finally {
+            recycle(reader);
+        }
     }
 
     @Override

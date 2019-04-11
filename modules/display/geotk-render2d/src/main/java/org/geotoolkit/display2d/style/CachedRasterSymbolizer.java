@@ -18,7 +18,6 @@ package org.geotoolkit.display2d.style;
 
 import java.awt.AlphaComposite;
 import java.awt.Composite;
-import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.opengis.filter.expression.Expression;
@@ -33,8 +32,6 @@ import org.opengis.style.Symbolizer;
  * @module
  */
 public class CachedRasterSymbolizer extends CachedSymbolizer<RasterSymbolizer>{
-
-    public static final Operations RASTER_OPERATIONS = new Operations(null);
 
     //cached values
     private Composite j2dComposite = null;

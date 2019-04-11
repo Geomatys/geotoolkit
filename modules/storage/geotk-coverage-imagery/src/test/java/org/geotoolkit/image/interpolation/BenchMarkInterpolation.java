@@ -20,8 +20,7 @@ import java.awt.Point;
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
 import javax.media.jai.RasterFactory;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.util.ArgumentChecks;
 
 /**
@@ -117,7 +116,7 @@ public class BenchMarkInterpolation {
                 rastertest.setSample(x, y, 2, val++);
             }
         }
-        pixelIterator = PixelIteratorFactory.createDefaultIterator(rastertest);
+        pixelIterator = new PixelIterator.Builder().create(rastertest);
     }
 
     /**

@@ -213,9 +213,8 @@ public final class Parameters extends Static {
      * @param  value The parameter to test.
      * @param  descriptor The descriptor to use for fetching the conditions.
      * @return A conformance result having the attribute <code>{@linkplain ConformanceResult#pass()
-     *         pass}=true</code> if the parameter is valid. If the parameter is not valid, then
-     *         the result {@linkplain ConformanceResult#getExplanation() explanation} gives the
-     *         raison.
+     *         pass}=true</code> if the parameter is valid. If the parameter is not valid, then the
+     *         result {@linkplain ConformanceResult#getExplanation() explanation} gives the reason.
      *
      * @since 3.05
      * @category verification

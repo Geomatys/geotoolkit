@@ -41,8 +41,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Spliterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -55,27 +55,30 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
+import org.apache.sis.coverage.grid.DisjointExtentException;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
-import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
+import static org.geotoolkit.display2d.GO2Utilities.*;
 import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
@@ -93,16 +96,17 @@ import org.geotoolkit.display2d.style.renderer.Presentation;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.coverage.bandselect.BandSelectProcess;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
-import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -112,8 +116,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.portrayal.PortrayalService;
-import static org.geotoolkit.display2d.GO2Utilities.*;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Default implementation of portrayal service.
@@ -542,7 +544,8 @@ public final class DefaultPortrayalService implements PortrayalService{
 
         //layer must be a coverage
         final MapLayer layer = layers.get(0);
-        if(!(layer instanceof CoverageMapLayer)) return false;
+        final Resource resource = layer.getResource();
+        if(!(resource instanceof GridCoverageResource)) return false;
 
         //we must not have extensions
         if(!sceneDef.extensions().isEmpty()) return false;
@@ -558,11 +561,8 @@ public final class DefaultPortrayalService implements PortrayalService{
         if(!GO2Utilities.isDefaultRasterSymbolizer(s)) return false;
 
         //we can bypass the renderer
-        final CoverageMapLayer cml = (CoverageMapLayer) layer;
-
-        try{
-            final GridCoverageResource ref = cml.getCoverageReference();
-            final CoverageReader reader = ref.acquireReader();
+        try {
+            final GridCoverageResource ref = (GridCoverageResource) resource;
             final String mime = outputDef.getMime();
             final Envelope env = viewDef.getEnvelope();
             final Dimension dim = canvasDef.getDimension();
@@ -570,13 +570,10 @@ public final class DefaultPortrayalService implements PortrayalService{
                     env.getSpan(0) / (double)dim.width,
                     env.getSpan(1) / (double)dim.height};
 
-            final GridCoverageReadParam readParam = new GridCoverageReadParam();
-            readParam.setEnvelope(viewDef.getEnvelope());
-            readParam.setResolution(resolution);
+            GridGeometry query = ref.getGridGeometry().derive().subgrid(env, resolution).sliceByRatio(0.5, 0, 1).build();
 
-            GridCoverage2D coverage = (GridCoverage2D)reader.read(cml.getCoverageReference().getImageIndex(), readParam);
-            final RenderedImage image = coverage.getRenderedImage();
-            ref.recycle(reader);
+            GridCoverage coverage = ref.read(query);
+            final RenderedImage image = coverage.render(null);
 
             // HACK TO FIX COLOR ERROR ON JPEG /////////////////////////////////
             if(mime.contains("jpeg") || mime.contains("jpg")){
@@ -584,14 +581,16 @@ public final class DefaultPortrayalService implements PortrayalService{
                     final int nbBands = image.getSampleModel().getNumBands();
                     if(nbBands > 3){
                         //we can remove the fourth band assuming it is the alpha
-                        coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{0,1,2});
+                        coverage = new BandSelectProcess(CoverageUtilities.toGeotk(coverage), new int[]{0,1,2}).executeNow();
                     }
                 }
             }
             ////////////////////////////////////////////////////////////////////
 
             writeCoverage(coverage, env, resolution, outputDef, canvasDef.getBackground());
-        }catch(CoverageStoreException ex){
+        } catch (DisjointExtentException ex) {
+            return false;
+        } catch (DataStoreException | ProcessException ex) {
             throw new PortrayalException(ex);
         }
         return true;
@@ -649,7 +648,7 @@ public final class DefaultPortrayalService implements PortrayalService{
             }
 
             writer.setOutput(outputDef.getOutput());
-            writer.write(coverage, writeParam);
+            writer.write(CoverageUtilities.toGeotk(coverage), writeParam);
 
         }catch(CoverageStoreException ex){
             throw new PortrayalException(ex);
@@ -663,11 +662,11 @@ public final class DefaultPortrayalService implements PortrayalService{
                         throw new PortrayalException(ex);
                     }
                 }
-            } catch (CoverageStoreException ex) {
+            } catch (DataStoreException ex) {
                 //the writer has problems, we better not put in back in the cache.
                 try {
                     writer.dispose();
-                } catch (CoverageStoreException ex1) {
+                } catch (DataStoreException ex1) {
                     Logging.getLogger("org.geotoolkit.display2d.service").log(Level.WARNING, null, ex1);
                 }
                 throw new PortrayalException(ex);

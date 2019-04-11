@@ -17,50 +17,50 @@
  */
 package org.geotoolkit.image.io.mosaic;
 
-import java.awt.Point;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
-import java.io.File;
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*; // Lot of imports used in this class.
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import java.util.concurrent.TimeUnit;
 import javax.imageio.IIOParamController;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.io.TableAppender;
-
-import org.geotoolkit.nio.IOUtilities;
-import org.opengis.metadata.spatial.PixelOrientation;
-
-import org.geotoolkit.io.wkt.PrjFiles;
-import org.geotoolkit.util.Utilities;
-import org.apache.sis.util.Disposable;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.util.logging.LogProducer;
-import org.apache.sis.util.logging.PerformanceLevel;
+import static org.apache.sis.util.ArgumentChecks.ensureValidIndex;
 import org.apache.sis.util.Classes;
+import org.apache.sis.util.Disposable;
 import org.apache.sis.util.collection.FrequencySortedSet;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.logging.PerformanceLevel;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
+import org.geotoolkit.image.io.metadata.ReferencingBuilder;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.ReferencingBuilder;
-import org.geotoolkit.coverage.grid.ImageGeometry;
+import org.geotoolkit.io.wkt.PrjFiles;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
-
-import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
-import static org.apache.sis.util.ArgumentChecks.ensureValidIndex;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.logging.LogProducer;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.datum.PixelInCell;
 
 
 /**
@@ -908,11 +908,11 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
         }
         if (md == null) {
             final TileManager manager = getTileManager(imageIndex);
-            final ImageGeometry geom = manager.getGridGeometry();
+            final GridGeometry geom = manager.getGridGeometry();
             if (geom != null) {
                 final SpatialMetadata sp = new SpatialMetadata(false, this, null);
                 final GridDomainAccessor accessor = new GridDomainAccessor(sp);
-                accessor.setAll(geom.getGridToCRS(), geom.getExtent(), null, PixelOrientation.UPPER_LEFT);
+                accessor.setAll((AffineTransform2D) geom.getGridToCRS(PixelInCell.CELL_CENTER), GridGeometryIterator.toRectangle(geom.getExtent()), null, PixelOrientation.UPPER_LEFT);
                 /*
                  * Add the CRS, if the tile manager has been created from a directory or a file
                  * is associated with a PRJ file.

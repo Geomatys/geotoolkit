@@ -14,34 +14,30 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.coverage;
 
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
-
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.PixelTranslation;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.Utilities;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.util.FactoryException;
-
-import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
-import org.apache.sis.referencing.CommonCRS;
-
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.apache.sis.coverage.grid.PixelTranslation;
-
-import org.apache.sis.util.Utilities;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * Test GridCoverageStack class.
@@ -70,7 +66,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
         assertNotNull(gridGeom);
 
         //check grid envelope
-        final GridEnvelope gridEnv = gridGeom.getExtent();
+        final GridExtent gridEnv = gridGeom.getExtent();
         assertNotNull(gridEnv);
         assertEquals(3,gridEnv.getDimension());
         assertEquals(0, gridEnv.getLow(0));
@@ -82,7 +78,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
         assertEquals(2, gridEnv.getHigh(2));
 
         //check grid to crs
-        final MathTransform gridToCRS = PixelTranslation.translate(gridGeom.getGridToCRS(), PixelInCell.CELL_CENTER, PixelInCell.CELL_CORNER);
+        final MathTransform gridToCRS = PixelTranslation.translate(gridGeom.getGridToCRS(PixelInCell.CELL_CENTER), PixelInCell.CELL_CENTER, PixelInCell.CELL_CORNER);
         assertEquals(3, gridToCRS.getSourceDimensions());
         assertEquals(3, gridToCRS.getTargetDimensions());
         final double[] lower = new double[]{0,0,0};
@@ -121,7 +117,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
         assertNotNull(gridGeom);
 
         //check grid envelope
-        final GridEnvelope gridEnv = gridGeom.getExtent();
+        final GridExtent gridEnv = gridGeom.getExtent();
         assertNotNull(gridEnv);
         assertEquals(4,gridEnv.getDimension());
         assertEquals(0, gridEnv.getLow(0));
@@ -136,7 +132,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
 
         //check grid to crs
         //-- in convention gridToCrs in PixelInCell.Center
-        final MathTransform gridToCRS = PixelTranslation.translate(gridGeom.getGridToCRS(), PixelInCell.CELL_CENTER, PixelInCell.CELL_CORNER);
+        final MathTransform gridToCRS = PixelTranslation.translate(gridGeom.getGridToCRS(PixelInCell.CELL_CENTER), PixelInCell.CELL_CENTER, PixelInCell.CELL_CORNER);
         assertEquals(4, gridToCRS.getSourceDimensions());
         assertEquals(4, gridToCRS.getTargetDimensions());
         final double[] lower = new double[]{0,0,0,0};
@@ -190,7 +186,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
         matrix.setIdentity();
         matrix.setElement(2, 3, z);
 
-        final MathTransformFactory mf = FactoryFinder.getMathTransformFactory(null);
+        final MathTransformFactory mf = DefaultFactories.forBuildin(MathTransformFactory.class);
         final MathTransform gridtoCrs = mf.createAffineTransform(matrix);
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
@@ -211,7 +207,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
         matrix.setElement(2, 4, z);
         matrix.setElement(3, 4, t);
 
-        final MathTransformFactory mf = FactoryFinder.getMathTransformFactory(null);
+        final MathTransformFactory mf = DefaultFactories.forBuildin(MathTransformFactory.class);
         final MathTransform gridtoCrs = mf.createAffineTransform(matrix);
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
@@ -223,5 +219,4 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
 
         return gcb.getGridCoverage2D();
     }
-
 }

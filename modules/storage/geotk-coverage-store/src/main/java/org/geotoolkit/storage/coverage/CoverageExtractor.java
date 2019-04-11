@@ -17,22 +17,23 @@
 
 package org.geotoolkit.storage.coverage;
 
+import java.util.*;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.coverage.GridCoverageStack;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.lang.Static;
-import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-
-import java.util.*;
 
 /**
  * A set of utility method to extract values, coverages or cube from a GridCoverage.
@@ -45,10 +46,10 @@ public class CoverageExtractor extends Static {
      * Simple Pojo that keep rayExtraction values.
      */
     public static class Ray {
-        private List<GridSampleDimension> sampleDimensions = new ArrayList<GridSampleDimension>();
+        private List<SampleDimension> sampleDimensions = new ArrayList<SampleDimension>();
         private Map<DirectPosition, double[]> values = new TreeMap<>(new SliceComparator());
 
-        public List<GridSampleDimension> getSampleDimensions() {
+        public List<SampleDimension> getSampleDimensions() {
             return sampleDimensions;
         }
 
@@ -58,29 +59,28 @@ public class CoverageExtractor extends Static {
     }
 
     /**
-     * Call {@link org.opengis.coverage.grid.GridCoverage#evaluate(org.opengis.geometry.DirectPosition, double[])} on all
+     * Call {@link org.geotoolkit.coverage.grid.GridCoverage#evaluate(org.opengis.geometry.DirectPosition, double[])} on all
      * {@link org.geotoolkit.coverage.grid.GridCoverage2D} slices returned by reader.
      *
      * @param point position given to evaluate function.
      * @param reader GridCoverageReader not disposed or released
-     * @param imageIndex index given to read.
      * @param param GridCoverageReadParam. Deferred parameter will be forced at true.
      * @return Ray bean object.
      * @throws CoverageStoreException
      * @throws TransformException
      */
-    public static Ray rayExtraction(GeneralDirectPosition point, GridCoverageReader reader, int imageIndex,
-                                                              GridCoverageReadParam param) throws CoverageStoreException, TransformException {
+    public static Ray rayExtraction(GeneralDirectPosition point, GridCoverageReader reader,
+                                                              GridCoverageReadParam param) throws DataStoreException, TransformException {
         param.setDeferred(true); //force deferred
-        final GridCoverage coverage = reader.read(imageIndex, param);
+        final GridCoverage coverage = reader.read(param);
         Ray result = new Ray();
-        result.getSampleDimensions().addAll(reader.getSampleDimensions(imageIndex));
+        result.getSampleDimensions().addAll(reader.getSampleDimensions());
         evaluateAllSlices(point, coverage, result);
         return result;
     }
 
     /**
-     * Call {@link org.opengis.coverage.grid.GridCoverage#evaluate(org.opengis.geometry.DirectPosition, double[])} on all
+     * Call {@link org.geotoolkit.coverage.grid.GridCoverage#evaluate(org.opengis.geometry.DirectPosition, double[])} on all
      * {@link org.geotoolkit.coverage.grid.GridCoverage2D slices}.
      *
      * @param directPos position given to evaluate function.
@@ -90,11 +90,11 @@ public class CoverageExtractor extends Static {
      * @throws TransformException
      */
     private static void evaluateAllSlices(GeneralDirectPosition directPos, GridCoverage coverage, Ray result)
-            throws CoverageStoreException, TransformException {
+            throws DataStoreException, TransformException {
 
         if (coverage instanceof GridCoverage2D) {
             final GridCoverage2D coverage2D = (GridCoverage2D) coverage;
-            double[] values = new double[coverage2D.getSampleDimensions().length];
+            double[] values = new double[coverage2D.getSampleDimensions().size()];
 
             //place directPos to a pixel center
             GridGeometry2D gg2D = coverage2D.getGridGeometry();
@@ -113,7 +113,7 @@ public class CoverageExtractor extends Static {
             int dimension = crs.getCoordinateSystem().getDimension();
 
             double[] point = new double[dimension];
-            final MathTransform cov2DGridToCRS = gg2D.getGridToCRS();
+            final MathTransform cov2DGridToCRS = gg2D.getGridToCRS(PixelInCell.CELL_CENTER);
             cov2DGridToCRS.transform(point, 0, point, 0, 1);
 
             final GeneralDirectPosition position = new GeneralDirectPosition(point);

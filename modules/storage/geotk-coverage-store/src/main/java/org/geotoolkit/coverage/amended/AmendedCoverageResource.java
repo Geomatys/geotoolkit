@@ -20,30 +20,28 @@ import java.awt.Image;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.CoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
-import org.opengis.coverage.grid.GridEnvelope;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.geometry.Envelope;
-import org.opengis.metadata.Metadata;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Decorates a coverage reference adding possibility to override properties.
@@ -59,21 +57,21 @@ import org.geotoolkit.storage.coverage.GridCoverageResource;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class AmendedCoverageResource implements Resource,GridCoverageResource{
+public class AmendedCoverageResource implements Resource, GridCoverageResource{
 
     protected final Set<ChangeListener> listeners = new HashSet<>();
     protected final GridCoverageResource ref;
     protected final DataStore store;
 
     //source unmodified informations
-    protected GeneralGridGeometry refGridGeom;
-    protected List<GridSampleDimension> refDims;
+    protected GridGeometry refGridGeom;
+    protected List<SampleDimension> refDims;
 
     //overrided informations
     protected CoordinateReferenceSystem overrideCRS;
     protected PixelInCell overridePixelInCell;
     protected MathTransform overrideGridToCrs;
-    protected List<GridSampleDimension> overrideDims;
+    protected List<SampleDimension> overrideDims;
 
     public AmendedCoverageResource(GridCoverageResource ref, DataStore store) {
         this.store = store;
@@ -81,7 +79,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
     }
 
     @Override
-    public DataStore getStore() {
+    public DataStore getOriginator() {
         return store;
     }
 
@@ -92,15 +90,13 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
 
     @Override
     public Envelope getEnvelope() throws DataStoreException {
-        return getGridGeometry(0).getEnvelope();
+        return getGridGeometry().getEnvelope();
     }
 
-    private void loadRefData(int index) throws CoverageStoreException {
-        if(refGridGeom==null){
-            final GridCoverageReader reader = ref.acquireReader();
-            refGridGeom = reader.getGridGeometry(index);
-            refDims = reader.getSampleDimensions(index);
-            ref.recycle(reader);
+    private void loadRefData() throws DataStoreException {
+        if (refGridGeom == null) {
+            refGridGeom = ref.getGridGeometry();
+            refDims = ref.getSampleDimensions();
         }
     }
 
@@ -130,8 +126,8 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      * @return
      * @throws CoverageStoreException
      */
-    public GeneralGridGeometry getOriginalGridGeometry(int index) throws CoverageStoreException{
-        loadRefData(index);
+    public GridGeometry getOriginalGridGeometry() throws DataStoreException {
+        loadRefData();
         return refGridGeom;
     }
 
@@ -200,7 +196,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      *
      * @return List, can be null
      */
-    public List<GridSampleDimension> getOverrideDims() {
+    public List<SampleDimension> getOverrideDims() {
         return overrideDims;
     }
 
@@ -209,34 +205,33 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      *
      * @param overrideDims , can be null
      */
-    public void setOverrideDims(List<GridSampleDimension> overrideDims) {
+    public void setOverrideDims(List<SampleDimension> overrideDims) {
         this.overrideDims = overrideDims;
     }
 
     /**
      * Get overriden grid geometry.
      *
-     * @param index image index in reader
      * @return overridden grid geometry or original one is there are no overrides.
      * @throws CoverageStoreException
      */
-    public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException{
-        loadRefData(index);
+    @Override
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        loadRefData();
         if(isGridGeometryOverriden()){
             if(refGridGeom instanceof GridGeometry2D){
-                final GridEnvelope extent = refGridGeom.getExtent();
+                final GridExtent extent = refGridGeom.getExtent();
                 return new GridGeometry2D(
                         extent,
                         overridePixelInCell!=null ? overridePixelInCell : PixelInCell.CELL_CENTER,
-                        overrideGridToCrs!=null ? overrideGridToCrs : refGridGeom.getGridToCRS(),
-                        overrideCRS!=null ? overrideCRS : refGridGeom.getCoordinateReferenceSystem(),
-                        null);
+                        overrideGridToCrs!=null ? overrideGridToCrs : refGridGeom.getGridToCRS(PixelInCell.CELL_CENTER),
+                        overrideCRS!=null ? overrideCRS : refGridGeom.getCoordinateReferenceSystem());
             }else{
-                final GridEnvelope extent = refGridGeom.getExtent();
-                return new GeneralGridGeometry(
+                final GridExtent extent = refGridGeom.getExtent();
+                return new GridGeometry(
                         extent,
                         overridePixelInCell!=null ? overridePixelInCell : PixelInCell.CELL_CENTER,
-                        overrideGridToCrs!=null ? overrideGridToCrs : refGridGeom.getGridToCRS(),
+                        overrideGridToCrs!=null ? overrideGridToCrs : refGridGeom.getGridToCRS(PixelInCell.CELL_CENTER),
                         overrideCRS!=null ? overrideCRS : refGridGeom.getCoordinateReferenceSystem());
             }
         }else{
@@ -247,25 +242,16 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
     /**
      * Get overriden sample dimensions
      *
-     * @param index image index in reader
      * @return overridden sample dimensions or original ones is there are no overrides.
      * @throws CoverageStoreException
      */
-    public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException{
-        loadRefData(index);
+    public List<SampleDimension> getSampleDimensions(int index) throws DataStoreException {
+        loadRefData();
         if(overrideDims!=null){
             return overrideDims;
         }else{
             return refDims;
         }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public int getImageIndex() {
-        return ref.getImageIndex();
     }
 
     /**
@@ -288,7 +274,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      * {@inheritDoc }
      */
     @Override
-    public GridCoverageReader acquireReader() throws CoverageStoreException {
+    public GridCoverageReader acquireReader() throws DataStoreException {
         return new AmendedCoverageReader(this);
     }
 
@@ -304,7 +290,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      * {@inheritDoc }
      */
     @Override
-    public void recycle(CoverageReader reader) {
+    public void recycle(GridCoverageReader reader) {
         ((AmendedCoverageReader)reader).dispose();
     }
 
@@ -312,7 +298,7 @@ public class AmendedCoverageResource implements Resource,GridCoverageResource{
      * {@inheritDoc }
      */
     @Override
-    public void recycle(CoverageWriter writer) {
+    public void recycle(GridCoverageWriter writer) {
         throw new UnsupportedOperationException("Not supported.");
     }
 

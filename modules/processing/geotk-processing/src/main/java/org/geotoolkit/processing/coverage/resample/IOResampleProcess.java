@@ -31,13 +31,12 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.image.PixelIterator;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.io.large.LargeCache;
 import org.geotoolkit.image.io.large.LargeRenderedImage;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -207,7 +206,7 @@ public class IOResampleProcess extends AbstractProcess {
             final ExecutorService resampleService = Executors.newFixedThreadPool(threadNumber);
             for (int threadCounter = 0; threadCounter < threadNumber; threadCounter++) {
                 // Duplicate iterators and interpolator because they're not thread-safe.
-                final PixelIterator it = PixelIteratorFactory.createDefaultIterator(rawImage);
+                final PixelIterator it = PixelIterator.create(rawImage);
                 final Interpolation interpol = Interpolation.create(it, toUse, LANCZOS_WINDOW);
                 runnableResults.add(
                         resampleService.submit(new ResampleThread(operator, interpol, defaultPixelValue, colorModel)));

@@ -54,7 +54,7 @@ public final strictfp class ReferencingFactoryContainerTest extends org.geotoolk
     @Test
     @Ignore
     public void testToGeodetic3D() throws FactoryException {
-        final ReferencingFactoryContainer factories = ReferencingFactoryContainer.instance(null);
+        final ReferencingFactoryContainer factories = ReferencingFactoryContainer.instance();
         final CRSFactory crsFactory = factories.getCRSFactory();
         final ProjectedCRS horizontalCRS = (ProjectedCRS)
                 crsFactory.createFromWKT(WKT.PROJCS_LAMBERT_CONIC_NTF);
@@ -122,7 +122,7 @@ public final strictfp class ReferencingFactoryContainerTest extends org.geotoolk
      */
     @Test
     public void testSeparate() throws FactoryException {
-        final ReferencingFactoryContainer factories = ReferencingFactoryContainer.instance(null);
+        final ReferencingFactoryContainer factories = ReferencingFactoryContainer.instance();
         final CRSFactory crsFactory = factories.getCRSFactory();
         CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
         crs = crsFactory.createCompoundCRS(name("WGS84 3D"), crs, CommonCRS.Vertical.MEAN_SEA_LEVEL.crs());

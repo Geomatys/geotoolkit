@@ -33,9 +33,5 @@
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.20
- *
- * @since 3.09 (derived from 2.4)
- * @module
  */
 package org.geotoolkit.coverage.io;

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.display2d.ext.pie;
 
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.se.xml.v110.ParameterValueType;
 import org.geotoolkit.se.xml.v110.SymbolizerType;
 import org.geotoolkit.sld.xml.StyleXmlIO;
@@ -40,6 +39,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.opengis.filter.FilterFactory;
 
 /**
  * Pie symbolizer.
@@ -148,7 +149,7 @@ public final class PieSymbolizer extends SymbolizerType implements ExtensionSymb
 
         int i=0;
         for(String str : properties){
-            config.put(String.valueOf(i++), FactoryFinder.getFilterFactory(null).property(str));
+            config.put(String.valueOf(i++), DefaultFactories.forBuildin(FilterFactory.class).property(str));
         }
         return config;
     }

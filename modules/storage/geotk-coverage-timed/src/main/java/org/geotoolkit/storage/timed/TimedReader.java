@@ -21,14 +21,15 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
@@ -44,7 +45,7 @@ import org.opengis.util.GenericName;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class TimedReader extends GridCoverageReader {
+public class TimedReader extends AbstractGridCoverageReader {
 
     final TimedResource parent;
 
@@ -53,22 +54,22 @@ public class TimedReader extends GridCoverageReader {
     }
 
     @Override
-    public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-        return Collections.singletonList(parent.getIdentifier());
+    public GenericName getCoverageName() throws DataStoreException, CancellationException {
+        return parent.getIdentifier();
     }
 
     @Override
-    public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
+    public GridGeometry getGridGeometry() throws DataStoreException, CancellationException {
         return parent.getGridGeometry();
     }
 
     @Override
-    public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException, CancellationException {
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException, CancellationException {
         return Collections.EMPTY_LIST;
     }
 
     @Override
-    public GridCoverage read(int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
+    public GridCoverage read(GridCoverageReadParam param) throws DataStoreException, CancellationException {
         if (param == null) {
             param = new GridCoverageReadParam();
         }
@@ -93,7 +94,7 @@ public class TimedReader extends GridCoverageReader {
 
         try (TimedUtils.CloseableCoverageReader reader = new TimedUtils.CloseableCoverageReader()) {
             reader.setInput(imageFile.toFile());
-            return reader.read(0, param);
+            return reader.read(param);
         }
     }
 }

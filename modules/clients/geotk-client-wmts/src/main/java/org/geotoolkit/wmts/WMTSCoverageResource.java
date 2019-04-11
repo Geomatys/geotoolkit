@@ -35,7 +35,7 @@ public class WMTSCoverageResource extends AbstractPyramidalCoverageResource {
     private final WMTSPyramidSet set;
 
     WMTSCoverageResource(WebMapTileClient server, GenericName name, boolean cacheImage){
-        super(server,name,0);
+        super(server,name);
         set = new WMTSPyramidSet(server, name.tip().toString(), cacheImage);
     }
 

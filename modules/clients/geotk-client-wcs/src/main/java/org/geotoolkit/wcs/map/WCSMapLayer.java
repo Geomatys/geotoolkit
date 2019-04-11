@@ -22,6 +22,7 @@ import java.net.URL;
 
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.map.AbstractMapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.wcs.GetCoverageRequest;
@@ -63,6 +64,11 @@ public class WCSMapLayer extends AbstractMapLayer {
 
         //register the default graphic builder for geotk 2D engine.
         graphicBuilders().add(WCSGraphicBuilder.INSTANCE);
+    }
+
+    @Override
+    public Resource getResource() {
+        return null;
     }
 
     /**

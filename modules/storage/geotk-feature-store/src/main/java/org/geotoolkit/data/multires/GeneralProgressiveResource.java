@@ -22,14 +22,12 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.sis.internal.storage.AbstractResource;
 import org.apache.sis.measure.NumberRange;
-import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.process.ProcessListener;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.Metadata;
 
 /**
  *
@@ -110,10 +108,4 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         }
         return mapped;
     }
-
-    @Override
-    public Metadata getMetadata() throws DataStoreException {
-        return new DefaultMetadata();
-    }
-
 }

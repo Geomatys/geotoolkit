@@ -29,12 +29,13 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.amended.AmendedCoverageResource;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.gui.javafx.crs.CRSButton;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 
 /**
@@ -138,8 +139,8 @@ public class FXCoverageDecoratorPane extends GridPane {
         uiCrs.setSelected(crs!=null);
         if(crs==null){
             try {
-                crs = decoratedRef.getGridGeometry(decoratedRef.getImageIndex()).getCoordinateReferenceSystem();
-            } catch (CoverageStoreException ex) {
+                crs = decoratedRef.getGridGeometry().getCoordinateReferenceSystem();
+            } catch (DataStoreException ex) {
                 Loggers.JAVAFX.log(Level.FINE, ex.getMessage(), ex);
             }
         }
@@ -149,8 +150,8 @@ public class FXCoverageDecoratorPane extends GridPane {
         uiGridToCrs.setSelected(overrideGridToCrs!=null);
         if(overrideGridToCrs==null){
             try {
-                overrideGridToCrs = decoratedRef.getGridGeometry(decoratedRef.getImageIndex()).getGridToCRS();
-            } catch (CoverageStoreException ex) {
+                overrideGridToCrs = decoratedRef.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER);
+            } catch (DataStoreException ex) {
                 Loggers.JAVAFX.log(Level.FINE, ex.getMessage(), ex);
             }
         }
@@ -180,8 +181,8 @@ public class FXCoverageDecoratorPane extends GridPane {
         CoordinateReferenceSystem crs = null;
         uiCrs.setSelected(false);
         try {
-            crs = decoratedRef.getGridGeometry(decoratedRef.getImageIndex()).getCoordinateReferenceSystem();
-        } catch (CoverageStoreException ex) {
+            crs = decoratedRef.getGridGeometry().getCoordinateReferenceSystem();
+        } catch (DataStoreException ex) {
             Loggers.JAVAFX.log(Level.FINE, ex.getMessage(), ex);
         }
         crsButton.crsProperty().set(crs);
@@ -193,8 +194,8 @@ public class FXCoverageDecoratorPane extends GridPane {
         MathTransform overrideGridToCrs = null;
         uiGridToCrs.setSelected(false);
         try {
-            overrideGridToCrs = decoratedRef.getGridGeometry(decoratedRef.getImageIndex()).getGridToCRS();
-        } catch (CoverageStoreException ex) {
+            overrideGridToCrs = decoratedRef.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER);
+        } catch (DataStoreException ex) {
             Loggers.JAVAFX.log(Level.FINE, ex.getMessage(), ex);
         }
 

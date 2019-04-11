@@ -37,7 +37,7 @@ public class IllegalRecordException extends CatalogException {
     /**
      * Creates an exception with no cause and no details message.
      */
-    public IllegalRecordException() {
+    IllegalRecordException() {
         super();
     }
 
@@ -46,7 +46,7 @@ public class IllegalRecordException extends CatalogException {
      *
      * @param message  the detail message.
      */
-    public IllegalRecordException(final String message) {
+    IllegalRecordException(final String message) {
         super(message);
     }
 
@@ -56,7 +56,7 @@ public class IllegalRecordException extends CatalogException {
      * @param message  the detail message.
      * @param cause    the cause for this exception.
      */
-    public IllegalRecordException(final String message, final Exception cause) {
+    IllegalRecordException(final String message, final Exception cause) {
         super(message, cause);
     }
 

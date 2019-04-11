@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.processing.coverage.compose;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
@@ -26,17 +23,20 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.ProcessException;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -55,7 +55,7 @@ public class ComposeTest {
 
         final List<Map.Entry<GridCoverage2D,Geometry[]>> inputs = new ArrayList<>();
 
-        final GridEnvelope2D gridEnvelope = new GridEnvelope2D(0, 0, 2, 2);
+        final GridExtent gridEnvelope = new GridExtent(2, 2);
         final CoordinateReferenceSystem crs = CommonCRS.WGS84. normalizedGeographic();
         final GeneralEnvelope envelope = new GeneralEnvelope(crs);
         envelope.setRange(0, 0, 2);
@@ -130,7 +130,7 @@ public class ComposeTest {
 
         final List<Map.Entry<GridCoverage2D,Geometry[]>> inputs = new ArrayList<>();
 
-        final GridEnvelope2D gridEnvelope = new GridEnvelope2D(0, 0, 2, 2);
+        final GridExtent gridEnvelope = new GridExtent(2, 2);
         final CoordinateReferenceSystem crs = CommonCRS.WGS84. normalizedGeographic();
         final GeneralEnvelope envelope = new GeneralEnvelope(crs);
         envelope.setRange(0, 0, 2);
@@ -233,7 +233,7 @@ public class ComposeTest {
         final List<Map.Entry<GridCoverage2D,Geometry[]>> inputs = new ArrayList<>();
 
         {
-            final GridEnvelope2D gridEnvelope = new GridEnvelope2D(0, 0, 2, 2);
+            final GridExtent gridEnvelope = new GridExtent(2, 2);
             final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
             final GeneralEnvelope envelope = new GeneralEnvelope(crs);
             envelope.setRange(0, 0, 2);
@@ -267,7 +267,7 @@ public class ComposeTest {
         }
 
         {
-            final GridEnvelope2D gridEnvelope = new GridEnvelope2D(0, 0, 2, 2);
+            final GridExtent gridEnvelope = new GridExtent(2, 2);
             final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
             final GeneralEnvelope envelope = new GeneralEnvelope(crs);
             envelope.setRange(0, 1, 3);
@@ -323,7 +323,7 @@ public class ComposeTest {
         final List<Map.Entry<GridCoverage2D,Geometry[]>> inputs = new ArrayList<>();
 
         {
-            final GridEnvelope2D gridEnvelope = new GridEnvelope2D(0, 0, 2, 2);
+            final GridExtent gridEnvelope = new GridExtent(2, 2);
             final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
             final GeneralEnvelope envelope = new GeneralEnvelope(crs);
             envelope.setRange(0, 0, 2);
@@ -357,7 +357,7 @@ public class ComposeTest {
         }
 
         {
-            final GridEnvelope2D gridEnvelope = new GridEnvelope2D(0, 0, 2, 2);
+            final GridExtent gridEnvelope = new GridExtent(2, 2);
             final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
             final GeneralEnvelope envelope = new GeneralEnvelope(crs);
             envelope.setRange(0, 1, 3);
@@ -407,7 +407,7 @@ public class ComposeTest {
         final List<Map.Entry<GridCoverage2D,Geometry[]>> inputs = new ArrayList<>();
 
         {
-            final GridEnvelope2D gridEnvelope = new GridEnvelope2D(0, 0, 2, 2);
+            final GridExtent gridEnvelope = new GridExtent(2, 2);
             final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
             final GeneralEnvelope envelope = new GeneralEnvelope(crs);
             envelope.setRange(0, 0, 2);
@@ -441,7 +441,7 @@ public class ComposeTest {
         }
 
         {
-            final GridEnvelope2D gridEnvelope = new GridEnvelope2D(0, 0, 2, 2);
+            final GridExtent gridEnvelope = new GridExtent(2, 2);
             final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
             final GeneralEnvelope envelope = new GeneralEnvelope(crs);
             envelope.setRange(0, 4, 6);

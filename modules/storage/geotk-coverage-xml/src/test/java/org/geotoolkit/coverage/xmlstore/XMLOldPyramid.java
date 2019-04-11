@@ -22,7 +22,6 @@ import java.util.logging.Level;
 import net.iharder.Base64;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.FormattableObject;
-import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
@@ -53,20 +52,15 @@ class XMLOldPyramid extends XMLPyramid {
         this.serializedCrs = null;
         if (crs instanceof FormattableObject) {
             this.crs = ((FormattableObject)crs).toString(Convention.WKT1);
-        } else if (crs instanceof org.geotoolkit.io.wkt.Formattable) {
-            WKTFormat f = new WKTFormat(null, null);
-            f.setConvention(Convention.WKT1);
-
-            this.crs = f.format(crs);
         }
 
-            if (crs instanceof Serializable) {
-                try {
-                    this.serializedCrs = Base64.encodeObject((Serializable)crs);
-            } catch (IOException ex) {
-                Logging.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, ex.getMessage(), ex);
-                }
+        if (crs instanceof Serializable) {
+            try {
+                this.serializedCrs = Base64.encodeObject((Serializable)crs);
+        } catch (IOException ex) {
+            Logging.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, ex.getMessage(), ex);
             }
+        }
 
         if (this.crs == null && serializedCrs == null) {
             throw new DataStoreException("Input CRS cannot be serialized :\n"+crs);

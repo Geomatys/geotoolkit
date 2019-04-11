@@ -32,8 +32,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.TextAlignment;
+import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
@@ -44,11 +46,10 @@ import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapItem;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Context tree column with name and type icon.
@@ -182,31 +183,29 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
 
     }
 
-    public static Image getTypeIcon(MapItem mapItem){
-        if(mapItem instanceof FeatureMapLayer){
-            return ICON_VECTOR;
-        }else if(mapItem instanceof CoverageMapLayer){
-            final DataStore store = ((CoverageMapLayer)mapItem).getCoverageReference().getStore();
-            if(store!=null && store.getProvider() instanceof ClientFactory){
-                return ICON_SERVICE;
-            }else{
-                return ICON_RASTER;
-            }
-        }else{
+    public static Image getTypeIcon(MapItem mapItem) {
+        if (mapItem instanceof MapLayer) {
+            Resource resource = ((MapLayer) mapItem).getResource();
+            return getTypeIcon(resource);
+        } else {
             //container
             return ICON_FOLDER;
         }
     }
 
-    public static Image getTypeIcon(Resource resource){
+    public static Image getTypeIcon(Resource resource) {
+        DataStore store = (resource instanceof StoreResource)? ((StoreResource)resource).getOriginator() : null;
+
         if (resource instanceof FeatureSet) {
             return ICON_VECTOR;
-        } else if(resource instanceof GridCoverageResource) {
-            return ICON_RASTER;
-        } else {
-            //container
-            return ICON_FOLDER;
+        } else if (resource instanceof GridCoverageResource) {
+            if (store instanceof ClientFactory) {
+                return ICON_SERVICE;
+            } else {
+                return ICON_RASTER;
+            }
         }
+        return ICON_FOLDER;
     }
 
 }

@@ -27,8 +27,13 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Utility class to build icones from TTF font.
@@ -37,18 +42,23 @@ import org.apache.sis.util.ArgumentChecks;
  */
 public final class IconBuilder {
 
-    public static final URL FONTAWESOME = IconBuilder.class.getResource("/org/geotoolkit/font/fa-solid-900.ttf");
-    public static Font FONT;
+    /** The logger for the rendering module. */
+    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.font");
 
-    static{
-      try {
-        InputStream is = IconBuilder.class.getResourceAsStream("/org/geotoolkit/font/fa-solid-900.ttf");
-        FONT = Font.createFont(Font.TRUETYPE_FONT, is);
+    private static final Supplier<IllegalStateException> INIT_ERROR = () -> new IllegalStateException("Font awesome has not been initialized properly.");
+
+    public static final URL FONTAWESOME = IconBuilder.class.getResource("/org/geotoolkit/font/fa-solid-900.ttf");
+    public static final Optional<Font> FONT;
+
+    static {
+      Optional<Font> tmpFont;
+      try (final InputStream is = FONTAWESOME.openStream()) {
+        tmpFont = Optional.of(Font.createFont(Font.TRUETYPE_FONT, is));
       } catch (Exception ex) {
-        ex.printStackTrace();
-        System.err.println("Font not loaded.  Using serif font.");
-        FONT = new Font("serif", Font.PLAIN, 24);
+          LOGGER.log(Level.WARNING, ex, () -> "Cannot load FontAwesome from "+FONTAWESOME);
+          tmpFont = Optional.empty();
       }
+      FONT = tmpFont;
     }
 
     private IconBuilder(){}
@@ -58,16 +68,20 @@ public final class IconBuilder {
     }
 
     public static BufferedImage createImage(String text, float size, Color iconColor){
-        return createImage(text, null, iconColor, FONT.deriveFont(size), null);
+        return createImage(text, size, iconColor, null);
     }
 
     public static ImageIcon createIcon(String text, float size, Color iconColor, Color bgColor){
-        final BufferedImage image = createImage(text, null, iconColor, FONT.deriveFont(size), bgColor);
+        final BufferedImage image = FONT
+                .map(f -> createImage(text, null, iconColor, f.deriveFont(size), null))
+                .orElseThrow(INIT_ERROR);
         return new ImageIcon(image);
     }
 
     public static BufferedImage createImage(String text, float size, Color iconColor, Color bgColor){
-        return createImage(text, null, iconColor, FONT.deriveFont(size), bgColor);
+        return FONT
+                .map(f -> createImage(text, null, iconColor, f.deriveFont(size), bgColor))
+                .orElseThrow(INIT_ERROR);
     }
 
     public static BufferedImage createImage(String text, ImageIcon icon, Color textColor, Font font, Color bgColor) {

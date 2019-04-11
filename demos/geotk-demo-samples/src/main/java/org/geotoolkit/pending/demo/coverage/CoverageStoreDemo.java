@@ -3,21 +3,21 @@ package org.geotoolkit.pending.demo.coverage;
 
 import java.nio.file.Path;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.coverage.filestore.FileCoverageProvider;
-import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.opengis.util.GenericName;
 
 
 public class CoverageStoreDemo {
@@ -35,19 +35,18 @@ public class CoverageStoreDemo {
         params.getOrCreate(FileCoverageProvider.PATH).setValue(dataResources.toUri());
         params.getOrCreate(FileCoverageProvider.TYPE).setValue("jpg-wf");
 
-        final CoverageStore store = (CoverageStore) DataStores.open(params);
+        final DataStore store = DataStores.open(params);
 
         //create a mapcontext
         final MapContext context = MapBuilder.createContext();
 
-        for(GenericName n : store.getNames()){
-            final Resource ref = store.findResource(n.toString());
-            final CoverageMapLayer cl = MapBuilder.createCoverageLayer(ref);
+        for (Resource ref : DataStores.flatten(store, true, GridCoverageResource.class)) {
+            final MapLayer cl = MapBuilder.createCoverageLayer(ref);
             context.layers().add(cl);
         }
 
         //display it
-        JMap2DFrame.show(context);
+        FXMapFrame.show(context);
 
     }
 

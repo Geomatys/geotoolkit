@@ -16,17 +16,16 @@
  */
 package org.geotoolkit.coverage.memory;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.util.iso.Names;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.util.GenericName;
 
 /**
@@ -34,7 +33,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class MemoryCoverageReader extends GridCoverageReader {
+public class MemoryCoverageReader extends AbstractGridCoverageReader {
     private final GridCoverage2D coverage;
 
     public MemoryCoverageReader(final GridCoverage2D coverage) {
@@ -42,23 +41,23 @@ public class MemoryCoverageReader extends GridCoverageReader {
     }
 
     @Override
-    public GeneralGridGeometry getGridGeometry(final int i) throws CoverageStoreException, CancellationException {
-        return (GeneralGridGeometry) coverage.getGridGeometry();
+    public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
+        return (GridGeometry) coverage.getGridGeometry();
     }
 
     @Override
-    public List<GridSampleDimension> getSampleDimensions(final int i) throws CoverageStoreException, CancellationException {
-        return Arrays.asList(coverage.getSampleDimensions());
+    public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+        return coverage.getSampleDimensions();
     }
 
     @Override
-    public GridCoverage read(final int i, final GridCoverageReadParam gcrp) throws CoverageStoreException, CancellationException {
+    public GridCoverage read(final GridCoverageReadParam gcrp) throws CoverageStoreException, CancellationException {
         return coverage;
     }
 
     @Override
-    public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-        return Collections.emptyList();
+    public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
+        return Names.createLocalName(null, null, coverage.getName() == null ? "" : coverage.getName());
     }
 
 }

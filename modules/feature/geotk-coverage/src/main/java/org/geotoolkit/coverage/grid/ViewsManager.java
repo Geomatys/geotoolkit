@@ -19,46 +19,42 @@ package org.geotoolkit.coverage.grid;
 
 import java.awt.RenderingHints;
 import java.awt.color.ColorSpace;
-import java.awt.image.*; // Numerous imports here.
+import java.awt.image.*;
 import java.awt.image.renderable.ParameterBlock;
+import static java.lang.Double.NaN;
+import static java.lang.Double.isNaN;
 import java.util.*;
-import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import javax.media.jai.JAI;
-import javax.media.jai.ROI;
-import javax.media.jai.RenderedOp;
+import java.util.logging.Logger;
 import javax.media.jai.ImageLayout;
+import javax.media.jai.JAI;
+import javax.media.jai.LookupTableJAI;
 import javax.media.jai.NullOpImage;
 import javax.media.jai.PlanarImage;
-import javax.media.jai.LookupTableJAI;
+import javax.media.jai.ROI;
+import javax.media.jai.RenderedOp;
 import javax.media.jai.operator.FormatDescriptor;
 import javax.media.jai.operator.LookupDescriptor;
-
-import org.opengis.util.InternationalString;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.operation.NoninvertibleTransformException;
-
-import org.geotoolkit.factory.Hints;
-import org.apache.sis.util.ArraysExt;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.internal.util.CollectionsExt;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.ArraysExt;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.processing.AbstractCoverageProcessor;
+import org.geotoolkit.coverage.SampleDimensionUtils;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.image.color.ColorUtilities;
+import org.geotoolkit.image.internal.ImageUtilities;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
-
-import static java.lang.Double.NaN;
-import static java.lang.Double.isNaN;
-import static java.lang.Double.doubleToRawLongBits;
-
-import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
-import org.geotoolkit.image.color.ColorUtilities;
-import org.geotoolkit.image.internal.ImageUtilities;
+import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.NoninvertibleTransformException;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -68,16 +64,27 @@ import org.geotoolkit.image.internal.ImageUtilities;
  * and CPU saver.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.11
- *
- * @since 2.5
- * @module
  */
 final class ViewsManager {
     /**
      * Slight number for rounding errors in floating point comparison.
      */
     private static final float EPS = 1E-5f;
+    /**
+     * The logging level for reporting coverage operations.
+     * This level is equals or slightly lower than {@link Level#INFO}.
+     */
+    public static final Level OPERATION = new LogLevel("OPERATION", 780);
+
+    /**
+     * The grid coverage logging level type.
+     */
+    private static final class LogLevel extends Level {
+        private static final long serialVersionUID = -2944283575307061508L;
+        protected LogLevel(final String name, final int level) {
+            super(name, level);
+        }
+    }
 
     /**
      * The views. The coverage that created this {@code ViewsManager} must be stored under
@@ -104,16 +111,16 @@ final class ViewsManager {
         boolean geophysics   = true; // 'true' only if all bands are geophysics.
         boolean photographic = true; // 'true' only if no band have category.
         boolean rendered     = true; // 'true' only if all bands are on unsigned samples, and we are not in geophysics mode.
-        final int numBands = coverage.getNumSampleDimensions();
-scan:   for (int i=0; i<numBands; i++) {
-            final GridSampleDimension band = coverage.getSampleDimension(i);
+        final List<SampleDimension> dims = coverage.getSampleDimensions();
+scan:   for (int i=0,n=dims.size(); i<n; i++) {
+            final SampleDimension band = dims.get(i);
             if (band != null) {
                 if (isNullOrEmpty(band.getCategories())) {
                     // No category. The image is treated as photographic.
                     continue;
                 }
                 photographic = false;
-                final GridSampleDimension packed = band.geophysics(false);
+                final SampleDimension packed = band.forConvertedValues(false);
                 if (band != packed) {
                     for (final Category category : packed.getCategories()) {
                         if (category.isQuantitative()) {
@@ -124,7 +131,7 @@ scan:   for (int i=0; i<numBands; i++) {
                     }
                 }
                 geophysics = false;
-                if (band.isRangeSigned()) {
+                if (SampleDimensionUtils.isRangeSigned(band)) {
                     rendered = false;
                 }
             }
@@ -164,9 +171,9 @@ scan:   for (int i=0; i<numBands; i++) {
                 for (final GridCoverage source : sources) {
                     if (source instanceof GridCoverage2D) {
                         final GridCoverage2D candidate = (GridCoverage2D) source;
-                        if (Objects.equals(coverage.image,            candidate.image)            &&
-                            Objects.equals(coverage.gridGeometry,     candidate.gridGeometry)     &&
-                            Arrays .equals(coverage.sampleDimensions, candidate.sampleDimensions) &&
+                        if (Objects.equals(coverage.image,                 candidate.image)            &&
+                            Objects.equals(coverage.getGridGeometry(),     candidate.getGridGeometry())     &&
+                            Objects.equals(coverage.getSampleDimensions(), candidate.getSampleDimensions()) &&
                             candidate.getViewClass() == viewClass)
                             // The CRS is checked with the GridGeometry2D.
                         {
@@ -357,11 +364,11 @@ scan:   for (int i=0; i<numBands; i++) {
         }
         final SampleModel           sourceModel = image.getSampleModel();
         final int                      numBands = sourceModel.getNumBands();
-        final GridSampleDimension[] sourceBands = coverage.sampleDimensions;
-        final GridSampleDimension[] targetBands = sourceBands.clone();
+        final SampleDimension[] sourceBands = CollectionsExt.toArray(coverage.getSampleDimensions(), SampleDimension.class);
+        final SampleDimension[] targetBands = sourceBands.clone();
         assert targetBands.length == numBands : targetBands.length;
         for (int i=0; i<targetBands.length; i++) {
-            targetBands[i] = targetBands[i].geophysics(toGeo);
+            targetBands[i] = targetBands[i].forConvertedValues(toGeo);
         }
         /*
          * If the target bands are equal to the source bands, then there is nothing to do.
@@ -372,7 +379,7 @@ scan:   for (int i=0; i<numBands; i++) {
             return coverage;
         }
         final int visibleBand = CoverageUtilities.getVisibleBand(image);
-        final GridSampleDimension[] nativeBands = toGeo ? sourceBands : targetBands;
+        final SampleDimension[] nativeBands = toGeo ? sourceBands : targetBands;
         /*
          * Computes immediately the "geophysics to native" transforms.  If all transforms are the
          * identity one, then we will return the coverage unchanged. The transforms that can't be
@@ -382,7 +389,7 @@ scan:   for (int i=0; i<numBands; i++) {
         boolean isIdentity = true;
         MathTransform1D[] transforms = new MathTransform1D[numBands];
         for (int i=0; i<numBands; i++) {
-            MathTransform1D transform = nativeBands[i].getSampleToGeophysics();
+            MathTransform1D transform = nativeBands[i].getTransferFunction().orElse(null);
             if (transform!=null && !toGeo) try {
                 transform = transform.inverse(); // We want the geophysics to native transform.
             } catch (NoninvertibleTransformException e) {
@@ -401,8 +408,8 @@ scan:   for (int i=0; i<numBands; i++) {
          *          only one big tile, and for the color model and sample model  (since we are
          *          reformating data in the process of this operation).
          */
-              ImageLayout layout      = ImageUtilities.getImageLayout(image);
-        final ColorModel  colors      = targetBands[visibleBand].getColorModel(visibleBand, numBands);
+        ImageLayout layout = ImageUtilities.getImageLayout(image);
+        final ColorModel  colors      = SampleDimensionUtils.getColorModel(targetBands[visibleBand], visibleBand, numBands);
         final SampleModel targetModel = colors.createCompatibleSampleModel(
                 layout.getTileWidth(image), layout.getTileHeight(image));
         layout = layout.setSampleModel(targetModel).setColorModel(colors);
@@ -456,8 +463,8 @@ testLinear: for (int i=0; i<numBands; i++) {
                 int jbp = 0; // Break point index (vary with j)
                 for (int j=0; j<numCategories; j++) {
                     final Category sourceCategory = sources.get(j);
-                    final Category packedCategory = sourceCategory.geophysics(false);
-                    MathTransform1D transform = packedCategory.getSampleToGeophysics();
+                    final Category packedCategory = sourceCategory; // TODO .forConvertedValues(false);
+                    MathTransform1D transform = packedCategory.getTransferFunction().orElse(null);
                     final double offset, scale;
                     if (transform == null) {
                         /*
@@ -474,19 +481,19 @@ testLinear: for (int i=0; i<numBands; i++) {
                          */
                         if (toGeo) {
                             canRescale = false;
-                            final NumberRange<?> target = sourceCategory.geophysics(true).getRange();
-                            offset = target.getMinDouble();
-                            if (doubleToRawLongBits(offset) != doubleToRawLongBits(target.getMaxDouble())) {
+//                          final NumberRange<?> target = sourceCategory.getMeasurementRange().get();
+//                          offset = target.getMinDouble();
+//                          if (doubleToRawLongBits(offset) != doubleToRawLongBits(target.getMaxDouble())) {
                                 canPiecewise = false;
                                 break testLinear;
-                            }
-                            scale = 0;
+//                          }
+//                          scale = 0;
                         } else {
                             canPiecewise = false;
                             assert !packedCategory.equals(sourceCategory) : packedCategory;
-                            final NumberRange<?> range = packedCategory.getRange();
+                            final NumberRange<?> range = packedCategory.getSampleRange();
                             if (range.getMinDouble(true) == 0 && range.getMaxDouble(true) == 0) {
-                                assert isNaN(sourceCategory.getRange().getMinDouble()) : sourceCategory;
+                                assert isNaN(sourceCategory.getSampleRange().getMinDouble()) : sourceCategory;
                                 conditional = true;
                                 continue;
                             }
@@ -526,7 +533,7 @@ testLinear: for (int i=0; i<numBands; i++) {
                         canRescale = false;
                     }
                     // Computes breakpoints.
-                    final NumberRange<?> range = sourceCategory.getRange();
+                    final NumberRange<?> range = sourceCategory.getSampleRange();
                     final double  minimum = range.getMinDouble(true);
                     final double  maximum = range.getMaxDouble(true);
                     final float sourceMin = (float) minimum;
@@ -593,7 +600,7 @@ testLinear: for (int i=0; i<numBands; i++) {
         }
         /*
          * STEP 5 - Transcode the image sample values. The "SampleTranscode" operation is
-         *          registered in the org.geotoolkit.coverage package in the GridSampleDimension
+         *          registered in the org.geotoolkit.coverage package in the SampleDimension
          *          class.
          */
         if (operation == null) {
@@ -618,16 +625,16 @@ testLinear: for (int i=0; i<numBands; i++) {
      * Creates the view and logs a record.
      */
     private static GridCoverage2D createView(final GridCoverage2D coverage, final RenderedOp view,
-            final GridSampleDimension[] targetBands, final int code, final Hints userHints)
+            final SampleDimension[] targetBands, final int code, final Hints userHints)
     {
         final InternationalString name = coverage.getName();
-        if (GridCoverage2D.LOGGER.isLoggable(AbstractCoverageProcessor.OPERATION)) {
+        if (GridCoverage2D.LOGGER.isLoggable(OPERATION)) {
             // Logs a message using the same level than grid coverage processor.
             final String operation = view.getOperationName();
             final String shortName = operation.substring(operation.lastIndexOf('.') + 1);
             final Locale    locale = coverage.getLocale();
             final LogRecord record = Loggings.getResources(locale).getLogRecord(
-                    AbstractCoverageProcessor.OPERATION, Loggings.Keys.SampleTranscode_3, new Object[] {
+                    OPERATION, Loggings.Keys.SampleTranscode_3, new Object[] {
                         (name != null) ? name.toString(locale) :
                             Vocabulary.getResources(locale).getString(Vocabulary.Keys.Untitled),
                         code, shortName
@@ -639,7 +646,7 @@ testLinear: for (int i=0; i<numBands; i++) {
             logger.log(record);
         }
         final GridCoverage[] sources = new GridCoverage[] {coverage};
-        return new GridCoverage2D(name, view, coverage.gridGeometry, targetBands, sources, null, userHints);
+        return new GridCoverage2D(name, view, coverage.getGridGeometry(), targetBands, sources, null, userHints);
     }
 
     /**
@@ -647,7 +654,7 @@ testLinear: for (int i=0; i<numBands; i++) {
      * not produce zero value. In case of doubt, this method conservatively returns {@code false}.
      * <p>
      * <b>Why this method exists</b><br>
-     * When a {@link org.opengis.coverage.SampleDimension} describes exactly one linear relationship with one NaN value
+     * When a {@link org.geotoolkit.coverage.SampleDimension} describes exactly one linear relationship with one NaN value
      * mapping exactly to the index value 0, then the "<cite>geophysics to native</cite>" transform
      * can be optimized to the {@code "Rescale"} operation because {@link Float#NaN} casted to the
      * {@code int} primitive type equals 0. This case is very common, which make this optimization
@@ -741,10 +748,8 @@ testLinear: for (int i=0; i<numBands; i++) {
             disposed = 0;
             for (final Iterator<GridCoverage2D> it=views.values().iterator(); it.hasNext();) {
                 final GridCoverage2D coverage = it.next();
-                if (coverage.disposeImage(force)) {
-                    it.remove();
-                    disposed++;
-                }
+                it.remove();
+                disposed++;
             }
         } while (disposed != 0);
         return views.values();

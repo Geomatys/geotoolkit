@@ -46,8 +46,9 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Numbers;
 import org.apache.sis.util.logging.Logging;
 
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.temporal.object.TemporalUtilities;
@@ -59,6 +60,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import static org.geotoolkit.coverage.SampleDimensionUtils.*;
+import org.geotoolkit.internal.coverage.ColoredCategory;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.GDAL_METADATA_KEY;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.GDAL_NODATA_KEY;
 
@@ -402,7 +404,7 @@ public strictfp class ThirdPartyMetaDataReader {
              * GEOPHISIC means exist at least, one of, scale, offset or noData values.
              */
             if (!categories.isEmpty()) {
-                final GridSampleDimension dim = new GridSampleDimension(""+b, categories.toArray(new Category[categories.size()]), null);
+                final SampleDimension dim = new SampleDimension(Names.createLocalName(null, null, String.valueOf(b)), null, categories);
                 accessor.setDimension(dim, Locale.ENGLISH);
             }
         }
@@ -444,7 +446,7 @@ public strictfp class ThirdPartyMetaDataReader {
         if(nodataValues.isEmpty()){
             if(scale!=null){
                 //main datas category
-                categories.add(new Category("data", null,
+                categories.add(new ColoredCategory("data", null,
                         getTypedRangeNumber(typeClass,minSampleValue, true,maxSampleValue, true),
                         scale, offset));
             }
@@ -469,17 +471,17 @@ public strictfp class ThirdPartyMetaDataReader {
         final Iterator<Double> itNoData = nodataValues.iterator();
         while (itNoData.hasNext()) {
             double currentNoData = itNoData.next();
-            final Category noDataCat = new Category(NODATA_CATEGORY_NAME, new Color(0,0,0,0),
+            final Category noDataCat = new ColoredCategory(NODATA_CATEGORY_NAME, new Color(0,0,0,0),
                     getTypedRangeNumber(typeClass, currentNoData, true, currentNoData, true));
             categories.add(noDataCat);
-            currentNoData = noDataCat.getRange().getMinDouble();
+            currentNoData = noDataCat.getSampleRange().getMinDouble();
 
             if (currentNoData == currentMinSV) {
                 isMinInclude = false;
             } else if (currentNoData == currentMaxSV) {
                 isMaxInclude = false;
             } else if (currentMinSV < currentNoData && currentNoData < currentMaxSV) {//-- intersection
-                categories.add(new Category("data", null,
+                categories.add(new ColoredCategory("data", null,
                     getTypedRangeNumber(typeClass,
                                         currentMinSV, isMinInclude,
                                         currentNoData, false), scale, offset));
@@ -489,10 +491,10 @@ public strictfp class ThirdPartyMetaDataReader {
         }
 
         assert currentMaxSV == maxSampleValue : "buildCategories : last category : currentMaxSample "
-                + "value should be equals to maxSampleValues. Expected : "+maxSampleValue+". Found : "+currentMaxSV;
+                + "value should be equals to maxSampleValues. Expected: "+maxSampleValue+". Found: "+currentMaxSV;
 
         if (currentMinSV<currentMaxSV) {
-            categories.add(new Category("data", null,
+            categories.add(new ColoredCategory("data", null,
                     getTypedRangeNumber(typeClass,
                                         currentMinSV, isMinInclude,
                                         currentMaxSV, isMaxInclude), scale, offset));

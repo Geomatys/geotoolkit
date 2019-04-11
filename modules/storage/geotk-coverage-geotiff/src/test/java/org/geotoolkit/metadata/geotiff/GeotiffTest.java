@@ -34,8 +34,8 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.NamedIdentifier;
 
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
@@ -126,10 +126,10 @@ public class GeotiffTest extends org.geotoolkit.test.TestBase {
         reader.dispose();
 
         final DimensionAccessor dimAccess    = new DimensionAccessor(sm);
-        final List<GridSampleDimension> sDim = dimAccess.getGridSampleDimensions();
+        final List<SampleDimension> sDim = dimAccess.getSampleDimensions();
         assertEquals("gridSampleDimension number", 3, sDim.size());
 
-        final GridSampleDimension gsd   = sDim.get(0);
+        final SampleDimension gsd   = sDim.get(0);
         final List<Category> categories = gsd.getCategories();
 
         assertEquals("categories number", 7, categories.size());
@@ -149,7 +149,7 @@ public class GeotiffTest extends org.geotoolkit.test.TestBase {
         final double[] foundArray = new double[14];
         int fAId = 0;
         for (final Category cat : categories) {
-            final NumberRange r = cat.getRange();
+            final NumberRange r = cat.getSampleRange();
             foundArray[fAId++]  = r.getMinDouble(true);
             foundArray[fAId++]  = r.getMaxDouble(true);
         }

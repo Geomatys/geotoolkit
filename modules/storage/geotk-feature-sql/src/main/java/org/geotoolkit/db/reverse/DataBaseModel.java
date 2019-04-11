@@ -36,16 +36,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
-import org.apache.sis.feature.AbstractOperation;
-import org.apache.sis.feature.FeatureOperations;
 import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import static org.geotoolkit.data.AbstractFeatureStore.*;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
@@ -60,10 +59,7 @@ import org.geotoolkit.db.reverse.MetaDataConstants.ImportedKey;
 import org.geotoolkit.db.reverse.MetaDataConstants.Index;
 import org.geotoolkit.db.reverse.MetaDataConstants.Schema;
 import org.geotoolkit.db.reverse.MetaDataConstants.Table;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.op.CoverageGeometryOperation;
 import org.geotoolkit.util.NamesExt;
-import org.opengis.coverage.Coverage;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
@@ -71,7 +67,6 @@ import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
 
 
 /**
@@ -92,7 +87,7 @@ public final class DataBaseModel {
     /**
      * Custom factory where types can be modified after they are created.
      */
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     /**
      * Feature type used to mark types which are sub types of others.
@@ -795,7 +790,7 @@ public final class DataBaseModel {
                                 defaultGeomSet = true;
                             }
                         }
-                    } else if (Coverage.class.isAssignableFrom(binding)) {
+                    } else if (GridCoverage.class.isAssignableFrom(binding)) {
 
                         //look up the type ( should only be one row )
                         final Filter tableFilter = filter(Table.TABLE_SCHEM, schema.name, Table.TABLE_NAME, tableName);

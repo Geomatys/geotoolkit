@@ -17,12 +17,12 @@
 package org.geotoolkit.processing.coverage.straighten;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.processing.AbstractProcessDescriptor;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
-import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -41,20 +41,20 @@ public class StraightenDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Coverage
      */
-    public static final ParameterDescriptor<Coverage> COVERAGE_IN = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage> COVERAGE_IN = new ParameterBuilder()
             .addName("coverage_in")
             .setRemarks("Input coverage ")
             .setRequired(true)
-            .create(Coverage.class, null);
+            .create(GridCoverage.class, null);
 
     /**
      * Mandatory - Coverage
      */
-    public static final ParameterDescriptor<Coverage> COVERAGE_OUT = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage> COVERAGE_OUT = new ParameterBuilder()
             .addName("coverage_out")
             .setRemarks("Output coverage ")
             .setRequired(true)
-            .create(Coverage.class, null);
+            .create(GridCoverage.class, null);
 
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

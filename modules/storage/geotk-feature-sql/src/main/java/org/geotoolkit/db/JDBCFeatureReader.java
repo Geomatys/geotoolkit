@@ -16,25 +16,25 @@
  */
 package org.geotoolkit.db;
 
-import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import static org.geotoolkit.db.JDBCFeatureStoreUtilities.*;
+import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.Hints;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.db.dialect.SQLDialect;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTS;
-import org.opengis.coverage.Coverage;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -186,9 +186,9 @@ public class JDBCFeatureReader implements FeatureReader {
         if(AttributeConvention.isGeometryAttribute(desc)){
             final AttributeType gatt = (AttributeType) desc;
             final Class valueClass = gatt.getValueClass();
-            if(Coverage.class.isAssignableFrom(valueClass)){
+            if(GridCoverage.class.isAssignableFrom(valueClass)){
                 //raster type
-                final Coverage coverage;
+                final GridCoverage coverage;
                 try {
                     coverage = dialect.decodeCoverageValue(gatt, rs, index);
                 } catch (IOException e) {

@@ -41,6 +41,8 @@ import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.test.TestUtilities;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.image.internal.ImageUtils;
@@ -49,11 +51,11 @@ import org.geotoolkit.image.internal.PlanarConfiguration;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import static org.geotoolkit.image.io.plugin.ImageOrientation.*;
-import org.geotoolkit.image.iterator.*;
 import org.geotoolkit.nio.IOUtilities;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.opengis.coverage.grid.SequenceType;
 
 /**
  * Primary test class to test {@link TiffImageWriter} and {@link TiffImageReader}. <br/><br/>
@@ -434,16 +436,15 @@ public strictfp abstract class TestTiffImageReaderWriter {
 
         assertEquals("numband : ", expectedNumband, testedSm.getNumBands());
 
-        final PixelIterator sourcePix = PixelIteratorFactory.createRowMajorIterator(image);
+        final PixelIterator sourcePix = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(image);
 
-        final PixelIterator testedPix = PixelIteratorFactory.createRowMajorIterator(tested);
-        int b = 0;
+        final PixelIterator testedPix = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(tested);
         while (sourcePix.next()) {
             testedPix.next();
-
-            assertEquals("pixel at coordinate : (x, y, b) : ("+sourcePix.getX()+", "+sourcePix.getY()+", "+(b - 1)+") : ",
-            sourcePix.getSampleDouble(), testedPix.getSampleDouble(), DEFAULT_TOLERANCE);
-            if (++b == expectedNumband) b = 0;
+            for (int b = 0; b<expectedNumband; b++) {
+                assertEquals("pixel at coordinate : (x, y, b) : ("+sourcePix.getPosition().x+", "+sourcePix.getPosition().y+", "+(b - 1)+") : ",
+                sourcePix.getSampleDouble(b), testedPix.getSampleDouble(b), DEFAULT_TOLERANCE);
+            }
         }
     }
 
@@ -727,20 +728,18 @@ public strictfp abstract class TestTiffImageReaderWriter {
 //        assertEquals(message+"numDataElement : ", expectedSm.getNumDataElements(), testedSm.getNumDataElements());
 //        assertEquals(message+"datatype : ", expectedSm.getDataType(), testedSm.getDataType());
 
-        final PixelIterator sourcePix = PixelIteratorFactory.createRowMajorIterator(sourceImage, sourceRegion);
+        final PixelIterator sourcePix = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).setRegionOfInterest(sourceRegion).create(sourceImage);
 
         final Rectangle testedRegion = new Rectangle(destOffsetX, destOffsetY, expectedWidth, expectedHeight);
-        final PixelIterator testedPix = PixelIteratorFactory.createRowMajorIterator(testedImage, testedRegion);
+        final PixelIterator testedPix = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).setRegionOfInterest(testedRegion).create(testedImage);
 
         for (int y = sourceRegion.y; y < sourceRegion.y + sourceRegion.height; y += sourceYsubsampling) {
             for (int x = sourceRegion.x; x < sourceRegion.x + sourceRegion.width; x += sourceXsubsampling) {
-                sourcePix.moveTo(x, y, 0);
-                int b = 0;
-                while (b++ < expectedNumband) {
-                    testedPix.next();
-                    assertEquals(message+"pixel at coordinate : (x, y, b) : ("+sourcePix.getX()+", "+sourcePix.getY()+", "+(b - 1)+") : ",
-                    sourcePix.getSampleDouble(), testedPix.getSampleDouble(), DEFAULT_TOLERANCE);
-                    sourcePix.next();
+                sourcePix.moveTo(x, y);
+                testedPix.next();
+                for (int b = 0; b < expectedNumband; b++) {
+                    assertEquals(message+"pixel at coordinate : (x, y, b) : ("+sourcePix.getPosition().x+", "+sourcePix.getPosition().y+", "+(b - 1)+") : ",
+                    sourcePix.getSampleDouble(b), testedPix.getSampleDouble(b), DEFAULT_TOLERANCE);
                 }
             }
         }
@@ -831,15 +830,33 @@ public strictfp abstract class TestTiffImageReaderWriter {
             return;
         }
 
-        final PixelIterator pix = PixelIteratorFactory.createDefaultWriteableIterator(image, image);
+        final WritablePixelIterator pix = new PixelIterator.Builder().createWritable(image);
+        final int numBands = pix.getNumBands();
         switch (databufferType) {
             case DataBuffer.TYPE_USHORT :
             case DataBuffer.TYPE_SHORT  :
-            case DataBuffer.TYPE_INT    : while (pix.next()) pix.setSample(random.nextInt()); break;
+            case DataBuffer.TYPE_INT    :
+                while (pix.next()) {
+                    for (int b = 0; b < numBands; b++) {
+                        pix.setSample(b, random.nextInt());
+                    }
+                }
+                break;
+            case DataBuffer.TYPE_FLOAT  :
+                while (pix.next()) {
+                    for (int b = 0; b < numBands; b++) {
+                        pix.setSample(b, random.nextFloat());
+                    }
+                }
+                break;
 
-            case DataBuffer.TYPE_FLOAT  : while (pix.next()) pix.setSampleFloat(random.nextFloat()); break;
-
-            case DataBuffer.TYPE_DOUBLE : while (pix.next()) pix.setSampleDouble(random.nextDouble()); break;
+            case DataBuffer.TYPE_DOUBLE :
+                while (pix.next()) {
+                    for (int b = 0; b < numBands; b++) {
+                        pix.setSample(b, random.nextDouble());
+                    }
+                }
+                break;
 
             default: throw new AssertionError(databufferType);
         }

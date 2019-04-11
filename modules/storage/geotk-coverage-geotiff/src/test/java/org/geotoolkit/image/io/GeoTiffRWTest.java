@@ -25,41 +25,34 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
-import javax.imageio.ImageIO;
-import javax.imageio.IIOImage;
-
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.crs.CRSFactory;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.util.FactoryException;
-
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.lang.Setup;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
+import org.geotoolkit.lang.Setup;
 import org.geotoolkit.test.TestData;
-
 import org.junit.After;
+import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.crs.CRSFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.FactoryException;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -99,8 +92,7 @@ public class GeoTiffRWTest extends org.geotoolkit.test.TestBase {    // LGPL
         });
     }
 
-    private final CRSFactory longlatFactory =  FactoryFinder.getCRSFactory(
-                new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
+    private final CRSFactory longlatFactory = DefaultFactories.forBuildin(CRSFactory.class);
 
     @Test
     public void test1() throws Exception {
@@ -804,7 +796,7 @@ final CoordinateReferenceSystem sourceCRS = CRS.fromWKT("PROJCS[\"NAD83 / Califo
     // TODO : Activate if the writer manage ImageOutputStream.
     @Test
     @Ignore
-    public void testStreamWriting() throws CoverageStoreException, IOException{
+    public void testStreamWriting() throws DataStoreException, IOException{
 
         File file = TestData.file(GeoTiffRWTest.class, "002025_0100_010722_l7_01_utm2.tiff");
         ImageCoverageReader reader = new ImageCoverageReader();
@@ -812,13 +804,13 @@ final CoordinateReferenceSystem sourceCRS = CRS.fromWKT("PROJCS[\"NAD83 / Califo
 
         try{
             //first test
-            GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
+            GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
 
             final File tempFile = File.createTempFile("coverage", ".tiff", tempDir);
             tempFile.deleteOnExit();
             final FileOutputStream stream = new FileOutputStream(tempFile);
 
-            final IIOImage iioimage = new IIOImage(coverage.getRenderedImage(), null, reader.getCoverageMetadata(0));
+            final IIOImage iioimage = new IIOImage(coverage.getRenderedImage(), null, reader.getCoverageMetadata());
             final ImageWriter writer = ImageIO.getImageWritersByFormatName("geotiff").next();
             writer.setOutput(ImageIO.createImageOutputStream(stream));
             writer.write(null, iioimage, null);
@@ -832,7 +824,7 @@ final CoordinateReferenceSystem sourceCRS = CRS.fromWKT("PROJCS[\"NAD83 / Califo
 
 
     private void test(final String fileName, final CoordinateReferenceSystem crs, final AffineTransform gridToCRS)
-            throws IOException, CoverageStoreException{
+            throws IOException, DataStoreException{
 
         File file = TestData.file(GeoTiffRWTest.class, fileName);
         ImageCoverageReader reader = new ImageCoverageReader();
@@ -840,18 +832,18 @@ final CoordinateReferenceSystem sourceCRS = CRS.fromWKT("PROJCS[\"NAD83 / Califo
 
         try{
             //first test
-            GridCoverage2D coverage = reader.read(0, null);
+            GridCoverage2D coverage = reader.read(null);
             compare(coverage, crs, gridToCRS);
 
             //write it and test again
-            file = write(coverage,reader.getCoverageMetadata(0));
+            file = write(coverage,reader.getCoverageMetadata());
             reader.dispose();
             final ImageReader imgReader = new TiffImageReader(new TiffImageReader.Spi());
             imgReader.setInput(file);
             reader = (ImageCoverageReader) CoverageIO.createSimpleReader(imgReader);
 
             //second test
-            coverage = reader.read(0, null);
+            coverage = reader.read(null);
             compare(coverage, crs, gridToCRS);
 
         }finally{

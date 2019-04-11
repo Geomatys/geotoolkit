@@ -19,8 +19,6 @@ package org.geotoolkit.image.io.plugin;
 
 import org.apache.sis.test.DependsOnMethod;
 import org.geotoolkit.image.io.SpatialImageReadParam;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -35,6 +33,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import org.apache.sis.image.PixelIterator;
+import org.opengis.coverage.grid.SequenceType;
 
 /**
  * Unit tests for HGT reader. We'll make an simple image which each pixel value is its position in a 1D buffer.
@@ -93,10 +93,10 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
         reader.setInput(TEMP_IMG);
         final BufferedImage read = reader.read(0);
 
-        final PixelIterator pxIt = PixelIteratorFactory.createDefaultIterator(read);
+        final PixelIterator pxIt = PixelIterator.create(read);
         int expected = 0;
         while (pxIt.next()) {
-            Assert.assertEquals("A pixel value is invalid !", expected++, pxIt.getSample());
+            Assert.assertEquals("A pixel value is invalid !", expected++, pxIt.getSample(0));
         }
     }
 
@@ -115,17 +115,17 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
         final BufferedImage read = reader.read(0, readParam);
         Assert.assertEquals("Read image width is invalid !", SOURCE_REGION.width, read.getWidth());
         Assert.assertEquals("Read image height is invalid !", SOURCE_REGION.height, read.getHeight());
-        final PixelIterator pxIt = PixelIteratorFactory.createRowMajorIterator(read);
+        final PixelIterator pxIt = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(read);
 
         int expected = SOURCE_REGION.y * IMG_WIDTH;
         // When we change line, we must add an offset to expected value.
         int previousY = -1;
         while (pxIt.next()) {
-            if (previousY < pxIt.getY()) {
+            if (previousY < pxIt.getPosition().y) {
                 expected += SOURCE_REGION.x;
-                previousY = pxIt.getY();
+                previousY = pxIt.getPosition().y;
             }
-            Assert.assertEquals("Pixel value at ("+pxIt.getX()+", "+pxIt.getY()+") is invalid !", expected++, pxIt.getSample());
+            Assert.assertEquals("Pixel value at ("+pxIt.getPosition().x+", "+pxIt.getPosition().y+") is invalid !", expected++, pxIt.getSample(0));
         }
     }
 
@@ -148,19 +148,19 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
         Assert.assertEquals("Read image width is invalid !", 3, read.getWidth());
         Assert.assertEquals("Read image height is invalid !", 4, read.getHeight());
 
-        PixelIterator pxIt = PixelIteratorFactory.createRowMajorIterator(read);
+        PixelIterator pxIt = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(read);
         int expected = -1;
         // When we change line, we must add an offset to expected value.
         int previousY = -1;
         while (pxIt.next()) {
-            if (previousY < pxIt.getY()) {
+            if (previousY < pxIt.getPosition().y) {
                 // We reset expected value to the one we should get at the beginning of current line.
-                previousY = pxIt.getY();
+                previousY = pxIt.getPosition().y;
                 expected = (previousY * ySubsampling) * IMG_WIDTH;
             } else {
                 expected += xSubsampling;
             }
-            Assert.assertEquals("Pixel value at ("+pxIt.getX()+", "+pxIt.getY()+") is invalid !", expected, pxIt.getSample());
+            Assert.assertEquals("Pixel value at ("+pxIt.getPosition().x+", "+pxIt.getPosition().y+") is invalid !", expected, pxIt.getSample(0));
         }
 
         // Subsampling with an offset
@@ -170,18 +170,18 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
         read = reader.read(0, readParam);
         Assert.assertEquals("Read image width is invalid !", 2, read.getWidth());
         Assert.assertEquals("Read image height is invalid !", 4, read.getHeight());
-        pxIt = PixelIteratorFactory.createRowMajorIterator(read);
+        pxIt = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(read);
         expected = -1;
         previousY = -1;
         while (pxIt.next()) {
-            if (previousY < pxIt.getY()) {
+            if (previousY < pxIt.getPosition().y) {
                 // We reset expected value to the one we should get at the beginning of current line.
-                previousY = pxIt.getY();
+                previousY = pxIt.getPosition().y;
                 expected = (yOffset + (previousY * ySubsampling)) * IMG_WIDTH + xOffset;
             } else {
                 expected += xSubsampling;
             }
-            Assert.assertEquals("Pixel value at ("+pxIt.getX()+", "+pxIt.getY()+") is invalid !", expected, pxIt.getSample());
+            Assert.assertEquals("Pixel value at ("+pxIt.getPosition().x+", "+pxIt.getPosition().y+") is invalid !", expected, pxIt.getSample(0));
         }
     }
 
@@ -219,10 +219,10 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
 
         };
 
-        final PixelIterator pxIt = PixelIteratorFactory.createRowMajorIterator(read);
+        final PixelIterator pxIt = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(read);
         int expectedIndex = 0;
         while (pxIt.next()) {
-            Assert.assertEquals("Pixel value at ("+pxIt.getX()+", "+pxIt.getY()+") is invalid !", expectedValues[expectedIndex++], pxIt.getSample());
+            Assert.assertEquals("Pixel value at ("+pxIt.getPosition().x+", "+pxIt.getPosition().y+") is invalid !", expectedValues[expectedIndex++], pxIt.getSample(0));
         }
 
     }

@@ -5,11 +5,11 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.db.postgres.PostgresFeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.util.GenericName;
@@ -40,7 +40,7 @@ public class PostgisDemo {
         }
 
 
-        JMap2DFrame.show(context);
+        FXMapFrame.show(context);
 
     }
 

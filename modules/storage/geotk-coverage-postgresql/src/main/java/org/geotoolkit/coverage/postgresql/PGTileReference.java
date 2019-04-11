@@ -62,7 +62,7 @@ public class PGTileReference extends AbstractResource implements ImageTile{
 
     @Override
     public synchronized Object getInput() {
-        final PGCoverageStore store = mosaic.getCoverageReference().getStore();
+        final PGCoverageStore store = mosaic.getCoverageReference().getOriginator();
         byte[] buffer = null;
         if(data != null){
             buffer = data.get();
@@ -80,7 +80,7 @@ public class PGTileReference extends AbstractResource implements ImageTile{
     }
 
     private byte[] download() throws SQLException{
-        final PGCoverageStore store = mosaic.getCoverageReference().getStore();
+        final PGCoverageStore store = mosaic.getCoverageReference().getOriginator();
 
         Connection cnx = null;
         Statement stmt = null;

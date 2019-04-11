@@ -21,21 +21,20 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.operation.Matrix;
-import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.OperationMethod;
-import org.geotoolkit.resources.Errors;
+import static java.lang.Math.*;
 import org.apache.sis.parameter.Parameters;
-import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
-
 import org.apache.sis.referencing.operation.transform.ContextualParameters.MatrixRole;
-import static java.lang.Math.*;
+import org.apache.sis.util.ComparisonMode;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
+import org.geotoolkit.resources.Errors;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.OperationMethod;
 
 
 /**
@@ -207,6 +206,17 @@ public class Orthographic extends UnitaryProjection {
     {
         final double λ = srcPts[srcOff];
         final double φ = srcPts[srcOff + 1];
+
+        if (Math.abs(φ-latitudeOfOrigin) > (Math.PI/2.0)) {
+            if (derivate) {
+                throw new ProjectionException(Errors.format(Errors.Keys.PointOutsideHemisphere));
+            } else {
+                dstPts[dstOff  ] = Double.NaN;
+                dstPts[dstOff+1] = Double.NaN;
+                return null;
+            }
+        }
+
         final double cosφ = cos(φ);
         final double cosλ = cos(λ);
         final double sinλ = sin(λ);
@@ -230,7 +240,13 @@ public class Orthographic extends UnitaryProjection {
             }
         }
         if (threshold < -EPSILON) {
-            throw new ProjectionException(Errors.format(Errors.Keys.PointOutsideHemisphere));
+            if (derivate) {
+                throw new ProjectionException(Errors.format(Errors.Keys.PointOutsideHemisphere));
+            } else {
+                dstPts[dstOff  ] = Double.NaN;
+                dstPts[dstOff+1] = Double.NaN;
+                return null;
+            }
         }
         if (dstPts != null) {
             dstPts[dstOff  ] = cosφ * sinλ;
@@ -281,7 +297,9 @@ public class Orthographic extends UnitaryProjection {
         double sinc = ρ;
         if (sinc > 1) {
             if (sinc - 1 > ANGLE_TOLERANCE) {
-                throw new ProjectionException(Errors.format(Errors.Keys.PointOutsideHemisphere));
+                dstPts[dstOff  ] = Double.NaN;
+                dstPts[dstOff+1] = Double.NaN;
+                return;
             }
             sinc = 1;
         }

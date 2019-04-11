@@ -16,13 +16,6 @@
  */
 package org.geotoolkit.display2d.service;
 
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -33,82 +26,82 @@ import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.imageio.ImageIO;
-
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.measure.Unit;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-
-import org.opengis.filter.expression.Expression;
-import org.opengis.style.ChannelSelection;
-import org.opengis.style.ColorMap;
-import org.opengis.style.ContrastEnhancement;
-import org.opengis.style.Description;
-import org.opengis.style.OverlapBehavior;
-import org.opengis.style.RasterSymbolizer;
-import org.opengis.style.ShadedRelief;
-import org.opengis.style.Symbolizer;
-import org.opengis.filter.FilterFactory;
-import org.opengis.style.Fill;
-import org.opengis.style.Graphic;
-import org.opengis.style.GraphicalSymbol;
-import org.opengis.style.Mark;
-import org.opengis.style.PointSymbolizer;
-import org.opengis.style.Stroke;
-
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
-import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
-
-import org.geotoolkit.coverage.CoverageStack;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.util.iso.Names;
+import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.display.canvas.control.StopOnErrorMonitor;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.SearchArea;
+import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.canvas.control.StopOnErrorMonitor;
 import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.referencing.CRS;
-import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.storage.coverage.DefaultCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import org.opengis.coverage.Coverage;
-import org.opengis.coverage.grid.GridGeometry;
-import org.opengis.geometry.Envelope;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-
-import static org.junit.Assert.*;
+import org.geotoolkit.style.StyleConstants;
 import static org.geotoolkit.style.StyleConstants.*;
-import org.opengis.coverage.grid.GridCoverage;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.style.ChannelSelection;
+import org.opengis.style.ColorMap;
+import org.opengis.style.ContrastEnhancement;
+import org.opengis.style.Description;
+import org.opengis.style.Fill;
+import org.opengis.style.Graphic;
+import org.opengis.style.GraphicalSymbol;
+import org.opengis.style.Mark;
+import org.opengis.style.OverlapBehavior;
+import org.opengis.style.PointSymbolizer;
+import org.opengis.style.RasterSymbolizer;
+import org.opengis.style.ShadedRelief;
+import org.opengis.style.Stroke;
+import org.opengis.style.Symbolizer;
+import org.opengis.util.FactoryException;
 
 /**
  * Testing portrayal service.
@@ -116,10 +109,7 @@ import org.opengis.referencing.datum.PixelInCell;
  * @author Johann Sorel (Geomatys)
  */
 public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
-
-    private static final double EPS = 0.000000001d;
-
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
     private static final GeometryFactory GF = new GeometryFactory();
     private static final GridCoverageBuilder GCF = new GridCoverageBuilder();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
@@ -129,8 +119,6 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
     private final List<Envelope> envelopes = new ArrayList<>();
     private final List<Date[]> dates = new ArrayList<>();
     private final List<Double[]> elevations = new ArrayList<>();
-
-    private final Coverage coverage4D;
 
     public PortrayalServiceTest() throws Exception {
 
@@ -235,43 +223,10 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         coverage = GCF.getGridCoverage2D();
         coverages.add(coverage);
 
-        //create some ND coverages ---------------------------------------------
-        CoordinateReferenceSystem crs = new GeodeticObjectBuilder().addName("4D crs")
-                                                                   .createCompoundCRS(CommonCRS.WGS84.geographic(),
-                                                                                      CommonCRS.Vertical.ELLIPSOIDAL.crs(),
-                                                                                      CommonCRS.Temporal.JAVA.crs());
-
-        List<Coverage> temps = new ArrayList<Coverage>();
-        for(int i=0; i<10; i++){
-            final List<Coverage> eles = new ArrayList<Coverage>();
-            for(int k=0;k<10;k++){
-                env = new GeneralEnvelope(crs);
-                env.setRange(0,  0,  10);
-                env.setRange(1, 0, 10);
-                env.setRange(2, k, k+1);
-                env.setRange(3, i, i+1);
-                img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
-                GCF.reset();
-                GCF.setEnvelope(env);
-                GCF.setRenderedImage(img);
-                coverage = GCF.getGridCoverage2D();
-                eles.add(coverage);
-            }
-            temps.add(new CoverageStack("3D", eles));
-        }
-        coverage4D = new CoverageStack("4D", coverages);
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
     }
 
     @Test
-    public void testEnvelopeNotNull() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
+    public void testEnvelopeNotNull() throws FactoryException, PortrayalException {
         MapContext context = MapBuilder.createContext(CommonCRS.WGS84.geographic());
         GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
@@ -294,12 +249,10 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
                 new CanvasDef(new Dimension(800, 600), null),
                 new SceneDef(context),
                 new ViewDef(env));
-
-
     }
 
     @Test
-    public void testFeatureRendering() throws Exception{
+    public void testFeatureRendering() throws Exception {
         for(FeatureCollection col : featureColls){
             final MapLayer layer = MapBuilder.createFeatureLayer(col, SF.style(SF.pointSymbolizer()));
             testRendering(layer);
@@ -310,7 +263,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
      * Test rendering of a coverage inside a feature property.
      */
     @Test
-    public void testCoveragePropertyRendering() throws Exception{
+    public void testCoveragePropertyRendering() throws Exception {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
         ftb.addAttribute(GridCoverage2D.class).setName("coverage");
@@ -433,7 +386,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void testLongitudeFirst() throws Exception{
+    public void testLongitudeFirst() throws Exception {
 
         final int[] pixel = new int[4];
         final int[] red = new int[]{255,0,0,255};
@@ -506,16 +459,13 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         raster.getPixel(180, 359, pixel);   assertArrayEquals(white, pixel);
         raster.getPixel(0, 180, pixel);     assertArrayEquals(red, pixel);
         raster.getPixel(359, 180, pixel);   assertArrayEquals(red, pixel);
-
-
-
     }
 
     /**
      * Test the CoverageReader view of a scene.
      */
     @Test
-    public void testPortrayalCoverageReader() throws CoverageStoreException{
+    public void testPortrayalCoverageReader() throws DataStoreException {
 
         //create a test coverage
         final BufferedImage img = new BufferedImage(360, 180, BufferedImage.TYPE_INT_ARGB);
@@ -532,29 +482,26 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
         //display it
         final MapContext context = MapBuilder.createContext();
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(
+        final MapLayer cl = MapBuilder.createCoverageLayer(
                 coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.layers().add(cl);
 
         final SceneDef sceneDef = new SceneDef(context);
         final GridCoverageReader reader = DefaultPortrayalService.asCoverageReader(sceneDef);
 
-        assertEquals(1, reader.getCoverageNames().size());
-
-        final GridGeometry gridGeom = reader.getGridGeometry(0);
+        final GridGeometry gridGeom = reader.getGridGeometry();
         assertNotNull(gridGeom);
 
-        final GridCoverage2D result = (GridCoverage2D) reader.read(0, null);
+        final GridCoverage2D result = (GridCoverage2D) reader.read(null);
         final RenderedImage image = result.getRenderedImage();
         assertEquals(1000, image.getWidth());
     }
 
     /**
      * Test that a large graphic outside the map area is still rendered.
-     *
      */
     @Test
-    public void testMarginRendering() throws Exception{
+    public void testMarginRendering() throws Exception {
         final List<GraphicalSymbol> symbols = new ArrayList<>();
         final Stroke stroke = SF.stroke(Color.BLACK, 0);
         final Fill fill = SF.fill(Color.BLACK);
@@ -595,8 +542,72 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         assertEquals(Color.WHITE.getRGB(), img.getRGB(7, 5));
     }
 
+    /**
+     * Test picking on a coverage in range 0-360.
+     * @throws PortrayalException
+     */
+    @Test
+    public void testCoverageVisit0_360() throws PortrayalException {
 
-    private void testRendering(final MapLayer layer) throws TransformException, PortrayalException{
+        // Create 0-360 coverage
+        final BufferedImage img = new BufferedImage(350, 180, BufferedImage.TYPE_INT_ARGB);
+        CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+        crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.POSITIVE_RANGE);
+        final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, 0, 90);
+        final GridExtent extent = new GridExtent(350, 180);
+        final GridGeometry gg = new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setRenderedImage(img);
+        gcb.setName("coverage");
+        gcb.setGridGeometry(gg);
+        final GridCoverage2D coverage = gcb.getGridCoverage2D();
+
+        final GridCoverageResource gcr = new DefaultCoverageResource(coverage, Names.createLocalName(null, null, coverage.getName()));
+        final MapLayer layer = MapBuilder.createCoverageLayer(gcr);
+        layer.setSelectable(true);
+
+        final MapContext context = MapBuilder.createContext();
+        context.layers().add(layer);
+
+
+        final GeneralEnvelope viewEnv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
+        viewEnv.setRange(0, -180, +180);
+        viewEnv.setRange(1, -90, +90);
+
+        final AtomicInteger count = new AtomicInteger();
+
+        GraphicVisitor gv = new GraphicVisitor() {
+            @Override
+            public void startVisit() {
+            }
+
+            @Override
+            public void endVisit() {
+            }
+
+            @Override
+            public void visit(org.opengis.display.primitive.Graphic graphic, RenderingContext context, SearchArea area) {
+                count.incrementAndGet();
+            }
+
+            @Override
+            public boolean isStopRequested() {
+                return false;
+            }
+        };
+
+
+        final SceneDef scene = new SceneDef(context);
+        final CanvasDef canvas = new CanvasDef(new Dimension(360, 180), null);
+        final ViewDef view = new ViewDef(viewEnv);
+        final VisitDef visit = new VisitDef(new Rectangle(10, 80, 2, 2), gv);
+
+        DefaultPortrayalService.visit(canvas, scene, view, visit);
+
+        assertEquals(1, count.get());
+    }
+
+    private void testRendering(final MapLayer layer) throws TransformException, PortrayalException {
         final StopOnErrorMonitor monitor = new StopOnErrorMonitor();
 
         final MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());

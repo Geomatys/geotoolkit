@@ -34,6 +34,7 @@ public class SecurityTest extends org.geotoolkit.test.TestBase {
     public static AtomicInteger INC = new AtomicInteger();
 
     @Test
+    @org.junit.Ignore("This test depends on network.")
     public void testHeader() throws MalformedURLException{
 
         //check it is called
@@ -59,8 +60,5 @@ public class SecurityTest extends org.geotoolkit.test.TestBase {
 
         //test.com has 1 inderection level
         assertEquals(2, INC.get());
-
-
     }
-
 }

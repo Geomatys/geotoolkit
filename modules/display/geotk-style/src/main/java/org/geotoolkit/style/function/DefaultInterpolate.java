@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.sis.internal.raster.ColorModelFactory;
+
 import org.geotoolkit.filter.AbstractExpression;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.image.RecolorRenderedImage;
@@ -31,7 +33,6 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
-import org.geotoolkit.image.color.ColorUtilities;
 import org.opengis.filter.capability.FunctionName;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
@@ -328,7 +329,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
             colors.getRGBs(ARGB);
 
             transformColormap(ARGB);
-            model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
+            model = ColorModelFactory.createIndexColorModel(ARGB, 1, visibleBand, -1);
 
         } else if (candidate instanceof ComponentColorModel) {
             final ComponentColorModel colors = (ComponentColorModel) candidate;
@@ -349,7 +350,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                 }
 
                 transformColormap(ARGB);
-                model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
+                model = ColorModelFactory.createIndexColorModel(ARGB, 1, visibleBand, -1);
 
             } else {
                 //we can't handle a index color model when values exceed int max value
@@ -375,7 +376,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                 }
 
                 transformColormap(ARGB);
-                model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
+                model = ColorModelFactory.createIndexColorModel(ARGB, 1, visibleBand, -1);
 
             } else {
                 //we can't handle a index color model when values exceed int max value

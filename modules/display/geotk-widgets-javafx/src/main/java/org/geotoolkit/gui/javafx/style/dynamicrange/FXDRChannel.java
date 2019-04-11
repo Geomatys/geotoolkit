@@ -25,20 +25,19 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.SampleDimensionUtils;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer;
 import org.geotoolkit.gui.javafx.style.FXStyleElementController;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.geometry.Envelope;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -117,44 +116,38 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
 
         if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final GridCoverageResource ref = cml.getCoverageReference();
-            GridCoverageReader reader = null;
+            final GridCoverageResource ref = cml.getResource();
             try {
-                reader = ref.acquireReader();
-                final List<GridSampleDimension> dims = reader.getSampleDimensions(ref.getImageIndex());
+                final List<SampleDimension> dims = ref.getSampleDimensions();
 
                 final int nbdim;
-                if(dims==null){
+                if (dims == null) {
                     //read a very low resolution image to extract bands from it
-                    final GeneralGridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
+                    final GridGeometry gg = ref.getGridGeometry();
                     final Envelope env = gg.getEnvelope();
-                    final double[] res = gg.getResolution();
+                    final double[] res = gg.getResolution(false);
                     for(int i=0;i<res.length;i++){
                         res[i] = env.getSpan(i);
                     }
-                    final GridCoverageReadParam params = new GridCoverageReadParam();
-                    params.setEnvelope(env);
-                    params.setResolution(res);
 
-                    final GridCoverage2D cov = (GridCoverage2D) reader.read(ref.getImageIndex(), params);
-                    final RenderedImage ri = cov.getRenderedImage();
+                    final GridGeometry query = gg.derive().subgrid(env, res).build();
+
+                    final GridCoverage cov = ref.read(query);
+                    final RenderedImage ri = cov.render(cov.getGridGeometry().derive().sliceByRatio(0.5, 0, 1).build().getExtent());
                     nbdim = ri.getSampleModel().getNumBands();
-                }else{
+                } else {
                     nbdim = dims.size();
                 }
 
                 final ObservableList<String> bvals = FXCollections.observableArrayList();
                 bvals.add("none");
-                for(int i=0;i<nbdim;i++){
+                for (int i = 0; i < nbdim; i++) {
                     bvals.add(""+i);
                 }
                 uiBands.setItems(bvals);
 
-                ref.recycle(reader);
-            } catch (CoverageStoreException ex) {
+            } catch (DataStoreException ex) {
                 Logging.getLogger("org.geotoolkit.gui.javafx.style.dynamicrange").log(Level.SEVERE, null, ex);
-            } finally{
-                if(reader!=null) ref.recycle(reader);
             }
 
         }
@@ -167,32 +160,10 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
     public void fitToData(){
         final MapLayer cml = getLayer();
         if(cml instanceof CoverageMapLayer){
-            final GridCoverageResource ref = ((CoverageMapLayer)cml).getCoverageReference();
-            GridCoverageReader reader = null;
+            final GridCoverageResource ref = ((CoverageMapLayer)cml).getResource();
             try {
-                reader = ref.acquireReader();
-                List<GridSampleDimension> dims = reader.getSampleDimensions(ref.getImageIndex());
-
-                final int nbdim;
-                if(dims==null){
-                    //read a very low resolution image to extract bands from it
-                    final GeneralGridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
-                    final Envelope env = gg.getEnvelope();
-                    final double[] res = gg.getResolution();
-                    for(int i=0;i<res.length;i++){
-                        res[i] = env.getSpan(i);
-                    }
-                    final GridCoverageReadParam params = new GridCoverageReadParam();
-                    params.setEnvelope(env);
-                    params.setResolution(res);
-
-                    final GridCoverage2D cov = (GridCoverage2D) reader.read(ref.getImageIndex(), params);
-                    final RenderedImage ri = cov.getRenderedImage();
-                    nbdim = ri.getSampleModel().getNumBands();
-                }else{
-                    nbdim = dims.size();
-                }
-
+                List<SampleDimension> dims = ref.getSampleDimensions();
+                final int nbdim = dims == null ? 1 : dims.size();
 
                 //find best match band index
                 int index = 0;
@@ -210,10 +181,10 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                 //extract band min/max
                 double min = 0;
                 double max = 255;
-                if(dims!=null){
-                    final GridSampleDimension sd = dims.get(index);
-                    min = sd.getMinimumValue();
-                    max = sd.getMaximumValue();
+                if (dims!=null) {
+                    final SampleDimension sd = dims.get(index);
+                    min = SampleDimensionUtils.getMinimumValue(sd);
+                    max = SampleDimensionUtils.getMaximumValue(sd);
                 }
 
                 final DynamicRangeSymbolizer.DRBound boundMin = new DynamicRangeSymbolizer.DRBound();
@@ -228,10 +199,8 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                 valueProperty().get().setUpper(boundMax);
                 uiUpper.valueProperty().setValue(boundMax);
 
-            } catch (CoverageStoreException ex) {
+            } catch (DataStoreException ex) {
                 Logging.getLogger("org.geotoolkit.gui.javafx.style.dynamicrange").log(Level.SEVERE, null, ex);
-            } finally{
-                if(reader!=null) ref.recycle(reader);
             }
         }
     }

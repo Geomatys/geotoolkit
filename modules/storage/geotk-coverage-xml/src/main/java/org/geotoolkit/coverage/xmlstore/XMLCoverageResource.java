@@ -46,22 +46,21 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.image.PixelIterator;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.data.multires.MultiResolutionModel;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
-import org.geotoolkit.image.color.ScaledColorSpace;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PlanarConfiguration;
 import org.geotoolkit.image.internal.SampleType;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.util.NamesExt;
-import org.opengis.coverage.SampleDimensionType;
+import org.geotoolkit.coverage.SampleDimensionType;
 import org.opengis.util.GenericName;
 
 /**
@@ -223,14 +222,14 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
     private NamedIdentifier id;
     private Path mainfile;
     //caches
-    private List<GridSampleDimension> cacheDimensions = null;
+    private List<SampleDimension> cacheDimensions = null;
 
     public XMLCoverageResource() {
-        super(null, DEFAULT_NAME, 0);
+        super(null, DEFAULT_NAME);
     }
 
     public XMLCoverageResource(XMLCoverageStore store, GenericName name, XMLPyramidSet set) {
-        super(store,name,0);
+        super(store,name);
         id = new NamedIdentifier(name);
         this.set = set;
         this.set.setRef(this);
@@ -292,20 +291,23 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
         return set;
     }
 
-
     @Override
     public Collection<Pyramid> getModels() throws DataStoreException {
         return set.getPyramids();
+    }
+
+    private static boolean isScaledColorSpace(final ColorSpace cs) {
+        return (cs != null) && cs.getClass().getSimpleName().equals("ScaledColorSpace");        // TODO: hopefully temporary hack.
     }
 
     private void checkColorModel(){
         if (minColorSampleValue == null) {
             assert maxColorSampleValue == null;
             if (colorModel != null)
-            assert !(colorModel.getColorSpace() instanceof ScaledColorSpace) : "with min and max NULL sample value color space should not be instance of ScaledColorSpace.";
+            assert !isScaledColorSpace(colorModel.getColorSpace()) : "with min and max NULL sample value color space should not be instance of ScaledColorSpace.";
         } else {
             assert maxColorSampleValue != null;
-            assert (colorModel.getColorSpace() instanceof ScaledColorSpace) : "with NOT NULL min and max sample value color space must be instance of ScaledColorSpace.";
+            assert isScaledColorSpace(colorModel.getColorSpace()) : "with NOT NULL min and max sample value color space must be instance of ScaledColorSpace.";
             assert Double.isFinite(minColorSampleValue) : "To write minColorSampleValue into XML Pyramid File, it should be finite. Found : "+minColorSampleValue;
             assert Double.isFinite(maxColorSampleValue) : "To write maxColorSampleValue into XML Pyramid File, it should be finite. Found : "+maxColorSampleValue;
         }
@@ -413,7 +415,7 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
      * {@inheritDoc }.
      */
     @Override
-    public synchronized List<GridSampleDimension> getSampleDimensions() throws DataStoreException {
+    public synchronized List<SampleDimension> getSampleDimensions() throws DataStoreException {
         if (cacheDimensions == null) {
             if (sampleDimensions == null) return null;
             assert !sampleDimensions.isEmpty() : "XmlCoverageReference.getSampleDimension : sampleDimension should not be empty.";
@@ -429,15 +431,15 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
      * {@inheritDoc }.
      */
     @Override
-    public void setSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
+    public void setSampleDimensions(List<SampleDimension> dimensions) throws DataStoreException {
         if (dimensions == null || dimensions.isEmpty()) return;
         this.cacheDimensions = null; //clear cache
 
         if (sampleDimensions == null) sampleDimensions = new CopyOnWriteArrayList<>();
         sampleDimensions.clear();
-        for (GridSampleDimension dimension : dimensions) {
-            dimension = dimension.geophysics(false);
-            final SampleDimensionType sdt = dimension.getSampleDimensionType();
+        for (SampleDimension dimension : dimensions) {
+            dimension = dimension.forConvertedValues(false);
+            final SampleDimensionType sdt = SampleDimensionUtils.getSampleDimensionType(dimension);
             final XMLSampleDimension dim  = new XMLSampleDimension();
             dim.fill(dimension);
             dim.setSampleType(sdt);
@@ -474,10 +476,10 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
                 if (minColorSampleValue == null) {
                     assert maxColorSampleValue == null;
                     if (colorModel != null)
-                    assert !(colorModel.getColorSpace() instanceof ScaledColorSpace) : "with min and max NULL sample value color space should not be instance of ScaledColorSpace.";
+                    assert !isScaledColorSpace(colorModel.getColorSpace()) : "with min and max NULL sample value color space should not be instance of ScaledColorSpace.";
                 } else {
                     assert maxColorSampleValue != null;
-                    //assert (colorModel.getColorSpace() instanceof ScaledColorSpace) : "with NOT NULL min and max sample value color space must be instance of ScaledColorSpace.";
+                    //assert isScaledColorSpace(colorModel.getColorSpace()) : "with NOT NULL min and max sample value color space must be instance of ScaledColorSpace.";
                     assert Double.isFinite(minColorSampleValue) : "To write minColorSampleValue into XML Pyramid File, it should be finite. Found : "+minColorSampleValue;
                     assert Double.isFinite(maxColorSampleValue) : "To write maxColorSampleValue into XML Pyramid File, it should be finite. Found : "+maxColorSampleValue;
                 }
@@ -642,9 +644,9 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
 
         //-- each tile may have different min and max value in its internal colorspace but it must be same type class.
         final ColorSpace imgCmCS = imgCm.getColorSpace();
-        if (imgCmCS instanceof ScaledColorSpace) {
+        if (isScaledColorSpace(imgCmCS)) {
 
-            if (cm != null && (!(cm.getColorSpace() instanceof ScaledColorSpace)))
+            if (cm != null && (!isScaledColorSpace(cm.getColorSpace())))
                 throw new IllegalArgumentException(String.format("Mismatch color space."));
 
             if (minColorSampleValue == null) minColorSampleValue = Double.POSITIVE_INFINITY;
@@ -659,14 +661,18 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
 //                }
             //-- now to be in accordance with ScaledColorSpace properties
             //-- travel all current image to find minimum and maximum raster values
-            final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(image);
+            final PixelIterator pix = PixelIterator.create(image);
+            double[] pixel = new double[pix.getNumBands()];
             while (pix.next()) {
-                //-- to avoid unexpected NAN values comportement don't use StrictMath class.
-                final double value = pix.getSampleDouble();
-                if (value < minColorSampleValue) {
-                    minColorSampleValue = value;
-                } else if (value > maxColorSampleValue) {
-                    maxColorSampleValue = value;
+                pix.getPixel(pixel);
+                for (int b = 0; b < pixel.length; b++) {
+                    //-- to avoid unexpected NAN values comportement don't use StrictMath class.
+                    final double value = pixel[b];
+                    if (value < minColorSampleValue) {
+                        minColorSampleValue = value;
+                    } else if (value > maxColorSampleValue) {
+                        maxColorSampleValue = value;
+                    }
                 }
             }
             //-- to refresh min and max of current stored color model

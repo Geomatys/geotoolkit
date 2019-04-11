@@ -80,7 +80,7 @@ public class ShadedRelief extends AbstractProcess {
         MathTransform1D eleConv = inputParameters.getValue(ShadedReliefDescriptor.ELECONV);
         //prepare coverage for the expected work
         coverage = coverage.view(ViewType.RENDERED);
-        elevation = elevation.view(ViewType.GEOPHYSICS);
+        elevation = elevation.forConvertedValues(true);
 
         //light informations
         final Vector3f lightDirection = new Vector3f(1, 1, 1);

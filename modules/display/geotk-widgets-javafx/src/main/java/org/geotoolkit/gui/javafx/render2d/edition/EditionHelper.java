@@ -31,7 +31,6 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.operation.buffer.BufferParameters;
 import org.locationtech.jts.operation.distance.DistanceOp;
-
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
@@ -46,9 +45,6 @@ import java.util.logging.Logger;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import org.geotoolkit.feature.FeatureExt;
-
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -58,12 +54,12 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.util.logging.Logging;
-
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
@@ -71,7 +67,6 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -80,6 +75,7 @@ import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.internal.Loggers;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
+import org.opengis.filter.FilterFactory;
 
 /**
  *
@@ -89,8 +85,7 @@ public class EditionHelper {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.javafx.render2d.edition");
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
-    private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
-                                                new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
+    private static final FilterFactory2 FF = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
     public static final Coordinate[] EMPTY_COORDINATE_ARRAY = new Coordinate[0];
 
     public static class EditionGeometry{
