@@ -41,6 +41,16 @@ import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.internal.referencing.ExtentSelector;
 import org.apache.sis.storage.*;
 
+// JMDA branch-specific
+import org.apache.sis.util.Disposable;
+import org.apache.sis.util.collection.BackingStoreException;
+import org.apache.sis.util.collection.Cache;
+import org.geotoolkit.internal.ReferenceQueueConsumer;
+import java.lang.ref.PhantomReference;
+import java.lang.ref.ReferenceQueue;
+import org.apache.sis.coverage.grid.GridCoverageProcessor;
+import org.apache.sis.coverage.grid.GridOrientation;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 
 /**
  * Reference to a {@link GridCoverage}. This object holds some metadata about the coverage time range,
@@ -55,7 +65,12 @@ import org.apache.sis.storage.*;
  */
 final class GridCoverageEntry extends Entry {
     /**
-     * The series in which the {@code GridCoverageReference} is defined.
+     * Keep datastores in memory to avoid repeating resource discovery (un-necessary IO and processing).
+     */
+    private static final Cache<Path, DataStoreHandler> DATASTORES = new Cache<>(128, 32, false);
+
+    /**
+     * The series in which the {@code GridCoverageReference} is defined.
      */
     private final SeriesEntry series;
 
@@ -143,32 +158,127 @@ final class GridCoverageEntry extends Entry {
     }
 
     /**
+     * Search for the resource pointed by current {@link #series} into given data store.
+     *
+     * @param source Data store to search for parameterized dataset.
+     * @return null if we cannot find a grid coverage matching our dataset name in given data store.
+     * @throws DataStoreException If there's a problem with data source access.
+     */
+    private GridCoverageResource fetchDataset(final DataStore source) throws DataStoreException {
+        final String dataset = series.dataset;
+        final GridCoverageResource r;
+        if (dataset != null) {
+            Resource cdt = source.findResource(dataset);
+            if (cdt instanceof GridCoverageResource) {
+                r = (GridCoverageResource) cdt;
+            } else {
+                r = null;
+            }
+        } else {
+            // Pick first resource.
+            r = resource(source);
+        }
+
+        return r;
+    }
+
+    /**
+     * Create a new DataStore on given file.
+     * @param dataPath Path to the data source.
+     * @return A handler (wrapper) around initialized data store. Note that you don't need to close it yourself, as
+     * a cleaning mechanism is watching over it.
+     * @throws BackingStoreException  If an error occurs while opening underlying data store.
+     */
+    private DataStoreHandler open(final Path dataPath) throws BackingStoreException {
+        final DataStore store;
+        try {
+            store = series.format.open(dataPath);
+        } catch (DataStoreException ex) {
+            throw new BackingStoreException(ex);
+        }
+        DataStoreHandler handler = new DataStoreHandler(store, dataPath);
+        new DataStoreGhost(handler, ReferenceQueueConsumer.DEFAULT.queue, store);
+        return handler;
+    }
+
+    private static class DataStoreGhost extends PhantomReference<DataStoreHandler> implements Disposable {
+
+        final DataStore source;
+
+        DataStoreGhost(DataStoreHandler referent, ReferenceQueue<? super DataStoreHandler> q, final DataStore source) {
+            super(referent, q);
+            this.source = source;
+        }
+
+        @Override
+        public void dispose() {
+            try {
+                source.close();
+            } catch (DataStoreException ex) {
+                throw new BackingStoreException("Cannot close a datastore.", ex);
+            }
+        }
+    }
+
+    private static class DataStoreHandler {
+
+        final Path accessKey;
+        final DataStore source;
+
+        DataStoreHandler(DataStore source, final Path accessKey) {
+            this.source = source;
+            this.accessKey = accessKey;
+        }
+
+        public <T> T apply(final DataStoreFunction<T> dataStoreProcessor) throws DataStoreException {
+            return dataStoreProcessor.apply(source);
+        }
+    }
+
+    @FunctionalInterface
+    static interface DataStoreFunction<T> {
+
+        T apply(DataStore source) throws DataStoreException;
+    }
+
+    /**
      * Loads the data if needed and returns the coverage.
      * Current implementation reads only the first resource.
      */
-    final GridCoverage coverage(GridGeometry targetGeometry, final int... bands) throws Exception {
-        try (DataStore store = series.format.open(getDataPath())) {
-            final String dataset = series.dataset;
-            final GridCoverageResource r;
-            if (dataset != null) {
-                Resource cdt = store.findResource(dataset);
-                if (cdt instanceof GridCoverageResource) {
-                    r = (GridCoverageResource) cdt;
-                } else {
-                    r = null;
-                }
-            } else {
-                // Pick first resource.
-                r = resource(store);
+    final GridCoverage coverage(final GridGeometry targetGeometry, final int... bands) throws Exception {
+        final DataStoreHandler handler;
+        try {
+            handler = DATASTORES.computeIfAbsent(getDataPath(), this::open);
+        } catch (BackingStoreException e) {
+            throw e.unwrapOrRethrow(DataStoreException.class);
+        }
+        final GridCoverageResource r = handler.apply(this::fetchDataset);
+
+        if (r != null) {
+            GridGeometry request = targetGeometry;
+            if (targetGeometry != null && targetGeometry.isDefined(GridGeometry.CRS | GridGeometry.ENVELOPE)) {
+                request = toAbsoluteRuntime(request, r);
             }
-            if (r != null) {
-                if (targetGeometry != null && targetGeometry.isDefined(GridGeometry.CRS | GridGeometry.ENVELOPE)) {
-                    targetGeometry = toAbsoluteRuntime(targetGeometry, r);
-                }
-                return r.read(targetGeometry, bands);
-            }
+          //  if (HACK && request == targetGeometry) {
+          //      // HACK: read at full resolution.
+          //      request = null;
+          //  }
+            return reprojectIfNoLinearGridToCRS(r.read(request, bands));
         }
         throw new CatalogException("No GridCoverageResource found for " + filename);
+    }
+
+    /*
+     * Hack for GCOM data.
+     */
+    private static GridCoverage reprojectIfNoLinearGridToCRS(GridCoverage gc) throws Exception {
+        GridGeometry gg = gc.getGridGeometry();
+        if (!(gg.getGridToCRS(PixelInCell.CELL_CORNER) instanceof LinearTransform)) {
+            gg = new GridGeometry(gg.getExtent(), gg.getEnvelope(), GridOrientation.DISPLAY.canReorderGridAxis(true));
+            GridCoverageProcessor p = new GridCoverageProcessor();
+            gc = p.resample(gc, gg);
+        }
+        return gc;
     }
 
     /**
