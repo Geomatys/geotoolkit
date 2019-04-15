@@ -43,6 +43,7 @@ public class Parameter {
     private Object defaultValue;
     private int minOccurs;
     private int maxOccurs;
+    private Object[] validValues;
     private Map<String, Object> userMap;
     private List<ParameterFormat> formats;
 
@@ -66,6 +67,10 @@ public class Parameter {
     }
 
     public Parameter(final String code, final Class type, final String title, final String remarks, final int minOccurs, final int maxOccurs, final Object defaultValue) {
+        this(code, type, title, remarks, minOccurs, maxOccurs, null, null);
+    }
+
+    public Parameter(final String code, final Class type, final String title, final String remarks, final int minOccurs, final int maxOccurs, final Object defaultValue, final Object[] validValues) {
         this.code = code;
         this.title = title;
         this.type = new ClassFull(type);
@@ -73,6 +78,7 @@ public class Parameter {
         this.minOccurs = minOccurs;
         this.remarks = remarks;
         this.defaultValue = defaultValue;
+        this.validValues = validValues;
     }
 
     public String getCode() {
@@ -189,6 +195,20 @@ public class Parameter {
         this.title = title;
     }
 
+    /**
+     * @return the validValues
+     */
+    public Object[] getValidValues() {
+        return validValues;
+    }
+
+    /**
+     * @param validValues the validValues to set
+     */
+    public void setValidValues(Object[] validValues) {
+        this.validValues = validValues;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -203,6 +223,7 @@ public class Parameter {
                    Objects  .equals(this.remarks, that.remarks) &&
                    Objects  .equals(this.userMap, that.userMap) &&
                    Objects  .equals(this.formats, that.formats) &&
+                   Objects  .equals(this.validValues, that.validValues) &&
                    Objects  .equals(this.type, that.type);
         }
         return false;
@@ -234,6 +255,12 @@ public class Parameter {
             sb.append("userMap:\n");
             for (Entry<String, Object> e : userMap.entrySet()) {
                 sb.append(e.getKey()).append(":").append(e.getValue()).append('\n');
+            }
+        }
+        if (validValues != null) {
+            sb.append("validValues:\n");
+            for (Object e : validValues) {
+                sb.append(e).append('\n');
             }
         }
         if (formats != null) {

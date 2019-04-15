@@ -184,7 +184,7 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
             }
             ext.put("formats", formats);
         }
-        return new ExtendedParameterDescriptor(param.getCode(), null, param.getRemarks(), param.getMinOccurs(), param.getMaxOccurs(), type, convertDefaultValueInClass(param.getDefaultValue(), type), null, ext);
+        return new ExtendedParameterDescriptor(param.getCode(), null, param.getRemarks(), param.getMinOccurs(), param.getMaxOccurs(), type, convertDefaultValueInClass(param.getDefaultValue(), type), param.getValidValues(), ext);
     }
 
     /**
