@@ -90,7 +90,7 @@ public class DbaseFileWriter implements Closeable{
     }
 
     private void init() throws IOException {
-        buffer = ByteBuffer.allocateDirect(header.getRecordLength());
+        buffer = ByteBuffer.allocate(header.getRecordLength());
     }
 
     private void write() throws IOException {

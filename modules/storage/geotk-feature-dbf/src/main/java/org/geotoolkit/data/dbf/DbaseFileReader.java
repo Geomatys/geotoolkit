@@ -144,7 +144,7 @@ public final class DbaseFileReader implements Closeable{
             int size = 8 * 1024;
             // if for some reason its not, resize it
             size = header.getRecordLength() > size ? header.getRecordLength() : size;
-            buffer = ByteBuffer.allocateDirect(size);
+            buffer = ByteBuffer.allocate(size);
             // fill it and reset
             fill(buffer, channel);
             buffer.flip();
