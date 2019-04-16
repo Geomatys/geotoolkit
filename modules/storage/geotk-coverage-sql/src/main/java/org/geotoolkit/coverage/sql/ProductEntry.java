@@ -363,7 +363,7 @@ final class ProductEntry extends Entry {
      * Removes this product from the given database.
      */
     final void remove() throws DataStoreException {
-        try (final Transaction transaction = database.transaction()) {
+        try (Transaction transaction = database.transaction()) {
             transaction.writeStart();
             try (ProductTable table = new ProductTable(transaction)) {
                 removeCached(table);
