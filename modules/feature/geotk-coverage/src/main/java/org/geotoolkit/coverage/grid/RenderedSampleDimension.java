@@ -18,7 +18,6 @@
 package org.geotoolkit.coverage.grid;
 
 import java.util.Arrays;
-import java.awt.Color;
 import java.awt.RenderingHints;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
@@ -31,7 +30,6 @@ import javax.measure.Unit;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.image.PixelIterator;
-import org.geotoolkit.coverage.SampleDimensionBuilder;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 
 import org.geotoolkit.factory.Hints;
@@ -132,7 +130,7 @@ final class RenderedSampleDimension implements Serializable {
                         Arrays.fill(names, name);
                     }
                     create(names, PixelIterator.create(image),
-                            model, null, null, null, null, defaultSD, null);
+                            model, null, null, null, defaultSD, null);
                 }
                 sd = defaultSD[i];
             }
@@ -163,9 +161,6 @@ final class RenderedSampleDimension implements Serializable {
      * @param  min The minimal value for each bands, or {@code null} for computing it automatically.
      * @param  max The maximal value for each bands, or {@code null} for computing it automatically.
      * @param  units The units of sample values, or {@code null} if unknown.
-     * @param  colors The colors to use for values from {@code min} to {@code max} for each
-     *         bands, or {@code null} for a default color palette. If non-null, each arrays
-     *         {@code colors[b]} may have any length; colors will be interpolated as needed.
      * @param  hints An optional set of rendering hints, or {@code null} if none. Those hints will
      *         not affect the sample dimensions to be created. However, they may affect the sample
      *         dimensions to be returned by <code>{@link #geophysics geophysics}(false)</code>, i.e.
@@ -181,13 +176,12 @@ final class RenderedSampleDimension implements Serializable {
                                     final double[]       min,
                                     final double[]       max,
                                     final Unit<?>[]      units,
-                                    final Color[][]      colors,
                                     final RenderingHints hints)
     {
         final SampleModel model = image.getSampleModel();
         final SampleDimension[] dst = new SampleDimension[model.getNumBands()];
         create(names, (min == null || max == null) ? PixelIterator.create(image) : null,
-               model, min, max, units, colors, dst, hints);
+               model, min, max, units, dst, hints);
         return dst;
     }
 
@@ -199,9 +193,6 @@ final class RenderedSampleDimension implements Serializable {
      * @param  min The minimal value for each bands, or {@code null} for computing it automatically.
      * @param  max The maximal value for each bands, or {@code null} for computing it automatically.
      * @param  units The units of sample values, or {@code null} if unknown.
-     * @param  colors The colors to use for values from {@code min} to {@code max} for each
-     *         bands, or {@code null} for a default color palette. If non-null, each arrays
-     *         {@code colors[b]} may have any length; colors will be interpolated as needed.
      * @param  hints An optional set of rendering hints, or {@code null} if none. Those hints will
      *         not affect the sample dimensions to be created. However, they may affect the sample
      *         dimensions to be returned by <code>{@link #geophysics geophysics}(false)</code>, i.e.
@@ -217,12 +208,11 @@ final class RenderedSampleDimension implements Serializable {
                                     final double[]       min,
                                     final double[]       max,
                                     final Unit<?>[]      units,
-                                    final Color[][]      colors,
                                     final RenderingHints hints)
     {
         final SampleDimension[] dst = new SampleDimension[raster.getNumBands()];
         create(names, (min == null || max == null) ? new PixelIterator.Builder().create(raster) : null,
-               raster.getSampleModel(), min, max, units, colors, dst, hints);
+               raster.getSampleModel(), min, max, units, dst, hints);
         return dst;
     }
 
@@ -235,9 +225,6 @@ final class RenderedSampleDimension implements Serializable {
      * @param  min The minimal value, or {@code null} for computing it automatically.
      * @param  max The maximal value, or {@code null} for computing it automatically.
      * @param  units The units of sample values, or {@code null} if unknown.
-     * @param  colors The colors to use for values from {@code min} to {@code max} for each bands,
-     *         or {@code null} for a default color palette. If non-null, each arrays
-     *         {@code colors[b]} may have any length; colors will be interpolated as needed.
      * @param  dst The array where to store sample dimensions. The array length must matches
      *         the number of bands.
      * @param  hints An optional set of rendering hints, or {@code null} if none.
@@ -256,7 +243,6 @@ final class RenderedSampleDimension implements Serializable {
                                double[]                    min,
                                double[]                    max,
                                final Unit<?>[]             units,
-                               final Color[][]             colors,
                                final SampleDimension[] dst,
                                final RenderingHints        hints)
     {
@@ -268,10 +254,6 @@ final class RenderedSampleDimension implements Serializable {
         if (max != null && max.length != numBands) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.MismatchedNumberOfBands_3,
                     numBands, max.length, "max[i]"));
-        }
-        if (colors != null && colors.length != numBands) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.MismatchedNumberOfBands_3,
-                    numBands, colors.length, "colors[i]"));
         }
         /*
          * Arguments are known to be valid. We now need to compute two ranges:
@@ -352,7 +334,7 @@ final class RenderedSampleDimension implements Serializable {
          * if the user plan to have NaN values. Even if the current image doesn't have NaN values,
          * it could have NaN later if the image uses a writable raster.
          */
-        final SampleDimensionBuilder builder = new SampleDimensionBuilder();
+        final SampleDimension.Builder builder = new SampleDimension.Builder();
         CharSequence untitled = null;
         for (int b=0; b<numBands; b++) {
             if (addNoData) {
@@ -369,12 +351,10 @@ final class RenderedSampleDimension implements Serializable {
                 }
             }
             NumberRange<?> sourceRange = TypeMap.getRange(sourceType);
-            final Color[] c = (colors != null) ? colors[b] : null;
             if (needScaling) {
                 final NumberRange<Double> range = NumberRange.create(min[b], true, max[b], true);
                 sourceRange = range.castTo((Class) sourceRange.getElementType());   // TODO
                 builder.addQuantitative(name, targetRange, sourceRange);
-                builder.setLastCategoryColors(c);
             }
             builder.setName(name);
             dst[b] = builder.build().forConvertedValues(true);

@@ -58,7 +58,6 @@ import org.apache.sis.referencing.operation.matrix.Matrix2;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
-import org.geotoolkit.coverage.SampleDimensionBuilder;
 
 
 /**
@@ -650,7 +649,7 @@ public class MetadataHelper implements Localized {
          */
         boolean allGeophysics = true;
         InternationalString untitled = null; // To be created only if needed.
-        final SampleDimensionBuilder categories = new SampleDimensionBuilder();
+        final org.apache.sis.coverage.SampleDimension.Builder categories = new org.apache.sis.coverage.SampleDimension.Builder();
         final org.apache.sis.coverage.SampleDimension[] bands = new org.apache.sis.coverage.SampleDimension[sampleDimensions.size()];
         boolean hasSampleDimensions = false;
         for (int i=0; i<bands.length; i++) {

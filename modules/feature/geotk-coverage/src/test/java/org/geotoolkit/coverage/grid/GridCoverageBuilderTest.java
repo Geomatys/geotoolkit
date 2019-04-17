@@ -68,7 +68,6 @@ public final strictfp class GridCoverageBuilderTest extends GridCoverageTestBase
         builder.variable(0).setName("Temperature");
         builder.variable(0).setSampleRange(30, 220);
         builder.variable(0).setLinearTransform(0.1, 10);
-        builder.variable(0).setColors(Color.BLUE, Color.GREEN, Color.YELLOW, Color.RED);
         builder.variable(0).addNodataValue("Missing values", 255, Color.GRAY);
         builder.setRenderedImage(SampleCoverage.SST.raster());
         coverage = builder.getGridCoverage2D();
@@ -94,7 +93,6 @@ public final strictfp class GridCoverageBuilderTest extends GridCoverageTestBase
         builder.setEnvelope(new Envelope2D(SampleCoverage.FLOAT.crs, SampleCoverage.FLOAT.bounds));
         builder.variable(0).setSampleRange(0, 256);
         builder.variable(0).setGeophysicsRange(0, 1000);
-        builder.variable(0).setColors(Color.RED, Color.WHITE, Color.BLUE);
         builder.setRenderedImage(SampleCoverage.FLOAT.raster());
         coverage = builder.getGridCoverage2D();
         SampleCoverage.SST.verifyGridGeometry(coverage, 0);

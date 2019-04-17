@@ -35,7 +35,6 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.awt.image.renderable.RenderableImage;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -63,14 +62,11 @@ import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.collection.BackingStoreException;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
-import org.geotoolkit.coverage.SampleDimensionBuilder;
 import org.geotoolkit.coverage.SampleDimensionType;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.internal.ImageUtilities;
-import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.lang.Builder;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Cloneable;
@@ -1468,9 +1464,9 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         final double[] maximum = getArrayProperty("maximum");
         if (names != null || minimum != null || maximum != null || units != null || colors != null) {
             if (raster != null) {
-                return RenderedSampleDimension.create(names, raster, minimum, maximum, units, colors, hints);
+                return RenderedSampleDimension.create(names, raster, minimum, maximum, units, hints);
             } else if (image != null) {
-                return RenderedSampleDimension.create(names, image, minimum, maximum, units, colors, hints);
+                return RenderedSampleDimension.create(names, image, minimum, maximum, units, hints);
             }
         }
         return null;
@@ -2698,24 +2694,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         }
 
         /**
-         * Sets the colors associated to the values in the {@linkplain #getSampleRange()
-         * sample range}. The {@code palette} argument can be any of the
-         * <a href="../../image/io/doc-files/palettes.html">build-in palettes</a>,
-         * or any additional palette defined by the extension mechanism.
-         *
-         * @param palette The name of the new colors ramp.
-         *
-         * @see PaletteFactory#getColors(String)
-         */
-        public void setColors(final String palette) {
-            try {
-                setColors(PaletteFactory.getDefault().getColors(palette));
-            } catch (IOException e) {
-                throw new BackingStoreException(e);
-            }
-        }
-
-        /**
          * Returns the sample dimension. If no dimension has been
          * {@linkplain #setSampleDimension(SampleDimension) explicitly defined}, then this method
          * builds a new dimension from the other attributes defined in this class.
@@ -2727,7 +2705,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             if (sd == null) {
                 sd = cached;
                 if (sd == null) {
-                    final SampleDimensionBuilder categories = new SampleDimensionBuilder();
+                    final SampleDimension.Builder categories = new SampleDimension.Builder();
                     final CharSequence bandName = getName();
                     final NumberRange<?> range = getSampleRange();
                     final Map<Integer,NoData> nodata = this.nodata;
@@ -2745,7 +2723,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                             }
                             final NoData n = entry.getValue();
                             categories.addQualitative(n.name, sample);
-                            categories.setLastCategoryColors(n.color);
                         }
                     }
                     /*
@@ -2763,12 +2740,10 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                             } else {
                                 // Let the Category constructor create a "sample to unit" transform.
                                 categories.addQuantitative(bandName, range, target);
-                                categories.setLastCategoryColors(colors);
                             }
                         }
                         if (sampleToUnit != null) {
                             categories.addQuantitative(bandName, range, sampleToUnit, getUnit());
-                            categories.setLastCategoryColors(colors);
                         }
                     }
                     cached = sd = categories.setName(bandName).build();

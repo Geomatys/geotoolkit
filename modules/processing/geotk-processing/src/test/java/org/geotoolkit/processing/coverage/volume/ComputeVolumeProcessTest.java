@@ -16,12 +16,10 @@
  */
 package org.geotoolkit.processing.coverage.volume;
 
-import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.apache.sis.coverage.SampleDimension;
@@ -40,7 +38,6 @@ import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.internal.coverage.ColoredCategory;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import static org.junit.Assert.*;
@@ -470,8 +467,10 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
                 gcb.setRenderedImage(newImage);
                 gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
 
-                ColoredCategory cat = new ColoredCategory("val", new Color[]{Color.WHITE,Color.BLACK}, -128, 128, 1, 0);
-                SampleDimension gsd = new SampleDimension(Names.createLocalName(null, null, "dim0"), null, Collections.singletonList(cat));
+                final SampleDimension.Builder builder = new SampleDimension.Builder();
+                builder.setName(Names.createLocalName(null, null, "dim0"));
+                builder.addQuantitative("val", -128, +128, null);
+                final SampleDimension gsd = builder.build();
 
                 gcb.setSampleDimensions(gsd);
                 return gcb.getGridCoverage2D();
