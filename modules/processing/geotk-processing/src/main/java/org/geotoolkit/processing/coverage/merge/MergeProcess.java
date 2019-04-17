@@ -17,10 +17,10 @@
 package org.geotoolkit.processing.coverage.merge;
 
 import java.awt.image.DataBuffer;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.process.Process;

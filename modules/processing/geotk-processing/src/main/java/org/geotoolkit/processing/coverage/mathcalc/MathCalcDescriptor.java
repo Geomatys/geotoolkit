@@ -17,9 +17,9 @@
 
 package org.geotoolkit.processing.coverage.mathcalc;
 
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.processing.GeotkProcessingRegistry;

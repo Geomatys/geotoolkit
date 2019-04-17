@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
@@ -41,7 +42,6 @@ import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -903,7 +903,7 @@ public class ResampleProcess extends AbstractProcess {
                 final Envelope reduced;
                 final MathTransform gridToCRS;
                 if (reducedCRS == sourceCRS) {
-                    reduced   = source.getEnvelope();
+                    reduced   = source.getGridGeometry().getEnvelope();
                     gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
                 } else {
                     reduced   = CoverageUtilities.getEnvelope2D(source);

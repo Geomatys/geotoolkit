@@ -13,11 +13,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Iterator;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.operation.builder.LocalizationGridBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.filestore.FileCoverageStore;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.referencing.operation.MathTransform;
@@ -219,7 +219,7 @@ abstract class VelocityComponent {
         double valueAt(final double x, final double y) {
             position.x = x;
             position.y = y;
-            return coverage.evaluate(position, samples)[0];
+            return ((org.geotoolkit.coverage.grid.GridCoverage) coverage).evaluate(position, samples)[0];
         }
     }
 

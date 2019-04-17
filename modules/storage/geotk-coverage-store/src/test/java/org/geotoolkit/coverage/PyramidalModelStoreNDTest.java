@@ -24,6 +24,7 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -33,7 +34,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -218,7 +218,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
 
         //we expect a 3D coverage, with all slices
         final GridCoverage coverage = (GridCoverage) reader.read(null);
-        final Envelope env = coverage.getEnvelope();
+        final Envelope env = coverage.getGridGeometry().getEnvelope();
         assertTrue(Utilities.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()));
         assertEquals(CORNER_LONG,  env.getMinimum(0), DELTA);//-- -180
         assertEquals(  75,         env.getMinimum(1), DELTA);

@@ -240,7 +240,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
         try (final AutoCloseable cvgClose = () -> writer.dispose(); final AutoCloseable imgClose = () -> imgWriter.dispose()) {
             imgWriter.setOutput(destination);
             writer.setOutput(imgWriter);
-            writer.write((org.geotoolkit.coverage.grid.GridCoverage) cvg, new GridCoverageWriteParam());
+            writer.write(cvg, new GridCoverageWriteParam());
         }
     }
 

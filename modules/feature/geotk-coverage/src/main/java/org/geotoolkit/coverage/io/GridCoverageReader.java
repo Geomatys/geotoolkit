@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.concurrent.CancellationException;
 import javax.imageio.ImageReader;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 

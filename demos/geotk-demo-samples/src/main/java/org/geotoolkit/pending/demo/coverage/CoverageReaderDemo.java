@@ -43,7 +43,7 @@ public class CoverageReaderDemo {
         readParam.setDeferred(true);
 
         final GridCoverageReader reader = CoverageIO.createSimpleReader(tempData);
-        final GridCoverage coverage = reader.read(readParam);
+        final GridCoverage coverage = (GridCoverage) reader.read(readParam);
 
         // Ok, so how to use it now ?
 

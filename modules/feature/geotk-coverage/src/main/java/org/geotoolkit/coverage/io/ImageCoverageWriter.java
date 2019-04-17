@@ -45,6 +45,7 @@ import javax.media.jai.RenderedImageAdapter;
 import javax.media.jai.Warp;
 import javax.media.jai.operator.WarpDescriptor;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
@@ -55,7 +56,6 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.image.io.MultidimensionalImageStore;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
@@ -558,8 +558,11 @@ public class ImageCoverageWriter extends GridCoverageStore implements GridCovera
          * need the ImageWriter, which need the RenderedImage, which need the GridGeometry.
          */
         GridGeometry2D gridGeometry = GridGeometry2D.castOrCopy(coverage.getGridGeometry());
-        RenderedImage image = coverage.getRenderableImage(gridGeometry.gridDimensionX,
-                gridGeometry.gridDimensionY).createDefaultRendering();
+        if (gridGeometry.gridDimensionX != 0 || gridGeometry.gridDimensionY != 1) {
+            throw new CoverageStoreException("Expecting dimensions X and Y at index 0 and 1 .");
+        }
+
+        RenderedImage image = coverage.render(null);
         while (image instanceof RenderedImageAdapter) {
             image = ((RenderedImageAdapter) image).getWrappedImage();
         }
@@ -625,8 +628,8 @@ public class ImageCoverageWriter extends GridCoverageStore implements GridCovera
                  *  - The translation or scale factors of the above transform are not integers;
                  *  - The requested envelope is greater than the coverage envelope;
                  */
-                final InternationalString name = (coverage instanceof GridCoverage) ?
-                        ((GridCoverage) coverage).getName() : null;
+                final InternationalString name = (coverage instanceof org.geotoolkit.coverage.grid.GridCoverage) ?
+                        ((org.geotoolkit.coverage.grid.GridCoverage) coverage).getName() : null;
                 final ImageLayout layout = new ImageLayout(
                         requestRegion.x,     requestRegion.y,
                         requestRegion.width, requestRegion.height);

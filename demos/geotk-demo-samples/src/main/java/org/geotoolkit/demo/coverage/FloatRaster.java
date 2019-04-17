@@ -11,9 +11,9 @@ import java.awt.Color;
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
 import javax.media.jai.RasterFactory;
+import org.apache.sis.coverage.grid.GridCoverage;
 
 import org.opengis.geometry.Envelope;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.apache.sis.geometry.Envelope2D;

@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
@@ -16,7 +17,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
@@ -195,7 +195,7 @@ public class Categorize extends AbstractProcess {
         int stackSize = source.getStackSize();
         for (int i = 0; i < stackSize; i++) {
             final GridCoverage cvg = source.coverageAtIndex(i);
-            final GeneralEnvelope subsetEnvelope = GeneralEnvelope.castOrCopy(cvg.getEnvelope());
+            final GeneralEnvelope subsetEnvelope = GeneralEnvelope.castOrCopy(cvg.getGridGeometry().getEnvelope());
             if (subsetEnvelope.contains(aoi, true)) {
                 if (cvg instanceof GridCoverage2D) {
                     return Optional.of((GridCoverage2D) cvg);
