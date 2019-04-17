@@ -100,10 +100,10 @@ public interface GridCoverageResource extends org.apache.sis.storage.GridCoverag
                 param.setResolution(resolution);
             }
 
-            org.geotoolkit.coverage.grid.GridCoverage cov = reader.read(param);
+            GridCoverage cov = reader.read(param);
             while (cov instanceof GridCoverageStack) {
                 //pick the first slice
-                cov = (org.geotoolkit.coverage.grid.GridCoverage) ((GridCoverageStack) cov).coverageAtIndex(0);
+                cov = ((GridCoverageStack) cov).coverageAtIndex(0);
             }
 
             if (!(cov instanceof GridCoverage2D)) {

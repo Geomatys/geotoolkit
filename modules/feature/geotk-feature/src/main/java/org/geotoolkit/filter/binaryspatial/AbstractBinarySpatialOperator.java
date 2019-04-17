@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Unit;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.measure.Units;
@@ -31,7 +32,6 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.geometry.jts.JTS;
@@ -114,7 +114,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
         if(value instanceof GridCoverage){
             //use the coverage envelope
             final GridCoverage coverage = (GridCoverage) value;
-            candidate = JTS.toGeometry(coverage.getEnvelope());
+            candidate = JTS.toGeometry(coverage.getGridGeometry().getEnvelope());
         }else if(value instanceof GridCoverageReader){
             //use the coverage envelope
             final GridCoverageReader reader = (GridCoverageReader) value;

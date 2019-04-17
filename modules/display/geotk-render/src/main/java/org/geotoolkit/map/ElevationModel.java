@@ -18,7 +18,6 @@ package org.geotoolkit.map;
 
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

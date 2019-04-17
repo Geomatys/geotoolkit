@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
 import java.util.Collections;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -32,7 +33,6 @@ import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -240,7 +240,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
         try (final AutoCloseable cvgClose = () -> writer.dispose(); final AutoCloseable imgClose = () -> imgWriter.dispose()) {
             imgWriter.setOutput(destination);
             writer.setOutput(imgWriter);
-            writer.write(cvg, new GridCoverageWriteParam());
+            writer.write((org.geotoolkit.coverage.grid.GridCoverage) cvg, new GridCoverageWriteParam());
         }
     }
 

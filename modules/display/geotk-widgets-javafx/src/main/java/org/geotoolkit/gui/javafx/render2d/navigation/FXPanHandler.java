@@ -129,7 +129,8 @@ public class FXPanHandler extends AbstractNavigationHandler {
                 //convert image to geophysic
                 //TODO replace by SIS API when available
                 if (coverage.getSampleDimensions() != null && !coverage.getSampleDimensions().isEmpty()) {
-                    coverage = org.geotoolkit.internal.coverage.CoverageUtilities.toGeotk(coverage).forConvertedValues(true);
+//                    coverage = coverage.forConvertedValues(true);
+//                    coverage = org.geotoolkit.internal.coverage.CoverageUtilities.toGeotk(coverage).forConvertedValues(true);
                 }
 
                 //pick first slice if several are available

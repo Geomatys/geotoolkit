@@ -87,7 +87,7 @@ public final class CoverageUtilities extends Static {
      * @return The two-dimensional CRS.
      * @throws TransformException if the CRS can't be reduced to two dimensions.
      */
-    public static CoordinateReferenceSystem getCRS2D(final GridCoverage coverage)
+    public static CoordinateReferenceSystem getCRS2D(final org.apache.sis.coverage.grid.GridCoverage coverage)
             throws TransformException
     {
         if (coverage instanceof GridCoverage2D) {
@@ -116,7 +116,7 @@ public final class CoverageUtilities extends Static {
      * @return The two-dimensional envelope.
      * @throws MismatchedDimensionException if the envelope can't be reduced to two dimensions.
      */
-    public static Envelope2D getEnvelope2D(final GridCoverage coverage)
+    public static Envelope2D getEnvelope2D(final org.apache.sis.coverage.grid.GridCoverage coverage)
             throws MismatchedDimensionException
     {
         if (coverage instanceof GridCoverage2D) {
@@ -128,11 +128,11 @@ public final class CoverageUtilities extends Static {
             if (geometry.isDefined(GridGeometry2D.ENVELOPE)) {
                 return geometry.getEnvelope2D();
             } else {
-                return geometry.reduce(coverage.getEnvelope());
+                return geometry.reduce(coverage.getGridGeometry().getEnvelope());
             }
         }
         // Following may thrown MismatchedDimensionException.
-        return new Envelope2D(coverage.getEnvelope());
+        return new Envelope2D(coverage.getGridGeometry().getEnvelope());
     }
 
     /**

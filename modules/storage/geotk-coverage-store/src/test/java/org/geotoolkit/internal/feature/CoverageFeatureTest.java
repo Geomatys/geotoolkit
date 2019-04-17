@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
@@ -34,7 +35,6 @@ import org.apache.sis.referencing.operation.matrix.Matrix4;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.SampleDimensionBuilder;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -209,7 +209,7 @@ public class CoverageFeatureTest {
 
         final GridCoverage coverage3D;
         {//create coverage 3d
-            coverage3D = new GridCoverageStack("Coverage3D", Arrays.asList(slice1,slice2));
+            coverage3D = new GridCoverageStack("Coverage3D", Arrays.asList((org.geotoolkit.coverage.grid.GridCoverage) slice1, (org.geotoolkit.coverage.grid.GridCoverage) slice2));
         }
 
         //test mapped feature type

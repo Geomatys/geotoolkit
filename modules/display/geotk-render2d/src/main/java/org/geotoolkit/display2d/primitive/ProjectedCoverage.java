@@ -17,12 +17,12 @@
 package org.geotoolkit.display2d.primitive;
 
 import java.util.logging.Level;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -110,7 +110,7 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
                             }
                             while (result instanceof GridCoverageStack) {
                                 //pick the first slice
-                                result = (GridCoverage) ((GridCoverageStack)result).coverageAtIndex(0);
+                                result = ((GridCoverageStack)result).coverageAtIndex(0);
                             }
                             value = (GridCoverage2D) result;
                             ref.recycle(reader);

@@ -19,10 +19,10 @@ package org.geotoolkit.feature.op;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.GeometricUtilities.WrapResolution;
 import org.geotoolkit.geometry.jts.JTS;
@@ -81,7 +81,7 @@ public class CoverageGeometryOperation extends AbstractOperation {
         final Attribute<Geometry> att = TYPE.newInstance();
         final Object value = ftr.getPropertyValue(referentName);
         if (value instanceof GridCoverage) {
-            final Envelope envelope = ((GridCoverage) value).getEnvelope();
+            final Envelope envelope = ((GridCoverage) value).getGridGeometry().getEnvelope();
             final Geometry geometry = GeometricUtilities.toJTSGeometry(envelope, WrapResolution.NONE);
             JTS.setCRS(geometry, CRS.getHorizontalComponent(envelope.getCoordinateReferenceSystem()));
             att.setValue(geometry);
