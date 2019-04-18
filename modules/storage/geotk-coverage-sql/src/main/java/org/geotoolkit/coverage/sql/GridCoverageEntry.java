@@ -17,19 +17,16 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.nio.file.Path;
-import java.util.List;
-import java.time.Instant;
-import java.sql.SQLException;
-import org.apache.sis.storage.Resource;
-import org.apache.sis.storage.Aggregate;
-import org.apache.sis.storage.DataStore;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.coverage.grid.GridCoverage;
-import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.storage.*;
+import org.opengis.referencing.operation.TransformException;
+
+import java.nio.file.Path;
+import java.sql.SQLException;
+import java.time.Instant;
+import java.util.List;
 
 
 /**

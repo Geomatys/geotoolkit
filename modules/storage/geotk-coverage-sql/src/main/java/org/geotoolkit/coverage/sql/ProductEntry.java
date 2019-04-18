@@ -204,7 +204,7 @@ final class ProductEntry extends Entry {
      * Fetches now the list of components if not already available.
      * This method should be invoked when the caller is going to invoke {@link #components()} soon.
      */
-    final synchronized void prefetch(final ProductTable table) throws SQLException, DataStoreException {
+    final void prefetch(final ProductTable table) throws SQLException, DataStoreException {
         if (components == null) {
             components = table.list(name);
         }
@@ -216,7 +216,7 @@ final class ProductEntry extends Entry {
      * by listing all products.
      */
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
-    public synchronized List<ProductEntry> components() throws DataStoreException {
+    public List<ProductEntry> components() throws DataStoreException {
         ensureValid();
         if (components == null) {
             try (Transaction transaction = database.transaction();

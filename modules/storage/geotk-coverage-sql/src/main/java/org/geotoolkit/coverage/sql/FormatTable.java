@@ -17,19 +17,19 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.util.List;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.storage.DataStoreException;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.apache.sis.coverage.Category;
-import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.apache.sis.measure.MeasurementRange;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 
 /**
@@ -47,7 +47,7 @@ final class FormatTable extends CachedTable<String,FormatEntry> {
      * Maximum number of formats for the same name. Current algorithm is very inefficient
      * for a large number of name collisions, so we are better to keep this limit small.
      */
-    private static final int MAX_FORMATS = 100;
+    private static final int MAX_FORMATS = 100000;
 
     /**
      * The sample dimensions table.
