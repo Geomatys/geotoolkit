@@ -48,13 +48,25 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.StampedLock;
 import java.util.stream.Collectors;
 
+import static org.geotoolkit.coverage.sql.UpgradableLock.Stamp;
 
 /**
  * Provides access to resource read from the database.
+ *
+ * @implNote Concurrency management is rather strict. You can only launch one insertion at a time, due to information
+ * merging policies (We try to factorize redondant information across products). Otherwise, reading stays accessible
+ * while inserting, except on a short period of time in which we commit all modifications to database. To enforce that
+ * mechanism, we use two different types of lock:
+ * <ul>
+ * <li>An {@link #insertionTicket insertion ticket}. It's simply a {@link Semaphore} with a single permit, to ensure
+ * only one insertion is performed at any time.</li>
+ * <li>An {@link #accessLock access lock} to manage concurrent reads and write over the catalog. ATTENTION ! It's NOT
+ * a reentrant lock, so be careful when using it.</li>
+ * </ul>
  */
 public final class DatabaseStore extends DataStore implements WritableAggregate {
     /**
@@ -225,10 +237,14 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
      */
     private volatile List<Resource> components;
 
-    private final StampedLock lock;
+    private final UpgradableLock accessLock;
+    private final Semaphore insertionTicket;
 
-    private final long waitTime = 10;
-    private final TimeUnit waitUnit = TimeUnit.SECONDS;
+    /**
+     * TODO: Add in provider parameters.
+     */
+    private final long lockTimeout = 30;
+    private final TimeUnit lockTimeoutUnit = TimeUnit.SECONDS;
 
     /**
      * Creates a new data store for the given parameters. The parameters should be an instance created by
@@ -243,7 +259,8 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     protected DatabaseStore(final Provider provider, final Parameters parameters) throws DataStoreException {
         super(provider, new StorageConnector(parameters.getMandatoryValue(Provider.DATABASE)));
         final DataSource dataSource = parameters.getMandatoryValue(Provider.DATABASE);
-        lock = new StampedLock();
+        accessLock = new UpgradableLock(lockTimeout, lockTimeoutUnit);
+        insertionTicket = new Semaphore(1);
         try {
             if (parameters.booleanValue(Provider.ALLOW_CREATE)) {
                 /*
@@ -359,7 +376,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public Collection<Resource> components() throws DataStoreException {
         if (components == null) {
-            doLocked(this::createComponentsIfNull, true);
+            accessLock.doLocked(this::createComponentsIfNull, true);
         }
         return components;
     }
@@ -394,7 +411,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     public Resource findResource(final String productName) throws DataStoreException {
         ArgumentChecks.ensureNonNull("productName", productName);
         // TODO : check if components are not null, in which case we could get the resource from there.
-        return doLocked(stamp -> {
+        return accessLock.doLocked(stamp -> {
             try (Transaction transaction = database.transaction();
                  ProductTable table = new ProductTable(transaction))
             {
@@ -488,16 +505,32 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
         }
 
         if (!rasters.isEmpty()) {
-            doLocked((Stamp stamp) -> insert(product, exportedGrid, option, rasters), true);
+            try {
+                // TODO: retry policy ?
+                if (!insertionTicket.tryAcquire(lockTimeout, lockTimeoutUnit)) {
+                    throw new CatalogException("Cannot lock insertion code. Another process is running an insertion for too long.");
+                }
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw new CatalogException("Thread interrupted while waiting for a lock for insertion", ex);
+            }
+            try {
+                accessLock.doLocked((Stamp stamp) -> insert(product, exportedGrid, option, rasters, stamp), false);
+            } finally {
+                insertionTicket.release();
+            }
         }
     }
 
-    private void insert(String product, GridGeometry exportedGrid, AddOption option, Map<String, List<NewRaster>> rasters) throws DataStoreException {
+    private void insert(String product, GridGeometry exportedGrid, AddOption option, Map<String, List<NewRaster>> rasters, final Stamp stamp) throws DataStoreException {
         try (Transaction transaction = database.transaction()) {
             transaction.writeStart();
             try (ProductTable table = new ProductTable(transaction)) {
                 table.addCoverageReferences(product, exportedGrid, option, rasters);
             }
+
+            stamp.tryUpgrade();
+
             transaction.writeEnd();
         } catch (SQLException e) {
             throw new CatalogException(e);
@@ -519,7 +552,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
      */
     public void removeRaster(final Path... files) throws DataStoreException {
         if (files.length != 0) {
-            doLocked(stamp -> {
+            accessLock.doLocked(stamp -> {
                 try (Transaction transaction = database.transaction()) {
                     transaction.writeStart();
                     try (GridCoverageTable table = new GridCoverageTable(transaction)) {
@@ -560,17 +593,18 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     /**
      * Removes the coverages in the resource which intersect the given envelope.
      *
-     * @param resource
-     * @param areaOfInterest
-     * @return list of remove data Paths
-     * @throws DataStoreException
+     * @param resource The product to remove a part of.
+     * @param areaOfInterest A sub-area to de-reference in input resource.
+     * @return list of files which won't be used anymore after given area removal.
+     * @throws DataStoreException If given resource is not a product from this data store, or there's an issue accessing
+     * inner ledger.
      */
     public List<Path> remove(Resource resource, Envelope areaOfInterest) throws DataStoreException {
         ArgumentChecks.ensureNonNull("areaOfInterest", areaOfInterest);
 
         if(resource instanceof ProductResource) {
             final ProductResource pr = (ProductResource) resource;
-            return doLocked((Stamp stamp) ->  remove(areaOfInterest, pr, stamp), false);
+            return accessLock.doLocked((Stamp stamp) ->  remove(areaOfInterest, pr, stamp), false);
         }
 
         throw new CatalogException("Illegal input resource. Expected a Coverage-SQL product, but got "+resource == null? "null" : resource.getClass().getCanonicalName());
@@ -619,92 +653,5 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
      */
     @Override
     public void close() throws DataStoreException {
-    }
-
-    private void doLocked(final DataStoreOperation operator, final boolean isWrite) throws DataStoreException {
-        doLocked(stamp -> {operator.apply(stamp);return null;}, isWrite);
-    }
-
-    private <T> T doLocked(final DataStoreFunction<T> operator, final boolean isWrite) throws DataStoreException {
-        try (final Stamp stamp = new DefaultStamp(isWrite)) {
-            return operator.apply(stamp);
-        }
-    }
-
-    private long lock(final boolean exclusive) throws DataStoreException {
-        try {
-            return exclusive? lock.tryWriteLock(waitTime, waitUnit) : lock.tryReadLock(waitTime, waitUnit);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new DataStoreException("Interrupted while waiting for exclusive lock", e);
-        }
-    }
-
-    private static interface Stamp extends AutoCloseable {
-        void tryUpgrade() throws DataStoreException;
-        void tryDowngrade() throws DataStoreException;
-        @Override
-        void close();
-    }
-
-    private class DefaultStamp implements Stamp {
-        long stamp;
-        private boolean exclusive;
-        private boolean isBroken = false;
-
-        DefaultStamp(final boolean exclusive) throws DataStoreException {
-            stamp = lock(exclusive);
-            this.exclusive = exclusive;
-        }
-
-        @Override
-        public void tryUpgrade() throws DataStoreException {
-            if (exclusive) return;
-            final long newStamp = lock.tryConvertToWriteLock(stamp);
-            if (newStamp == 0) {
-                lock.unlockRead(stamp);
-                isBroken = true;
-                stamp = lock(true);
-                isBroken = false;
-            } else {
-                stamp = newStamp;
-            }
-
-            exclusive = true;
-        }
-
-        @Override
-        public void tryDowngrade() throws DataStoreException {
-            if (!exclusive) return;
-            final long newStamp = lock.tryConvertToReadLock(stamp);
-            if (newStamp == 0) {
-                lock.unlockWrite(stamp);
-                isBroken = true;
-                stamp = lock(false);
-                isBroken = false;
-            } else {
-                stamp = newStamp;
-            }
-
-            exclusive = false;
-        }
-
-        @Override
-        public void close() {
-            if (isBroken) return;
-            if (exclusive) lock.unlockWrite(stamp);
-            else lock.unlockRead(stamp);
-        }
-    }
-
-
-    @FunctionalInterface
-    private static interface DataStoreOperation {
-        void apply(final Stamp lock) throws DataStoreException;
-    }
-
-    @FunctionalInterface
-    private static interface DataStoreFunction<T> {
-        T apply(final Stamp lock) throws DataStoreException;
     }
 }
