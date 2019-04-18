@@ -28,7 +28,6 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -90,8 +89,9 @@ public class ReduceToDomainProcess extends AbstractProcess {
      */
     @Override
     protected void execute() throws ProcessException {
-        GridCoverage2D candidate = (GridCoverage2D) inputParameters.getValue(StraightenDescriptor.COVERAGE_IN);
-        final CoordinateReferenceSystem crs = candidate.getCoordinateReferenceSystem2D();
+        GridCoverage candidate = inputParameters.getValue(StraightenDescriptor.COVERAGE_IN);
+        GridGeometry2D gridgeom = GridGeometry2D.castOrCopy(candidate.getGridGeometry());
+        final CoordinateReferenceSystem crs = gridgeom.getCoordinateReferenceSystem2D();
         final CoordinateReferenceSystem crs2d;
         try {
             crs2d = CRSUtilities.getCRS2D(crs);
@@ -124,16 +124,14 @@ public class ReduceToDomainProcess extends AbstractProcess {
         }catch(ProcessException ex){
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-        candidate = (GridCoverage2D) result.getValue(StraightenDescriptor.COVERAGE_OUT);
-
-
+        candidate = result.getValue(StraightenDescriptor.COVERAGE_OUT);
 
         //resample coverage, we want it to be 'straight', no rotation or different axe scale.
-        final GridGeometry2D gridgeom = candidate.getGridGeometry();
+        gridgeom = GridGeometry2D.castOrCopy(candidate.getGridGeometry());
         final GridExtent gridenv = gridgeom.getExtent2D();
         final MathTransform gridToCRS = gridgeom.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
 
-        try{
+        try {
             final double[] coords = new double[2 * 2];
             coords[0] = gridenv.getLow(0);      coords[1] = gridenv.getLow(1);
             coords[2] = gridenv.getHigh(0);     coords[3] = gridenv.getHigh(1);
@@ -191,8 +189,8 @@ public class ReduceToDomainProcess extends AbstractProcess {
 
             //calculate the fixed result image
             final AffineTransform2D baseTrs = (AffineTransform2D)
-                    candidate.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
-            final RenderedImage img = candidate.getRenderedImage();
+                   gridgeom.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
+            final RenderedImage img = candidate.render(null);
             final ColorModel cm = img.getColorModel();
             final Raster baseRaster = img.getData();
             final BufferedImage resimg;
@@ -308,7 +306,7 @@ public class ReduceToDomainProcess extends AbstractProcess {
             gcb.setGridCoverage(candidate);
             gcb.setGridGeometry(gg);
             gcb.setRenderedImage(resimg);
-            final GridCoverage2D outgc = gcb.getGridCoverage2D();
+            final GridCoverage outgc = gcb.getGridCoverage2D();
             outputParameters.getOrCreate(StraightenDescriptor.COVERAGE_OUT).setValue(outgc);
         }catch(TransformException ex){
             throw new ProcessException(ex.getMessage(), this, ex);

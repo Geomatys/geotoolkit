@@ -23,9 +23,9 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.UUID;
 import net.iharder.Base64;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.nio.IOUtilities;
@@ -34,11 +34,11 @@ import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Reference;
 
 /**
- * Implementation of ObjectConverter to convert a {@link GridCoverage2D coverage} into a {@link Reference reference}.
+ * Implementation of ObjectConverter to convert a {@link GridCoverage coverage} into a {@link Reference reference}.
  *
  * @author Quentin Boileau (Geomatys).
  */
-public class CoverageToReferenceConverter extends AbstractReferenceOutputConverter<GridCoverage2D> {
+public class CoverageToReferenceConverter extends AbstractReferenceOutputConverter<GridCoverage> {
 
     private static CoverageToReferenceConverter INSTANCE;
 
@@ -53,15 +53,15 @@ public class CoverageToReferenceConverter extends AbstractReferenceOutputConvert
     }
 
     @Override
-    public Class<GridCoverage2D> getSourceClass() {
-        return GridCoverage2D.class;
+    public Class<GridCoverage> getSourceClass() {
+        return GridCoverage.class;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Reference convert(final GridCoverage2D source, final Map<String, Object> params) throws UnconvertibleObjectException {
+    public Reference convert(final GridCoverage source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         if (params.get(TMP_DIR_PATH) == null) {
             throw new UnconvertibleObjectException("The output directory should be defined.");

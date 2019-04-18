@@ -35,6 +35,7 @@ import java.util.logging.Level;
 import java.util.stream.Stream;
 import javax.imageio.ImageReader;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -47,7 +48,6 @@ import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -394,7 +394,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         }
 
         final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
-        GridCoverage2D coverage = (GridCoverage2D) reader.read(params);
+        GridCoverage coverage = reader.read(params);
 
         //straighten coverage
         final Parameters subParams = Parameters.castOrWrap(StraightenDescriptor.INPUT_DESC.createValue());
@@ -406,7 +406,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         }catch(ProcessException ex){
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-        coverage = (GridCoverage2D) result.getOrCreate(StraightenDescriptor.COVERAGE_OUT).getValue();
+        coverage = result.getOrCreate(StraightenDescriptor.COVERAGE_OUT).getValue();
 
         //reduce to valid domain
         if(reduce){
@@ -415,22 +415,22 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
             final Process redprocess = ReduceToDomainDescriptor.INSTANCE.createProcess(redParams);
             try{
                 result = Parameters.castOrWrap(redprocess.call());
-                coverage = (GridCoverage2D) result.getOrCreate(StraightenDescriptor.COVERAGE_OUT).getValue();
+                coverage = result.getOrCreate(StraightenDescriptor.COVERAGE_OUT).getValue();
             }catch(ProcessException ex){
                 throw new ProcessException(ex.getMessage(), this, ex);
             }
 
         }
 
-        final GridGeometry2D gridgeom = coverage.getGridGeometry();
+        final GridGeometry2D gridgeom = GridGeometry2D.castOrCopy(coverage.getGridGeometry());
         //we know it's an affine transform since we straighten the coverage
         final AffineTransform2D gridToCRS = (AffineTransform2D) gridgeom.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
         final double scale = gridToCRS.getScaleX();
 
-        final RenderedImage img = ((GridCoverage2D) coverage).getRenderedImage();
+        final RenderedImage img = coverage.render(null);
         final Dimension gridSize = new Dimension(1, 1);
         final Dimension TileSize = new Dimension(img.getWidth(), img.getHeight());
-        final Envelope covEnv = coverage.getEnvelope();
+        final Envelope covEnv = gridgeom.getEnvelope();
         final GeneralDirectPosition upperleft = new GeneralDirectPosition(crs);
         upperleft.setOrdinate(0, covEnv.getMinimum(0));
         upperleft.setOrdinate(1, covEnv.getMaximum(1));

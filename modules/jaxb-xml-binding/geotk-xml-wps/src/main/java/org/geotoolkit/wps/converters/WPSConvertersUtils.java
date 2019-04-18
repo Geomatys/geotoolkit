@@ -37,6 +37,7 @@ import java.util.Set;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import net.sf.json.JSONObject;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
@@ -49,8 +50,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.PATH;
@@ -319,10 +319,10 @@ public class WPSConvertersUtils {
             final CoordinateReferenceSystem outCRS = CommonCRS.WGS84.geographic();
             Envelope env =null;
             Integer crsCode = null;
-            if (object instanceof GridCoverage2D) {
-                final GridCoverage2D coverage = (GridCoverage2D) object;
+            if (object instanceof GridCoverage) {
+                final GridCoverage coverage = (GridCoverage) object;
                 CoverageIO.write(coverage, "GEOTIFF", coverageFile);
-                env = Envelopes.transform(coverage.getEnvelope2D(), outCRS);
+                env = Envelopes.transform(GridGeometry2D.castOrCopy(coverage.getGridGeometry()).getEnvelope2D(), outCRS);
                 crsCode = IdentifiedObjects.lookupEPSG(coverage.getCoordinateReferenceSystem());
 
             } else if (object instanceof File || object instanceof Path) {

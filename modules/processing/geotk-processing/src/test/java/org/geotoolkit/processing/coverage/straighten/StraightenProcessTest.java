@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.processing.coverage.straighten;
 
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.process.Process;
@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
-
+import org.opengis.referencing.datum.PixelInCell;
 
 /**
  *
@@ -59,7 +59,7 @@ public class StraightenProcessTest extends AbstractProcessTest {
         final GridExtent gridEnv = new GridExtent(60, 40);
         final GridGeometry2D gridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, gridToCrs, CommonCRS.WGS84.normalizedGeographic());
         gcb.setGridGeometry(gridGeom);
-        final GridCoverage2D coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage = gcb.getGridCoverage2D();
 
 
         final ProcessDescriptor desc = StraightenDescriptor.INSTANCE;
@@ -68,18 +68,18 @@ public class StraightenProcessTest extends AbstractProcessTest {
         final Process process = desc.createProcess(in);
         final ParameterValueGroup out = process.call();
 
-        final GridCoverage2D res = (GridCoverage2D) out.parameter(StraightenDescriptor.COVERAGE_OUT.getName().getCode()).getValue();
+        final GridCoverage res = (GridCoverage) out.parameter(StraightenDescriptor.COVERAGE_OUT.getName().getCode()).getValue();
 
         assertEquals(coverage.getCoordinateReferenceSystem(),
                    res.getCoordinateReferenceSystem());
-        assertEquals(coverage.getGridGeometry().getGridToCRS2D(),
-                   res.getGridGeometry().getGridToCRS2D());
-        assertEquals(coverage.getEnvelope(),
-                   res.getEnvelope());
-        assertEquals(coverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT),
-                   res.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT));
-        assertEquals(coverage.getGridGeometry().getExtent2D(),
-                   res.getGridGeometry().getExtent2D());
+        assertEquals(coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER),
+                   res.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER));
+        assertEquals(coverage.getGridGeometry().getEnvelope(),
+                   res.getGridGeometry().getEnvelope());
+        assertEquals(coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER),
+                   res.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER));
+        assertEquals(coverage.getGridGeometry().getExtent(),
+                   res.getGridGeometry().getExtent());
     }
 
     @Test
@@ -97,8 +97,7 @@ public class StraightenProcessTest extends AbstractProcessTest {
         final GridExtent gridEnv = new GridExtent(60, 40);
         final GridGeometry2D gridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, gridToCrs, CommonCRS.WGS84.normalizedGeographic());
         gcb.setGridGeometry(gridGeom);
-        final GridCoverage2D coverage = gcb.getGridCoverage2D();
-
+        final GridCoverage coverage = gcb.getGridCoverage2D();
 
         final ProcessDescriptor desc = StraightenDescriptor.INSTANCE;
         final Parameters in = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
@@ -106,12 +105,12 @@ public class StraightenProcessTest extends AbstractProcessTest {
         final Process process = desc.createProcess(in);
         final ParameterValueGroup out = process.call();
 
-        final GridCoverage2D res = (GridCoverage2D) out.parameter(StraightenDescriptor.COVERAGE_OUT.getName().getCode()).getValue();
+        final GridCoverage res = (GridCoverage) out.parameter(StraightenDescriptor.COVERAGE_OUT.getName().getCode()).getValue();
 
         assertEquals(coverage.getCoordinateReferenceSystem(),
                    res.getCoordinateReferenceSystem());
         assertEquals(new AffineTransform2D(1, 0, 0, -1, 20, 71),
-                res.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT));
+                res.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER));
     }
 
 }

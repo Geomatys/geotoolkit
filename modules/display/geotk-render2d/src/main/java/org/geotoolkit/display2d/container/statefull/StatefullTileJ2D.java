@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.vecmath.Point3d;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.Utilities;
@@ -33,7 +34,6 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -167,8 +167,8 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
                         mosaic, new Point((int)coordinate.x, (int)coordinate.y));
                 final ImageTile tr = (ImageTile) mosaic.getTile((int)coordinate.x, (int)coordinate.y);
                 final CoordinateReferenceSystem pyramidCRS2D = CRSUtilities.getCRS2D(mosaic.getEnvelope().getCoordinateReferenceSystem());
-                final GridCoverage2D coverage = prepareTile(env2d.getCoordinateReferenceSystem(), pyramidCRS2D, tr, trs);
-                if(coverage != null){
+                final GridCoverage2D coverage = (GridCoverage2D) prepareTile(env2d.getCoordinateReferenceSystem(), pyramidCRS2D, tr, trs);
+                if (coverage != null) {
 
                     //we copy the image in a buffered image with a well knowed data typeand color model
                     //this can significantly improve performances.
@@ -210,7 +210,7 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
         }
     }
 
-    private static GridCoverage2D prepareTile(final CoordinateReferenceSystem objCRS2D,
+    private static GridCoverage prepareTile(final CoordinateReferenceSystem objCRS2D,
             final CoordinateReferenceSystem tileCRS ,final ImageTile tile, MathTransform trs) {
 
         RenderedImage image;
@@ -240,11 +240,11 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
         gcb.setName("tile");
         gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);
-        GridCoverage2D coverage = (GridCoverage2D) gcb.build();
+        GridCoverage coverage = gcb.build();
 
         if (needReproject) {
             try {
-                coverage = GO2Utilities.resample(coverage.view(ViewType.NATIVE),objCRS2D);
+                coverage = GO2Utilities.resample(coverage.forConvertedValues(false), objCRS2D);
             } catch (ProcessException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
             }

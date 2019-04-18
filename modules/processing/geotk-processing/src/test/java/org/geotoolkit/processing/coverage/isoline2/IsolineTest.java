@@ -16,12 +16,13 @@
  */
 package org.geotoolkit.processing.coverage.isoline2;
 
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.coverage.memory.MemoryCoverageStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -30,15 +31,10 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
-
-import org.opengis.feature.Property;
 import org.opengis.parameter.ParameterValueGroup;
-
-
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  *
@@ -60,7 +56,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
             {100,200,100},
             {100,100,100}
         });
-        final GridCoverage2D coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage = gcb.getGridCoverage2D();
         final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
         final GridCoverageResource ref = (GridCoverageResource) store.findResource(store.getNames().iterator().next().toString());
 
@@ -94,7 +90,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
             {10,10,20},
             {10,15,10},
         });
-        final GridCoverage2D coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage = gcb.getGridCoverage2D();
         final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
         final GridCoverageResource ref = (GridCoverageResource) store.findResource(store.getNames().iterator().next().toString());
 
@@ -128,7 +124,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
             {10,15,10},
             {10,15,10},
         });
-        final GridCoverage2D coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage = gcb.getGridCoverage2D();
         final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
         final GridCoverageResource ref = (GridCoverageResource) store.findResource(store.getNames().iterator().next().toString());
 
@@ -165,7 +161,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
                 { Float.NaN,  Float.NaN, Float.NaN,  Float.NaN, Float.NaN, Float.NaN, Float.NaN}
         });
 
-        final GridCoverage2D coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage = gcb.getGridCoverage2D();
         final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
         final GridCoverageResource ref = (GridCoverageResource) store.findResource(store.getNames().iterator().next().toString());
 

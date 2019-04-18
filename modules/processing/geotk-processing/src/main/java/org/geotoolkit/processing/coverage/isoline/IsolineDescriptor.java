@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.processing.coverage.isoline;
 
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
@@ -44,11 +44,11 @@ public class IsolineDescriptor extends AbstractProcessDescriptor {
      */
     public static final String IN_COVERAGE_PARAM_NAME = "inCoverage";
     public static final InternationalString IN_COVERAGE_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_inCoverage);
-    public static final ParameterDescriptor<GridCoverage2D> COVERAGE = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage> COVERAGE = new ParameterBuilder()
             .addName(IN_COVERAGE_PARAM_NAME)
             .setRemarks(IN_COVERAGE_PARAM_REMARKS)
             .setRequired(true)
-            .create(GridCoverage2D.class, null);
+            .create(GridCoverage.class, null);
 
     /*
      * Intervals

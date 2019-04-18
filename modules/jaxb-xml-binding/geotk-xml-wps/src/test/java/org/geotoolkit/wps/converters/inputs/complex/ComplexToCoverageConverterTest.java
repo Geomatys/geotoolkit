@@ -19,9 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.test.Assert;
 import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
@@ -46,7 +46,7 @@ public class ComplexToCoverageConverterTest extends AbstractWPSConverterTest {
     @org.junit.Ignore("Fails randomly because of GeoTIFF reader not found.")
     public void testConversion() throws UnconvertibleObjectException, IOException, InterruptedException  {
 
-        final WPSObjectConverter<Data, GridCoverage2D> converter = WPSConverterRegistry.getInstance().getConverter(Data.class, GridCoverage2D.class);
+        final WPSObjectConverter<Data, GridCoverage> converter = WPSConverterRegistry.getInstance().getConverter(Data.class, GridCoverage.class);
 
         final InputStream expectedStream = ComplexToRenderedImageConvereterTest.class.getResourceAsStream("/expected/coverage_base64");
         assertNotNull(expectedStream);
@@ -60,20 +60,20 @@ public class ComplexToCoverageConverterTest extends AbstractWPSConverterTest {
         final Data complex = new Data(format, encodedCoverage);
         complex.getContent().add(encodedCoverage);
 
-        final GridCoverage2D convertedCoverage = converter.convert(complex, param);
+        final GridCoverage convertedCoverage = converter.convert(complex, param);
         assertNotNull(convertedCoverage);
 
-        final GridCoverage2D expectedCoverage = ConvertersTestUtils.makeCoverage();
+        final GridCoverage expectedCoverage = ConvertersTestUtils.makeCoverage();
 
-        final Envelope convertedEnvelope = convertedCoverage.getEnvelope();
-        final Envelope expectedEnvelope = expectedCoverage.getEnvelope();
+        final Envelope convertedEnvelope = convertedCoverage.getGridGeometry().getEnvelope();
+        final Envelope expectedEnvelope = expectedCoverage.getGridGeometry().getEnvelope();
 
         assertTrue(Utilities.equalsIgnoreMetadata(expectedEnvelope.getCoordinateReferenceSystem(), convertedEnvelope.getCoordinateReferenceSystem()));
         assertTrue(expectedEnvelope.getMinimum(0) == convertedEnvelope.getMinimum(0));
         assertTrue(expectedEnvelope.getMinimum(1) == convertedEnvelope.getMinimum(1));
         assertTrue(expectedEnvelope.getMaximum(0) == convertedEnvelope.getMaximum(0));
         assertTrue(expectedEnvelope.getMaximum(1) == convertedEnvelope.getMaximum(1));
-        Assert.assertRasterEquals(expectedCoverage.getRenderableImage(0,1).createDefaultRendering(),
-                             convertedCoverage.getRenderableImage(0,1).createDefaultRendering());
+        Assert.assertRasterEquals(expectedCoverage.render(null),
+                             convertedCoverage.render(null));
     }
 }

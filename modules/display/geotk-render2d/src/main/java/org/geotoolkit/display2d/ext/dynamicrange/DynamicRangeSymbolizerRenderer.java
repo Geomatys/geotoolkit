@@ -31,7 +31,6 @@ import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.display.PortrayalException;
@@ -185,9 +184,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                 }
             }
 
-            if (dataCoverage.getViewTypes().contains(ViewType.GEOPHYSICS)) {
-                dataCoverage = dataCoverage.forConvertedValues(true);
-            }
+            dataCoverage = dataCoverage.forConvertedValues(true);
             final RenderedImage ri = dataCoverage.getRenderedImage();
 
             final DynamicRangeStretchProcess p = new DynamicRangeStretchProcess(ri, bands, ranges);

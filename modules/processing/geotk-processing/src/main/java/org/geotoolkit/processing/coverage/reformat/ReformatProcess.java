@@ -26,7 +26,6 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.Process;
@@ -78,9 +77,9 @@ public class ReformatProcess extends AbstractProcess {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
 
         // PARAMETERS CHECK ////////////////////////////////////////////////////
-        final GridCoverage2D inputCoverage = (GridCoverage2D) inputParameters.getValue(IN_COVERAGE);
+        final GridCoverage inputCoverage = inputParameters.getValue(IN_COVERAGE);
         final int inputType = inputParameters.getValue(IN_DATATYPE);
-        final RenderedImage inputImage = inputCoverage.getRenderedImage();
+        final RenderedImage inputImage = inputCoverage.render(null);
         final SampleModel inputSampleModel = inputImage.getSampleModel();
         //check type, if same return the original coverage
         if(inputSampleModel.getDataType() == inputType){
@@ -92,7 +91,7 @@ public class ReformatProcess extends AbstractProcess {
         // CALL IMAGE BAND SELECT //////////////////////////////////////////////
         final ProcessDescriptor imageReformatDesc = org.geotoolkit.processing.image.reformat.ReformatDescriptor.INSTANCE;
         final Parameters params = Parameters.castOrWrap(imageReformatDesc.getInputDescriptor().createValue());
-        params.parameter("image").setValue(inputCoverage.getRenderedImage());
+        params.parameter("image").setValue(inputCoverage.render(null));
         params.parameter("datatype").setValue(inputType);
         final Process process = imageReformatDesc.createProcess(params);
         BufferedImage resultImage = (BufferedImage)process.call().parameter("result").getValue();
@@ -114,8 +113,7 @@ public class ReformatProcess extends AbstractProcess {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(resultImage);
         gcb.setGridGeometry(inputCoverage.getGridGeometry());
-        final GridCoverage2D resultCoverage = gcb.getGridCoverage2D();
-
+        final GridCoverage resultCoverage = gcb.getGridCoverage2D();
 
         outputParameters.getOrCreate(OUT_COVERAGE).setValue(resultCoverage);
     }

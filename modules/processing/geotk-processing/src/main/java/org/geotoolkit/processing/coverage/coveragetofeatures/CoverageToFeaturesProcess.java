@@ -19,6 +19,7 @@ package org.geotoolkit.processing.coverage.coveragetofeatures;
 import java.awt.geom.Point2D;
 import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -95,7 +96,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
     protected void execute() throws ProcessException{
         try {
             final GridCoverageReader reader = inputParameters.getValue(CoverageToFeaturesDescriptor.READER_IN);
-            final GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
+            final GridCoverage coverage = reader.read(null);
             final GridGeometry gridGeom = reader.getGridGeometry();
 
             final CoverageToFeatureCollection resultFeatureList =
@@ -112,7 +113,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
      *
      * @return the FeatureType of Features
      */
-    static FeatureType createFeatureType(final GridCoverage2D coverage, final GridCoverageReader reader) throws DataStoreException {
+    static FeatureType createFeatureType(final GridCoverage coverage, final GridCoverageReader reader) throws DataStoreException {
 
         final int nbBand = coverage.getSampleDimensions().size();
 

@@ -32,7 +32,6 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -42,6 +41,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -247,17 +247,17 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
 
     private static class SimpleCoverageReader extends AbstractGridCoverageReader {
 
-        private final GridCoverage2D coverage;
+        private final GridCoverage coverage;
         private final PixelInCell pixPos;
 
-        public SimpleCoverageReader(final GridCoverage2D coverage, PixelInCell pixPos) {
+        public SimpleCoverageReader(final GridCoverage coverage, PixelInCell pixPos) {
             this.coverage = coverage;
             this.pixPos = pixPos;
         }
 
         @Override
         public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
-            return Names.createLocalName(null, null, coverage.getName() == null ? "" : coverage.getName());
+            return Names.createLocalName(null, null, CoverageUtilities.getName(coverage));
         }
 
         @Override

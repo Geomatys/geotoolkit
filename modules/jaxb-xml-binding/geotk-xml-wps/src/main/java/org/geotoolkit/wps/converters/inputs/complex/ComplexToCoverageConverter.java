@@ -25,20 +25,20 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import net.iharder.Base64;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v200.Data;
 
 /**
- * Convert an base64 encoded coverage into a GridCoverage2D.
+ * Convert an base64 encoded coverage into a GridCoverage.
  *
  * @author Quentin Boileau (Geomatys).
  */
-public class ComplexToCoverageConverter extends AbstractComplexInputConverter<GridCoverage2D> {
+public class ComplexToCoverageConverter extends AbstractComplexInputConverter<GridCoverage> {
 
     private static ComplexToCoverageConverter INSTANCE;
 
@@ -53,12 +53,12 @@ public class ComplexToCoverageConverter extends AbstractComplexInputConverter<Gr
     }
 
     @Override
-    public Class<GridCoverage2D> getTargetClass() {
-        return GridCoverage2D.class;
+    public Class<GridCoverage> getTargetClass() {
+        return GridCoverage.class;
     }
 
     @Override
-    public GridCoverage2D convert(Data source, Map<String, Object> params) throws UnconvertibleObjectException {
+    public GridCoverage convert(Data source, Map<String, Object> params) throws UnconvertibleObjectException {
 
         try {
             if (params.get(ENCODING) != null && params.get(ENCODING).equals(WPSEncoding.BASE64.getValue())) {
@@ -78,7 +78,7 @@ public class ComplexToCoverageConverter extends AbstractComplexInputConverter<Gr
                         } else {
                             reader = XImageIO.getReader(inStream, null, Boolean.FALSE);
                         }
-                        return (GridCoverage2D) CoverageIO.read(reader);
+                        return CoverageIO.read(reader);
                     }
                 }
                 throw new UnconvertibleObjectException("Error during base64 decoding.");
