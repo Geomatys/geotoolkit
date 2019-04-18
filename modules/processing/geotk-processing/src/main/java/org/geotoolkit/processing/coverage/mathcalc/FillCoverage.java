@@ -26,6 +26,7 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
@@ -35,7 +36,6 @@ import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
@@ -176,7 +176,7 @@ public class FillCoverage {
             gcb.setCoordinateReferenceSystem(gg.getCoordinateReferenceSystem());
             gcb.setRenderedImage(zoneImage);
             gcb.setGridToCRS(concat);
-            final GridCoverage2D zoneCoverage = gcb.getGridCoverage2D();
+            final GridCoverage zoneCoverage = gcb.getGridCoverage2D();
             final GridCoverageWriteParam param = new GridCoverageWriteParam();
             outWriter.write(zoneCoverage, param);
         }

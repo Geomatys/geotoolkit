@@ -26,7 +26,7 @@ import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 import javax.swing.JComponent;
 import javax.swing.Timer;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.AbstractCanvas;
@@ -44,7 +44,7 @@ import org.apache.sis.util.logging.Logging;
 public class SwingVolatileGeoComponent extends JComponent{
 
     private final J2DCanvasVolatile canvas;
-    private GridCoverage2D coverage = null;
+    private GridCoverage coverage = null;
 
     /**
      * Updates the enclosing canvas according various AWT events.

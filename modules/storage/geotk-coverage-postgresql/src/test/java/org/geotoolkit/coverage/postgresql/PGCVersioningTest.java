@@ -33,10 +33,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
 import org.geotoolkit.data.multires.DefiningMosaic;
@@ -119,7 +119,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         PyramidalCoverageResource cref;
         Pyramid pyramid;
         Mosaic mosaic;
-        GridCoverage2D coverage;
+        GridCoverage coverage;
 
         final GenericName name = NamesExt.create(null, "versLayer");
         store.add(new DefiningCoverageResource(name));
@@ -145,9 +145,9 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         assertEquals(date1.getTime(),versions.get(0).getDate().getTime());
 
         GridCoverageReader reader = cref.acquireReader();
-        coverage = (GridCoverage2D)reader.read(null);
+        coverage = reader.read(null);
         cref.recycle(reader);
-        assertImageColor(coverage.getRenderedImage(), Color.RED);
+        assertImageColor(coverage.render(null), Color.RED);
 
         //create version 2 -----------------------------------------------------
         calendar.setTimeInMillis(50000);
@@ -162,9 +162,9 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(dimension, Color.BLUE), new Point(0, 0))), null);
 
         reader = cref.acquireReader();
-        coverage = (GridCoverage2D)reader.read(null);
+        coverage = reader.read(null);
         cref.recycle(reader);
-        assertImageColor(coverage.getRenderedImage(), Color.BLUE);
+        assertImageColor(coverage.render(null), Color.BLUE);
 
         versions = vc.list();
         assertEquals(2, versions.size());
@@ -184,9 +184,9 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(dimension, Color.BLUE), new Point(0, 0))), null);
 
         reader = cref.acquireReader();
-        coverage = (GridCoverage2D)reader.read(null);
+        coverage = reader.read(null);
         cref.recycle(reader);
-        assertImageColor(coverage.getRenderedImage(), Color.GREEN);
+        assertImageColor(coverage.render(null), Color.GREEN);
 
         versions = vc.list();
         assertEquals(3, versions.size());
@@ -199,21 +199,21 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         cref = (PyramidalCoverageResource) store.findResource(name.toString());
         //we should have the blue image
         reader = cref.acquireReader();
-        coverage = (GridCoverage2D)reader.read(null);
+        coverage = reader.read(null);
         cref.recycle(reader);
-        assertImageColor(coverage.getRenderedImage(), Color.BLUE);
+        assertImageColor(coverage.render(null), Color.BLUE);
 
         //grab by version
         cref = (PyramidalCoverageResource) store.findResource(name,versions.get(0));
         reader = cref.acquireReader();
-        coverage = (GridCoverage2D)reader.read(null);
-        assertImageColor(coverage.getRenderedImage(), Color.RED);
+        coverage = reader.read(null);
+        assertImageColor(coverage.render(null), Color.RED);
         cref = (PyramidalCoverageResource) store.findResource(name,versions.get(1));
-        coverage = (GridCoverage2D)reader.read(null);
-        assertImageColor(coverage.getRenderedImage(), Color.GREEN);
+        coverage = reader.read(null);
+        assertImageColor(coverage.render(null), Color.GREEN);
         cref = (PyramidalCoverageResource) store.findResource(name,versions.get(2));
-        coverage = (GridCoverage2D)reader.read(null);
-        assertImageColor(coverage.getRenderedImage(), Color.BLUE);
+        coverage = reader.read(null);
+        assertImageColor(coverage.render(null), Color.BLUE);
         reader = cref.acquireReader();
 
 
@@ -226,11 +226,11 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
 
         reader = cref.acquireReader();
         cref = (PyramidalCoverageResource) store.findResource(name,versions.get(0));
-        coverage = (GridCoverage2D)reader.read(null);
-        assertImageColor(coverage.getRenderedImage(), Color.RED);
+        coverage = reader.read(null);
+        assertImageColor(coverage.render(null), Color.RED);
         cref = (PyramidalCoverageResource) store.findResource(name,versions.get(1));
-        coverage = (GridCoverage2D)reader.read(null);
-        assertImageColor(coverage.getRenderedImage(), Color.BLUE);
+        coverage = reader.read(null);
+        assertImageColor(coverage.render(null), Color.BLUE);
         cref.recycle(reader);
 
     }

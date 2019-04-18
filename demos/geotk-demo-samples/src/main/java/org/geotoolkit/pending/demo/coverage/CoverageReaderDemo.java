@@ -8,7 +8,6 @@ import java.nio.file.Path;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.image.PixelIterator;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -51,24 +50,22 @@ public class CoverageReaderDemo {
         coverage.evaluate(new GeneralDirectPosition(-100, 10, 0));
 
         // But in most cases ...
-        if (coverage instanceof GridCoverage2D) {
-            // ... You will acquire iterator for fast and safe browsing.
-            final RenderedImage cvgData = ((GridCoverage2D) coverage).getRenderedImage();
-            final PixelIterator pxIterator = PixelIterator.create(cvgData);
+        // ... You will acquire iterator for fast and safe browsing.
+        final RenderedImage cvgData = coverage.render(null);
+        final PixelIterator pxIterator = PixelIterator.create(cvgData);
 
-            // What should you avoid to do with deferred reading ?
+        // What should you avoid to do with deferred reading ?
 
-            //Don't asked for the entire Raster of the image, it load all image data in memory.
-            cvgData.getData();
+        //Don't asked for the entire Raster of the image, it load all image data in memory.
+        cvgData.getData();
 
-            // Do not close your coverage reader before you've ended using your coverage, it would close connexion to the source,
-            // and tile loading will return you an error.
-            reader.dispose();
-            try {
-                cvgData.getTile(cvgData.getMinTileX(), cvgData.getMinTileY());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        // Do not close your coverage reader before you've ended using your coverage, it would close connexion to the source,
+        // and tile loading will return you an error.
+        reader.dispose();
+        try {
+            cvgData.getTile(cvgData.getMinTileX(), cvgData.getMinTileY());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
 //        final File input = new File(CoverageReaderDemo.class.getResource("/data/coverage/clouds.jpg").toURI());

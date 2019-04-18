@@ -33,7 +33,6 @@ import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -203,13 +202,12 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
             final GridCoverageReadParam param = new GridCoverageReadParam();
             param.setEnvelope(expectedEnvelope);
             final GridCoverage secondSlice = reader.read(param);
-            Assert.assertTrue("Read coverage should be 2D slice of the data.", secondSlice instanceof GridCoverage2D);
             final GeneralEnvelope env2d = expectedEnvelope.subEnvelope(0, 2).clone();
             env2d.setRange(0, -2, 1);
             env2d.setRange(1, -2, 1);
             env2d.setCoordinateReferenceSystem(inputCRS);
             final GridExtent slice2d = new GridExtent(null, new long[]{0,0}, new long[]{16, 16}, false);
-            checkReferencing(((GridCoverage2D) secondSlice).getGridGeometry(), slice2d, env2d);
+            checkReferencing(secondSlice.getGridGeometry(), slice2d, env2d);
         }
     }
 

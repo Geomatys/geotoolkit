@@ -25,10 +25,10 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -99,7 +99,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
      * @return {@link GridCoverage2D} from image, {@link CoordinateReferenceSystem}
      * and double table values which represent geographic envelope in {@link CoordinateReferenceSystem} units.
      */
-    private GridCoverage2D createCoverage(RenderedImage image, CoordinateReferenceSystem crs, double...ordinates) {
+    private GridCoverage createCoverage(RenderedImage image, CoordinateReferenceSystem crs, double...ordinates) {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setCoordinateReferenceSystem(crs);
         gcb.setRenderedImage(image);
@@ -128,7 +128,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
             final int srcY        = srcPix.getPosition().y - srcMinY;
             final int destX       = proportionalityCoefficient * srcX;
             final int destY       = proportionalityCoefficient * srcY;
-            
+
             for (int b = 0; b < numband; b++) {
                 final double srcValue = srcPix.getSampleDouble(b);
                 for(int dy = destY; dy < destY + proportionalityCoefficient; dy++) {
@@ -178,7 +178,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
         final BufferedImage img = createImage(180, 90);
         final CoordinateReferenceSystem crs = PredefinedCRS.CARTESIAN_2D;
         final double[] envelope = new double[]{-180, -90, 180, 90};
-        final GridCoverage2D gc2D = createCoverage(img, crs, envelope);
+        final GridCoverage gc2D = createCoverage(img, crs, envelope);
 
         final MapLayer cl = MapBuilder.createCoverageLayer(gc2D, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "raster");
 
@@ -210,14 +210,14 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
         final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
 
         final BufferedImage img = ImageIO.read(input);
-        final GridCoverage2D gridcov = (GridCoverage2D) reader.read(null);
+        final GridCoverage gridcov = reader.read(null);
 
         proportionalityCoefficient = 2;
 
         final MapLayer cl = MapBuilder.createCoverageLayer(input);
 
         //Envelope result
-        resEnv = gridcov.getEnvelope();
+        resEnv = gridcov.getGridGeometry().getEnvelope();
 
         srcWidth  = img.getWidth();
         srcHeight = img.getHeight();

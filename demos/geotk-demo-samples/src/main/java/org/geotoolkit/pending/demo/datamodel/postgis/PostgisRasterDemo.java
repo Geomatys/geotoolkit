@@ -8,7 +8,6 @@ import java.util.Collections;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
@@ -66,7 +65,7 @@ public class PostgisRasterDemo {
         gcb.setCoordinateReferenceSystem(crs);
         gcb.setGridToCRS(-1, 0, 0, 1, +90, -180);
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-        final GridCoverage2D coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage = gcb.getGridCoverage2D();
 
         //Create a feature
         final Feature feature = type.newInstance();

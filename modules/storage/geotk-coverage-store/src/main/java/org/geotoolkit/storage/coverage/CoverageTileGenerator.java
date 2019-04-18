@@ -33,8 +33,6 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -187,29 +185,20 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
         //at this point we should have a coverage 2D
         //if not, this means the source coverage has more dimensions then the pyramid
-        if (coverage instanceof GridCoverage2D) {
+        //resample coverage to exact tile grid geometry
+        try {
+            final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("geotoolkit", "coverage:resample");
+            final Parameters params = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
+            params.parameter("Source").setValue(coverage);
+            params.parameter("GridGeometry").setValue(gridGeomNd);
+            params.parameter("Background").setValue(fillValues == null ? empty : fillValues);
+            params.parameter("InterpolationType").setValue(interpolation);
 
-            //resample coverage to exact tile grid geometry
-            try {
-                final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("geotoolkit", "coverage:resample");
-                final Parameters params = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
-                params.parameter("Source").setValue(coverage);
-                params.parameter("GridGeometry").setValue(gridGeomNd);
-                params.parameter("Background").setValue(fillValues == null ? empty : fillValues);
-                params.parameter("InterpolationType").setValue(interpolation);
-
-                final Process process = desc.createProcess(params);
-                final ParameterValueGroup results = process.call();
-                coverage = (GridCoverage) results.parameter("result").getValue();
-            } catch (ProcessException | NoSuchIdentifierException ex) {
-                throw new DataStoreException(ex.getMessage(), ex);
-            }
-
-        } else if (coverage instanceof GridCoverageStack) {
-            throw new DataStoreException("Pyramid tile resulted in a Coverage stack from the source coverage, "
-                    + "this happens when source coverage has more dimensions then the pyramid. Given source coverage can not be used with this pyramid");
-        } else {
-            throw new DataStoreException("Unexpected coverage type : "+coverage.getClass().getName());
+            final Process process = desc.createProcess(params);
+            final ParameterValueGroup results = process.call();
+            coverage = (GridCoverage) results.parameter("result").getValue();
+        } catch (ProcessException | NoSuchIdentifierException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
         }
 
         coverage = coverage.forConvertedValues(true);

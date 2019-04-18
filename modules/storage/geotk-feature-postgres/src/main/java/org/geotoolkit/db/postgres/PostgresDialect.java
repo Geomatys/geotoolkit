@@ -45,7 +45,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.Version;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.wkb.WKBRasterReader;
 import org.geotoolkit.coverage.wkb.WKBRasterWriter;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
@@ -681,7 +680,7 @@ final class PostgresDialect extends AbstractSQLDialect{
     public void encodeCoverageValue(StringBuilder sql, GridCoverage value) throws DataStoreException {
         try{
             final WKBRasterWriter writer = new WKBRasterWriter();
-            final byte[] wkbimg = writer.write((GridCoverage2D)value);
+            final byte[] wkbimg = writer.write(value);
             final String base64 = Base64.encodeBytes(wkbimg);
             sql.append("(encode(").append("decode('").append(base64).append("','base64')").append(",'hex')").append(")::raster");
         }catch(IOException | FactoryException ex){

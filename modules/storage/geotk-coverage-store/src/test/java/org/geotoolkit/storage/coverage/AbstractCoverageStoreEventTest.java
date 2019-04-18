@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.storage.coverage;
 
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.StorageCountListener;
 import org.geotoolkit.coverage.memory.MemoryCoverageStore;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.util.NamesExt;
@@ -70,7 +70,7 @@ public abstract class AbstractCoverageStoreEventTest extends org.geotoolkit.test
         gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
         gcb.setRenderedImage(data);
         gcb.setEnvelope(-180,-90,180,90);
-        final GridCoverage2D coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage = gcb.getGridCoverage2D();
 
         ref.addListener(reflistener, ChangeEvent.class);
         final GridCoverageWriter writer = ref.acquireWriter();

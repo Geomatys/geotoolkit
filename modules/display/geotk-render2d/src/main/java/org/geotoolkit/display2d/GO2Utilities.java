@@ -81,6 +81,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.jts.awt.DecimateJTSGeometryJ2D;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.image.jai.FloodFill;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -260,7 +261,10 @@ public final class GO2Utilities {
     /**
      * @return true if some datas has been rendered
      */
-    public static boolean portray(final RenderingContext2D renderingContext, GridCoverage2D dataCoverage) throws PortrayalException{
+    public static boolean portray(final RenderingContext2D renderingContext, GridCoverage coverage) throws PortrayalException{
+
+        GridCoverage2D dataCoverage = CoverageUtilities.toGeotk(coverage);
+
         final CanvasMonitor monitor = renderingContext.getMonitor();
         final Graphics2D g2d = renderingContext.getGraphics();
 

@@ -18,8 +18,8 @@ package org.geotoolkit.map;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.geotoolkit.storage.coverage.DefaultCoverageResource;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.memory.MemoryCoverageReader;
 import org.geotoolkit.util.NamesExt;
@@ -122,7 +122,7 @@ public class ProcessedCoverageResource extends DefaultCoverageResource{
         this.lifespan = lifespan;
     }
 
-    private GridCoverage2D getResult(){
+    private GridCoverage getResult(){
         if(processDescriptor == null || inputParam == null || resultParam == null){
             LOGGER.log(Level.WARNING, "ProcessedCollection not configured.");
             return null;
@@ -156,7 +156,7 @@ public class ProcessedCoverageResource extends DefaultCoverageResource{
                 LOGGER.log(Level.WARNING, "Parameter "+resultParam+" is not in the result parameters.");
             }
 
-            if(cov instanceof GridCoverage2D){
+            if(cov instanceof GridCoverage){
                 //do nothing
             }else{
                 //unsupported type
@@ -164,15 +164,15 @@ public class ProcessedCoverageResource extends DefaultCoverageResource{
                 cov = null;
             }
 
-            return (GridCoverage2D)cov;
+            return (GridCoverage)cov;
         }
 
     }
 
     @Override
     public GridCoverageReader acquireReader() throws CoverageStoreException {
-        GridCoverage2D cov = getResult();
-        if(cov != null){
+        GridCoverage cov = getResult();
+        if (cov != null) {
             return new MemoryCoverageReader(cov);
         }
         return null;

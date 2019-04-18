@@ -24,11 +24,11 @@ import java.awt.image.Raster;
 import java.io.File;
 import java.util.Arrays;
 import javax.imageio.ImageIO;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
@@ -79,9 +79,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         gcb.setEnvelope(gridEnv);
         gcb.setName("myCoverage");
         gcb.setRenderedImage(img);
-        final GridCoverage2D coverage = gcb.getGridCoverage2D();
-
-
+        final GridCoverage coverage = gcb.getGridCoverage2D();
 
 
         final MapContext context = MapBuilder.createContext();

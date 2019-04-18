@@ -28,7 +28,6 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
@@ -117,9 +116,9 @@ public class CoverageRasterizer {
         gcb.setName("slice");
         gcb.setGridGeometry(sliceGridGeom);
         gcb.setSampleDimensions(samples);
-        final GridCoverage2D coverage = (GridCoverage2D) gcb.build();
+        final GridCoverage coverage = gcb.build();
 
-        final BufferedImage image = (BufferedImage) coverage.getRenderedImage();
+        final BufferedImage image = (BufferedImage) coverage.render(null);
         final WritableRaster raster = image.getRaster();
         final double[] pixel = new double[image.getSampleModel().getNumDataElements()];
         final double[] fillValues = new double[pixel.length];

@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.map;
 
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.storage.coverage.DefaultCoverageResource;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -106,7 +106,7 @@ public final class MapBuilder {
      * @param style layer style
      * @return FeatureMapLayer
      */
-    public static FeatureMapLayer createFeatureLayer(final FeatureSet collection, final MutableStyle style){
+    public static FeatureMapLayer createFeatureLayer(final FeatureSet collection, final MutableStyle style) {
         return new DefaultFeatureMapLayer(collection, style);
     }
 
@@ -116,7 +116,7 @@ public final class MapBuilder {
      * @param style layer style
      * @return  CoverageMapLayer
      */
-    public static CoverageMapLayer createCoverageLayer(final GridCoverage2D grid, final MutableStyle style, final String name){
+    public static CoverageMapLayer createCoverageLayer(final GridCoverage grid, final MutableStyle style, final String name) {
         final GridCoverageResource ref = new DefaultCoverageResource(grid, NamesExt.create(name));
         return createCoverageLayer(ref, style);
     }
@@ -128,10 +128,10 @@ public final class MapBuilder {
      * @param ref input
      * @return  CoverageMapLayer
      */
-    public static CoverageMapLayer createCoverageLayer(final Object input){
+    public static CoverageMapLayer createCoverageLayer(final Object input) {
         final GridCoverageResource resource;
         if (input instanceof GridCoverageResource) {
-            resource = (GridCoverageResource)input;
+            resource = (GridCoverageResource) input;
         } else {
             resource = new DefaultCoverageResource(input, NamesExt.create("image"));
         }

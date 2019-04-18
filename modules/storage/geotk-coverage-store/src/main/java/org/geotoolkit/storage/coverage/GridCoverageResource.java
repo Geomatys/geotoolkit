@@ -23,8 +23,6 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -100,16 +98,7 @@ public interface GridCoverageResource extends org.apache.sis.storage.GridCoverag
                 param.setResolution(resolution);
             }
 
-            GridCoverage cov = reader.read(param);
-            while (cov instanceof GridCoverageStack) {
-                //pick the first slice
-                cov = ((GridCoverageStack) cov).coverageAtIndex(0);
-            }
-
-            if (!(cov instanceof GridCoverage2D)) {
-                throw new DataStoreException("Read coverage is not a GridCoverage2D");
-            }
-            return (GridCoverage2D) cov;
+            return reader.read(param);
         } finally {
             recycle(reader);
         }

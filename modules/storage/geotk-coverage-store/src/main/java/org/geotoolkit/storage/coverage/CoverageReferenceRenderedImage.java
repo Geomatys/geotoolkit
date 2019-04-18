@@ -59,7 +59,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class CoverageReferenceRenderedImage implements RenderedImage{
+public class CoverageReferenceRenderedImage implements RenderedImage {
 
     private final GridCoverageResource ref;
     private final Mosaic mosaic;
