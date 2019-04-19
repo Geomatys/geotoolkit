@@ -287,6 +287,10 @@ final class ProductEntry extends Entry {
         }
     }
 
+    /**
+     * Returns sample dimensions "global" to this product. Those sample dimensions may be slightly different than the
+     * sample dimensions returned {@link GridCoverage#getSampleDimensions()} if {@link FormatEntry#approximate} is true.
+     */
     public List<SampleDimension> getSampleDimensions() throws CatalogException {
         ensureValid();
         if (format != null) {

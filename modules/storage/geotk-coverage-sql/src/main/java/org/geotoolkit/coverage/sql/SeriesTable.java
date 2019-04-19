@@ -105,7 +105,7 @@ final class SeriesTable extends CachedTable<Integer,SeriesEntry> {
     final int findOrInsert(final String product, final String directory, final String extension, final NewRaster raster)
             throws SQLException, DataStoreException
     {
-        final String format = formats.findOrInsert(raster.driver, raster.bands, raster.suggestedID(product));
+        final String format = formats.findOrInsert(product, raster.driver, SampleDimensionEntry.wrap(raster.bands), raster.suggestedID(product));
         boolean insert = false;
         do {
             final PreparedStatement statement;
