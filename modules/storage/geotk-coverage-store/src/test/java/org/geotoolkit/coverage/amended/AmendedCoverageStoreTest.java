@@ -31,6 +31,7 @@ import org.apache.sis.referencing.datum.DefaultImageDatum;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.memory.MemoryCoverageStore;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.util.NamesExt;
@@ -103,7 +104,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
 
         //decorate this coverage
         final AmendedCoverageStore decorated = new AmendedCoverageStore(store);
-        assertEquals(1,decorated.getNames().size());
+        assertEquals(1, DataStores.flatten(store, true, GridCoverageResource.class).size());
         final AmendedCoverageResource decoratedRef = (AmendedCoverageResource) decorated.findResource(name.toString());
         assertNotNull(decoratedRef);
         assertEquals(IMAGECRS, decoratedRef.getGridGeometry().getCoordinateReferenceSystem());
@@ -131,7 +132,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
 
         //decorate this coverage
         final AmendedCoverageStore decorated = new AmendedCoverageStore(store);
-        assertEquals(1,decorated.getNames().size());
+        assertEquals(1, DataStores.flatten(store, true, GridCoverageResource.class).size());
         final AmendedCoverageResource decoratedRef = (AmendedCoverageResource) decorated.findResource(name.toString());
         assertNotNull(decoratedRef);
         assertEquals(IMAGECRS, decoratedRef.getGridGeometry().getCoordinateReferenceSystem());

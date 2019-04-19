@@ -12,16 +12,15 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Iterator;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.operation.builder.LocalizationGridBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.filestore.FileCoverageStore;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.GenericName;
 import ucar.ma2.ArrayFloat;
 import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -189,24 +188,11 @@ abstract class VelocityComponent {
 
         MeteoFrance(final URI file) throws DataStoreException, IOException, URISyntaxException {
             try (FileCoverageStore store = new FileCoverageStore(file, "geotiff")) {
-                final GridCoverageResource ref = (GridCoverageResource) store.findResource(singleton(store.getNames()));
+                final GridCoverageResource ref = DataStores.flatten(store, true, GridCoverageResource.class).iterator().next();;
                 coverage = ref.read(null);
             }
             position = new DirectPosition2D();
             samples = new double[1];
-        }
-
-        /**
-         * Returns the singleton element in the given collection.
-         * If the iteration is not over exactly one element, throws an exception.
-         */
-        private static String singleton(final Iterable<? extends GenericName> names) throws DataStoreException {
-            final Iterator<? extends GenericName> it = names.iterator();
-            if (it.hasNext()) {
-                final GenericName name = it.next();
-                if (!it.hasNext()) return name.toString();
-            }
-            throw new DataStoreException("Unexpected amount of names.");
         }
 
         /**

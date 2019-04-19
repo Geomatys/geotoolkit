@@ -36,6 +36,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.storage.DataSet;
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
@@ -100,7 +101,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         for (GridCoverageResource r : DataStores.flatten(store, true, GridCoverageResource.class)) {
             store.remove(r);
         }
-        assertTrue(store.getNames().isEmpty());
+        assertTrue(DataStores.getNames(store, true, DataSet.class).isEmpty());
     }
 
     @Test

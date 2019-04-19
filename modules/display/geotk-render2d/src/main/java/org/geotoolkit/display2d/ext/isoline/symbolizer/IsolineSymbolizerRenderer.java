@@ -46,6 +46,7 @@ import org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.function.Jenks;
@@ -58,7 +59,6 @@ import org.opengis.style.ColorMap;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.TextSymbolizer;
-import org.opengis.util.GenericName;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -151,9 +151,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
 
                     final GridCoverage resampledCoverage = (GridCoverage) output.parameter(ResampleDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
                     final MemoryCoverageStore memoryCoverageStore = new MemoryCoverageStore(resampledCoverage, coverageReference.getIdentifier().tip().toString());
-
-                    final GenericName name = memoryCoverageStore.getNames().iterator().next();
-                    final GridCoverageResource resampledCovRef = (GridCoverageResource) memoryCoverageStore.findResource(name.toString());
+                    final GridCoverageResource resampledCovRef = (GridCoverageResource) DataStores.flatten(memoryCoverageStore, true, GridCoverageResource.class);
 
                     /////////////////////
                     // 2.2 - Compute isolines

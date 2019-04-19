@@ -36,6 +36,7 @@ import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStoreException;
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
 import org.geotoolkit.data.multires.DefiningMosaic;
@@ -101,7 +102,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         for (GridCoverageResource r : DataStores.flatten(store, true, GridCoverageResource.class)) {
             store.remove(r);
         }
-        assertTrue(store.getNames().isEmpty());
+        assertTrue(DataStores.getNames(store, true, DataSet.class).isEmpty());
     }
 
     @Test

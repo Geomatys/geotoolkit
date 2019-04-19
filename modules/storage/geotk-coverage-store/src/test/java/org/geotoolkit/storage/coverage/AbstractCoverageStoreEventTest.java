@@ -26,6 +26,7 @@ import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.event.ChangeEvent;
+import org.geotoolkit.storage.DataStores;
 import org.junit.Test;
 import org.opengis.util.GenericName;
 
@@ -52,7 +53,7 @@ public abstract class AbstractCoverageStoreEventTest extends org.geotoolkit.test
         final MemoryCoverageStore store = new MemoryCoverageStore();
         store.addListener(storelistener, ChangeEvent.class);
 
-        assertEquals(0, store.getNames().size());
+        assertEquals(0, DataStores.flatten(store, true, GridCoverageResource.class).size());
 
         final GenericName name = NamesExt.create("test");
         final GridCoverageResource ref = store.add(new DefiningCoverageResource(name));

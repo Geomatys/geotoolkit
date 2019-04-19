@@ -185,8 +185,6 @@ public class PyramidalModelReader extends AbstractGridCoverageReader {
             }
         }
 
-        final MathTransform gridToCRSds = ReferencingUtilities.toTransform(minordi, gridToCRS, multiAxisValues, cs.getDimension());
-
         //-- size of internal pixel data recovered
         final Rectangle dataSize = mosaic.getDataExtent();
 
@@ -206,6 +204,14 @@ public class PyramidalModelReader extends AbstractGridCoverageReader {
         }
 
         final GridExtent ge = new GridExtent(null, null, high, false);
+
+        // TODO : we should do the transform like this but the is an issue further with derivate transforms
+        //convert to center
+        //gridToCRS = PixelTranslation.translate(gridToCRS, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
+        //final MathTransform gridToCRSds = ReferencingUtilities.toTransform(minordi, gridToCRS, multiAxisValues, cs.getDimension());
+        //gridGeom = new GridGeometry(ge, PixelInCell.CELL_CENTER, gridToCRSds, crs);
+
+        final MathTransform gridToCRSds = ReferencingUtilities.toTransform(minordi, gridToCRS, multiAxisValues, cs.getDimension());
         gridGeom = new GridGeometry(ge, PixelInCell.CELL_CORNER, gridToCRSds, crs);
 
         return gridGeom;

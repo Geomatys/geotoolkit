@@ -35,16 +35,14 @@ import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
-import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.StorageEvent;
@@ -67,8 +65,6 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
     protected final Parameters parameters;
     protected final Set<ChangeListener> storeListeners = new HashSet<>();
-
-    private GenericNameIndex<GridCoverageResource> cachedRefs = null;
 
     protected AbstractCoverageStore(final ParameterValueGroup params) {
         this.parameters = Parameters.castOrWrap(params);
@@ -222,6 +218,7 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
      *
      * @return source configuration parameters
      */
+    @Override
     public ParameterValueGroup getOpenParameters() {
         return parameters;
     }
@@ -234,46 +231,6 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
     @Override
     public String toString() {
         return Classes.getShortClassName(this);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // Convinient methods, fallback on getRootResource                            //
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Get a collection of all available coverage names.
-     *
-     * @return Set<GenericName> , never null, but can be empty.
-     * @throws DataStoreException
-     */
-    public final Set<GenericName> getNames() throws DataStoreException {
-        final GenericNameIndex<GridCoverageResource> map = listReferences();
-        return map.getNames();
-    }
-
-    protected synchronized GenericNameIndex<GridCoverageResource> listReferences() throws DataStoreException {
-        if (cachedRefs==null) {
-            cachedRefs = new GenericNameIndex<>();
-            listReferences(this, cachedRefs);
-        }
-        return cachedRefs;
-    }
-
-    private GenericNameIndex<GridCoverageResource> listReferences(org.apache.sis.storage.Resource candidate, GenericNameIndex<GridCoverageResource> map)
-            throws IllegalNameException, DataStoreException{
-
-        if(candidate instanceof GridCoverageResource){
-            final GridCoverageResource cr = (GridCoverageResource) candidate;
-            map.add(cr.getIdentifier(), cr);
-        }
-
-        if (candidate instanceof Aggregate) {
-            for(org.apache.sis.storage.Resource child : ((Aggregate)candidate).components()){
-                listReferences(child, map);
-            }
-        }
-
-        return map;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -369,8 +326,8 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
      */
     protected void typeCheck(final GenericName candidate) throws DataStoreException{
 
-        final Collection<GenericName> names = getNames();
-        if(!names.contains(candidate)){
+        final Collection<GenericName> names = DataStores.getNames(this, true, DataSet.class);
+        if (!names.contains(candidate)) {
             final StringBuilder sb = new StringBuilder("Type name : ");
             sb.append(candidate);
             sb.append(" do not exist in this datastore, available names are : ");
@@ -400,7 +357,6 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
      * @param event , event to send to listeners.
      */
     protected synchronized void sendEvent(final ChangeEvent event){
-        cachedRefs = null;
         final ChangeListener[] lst;
         synchronized (storeListeners) {
             lst = storeListeners.toArray(new ChangeListener[storeListeners.size()]);

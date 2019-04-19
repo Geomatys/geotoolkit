@@ -24,10 +24,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.storage.DataStore;
+import org.junit.Ignore;
 
 /**
  * @author Johann Sorel (Geomatys)
  */
+@Ignore
 public class XMLCoverageStoreNDTest extends PyramidalModelStoreNDTest {
 
     private final List<File> folders = new ArrayList<File>();

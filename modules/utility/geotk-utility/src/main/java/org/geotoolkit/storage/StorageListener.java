@@ -17,12 +17,10 @@
 package org.geotoolkit.storage;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
@@ -53,10 +51,6 @@ public final class StorageListener {
      */
     public static final class Weak extends WeakReference<ChangeListener> implements ChangeListener, Disposable {
 
-        private static final String ERROR_MSG = "Potential memory leak in ChangeListener, could "
-                        + "not remove listener because source object does not have a removeListener method. "
-                        + "Source object is : {0}";
-
         private final Collection<Object> sources = new ArrayList<>(1);
 
         public Weak(final ChangeListener ref) {
@@ -75,19 +69,9 @@ public final class StorageListener {
             if (source != null && !sources.contains(source)) {
                 // register in the new source
                 this.sources.add(source);
-                try {
-                    final Method method = source.getClass().getMethod("addListener", ChangeListener.class, Class.class);
-                    method.invoke(source, this, ChangeEvent.class);
-                } catch (IllegalAccessException ex) {
-                    LOGGER.log(Level.WARNING, ERROR_MSG, source);
-                } catch (IllegalArgumentException ex) {
-                    LOGGER.log(Level.WARNING, ERROR_MSG, source);
-                } catch (InvocationTargetException ex) {
-                    LOGGER.log(Level.WARNING, ERROR_MSG, source);
-                } catch (NoSuchMethodException ex) {
-                    LOGGER.log(Level.WARNING, ERROR_MSG, source);
-                } catch (SecurityException ex) {
-                    LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                if (source instanceof Resource) {
+                    Resource res = (Resource) source;
+                    res.addListener(this, ChangeEvent.class);
                 }
             }
         }
@@ -110,11 +94,9 @@ public final class StorageListener {
         }
 
         private synchronized void remove(final Object source) {
-            try {
-                final Method method = source.getClass().getMethod("removeListener", ChangeListener.class, Class.class);
-                method.invoke(source, this, ChangeEvent.class);
-            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
-                LOGGER.log(Level.WARNING, ERROR_MSG, source);
+            if (source instanceof Resource) {
+                Resource res = (Resource) source;
+                res.removeListener(this, ChangeEvent.class);
             }
         }
 

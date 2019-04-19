@@ -28,6 +28,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
@@ -40,6 +41,7 @@ import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.DefaultCoverageResource;
@@ -114,7 +116,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
         final DefiningCoverageResource cr = (DefiningCoverageResource) resource;
         final GenericName name = cr.getName();
 
-        final Set<GenericName> names = getNames();
+        final Set<GenericName> names = DataStores.getNames(this, true, DataSet.class);
         if (names.contains(name)) {
             throw new DataStoreException("Layer "+name+" already exist");
         }
