@@ -1,7 +1,18 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2019, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.coverage.sql;
 
@@ -15,7 +26,7 @@ import org.apache.sis.util.ArgumentChecks;
  *
  * @author Alexis Manin (Geomatys)
  */
-class UpgradableLock {
+final class UpgradableLock {
 
     private final StampedLock accessLock;
 
@@ -58,12 +69,18 @@ class UpgradableLock {
     }
 
     private long lock(final boolean exclusive) throws DataStoreException {
+        final long stamp;
         try {
-            return exclusive? accessLock.tryWriteLock(lockTimeout, lockTimeoutUnit) : accessLock.tryReadLock(lockTimeout, lockTimeoutUnit);
+            stamp = exclusive ? accessLock.tryWriteLock(lockTimeout, lockTimeoutUnit)
+                              : accessLock.tryReadLock(lockTimeout, lockTimeoutUnit);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            Thread.currentThread().interrupt();         // Set the thread interrupt status.
             throw new DataStoreException("Interrupted while waiting for exclusive lock", e);
         }
+        if (stamp == 0) {
+            throw new DataStoreException("Timeout while waiting for a lock");
+        }
+        return stamp;
     }
 
     interface Stamp {
