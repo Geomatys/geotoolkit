@@ -37,8 +37,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtilities;
@@ -118,7 +116,7 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
      * Internal only, use setOutputCRS to recalculate output transform
      */
     private void createTransformOutput() throws FactoryException, IncommensurableException {
-        if (outputCrs != null){
+        if (outputCrs != null) {
             final CoordinateReferenceSystem crsImg = gridGeom.getCoordinateReferenceSystem();
             coverageToOutput = CRS.findOperation(crsImg, outputCrs, null).getMathTransform();
             try {
@@ -132,22 +130,19 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
     @Override
     public BufferedImage getBufferedImageOf(final Envelope outputEnv, final Dimension outputDimension) throws PortrayalException {
 
-        if(outputCrs == null){
+        if (outputCrs == null) {
             throw new PortrayalException("Output crs has not been set");
         }
 
-        if (!org.geotoolkit.referencing.CRS.equalsApproximatively(outputEnv.getCoordinateReferenceSystem(), outputCrs)){
+        if (!org.geotoolkit.referencing.CRS.equalsApproximatively(outputEnv.getCoordinateReferenceSystem(), outputCrs)) {
             this.setOutputCRS(outputEnv.getCoordinateReferenceSystem());
         }
 
-        try{
-            final GridCoverageReader reader = coverageRef.acquireReader();
-            final GridCoverageReadParam params = new GridCoverageReadParam();
-            params.setEnvelope(outputEnv);
-            try{
-                final GridCoverage coverage = reader.read(params);
+        try {
+            try {
+                final GridCoverage coverage = coverageRef.read(coverageRef.getGridGeometry().derive().subgrid(outputEnv).build());
                 return extractTileImage(outputEnv, coverage, outputToCoverage, outputDimension);
-            }catch(DisjointCoverageDomainException de){
+            } catch (DisjointCoverageDomainException de) {
                 //tile outside of the coverage, it's possible
                 //create a fake tile at minimum elevation
                 final BufferedImage img = BufferedImages.createImage(
@@ -156,7 +151,7 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
                 return img;
             }
 
-        }catch(Exception ex){
+        } catch(Exception ex) {
             throw new PortrayalException(ex);
         }
     }

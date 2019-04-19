@@ -143,7 +143,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
     public void close() {
     }
 
-    private class MemoryCoverageResource extends DefaultCoverageResource{
+    private class MemoryCoverageResource extends DefaultCoverageResource {
 
         private GridCoverage coverage;
 

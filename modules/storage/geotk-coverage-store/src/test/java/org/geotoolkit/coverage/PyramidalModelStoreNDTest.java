@@ -35,8 +35,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
 import org.geotoolkit.data.multires.Mosaic;
@@ -213,10 +211,9 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
     @Test
     public void readDefaultTest() throws Exception {
         getCoverageStore();
-        final GridCoverageReader reader = ref.acquireReader();
 
         //we expect a 3D coverage, with all slices
-        final GridCoverage coverage = reader.read(null);
+        final GridCoverage coverage = ref.read(null);
         final Envelope env = coverage.getGridGeometry().getEnvelope();
         assertTrue(Utilities.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()));
         assertEquals(CORNER_LONG,  env.getMinimum(0), DELTA);//-- -180
@@ -240,8 +237,6 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
         checkCoverage(lowerCovs.get(0), 40, 30, colors[0][1], CORNER_LONG, -160, 75, CORNER_LAT, CORNER_V[0], -14);
         //expecting image from mosaic with min resolution and vertical 46.58
         checkCoverage(upperCovs.get(0), 40, 30, colors[1][1], CORNER_LONG, -160, 75, CORNER_LAT, CORNER_V[1], 47.58);
-
-        ref.recycle(reader);
     }
 
     /**
@@ -250,55 +245,46 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
     @Test
     public void readSlicesTest() throws Exception {
         getCoverageStore();
-        final GridCoverageReader reader = ref.acquireReader();
-        final GridCoverageReadParam param = new GridCoverageReadParam();
+
+        final GridGeometry gg = ref.getGridGeometry();
 
         //expecting image from mosaic with min resolution and vertical -15
-        param.setEnvelope(createEnvelope(CORNER_LONG, +180,          //-- dim 0 (long)
-                                                 -90, CORNER_LAT,    //-- dim 1 (lat)
-                                         CORNER_V[0], CORNER_V[0])); //-- dim 2 (vertical)
-        param.setResolution(0.5,
-                            0.5,
-                            1);
+        Envelope env = createEnvelope(CORNER_LONG, +180,          //-- dim 0 (long)
+                                              -90, CORNER_LAT,    //-- dim 1 (lat)
+                                      CORNER_V[0], CORNER_V[0]); //-- dim 2 (vertical)
 
-        GridCoverage coverage = reader.read(param);
+
+        GridCoverage coverage = ref.read(gg.derive().subgrid(env, 0.5, 0.5, 1).build());
         checkCoverage(coverage, 40, 30, colors[0][1], CORNER_LONG, -160,
                                                                75, CORNER_LAT,
                                                       CORNER_V[0], -14); //-- -14 = corner_v[0] - 1 unity.
-        ref.recycle(reader);
 
         //expecting image from mosaic with max resolution and vertical -15
-        param.setEnvelope(createEnvelope(CORNER_LONG, +180,
-                                                 -90, CORNER_LAT,
-                                         CORNER_V[0], CORNER_V[0]));
-        param.setResolution(1,1,1);
-        coverage = reader.read(param);
+        env = createEnvelope(CORNER_LONG, +180,
+                                     -90, CORNER_LAT,
+                             CORNER_V[0], CORNER_V[0]);
+        coverage = ref.read(gg.derive().subgrid(env, 1, 1, 1).build());
         checkCoverage(coverage, 20, 20, colors[0][0], CORNER_LONG, -160,
                                                                70, CORNER_LAT,
                                                       CORNER_V[0], -14);
-        ref.recycle(reader);
 
         //expecting image from mosaic with min resolution and vertical 46.58
-        param.setEnvelope(createEnvelope(CORNER_LONG, +180,
-                                                 -90, CORNER_LAT,
-                                         CORNER_V[1], CORNER_V[1]));
-        param.setResolution(0.5,0.5,1);
-        coverage = reader.read(param);
+        env = createEnvelope(CORNER_LONG, +180,
+                                     -90, CORNER_LAT,
+                             CORNER_V[1], CORNER_V[1]);
+        coverage = ref.read(gg.derive().subgrid(env, 0.5, 0.5, 1).build());
         checkCoverage(coverage, 40, 30, colors[1][1], CORNER_LONG, -160,
                                                                75, CORNER_LAT,
                                                       CORNER_V[1], 47.58);
-        ref.recycle(reader);
 
         //expecting image from mosaic with max resolution and vertical 46.58
-        param.setEnvelope(createEnvelope(CORNER_LONG, +180,
-                                                 -90, CORNER_LAT,
-                                         CORNER_V[1], CORNER_V[1]));
-        param.setResolution(1,1,1);
-        coverage = reader.read(param);
+        env = createEnvelope(CORNER_LONG, +180,
+                                     -90, CORNER_LAT,
+                             CORNER_V[1], CORNER_V[1]);
+        coverage = ref.read(gg.derive().subgrid(env, 1, 1, 1).build());
         checkCoverage(coverage, 20, 20, colors[1][0], CORNER_LONG, -160,
                                                                70, CORNER_LAT,
                                                       CORNER_V[1], 47.58);
-        ref.recycle(reader);
     }
 
     /**

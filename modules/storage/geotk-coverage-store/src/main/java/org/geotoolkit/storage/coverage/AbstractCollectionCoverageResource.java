@@ -191,9 +191,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
         final Collection<GridCoverageResource> references = getCoverages(null);
         if (!references.isEmpty()) {
             final GridCoverageResource ref = references.iterator().next();
-            GridCoverageReader reader = ref.acquireReader();
-            sampleDimensions = reader.getSampleDimensions();
-            ref.recycle(reader);
+            sampleDimensions = ref.getSampleDimensions();
         }
 
         return sampleDimensions;

@@ -21,8 +21,6 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -67,13 +65,6 @@ public class Categorize extends AbstractProcess {
         final GridCoverageResource source = getSource();
         final GridCoverageResource destination = getDestination();
 
-        final GridCoverageReader reader;
-        try {
-            reader = source.acquireReader();
-        } catch (DataStoreException ex) {
-            throw new ProcessException("Cannot access data source", this, ex);
-        }
-
         final GridCoverageWriter writer;
         try {
             writer = destination.acquireWriter();
@@ -81,8 +72,7 @@ public class Categorize extends AbstractProcess {
             throw new ProcessException("Cannot access data output", this, ex);
         }
 
-        try (final UncheckedCloseable inClose = () -> source.recycle(reader);
-                final UncheckedCloseable outClose = () -> destination.recycle(writer)) {
+        try (final UncheckedCloseable outClose = () -> destination.recycle(writer)) {
             final GridGeometry inputGG = source.getGridGeometry();
 
             final GridGeometry readGeom;
@@ -133,11 +123,9 @@ public class Categorize extends AbstractProcess {
 
             final GridGeometryIterator it = new GridGeometryIterator(readGeom);
             while (it.hasNext()) {
-                final GridCoverageReadParam readParam = new GridCoverageReadParam();
                 final GridGeometry sliceGeom = it.next();
                 final GeneralEnvelope expectedSliceEnvelope = GeneralEnvelope.castOrCopy(sliceGeom.getEnvelope());
-                readParam.setEnvelope(expectedSliceEnvelope);
-                GridCoverage sourceCvg = reader.read(readParam);
+                GridCoverage sourceCvg = source.read(sliceGeom);
                 if (sourceCvg instanceof GridCoverageStack) {
                     // Try to unravel expected slice
                     final Optional<GridCoverage> slice = extractSlice((GridCoverageStack) sourceCvg, sliceGeom.getEnvelope());

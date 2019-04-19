@@ -77,7 +77,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         final GridExtent gridEnvReader = gridGeomReader.getExtent();
         final MathTransform gridToCrsReader = gridGeomReader.getGridToCRS(PixelInCell.CELL_CENTER);
 
-        final GridCoverage result = ref1.acquireReader().read(null);
+        final GridCoverage result = ref1.read(null);
         Assert.assertEquals(crs,result.getCoordinateReferenceSystem());
 
         final GridGeometry gridGeom   = result.getGridGeometry();

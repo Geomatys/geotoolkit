@@ -54,6 +54,7 @@ import org.opengis.util.GenericName;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
  */
+@Deprecated
 public interface GridCoverageReader {
 
     /**

@@ -41,7 +41,6 @@ import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
@@ -106,9 +105,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
                 outRef);
         process.call();
 
-        final GridCoverageReader reader = outRef.acquireReader();
-        final GridCoverage result = reader.read(null);
-        outRef.recycle(reader);
+        final GridCoverage result = outRef.read(null);
         final Raster resultRaster = result.render(null).getData();
         for(int x=0;x<width;x++){
             for(int y=0;y<height;y++){
@@ -159,9 +156,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
                 outRef);
         process.call();
 
-        final GridCoverageReader reader = outRef.acquireReader();
-        final GridCoverage result = reader.read(null);
-        outRef.recycle(reader);
+        final GridCoverage result = outRef.read(null);
         final Raster resultRaster = result.render(null).getData();
         for(int x=0;x<width;x++){
             for(int y=0;y<height;y++){
@@ -213,9 +208,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
                 outRef);
         process.call();
 
-        final GridCoverageReader reader = outRef.acquireReader();
-        final GridCoverage result = reader.read(null);
-        outRef.recycle(reader);
+        final GridCoverage result = outRef.read(null);
         final Raster resultRaster = result.render(null).getData();
         for(int x=0;x<width;x++){
             for(int y=0;y<height;y++){
@@ -276,12 +269,8 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
 
 
         //create base coverage
-        final GridCoverageReader reader1 = ref1.acquireReader();
-        final GridCoverageReader reader2 = ref2.acquireReader();
-        final GridCoverage baseCoverage1 = reader1.read(null);
-        final GridCoverage baseCoverage2 = reader2.read(null);
-        ref1.recycle(reader1);
-        ref2.recycle(reader2);
+        final GridCoverage baseCoverage1 = ref1.read(null);
+        final GridCoverage baseCoverage2 = ref2.read(null);
 
         outRef.setSampleModel(createRenderedImage(1,1,0,0).getSampleModel());
         outRef.setColorModel(createRenderedImage(1,1,0,0).getColorModel());
@@ -294,9 +283,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
                 outRef);
         process.call();
 
-        final GridCoverageReader outReader = outRef.acquireReader();
-        final GridCoverage result = outReader.read(null);
-        outRef.recycle(outReader);
+        final GridCoverage result = outRef.read(null);
         Assert.assertTrue(result instanceof GridCoverageStack);
         final GridCoverageStack stackT = (GridCoverageStack) result;
         final GridCoverageStack stackT0 = (GridCoverageStack) stackT.coveragesAt(-9).get(0);

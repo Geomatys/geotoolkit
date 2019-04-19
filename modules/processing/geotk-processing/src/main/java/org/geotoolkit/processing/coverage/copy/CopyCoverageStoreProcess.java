@@ -41,17 +41,15 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
-import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
 import org.geotoolkit.data.multires.Mosaic;
@@ -70,7 +68,6 @@ import org.geotoolkit.processing.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.temporal.object.TemporalUtilities;
@@ -148,7 +145,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
             final float size = gcrs.size();
             int inc = 0;
             for(GridCoverageResource gcr : gcrs){
-                NamedIdentifier n = gcr.getIdentifier();
+                GenericName n = gcr.getIdentifier();
                 fireProgressing("Copying "+n+".", (int)((inc*100f)/size), false);
                 final Resource resource = inStore.findResource(n.toString());
                 if (resource instanceof GridCoverageResource) {
@@ -363,14 +360,12 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         final Pyramid pyramid = (Pyramid) outPM.createModel(new DefiningPyramid(crs));
 
         // save all possible envelope slice combinations in a separate mosaic.
-        final GridCoverageReader reader = inRef.acquireReader();
         final GridGeometryIterator gridCIte = new GridGeometryIterator(globalGeom);
         while (gridCIte.hasNext()) {
             GeneralEnvelope env = GeneralEnvelope.castOrCopy(gridCIte.next().getEnvelope());
-            saveMosaic(outPM, pyramid, reader, env, reduce);
+            saveMosaic(outPM, pyramid, inRef, env, reduce);
         }
 
-        inRef.recycle(reader);
     }
 
     /**
@@ -384,17 +379,17 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      * @throws DataStoreException
      * @throws TransformException
      */
-    private void saveMosaic(final PyramidalCoverageResource pm, final Pyramid pyramid, final GridCoverageReader reader,
+    private void saveMosaic(final PyramidalCoverageResource pm, final Pyramid pyramid, final GridCoverageResource inRes,
             Envelope env, boolean reduce) throws DataStoreException, TransformException, ProcessException {
-        final GridCoverageReadParam params = new GridCoverageReadParam();
-        if (env != null) {
-            params.setEnvelope(env);
-        }else{
-            env = reader.getGridGeometry().getEnvelope();
-        }
 
+        GridCoverage coverage;
+        if (env != null) {
+            coverage = inRes.read(inRes.getGridGeometry().derive().subgrid(env).build());
+        }else{
+            env = inRes.getGridGeometry().getEnvelope();
+            coverage = inRes.read(null);
+        }
         final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
-        GridCoverage coverage = reader.read(params);
 
         //straighten coverage
         final Parameters subParams = Parameters.castOrWrap(StraightenDescriptor.INPUT_DESC.createValue());

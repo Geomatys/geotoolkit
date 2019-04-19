@@ -37,7 +37,6 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
@@ -144,9 +143,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         assertEquals(versions.get(0).getDate().getTime(),0);
         assertEquals(date1.getTime(),versions.get(0).getDate().getTime());
 
-        GridCoverageReader reader = cref.acquireReader();
-        coverage = reader.read(null);
-        cref.recycle(reader);
+        coverage = cref.read(null);
         assertImageColor(coverage.render(null), Color.RED);
 
         //create version 2 -----------------------------------------------------
@@ -161,9 +158,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
                 new DefiningMosaic(null, upperLeft, 1, dimension, new Dimension(1, 1)));
         mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(dimension, Color.BLUE), new Point(0, 0))), null);
 
-        reader = cref.acquireReader();
-        coverage = reader.read(null);
-        cref.recycle(reader);
+        coverage = cref.read(null);
         assertImageColor(coverage.render(null), Color.BLUE);
 
         versions = vc.list();
@@ -183,9 +178,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
                 new DefiningMosaic(null, upperLeft, 1, dimension, new Dimension(1, 1)));
         mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(dimension, Color.BLUE), new Point(0, 0))), null);
 
-        reader = cref.acquireReader();
-        coverage = reader.read(null);
-        cref.recycle(reader);
+        coverage = cref.read(null);
         assertImageColor(coverage.render(null), Color.GREEN);
 
         versions = vc.list();
@@ -198,23 +191,19 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         //try accesing different version ---------------------------------------
         cref = (PyramidalCoverageResource) store.findResource(name.toString());
         //we should have the blue image
-        reader = cref.acquireReader();
-        coverage = reader.read(null);
-        cref.recycle(reader);
+        coverage = cref.read(null);
         assertImageColor(coverage.render(null), Color.BLUE);
 
         //grab by version
         cref = (PyramidalCoverageResource) store.findResource(name,versions.get(0));
-        reader = cref.acquireReader();
-        coverage = reader.read(null);
+        coverage = cref.read(null);
         assertImageColor(coverage.render(null), Color.RED);
         cref = (PyramidalCoverageResource) store.findResource(name,versions.get(1));
-        coverage = reader.read(null);
+        coverage = cref.read(null);
         assertImageColor(coverage.render(null), Color.GREEN);
         cref = (PyramidalCoverageResource) store.findResource(name,versions.get(2));
-        coverage = reader.read(null);
+        coverage = cref.read(null);
         assertImageColor(coverage.render(null), Color.BLUE);
-        reader = cref.acquireReader();
 
 
         //drop some versions ---------------------------------------------------
@@ -224,14 +213,12 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         assertEquals(versions.get(0).getDate().getTime(),0);
         assertEquals(versions.get(1).getDate().getTime(),50000);
 
-        reader = cref.acquireReader();
         cref = (PyramidalCoverageResource) store.findResource(name,versions.get(0));
-        coverage = reader.read(null);
+        coverage = cref.read(null);
         assertImageColor(coverage.render(null), Color.RED);
         cref = (PyramidalCoverageResource) store.findResource(name,versions.get(1));
-        coverage = reader.read(null);
+        coverage = cref.read(null);
         assertImageColor(coverage.render(null), Color.BLUE);
-        cref.recycle(reader);
 
     }
 

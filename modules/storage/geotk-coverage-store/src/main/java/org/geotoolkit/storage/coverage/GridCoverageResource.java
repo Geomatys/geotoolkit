@@ -34,6 +34,7 @@ import org.opengis.metadata.content.CoverageDescription;
  * @author Johann Sorel (Geomatys)
  * @module
  */
+@Deprecated
 public interface GridCoverageResource extends org.apache.sis.storage.GridCoverageResource, StoreResource {
 
     /**
@@ -65,12 +66,14 @@ public interface GridCoverageResource extends org.apache.sis.storage.GridCoverag
      * Get a reader for this coverage.
      * When you have finished using it, return it using the recycle method.
      */
+    @Deprecated
     GridCoverageReader acquireReader() throws DataStoreException;
 
     /**
      * Get a writer for this coverage.
      * When you have finished using it, return it using the recycle method.
      */
+    @Deprecated
     GridCoverageWriter acquireWriter() throws DataStoreException;
 
     /**
