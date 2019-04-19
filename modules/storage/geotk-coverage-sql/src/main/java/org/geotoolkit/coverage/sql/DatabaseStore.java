@@ -416,7 +416,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
                  ProductTable table = new ProductTable(transaction))
             {
                 final ProductEntry product = table.getEntry(productName);
-                product.prefetch(table);
+                product.components(table);                                  // Force prefetching components.
 
                 return createResource(product);
             } catch (SQLException e) {

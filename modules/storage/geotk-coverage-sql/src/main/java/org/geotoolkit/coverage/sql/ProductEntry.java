@@ -112,7 +112,7 @@ final class ProductEntry extends Entry {
     /**
      * {@code true} if this product has been deleted.
      */
-    private boolean isDeleted;
+    private volatile boolean isDeleted;
 
     /**
      * Creates a new product.
@@ -204,10 +204,12 @@ final class ProductEntry extends Entry {
      * Fetches now the list of components if not already available.
      * This method should be invoked when the caller is going to invoke {@link #components()} soon.
      */
-    final void prefetch(final ProductTable table) throws SQLException, DataStoreException {
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
+    final synchronized List<ProductEntry> components(final ProductTable table) throws SQLException, DataStoreException {
         if (components == null) {
             components = table.list(name);
         }
+        return components;
     }
 
     /**
@@ -216,7 +218,7 @@ final class ProductEntry extends Entry {
      * by listing all products.
      */
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
-    public List<ProductEntry> components() throws DataStoreException {
+    public synchronized List<ProductEntry> components() throws DataStoreException {
         ensureValid();
         if (components == null) {
             try (Transaction transaction = database.transaction();
@@ -379,12 +381,11 @@ final class ProductEntry extends Entry {
      * Removed recursively all cached values.
      */
     private void removeCached(final ProductTable table) throws SQLException, DataStoreException {
-        prefetch(table);
-        for (final ProductEntry c : components) {
-            c.removeCached(table);
-        }
         table.removeCached(name);
         isDeleted = true;
+        for (final ProductEntry c : components(table)) {
+            c.removeCached(table);
+        }
     }
 
     /**
