@@ -36,7 +36,6 @@ import javax.media.jai.LookupTableJAI;
 import javax.media.jai.NullOpImage;
 import javax.media.jai.OpImage;
 import javax.media.jai.RenderedOp;
-import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -102,10 +101,10 @@ import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.content.CoverageDescription;
-import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -149,8 +148,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
         boolean dataRendered = false;
         try {
-            GridCoverage2D dataCoverage = getObjectiveCoverage(projectedCoverage);
-            GridCoverage2D elevationCoverage = null;//getObjectiveElevationCoverage(projectedCoverage);
+            GridCoverage dataCoverage = getObjectiveCoverage(projectedCoverage);
+            GridCoverage elevationCoverage = null;//getObjectiveElevationCoverage(projectedCoverage);
             final MapLayer coverageLayer = projectedCoverage.getLayer();
             final GridCoverageResource ref = (GridCoverageResource) coverageLayer.getResource();
 
@@ -210,7 +209,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
 //            RenderedImage dataImage = dataCoverage.getRenderedImage();
             RenderedImage dataImage = applyStyle(ref, dataCoverage, elevationCoverage, sourceSymbol);
-            final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
+            final MathTransform trs2D = dataCoverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
 
             ////////////////////////////////////////////////////////////////////
             // 5 - Correct cross meridian problems / render                   //
@@ -224,7 +223,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 //check if the geometry overlaps the meridian
                 int nbIncRep = renderingContext.wraps.wrapIncNb;
                 int nbDecRep = renderingContext.wraps.wrapDecNb;
-                final Geometry objBounds = JTS.toGeometry(dataCoverage.getEnvelope());
+                final Geometry objBounds = JTS.toGeometry(dataCoverage.getGridGeometry().getEnvelope());
 
                 // geometry cross the far east meridian, geometry is like :
                 // POLYGON(-179,10,  181,10,  181,-10,  179,-10)
@@ -260,43 +259,43 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         return dataRendered;
     }
 
-    /**
-     * Analyse input coverage to know if we need to add an alpha channel. Alpha channel is required in photographic
-     * coverage case, in order for the resample to deliver a ready to style image.
-     *
-     * @param source The coverage to analyse.
-     * @param symbolizer contain color Map.
-     * @return The same coverage as input if style do not require an ARGB data to properly render, or a new ARGB coverage
-     * computed from source data.
-     */
-    @Override
-    protected final GridCoverage2D prepareCoverageToResampling(final GridCoverage2D source, final CachedRasterSymbolizer symbolizer) {
-        final List<SampleDimension> dims = source.getSampleDimensions();
-        final ColorMap cMap = symbolizer.getSource().getColorMap();
-        if ((cMap != null && cMap.getFunction() != null) ||
-            (dims != null && dims.size() != 0 && dims.get(0).getNoDataValues() != null) ||
-            source.getViewTypes().contains(ViewType.GEOPHYSICS)) {
-            return source;
-
-        } else {
-            final GridCoverage2D photoCvg = source.view(ViewType.PHOTOGRAPHIC);
-            RenderedImage img = photoCvg.getRenderedImage();
-            final int datatype = img.getSampleModel().getDataType();
-            if (datatype != DataBuffer.TYPE_BYTE) return source;
-            //-- RGB -> ARGB
-            RenderedImage imga = GO2Utilities.forceAlpha(img);
-
-            if (imga != img) {
-                final GridCoverageBuilder gcb = new GridCoverageBuilder();
-                gcb.setName("temp");
-                gcb.setGridGeometry(source.getGridGeometry());
-                gcb.setRenderedImage(imga);
-                return gcb.getGridCoverage2D();
-            } else {
-                return source;
-            }
-        }
-    }
+//    /**
+//     * Analyse input coverage to know if we need to add an alpha channel. Alpha channel is required in photographic
+//     * coverage case, in order for the resample to deliver a ready to style image.
+//     *
+//     * @param source The coverage to analyse.
+//     * @param symbolizer contain color Map.
+//     * @return The same coverage as input if style do not require an ARGB data to properly render, or a new ARGB coverage
+//     * computed from source data.
+//     */
+//    @Override
+//    protected final GridCoverage prepareCoverageToResampling(final GridCoverage source, final CachedRasterSymbolizer symbolizer) {
+//        final List<SampleDimension> dims = source.getSampleDimensions();
+//        final ColorMap cMap = symbolizer.getSource().getColorMap();
+//        if ((cMap != null && cMap.getFunction() != null) ||
+//            (dims != null && dims.size() != 0 && dims.get(0).getNoDataValues() != null) ||
+//            source.getViewTypes().contains(ViewType.GEOPHYSICS)) {
+//            return source;
+//
+//        } else {
+//            final GridCoverage2D photoCvg = source.view(ViewType.PHOTOGRAPHIC);
+//            RenderedImage img = photoCvg.getRenderedImage();
+//            final int datatype = img.getSampleModel().getDataType();
+//            if (datatype != DataBuffer.TYPE_BYTE) return source;
+//            //-- RGB -> ARGB
+//            RenderedImage imga = GO2Utilities.forceAlpha(img);
+//
+//            if (imga != img) {
+//                final GridCoverageBuilder gcb = new GridCoverageBuilder();
+//                gcb.setName("temp");
+//                gcb.setGridGeometry(source.getGridGeometry());
+//                gcb.setRenderedImage(imga);
+//                return gcb.getGridCoverage2D();
+//            } else {
+//                return source;
+//            }
+//        }
+//    }
 
     /**
      * Apply style on current coverage.<br><br>
@@ -318,8 +317,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @see #applyShadedRelief(java.awt.image.RenderedImage, org.geotoolkit.coverage.grid.GridCoverage2D, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer)
      * @see #applyContrastEnhancement(java.awt.image.RenderedImage, org.opengis.style.RasterSymbolizer)
      */
-    public static RenderedImage applyStyle(GridCoverageResource ref, GridCoverage2D coverage,
-            GridCoverage2D elevationCoverage,
+    public static RenderedImage applyStyle(GridCoverageResource ref, GridCoverage coverage,
+            GridCoverage elevationCoverage,
             final RasterSymbolizer styleElement)
             throws ProcessException, FactoryException, TransformException, PortrayalException, IOException
              {
@@ -379,8 +378,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @throws TransformException if problem during DEM generation.
      * @see #getDEMCoverage(org.geotoolkit.coverage.grid.GridCoverage2D, org.geotoolkit.coverage.grid.GridCoverage2D)
      */
-    private static RenderedImage applyShadedRelief(RenderedImage colorMappedImage, final GridCoverage2D coverage,
-            final GridCoverage2D elevationCoverage, final RasterSymbolizer styleElement)
+    private static RenderedImage applyShadedRelief(RenderedImage colorMappedImage, final GridCoverage coverage,
+            final GridCoverage elevationCoverage, final RasterSymbolizer styleElement)
             throws FactoryException, TransformException, ProcessException {
         ArgumentChecks.ensureNonNull("colorMappedImage", colorMappedImage);
         ArgumentChecks.ensureNonNull("coverage", coverage);
@@ -444,7 +443,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @throws ProcessException if problem during statistic problem.
      */
     private static RenderedImage applyColorMapStyle(final GridCoverageResource ref,
-            GridCoverage2D coverage,final RasterSymbolizer styleElement) throws ProcessException, IOException {
+            GridCoverage coverage,final RasterSymbolizer styleElement) throws ProcessException, IOException {
         ArgumentChecks.ensureNonNull("CoverageReference", ref);
         ArgumentChecks.ensureNonNull("coverage", coverage);
         ArgumentChecks.ensureNonNull("styleElement", styleElement);
@@ -470,9 +469,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             if (sampleDims != null && sampleDims.size() == 1)
 
             //if there is no geophysic, the same coverage is returned
-            coverage = hasQuantitativeCategory(coverage) ? coverage.forConvertedValues(true) : coverage;
+            coverage = coverage.forConvertedValues(true);
 
-            final RenderedImage ri = coverage.getRenderedImage();
+            final RenderedImage ri = coverage.render(null);
             final SampleModel sampleMod = ri.getSampleModel();
             final ColorModel riColorModel = ri.getColorModel();
 
@@ -598,46 +597,16 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
             //color map is applied on geophysics view
             //if there is no geophysic, the same coverage is returned
-            coverage = hasQuantitativeCategory(coverage) ? coverage.forConvertedValues(true) : coverage;
-            resultImage        = recolor.getFunction().evaluate(coverage.getRenderedImage(), RenderedImage.class);
+            coverage = coverage.forConvertedValues(true);
+            resultImage = recolor.getFunction().evaluate(coverage.render(null), RenderedImage.class);
         } else {
             //no color map, used the default image rendered view
             // coverage = coverage.view(ViewType.RENDERED);
-            if (coverage.getViewTypes().contains(ViewType.PHOTOGRAPHIC)) {
-                resultImage = coverage.view(ViewType.PHOTOGRAPHIC).getRenderedImage();
-            } else {
-                resultImage = coverage.view(ViewType.PACKED).getRenderedImage();//-- same as rendered view into implementation
-            }
-
-//            //-- if RGB force ARGB to delete black border
-//            final int[] componentSize = resultImage.getColorModel().getComponentSize();
-//            if (componentSize.length == 3 && componentSize[0] == 8) {
-//                resultImage = GO2Utilities.forceAlpha(resultImage);
-//                if (resultImage instanceof WritableRenderedImage) GO2Utilities.removeBlackBorder((WritableRenderedImage)resultImage);
-//            }
+            resultImage = coverage.forConvertedValues(false).render(null);
         }
 
         assert resultImage != null : "applyColorMapStyle : image can't be null.";
         return resultImage;
-    }
-
-    /**
-     * Returns {@code true} if the given {@link GridCoverage2D} contain an interpretable geophysic {@link Category},
-     * else {@code false}.
-     *
-     * @param coverage
-     * @return true if coverage contain quantitative category.
-     */
-    private static boolean  hasQuantitativeCategory(final GridCoverage2D coverage) {
-        ArgumentChecks.ensureNonNull("GridCoverage2D", coverage);
-        for (SampleDimension gs : coverage.getSampleDimensions()) {
-            final List<Category> categories = gs.getCategories();
-            if (categories != null)
-                for (Category cat : categories) {
-                    if (cat.isQuantitative()) return true;
-                }
-        }
-        return false;
     }
 
     /**
@@ -653,6 +622,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         ArgumentChecks.ensureNonNull("colorModel",  colorModel);
 
         final int[] pixelSampleSize = colorModel.getComponentSize();
+        if (pixelSampleSize == null) return true;
 
         assert pixelSampleSize != null;
         final int sampleSize = pixelSampleSize[0];
@@ -697,7 +667,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         throw new PortrayalException("Band for name/indice "+name+" not found");
     }
 
-    private boolean renderCoverage(final ProjectedCoverage projectedCoverage, RenderedImage img, MathTransform2D trs2D) throws PortrayalException{
+    private boolean renderCoverage(final ProjectedCoverage projectedCoverage, RenderedImage img, MathTransform trs2D) throws PortrayalException{
         boolean dataRendered = false;
 
         if (trs2D instanceof AffineTransform) {
@@ -905,18 +875,18 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a {@link GridCoverage2D} which contain band extracted from sourceCoverage
+     * Returns a {@link GridCoverage} which contain band extracted from sourceCoverage
      * at band indices given by indice array parameter.<br><br>
      *
      * note : out coverage will have same band number than indice array length.
      *
      * @param sourceCoverage coverage which contain all needed band.
-     * @param indices an array which contain band index of sourceCoverage to build another {@link GridCoverage2D}.
-     * @return a new {@link GridCoverage2D} with extracted band from sourceCoverage at indice given by indice array.
+     * @param indices an array which contain band index of sourceCoverage to build another {@link GridCoverage}.
+     * @return a new {@link GridCoverage} with extracted band from sourceCoverage at indice given by indice array.
      * @throws ProcessException if problem during process band selection.
      * @see BandSelectProcess
      */
-    private static GridCoverage2D selectBand(final GridCoverage2D sourceCoverage, final int[] indices) throws ProcessException {
+    private static GridCoverage selectBand(final GridCoverage sourceCoverage, final int[] indices) throws ProcessException {
         final List<SampleDimension> sampleDimensions = sourceCoverage.getSampleDimensions();
 
         if (sampleDimensions.size() < indices.length) {
@@ -924,7 +894,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             LOGGER.log(Level.WARNING, "Raster Style define more bands than the data");
             return sourceCoverage;
         } else {
-            RenderedImage image = sourceCoverage.getRenderedImage();
+            RenderedImage image = sourceCoverage.render(null);
 
             final ProcessDescriptor bandSelectDesc = BandSelectDescriptor.INSTANCE;
             final Parameters param = Parameters.castOrWrap(bandSelectDesc.getInputDescriptor().createValue());
