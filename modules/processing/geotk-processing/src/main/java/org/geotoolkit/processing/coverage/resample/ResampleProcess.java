@@ -98,19 +98,19 @@ public class ResampleProcess extends AbstractProcess {
     }
 
     private static ParameterValueGroup asParameters(GridCoverage2D coverage, CoordinateReferenceSystem targetCrs,
-            GridGeometry gridGeom, InterpolationCase interpolation, double[] background){
+            GridGeometry gridGeom, InterpolationCase interpolation, double[] background) {
         final Parameters params = Parameters.castOrWrap(ResampleDescriptor.INPUT_DESC.createValue());
         params.getOrCreate(IN_COVERAGE).setValue(coverage);
-        if(targetCrs!=null){
+        if (targetCrs != null) {
             params.getOrCreate( IN_COORDINATE_REFERENCE_SYSTEM).setValue(targetCrs);
         }
-        if(gridGeom!=null){
+        if (gridGeom != null) {
             params.getOrCreate(IN_GRID_GEOMETRY).setValue(gridGeom);
         }
-        if(background!=null){
+        if (background != null) {
             params.getOrCreate(IN_BACKGROUND).setValue(background);
         }
-        if(interpolation!=null){
+        if (interpolation != null) {
             params.getOrCreate(IN_INTERPOLATION_TYPE).setValue(interpolation);
         }
         return params;
@@ -129,7 +129,7 @@ public class ResampleProcess extends AbstractProcess {
         final GridCoverage2D source = inputParameters.getValue(IN_COVERAGE);
         final double[] background = inputParameters.getValue(IN_BACKGROUND);
         InterpolationCase interpolation = inputParameters.getValue(IN_INTERPOLATION_TYPE);
-        if(interpolation == null){
+        if (interpolation == null) {
             interpolation = InterpolationCase.NEIGHBOR;
         }
         final ResampleBorderComportement border = inputParameters.getValue(IN_BORDER_COMPORTEMENT_TYPE);
@@ -248,14 +248,6 @@ public class ResampleProcess extends AbstractProcess {
             throws FactoryException, TransformException
     {
 
-        double[] fillValue = getFillValue(sourceCoverage);
-        if (background != null) {
-            if (fillValue.length != background.length) {
-                throw new TransformException("Invalid default values, expected size " + fillValue.length + " but was " + background.length);
-            }
-            fillValue = background;
-        }
-
         //set default values
         if(borderComportement==null) borderComportement = ResampleBorderComportement.EXTRAPOLATION;
 
@@ -344,6 +336,15 @@ public class ResampleProcess extends AbstractProcess {
         RenderedImage sourceImage = sourceCoverage.getRenderedImage();
         assert sourceCoverage.getCoordinateReferenceSystem() == sourceCRS : sourceCoverage;
         // From this point, consider 'sourceCoverage' as final.
+
+        //extract fill value after the resampling view type has been choosen
+        double[] fillValue = getFillValue(sourceCoverage);
+        if (background != null) {
+            if (fillValue.length != background.length) {
+                throw new TransformException("Invalid default values, expected size " + fillValue.length + " but was " + background.length);
+            }
+            fillValue = background;
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////
         ////                                                                                ////
@@ -579,7 +580,7 @@ public class ResampleProcess extends AbstractProcess {
         final double[] fillValue = new double[nbBand];
         Arrays.fill(fillValue, Double.NaN);
         for(int i=0;i<nbBand;i++){
-            final double[] nodata = SampleDimensionUtils.getNoDataValues(dimensions[i].forConvertedValues(true));
+            final double[] nodata = SampleDimensionUtils.getNoDataValues(dimensions[i]);
             if (nodata != null && nodata.length > 0){
                 fillValue[i] = nodata[0];
             }
