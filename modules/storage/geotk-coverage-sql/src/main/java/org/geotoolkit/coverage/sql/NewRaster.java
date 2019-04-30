@@ -30,8 +30,10 @@ import org.apache.sis.measure.Range;
 import org.apache.sis.metadata.iso.extent.Extents;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.StorageConnector;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.identification.Identification;
@@ -95,6 +97,22 @@ final class NewRaster {
     }
 
     /**
+     * Opens the given file using the given provider, or by auto-detection if {@code provider} is null.
+     */
+    private static DataStore open(final DataStoreProvider provider, final Path file) throws DataStoreException {
+        if (provider == null) {
+            return DataStores.open(file);
+        }
+        final StorageConnector connector = new StorageConnector(file);
+        try {
+            return provider.open(connector);
+        } catch (DataStoreException e) {
+            connector.closeAllExcept(null);
+            throw e;
+        }
+    }
+
+    /**
      * Returns information about rasters to add. Keys in the returned map are resource identifiers.
      * There is often only one entry, but we may have more entries if the storage contains many images
      * or many netCDF variables for example. In the netCDF case, each variable may be a different
@@ -103,10 +121,12 @@ final class NewRaster {
      * @param  files  paths to the files to add.
      * @return information about rasters, separated by resource identifier.
      */
-    static Map<String,List<NewRaster>> list(final String product, final AddOption option, final Path... files) throws DataStoreException {
+    static Map<String,List<NewRaster>> list(final String product, final AddOption option,
+            final DataStoreProvider provider, final Path... files) throws DataStoreException
+    {
         final Map<String,List<NewRaster>> rasters = new LinkedHashMap<>();
         for (final Path file : files) {
-            try (final DataStore ds = DataStores.open(file)) {
+            try (final DataStore ds = open(provider, file)) {
                 final String driver = ds.getProvider().getShortName();
                 final Collection<GridCoverageResource> candidates = org.geotoolkit.storage.DataStores.flatten(ds, true, GridCoverageResource.class);
                 /*

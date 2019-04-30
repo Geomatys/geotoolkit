@@ -471,7 +471,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     public void addRaster(final String product, final GridGeometry exportedGrid, final AddOption option,
             final Path... files) throws DataStoreException
     {
-        addRaster(product, exportedGrid, option, null, files);
+        addRaster(product, exportedGrid, option, null, null, files);
     }
 
     /**
@@ -489,13 +489,14 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
      * @param  exportedGrid  a grid encompassing all files that may be added for this product, or {@code null}.
      * @param  option        specifies if non-existing product should be created.
      * @param  datasets      array of datasets to insert, null for all
+     * @param  provider      provider to use for opening files, or {@code null} for auto-detection.
      * @param  files         the files to add to the specified product.
      * @throws DataStoreException if an error occurred while reading the grid coverages or adding them to the database.
      */
     public void addRaster(final String product, final GridGeometry exportedGrid, final AddOption option,
-            final Set<String> datasets, final Path... files) throws DataStoreException
+            final Set<String> datasets, final DataStoreProvider provider, final Path... files) throws DataStoreException
     {
-        final Map<String,List<NewRaster>> rasters = NewRaster.list(product, option, files);
+        final Map<String,List<NewRaster>> rasters = NewRaster.list(product, option, provider, files);
         if (datasets != null) {
             for (String ds : rasters.keySet().toArray(new String[0])) {
                 if (!datasets.contains(ds)) {
@@ -503,7 +504,6 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
                 }
             }
         }
-
         if (!rasters.isEmpty()) {
             try {
                 // TODO: retry policy ?
