@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.processing.coverage.statistics;
 
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -40,7 +40,7 @@ public class StatisticsTest extends org.geotoolkit.test.TestBase {
 
     private GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
     private GridCoverageBuilder gcb = new GridCoverageBuilder();
-    private GridCoverage2D coverage;
+    private GridCoverage coverage;
 
     @Before
     public void initTest(){

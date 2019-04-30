@@ -197,8 +197,8 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
             throw new DataStoreException("Store root is a file, not a directory, no reference creation allowed.");
         }
         name = NamesExt.create(name.tip().toString());
-        final Set<GenericName> names = getNames();
-        if(names.contains(name)){
+        final Set<GenericName> names = DataStores.getNames(this, false, GridCoverageResource.class);
+        if (names.contains(name)) {
             throw new DataStoreException("Name already used in store: " + name.tip());
         }
 

@@ -26,9 +26,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.vecmath.Point3d;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
@@ -161,11 +161,11 @@ public class KrigingProcess extends AbstractProcess {
                 new double[] {x0 + spanX, y0 + spanY});
         env.setCoordinateReferenceSystem(crs);
 
-        final GridCoverage2D coverage = toCoverage(cz, cx, cy, env);
+        final GridCoverage coverage = toCoverage(cz, cx, cy, env);
         outputParameters.getOrCreate(OUT_COVERAGE).setValue(coverage);
 
         //test
-        renderedImage = coverage.getRenderedImage();
+        renderedImage = coverage.render(null);
 
         //create the isolines //////////////////////////////////////////////////
         if (step <= 0) {
@@ -270,7 +270,7 @@ public class KrigingProcess extends AbstractProcess {
         outputParameters.getOrCreate(OUT_LINES).setValue(col);
     }
 
-    private static GridCoverage2D toCoverage(final double[] computed, final double[] xs, final double[] ys,
+    private static GridCoverage toCoverage(final double[] computed, final double[] xs, final double[] ys,
             final Envelope env) {
 
         final float[][] matrix = new float[xs.length][ys.length];

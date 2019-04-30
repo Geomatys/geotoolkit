@@ -34,11 +34,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.Boundary;
@@ -54,6 +53,7 @@ import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
@@ -73,6 +73,7 @@ import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.expression.Expression;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.LineSymbolizer;
@@ -376,31 +377,29 @@ public class KmzContextInterpreter {
         final CoordinateReferenceSystem targetCrs = CommonCRS.WGS84.normalizedGeographic();
 
         final GridCoverageResource ref = (GridCoverageResource) coverageMapLayer.getResource();
-        final GridCoverageReader reader = ref.acquireReader();
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
-        ref.recycle(reader);
-
-
-        final GridCoverage2D targetCoverage = new ResampleProcess(coverage, targetCrs, null, InterpolationCase.NEIGHBOR, null).executeNow();
+        final GridCoverage coverage = ref.read(null);
+        final GridCoverage targetCoverage = new ResampleProcess(coverage, targetCrs, null, InterpolationCase.NEIGHBOR, null).executeNow();
+        final Envelope envelope = targetCoverage.getGridGeometry().getEnvelope();
+        final CharSequence name = CoverageUtilities.getName(targetCoverage);
 
         // Creating image file and Writting referenced image into.
-        final Path img = filesDirectory.resolve(targetCoverage.getName().toString()+".png");
+        final Path img = filesDirectory.resolve(name.toString()+".png");
         try (OutputStream outputStream = Files.newOutputStream(img, CREATE, WRITE, TRUNCATE_EXISTING)) {
-            ImageIO.write(targetCoverage.getRenderedImage(), "png", outputStream);
+            ImageIO.write(targetCoverage.render(null), "png", outputStream);
         }
 
         final Icon image = KML_FACTORY.createIcon(KML_FACTORY.createLink());
-        image.setHref(filesDirectory.getFileName().toString() + File.separator + targetCoverage.getName());
-        groundOverlay.setPropertyValue(KmlConstants.TAG_NAME, targetCoverage.getName().toString());
+        image.setHref(filesDirectory.getFileName().toString() + File.separator + name);
+        groundOverlay.setPropertyValue(KmlConstants.TAG_NAME, name.toString());
         groundOverlay.setPropertyValue(KmlConstants.TAG_ICON, image);
         groundOverlay.setPropertyValue(KmlConstants.TAG_ALTITUDE, 1.0);
         groundOverlay.setPropertyValue(KmlConstants.TAG_ALTITUDE_MODE, EnumAltitudeMode.CLAMP_TO_GROUND);
 
         final LatLonBox latLonBox = KML_FACTORY.createLatLonBox();
-        latLonBox.setNorth(targetCoverage.getEnvelope2D().getMaxY());
-        latLonBox.setSouth(targetCoverage.getEnvelope2D().getMinY());
-        latLonBox.setEast(targetCoverage.getEnvelope2D().getMaxX());
-        latLonBox.setWest(targetCoverage.getEnvelope2D().getMinX());
+        latLonBox.setNorth(envelope.getMaximum(1));
+        latLonBox.setSouth(envelope.getMinimum(1));
+        latLonBox.setEast(envelope.getMaximum(0));
+        latLonBox.setWest(envelope.getMinimum(0));
 
         groundOverlay.setPropertyValue(KmlConstants.TAG_LAT_LON_BOX, latLonBox);
 

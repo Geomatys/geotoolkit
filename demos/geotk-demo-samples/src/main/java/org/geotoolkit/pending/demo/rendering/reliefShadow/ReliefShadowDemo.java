@@ -9,7 +9,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.filestore.FileCoverageStore;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
@@ -19,6 +18,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
@@ -61,7 +61,7 @@ public class ReliefShadowDemo {
         covPath.setInput(reliefPath);
 
         FileCoverageStore store = new FileCoverageStore(reliefPath.toURL(), "AUTO");
-        final Resource ref = store.findResource(store.getNames().iterator().next().toString());
+        final GridCoverageResource ref = DataStores.flatten(store, true, GridCoverageResource.class).iterator().next();
 
 //        final GridCoverageReader  demGCR = CoverageIO.createSimpleReader(covPath);
 
@@ -82,7 +82,7 @@ public class ReliefShadowDemo {
         final double azimuth = 45;
         final double altitude = 2;
         final double scale = 0.4;
-        final ElevationModel elevModel = new ElevationModel((GridCoverageResource) ref, azimuth, altitude, scale, AxisDirection.UP);
+        final ElevationModel elevModel = new ElevationModel(ref, azimuth, altitude, scale, AxisDirection.UP);
 
         /*
          * Define Elevation Model object to get informations necessary to compute shadow on coverage.

@@ -208,7 +208,7 @@ public class CoverageFeatureTest {
 
         final GridCoverage coverage3D;
         {//create coverage 3d
-            coverage3D = new GridCoverageStack("Coverage3D", Arrays.asList((org.geotoolkit.coverage.grid.GridCoverage) slice1, (org.geotoolkit.coverage.grid.GridCoverage) slice2));
+            coverage3D = new GridCoverageStack("Coverage3D", Arrays.asList(slice1, slice2));
         }
 
         //test mapped feature type

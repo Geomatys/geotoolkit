@@ -40,6 +40,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 
 /**
@@ -101,6 +102,21 @@ public final class DataStores extends Static {
                 list(rs, list, resourceClass);
             }
         }
+    }
+
+
+    /**
+     * Get a collection of all available names of a specific resource type.
+     *
+     * @return Set<GenericName> , never null, but can be empty.
+     * @throws DataStoreException
+     */
+    public static final <T extends Resource> Set<GenericName> getNames(Resource root, boolean includeRoot, Class<T> resourceClass) throws DataStoreException {
+        final Set<GenericName> names = new HashSet<>();
+        for (T t : flatten(root, includeRoot, resourceClass)) {
+            names.add(t.getIdentifier());
+        }
+        return names;
     }
 
     /**

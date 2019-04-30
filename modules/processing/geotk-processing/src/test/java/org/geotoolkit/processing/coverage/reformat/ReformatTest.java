@@ -23,7 +23,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
@@ -65,7 +65,7 @@ public class ReformatTest extends org.geotoolkit.test.TestBase {
         gcb.setRenderedImage(inputImage);
         gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
         gcb.setEnvelope(0,0,500,30);
-        final GridCoverage2D inCoverage = (GridCoverage2D) gcb.build();
+        final GridCoverage inCoverage = gcb.build();
 
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, ReformatDescriptor.NAME);
         assertNotNull(desc);
@@ -78,11 +78,11 @@ public class ReformatTest extends org.geotoolkit.test.TestBase {
         final ParameterValueGroup result = process.call();
 
         //check result coverage
-        final GridCoverage2D outCoverage = (GridCoverage2D) result.parameter("result").getValue();
+        final GridCoverage outCoverage = (GridCoverage) result.parameter("result").getValue();
         assertEquals(inCoverage.getCoordinateReferenceSystem(), outCoverage.getCoordinateReferenceSystem());
         assertEquals(inCoverage.getGridGeometry(), outCoverage.getGridGeometry());
 
-        final RenderedImage outImage = outCoverage.getRenderedImage();
+        final RenderedImage outImage = outCoverage.render(null);
         final SampleModel outSampleModel = outImage.getSampleModel();
         assertEquals(inputImage.getWidth(), outImage.getWidth());
         assertEquals(inputImage.getHeight(), outImage.getHeight());

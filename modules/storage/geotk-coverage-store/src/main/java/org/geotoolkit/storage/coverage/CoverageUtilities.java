@@ -31,6 +31,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.StrictlyCoverageFinder;
@@ -225,8 +226,12 @@ public final class CoverageUtilities {
         }
     }
 
-    public static int getDataType(final GridCoverage2D coverage) {
-        return coverage.getRenderedImage().getSampleModel().getDataType();
+    public static int getDataType(final GridCoverage coverage) {
+        try {
+            return firstSlice(coverage).render(null).getSampleModel().getDataType();
+        } catch (CoverageStoreException ex) {
+            throw new BackingStoreException(ex.getMessage(), ex);
+        }
     }
 
     @Deprecated

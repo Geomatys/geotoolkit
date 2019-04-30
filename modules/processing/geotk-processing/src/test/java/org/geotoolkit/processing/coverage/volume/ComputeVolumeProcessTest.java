@@ -23,6 +23,7 @@ import java.awt.image.WritableRenderedImage;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -31,8 +32,6 @@ import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -411,7 +410,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
      */
     private class GridCovReaderTest extends AbstractGridCoverageReader {
 
-        final GridCoverage2D coverage;
+        final GridCoverage coverage;
 
         GridCovReaderTest(final RenderedImage image, final Envelope envelope){
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
@@ -443,11 +442,10 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
                 MathTransform paramToCoverageCrs = CRS.findOperation(param.getCoordinateReferenceSystem(), coverage.getCoordinateReferenceSystem(), null).getMathTransform();
                 readEnvelope                     = Envelopes.transform(paramToCoverageCrs, readEnvelope);
                 GeneralEnvelope readGenEnvelope  = new GeneralEnvelope(readEnvelope);
-                readGenEnvelope.intersects(coverage.getEnvelope(), true);
+                readGenEnvelope.intersects(coverage.getGridGeometry().getEnvelope(), true);
                 MathTransform crsToGrid          = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER).inverse();
                 GeneralEnvelope gridEnvelope     = Envelopes.transform(crsToGrid, readGenEnvelope);
-
-                final RenderedImage covImg       = coverage.getRenderedImage();
+                final RenderedImage covImg       = coverage.render(null);
 
                 // new coverage
                 Rectangle rect = new Rectangle((int)gridEnvelope.getLower(0),(int) gridEnvelope.getLower(1),

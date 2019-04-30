@@ -19,8 +19,8 @@ package org.geotoolkit.coverage.io;
 
 import java.util.concurrent.CancellationException;
 import javax.imageio.ImageWriter;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridCoverage;
 
 
 /**

@@ -29,16 +29,14 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
 import org.geotoolkit.data.multires.Mosaic;
@@ -202,9 +200,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
     public void readRGBANoArgumentTest() throws Exception{
         //load the coverage store
         getCoverageStore();
-        final GridCoverageReader reader = rgbaCoverageRef.acquireReader();
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
-        rgbaCoverageRef.recycle(reader);
+        final GridCoverage coverage = rgbaCoverageRef.read(null);
 
         //check defined color model
         //testColorModel(rgbaColorModel, rgbaCoverageRef.getColorModel());
@@ -212,7 +208,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
         //check coverage informations
         final CoordinateReferenceSystem covcrs = coverage.getCoordinateReferenceSystem();
         assertTrue(Utilities.equalsIgnoreMetadata(crs,  covcrs));
-        final Envelope env = coverage.getEnvelope();
+        final Envelope env = coverage.getGridGeometry().getEnvelope();
         assertEquals(corner.getOrdinate(0), env.getMinimum(0), DELTA);
         assertEquals(corner.getOrdinate(1), env.getMaximum(1), DELTA);
         assertEquals(corner.getOrdinate(0) +(4*10)*0.5, env.getMaximum(0), DELTA);
@@ -220,7 +216,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
         assertTrue(Utilities.equalsIgnoreMetadata(crs,  env.getCoordinateReferenceSystem()));
 
         //check tile aggregation
-        final RenderedImage img = coverage.getRenderedImage();
+        final RenderedImage img = coverage.render(null);
         final Raster raster = img.getData();
 
         //check defined color model, do not test the colorspace
@@ -250,9 +246,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
     public void readFloat1BNoArgumentTest() throws Exception{
         //load the coverage store
         getCoverageStore();
-        final GridCoverageReader reader = float1bCoverageRef.acquireReader();
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
-        float1bCoverageRef.recycle(reader);
+        final GridCoverage coverage = float1bCoverageRef.read(null);
 
         //check defined color model, do not test the colorspace
         //testColorModel(float1bColorModel, float1bCoverageRef.getColorModel());
@@ -261,7 +255,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
         //check coverage informations
         final CoordinateReferenceSystem covcrs = coverage.getCoordinateReferenceSystem();
         assertTrue(Utilities.equalsIgnoreMetadata(crs,  covcrs));
-        final Envelope env = coverage.getEnvelope();
+        final Envelope env = coverage.getGridGeometry().getEnvelope();
         assertEquals(corner.getOrdinate(0), env.getMinimum(0), DELTA);
         assertEquals(corner.getOrdinate(1), env.getMaximum(1), DELTA);
         assertEquals(corner.getOrdinate(0) +(4*10)*0.5, env.getMaximum(0), DELTA);
@@ -269,7 +263,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
         assertTrue(Utilities.equalsIgnoreMetadata(crs,  env.getCoordinateReferenceSystem()));
 
         //check tile aggregation
-        final RenderedImage img = coverage.getRenderedImage();
+        final RenderedImage img = coverage.render(null);
         final Raster raster = img.getData();
 
         //check defined color model, do not test the colorspace
@@ -300,24 +294,17 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
 
         //load the coverage store
         getCoverageStore();
-        final GridCoverageReader reader = rgbaCoverageRef.acquireReader();
 
         final GeneralEnvelope paramEnv = new GeneralEnvelope(crs);
         paramEnv.setRange(0, corner.getOrdinate(0) +(1*10)*1, corner.getOrdinate(0) +(2*10)*1);
         paramEnv.setRange(1, corner.getOrdinate(1) -(2*10)*1, corner.getOrdinate(1));
         //we should obtain tiles [1,0] and [1,1]
 
-        final GridCoverageReadParam param = new GridCoverageReadParam();
-        param.setCoordinateReferenceSystem(crs);
-        param.setResolution(1.2,1.2);
-        param.setEnvelope(paramEnv);
-
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(param);
-        rgbaCoverageRef.recycle(reader);
+        final GridCoverage coverage = rgbaCoverageRef.read(rgbaCoverageRef.getGridGeometry().derive().subgrid(paramEnv, 1.2, 1.2).build());
 
         //check coverage informations
         assertTrue(Utilities.equalsApproximatively(crs,  coverage.getCoordinateReferenceSystem()));
-        final Envelope env = coverage.getEnvelope();
+        final Envelope env = coverage.getGridGeometry().getEnvelope();
         assertEquals(corner.getOrdinate(0) +(1*10)*1, env.getMinimum(0), DELTA);
         assertEquals(corner.getOrdinate(1), env.getMaximum(1), DELTA);
         assertEquals(corner.getOrdinate(0) +(1*10)*1+(1*10)*1, env.getMaximum(0), DELTA);
@@ -326,7 +313,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
 
 
         //check tile aggregation
-        final RenderedImage img = coverage.getRenderedImage();
+        final RenderedImage img = coverage.render(null);
         final Raster raster = img.getData();
 
         assertEquals(1*10,img.getWidth());

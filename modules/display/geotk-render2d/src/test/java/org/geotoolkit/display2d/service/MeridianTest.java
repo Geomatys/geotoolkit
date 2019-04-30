@@ -31,12 +31,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-
 import org.apache.sis.measure.Units;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreUtilities;
@@ -620,7 +619,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         gcb.setGridToCRS(new AffineTransform(1, 0, 0, -1, env.getMinimum(0), env.getMaximum(1)));
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setSampleDimensions(new double[]{0, 0, 0}, new double[]{255, 255, 255}, Units.UNITY, null);
-        final GridCoverage2D coverage = (GridCoverage2D) gcb.build();
+        final GridCoverage coverage = gcb.build();
 
         final RasterSymbolizer symbol = SF.rasterSymbolizer();
         final MutableStyle style = SF.style(symbol);

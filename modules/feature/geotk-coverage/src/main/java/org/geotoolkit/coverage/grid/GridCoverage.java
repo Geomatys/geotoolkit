@@ -141,7 +141,7 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
      * Sources grid coverage, or {@code null} if none. This information is lost during
      * serialization, in order to avoid sending a too large amount of data over the network.
      */
-    private final transient List<GridCoverage> sources;
+    private final transient List<org.apache.sis.coverage.grid.GridCoverage> sources;
 
     /**
      * The sample dimension to make visible by {@link #getRenderableImage}.
@@ -515,7 +515,7 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
      * @param converted
      * @return
      */
-    public abstract GridCoverage forConvertedValues(boolean converted);
+    public abstract org.apache.sis.coverage.grid.GridCoverage forConvertedValues(boolean converted);
 
     /////////////////////////////////////////////////////////////////////////
     ////////////////                                         ////////////////
@@ -1173,7 +1173,7 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
      * to establish what {@code GridCoverage}s will be affected when others are updated,
      * as well as to trace back to the "raw data".
      */
-    public List<GridCoverage> getSources() {
+    public List<org.apache.sis.coverage.grid.GridCoverage> getSources() {
         // Reminder: 'sources' is always null after deserialization.
         if (sources != null) {
             return sources;

@@ -31,6 +31,7 @@ import javax.media.jai.InterpolationBilinear;
 import javax.media.jai.InterpolationNearest;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelope2D;
@@ -40,7 +41,7 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.geotoolkit.coverage.grid.GridCoverage;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -58,6 +59,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -87,7 +89,7 @@ public final class CoverageUtilities extends Static {
      * @return The two-dimensional CRS.
      * @throws TransformException if the CRS can't be reduced to two dimensions.
      */
-    public static CoordinateReferenceSystem getCRS2D(final org.apache.sis.coverage.grid.GridCoverage coverage)
+    public static CoordinateReferenceSystem getCRS2D(final GridCoverage coverage)
             throws TransformException
     {
         if (coverage instanceof GridCoverage2D) {
@@ -116,7 +118,7 @@ public final class CoverageUtilities extends Static {
      * @return The two-dimensional envelope.
      * @throws MismatchedDimensionException if the envelope can't be reduced to two dimensions.
      */
-    public static Envelope2D getEnvelope2D(final org.apache.sis.coverage.grid.GridCoverage coverage)
+    public static Envelope2D getEnvelope2D(final GridCoverage coverage)
             throws MismatchedDimensionException
     {
         if (coverage instanceof GridCoverage2D) {
@@ -564,5 +566,12 @@ public final class CoverageUtilities extends Static {
         builder.setSampleDimensions(coverage.getSampleDimensions());
         builder.setRenderedImage(coverage.render(null));
         return builder.getGridCoverage2D();
+    }
+
+    public static InternationalString getName(GridCoverage coverage) {
+        if (coverage instanceof org.geotoolkit.coverage.grid.GridCoverage) {
+            return ((org.geotoolkit.coverage.grid.GridCoverage) coverage).getName();
+        }
+        return new SimpleInternationalString("");
     }
 }

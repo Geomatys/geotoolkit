@@ -20,9 +20,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import net.iharder.Base64;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
@@ -31,11 +31,11 @@ import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.Format;
 
 /**
- * Convert an GridCoverage2D to Data using Base64 encoding.
+ * Convert an GridCoverage to Data using Base64 encoding.
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class CoverageToComplexConverter extends AbstractComplexOutputConverter<GridCoverage2D> {
+public class CoverageToComplexConverter extends AbstractComplexOutputConverter<GridCoverage> {
 
     private static CoverageToComplexConverter INSTANCE;
 
@@ -50,12 +50,12 @@ public class CoverageToComplexConverter extends AbstractComplexOutputConverter<G
     }
 
     @Override
-    public Class<GridCoverage2D> getSourceClass() {
-        return GridCoverage2D.class;
+    public Class<GridCoverage> getSourceClass() {
+        return GridCoverage.class;
     }
 
     @Override
-    public Data convert(GridCoverage2D source, Map<String, Object> params) throws UnconvertibleObjectException {
+    public Data convert(GridCoverage source, Map<String, Object> params) throws UnconvertibleObjectException {
         if (source == null) {
             throw new UnconvertibleObjectException("The output data should be defined.");
         } else if (params == null) {

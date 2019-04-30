@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.RasterFactory;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import static org.geotoolkit.coverage.wkb.WKBRasterConstants.*;
 import org.geotoolkit.io.LEDataInputStream;
@@ -89,7 +89,7 @@ public class WKBRasterReader {
      * @return
      * @throws IOException
      */
-    public GridCoverage2D readCoverage(byte[] data, CRSAuthorityFactory authorityFactory)
+    public GridCoverage readCoverage(byte[] data, CRSAuthorityFactory authorityFactory)
             throws IOException, NoSuchAuthorityCodeException, FactoryException{
         final InputStream stream = new ByteArrayInputStream(data);
         return readCoverage(stream,authorityFactory);
@@ -102,7 +102,7 @@ public class WKBRasterReader {
      * @return
      * @throws IOException
      */
-    public GridCoverage2D readCoverage(final InputStream stream, CRSAuthorityFactory authorityFactory)
+    public GridCoverage readCoverage(final InputStream stream, CRSAuthorityFactory authorityFactory)
             throws IOException, NoSuchAuthorityCodeException, FactoryException{
         final BufferedImage image = read(stream);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();

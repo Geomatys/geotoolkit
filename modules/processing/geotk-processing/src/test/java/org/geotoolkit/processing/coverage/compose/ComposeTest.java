@@ -23,10 +23,10 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.geometry.jts.JTS;
@@ -53,7 +53,7 @@ public class ComposeTest {
     @Test
     public void simpleImageTest() throws ProcessException, MismatchedDimensionException, TransformException {
 
-        final List<Map.Entry<GridCoverage2D,Geometry[]>> inputs = new ArrayList<>();
+        final List<Map.Entry<GridCoverage,Geometry[]>> inputs = new ArrayList<>();
 
         final GridExtent gridEnvelope = new GridExtent(2, 2);
         final CoordinateReferenceSystem crs = CommonCRS.WGS84. normalizedGeographic();
@@ -73,7 +73,7 @@ public class ComposeTest {
             gcb.setName("image0");
             gcb.setRenderedImage(image);
             gcb.setGridGeometry(gridGeometry);
-            final GridCoverage2D gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -100,7 +100,7 @@ public class ComposeTest {
             gcb.setName("image1");
             gcb.setRenderedImage(image);
             gcb.setGridGeometry(gridGeometry);
-            final GridCoverage2D gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -116,8 +116,8 @@ public class ComposeTest {
             inputs.add(new AbstractMap.SimpleImmutableEntry<>(gridCoverage2d,new Geometry[]{geometry,null}));
         }
 
-        final GridCoverage2D gridCoverage = new Compose(inputs,null).executeNow();
-        final WritableRaster raster = ((BufferedImage)gridCoverage.getRenderedImage()).getRaster();
+        final GridCoverage gridCoverage = new Compose(inputs,null).executeNow();
+        final WritableRaster raster = ((BufferedImage) gridCoverage.render(null)).getRaster();
         assertEquals(1, raster.getSample(0, 0, 0));
         assertEquals(1, raster.getSample(1, 0, 0));
         assertEquals(2, raster.getSample(0, 1, 0));
@@ -128,7 +128,7 @@ public class ComposeTest {
     @Test
     public void multipleImageTest() throws ProcessException, MismatchedDimensionException, TransformException {
 
-        final List<Map.Entry<GridCoverage2D,Geometry[]>> inputs = new ArrayList<>();
+        final List<Map.Entry<GridCoverage,Geometry[]>> inputs = new ArrayList<>();
 
         final GridExtent gridEnvelope = new GridExtent(2, 2);
         final CoordinateReferenceSystem crs = CommonCRS.WGS84. normalizedGeographic();
@@ -148,7 +148,7 @@ public class ComposeTest {
             gcb.setName("image0");
             gcb.setRenderedImage(image);
             gcb.setGridGeometry(gridGeometry);
-            final GridCoverage2D gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -175,7 +175,7 @@ public class ComposeTest {
             gcb.setName("image1");
             gcb.setRenderedImage(image);
             gcb.setGridGeometry(gridGeometry);
-            final GridCoverage2D gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -202,7 +202,7 @@ public class ComposeTest {
             gcb.setName("image2");
             gcb.setRenderedImage(image);
             gcb.setGridGeometry(gridGeometry);
-            final GridCoverage2D gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -218,8 +218,8 @@ public class ComposeTest {
             inputs.add(new AbstractMap.SimpleImmutableEntry<>(gridCoverage2d,new Geometry[]{geometry,null}));
         }
 
-        final GridCoverage2D gridCoverage = new Compose(inputs,null).executeNow();
-        final WritableRaster raster = ((BufferedImage)gridCoverage.getRenderedImage()).getRaster();
+        final GridCoverage gridCoverage = new Compose(inputs,null).executeNow();
+        final WritableRaster raster = ((BufferedImage)gridCoverage.render(null)).getRaster();
 
         assertEquals(1, raster.getSample(0, 0, 0));
         assertEquals(1, raster.getSample(1, 0, 0));
@@ -230,7 +230,7 @@ public class ComposeTest {
     @Test
     public void simpleOffsetTest() throws MismatchedDimensionException, TransformException, ProcessException {
 
-        final List<Map.Entry<GridCoverage2D,Geometry[]>> inputs = new ArrayList<>();
+        final List<Map.Entry<GridCoverage,Geometry[]>> inputs = new ArrayList<>();
 
         {
             final GridExtent gridEnvelope = new GridExtent(2, 2);
@@ -250,7 +250,7 @@ public class ComposeTest {
             gcb.setName("image0");
             gcb.setRenderedImage(image);
             gcb.setGridGeometry(gridGeometry);
-            final GridCoverage2D gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -284,7 +284,7 @@ public class ComposeTest {
             gcb.setName("image0");
             gcb.setRenderedImage(image);
             gcb.setGridGeometry(gridGeometry);
-            final GridCoverage2D gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -300,8 +300,8 @@ public class ComposeTest {
             inputs.add(new AbstractMap.SimpleImmutableEntry<>(gridCoverage2d,new Geometry[]{geometry,null}));
         }
 
-        final GridCoverage2D gridCoverage = new Compose(inputs,null).executeNow();
-        final WritableRaster raster = ((BufferedImage)gridCoverage.getRenderedImage()).getRaster();
+        final GridCoverage gridCoverage = new Compose(inputs,null).executeNow();
+        final WritableRaster raster = ((BufferedImage)gridCoverage.render(null)).getRaster();
 
         assertEquals(0, raster.getSample(0, 0, 0));
         assertEquals(1, raster.getSample(0, 1, 0));
@@ -320,7 +320,7 @@ public class ComposeTest {
     @Test
     public void offsetWithGeometryTest() throws MismatchedDimensionException, TransformException, ProcessException {
 
-        final List<Map.Entry<GridCoverage2D,Geometry[]>> inputs = new ArrayList<>();
+        final List<Map.Entry<GridCoverage,Geometry[]>> inputs = new ArrayList<>();
 
         {
             final GridExtent gridEnvelope = new GridExtent(2, 2);
@@ -340,7 +340,7 @@ public class ComposeTest {
             gcb.setName("image0");
             gcb.setRenderedImage(image);
             gcb.setGridGeometry(gridGeometry);
-            final GridCoverage2D gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -374,7 +374,7 @@ public class ComposeTest {
             gcb.setName("image0");
             gcb.setRenderedImage(image);
             gcb.setGridGeometry(gridGeometry);
-            final GridCoverage2D gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -390,8 +390,8 @@ public class ComposeTest {
             inputs.add(new AbstractMap.SimpleImmutableEntry<>(gridCoverage2d,new Geometry[]{geometry,null}));
         }
 
-        final GridCoverage2D gridCoverage = new Compose(inputs,null).executeNow();
-        final WritableRaster raster = ((BufferedImage)gridCoverage.getRenderedImage()).getRaster();
+        final GridCoverage gridCoverage = new Compose(inputs,null).executeNow();
+        final WritableRaster raster = ((BufferedImage)gridCoverage.render(null)).getRaster();
 
         assertEquals(1, raster.getSample(0, 0, 0));
         assertEquals(1, raster.getSample(0, 1, 0));
@@ -404,7 +404,7 @@ public class ComposeTest {
     @Test
     public void offsetWithHoleTest() throws MismatchedDimensionException, TransformException, ProcessException {
 
-        final List<Map.Entry<GridCoverage2D,Geometry[]>> inputs = new ArrayList<>();
+        final List<Map.Entry<GridCoverage,Geometry[]>> inputs = new ArrayList<>();
 
         {
             final GridExtent gridEnvelope = new GridExtent(2, 2);
@@ -424,7 +424,7 @@ public class ComposeTest {
             gcb.setName("image0");
             gcb.setRenderedImage(image);
             gcb.setGridGeometry(gridGeometry);
-            final GridCoverage2D gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -458,7 +458,7 @@ public class ComposeTest {
             gcb.setName("image0");
             gcb.setRenderedImage(image);
             gcb.setGridGeometry(gridGeometry);
-            final GridCoverage2D gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -474,8 +474,8 @@ public class ComposeTest {
             inputs.add(new AbstractMap.SimpleImmutableEntry<>(gridCoverage2d,new Geometry[]{geometry,null}));
         }
 
-        final GridCoverage2D gridCoverage = new Compose(inputs,null).executeNow();
-        final WritableRaster raster = ((BufferedImage)gridCoverage.getRenderedImage()).getRaster();
+        final GridCoverage gridCoverage = new Compose(inputs,null).executeNow();
+        final WritableRaster raster = ((BufferedImage)gridCoverage.render(null)).getRaster();
 
         assertEquals(1, raster.getSample(0, 0, 0));
         assertEquals(1, raster.getSample(0, 1, 0));

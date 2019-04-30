@@ -39,6 +39,7 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.RenderedImageAdapter;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
@@ -47,7 +48,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -425,7 +425,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
         }
         final GridCoverage coverage = read(gp);
         return (coverage == null) ? null :
-                coverage.getRenderableImage(X_DIMENSION, Y_DIMENSION).createDefaultRendering();
+                coverage.render(null);
     }
 
     /**

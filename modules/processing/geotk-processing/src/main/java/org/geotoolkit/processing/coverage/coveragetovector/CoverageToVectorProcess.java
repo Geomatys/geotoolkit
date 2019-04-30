@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
+import org.apache.sis.coverage.grid.GridCoverage;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.geometry.jts.JTS;
@@ -38,6 +39,7 @@ import org.geotoolkit.process.ProcessException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.parameter.Parameters;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -76,11 +78,11 @@ public class CoverageToVectorProcess extends AbstractProcess {
      * @param ranges data value ranges
      * @param band coverage band to process
      */
-    public CoverageToVectorProcess(GridCoverage2D coverage, NumberRange[] ranges, int band){
+    public CoverageToVectorProcess(GridCoverage coverage, NumberRange[] ranges, int band){
         super(CoverageToVectorDescriptor.INSTANCE, asParameters(coverage,ranges,band));
     }
 
-    private static ParameterValueGroup asParameters(GridCoverage2D coverage, NumberRange[] ranges, int band){
+    private static ParameterValueGroup asParameters(GridCoverage coverage, NumberRange[] ranges, int band){
         final Parameters params = Parameters.castOrWrap(CoverageToVectorDescriptor.INPUT_DESC.createValue());
         params.getOrCreate(CoverageToVectorDescriptor.COVERAGE).setValue(coverage);
         params.getOrCreate(CoverageToVectorDescriptor.RANGES).setValue(ranges);
@@ -427,7 +429,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
     protected void execute() throws ProcessException{
         ArgumentChecks.ensureNonNull("inputParameters", inputParameters);
 
-        final GridCoverage2D coverage = inputParameters.getValue(CoverageToVectorDescriptor.COVERAGE);
+        final GridCoverage2D coverage = CoverageUtilities.toGeotk(inputParameters.getValue(CoverageToVectorDescriptor.COVERAGE));
         final NumberRange[] ranges = inputParameters.getValue(CoverageToVectorDescriptor.RANGES);
         Integer band = inputParameters.getValue(CoverageToVectorDescriptor.BAND);
         if(band == null) {

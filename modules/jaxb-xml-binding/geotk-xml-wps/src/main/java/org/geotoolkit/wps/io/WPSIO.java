@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.measure.Unit;
 import javax.xml.bind.JAXBException;
+import org.apache.sis.coverage.grid.GridCoverage;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.ows.xml.v200.BoundingBoxType;
@@ -42,7 +43,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
@@ -350,7 +350,7 @@ public final class WPSIO {
         final List<FormatSupport> supports = new ArrayList<FormatSupport>();
 
         for (final FormatSupport formatSupport : FORMATSUPPORTS) {
-            if (clazz != null && formatSupport.getClazz().equals(clazz) || formatSupport.getClazz().isAssignableFrom(clazz)) {
+            if (clazz != null && (formatSupport.getClazz().equals(clazz) || formatSupport.getClazz().isAssignableFrom(clazz))) {
                 if (formatSupport.getIOType().equals(IOType.BOTH) || formatSupport.getIOType().equals(ioType)) {
                     supports.add(formatSupport);
                 }

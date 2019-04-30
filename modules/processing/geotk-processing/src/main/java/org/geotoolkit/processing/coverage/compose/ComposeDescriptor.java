@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.processing.coverage.compose;
 
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.locationtech.jts.geom.Geometry;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
@@ -42,10 +42,10 @@ public class ComposeDescriptor extends AbstractProcessDescriptor {
             .setRequired(false)
             .create(GridGeometry2D.class, null);
 
-    public static final ParameterDescriptor<GridCoverage2D> COVERAGE_PARAM = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage> COVERAGE_PARAM = new ParameterBuilder()
             .addName("coverage")
             .setRequired(true)
-            .create(GridCoverage2D.class, null);
+            .create(GridCoverage.class, null);
 
     public static final ParameterDescriptor<Geometry> INCLUDE_PARAM = new ParameterBuilder()
             .addName("include")

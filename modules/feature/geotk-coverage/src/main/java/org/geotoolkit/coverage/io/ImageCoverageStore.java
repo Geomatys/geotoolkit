@@ -23,11 +23,10 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import javax.imageio.spi.ImageReaderWriterSpi;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import static org.geotoolkit.coverage.io.GridCoverageStore.LOGGER;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
@@ -152,8 +151,8 @@ final class ImageCoverageStore extends Static {
          * the NetCDF format.
          */
         InternationalString name = null;
-        if (coverage instanceof GridCoverage) {
-            name = ((GridCoverage) coverage).getName();
+        if (coverage instanceof org.geotoolkit.coverage.grid.GridCoverage) {
+            name = ((org.geotoolkit.coverage.grid.GridCoverage) coverage).getName();
         }
         if (name == null) {
             name = Vocabulary.formatInternational(Vocabulary.Keys.Untitled);

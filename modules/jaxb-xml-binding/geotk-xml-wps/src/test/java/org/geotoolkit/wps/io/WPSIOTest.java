@@ -18,9 +18,8 @@ package org.geotoolkit.wps.io;
 
 import java.awt.image.RenderedImage;
 import java.net.URLConnection;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.Reference;
@@ -48,14 +47,14 @@ public class WPSIOTest extends org.geotoolkit.test.TestBase {
 
 
         //Coverage
-        assertFalse(WPSIO.isSupportedLiteralInputClass(GridCoverage2D.class));       //IN - Literal
-        assertFalse(WPSIO.isSupportedLiteralOutputClass(GridCoverage2D.class));          //OUT - Literal
-        assertFalse(WPSIO.isSupportedBBoxInputClass(GridCoverage2D.class));          //IN - BBOX
-        assertFalse(WPSIO.isSupportedBBoxOutputClass(GridCoverage2D.class));             //OUT - BBOX
-        assertTrue(WPSIO.isSupportedComplexInputClass(GridCoverage2D.class));        //IN - Complex
-        assertTrue(WPSIO.isSupportedComplexOutputClass(GridCoverage2D.class));           //OUT - Complex
-        assertTrue(WPSIO.isSupportedReferenceInputClass(GridCoverage2D.class));      //IN - Reference
-        assertTrue(WPSIO.isSupportedReferenceOutputClass(GridCoverage2D.class));         //OUT - Reference
+        assertFalse(WPSIO.isSupportedLiteralInputClass(GridCoverage.class));       //IN - Literal
+        assertFalse(WPSIO.isSupportedLiteralOutputClass(GridCoverage.class));          //OUT - Literal
+        assertFalse(WPSIO.isSupportedBBoxInputClass(GridCoverage.class));          //IN - BBOX
+        assertFalse(WPSIO.isSupportedBBoxOutputClass(GridCoverage.class));             //OUT - BBOX
+        assertTrue(WPSIO.isSupportedComplexInputClass(GridCoverage.class));        //IN - Complex
+        assertTrue(WPSIO.isSupportedComplexOutputClass(GridCoverage.class));           //OUT - Complex
+        assertTrue(WPSIO.isSupportedReferenceInputClass(GridCoverage.class));      //IN - Reference
+        assertTrue(WPSIO.isSupportedReferenceOutputClass(GridCoverage.class));         //OUT - Reference
 
 
     }
@@ -156,31 +155,31 @@ public class WPSIOTest extends org.geotoolkit.test.TestBase {
         assertEquals(RenderedImage.class, converter.getTargetClass());
 
         /*
-         * GridCoverage2D
+         * GridCoverage
          */
-        // GridCoverage2D -> ComplexData
-        converter = WPSIO.getConverter(GridCoverage2D.class, WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX);
+        // GridCoverage -> ComplexData
+        converter = WPSIO.getConverter(GridCoverage.class, WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX);
         assertNotNull(converter);
-        assertEquals(GridCoverage2D.class, converter.getSourceClass());
+        assertEquals(GridCoverage.class, converter.getSourceClass());
         assertEquals(Data.class, converter.getTargetClass());
 
-        //ComplexDataType -> GridCoverage2D
-        converter = WPSIO.getConverter(GridCoverage2D.class, WPSIO.IOType.INPUT, WPSIO.FormChoice.COMPLEX);
+        //ComplexDataType -> GridCoverage
+        converter = WPSIO.getConverter(GridCoverage.class, WPSIO.IOType.INPUT, WPSIO.FormChoice.COMPLEX);
         assertNotNull(converter);
-        assertEquals(GridCoverage2D.class, converter.getTargetClass());
+        assertEquals(GridCoverage.class, converter.getTargetClass());
         assertEquals(Data.class, converter.getSourceClass());
 
-        // GridCoverage2D -> Reference
-        converter = WPSIO.getConverter(GridCoverage2D.class, WPSIO.IOType.OUTPUT, WPSIO.FormChoice.REFERENCE);
+        // GridCoverage -> Reference
+        converter = WPSIO.getConverter(GridCoverage.class, WPSIO.IOType.OUTPUT, WPSIO.FormChoice.REFERENCE);
         assertNotNull(converter);
-        assertEquals(GridCoverage2D.class, converter.getSourceClass());
+        assertEquals(GridCoverage.class, converter.getSourceClass());
         assertEquals(Reference.class, converter.getTargetClass());
 
-        //ReferenceType -> GridCoverage2D
-        converter = WPSIO.getConverter(GridCoverage2D.class, WPSIO.IOType.INPUT, WPSIO.FormChoice.REFERENCE);
+        //ReferenceType -> GridCoverage
+        converter = WPSIO.getConverter(GridCoverage.class, WPSIO.IOType.INPUT, WPSIO.FormChoice.REFERENCE);
         assertNotNull(converter);
         assertEquals(Reference.class, converter.getSourceClass());
-        assertEquals(GridCoverage2D.class, converter.getTargetClass());
+        assertEquals(GridCoverage.class, converter.getTargetClass());
 
         // URL connections
         converter = WPSIO.getConverter(URLConnection.class, WPSIO.IOType.OUTPUT, WPSIO.FormChoice.REFERENCE);

@@ -47,7 +47,6 @@ import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
@@ -62,6 +61,7 @@ import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -115,7 +115,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
 
     private final List<FeatureCollection> featureColls = new ArrayList<>();
-    private final List<GridCoverage2D> coverages = new ArrayList<>();
+    private final List<GridCoverage> coverages = new ArrayList<>();
     private final List<Envelope> envelopes = new ArrayList<>();
     private final List<Date[]> dates = new ArrayList<>();
     private final List<Double[]> elevations = new ArrayList<>();
@@ -207,7 +207,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         GCF.reset();
         GCF.setEnvelope(env);
         GCF.setRenderedImage(img);
-        GridCoverage2D coverage = GCF.getGridCoverage2D();
+        GridCoverage coverage = GCF.getGridCoverage2D();
         coverages.add(coverage);
 
         env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
@@ -266,7 +266,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
     public void testCoveragePropertyRendering() throws Exception {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.addAttribute(GridCoverage2D.class).setName("coverage");
+        ftb.addAttribute(GridCoverage.class).setName("coverage");
         final FeatureType ft = ftb.build();
 
         final BufferedImage img = new BufferedImage(90, 90, BufferedImage.TYPE_INT_ARGB);
@@ -330,7 +330,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testCoverageRendering() throws Exception{
-        for(GridCoverage2D col : coverages){
+        for(GridCoverage col : coverages){
             final MapLayer layer = MapBuilder.createCoverageLayer(col, SF.style(SF.rasterSymbolizer()), "cov");
             testRendering(layer);
         }
@@ -409,7 +409,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setEnvelope(covenv);
         gcb.setRenderedImage(img);
-        final GridCoverage2D coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage = gcb.getGridCoverage2D();
         final MapLayer layer = MapBuilder.createCoverageLayer(coverage, SF.style(SF.rasterSymbolizer()), "unnamed");
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);
@@ -478,7 +478,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setEnvelope(env);
         gcb.setRenderedImage(img);
-        final GridCoverage2D coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage = gcb.getGridCoverage2D();
 
         //display it
         final MapContext context = MapBuilder.createContext();
@@ -492,8 +492,8 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         final GridGeometry gridGeom = reader.getGridGeometry();
         assertNotNull(gridGeom);
 
-        final GridCoverage2D result = (GridCoverage2D) reader.read(null);
-        final RenderedImage image = result.getRenderedImage();
+        final GridCoverage result = reader.read(null);
+        final RenderedImage image = result.render(null);
         assertEquals(1000, image.getWidth());
     }
 
@@ -560,9 +560,9 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         gcb.setRenderedImage(img);
         gcb.setName("coverage");
         gcb.setGridGeometry(gg);
-        final GridCoverage2D coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage = gcb.getGridCoverage2D();
 
-        final GridCoverageResource gcr = new DefaultCoverageResource(coverage, Names.createLocalName(null, null, coverage.getName()));
+        final GridCoverageResource gcr = new DefaultCoverageResource(coverage, Names.createLocalName(null, null, CoverageUtilities.getName(coverage)));
         final MapLayer layer = MapBuilder.createCoverageLayer(gcr);
         layer.setSelectable(true);
 

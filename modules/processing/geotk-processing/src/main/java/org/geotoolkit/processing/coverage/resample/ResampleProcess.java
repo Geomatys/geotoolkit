@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
@@ -41,7 +42,6 @@ import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -84,11 +84,11 @@ public class ResampleProcess extends AbstractProcess {
     private static final PixelOrientation CORNER = PixelOrientation.UPPER_LEFT;
 
 
-    public ResampleProcess(GridCoverage2D coverage, CoordinateReferenceSystem targetCrs, double[] background) {
+    public ResampleProcess(GridCoverage coverage, CoordinateReferenceSystem targetCrs, double[] background) {
         super(INSTANCE, asParameters(coverage, targetCrs,  null, null, background));
     }
 
-    public ResampleProcess(GridCoverage2D coverage, CoordinateReferenceSystem targetCrs,
+    public ResampleProcess(GridCoverage coverage, CoordinateReferenceSystem targetCrs,
                            GridGeometry gridGeom, InterpolationCase interpolation, double[] background) {
         super(INSTANCE, asParameters(coverage, targetCrs, gridGeom, interpolation, background));
     }
@@ -97,8 +97,8 @@ public class ResampleProcess extends AbstractProcess {
         super(INSTANCE, input);
     }
 
-    private static ParameterValueGroup asParameters(GridCoverage2D coverage, CoordinateReferenceSystem targetCrs,
-            GridGeometry gridGeom, InterpolationCase interpolation, double[] background) {
+    private static ParameterValueGroup asParameters(GridCoverage coverage, CoordinateReferenceSystem targetCrs,
+            GridGeometry gridGeom, InterpolationCase interpolation, double[] background){
         final Parameters params = Parameters.castOrWrap(ResampleDescriptor.INPUT_DESC.createValue());
         params.getOrCreate(IN_COVERAGE).setValue(coverage);
         if (targetCrs != null) {
@@ -126,7 +126,7 @@ public class ResampleProcess extends AbstractProcess {
      */
     @Override
     protected void execute() throws ProcessException {
-        final GridCoverage2D source = inputParameters.getValue(IN_COVERAGE);
+        final GridCoverage source = inputParameters.getValue(IN_COVERAGE);
         final double[] background = inputParameters.getValue(IN_BACKGROUND);
         InterpolationCase interpolation = inputParameters.getValue(IN_INTERPOLATION_TYPE);
         if (interpolation == null) {
@@ -145,10 +145,10 @@ public class ResampleProcess extends AbstractProcess {
             target = reproject(source, targetCRS, targetGG, interpolation, border, background, null);
         } catch (FactoryException exception) {
             throw new CannotReprojectException(Errors.format(
-                    Errors.Keys.CantReprojectCoverage_1, source.getName()), exception);
+                    Errors.Keys.CantReprojectCoverage_1, CoverageUtilities.getName(source)), exception);
         } catch (TransformException exception) {
             throw new CannotReprojectException(Errors.format(
-                    Errors.Keys.CantReprojectCoverage_1, source.getName()), exception);
+                    Errors.Keys.CantReprojectCoverage_1, CoverageUtilities.getName(source)), exception);
         }
         outputParameters.getOrCreate(OUT_COVERAGE).setValue(target);
     }
@@ -206,7 +206,7 @@ public class ResampleProcess extends AbstractProcess {
      * @throws  FactoryException If a transformation step can't be created.
      * @throws TransformException If a transformation failed.
      */
-    public static GridCoverage2D reproject(GridCoverage2D            sourceCoverage,
+    public static GridCoverage2D reproject(GridCoverage              sourceCoverage,
                                            CoordinateReferenceSystem targetCRS,
                                            GridGeometry2D            targetGG,
                                            InterpolationCase         interpolationType,
@@ -223,7 +223,7 @@ public class ResampleProcess extends AbstractProcess {
      * grid geometry is supplied, only its {@linkplain GridGeometry2D#getRange grid envelope}
      * and {@linkplain GridGeometry2D#getGridToCRS grid to CRS} transform are taken in account.
      *
-     * @param sourceCoverage The source grid coverage.
+     * @param sourceCov      The source grid coverage.
      * @param targetCRS      Coordinate reference system for the new grid coverage, or {@code null}.
      * @param targetGG       The target grid geometry, or {@code null} for default.
      * @param background     The background values, or {@code null} for default.
@@ -238,7 +238,7 @@ public class ResampleProcess extends AbstractProcess {
      * @throws  FactoryException If a transformation step can't be created.
      * @throws TransformException If a transformation failed.
      */
-    public static GridCoverage2D reproject(GridCoverage2D            sourceCoverage,
+    public static GridCoverage2D reproject(GridCoverage              sourceCov,
                                            CoordinateReferenceSystem targetCRS,
                                            GridGeometry2D            targetGG,
                                            InterpolationCase         interpolationType,
@@ -247,6 +247,9 @@ public class ResampleProcess extends AbstractProcess {
                                            final Hints               hints)
             throws FactoryException, TransformException
     {
+
+        //TODO : to replace by SIS
+        GridCoverage2D sourceCoverage = CoverageUtilities.toGeotk(sourceCov);
 
         //set default values
         if(borderComportement==null) borderComportement = ResampleBorderComportement.EXTRAPOLATION;
@@ -574,7 +577,7 @@ public class ResampleProcess extends AbstractProcess {
         return create(sourceCoverage, targetImage, targetGG, finalView, hints);
     }
 
-    private static double[] getFillValue(GridCoverage2D gridCoverage2D){
+    private static double[] getFillValue(GridCoverage gridCoverage2D){
         final SampleDimension[] dimensions = gridCoverage2D.getSampleDimensions().toArray(new SampleDimension[0]);
         final int nbBand = dimensions.length;
         final double[] fillValue = new double[nbBand];
@@ -903,7 +906,7 @@ public class ResampleProcess extends AbstractProcess {
                 final Envelope reduced;
                 final MathTransform gridToCRS;
                 if (reducedCRS == sourceCRS) {
-                    reduced   = source.getEnvelope();
+                    reduced   = source.getGridGeometry().getEnvelope();
                     gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
                 } else {
                     reduced   = CoverageUtilities.getEnvelope2D(source);

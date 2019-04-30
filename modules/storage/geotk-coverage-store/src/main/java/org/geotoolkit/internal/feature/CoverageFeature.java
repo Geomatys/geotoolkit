@@ -242,8 +242,7 @@ public final class CoverageFeature {
             public Iterator<Feature> iterator() {
                 final GridCoverage cov;
                 try {
-                    final GridCoverageReader reader = res.acquireReader();
-                    cov = reader.read(null);
+                    cov = res.read(null);
                 } catch (DataStoreException ex) {
                     throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
                 }
@@ -254,15 +253,13 @@ public final class CoverageFeature {
             public synchronized int size() {
                 if (count==-1) {
                     try {
-                        final GridCoverageReader reader = res.acquireReader();
-                        final GridGeometry gg = reader.getGridGeometry();
+                        final GridGeometry gg = res.getGridGeometry();
                         final GridExtent extent = gg.getExtent();
                         final int dimension = extent.getDimension();
                         long size = extent.getSize(0);
                         for (int i=1;i<dimension;i++) {
                             size *= extent.getSize(i);
                         }
-                        res.recycle(reader);
                         count = (int) size;
                     } catch (DataStoreException ex) {
                         throw new FeatureStoreRuntimeException(ex.getMessage(), ex);

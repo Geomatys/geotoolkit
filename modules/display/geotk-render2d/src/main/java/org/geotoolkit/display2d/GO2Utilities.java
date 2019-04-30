@@ -81,6 +81,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.jts.awt.DecimateJTSGeometryJ2D;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.image.jai.FloodFill;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -260,7 +261,10 @@ public final class GO2Utilities {
     /**
      * @return true if some datas has been rendered
      */
-    public static boolean portray(final RenderingContext2D renderingContext, GridCoverage2D dataCoverage) throws PortrayalException{
+    public static boolean portray(final RenderingContext2D renderingContext, GridCoverage coverage) throws PortrayalException{
+
+        GridCoverage2D dataCoverage = CoverageUtilities.toGeotk(coverage);
+
         final CanvasMonitor monitor = renderingContext.getMonitor();
         final Graphics2D g2d = renderingContext.getGraphics();
 
@@ -270,7 +274,7 @@ public final class GO2Utilities {
             final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
             if(!Utilities.equalsIgnoreMetadata(candidate2D,renderingContext.getObjectiveCRS2D()) ){
                 sameCRS = false;
-                dataCoverage = GO2Utilities.resample(dataCoverage.view(ViewType.NATIVE),renderingContext.getObjectiveCRS2D());
+                dataCoverage = (GridCoverage2D) GO2Utilities.resample(dataCoverage.view(ViewType.NATIVE),renderingContext.getObjectiveCRS2D());
 
                 if(dataCoverage != null){
                     dataCoverage = dataCoverage.view(ViewType.RENDERED);
@@ -773,7 +777,7 @@ public final class GO2Utilities {
     // rewrite coverage read param  ////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public static GridCoverage2D resample(final GridCoverage dataCoverage, final CoordinateReferenceSystem targetCRS) throws ProcessException{
+    public static GridCoverage resample(final GridCoverage dataCoverage, final CoordinateReferenceSystem targetCRS) throws ProcessException{
         final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
         final Parameters params = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
         params.getOrCreate(ResampleDescriptor.IN_COVERAGE).setValue(dataCoverage);
@@ -781,7 +785,7 @@ public final class GO2Utilities {
 
         final org.geotoolkit.process.Process process = desc.createProcess(params);
         final ParameterValueGroup result = process.call();
-        return (GridCoverage2D) result.parameter("result").getValue();
+        return (GridCoverage) result.parameter("result").getValue();
     }
 
     ////////////////////////////////////////////////////////////////////////////

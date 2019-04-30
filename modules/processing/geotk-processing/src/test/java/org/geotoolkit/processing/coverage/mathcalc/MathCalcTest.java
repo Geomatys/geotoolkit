@@ -31,18 +31,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
@@ -81,7 +79,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         env.setRange(1, 0, 30.0);
 
         //create base coverage
-        final GridCoverage2D baseCoverage = createCoverage2D(env, width, height, 15.5f, -3.0f);
+        final GridCoverage baseCoverage = createCoverage2D(env, width, height, 15.5f, -3.0f);
 
 
         //create output coverage ref
@@ -90,8 +88,8 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         final PyramidalCoverageResource outRef = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(n));
         outRef.setPackMode(ViewType.GEOPHYSICS);
         outRef.setSampleDimensions(Collections.singletonList(new SampleDimension(Names.createLocalName(null, null, "data"), null, Collections.emptyList())));
-        outRef.setSampleModel(baseCoverage.getRenderedImage().getSampleModel());
-        outRef.setColorModel(baseCoverage.getRenderedImage().getColorModel());
+        outRef.setSampleModel(baseCoverage.render(null).getSampleModel());
+        outRef.setColorModel(baseCoverage.render(null).getColorModel());
         final Pyramid pyramid = (Pyramid) outRef.createModel(new DefiningPyramid(crs));
         final GeneralDirectPosition corner = new GeneralDirectPosition(crs);
         corner.setCoordinate(env.getMinimum(0), env.getMaximum(1));
@@ -107,10 +105,8 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
                 outRef);
         process.call();
 
-        final GridCoverageReader reader = outRef.acquireReader();
-        final GridCoverage2D result = (GridCoverage2D)reader.read(null);
-        outRef.recycle(reader);
-        final Raster resultRaster = result.getRenderedImage().getData();
+        final GridCoverage result = outRef.read(null);
+        final Raster resultRaster = result.render(null).getData();
         for(int x=0;x<width;x++){
             for(int y=0;y<height;y++){
                 float v = resultRaster.getSampleFloat(x, y, 0);
@@ -134,7 +130,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         env.setRange(1, 0, 30.0);
 
         //create base coverage
-        final GridCoverage2D baseCoverage = createCoverage2D(env, width, height, 15.5f, -2.0f);
+        final GridCoverage baseCoverage = createCoverage2D(env, width, height, 15.5f, -2.0f);
 
 
         //create output coverage ref
@@ -143,8 +139,8 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         final PyramidalCoverageResource outRef = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(n));
         outRef.setPackMode(ViewType.GEOPHYSICS);
         outRef.setSampleDimensions(Collections.singletonList(new SampleDimension(Names.createLocalName(null, null, "data"), null, Collections.emptyList())));
-        outRef.setSampleModel(baseCoverage.getRenderedImage().getSampleModel());
-        outRef.setColorModel(baseCoverage.getRenderedImage().getColorModel());
+        outRef.setSampleModel(baseCoverage.render(null).getSampleModel());
+        outRef.setColorModel(baseCoverage.render(null).getColorModel());
         final Pyramid pyramid = (Pyramid) outRef.createModel(new DefiningPyramid(crs));
         final GeneralDirectPosition corner = new GeneralDirectPosition(crs);
         corner.setCoordinate(env.getMinimum(0), env.getMaximum(1));
@@ -160,10 +156,8 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
                 outRef);
         process.call();
 
-        final GridCoverageReader reader = outRef.acquireReader();
-        final GridCoverage2D result = (GridCoverage2D)reader.read(null);
-        outRef.recycle(reader);
-        final Raster resultRaster = result.getRenderedImage().getData();
+        final GridCoverage result = outRef.read(null);
+        final Raster resultRaster = result.render(null).getData();
         for(int x=0;x<width;x++){
             for(int y=0;y<height;y++){
                 float v = resultRaster.getSampleFloat(x, y, 0);
@@ -187,8 +181,8 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         env.setRange(1, 0, 30.0);
 
         //create base coverage
-        final GridCoverage2D baseCoverage1 = createCoverage2D(env, width, height, 15.5f,  3.0f);
-        final GridCoverage2D baseCoverage2 = createCoverage2D(env, width, height, -9.0f, 20.0f);
+        final GridCoverage baseCoverage1 = createCoverage2D(env, width, height, 15.5f,  3.0f);
+        final GridCoverage baseCoverage2 = createCoverage2D(env, width, height, -9.0f, 20.0f);
 
 
         //create output coverage ref
@@ -197,8 +191,8 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         final PyramidalCoverageResource outRef = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(n));
         outRef.setPackMode(ViewType.GEOPHYSICS);
         outRef.setSampleDimensions(Collections.singletonList(new SampleDimension(Names.createLocalName(null, null, "data"), null, Collections.emptyList())));
-        outRef.setSampleModel(baseCoverage1.getRenderedImage().getSampleModel());
-        outRef.setColorModel(baseCoverage1.getRenderedImage().getColorModel());
+        outRef.setSampleModel(baseCoverage1.render(null).getSampleModel());
+        outRef.setColorModel(baseCoverage1.render(null).getColorModel());
         final Pyramid pyramid = (Pyramid) outRef.createModel(new DefiningPyramid(crs));
         final GeneralDirectPosition corner = new GeneralDirectPosition(crs);
         corner.setCoordinate(env.getMinimum(0), env.getMaximum(1));
@@ -214,10 +208,8 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
                 outRef);
         process.call();
 
-        final GridCoverageReader reader = outRef.acquireReader();
-        final GridCoverage2D result = (GridCoverage2D)reader.read(null);
-        outRef.recycle(reader);
-        final Raster resultRaster = result.getRenderedImage().getData();
+        final GridCoverage result = outRef.read(null);
+        final Raster resultRaster = result.render(null).getData();
         for(int x=0;x<width;x++){
             for(int y=0;y<height;y++){
                 float v = resultRaster.getSampleFloat(x, y, 0);
@@ -277,12 +269,8 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
 
 
         //create base coverage
-        final GridCoverageReader reader1 = ref1.acquireReader();
-        final GridCoverageReader reader2 = ref2.acquireReader();
-        final GridCoverage baseCoverage1 = reader1.read(null);
-        final GridCoverage baseCoverage2 = reader2.read(null);
-        ref1.recycle(reader1);
-        ref2.recycle(reader2);
+        final GridCoverage baseCoverage1 = ref1.read(null);
+        final GridCoverage baseCoverage2 = ref2.read(null);
 
         outRef.setSampleModel(createRenderedImage(1,1,0,0).getSampleModel());
         outRef.setColorModel(createRenderedImage(1,1,0,0).getColorModel());
@@ -295,27 +283,25 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
                 outRef);
         process.call();
 
-        final GridCoverageReader outReader = outRef.acquireReader();
-        final GridCoverage result = outReader.read(null);
-        outRef.recycle(outReader);
+        final GridCoverage result = outRef.read(null);
         Assert.assertTrue(result instanceof GridCoverageStack);
         final GridCoverageStack stackT = (GridCoverageStack) result;
         final GridCoverageStack stackT0 = (GridCoverageStack) stackT.coveragesAt(-9).get(0);
         final GridCoverageStack stackT1 = (GridCoverageStack) stackT.coveragesAt( 0).get(0);
         final GridCoverageStack stackT2 = (GridCoverageStack) stackT.coveragesAt(21).get(0);
-        final GridCoverage2D stackT0Z0 = (GridCoverage2D) stackT0.coveragesAt(-5).get(0);
-        final GridCoverage2D stackT0Z1 = (GridCoverage2D) stackT0.coveragesAt(62).get(0);
-        final GridCoverage2D stackT1Z0 = (GridCoverage2D) stackT1.coveragesAt(-5).get(0);
-        final GridCoverage2D stackT1Z1 = (GridCoverage2D) stackT1.coveragesAt(62).get(0);
-        final GridCoverage2D stackT2Z0 = (GridCoverage2D) stackT2.coveragesAt(-5).get(0);
-        final GridCoverage2D stackT2Z1 = (GridCoverage2D) stackT2.coveragesAt(62).get(0);
+        final GridCoverage stackT0Z0 = stackT0.coveragesAt(-5).get(0);
+        final GridCoverage stackT0Z1 = stackT0.coveragesAt(62).get(0);
+        final GridCoverage stackT1Z0 = stackT1.coveragesAt(-5).get(0);
+        final GridCoverage stackT1Z1 = stackT1.coveragesAt(62).get(0);
+        final GridCoverage stackT2Z0 = stackT2.coveragesAt(-5).get(0);
+        final GridCoverage stackT2Z1 = stackT2.coveragesAt(62).get(0);
 
-        testImageContent(stackT0Z0.getRenderedImage(), width, height,  40,  40); // (12 -  4)*5
-        testImageContent(stackT1Z0.getRenderedImage(), width, height, 125, 125); // (-7 + 32)*5
-        testImageContent(stackT2Z0.getRenderedImage(), width, height, 705, 705); // (51 + 90)*5
-        testImageContent(stackT0Z1.getRenderedImage(), width, height,-450,-450); // (-3 - 87)*5
-        testImageContent(stackT1Z1.getRenderedImage(), width, height,  -5,  -5); // ( 5 -  6)*5
-        testImageContent(stackT2Z1.getRenderedImage(), width, height, 290, 290); // (17 + 41)*5
+        testImageContent(stackT0Z0.render(null), width, height,  40,  40); // (12 -  4)*5
+        testImageContent(stackT1Z0.render(null), width, height, 125, 125); // (-7 + 32)*5
+        testImageContent(stackT2Z0.render(null), width, height, 705, 705); // (51 + 90)*5
+        testImageContent(stackT0Z1.render(null), width, height,-450,-450); // (-3 - 87)*5
+        testImageContent(stackT1Z1.render(null), width, height,  -5,  -5); // ( 5 -  6)*5
+        testImageContent(stackT2Z1.render(null), width, height, 290, 290); // (17 + 41)*5
 
 
     }
@@ -361,7 +347,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
      * @param fillValue1 value used in first vertical half of the image
      * @param fillValue2 value used in secong vertical half of the image
      */
-    private static GridCoverage2D createCoverage2D(Envelope env, int width, int height, float fillValue1, float fillValue2){
+    private static GridCoverage createCoverage2D(Envelope env, int width, int height, float fillValue1, float fillValue2){
         final BufferedImage baseImage = createRenderedImage(width, height, fillValue1, fillValue2);
         final GridCoverageBuilder baseGcb1 = new GridCoverageBuilder();
         baseGcb1.setName("base");

@@ -37,6 +37,7 @@ import javax.imageio.event.IIOReadProgressListener;
 import javax.imageio.event.IIOReadWarningListener;
 import javax.media.jai.InterpolationNearest;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.PixelTranslation;
@@ -124,7 +125,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
  */
-public class GridCoverageStack extends GridCoverage {
+public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage {
 
     /**
      * Reference to a single <var>n</var> dimensional coverage in a (<var>n</var>+1) dimensional
@@ -340,8 +341,8 @@ public class GridCoverageStack extends GridCoverage {
         @Override
         public String getName() throws IOException {
             Object coverage = getCoverage(null);
-            if (coverage instanceof GridCoverage)  {
-                coverage = ((GridCoverage) coverage).getName();
+            if (coverage instanceof org.geotoolkit.coverage.grid.GridCoverage)  {
+                coverage = ((org.geotoolkit.coverage.grid.GridCoverage) coverage).getName();
             }
             return coverage.toString();
         }
@@ -393,7 +394,7 @@ public class GridCoverageStack extends GridCoverage {
          */
         @Override
         public Envelope getEnvelope() throws IOException {
-            return getCoverage(null).getEnvelope();
+            return getCoverage(null).getGridGeometry().getEnvelope();
         }
 
         /**
@@ -493,14 +494,14 @@ public class GridCoverageStack extends GridCoverage {
      * If possible, this class will tries to select a coverage with a middle value (not just the
      * minimum value) lower than the requested <var>z</var> value.
      */
-    private transient GridCoverage lower;
+    private transient org.geotoolkit.coverage.grid.GridCoverage lower;
 
     /**
      * Coverage with a maximum z-value higher than or equals to the requested <var>z</var> value.
      * If possible, this class will tries to select a coverage with a middle value (not just the
      * maximum value) higher than the requested <var>z</var> value.
      */
-    private transient GridCoverage upper;
+    private transient org.geotoolkit.coverage.grid.GridCoverage upper;
 
     /**
      * <var>Z</var> values in the middle of {@link #lower} and {@link #upper} envelope.
@@ -1200,7 +1201,7 @@ public class GridCoverageStack extends GridCoverage {
      * @return The loaded coverage.
      * @throws IOException if an error occurred while loading image.
      */
-    private GridCoverage load(final Element element) throws IOException {
+    private org.geotoolkit.coverage.grid.GridCoverage load(final Element element) throws IOException {
         assert Thread.holdsLock(this);
         GridCoverage coverage = element.getCoverage(listeners);
         if (coverage instanceof GridCoverage2D) {
@@ -1217,7 +1218,7 @@ public class GridCoverageStack extends GridCoverage {
         final CoordinateReferenceSystem sourceCRS;
         assert debugEquals((sourceCRS = coverage.getCoordinateReferenceSystem()),
                 CRS.getOrCreateSubCRS(getCoordinateReferenceSystem(), 0, sourceCRS.getCoordinateSystem().getDimension())) : sourceCRS;
-        return coverage;
+        return (org.geotoolkit.coverage.grid.GridCoverage) coverage;
     }
 
     /**
@@ -1247,8 +1248,8 @@ public class GridCoverageStack extends GridCoverage {
         });
         final NumberRange<?> lowerRange = lowerElement.getZRange();
         final NumberRange<?> upperRange = upperElement.getZRange();
-        final GridCoverage lower = load(lowerElement);
-        final GridCoverage upper = load(upperElement);
+        final org.geotoolkit.coverage.grid.GridCoverage lower = load(lowerElement);
+        final org.geotoolkit.coverage.grid.GridCoverage upper = load(upperElement);
 
         this.lower      = lower; // Set only when BOTH images are OK.
         this.upper      = upper;
@@ -1438,7 +1439,7 @@ public class GridCoverageStack extends GridCoverage {
             return lower.evaluate(reduce(coord, lower), dest);
         }
         assert !(z<lowerZ || z>upperZ) : z;   // Uses !(...) in order to accepts NaN.
-        final GridCoverage coverage = (z >= 0.5*(lowerZ + upperZ)) ? upper : lower;
+        final org.geotoolkit.coverage.grid.GridCoverage coverage = (z >= 0.5*(lowerZ + upperZ)) ? upper : lower;
         return coverage.evaluate(reduce(coord, coverage), dest);
     }
 

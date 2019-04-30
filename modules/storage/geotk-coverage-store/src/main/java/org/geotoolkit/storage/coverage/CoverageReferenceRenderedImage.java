@@ -35,8 +35,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.image.BufferedImages;
@@ -59,7 +57,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class CoverageReferenceRenderedImage implements RenderedImage{
+public class CoverageReferenceRenderedImage implements RenderedImage {
 
     private final GridCoverageResource ref;
     private final Mosaic mosaic;
@@ -266,18 +264,12 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
     }
 
     public GridCoverage2D getTileCoverage(int idx, int idy) throws DataStoreException, TransformException {
-        final GridCoverageReadParam rparam = new GridCoverageReadParam();
         Envelope tenv = Pyramids.computeTileEnvelope(mosaic, idx, idy);
         final GeneralEnvelope genv = new GeneralEnvelope(tenv);
         genv.setRange(0, tenv.getMinimum(0) - mosaic.getScale(), tenv.getMaximum(0) + mosaic.getScale());
         genv.setRange(1, tenv.getMinimum(1) - mosaic.getScale(), tenv.getMaximum(1) + mosaic.getScale());
         tenv = ReferencingUtilities.transform(genv, dataEnv.getCoordinateReferenceSystem());
-        rparam.setEnvelope(tenv);
-
-        final GridCoverageReader reader = ref.acquireReader();
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(rparam);
-        ref.recycle(reader);
-        return coverage;
+        return (GridCoverage2D) ref.read(ref.getGridGeometry().derive().subgrid(tenv).build());
     }
 
     @Override

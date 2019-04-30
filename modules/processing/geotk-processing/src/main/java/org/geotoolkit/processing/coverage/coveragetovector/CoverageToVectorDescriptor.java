@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.processing.coverage.coveragetovector;
 
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.locationtech.jts.geom.Geometry;
 
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -26,7 +26,6 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
-
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -44,11 +43,11 @@ public final class CoverageToVectorDescriptor extends AbstractProcessDescriptor 
     /**
      * Mandatory - Coverage to process
      */
-    public static final ParameterDescriptor<GridCoverage2D> COVERAGE = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage> COVERAGE = new ParameterBuilder()
             .addName("coverage")
             .setRemarks("Coverage to process.")
             .setRequired(true)
-            .create(GridCoverage2D.class,null);
+            .create(GridCoverage.class,null);
 
     /**
      * Optional - Ranges to regroup

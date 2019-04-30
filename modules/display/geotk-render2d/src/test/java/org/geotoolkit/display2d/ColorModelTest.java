@@ -35,12 +35,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.imageio.ImageIO;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreUtilities;
@@ -94,7 +94,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
 
     private final List<FeatureCollection> featureColls = new ArrayList<>();
-    private final List<GridCoverage2D> coverages = new ArrayList<>();
+    private final List<GridCoverage> coverages = new ArrayList<>();
     private final List<Envelope> envelopes = new ArrayList<>();
     private final List<Date[]> dates = new ArrayList<>();
     private final List<Double[]> elevations = new ArrayList<>();
@@ -187,7 +187,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         gcb.reset();
         gcb.setEnvelope(env);
         gcb.setRenderedImage(img);
-        GridCoverage2D coverage = gcb.getGridCoverage2D();
+        GridCoverage coverage = gcb.getGridCoverage2D();
         coverages.add(coverage);
 
         env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
@@ -430,7 +430,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setEnvelope(env);
         gcb.setRenderedImage(img);
-        final GridCoverage2D coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage = gcb.getGridCoverage2D();
 
         //display it
         final MapContext context = MapBuilder.createContext();
@@ -481,7 +481,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setEnvelope(env);
         gcb.setRenderedImage(img);
-        final GridCoverage2D coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage = gcb.getGridCoverage2D();
 
         //display it
         final MapContext context = MapBuilder.createContext();

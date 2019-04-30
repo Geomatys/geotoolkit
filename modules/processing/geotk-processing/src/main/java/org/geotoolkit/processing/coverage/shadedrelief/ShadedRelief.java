@@ -23,6 +23,7 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
 import javax.vecmath.Vector3f;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -41,6 +42,7 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 
 /**
  *
@@ -57,7 +59,7 @@ public class ShadedRelief extends AbstractProcess {
         }
     }
 
-    public ShadedRelief(GridCoverage2D coverage, GridCoverage2D elevation, MathTransform1D eleConv){
+    public ShadedRelief(GridCoverage coverage, GridCoverage elevation, MathTransform1D eleConv){
         this(ShadedReliefDescriptor.INSTANCE,toParameters(coverage, elevation, eleConv));
     }
 
@@ -65,7 +67,7 @@ public class ShadedRelief extends AbstractProcess {
         super(desc, input);
     }
 
-    private static final ParameterValueGroup toParameters(GridCoverage2D coverage, GridCoverage2D elevation, MathTransform1D eleConv){
+    private static final ParameterValueGroup toParameters(GridCoverage coverage, GridCoverage elevation, MathTransform1D eleConv){
         final Parameters params = Parameters.castOrWrap(ShadedReliefDescriptor.INPUT_DESC.createValue());
         params.getOrCreate(ShadedReliefDescriptor.COVERAGE).setValue(coverage);
         params.getOrCreate(ShadedReliefDescriptor.ELEVATION).setValue(elevation);
@@ -75,8 +77,8 @@ public class ShadedRelief extends AbstractProcess {
 
     @Override
     protected void execute() throws ProcessException {
-        GridCoverage2D coverage = inputParameters.getValue(ShadedReliefDescriptor.COVERAGE);
-        GridCoverage2D elevation = inputParameters.getValue(ShadedReliefDescriptor.ELEVATION);
+        GridCoverage2D coverage = CoverageUtilities.toGeotk(inputParameters.getValue(ShadedReliefDescriptor.COVERAGE));
+        GridCoverage2D elevation = CoverageUtilities.toGeotk(inputParameters.getValue(ShadedReliefDescriptor.ELEVATION));
         MathTransform1D eleConv = inputParameters.getValue(ShadedReliefDescriptor.ELECONV);
         //prepare coverage for the expected work
         coverage = coverage.view(ViewType.RENDERED);

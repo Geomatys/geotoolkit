@@ -37,8 +37,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
@@ -66,7 +66,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import org.opengis.feature.Feature;
 import org.opengis.util.FactoryException;
-import org.w3c.dom.CDATASection;
 
 /**
  *
@@ -90,7 +89,7 @@ public final class ConvertersTestUtils {
         return img;
     }
 
-    public static GridCoverage2D makeCoverage() {
+    public static GridCoverage makeCoverage() {
 
         final BufferedImage img = new BufferedImage(500, 500, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g2d = img.createGraphics();

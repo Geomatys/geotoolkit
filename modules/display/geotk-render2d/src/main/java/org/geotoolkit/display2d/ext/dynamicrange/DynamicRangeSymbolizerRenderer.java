@@ -31,7 +31,6 @@ import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.display.PortrayalException;
@@ -172,7 +171,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
 
             //check if the reader honored the band request
             final List<SampleDimension> readDimensions = dataCoverage.getSampleDimensions();
-            final List<SampleDimension> sampleDimensions = covref.acquireReader().getSampleDimensions();
+            final List<SampleDimension> sampleDimensions = covref.getSampleDimensions();
             boolean bandReadHonored = (readDimensions.size() == toRead.length);
             for (int i=0;bandReadHonored && i<toRead.length;i++) {
                 bandReadHonored &= Objects.equals(readDimensions.get(i).getName(), (sampleDimensions == null) ? null : sampleDimensions.get(toRead[i]).getName());
@@ -185,9 +184,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                 }
             }
 
-            if (dataCoverage.getViewTypes().contains(ViewType.GEOPHYSICS)) {
-                dataCoverage = dataCoverage.forConvertedValues(true);
-            }
+            dataCoverage = dataCoverage.forConvertedValues(true);
             final RenderedImage ri = dataCoverage.getRenderedImage();
 
             final DynamicRangeStretchProcess p = new DynamicRangeStretchProcess(ri, bands, ranges);

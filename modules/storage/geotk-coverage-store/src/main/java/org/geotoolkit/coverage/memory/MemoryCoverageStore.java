@@ -24,14 +24,14 @@ import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.AbstractGridCoverageWriter;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -39,7 +39,9 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.DefaultCoverageResource;
@@ -50,7 +52,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.GenericName;
 
 /**
- * Simple implementation to provide a {@link MemoryCoverageStore} for a {@link GridCoverage2D}.
+ * Simple implementation to provide a {@link MemoryCoverageStore} for a {@link GridCoverage}.
  *
  * @author Johan Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
@@ -68,11 +70,11 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
         super(EMPTY_DESCRIPTOR.createValue());
     }
 
-    public MemoryCoverageStore(final GridCoverage2D gridCov) {
-        this(gridCov, String.valueOf(gridCov.getName()));
+    public MemoryCoverageStore(final GridCoverage gridCov) {
+        this(gridCov, String.valueOf(CoverageUtilities.getName(gridCov)));
     }
 
-    public MemoryCoverageStore(final GridCoverage2D gridCov, final String name) {
+    public MemoryCoverageStore(final GridCoverage gridCov, final String name) {
         this();
         try {
             final GridCoverageResource ref = add(new DefiningCoverageResource(NamesExt.create(name),null));
@@ -114,7 +116,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
         final DefiningCoverageResource cr = (DefiningCoverageResource) resource;
         final GenericName name = cr.getName();
 
-        final Set<GenericName> names = getNames();
+        final Set<GenericName> names = DataStores.getNames(this, true, DataSet.class);
         if (names.contains(name)) {
             throw new DataStoreException("Layer "+name+" already exist");
         }
@@ -143,15 +145,15 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
     public void close() {
     }
 
-    private class MemoryCoverageResource extends DefaultCoverageResource{
+    private class MemoryCoverageResource extends DefaultCoverageResource {
 
-        private GridCoverage2D coverage;
+        private GridCoverage coverage;
 
         public MemoryCoverageResource(GenericName name) {
             super(MemoryCoverageStore.this,null,name);
         }
 
-        public void setCoverage(GridCoverage2D coverage) {
+        public void setCoverage(GridCoverage coverage) {
             this.coverage = coverage;
             final CoverageStoreContentEvent event = fireDataUpdated();
             ((MemoryCoverageStore)getOriginator()).forwardEvent(event);
@@ -208,7 +210,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
 
         @Override
         public void write(GridCoverage coverage, GridCoverageWriteParam param) throws CoverageStoreException, CancellationException {
-            ref.setCoverage((GridCoverage2D)coverage);
+            ref.setCoverage(coverage);
         }
 
     }

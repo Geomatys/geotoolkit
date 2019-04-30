@@ -34,6 +34,7 @@ import javax.measure.IncommensurableException;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.internal.storage.MetadataBuilder;
@@ -51,7 +52,6 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -513,6 +513,7 @@ public abstract class AbstractGridCoverageReader implements GridCoverageReader {
      *
      * @see ImageReader#read(int)
      */
+    @Override
     public abstract GridCoverage read(GridCoverageReadParam param)
             throws DataStoreException, CancellationException;
 
@@ -529,6 +530,7 @@ public abstract class AbstractGridCoverageReader implements GridCoverageReader {
      * @see javax.imageio.ImageReader#abort()
      * @see javax.imageio.ImageWriter#abort()
      */
+    @Override
     public void abort() {
         abortRequested = true;
     }

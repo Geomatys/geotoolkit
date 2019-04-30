@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
@@ -45,7 +46,10 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
-import org.geotoolkit.coverage.grid.*;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -73,7 +77,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class PyramidalModelReader extends AbstractGridCoverageReader{
+public class PyramidalModelReader extends AbstractGridCoverageReader {
 
     private GridCoverageResource ref;
     private final CoverageFinder coverageFinder;
@@ -181,8 +185,6 @@ public class PyramidalModelReader extends AbstractGridCoverageReader{
             }
         }
 
-        final MathTransform gridToCRSds = ReferencingUtilities.toTransform(minordi, gridToCRS, multiAxisValues, cs.getDimension());
-
         //-- size of internal pixel data recovered
         final Rectangle dataSize = mosaic.getDataExtent();
 
@@ -202,6 +204,14 @@ public class PyramidalModelReader extends AbstractGridCoverageReader{
         }
 
         final GridExtent ge = new GridExtent(null, null, high, false);
+
+        // TODO : we should do the transform like this but the is an issue further with derivate transforms
+        //convert to center
+        //gridToCRS = PixelTranslation.translate(gridToCRS, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
+        //final MathTransform gridToCRSds = ReferencingUtilities.toTransform(minordi, gridToCRS, multiAxisValues, cs.getDimension());
+        //gridGeom = new GridGeometry(ge, PixelInCell.CELL_CENTER, gridToCRSds, crs);
+
+        final MathTransform gridToCRSds = ReferencingUtilities.toTransform(minordi, gridToCRS, multiAxisValues, cs.getDimension());
         gridGeom = new GridGeometry(ge, PixelInCell.CELL_CORNER, gridToCRSds, crs);
 
         return gridGeom;

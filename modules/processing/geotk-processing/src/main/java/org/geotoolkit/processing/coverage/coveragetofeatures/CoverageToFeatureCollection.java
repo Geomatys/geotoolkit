@@ -16,13 +16,14 @@
  */
 package org.geotoolkit.processing.coverage.coveragetofeatures;
 
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.operation.TransformException;
@@ -36,14 +37,14 @@ public class CoverageToFeatureCollection extends RasterFeatureCollection {
 
     private final FeatureType newFeatureType;
     private final GridCoverageReader reader;
-    private final GridCoverage2D coverage;
+    private final GridCoverage coverage;
     private final GridGeometry gridGeom;
 
     /**
      * CoverageToFeatureCollection constructor connect the collection to the coverage.
      */
     public CoverageToFeatureCollection(final GridCoverageReader reader, GridExtent range,
-            GridCoverage2D coverage, GridGeometry gridGeom) throws DataStoreException {
+            GridCoverage coverage, GridGeometry gridGeom) throws DataStoreException {
         super(reader, range);
         this.reader = reader;
         this.coverage = coverage;
@@ -80,7 +81,7 @@ public class CoverageToFeatureCollection extends RasterFeatureCollection {
     protected Feature create(long x, long y) throws FeatureStoreRuntimeException {
         Feature feat = null;
         try {
-            feat = CoverageToFeaturesProcess.convertToFeature(getFeatureType(), x, y, coverage, reader, gridGeom);
+            feat = CoverageToFeaturesProcess.convertToFeature(getFeatureType(), x, y, CoverageUtilities.toGeotk(coverage), reader, gridGeom);
         } catch (DataStoreException ex) {
            throw new FeatureStoreRuntimeException(ex);
         } catch (TransformException ex) {

@@ -30,6 +30,7 @@ import java.awt.image.BufferedImage;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReport;
+import org.apache.sis.coverage.grid.GridCoverage;
 
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
@@ -45,7 +46,6 @@ import org.geotoolkit.report.graphic.map.MapDef;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 
 import org.junit.After;
@@ -162,7 +162,7 @@ public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setEnvelope(env);
         gcb.setRenderedImage(img);
-        final GridCoverage2D coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage = gcb.getGridCoverage2D();
 
         final MapContext context = MapBuilder.createContext();
         context.layers().add(MapBuilder.createCoverageLayer(coverage,

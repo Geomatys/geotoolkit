@@ -67,6 +67,7 @@ import org.geotoolkit.coverage.SampleDimensionType;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.internal.ImageUtilities;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.lang.Builder;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Cloneable;
@@ -2068,12 +2069,15 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @param coverage The coverage to set.
      */
-    public void setGridCoverage(final GridCoverage coverage) {
+    public void setGridCoverage(final org.apache.sis.coverage.grid.GridCoverage coverage) {
         setCoordinateReferenceSystem(coverage.getCoordinateReferenceSystem());
         final GridGeometry gridGeometry = coverage.getGridGeometry();
         setGridGeometry(gridGeometry);
         setSampleDimensions(coverage.getSampleDimensions());
-        final List<GridCoverage> sources = coverage.getSources();
+        List<org.apache.sis.coverage.grid.GridCoverage> sources = null;
+        if (coverage instanceof GridCoverage) {
+            sources = ((GridCoverage) coverage).getSources();
+        }
         if (sources != null) {
             setSources(sources.toArray(new GridCoverage[sources.size()]));
         }
@@ -2090,9 +2094,14 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                 gridDimensionX = g2.gridDimensionX;
                 gridDimensionY = g2.gridDimensionY;
             }
-            final RenderableImage im = coverage.getRenderableImage(gridDimensionX, gridDimensionY);
-            if (im != null) {
-                setRenderedImage(im.createDefaultRendering());
+
+            if (coverage instanceof GridCoverage) {
+                final RenderableImage im = ((GridCoverage) coverage).getRenderableImage(gridDimensionX, gridDimensionY);
+                if (im != null) {
+                    setRenderedImage(im.createDefaultRendering());
+                }
+            } else {
+                setRenderedImage(coverage.render(null));
             }
         }
         /*
@@ -2138,11 +2147,22 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @param sources Optional grid coverage sources, or {@code null} or an empty array if none.
      */
-    public void setSources(GridCoverage... sources) {
+    public void setSources(org.apache.sis.coverage.grid.GridCoverage... sources) {
         if (sources != null && sources.length == 0) {
             sources = null;
         }
-        this.sources = sources; // NOSONAR
+        if (sources == null) {
+            this.sources = null;
+        } else {
+            this.sources = new GridCoverage[sources.length];
+            for (int i=0; i<sources.length; i++) {
+                if (sources[i] instanceof GridCoverage) {
+                    this.sources[i] = (GridCoverage) sources[i];
+                } else {
+                    this.sources[i] = CoverageUtilities.toGeotk(sources[i]);
+                }
+            }
+        }
     }
 
     /**
