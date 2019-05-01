@@ -128,7 +128,7 @@ public final strictfp class WorldFileImageReaderTest extends TextImageReaderTest
                 "│           └───method=“Mercator_1SP”\n" +
                 "└───SpatialRepresentation\n" +
                 "    ├───numberOfDimensions=“2”\n" +
-                "    ├───centerPoint=“0.0 0.0”\n" +
+                "    ├───centrePoint=“0.0 0.0”\n" +
                 "    └───pointInPixel=“upperLeft”\n"), metadata.toString());
     }
 

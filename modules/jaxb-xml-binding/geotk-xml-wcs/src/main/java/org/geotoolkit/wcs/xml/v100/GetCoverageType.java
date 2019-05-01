@@ -342,8 +342,8 @@ public class GetCoverageType implements GetCoverage {
         if (high.getCoordinateValues().length < 2) {
             return null;
         }
-        final int width  = high.getCoordinateValue(0);
-        final int height = high.getCoordinateValue(1);
+        final int width  = Math.toIntExact(high.getCoordinateValue(0));
+        final int height = Math.toIntExact(high.getCoordinateValue(1));
         return new Dimension(width, height);
     }
 

@@ -27,7 +27,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.coverage.grid.GridGeometry;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
@@ -293,17 +292,17 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
     /**
      * Sets the values of the {@code "SpatialRepresentation"} attributes.
      *
-     * @param centerPoint  The value to assign to the {@code "centerPoint"}  attribute.
+     * @param centrePoint  The value to assign to the {@code "centrePoint"}  attribute.
      * @param cellGeometry The value to assign to the {@code "cellGeometry"} attribute, or {@code null}.
      * @param pointInPixel The value to assign to the {@code "pointInPixel"} attribute, or {@code null}.
      */
-    public void setSpatialRepresentation(final double[] centerPoint, final CellGeometry cellGeometry,
+    public void setSpatialRepresentation(final double[] centrePoint, final CellGeometry cellGeometry,
             final PixelOrientation pointInPixel)
     {
         final MetadataNodeAccessor accessor = new MetadataNodeAccessor(
                 metadata, GEOTK_FORMAT_NAME, "SpatialRepresentation", null);
-        accessor.setAttribute("numberOfDimensions", centerPoint.length);
-        accessor.setAttribute("centerPoint",  centerPoint);
+        accessor.setAttribute("numberOfDimensions", centrePoint.length);
+        accessor.setAttribute("centrePoint",  centrePoint);
         accessor.setAttribute("pointInPixel", pointInPixel);
         accessor.setAttribute("cellGeometry", cellGeometry);
     }
@@ -327,10 +326,10 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
                   new int[] {
                       bounds.x + bounds.width  - 1,   // X_POSITION
                       bounds.y + bounds.height - 1}); // Y_POSITION
-        final double[] centerPoint = new double[] {
+        final double[] centrePoint = new double[] {
                 bounds.getCenterX(),  // X_POSITION
                 bounds.getCenterY()}; // Y_POSITION
-        gridToCRS.transform(centerPoint, 0, centerPoint, 0, 1);
+        gridToCRS.transform(centrePoint, 0, centrePoint, 0, 1);
         /*
          * Get an estimation of the envelope size (the diagonal length actually),
          * in order to estimate a threshold value for trapping zeros.
@@ -340,10 +339,10 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
                 bounds.getHeight());  // Y_POSITION
         span = gridToCRS.deltaTransform(span, span);
         final double tolerance = Math.hypot(span.getX(), span.getY()) * EPS;
-        for (int i=0; i<centerPoint.length; i++) {
-            centerPoint[i] = adjustForRoundingError(centerPoint[i], tolerance);
+        for (int i=0; i<centrePoint.length; i++) {
+            centrePoint[i] = adjustForRoundingError(centrePoint[i], tolerance);
         }
-        setSpatialRepresentation(centerPoint, cellGeometry, pointInPixel);
+        setSpatialRepresentation(centrePoint, cellGeometry, pointInPixel);
     }
 
     //
@@ -364,7 +363,7 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
 
     /**
      * Sets the values of the {@code "SpatialRepresentation"} attributes. This method computes
-     * the {@code "centerPoint"} attribute from the given {@code "origin"} and {@code "bounds"}
+     * the {@code "centrePoint"} attribute from the given {@code "origin"} and {@code "bounds"}
      * because this method is typically invoked together with the {@link #setRectifiedGridDomain}
      * method.
      *
@@ -378,12 +377,12 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
     {
         final int crsDim = origin.length;
         checkDimension("bounds", bounds.length, crsDim);
-        final double[] centerPoint = new double[crsDim];
+        final double[] centrePoint = new double[crsDim];
         for (int i=0; i<crsDim; i++) {
             final double tolerance = EPS * (bounds[i] - origin[i]);
-            centerPoint[i] = adjustForRoundingError(0.5 * (origin[i] + bounds[i]), tolerance);
+            centrePoint[i] = adjustForRoundingError(0.5 * (origin[i] + bounds[i]), tolerance);
         }
-        setSpatialRepresentation(centerPoint, cellGeometry, pointInPixel);
+        setSpatialRepresentation(centrePoint, cellGeometry, pointInPixel);
     }
 
     /**

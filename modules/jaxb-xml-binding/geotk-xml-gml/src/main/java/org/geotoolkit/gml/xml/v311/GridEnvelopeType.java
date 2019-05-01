@@ -58,10 +58,10 @@ public class GridEnvelopeType {
 
     @XmlList
     @XmlElement(required = true)
-    private int[] low;
+    private long[] low;
     @XmlList
     @XmlElement(required = true)
-    private int[] high;
+    private long[] high;
 
     /**
      * Empty constructor used by JAXB
@@ -73,7 +73,7 @@ public class GridEnvelopeType {
     /**
      * Build a new Grid envelope
      */
-    public GridEnvelopeType(final GridEnvelope env){
+    public GridEnvelopeType(final GridEnvelope env) {
         if (env != null) {
             if (env.getHigh() != null) {
                 this.high = env.getHigh().getCoordinateValues();
@@ -87,7 +87,7 @@ public class GridEnvelopeType {
     /**
      * Build a new Grid envelope
      */
-    public GridEnvelopeType(final int[] low, final int[] high){
+    public GridEnvelopeType(final long[] low, final long[] high){
         this.high = high;
         this.low  = low;
     }
@@ -120,14 +120,14 @@ public class GridEnvelopeType {
     }
 
 
-    public int getLow(final int i) throws IndexOutOfBoundsException {
+    public long getLow(final int i) throws IndexOutOfBoundsException {
         if (low != null && i < low.length) {
             return low[i];
         }
         return -1;
     }
 
-    public int getHigh(final int i) throws IndexOutOfBoundsException {
+    public long getHigh(final int i) throws IndexOutOfBoundsException {
         if (high != null && i < high.length) {
             return high[i];
         }
@@ -138,19 +138,19 @@ public class GridEnvelopeType {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public class GmlGridCoordinates implements GridCoordinates {
+    public static class GmlGridCoordinates implements GridCoordinates {
 
         /**
          * The grid coordinates.
          */
-        final int[] coordinates;
+        final long[] coordinates;
 
         /**
          * Creates a grid coordinates initialized to the specified values.
          *
          * @param coordinates The grid coordinates to copy.
          */
-        public GmlGridCoordinates(final int[] coordinates) {
+        public GmlGridCoordinates(final long[] coordinates) {
             this.coordinates = coordinates.clone();
         }
 
@@ -161,21 +161,21 @@ public class GridEnvelopeType {
             return -1;
         }
 
-        public int[] getCoordinateValues() {
+        public long[] getCoordinateValues() {
             if (coordinates != null) {
                 return coordinates.clone();
             }
             return null;
         }
 
-        public int getCoordinateValue(final int dimension) throws IndexOutOfBoundsException {
+        public long getCoordinateValue(final int dimension) throws IndexOutOfBoundsException {
             if (coordinates != null) {
                 return coordinates[dimension];
             }
             return -1;
         }
 
-        public void setCoordinateValue(final int dimension, final int value) throws IndexOutOfBoundsException, UnsupportedOperationException {
+        public void setCoordinateValue(final int dimension, final long value) throws IndexOutOfBoundsException, UnsupportedOperationException {
             if (coordinates != null) {
                 coordinates[dimension] = value;
             }

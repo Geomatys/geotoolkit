@@ -47,7 +47,7 @@ final class FormatTable extends CachedTable<String,FormatEntry> {
      * Maximum number of formats for the same name. Current algorithm is very inefficient
      * for a large number of name collisions, so we are better to keep this limit small.
      */
-    private static final int MAX_FORMATS = 100000;
+    private static final int MAX_FORMATS = 100;
 
     /**
      * The sample dimensions table.
