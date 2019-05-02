@@ -20,6 +20,8 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.metadata.sql.ScriptRunner;
 import org.apache.sis.internal.util.Constants;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.sql.MetadataSource;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
@@ -69,6 +71,9 @@ import static org.geotoolkit.coverage.sql.UpgradableLock.Stamp;
  * </ul>
  */
 public final class DatabaseStore extends DataStore implements WritableAggregate {
+
+    private static final long DEFAULT_TIMEOUT_MS = TimeUnit.MINUTES.toMillis(5);
+
     /**
      * Provider of {@link DatabaseStore}.
      *
@@ -97,14 +102,30 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
         private static final ParameterDescriptor<Boolean> ALLOW_CREATE;
 
         /**
+         * Parameter to setup timeout on lock acquisitions (insertions, read, etc.)
+         */
+        private static final ParameterDescriptor<Long> LOCK_TIMEOUT;
+
+        /**
          * All parameters.
          */
         private static final ParameterDescriptorGroup PARAMETERS;
         static {
             final ParameterBuilder builder = new ParameterBuilder();
-            DATABASE       = builder.addName("database").setRemarks("Connection to the database.").setRequired(true).create(DataSource.class, null);
-            ROOT_DIRECTORY = builder.addName("rootDirectory").setRemarks("Root of data directory.").setRequired(true).create(Path.class, null);
-            ALLOW_CREATE   = builder.addName(CREATE).setRemarks("Enable schemas creation if they do not exist.").setRequired(false).create(Boolean.class, Boolean.TRUE);
+            ALLOW_CREATE = builder.addName(CREATE).setRemarks("Enable schemas creation if they do not exist.")
+                    .create(Boolean.class, Boolean.TRUE);
+            LOCK_TIMEOUT = builder.addName("lock-timeout")
+                    .setDescription("Maximum number of milliseconds to wait for a read/write lock on the store")
+                    .createBounded(
+                            new MeasurementRange<>(Long.class, 1l, true, Long.MAX_VALUE, true, Units.MILLISECOND),
+                            DEFAULT_TIMEOUT_MS
+                    );
+
+            builder.setRequired(true);
+            DATABASE       = builder.addName("database").setRemarks("Connection to the database.")
+                    .create(DataSource.class, null);
+            ROOT_DIRECTORY = builder.addName("rootDirectory").setRemarks("Root of data directory.")
+                    .create(Path.class, null);
             PARAMETERS     = builder.addName(NAME).createGroup(DATABASE, ROOT_DIRECTORY, ALLOW_CREATE);
         }
 
@@ -243,8 +264,8 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     /**
      * TODO: Add in provider parameters.
      */
-    private final long lockTimeout = 30;
-    private final TimeUnit lockTimeoutUnit = TimeUnit.SECONDS;
+    private final long lockTimeout;
+    private final TimeUnit lockTimeoutUnit;
 
     /**
      * Creates a new data store for the given parameters. The parameters should be an instance created by
@@ -259,6 +280,9 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     protected DatabaseStore(final Provider provider, final Parameters parameters) throws DataStoreException {
         super(provider, new StorageConnector(parameters.getMandatoryValue(Provider.DATABASE)));
         final DataSource dataSource = parameters.getMandatoryValue(Provider.DATABASE);
+        final Long lockParam = parameters.getValue(Provider.LOCK_TIMEOUT);
+        lockTimeout = lockParam == null? DEFAULT_TIMEOUT_MS : lockParam;
+        lockTimeoutUnit = TimeUnit.MILLISECONDS;
         accessLock = new UpgradableLock(lockTimeout, lockTimeoutUnit);
         insertionTicket = new Semaphore(1);
         try {
