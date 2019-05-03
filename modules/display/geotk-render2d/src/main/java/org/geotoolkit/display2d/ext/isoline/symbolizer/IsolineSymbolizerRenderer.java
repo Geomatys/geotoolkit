@@ -25,6 +25,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.memory.MemoryCoverageStore;
@@ -47,7 +48,6 @@ import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.function.Jenks;
 import org.opengis.geometry.Envelope;
@@ -151,7 +151,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
 
                     final GridCoverage resampledCoverage = (GridCoverage) output.parameter(ResampleDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
                     final MemoryCoverageStore memoryCoverageStore = new MemoryCoverageStore(resampledCoverage, coverageReference.getIdentifier().tip().toString());
-                    final GridCoverageResource resampledCovRef = (GridCoverageResource) DataStores.flatten(memoryCoverageStore, true, GridCoverageResource.class);
+                    final GridCoverageResource resampledCovRef = (GridCoverageResource) DataStores.flatten(memoryCoverageStore, true, GridCoverageResource.class).iterator().next();
 
                     /////////////////////
                     // 2.2 - Compute isolines

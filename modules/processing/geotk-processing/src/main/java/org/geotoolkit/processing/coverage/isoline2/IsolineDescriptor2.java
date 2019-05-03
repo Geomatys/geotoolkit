@@ -17,6 +17,7 @@
 package org.geotoolkit.processing.coverage.isoline2;
 
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
@@ -29,7 +30,6 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * Create a FeatureCollection of isoline from a GridCoverage2D and an array of intervals.
