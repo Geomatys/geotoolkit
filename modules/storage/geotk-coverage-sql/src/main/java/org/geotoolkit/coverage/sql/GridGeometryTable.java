@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -53,9 +54,6 @@ import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Utilities;
 import static org.geotoolkit.coverage.sql.GridGeometryEntry.AFFINE_DIMENSION;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.extent.Extent;
-import org.opengis.metadata.extent.GeographicBoundingBox;
-import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.TemporalCRS;
@@ -269,41 +267,26 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
             final CoordinateOperation op = CRS.findOperation(crs, extentCRS, null);
             gridToCRS = (MathTransform2D) MathTransforms.concatenate(gridToCRS, op.getMathTransform());
         }
-        RectangularShape bounds = null;
+        RectangularShape bounds;
         try {
             area = gridToCRS.createTransformedShape(area);
             bounds = (area instanceof RectangularShape) ? (RectangularShape) area : area.getBounds2D();
         } catch (TransformException ex) {
-            //may happen if one point is outside posible transformation range
+            // May happen if one point is outside posible transformation range.
             area = null;
             bounds = null;
         }
-
         if (bounds == null || (Double.isNaN(bounds.getCenterX()) || Double.isNaN(bounds.getCenterY()))) {
-            //fallback on crs domain of validity
-            Extent ext = crs.getDomainOfValidity();
-            if (ext != null) {
-                for (GeographicExtent ge : ext.getGeographicElements()) {
-                    if (ge instanceof GeographicBoundingBox) {
-                        GeographicBoundingBox geoext = (GeographicBoundingBox) ge;
-                        GeneralEnvelope env = new GeneralEnvelope(geoext);
-                        bounds = new Rectangle2D.Double(
-                                env.getMinimum(0),
-                                env.getMinimum(1),
-                                env.getMaximum(0) - env.getMinimum(0),
-                                env.getSpan(1));
-                        area = bounds.getBounds2D();
-                        break;
-                    }
-                }
+            /*
+             * If the bounds could not be computed by transforming the grid extent,
+             * fallback on CRS domain of validity.
+             */
+            final Envelope env = CRS.getDomainOfValidity(crs);
+            if (env == null) {
+                throw new TransformException("Failed to transform area to WKT and CRS has no defined domain of validity");
             }
+            area = new Envelope2D(env);
         }
-
-        if (bounds == null) {
-            throw new TransformException("Failed to transform area to WKT and CRS has no defined domain of validity");
-        }
-
-
         final boolean mergeLeft  = bounds.getMinX() < Longitude.MIN_VALUE;
         final boolean mergeRight = bounds.getMaxX() > Longitude.MAX_VALUE;
         Area merged = null;
@@ -375,6 +358,34 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
     }
 
     /**
+     * Description of an axis to be find or inserted in the database.
+     */
+    private static final class Axis {
+        private final long low;
+        private final int size;
+        private final MathTransform1D gridToCRS;
+        private final SingleCRS crs1D;
+
+        Axis(final long low, final int size, final MathTransform1D gridToCRS, final SingleCRS crs1D) {
+            this.gridToCRS = gridToCRS;
+            this.low = low;
+            this.size = size;
+            this.crs1D = crs1D;
+        }
+
+        static String[] findOrInsert(final List<Axis> axes, final AdditionalAxisTable table,
+                final String suggestedID, final Instant startTime) throws Exception
+        {
+            final String[] identifiers = new String[axes.size()];
+            for (int i=0; i<identifiers.length; i++) {
+                final Axis x = axes.get(i);
+                identifiers[i] = table.findOrInsert(suggestedID, x.low, x.size, x.gridToCRS, x.crs1D, startTime);
+            }
+            return identifiers;
+        }
+    }
+
+    /**
      * Returns the identifier for the specified grid geometry. If a suitable entry already exists,
      * its identifier is returned. Otherwise a new entry is inserted and its identifier is returned.
      *
@@ -385,7 +396,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
      * @throws Exception if the operation failed (many checked exceptions possible).
      */
     final int findOrInsert(final GridGeometry geometry, final Instant[] period, final String suggestedID) throws Exception {
-        final List<String> additionalAxes = new ArrayList<>();
+        final List<Axis> additionalAxes = new ArrayList<>();
         /*
          * Find grid geometry of the two first source dimensions. This is usually the horizontal axes of the data cube,
          * but not necessarily. The corresponding part of the CRS is usually at the two first dimensions too, but this
@@ -423,21 +434,18 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                             throw new IllegalUpdateException("Unexpected number of target dimensions for source dimension " + i + ".");
                         }
                         final int dim  = targetDims[0];
-                        final int span = Math.toIntExact(extent.getSize(dim));
+                        final int size = Math.toIntExact(extent.getSize(dim));
                         final SingleCRS crs1D = (SingleCRS) CRS.getComponentAt(crs, dim, dim+1);
-                        Instant startTime = null;
                         if (period[0] == null && period[1] == null && crs1D instanceof TemporalCRS) {
                             final DefaultTemporalCRS temporal = DefaultTemporalCRS.castOrCopy((TemporalCRS) crs1D);
                             final Envelope range = geometry.getEnvelope();
-                            startTime = temporal.toInstant(range.getMinimum(dim));
+                            period[0] = temporal.toInstant(range.getMinimum(dim));
                             period[1] = temporal.toInstant(range.getMaximum(dim));
-                            period[0] = startTime;
-                            if (span <= 1) {
+                            if (size <= 1) {
                                 continue;       // Do not add an AdditionalAxisEntry if start time and end time are sufficient.
                             }
                         }
-                        additionalAxes.add(getAxisTable().findOrInsert(suggestedID,
-                                extent.getLow(dim), span, gridToCRS, crs1D, startTime));
+                        additionalAxes.add(new Axis(extent.getLow(dim), size, gridToCRS, crs1D));
                     }
                     /*
                      * At this point we collected all additional axes. Process to the insertion.
@@ -482,7 +490,8 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                     if (additionalAxes.isEmpty()) {
                         axes = null;
                     } else {
-                        axes = getConnection().createArrayOf("VARCHAR", additionalAxes.toArray());
+                        final String[] identifiers = Axis.findOrInsert(additionalAxes, getAxisTable(), suggestedID, period[0]);
+                        axes = getConnection().createArrayOf("VARCHAR", identifiers);
                     }
                     final SpatialReferencingTable ref = getReferencingTable();
                     final int srid = ref.findOrInsert(crs2D);
