@@ -33,11 +33,13 @@ import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.ParametricCRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CSFactory;
 import org.opengis.referencing.cs.TimeCS;
 import org.opengis.referencing.cs.VerticalCS;
 import org.opengis.referencing.cs.ParametricCS;
 import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.VerticalDatumType;
 import org.opengis.referencing.datum.ParametricDatum;
@@ -52,7 +54,9 @@ import org.apache.sis.internal.metadata.AxisDirections;
 import org.apache.sis.internal.referencing.ReferencingFactoryContainer;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.cs.DefaultTimeCS;
 import org.apache.sis.referencing.cs.DefaultParametricCS;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.crs.DefaultParametricCRS;
 import org.apache.sis.referencing.datum.DefaultTemporalDatum;
@@ -95,12 +99,12 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
     /**
      * Name of temporal datum for runtime, interpreted as parametric.
      */
-    private static final String RUNTIME_DATUM = "Runtime";
+    static final String RUNTIME_DATUM = "Runtime";
 
     /**
      * Datum name for runtime relative to the start time of a {@link GridCoverageEntry}.
      */
-    private static final String RELATIVE_RUNTIME_DATUM = "Runtime relative to data time";
+    static final String RELATIVE_RUNTIME_DATUM = "Runtime relative to data time";
 
     /**
      * Datum name for time relative to the start time of a {@link GridCoverageEntry}.
@@ -122,10 +126,12 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
      */
     private static final TemporalCRS RELATIVE_TIME;
     static {
-        final DefaultTemporalDatum datum = new DefaultTemporalDatum(
-                Collections.singletonMap(TemporalDatum.NAME_KEY, RELATIVE_TIME_DATUM), new Date(0));
-        RELATIVE_TIME = new DefaultTemporalCRS(Collections.singletonMap(TemporalCRS.NAME_KEY, datum.getName()),
-                datum, GridGeometryEntry.TEMPORAL_CRS.getCoordinateSystem());
+        TimeCS cs = GridGeometryEntry.TEMPORAL_CRS.getCoordinateSystem();
+        final CoordinateSystemAxis axis = new DefaultCoordinateSystemAxis(
+                properties("Relative time"), "Δt", AxisDirection.FUTURE, cs.getAxis(0).getUnit());
+        cs = new DefaultTimeCS(properties(cs.getName()), axis);
+        final DefaultTemporalDatum datum = new DefaultTemporalDatum(properties(RELATIVE_TIME_DATUM), new Date(0));
+        RELATIVE_TIME = new DefaultTemporalCRS(properties(datum.getName()), datum, cs);
     }
 
     /**
@@ -135,11 +141,12 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
      */
     private static final ParametricCRS RELATIVE_RUNTIME;
     static {
-        final DefaultParametricDatum datum = new DefaultParametricDatum(
-                Collections.singletonMap(TemporalDatum.NAME_KEY, RELATIVE_RUNTIME_DATUM));
-        final Map<String,?> name = Collections.singletonMap(ParametricCRS.NAME_KEY, datum.getName());
-        RELATIVE_RUNTIME = new DefaultParametricCRS(name, datum, new DefaultParametricCS(name,
-                RELATIVE_TIME.getCoordinateSystem().getAxis(0)));
+        CoordinateSystem cs = RELATIVE_TIME.getCoordinateSystem();
+        CoordinateSystemAxis axis = cs.getAxis(0);
+        axis = new DefaultCoordinateSystemAxis(properties(axis.getName()), axis.getAbbreviation(), AxisDirection.PAST, axis.getUnit());
+        final DefaultParametricDatum datum = new DefaultParametricDatum(properties(RELATIVE_RUNTIME_DATUM));
+        final Map<String,?> name = properties(datum.getName());
+        RELATIVE_RUNTIME = new DefaultParametricCRS(name, datum, new DefaultParametricCS(properties(cs.getName()), axis));
     }
 
     /**
@@ -155,6 +162,15 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
      */
     static boolean isTemporalAxis(final AdditionalAxisEntry axis) {
         return axis.crs == RELATIVE_TIME;
+    }
+
+    private static boolean isTemporalAxis(final CoordinateReferenceSystem crs) {
+        final CoordinateSystem cs = crs.getCoordinateSystem();
+        return cs.getDimension() == 1 && AxisDirections.isTemporal(cs.getAxis(0).getDirection());
+    }
+
+    static boolean isTemporalAxis(final SingleCRS crs, final String expectedDatum) {
+        return isTemporalAxis(crs) && expectedDatum.equalsIgnoreCase(crs.getDatum().getName().getCode());
     }
 
     /**
@@ -348,14 +364,14 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
      * Returns a singleton map with the given object as its {@code "name"} property.
      * This helper method is used for geodetic object construction.
      */
-    private static Map<String,?> properties(final Object name) {
+    static Map<String,?> properties(final Object name) {
         return Collections.singletonMap(SingleCRS.NAME_KEY, name);
     }
 
     /**
      * Returns the unit of a CRS presumed to have only one axis (this is not verified).
      */
-    private static Unit<?> getUnit(final SingleCRS crs) {
+    static Unit<?> getUnit(final SingleCRS crs) {
         return crs.getCoordinateSystem().getAxis(0).getUnit();
     }
 
@@ -375,7 +391,7 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
             final MathTransform1D gridToCRS, SingleCRS crs, final Instant startTime) throws Exception
     {
         final UnitConverter toRelativeTime;
-        if (startTime != null && AxisDirections.isTemporal(crs.getCoordinateSystem().getAxis(0).getDirection())) {
+        if (startTime != null && isTemporalAxis(crs)) {
             final Unit<?> unit = getUnit(crs);
             final TemporalCRS timeCRS;
             if (crs instanceof TemporalCRS) {
@@ -385,10 +401,11 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
                 timeCRS = RUNTIME_EPOCH.crs();
                 crs = RELATIVE_RUNTIME;
             }
-            double offset = ((DefaultTemporalCRS) timeCRS).toValue(startTime);
-            offset = getUnit(timeCRS).getConverterToAny(unit).convert(offset);
-            UnitConverter step1 = Units.converter(null, -offset);
-            UnitConverter step2 = unit.getConverterToAny(getUnit(crs));
+            int sign = AxisDirection.PAST.equals(timeCRS.getCoordinateSystem().getAxis(0).getDirection()) ? -1 : +1;
+            double offset = ((DefaultTemporalCRS) timeCRS).toValue(startTime);          // In unit of temporal CRS.
+            offset = getUnit(timeCRS).getConverterToAny(unit).convert(offset);          // In unit of specified CRS.
+            UnitConverter step1 = Units.converter(sign, -sign * offset);
+            UnitConverter step2 = unit.getConverterToAny(getUnit(crs));                 // To unit of relative CRS.
             toRelativeTime = step2.concatenate(step1);
         } else {
             toRelativeTime = null;

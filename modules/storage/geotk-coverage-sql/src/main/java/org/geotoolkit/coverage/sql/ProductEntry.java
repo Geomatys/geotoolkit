@@ -309,7 +309,6 @@ final class ProductEntry extends Entry {
         if (areaOfInterest == null) {
             areaOfInterest = getGridGeometry();
         }
-
         /*
          * Modify envelope: when we encounter a slice, use the median value instead of the slice width
          * to avoid multiple coverage occurence of coverages at envelope border intersections.

@@ -17,16 +17,27 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.List;
+import java.time.Instant;
+import java.nio.file.Path;
+import java.sql.SQLException;
+import javax.measure.UnitConverter;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.MathTransform;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.storage.*;
-import org.opengis.referencing.operation.TransformException;
-
-import java.nio.file.Path;
-import java.sql.SQLException;
-import java.time.Instant;
-import java.util.List;
 
 
 /**
@@ -125,7 +136,7 @@ final class GridCoverageEntry extends Entry {
      * Loads the data if needed and returns the coverage.
      * Current implementation reads only the first resource.
      */
-    final GridCoverage coverage(final GridGeometry targetGeometry, final int... bands) throws DataStoreException {
+    final GridCoverage coverage(GridGeometry targetGeometry, final int... bands) throws Exception {
         try (DataStore store = series.format.open(getDataPath())) {
             final String dataset = series.dataset;
             final GridCoverageResource r;
@@ -141,6 +152,9 @@ final class GridCoverageEntry extends Entry {
                 r = resource(store);
             }
             if (r != null) {
+                if (targetGeometry != null && targetGeometry.isDefined(GridGeometry.CRS | GridGeometry.ENVELOPE)) {
+                    targetGeometry = toAbsoluteRuntime(targetGeometry, r);
+                }
                 return r.read(targetGeometry, bands);
             }
         }
@@ -161,5 +175,83 @@ final class GridCoverageEntry extends Entry {
             return (GridCoverageResource) resource;
         }
         return null;
+    }
+
+    /**
+     * If the CRS of the request uses a <cite>"Runtime relative to data time"</cite> axis while the
+     * CRS of the data uses absolute time in their axis, replaces the relative time by absolute time.
+     */
+    private static GridGeometry toAbsoluteRuntime(final GridGeometry request, final GridCoverageResource resource) throws Exception {
+        final CoordinateReferenceSystem requestCRS = request.getCoordinateReferenceSystem();
+        final List<SingleCRS> components = CRS.getSingleComponents(requestCRS);
+        int requestDim = 0;
+        for (int i=0; i<components.size(); i++) {
+            final SingleCRS c = components.get(i);
+            if (AdditionalAxisTable.isTemporalAxis(c, AdditionalAxisTable.RELATIVE_RUNTIME_DATUM)) {
+                final GridGeometry grid = resource.getGridGeometry();
+                if (grid != null && grid.isDefined(GridGeometry.CRS | GridGeometry.ENVELOPE)) {
+                    int dataDim = 0;
+                    for (final SingleCRS dc : CRS.getSingleComponents(grid.getCoordinateReferenceSystem())) {
+                        if (AdditionalAxisTable.isTemporalAxis(dc, AdditionalAxisTable.RUNTIME_DATUM)) {
+                            /*
+                             * Found a relative runtime axis. Convert the relative time range request
+                             * to an absolute time range, using the current image time as the origin.
+                             */
+                            final UnitConverter converter = AdditionalAxisTable.getUnit(c).getConverterToAny(AdditionalAxisTable.getUnit(dc));
+                            final double startTime = grid.getEnvelope().getMinimum(dataDim);        // In unit of data CRS.
+                            final Envelope envelope = request.getEnvelope();
+                            double lower = envelope.getMinimum(requestDim);                         // In unit of request CRS
+                            double upper = envelope.getMaximum(requestDim);
+                            lower = startTime - converter.convert(lower);                           // In unit of data CRS.
+                            upper = startTime - converter.convert(upper);
+                            // TODO: take axis direction in account (above code assume AxisDirection.PAST).
+                            /*
+                             * Convert the time range to grid indices in the system of data grid.
+                             */
+                            TransformSeparator sep = new TransformSeparator(grid.getGridToCRS(PixelInCell.CELL_CORNER).inverse());
+                            sep.addSourceDimensionRange(dataDim, dataDim + 1);
+                            MathTransform1D runtimeTr = (MathTransform1D) sep.separate();
+                            lower = runtimeTr.transform(lower);
+                            upper = runtimeTr.transform(upper);
+                            runtimeTr = runtimeTr.inverse();            // Will be needed later.
+                            /*
+                             * Substitute the data CRS for the temporal dimension.
+                             */
+                            MathTransform gridToCRS = request.getGridToCRS(PixelInCell.CELL_CORNER);
+                            sep = new TransformSeparator(gridToCRS);
+                            sep.addSourceDimensionRange(0, requestDim);
+                            MathTransform lowerTr = sep.separate();
+                            sep.clear();
+                            sep.addSourceDimensionRange(requestDim + 1, gridToCRS.getSourceDimensions());
+                            MathTransform upperTr = sep.separate();
+                            gridToCRS = MathTransforms.compound(lowerTr, runtimeTr, upperTr);
+                            /*
+                             * Replace the grid indices for the temporal dimension only.
+                             */
+                            GridExtent extent = request.getExtent();
+                            final long[] lowerCoordinates = extent.getLow().getCoordinateValues();
+                            final long[] upperCoordinates = extent.getHigh().getCoordinateValues();
+                            final long low  = Math.round(Math.min(lower, upper));
+                            final long high = Math.round(Math.max(lower, upper));
+                            lowerCoordinates[requestDim] = low;
+                            upperCoordinates[requestDim] = Math.max(low, high - 1);
+                            extent = new GridExtent(null, lowerCoordinates, upperCoordinates, true);
+                            /*
+                             * Rebuild the grid geometry with the new time range.
+                             */
+                            final SingleCRS[] modifiedComponents = components.toArray(new SingleCRS[components.size()]);
+                            modifiedComponents[requestDim] = dc;                    // Replace request CRS by data CRS.
+                            final CoordinateReferenceSystem modifiedCRS = new DefaultCompoundCRS(
+                                    AdditionalAxisTable.properties(requestCRS.getName()), modifiedComponents);
+                            return new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCRS, modifiedCRS);
+                        }
+                        dataDim += dc.getCoordinateSystem().getDimension();
+                    }
+                }
+                break;          // Can not convert relative runtime axes. There is no point to continue.
+            }
+            requestDim += c.getCoordinateSystem().getDimension();
+        }
+        return request;
     }
 }

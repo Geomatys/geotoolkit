@@ -22,13 +22,10 @@ package org.geotoolkit.referencing.crs;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Locale;
-
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.crs.EngineeringCRS;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.util.InternationalString;
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.crs.DefaultImageCRS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.crs.DefaultEngineeringCRS;
@@ -37,19 +34,15 @@ import org.apache.sis.referencing.datum.DefaultEngineeringDatum;
 import org.geotoolkit.referencing.cs.Axes;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.resources.Vocabulary;
-import org.apache.sis.util.ComparisonMode;
-import org.apache.sis.measure.Units;
 
 import static org.opengis.referencing.IdentifiedObject.ALIAS_KEY;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 
 /**
- * Predefined CRS constants. <strong>This class is temporary</strong> - its content may
- * move to Apache SIS in future version.
+ * Predefined CRS constants.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @module
  */
 public final class PredefinedCRS {
     /**
@@ -71,49 +64,6 @@ public final class PredefinedCRS {
     }
 
     /**
-     * A Cartesian local coordinate system.
-     */
-    private static final class Cartesian extends DefaultEngineeringCRS {
-        /** Serial number for inter-operability with different versions. */
-        private static final long serialVersionUID = -1773381554353809683L;
-
-        /**
-         * An engineering datum for unknown coordinate reference system. Such CRS are usually
-         * assumed Cartesian, but will not have any transformation path to other CRS.
-         */
-        public static final DefaultEngineeringDatum UNKNOWN =
-                new DefaultEngineeringDatum(name(Vocabulary.Keys.Unknown));
-
-        /** Constructs a coordinate system with the given name. */
-        public Cartesian(final int key, final CoordinateSystem cs) {
-            super(name(key), UNKNOWN, cs);
-        }
-
-        /**
-         * Compares the specified object to this CRS for equality. This method is overridden
-         * because, otherwise, {@code CARTESIAN_xD} and {@code GENERIC_xD} would be considered
-         * equals when metadata are ignored.
-         */
-        @Override
-        public boolean equals(final Object object, final ComparisonMode mode) {
-            if (object instanceof EngineeringCRS && super.equals(object, mode)) {
-                switch (mode) {
-                    case STRICT:
-                    case BY_CONTRACT: {
-                        // No need to performs the check below if metadata were already compared.
-                        return true;
-                    }
-                    default: {
-                        final EngineeringCRS that = (EngineeringCRS) object;
-                        return Objects.equals(getName().getCode(), that.getName().getCode());
-                    }
-                }
-            }
-            return false;
-        }
-    }
-
-    /**
      * A two-dimensional Cartesian coordinate reference system with
      * {@linkplain Axes#X x},
      * {@linkplain Axes#Y y}
@@ -121,8 +71,7 @@ public final class PredefinedCRS {
      * path to any other CRS (i.e. a map using this CS can't be reprojected to a
      * {@linkplain DefaultGeographicCRS geographic coordinate reference system} for example).
      */
-    public static final DefaultEngineeringCRS CARTESIAN_2D =
-            new Cartesian(Vocabulary.Keys.Cartesian2d, PredefinedCS.CARTESIAN_2D);
+    public static final DefaultEngineeringCRS CARTESIAN_2D;
 
     /**
      * A three-dimensional Cartesian coordinate reference system with
@@ -133,8 +82,12 @@ public final class PredefinedCRS {
      * path to any other CRS (i.e. a map using this CS can't be reprojected to a
      * {@linkplain DefaultGeographicCRS geographic coordinate reference system} for example).
      */
-    public static final DefaultEngineeringCRS CARTESIAN_3D =
-            new Cartesian(Vocabulary.Keys.Cartesian3d, PredefinedCS.CARTESIAN_3D);
+    public static final DefaultEngineeringCRS CARTESIAN_3D;
+    static {
+        final DefaultEngineeringDatum datum = new DefaultEngineeringDatum(name(Vocabulary.Keys.Unknown));
+        CARTESIAN_2D = new DefaultEngineeringCRS(name(Vocabulary.Keys.Cartesian2d), datum, PredefinedCS.CARTESIAN_2D);
+        CARTESIAN_3D = new DefaultEngineeringCRS(name(Vocabulary.Keys.Cartesian3d), datum, PredefinedCS.CARTESIAN_3D);
+    }
 
     /**
      * A two-dimensional Cartesian coordinate reference system with
@@ -146,13 +99,10 @@ public final class PredefinedCRS {
      * <p>
      * The {@link PixelInCell} attribute of the associated {@link ImageDatum}
      * is set to {@link PixelInCell#CELL_CENTER CELL_CENTER}.
-     *
-     * @since 3.09
      */
     public static final DefaultImageCRS GRID_2D;
     static {
         final Map<String,?> properties = name(Vocabulary.Keys.Grid);
-        GRID_2D = new DefaultImageCRS(properties, new DefaultImageDatum(properties,
-                PixelInCell.CELL_CENTER), PredefinedCS.GRID);
+        GRID_2D = new DefaultImageCRS(properties, new DefaultImageDatum(properties, PixelInCell.CELL_CENTER), PredefinedCS.GRID);
     }
 }
