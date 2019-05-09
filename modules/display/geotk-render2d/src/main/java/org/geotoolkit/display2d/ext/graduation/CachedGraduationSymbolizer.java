@@ -18,6 +18,7 @@ package org.geotoolkit.display2d.ext.graduation;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedFont;
 import org.geotoolkit.display2d.style.CachedStroke;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
@@ -42,7 +43,7 @@ public class CachedGraduationSymbolizer extends CachedSymbolizer<GraduationSymbo
     }
 
     @Override
-    public float getMargin(Object candidate, float coeff) {
+    public float getMargin(Object candidate, RenderingContext2D ctx) {
         return 0;
     }
 

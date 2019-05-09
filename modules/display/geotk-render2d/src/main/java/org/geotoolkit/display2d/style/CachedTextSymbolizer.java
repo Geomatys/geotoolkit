@@ -23,6 +23,7 @@ import java.awt.Font;
 import java.awt.Paint;
 import java.awt.RenderingHints;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Fill;
@@ -155,7 +156,7 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
     }
 
     @Override
-    public float getMargin(final Object candidate, final float coeff) {
+    public float getMargin(Object candidate, RenderingContext2D ctx) {
         //we can not evaluate the size of a text symbolizer
         return Float.NaN;
     }

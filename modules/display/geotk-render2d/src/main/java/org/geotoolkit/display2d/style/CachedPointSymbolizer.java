@@ -18,6 +18,7 @@ package org.geotoolkit.display2d.style;
 
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.util.collection.UnSynchronizedCache;
 import org.opengis.style.PointSymbolizer;
@@ -44,8 +45,8 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
      * {@inheritDoc }
      */
     @Override
-    public float getMargin(final Object candidate, final float coeff) {
-        return cachedGraphic.getMargin(candidate, coeff);
+    public float getMargin(Object candidate, RenderingContext2D ctx) {
+        return cachedGraphic.getMargin(candidate, ctx.getUnitCoefficient(this.styleElement.getUnitOfMeasure()));
     }
 
     /**

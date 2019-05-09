@@ -227,7 +227,7 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
                 start.getX() + Math.cos(angle)*info.size,
                 start.getY() + Math.sin(angle)*info.size );
         final Line2D tick = new Line2D.Double(start, end);
-        DefaultLineSymbolizerRenderer.portray(symbol, g2d, tick, cs, candidate, coeff, hints);
+        DefaultLineSymbolizerRenderer.portray(symbol, g2d, tick, cs, candidate, coeff, hints, renderingContext);
 
         //render text
         final String text = info.format.format(distance + info.distanceTextOffset);

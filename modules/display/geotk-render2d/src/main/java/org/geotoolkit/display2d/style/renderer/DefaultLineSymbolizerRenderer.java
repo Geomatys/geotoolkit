@@ -135,7 +135,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
             }
 
             for(Shape j2dShape : j2dShapes){
-                dataRendered |= portray(symbol, g2d, j2dShape, cachedStroke, feature, coeff, hints);
+                dataRendered |= portray(symbol, g2d, j2dShape, cachedStroke, feature, coeff, hints, renderingContext);
             }
         }
         return dataRendered;
@@ -159,7 +159,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
         boolean dataRendered = false;
         for(Shape j2dShape : j2dShapes){
-            dataRendered |= portray(symbol, g2d, j2dShape, cachedStroke, feature, coeff, hints);
+            dataRendered |= portray(symbol, g2d, j2dShape, cachedStroke, feature, coeff, hints, renderingContext);
         }
         return dataRendered;
     }
@@ -198,7 +198,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
     }
 
     public static boolean portray(CachedSymbolizer symbol, Graphics2D g2d, Shape j2dShape,
-            CachedStroke cachedStroke, Object feature, float coeff, RenderingHints hints){
+            CachedStroke cachedStroke, Object feature, float coeff, RenderingHints hints, RenderingContext2D ctx){
 
         if(cachedStroke instanceof CachedStrokeSimple){
             final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
@@ -206,7 +206,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
             if(cs.isMosaicPaint()){
                 //we need to find the top left bounds of the geometry
-                final float margin = symbol.getMargin(feature, coeff) /2f;
+                final float margin = symbol.getMargin(feature, ctx) /2f;
                 final Rectangle2D bounds = j2dShape.getBounds2D();
                 final int x = (int) (bounds.getMinX() - margin);
                 final int y = (int) (bounds.getMinY() - margin);
@@ -297,7 +297,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
                 return false;
             }
 
-            final int bufferWidth = (int) symbol.getMargin(feature,1);
+            final int bufferWidth = (int) symbol.getMargin(feature, renderingContext);
 
             //test envelopes first
 //            Geometry CRSShape = mask.getEnvelope();
