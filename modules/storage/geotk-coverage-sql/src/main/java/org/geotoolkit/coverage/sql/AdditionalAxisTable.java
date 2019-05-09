@@ -164,13 +164,14 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
         return axis.crs == RELATIVE_TIME;
     }
 
-    private static boolean isTemporalAxis(final CoordinateReferenceSystem crs) {
+    static AxisDirection getDirection(final CoordinateReferenceSystem crs) {
         final CoordinateSystem cs = crs.getCoordinateSystem();
-        return cs.getDimension() == 1 && AxisDirections.isTemporal(cs.getAxis(0).getDirection());
+        return cs.getDimension() == 1 ? cs.getAxis(0).getDirection() : null;
     }
 
     static boolean isTemporalAxis(final SingleCRS crs, final String expectedDatum) {
-        return isTemporalAxis(crs) && expectedDatum.equalsIgnoreCase(crs.getDatum().getName().getCode());
+        return AxisDirections.isTemporal(getDirection(crs))
+                && expectedDatum.equalsIgnoreCase(crs.getDatum().getName().getCode());
     }
 
     /**
@@ -391,7 +392,7 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
             final MathTransform1D gridToCRS, SingleCRS crs, final Instant startTime) throws Exception
     {
         final UnitConverter toRelativeTime;
-        if (startTime != null && isTemporalAxis(crs)) {
+        if (startTime != null && AxisDirections.isTemporal(getDirection(crs))) {
             final Unit<?> unit = getUnit(crs);
             final TemporalCRS timeCRS;
             if (crs instanceof TemporalCRS) {
@@ -401,7 +402,7 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
                 timeCRS = RUNTIME_EPOCH.crs();
                 crs = RELATIVE_RUNTIME;
             }
-            int sign = AxisDirection.PAST.equals(timeCRS.getCoordinateSystem().getAxis(0).getDirection()) ? -1 : +1;
+            int sign = AxisDirection.PAST.equals(getDirection(timeCRS)) ? -1 : +1;
             double offset = ((DefaultTemporalCRS) timeCRS).toValue(startTime);          // In unit of temporal CRS.
             offset = getUnit(timeCRS).getConverterToAny(unit).convert(offset);          // In unit of specified CRS.
             UnitConverter step1 = Units.converter(sign, -sign * offset);
