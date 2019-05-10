@@ -47,7 +47,7 @@ import org.opengis.util.FactoryException;
  * @module
  */
 @Deprecated
-public interface GridCoverageResource extends org.apache.sis.storage.GridCoverageResource, StoreResource {
+public interface GridCoverageResource extends org.apache.sis.storage.WritableGridCoverageResource, StoreResource {
 
     /**
      * Same as {@link org.apache.sis.storage.Resource} without exception.
@@ -161,6 +161,16 @@ public interface GridCoverageResource extends org.apache.sis.storage.GridCoverag
             return reader.read(param);
         } finally {
             recycle(reader);
+        }
+    }
+
+    @Override
+    default void write(GridCoverage coverage, Option... options) throws DataStoreException {
+        final GridCoverageWriter writer = acquireWriter();
+        try {
+            writer.write(coverage, null);
+        } finally {
+            recycle(writer);
         }
     }
 

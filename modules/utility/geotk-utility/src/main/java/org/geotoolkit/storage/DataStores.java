@@ -231,7 +231,7 @@ public final class DataStores extends Static {
      * @return A data store created from the given parameters, or {@code null} if none.
      * @throws DataStoreException If a factory is found but can't open the data store.
      */
-    public static DataStore open(final Map<String, Serializable> parameters) throws DataStoreException {
+    public static org.apache.sis.storage.DataStore open(final Map<String, Serializable> parameters) throws DataStoreException {
         ArgumentChecks.ensureNonNull("parameters", parameters);
         return open((ParameterValueGroup)null, parameters);
     }
@@ -247,7 +247,7 @@ public final class DataStores extends Static {
      * @return A data store created from the given parameters, or {@code null} if none.
      * @throws DataStoreException If a factory is found but can't open the data store.
      */
-    public static DataStore open(final ParameterValueGroup parameters) throws DataStoreException {
+    public static org.apache.sis.storage.DataStore open(final ParameterValueGroup parameters) throws DataStoreException {
         ArgumentChecks.ensureNonNull("parameters", parameters);
         return open(parameters, null);
     }
@@ -256,7 +256,7 @@ public final class DataStores extends Static {
      * Implementation of the public {@code open} method. Exactly one of the {@code parameters}
      * and {@code asMap} arguments shall be non-null.
      */
-    private static synchronized DataStore open(final ParameterValueGroup parameters,
+    private static synchronized org.apache.sis.storage.DataStore open(final ParameterValueGroup parameters,
             final Map<String, Serializable> asMap) throws DataStoreException
     {
         CharSequence unavailable = null;
@@ -286,7 +286,7 @@ public final class DataStores extends Static {
         return null;
     }
 
-    public static DataStore open(DataStoreFactory factory, Map<String, ? extends Serializable> params) throws DataStoreException {
+    public static org.apache.sis.storage.DataStore open(DataStoreProvider factory, Map<String, ? extends Serializable> params) throws DataStoreException {
         final ParameterValueGroup prm;
         try {
             prm = Parameters.toParameter(
@@ -301,14 +301,18 @@ public final class DataStores extends Static {
     /**
      * @see DataStoreFactory#create(org.opengis.parameter.ParameterValueGroup)
      */
-    public static DataStore create(DataStoreFactory factory, Map<String, ? extends Serializable> params) throws DataStoreException {
+    public static org.apache.sis.storage.DataStore create(DataStoreProvider factory, Map<String, ? extends Serializable> params) throws DataStoreException {
         final ParameterValueGroup prm;
         try {
             prm = Parameters.toParameter(DataStores.forceIdentifier(factory, params), factory.getOpenParameters());
         } catch(IllegalArgumentException ex) {
             throw new DataStoreException(ex);
         }
-        return factory.create(prm);
+        if (factory instanceof DataStoreFactory) {
+            return ((DataStoreFactory) factory).create(prm);
+        } else {
+            return factory.open(prm);
+        }
     }
 
     /**
@@ -360,7 +364,7 @@ public final class DataStores extends Static {
     /**
      * Set the identifier parameter in the map if not present.
      */
-    static final Map<String,Serializable> forceIdentifier(DataStoreFactory factory, Map params){
+    static final Map<String,Serializable> forceIdentifier(DataStoreProvider factory, Map params){
 
         if (!params.containsKey(DataStoreFactory.IDENTIFIER.getName().getCode())) {
             //identifier is not specified, force it
