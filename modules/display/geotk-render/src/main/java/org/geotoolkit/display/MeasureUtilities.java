@@ -107,7 +107,7 @@ public class MeasureUtilities {
         try {
             Envelope env = JTS.toEnvelope(geom);
 
-            final GeographicCRS geoCRS = ReferencingUtilities.toNormalizedGeographicCRS(geomCRS);
+            final GeographicCRS geoCRS = ReferencingUtilities.toNormalizedGeographicCRS(geomCRS, false, false);
 
             final MathTransform step0 = CRS.findOperation(geomCRS, geoCRS, null).getMathTransform();
             Envelope genv = JTS.transform(env, step0);
