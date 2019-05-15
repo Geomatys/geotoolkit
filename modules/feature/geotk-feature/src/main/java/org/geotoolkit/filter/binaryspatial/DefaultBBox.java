@@ -17,26 +17,28 @@
  */
 package org.geotoolkit.filter.binaryspatial;
 
+import java.util.logging.Level;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.util.Utilities;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.filter.DefaultPropertyName;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
+import org.geotoolkit.util.StringUtilities;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
-
-import java.util.logging.Level;
-import org.geotoolkit.feature.FeatureExt;
-
-import org.geotoolkit.filter.DefaultLiteral;
-import org.geotoolkit.filter.DefaultPropertyName;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.geometry.jts.SRIDGenerator;
-import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.IdentifiedObjects;
-import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.util.StringUtilities;
-
+import org.opengis.feature.Feature;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.BBOX;
@@ -44,14 +46,9 @@ import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.util.Utilities;
-import org.apache.sis.util.logging.Logging;
-import org.opengis.feature.Feature;
-import org.opengis.feature.PropertyType;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.opengis.util.FactoryException;
 
 /**
  * Immutable "BBOX" filter.
@@ -233,7 +230,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("BBOX \n");
+        final StringBuilder sb = new StringBuilder("BBOX");
         sb.append(StringUtilities.toStringTree(left,right));
         return sb.toString();
     }

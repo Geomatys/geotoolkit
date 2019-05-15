@@ -19,11 +19,11 @@ package org.geotoolkit.filter.binarycomparison;
 
 import java.util.Calendar;
 import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.MatchAction;
 import org.opengis.filter.expression.Expression;
-import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * Abstract "property equal" filter, used by isEqual and isNotEqual subclass to avoid
@@ -169,7 +169,7 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PropertyEqual (matchcase=");
-        sb.append(match).append(")\n");
+        sb.append(match).append(")");
         sb.append(StringUtilities.toStringTree(left,right));
         return sb.toString();
     }

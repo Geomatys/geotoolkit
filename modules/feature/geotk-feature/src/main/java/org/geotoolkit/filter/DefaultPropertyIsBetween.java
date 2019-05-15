@@ -18,14 +18,12 @@
 package org.geotoolkit.filter;
 
 import java.io.Serializable;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.util.StringUtilities;
-
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsBetween;
 import org.opengis.filter.expression.Expression;
-
-import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Immutable "is between" filter.
@@ -155,7 +153,7 @@ public class DefaultPropertyIsBetween implements PropertyIsBetween,Serializable{
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Between\n");
+        final StringBuilder sb = new StringBuilder("Between");
         sb.append(StringUtilities.toStringTree("Exp : "+ candidate,"Lower : "+lower, "Upper : "+upper));
         return sb.toString();
     }

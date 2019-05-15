@@ -62,7 +62,7 @@ public class DefaultDivide extends AbstractBinaryExpression<Expression,Expressio
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Divide \n");
+        final StringBuilder sb = new StringBuilder("Divide");
         sb.append(StringUtilities.toStringTree(left,right));
         return sb.toString();
     }

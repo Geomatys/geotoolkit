@@ -64,7 +64,7 @@ public class DefaultAdd extends AbstractBinaryExpression<Expression,Expression> 
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Add \n");
+        final StringBuilder sb = new StringBuilder("Add");
         sb.append(StringUtilities.toStringTree(left,right));
         return sb.toString();
     }

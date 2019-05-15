@@ -17,17 +17,16 @@
  */
 package org.geotoolkit.filter.binaryspatial;
 
+import java.util.logging.Level;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.util.StringUtilities;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
-
-import java.util.logging.Level;
-import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.spatial.Intersects;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.util.logging.Logging;
+import org.opengis.util.FactoryException;
 
 /**
  * Immutable "intersect" filter.
@@ -86,7 +85,7 @@ public class DefaultIntersect extends AbstractBinarySpatialOperator<Expression,E
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Intersect \n");
+        final StringBuilder sb = new StringBuilder("Intersect");
         sb.append(StringUtilities.toStringTree(left,right));
         return sb.toString();
     }
