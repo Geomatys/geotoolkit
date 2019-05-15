@@ -98,11 +98,11 @@ public class LoxodromicEngine implements ToDoubleBiFunction<Coordinate, Coordina
         start = positionConversion.apply(start);
         end = positionConversion.apply(end);
 
-        final double λA = DEGREE_TO_RADIAN.convert(start.x);
-        final double φA = DEGREE_TO_RADIAN.convert(start.y);
+        final double λA = Math.toRadians(start.x);
+        final double φA = Math.toRadians(start.y);
 
-        final double λB = DEGREE_TO_RADIAN.convert(end.x);
-        final double φB = DEGREE_TO_RADIAN.convert(end.y);
+        final double λB = Math.toRadians(end.x);
+        final double φB = Math.toRadians(end.y);
 
         final double Δλ = λB - λA;
         final double Δφ = φB - φA;
@@ -143,7 +143,7 @@ public class LoxodromicEngine implements ToDoubleBiFunction<Coordinate, Coordina
      * @return The perimeter of the great arc in meter.
      */
     private double meridianDistance(double Δφ) {
-        return authalicRadius * DEGREE_TO_RADIAN.convert(Δφ);
+        return authalicRadius * Math.toRadians(Δφ);
     }
 
     /**
