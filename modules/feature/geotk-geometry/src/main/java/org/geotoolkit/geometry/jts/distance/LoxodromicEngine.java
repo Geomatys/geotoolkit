@@ -143,7 +143,7 @@ public class LoxodromicEngine implements ToDoubleBiFunction<Coordinate, Coordina
      * @return The perimeter of the great arc in meter.
      */
     private double meridianDistance(double Δφ) {
-        return authalicRadius * Math.toRadians(Δφ);
+        return authalicRadius * Δφ;
     }
 
     /**
