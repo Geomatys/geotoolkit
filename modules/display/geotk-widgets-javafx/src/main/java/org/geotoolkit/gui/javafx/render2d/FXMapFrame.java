@@ -151,7 +151,7 @@ public class FXMapFrame extends BorderPane {
     public FXMap getMap() {
         return map;
     }
-    
+
     public static void show(final MapContext context){
         show(context,null);
     }

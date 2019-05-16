@@ -18,6 +18,7 @@ package org.geotoolkit.display2d.primitive;
 
 import java.util.logging.Level;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
@@ -154,14 +155,14 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
      *
      * @throws CoverageStoreException
      */
-    public GridCoverage2D getElevationCoverage(final GridCoverageReadParam param) throws DataStoreException {
+    public GridCoverage getElevationCoverage(final GridGeometry param) throws DataStoreException {
         ElevationModel elevationModel = layer.getElevationModel();
         if(elevationModel == null){
              elevationModel = (ElevationModel) params.context.getRenderingHints().get(GO2Hints.KEY_ELEVATION_MODEL);
         }
 
         if(elevationModel != null){
-            return (GridCoverage2D) elevationModel.getCoverageReader().read(param);
+            return elevationModel.getCoverageReader().read(param);
         }else{
             return null;
         }

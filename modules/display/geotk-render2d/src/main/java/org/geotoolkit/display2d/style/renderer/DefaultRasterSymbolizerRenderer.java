@@ -49,6 +49,7 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -73,6 +74,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.metadata.ImageStatistics;
+import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.shadedrelief.ShadedReliefDescriptor;
@@ -100,6 +102,7 @@ import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -489,8 +492,20 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 covRefMetadata = ((org.geotoolkit.storage.coverage.GridCoverageResource)ref).getCoverageDescription();
             }
 
-            ImageStatistics analyse = null;
+            if (covRefMetadata == null) {
+                final Metadata metadata;
+                try {
+                    metadata = ref.getMetadata();
+                } catch (DataStoreException ex) {
+                    throw new IOException("Cannot fetch metadata from input resource.", ex);
+                }
 
+                covRefMetadata = MetadataUtilities.extractCoverageDescription(metadata)
+                    .findFirst()
+                    .orElse(null);
+            }
+
+            ImageStatistics analyse = null;
             if (covRefMetadata != null) {
                 analyse = ImageStatistics.transform(covRefMetadata);
             }
@@ -499,6 +514,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             // ensure consistency over tiled rendering (cf. OpenLayer/WMS).
             if (analyse == null)
                 analyse = Statistics.analyse(ri, true);
+
 
             final int nbBands = sampleMod.getNumBands();
             if (nbBands < 3) {
