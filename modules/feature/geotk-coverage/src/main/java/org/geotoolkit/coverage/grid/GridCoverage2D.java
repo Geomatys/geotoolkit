@@ -40,7 +40,6 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.geometry.TransformedDirectPosition;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.resources.Errors;
@@ -52,6 +51,8 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.internal.referencing.PositionTransformer;
+
 
 /**
  * Basic access to grid data values backed by a two-dimensional
@@ -118,7 +119,7 @@ public class GridCoverage2D extends GridCoverage {
      * Will be created only when first needed. Note that the target CRS should
      * be two-dimensional, not the {@link #crs} value.
      */
-    private transient TransformedDirectPosition arbitraryToInternal;
+    private transient PositionTransformer arbitraryToInternal;
 
     /**
      * The preferred encoding to use for serialization using the {@code writeObject} method,
@@ -472,15 +473,15 @@ public class GridCoverage2D extends GridCoverage {
             synchronized (this) {
                 if (arbitraryToInternal == null) {
                     final CoordinateReferenceSystem targetCRS = getCoordinateReferenceSystem2D();
-                    arbitraryToInternal = new TransformedDirectPosition(sourceCRS, targetCRS, null);
+                    arbitraryToInternal = new PositionTransformer(targetCRS, targetCRS, null);
                 }
+                final DirectPosition p;
                 try {
-                    arbitraryToInternal.transform(point);
+                    p = arbitraryToInternal.transform(point);
                 } catch (TransformException exception) {
                     throw new CannotEvaluateException(formatEvaluateError(point, false), exception);
                 }
-                return new Point2D.Double(arbitraryToInternal.getOrdinate(0),
-                                          arbitraryToInternal.getOrdinate(1));
+                return new Point2D.Double(p.getOrdinate(0), p.getOrdinate(1));
             }
         }
         /*

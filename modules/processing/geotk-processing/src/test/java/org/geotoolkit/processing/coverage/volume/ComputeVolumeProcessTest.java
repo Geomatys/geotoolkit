@@ -60,15 +60,15 @@ import org.opengis.util.GenericName;
 public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestBase {
 
     /**
-     * Test tolerance.
+     * Test tolerance relative to the expected value.
      */
-    private final static double TOLERANCE = 1E-9;
+    private final static double TOLERANCE = 0.005;
 
     /**
      * {@link CoordinateReferenceSystem} to test compute volume process with data
      * from {@link PredefinedCRS} with cartesian {@link CoordinateSystem}.
      */
-    private static CoordinateReferenceSystem CARTESIAN_CRS = PredefinedCRS.CARTESIAN_2D;
+    private static final CoordinateReferenceSystem CARTESIAN_CRS = PredefinedCRS.CARTESIAN_2D;
 
     /**
      * {@link GeometryFactory} to create geometry to test process in differents way.
@@ -82,7 +82,6 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
     public void testBilinearCartesian() throws ProcessException {
         basicTest(4, 4, 4, CARTESIAN_CRS,/*envelope coords -> */ 0, 0, 4, 4,
                                          /*geometry coords -> */ 1, 1, 1, 3, 3, 3, 3, 1, 1, 1);
-
     }
 
     /**
@@ -125,7 +124,6 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
      * @param crs coverage space.
      * @param envelopeAndGeomCoordinates estate value which define coverage coordinate and geometry coordinate.
      * In this case coverage envelope coordinates are the four first value and geometry coordinates the others.
-     * @throws ProcessException
      */
     private void basicTest(final int imageWidth, final int imageHeight, final double expectedValue,
                           final CoordinateReferenceSystem crs, final double ...envelopeAndGeomCoordinates) throws ProcessException {
@@ -156,7 +154,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
         final double volume = cvb.getVolume();
 
         // test if volume computed is conform.
-        assertEquals(expectedValue, volume, 1E-9);
+        assertEquals(expectedValue, volume, expectedValue * TOLERANCE);
     }
 
     /**
@@ -166,8 +164,6 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
     public void testAltitudesInCartesianSpace() throws ProcessException {
         altitudesTest(CARTESIAN_CRS, 6.5, 6.5, 3.25);
     }
-
-
 
     /**
      * Test different altitudes in geographical space.
@@ -182,7 +178,6 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
      *
      * @param crs coverage space.
      * @param expectedResults expected results.
-     * @throws ProcessException
      */
     private void altitudesTest(final CoordinateReferenceSystem crs, final double ...expectedResults) throws ProcessException {
         final BufferedImage buff = new BufferedImage(7, 7, BufferedImage.TYPE_BYTE_GRAY);
@@ -218,20 +213,23 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
 
         ComputeVolumeBuilder cvb = new ComputeVolumeBuilder(gcrTest, geomTest, altiCeiling);
         double volume = cvb.getVolume();
-        assertEquals(expectedResults[0], volume, 1E-9);
+        double expected = expectedResults[0];
+        assertEquals(expected, volume, expected * TOLERANCE);
 
         // change ceilings
         cvb.setAnotherCeiling(0.75);
         cvb.setGeometryAltitude(0.25);
         volume = cvb.getVolume();
-        assertEquals(expectedResults[1], volume, 1E-9);
+        expected = expectedResults[1];
+        assertEquals(expected, volume, expected * TOLERANCE);
 
         // change ceilings
         // negative sens
         cvb.setAnotherCeiling(0.75);
         cvb.setGeometryAltitude(1.25);
         volume = cvb.getVolume();
-        assertEquals(expectedResults[2], volume, 1E-9);
+        expected = expectedResults[2];
+        assertEquals(expected, volume, expected * TOLERANCE);
     }
 
     /**
@@ -278,7 +276,6 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
                        /*resolution = 3 -> */  1.1535336449348945E13,  5.770442307446776E12);
     }
 
-
     /**
      * Test process.
      *
@@ -290,7 +287,6 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
      * @param resolution coverage resolution
      * @param crs space test
      * @param expectedResults test results. 2 results for each resolution. If n = resolution number. expectedResult length = 2 * n.
-     * @throws ProcessException
      */
     private void pikeOrHoleTest(double[] altitudes, final int imageWidth, final int imageHeight, final int basicImageValue, final int imageStep,
                                 final double[] resolution, final CoordinateReferenceSystem crs, final double ...expectedResults ) throws ProcessException {
@@ -329,7 +325,8 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
                 cvb.setAnotherCeiling(altitudes[ceilAltId]);
                 cvb.setGeometryAltitude(altitudes[geomAltiId]);
                 double volume = cvb.getVolume();
-                assertEquals(expectedResults[expResult++], volume, TOLERANCE);
+                double expected = expectedResults[expResult++];
+                assertEquals(expected, volume, expected * TOLERANCE);
 
                 // geometry altitude becomme ceil altitude and vice versa.
                 ceilAltId--;
@@ -388,6 +385,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
             value += step;
         }
     }
+
     /**
      * Create jts geometry with the given coordinates.
      *

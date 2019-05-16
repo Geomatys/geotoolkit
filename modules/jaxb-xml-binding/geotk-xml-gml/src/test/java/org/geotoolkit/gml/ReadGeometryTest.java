@@ -41,7 +41,11 @@ public abstract class ReadGeometryTest {
         final GeometryCollection col = (GeometryCollection) result;
         Assert.assertEquals("Bad number of polygon members", expectedInnerGeometries, col.getNumGeometries());
 
-        Assert.assertEquals("Bad boundaries", expectedEnvelope, col.getEnvelopeInternal());
+        final Envelope actual = col.getEnvelopeInternal();
+        Assert.assertEquals(expectedEnvelope.getMinX(), actual.getMinX(), 0.01);
+        Assert.assertEquals(expectedEnvelope.getMinY(), actual.getMinY(), 0.01);
+        Assert.assertEquals(expectedEnvelope.getMaxX(), actual.getMaxX(), 0.01);
+        Assert.assertEquals(expectedEnvelope.getMaxY(), actual.getMaxY(), 0.01);
     }
 
     final <T> T read(final URL source) throws Exception {

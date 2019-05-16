@@ -42,7 +42,7 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.referencing.GeodeticCalculator;
+import org.apache.sis.referencing.GeodeticCalculator;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -406,8 +406,8 @@ public class ComputeVolumeProcess extends AbstractProcess {
             this.upGridPosition  = new double[2];
             this.lowCRSPosition  = new double[2];
             this.upCRSPosition   = new double[2];
-            this.geoCalc         = new GeodeticCalculator(crs);
-            ellConverter         = geoCalc.getEllipsoid().getAxisUnit().getConverterToAny(METER);
+            this.geoCalc         = GeodeticCalculator.create(crs);
+            ellConverter         = geoCalc.getDistanceUnit().getConverterToAny(METER);
         }
 
         /**
@@ -424,9 +424,9 @@ public class ComputeVolumeProcess extends AbstractProcess {
             gridToCrs.transform(upGridPosition, 0, upCRSPosition, 0, 1);
 
             // compute distance on grid x projected axis
-            geoCalc.setStartingGeographicPoint(lowCRSPosition[0], lowCRSPosition[1]);
-            geoCalc.setDestinationGeographicPoint(upCRSPosition[0], upCRSPosition[1]);
-            final double distX = ellConverter.convert(geoCalc.getOrthodromicDistance());
+            geoCalc.setStartPoint(lowCRSPosition[1], lowCRSPosition[0]);
+            geoCalc.setEndPoint(upCRSPosition[1], upCRSPosition[0]);
+            final double distX = ellConverter.convert(geoCalc.getGeodesicDistance());
 
             // compute on y grid axis
             lowGridPosition[0] = pixelPosition[0];
@@ -437,9 +437,9 @@ public class ComputeVolumeProcess extends AbstractProcess {
             gridToCrs.transform(upGridPosition, 0, upCRSPosition, 0, 1);
 
             // compute distance on grid y projected axis
-            geoCalc.setStartingGeographicPoint(lowCRSPosition[0], lowCRSPosition[1]);
-            geoCalc.setDestinationGeographicPoint(upCRSPosition[0], upCRSPosition[1]);
-            final double distY = ellConverter.convert(geoCalc.getOrthodromicDistance());
+            geoCalc.setStartPoint(lowCRSPosition[1], lowCRSPosition[0]);
+            geoCalc.setEndPoint(upCRSPosition[1], upCRSPosition[0]);
+            final double distY = ellConverter.convert(geoCalc.getGeodesicDistance());
             return distX * distY;
         }
     }

@@ -26,9 +26,6 @@ import com.sun.star.beans.XPropertySet;
 import com.sun.star.uno.AnyConverter;
 
 import org.opengis.util.FactoryException;
-import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.datum.Ellipsoid;
-import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -38,9 +35,8 @@ import org.apache.sis.measure.Angle;
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
 import org.apache.sis.measure.AngleFormat;
-import org.geotoolkit.referencing.GeodeticCalculator;
+import org.apache.sis.referencing.GeodeticCalculator;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -201,17 +197,8 @@ public final class Referencing extends Formulas implements XReferencing {
             authorityString = AnyConverter.toString(authorityCode);
         }
         if (calculatorCRS==null || !calculatorCRS.equals(authorityString)) {
-            final IdentifiedObject object = crsFactory().createObject(authorityString);
-            if (object instanceof Ellipsoid) {
-                calculator = new GeodeticCalculator((Ellipsoid) object);
-            } else if (object instanceof GeodeticDatum) {
-                calculator = new GeodeticCalculator(((GeodeticDatum) object).getEllipsoid());
-            } else if (object instanceof CoordinateReferenceSystem) {
-                calculator = new GeodeticCalculator((CoordinateReferenceSystem) object);
-            } else {
-                throw new FactoryException(Errors.format(
-                        Errors.Keys.IllegalCoordinateReferenceSystem));
-            }
+            final CoordinateReferenceSystem object = crsFactory().createCoordinateReferenceSystem(authorityString);
+            calculator = GeodeticCalculator.create(object);
             calculatorCRS = authorityString;
         }
         return calculator;
@@ -330,7 +317,7 @@ public final class Referencing extends Formulas implements XReferencing {
             return getFailure(source.length, 2);
         }
         boolean failureReported = false;
-        final int dim = calculator.getCoordinateReferenceSystem().getCoordinateSystem().getDimension();
+        final int dim = calculator.getPositionCRS().getCoordinateSystem().getDimension();
         final GeneralDirectPosition sourcePt = new GeneralDirectPosition(dim);
         final GeneralDirectPosition targetPt = new GeneralDirectPosition(dim);
         final double[][] result = new double[getLength(source, target)][];
@@ -345,19 +332,18 @@ public final class Referencing extends Formulas implements XReferencing {
                 targetPt.ordinates[i] = (i<dst.length) ? dst[i] : 0;
             }
             try {
-                calculator.setStartingPosition   (sourcePt);
-                calculator.setDestinationPosition(targetPt);
+                calculator.setStartPoint(sourcePt);
+                calculator.setEndPoint  (targetPt);
+                result[j] = new double[] {
+                    calculator.getGeodesicDistance(),
+                    calculator.getStartingAzimuth()
+                };
             } catch (TransformException exception) {
                 if (!failureReported) {
                     reportException("getOrthodromicDistance", exception, false);
                     failureReported = true;
                 }
-                continue;
             }
-            result[j] = new double[] {
-                calculator.getOrthodromicDistance(),
-                calculator.getAzimuth()
-            };
         }
         return result;
     }
@@ -380,7 +366,7 @@ public final class Referencing extends Formulas implements XReferencing {
             return getFailure(source.length, 2);
         }
         boolean failureReported = false;
-        final int dim = calculator.getCoordinateReferenceSystem().getCoordinateSystem().getDimension();
+        final int dim = calculator.getPositionCRS().getCoordinateSystem().getDimension();
         final GeneralDirectPosition sourcePt = new GeneralDirectPosition(dim);
         final double[][] result = new double[getLength(source, displacement)][];
         for (int j=0; j<result.length; j++) {
@@ -401,9 +387,10 @@ public final class Referencing extends Formulas implements XReferencing {
             }
             final DirectPosition targetPt;
             try {
-                calculator.setStartingPosition(sourcePt);
-                calculator.setDirection(azimuth, distance);
-                targetPt = calculator.getDestinationPosition();
+                calculator.setStartPoint(sourcePt);
+                calculator.setStartingAzimuth(azimuth);
+                calculator.setGeodesicDistance(distance);
+                targetPt = calculator.getEndPoint();
             } catch (TransformException exception) {
                 if (!failureReported) {
                     reportException("getOrthodromicForward", exception, false);

@@ -39,6 +39,7 @@ import org.opengis.util.FactoryException;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.apache.sis.internal.referencing.ReferencingFactoryContainer;
+import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -406,7 +407,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
             setName(conversion, opAccessor);
             setName(conversion.getMethod(), false, opAccessor, "method");
             addParameter(new MetadataNodeAccessor[] {opAccessor, null}, conversion.getParameterValues(),
-                    CRS.getEllipsoid(crs));
+                    ReferencingUtilities.getEllipsoid(crs));
         }
         setUserObject(accessor, crs);
     }

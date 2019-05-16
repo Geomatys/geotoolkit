@@ -32,7 +32,7 @@ import javax.measure.Unit;
 import org.apache.sis.measure.Units;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.GeodeticCalculator;
+import org.apache.sis.referencing.GeodeticCalculator;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.apache.sis.internal.system.DefaultFactories;
@@ -66,7 +66,7 @@ public class MeasureUtilities {
         Coordinate[] coords = line.getCoordinates();
 
         try {
-            final GeodeticCalculator calculator = new GeodeticCalculator(geomCRS);
+            final GeodeticCalculator calculator = GeodeticCalculator.create(geomCRS);
             final GeneralDirectPosition pos = new GeneralDirectPosition(geomCRS);
 
             double length = 0;
@@ -76,12 +76,12 @@ public class MeasureUtilities {
 
                 pos.ordinates[0] = coord1.x;
                 pos.ordinates[1] = coord1.y;
-                calculator.setStartingPosition(pos);
+                calculator.setStartPoint(pos);
                 pos.ordinates[0] = coord2.x;
                 pos.ordinates[1] = coord2.y;
-                calculator.setDestinationPosition(pos);
+                calculator.setEndPoint(pos);
 
-                length += calculator.getOrthodromicDistance();
+                length += calculator.getGeodesicDistance();
             }
 
             if(!Units.METRE.equals(unit)){
