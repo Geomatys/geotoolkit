@@ -26,6 +26,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Iterator;
+import java.util.function.Consumer;
+
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -46,6 +48,11 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPointSymbolizer>{
 
+    /**
+     * Defines the absolute radian value below which rotation is ignored.
+     */
+    private static final double ROTATION_TOLERANCE = 5e-2;
+
     public DefaultPointSymbolizerRenderer(final SymbolizerRendererService service,final CachedPointSymbolizer symbol, final RenderingContext2D context){
         super(service,symbol,context);
     }
@@ -62,7 +69,6 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
         if(projectedGeometry == null) return false;
 
         return portray(projectedGeometry, null);
-
     }
 
     /**
@@ -113,7 +119,6 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
             return false;
         }
 
-        final float imgRot = symbol.getRotation(candidate);
         final float[] disps = new float[2];
         final float[] anchor = new float[2];
         symbol.getDisplacement(candidate,disps);
@@ -133,83 +138,58 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
             return false;
         }
 
-        double rot = renderingContext.getRotation();
-        rot -= imgRot;
+        /**
+         * Rendering context defines a Java2D rotation (counter-clockwise), but symbolizer defines a clockwise one
+         * (note: Cannot find this information in SLD specification, but that's documented in GeoServer documentation).
+         * To properly manage rotations, we have to merge them immediately because they
+         */
+        final double ccwRotation = -symbol.getRotation(candidate);
+        final boolean skipRotation = Math.abs(ccwRotation) < ROTATION_TOLERANCE;
 
         final int postx = (int) (-img.getWidth()*anchor[0] + disps[0]);
         final int posty = (int) (-img.getHeight()*anchor[1] - disps[1]);
+        final Consumer<Coordinate> drawer;
+        if (skipRotation) {
+            //we use Math.floor and not a cast, for negative values this ensure
+            //a regular displacement and avoid tile border artifacts
+            drawer = point -> g2d.drawImage(img, (int)Math.floor(point.x)+postx, (int)Math.floor(point.y)+posty, null);
+        } else {
+            drawer = point -> {
+                final AffineTransform positioning = AffineTransform.getTranslateInstance(point.x, point.y);
+                positioning.rotate(ccwRotation);
+                positioning.translate(postx, posty);
+                g2d.drawImage(img, positioning, null);
+            };
+        }
+
         boolean dataRendered = false;
         for(Geometry geom : geoms){
-            if(rot==0.0 && imgRot==0f){
-                if(geom instanceof Point || geom instanceof MultiPoint){
-                    //TODO use generalisation on multipoints
+            if(geom instanceof Point || geom instanceof MultiPoint){
+                //TODO use generalisation on multipoints
 
-                    final Coordinate[] coords = geom.getCoordinates();
-                    for(int i=0, n = coords.length; i<n ; i++){
-                        final Coordinate coord = coords[i];
-                        //we use Math.floor and not a cast, for negative values this ensure
-                        //a regular displacement and avoid tile border artifacts
-                        g2d.drawImage(img, (int)Math.floor(coord.x)+postx, (int)Math.floor(coord.y)+posty, null);
-                        dataRendered = true;
-                    }
+                final Coordinate[] coords = geom.getCoordinates();
+                for(int i=0, n = coords.length; i<n ; i++){
+                    final Coordinate coord = coords[i];
 
-                }else{
-                    //get most appropriate point
-                    final Point pt2d = GO2Utilities.getBestPoint(geom);
-                    if(pt2d == null || pt2d.isEmpty()){
-                        //no geometry
-                        return dataRendered;
-                    }
-
-                    Coordinate pcoord = pt2d.getCoordinate();
-                    if(Double.isNaN(pcoord.x)){
-                        pcoord = geom.getCoordinate();
-                    }
-
-                    g2d.drawImage(img, (int)Math.floor(pcoord.x)+postx, (int)Math.floor(pcoord.y)+posty, null);
+                    drawer.accept(coord);
                     dataRendered = true;
                 }
+
             }else{
-                final AffineTransform postConcat = new AffineTransform(1, 0, 0, 1, postx, posty);
-                final AffineTransform finalRot = new AffineTransform();
-                finalRot.rotate(imgRot);
-
-                if(geom instanceof Point || geom instanceof MultiPoint){
-                    //TODO use generalisation on multipoints
-
-                    final Coordinate[] coords = geom.getCoordinates();
-                    for(int i=0, n = coords.length; i<n ; i++){
-                        final Coordinate coord = coords[i];
-
-                        final AffineTransform ptrs = new AffineTransform();
-                        ptrs.rotate(-rot);
-                        ptrs.preConcatenate(new AffineTransform(1, 0, 0, 1, coord.x, coord.y));
-                        ptrs.concatenate(postConcat);
-
-                        g2d.drawImage(img, ptrs, null);
-                        dataRendered = true;
-                    }
-                }else{
-                    //get most appropriate point
-                    final Point pt2d = GO2Utilities.getBestPoint(geom);
-                    if(pt2d == null || pt2d.isEmpty()){
-                        //no geometry
-                        return dataRendered;
-                    }
-
-                    Coordinate pcoord = pt2d.getCoordinate();
-                    if(Double.isNaN(pcoord.x)){
-                        pcoord = geom.getCoordinate();
-                    }
-
-                    final AffineTransform ptrs = new AffineTransform();
-                    ptrs.rotate(-rot);
-                    ptrs.preConcatenate(new AffineTransform(1, 0, 0, 1, pcoord.x, pcoord.y));
-                    ptrs.concatenate(postConcat);
-
-                    g2d.drawImage(img, ptrs, null);
-                    dataRendered = true;
+                //get most appropriate point
+                final Point pt2d = GO2Utilities.getBestPoint(geom);
+                if(pt2d == null || pt2d.isEmpty()){
+                    //no geometry
+                    return dataRendered;
                 }
+
+                Coordinate pcoord = pt2d.getCoordinate();
+                if(Double.isNaN(pcoord.x)){
+                    pcoord = geom.getCoordinate();
+                }
+
+                drawer.accept(pcoord);
+                dataRendered = true;
             }
         }
         return dataRendered;
@@ -476,5 +456,4 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
     public boolean hit(final ProjectedCoverage graphic, final SearchAreaJ2D mask, final VisitFilter filter) {
         return false;
     }
-
 }
