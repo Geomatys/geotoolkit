@@ -71,7 +71,10 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
             if (param instanceof CellDataFeatures) {
                 final TreeItem item = ((CellDataFeatures) param).getValue();
                 final Object value = item.getValue();
-                return FXUtilities.beanProperty(value, "name", String.class);
+                if (value instanceof MapItem) {
+                    return FXUtilities.beanProperty(value, "name", String.class);
+                } else throw new IllegalArgumentException("Expected a Map item object, but got "+value == null? "null" : value.getClass().getCanonicalName());
+
             }
 
             return null;

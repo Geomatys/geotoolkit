@@ -134,7 +134,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     /**
      * Style factory object use to generate in some case to interpret raster with no associated style.
      *
-     * @see #applyColorMapStyle(CoverageReference, GridCoverage2D, RasterSymbolizer)
+     * @see #applyColorMapStyle(GridCoverageResource, GridCoverage, RasterSymbolizer)
      */
     public static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
 

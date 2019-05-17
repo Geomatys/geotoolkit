@@ -40,6 +40,7 @@ import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -63,7 +64,8 @@ public class ResourceNameColumn extends TreeTableColumn<Resource,String>{
                     final Resource r = param.getValue().getValue();
                     String id = MetadataUtilities.getIdentifier(r.getMetadata());
                     if (id == null || (id = id.trim()).isEmpty()) {
-                        id = r.getIdentifier().toString();
+                        final GenericName rId = r.getIdentifier();
+                        id = rId == null? "Unknown" : rId.toString();
                     }
                     return new SimpleObjectProperty<>(id);
                 } catch (DataStoreException ex) {
