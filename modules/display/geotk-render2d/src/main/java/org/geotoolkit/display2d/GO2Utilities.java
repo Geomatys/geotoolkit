@@ -48,6 +48,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.metadata.AxisDirections;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
@@ -59,8 +60,7 @@ import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.processing.coverage.resample.CannotReprojectException;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
@@ -81,13 +81,11 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.jts.awt.DecimateJTSGeometryJ2D;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.image.jai.FloodFill;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.renderer.style.WKMMarkFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -113,15 +111,14 @@ import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Fill;
@@ -263,22 +260,20 @@ public final class GO2Utilities {
      */
     public static boolean portray(final RenderingContext2D renderingContext, GridCoverage coverage) throws PortrayalException{
 
-        GridCoverage2D dataCoverage = CoverageUtilities.toGeotk(coverage);
-
         final CanvasMonitor monitor = renderingContext.getMonitor();
         final Graphics2D g2d = renderingContext.getGraphics();
 
-        final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem objectiveCrs = renderingContext.getObjectiveCRS2D();
+        final CoordinateReferenceSystem coverageCRS = coverage.getCoordinateReferenceSystem();
         boolean sameCRS = true;
         try{
-            final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
-            if(!Utilities.equalsIgnoreMetadata(candidate2D,renderingContext.getObjectiveCRS2D()) ){
+            final CoordinateReferenceSystem candidate2D = CRS.getHorizontalComponent(coverageCRS);
+            if (candidate2D == null)
+                throw new PortrayalException("Cannot find horizontal component of input data CRS.");
+            if(!Utilities.equalsIgnoreMetadata(candidate2D, objectiveCrs) ){
                 sameCRS = false;
-                dataCoverage = (GridCoverage2D) GO2Utilities.resample(dataCoverage.view(ViewType.NATIVE),renderingContext.getObjectiveCRS2D());
-
-                if(dataCoverage != null){
-                    dataCoverage = dataCoverage.view(ViewType.RENDERED);
-                }
+                // We do not force geophysics only because we use a neighbor interpolation.
+                coverage = GO2Utilities.resample(coverage, objectiveCrs, InterpolationCase.NEIGHBOR);
             }
         } catch (CannotReprojectException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
@@ -294,7 +289,7 @@ public final class GO2Utilities {
             return false;
         }
 
-        if(dataCoverage == null){
+        if(coverage == null){
             monitor.exceptionOccured(new NullArgumentException("GO2Utilities : Reprojected coverage is null."),Level.WARNING);
             return false;
         }
@@ -302,7 +297,8 @@ public final class GO2Utilities {
         //we must switch to objectiveCRS for grid coverage
         renderingContext.switchToObjectiveCRS();
 
-        RenderedImage img = dataCoverage.getRenderedImage();
+        coverage = coverage.forConvertedValues(true);
+        RenderedImage img = coverage.render(null);
 
         if(!sameCRS){
             //will be reprojected, we must check that image has alpha support
@@ -328,21 +324,28 @@ public final class GO2Utilities {
             }
         }
 
-        final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
-        if(trs2D instanceof AffineTransform){
+        // If there's no reprojection above, and input coverage has more than 2 dimensions, we must search for horizontal axes.
+        final int xAxis = AxisDirections.indexOfColinear(
+                objectiveCrs.getCoordinateSystem(),
+                coverage.getCoordinateReferenceSystem().getCoordinateSystem()
+        );
+
+        final MathTransform gridToCRS = coverage.getGridGeometry()
+                .reduce(xAxis, xAxis + 1)
+                .getGridToCRS(PixelInCell.CELL_CORNER);
+        if(gridToCRS instanceof AffineTransform){
             g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
-            g2d.drawRenderedImage(img, (AffineTransform)trs2D);
+            g2d.drawRenderedImage(img, (AffineTransform)gridToCRS);
             return true;
-        }else if (trs2D instanceof LinearTransform) {
-            final LinearTransform lt = (LinearTransform) trs2D;
+        }else if (gridToCRS instanceof LinearTransform) {
+            final LinearTransform lt = (LinearTransform) gridToCRS;
             final int col = lt.getMatrix().getNumCol();
             final int row = lt.getMatrix().getNumRow();
             //TODO using only the first parameters of the linear transform
-            throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass());
+            throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + gridToCRS.getClass());
         }else{
-            throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass() );
+            throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + gridToCRS.getClass() );
         }
-
     }
 
     public static boolean hit(final ProjectedFeature graphic, final CachedSymbolizer symbol,
@@ -624,7 +627,7 @@ public final class GO2Utilities {
         final MathTransform objToDisp = context2D.getObjectiveToDisplay();
 
         Envelope cropped = wanted;
-        if(!CRS.equalsApproximatively(context2D.getCanvasObjectiveBounds2D(), wanted.getCoordinateReferenceSystem())){
+        if(!Utilities.equalsApproximatively(context2D.getObjectiveCRS2D(), wanted.getCoordinateReferenceSystem())){
             cropped = Envelopes.transform(wanted, context2D.getObjectiveCRS2D());
         }
 
@@ -777,10 +780,30 @@ public final class GO2Utilities {
     // rewrite coverage read param  ////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Performs a NEIGHBOR interpolation on input image, and resample it into queried coordinate system.
+     * @param dataCoverage Data to change CRS for.
+     * @param targetCRS Output coverage CRS.
+     * @return A new coverage, built after reprojection.
+     * @throws ProcessException If anything crashes while resample operation.
+     */
     public static GridCoverage resample(final GridCoverage dataCoverage, final CoordinateReferenceSystem targetCRS) throws ProcessException{
+        return resample(dataCoverage, targetCRS, InterpolationCase.NEIGHBOR);
+    }
+
+    /**
+     * Performs a resample into queried coordinate system.
+     * @param dataCoverage Data to change CRS for.
+     * @param targetCRS Output coverage CRS.
+     * @param interpol {@link InterpolationCase Interpolation logic} to apply while resampling pixels.
+     * @return A new coverage, built after reprojection.
+     * @throws ProcessException If anything crashes while resample operation.
+     */
+    public static GridCoverage resample(final GridCoverage dataCoverage, final CoordinateReferenceSystem targetCRS, final InterpolationCase interpol) throws ProcessException{
         final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
         final Parameters params = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
         params.getOrCreate(ResampleDescriptor.IN_COVERAGE).setValue(dataCoverage);
+        params.getOrCreate(ResampleDescriptor.IN_INTERPOLATION_TYPE).setValue(interpol);
         params.getOrCreate(ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM).setValue(targetCRS);
 
         final org.geotoolkit.process.Process process = desc.createProcess(params);

@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.LookupTableJAI;
@@ -51,6 +52,7 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.coverage.SampleDimensionType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -151,17 +153,20 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
         boolean dataRendered = false;
         try {
-            GridCoverage dataCoverage = getObjectiveCoverage(projectedCoverage);
             GridCoverage elevationCoverage = null;//getObjectiveElevationCoverage(projectedCoverage);
             final MapLayer coverageLayer = projectedCoverage.getLayer();
-            final GridCoverageResource ref = (GridCoverageResource) coverageLayer.getResource();
 
-            assert ref != null : "CoverageMapLayer.getCoverageReference() contract don't allow null pointeur.";
-
-            if (dataCoverage == null) {
-                //LOGGER.log(Level.WARNING, "RasterSymbolizer : Reprojected coverage is null.");
+            final Resource resource = coverageLayer.getResource();
+            if (!(resource instanceof GridCoverageResource)) {
+                LOGGER.log(Level.WARNING, () -> String.format(
+                        "Unsupported case: given layer [%s] has no compatible resource.%nExpected: %s%nBut got: %s",
+                        coverageLayer.getName(), GridCoverageResource.class, resource == null? "null" : resource.getClass()
+                ));
                 return false;
             }
+
+            final GridCoverageResource ref = (GridCoverageResource) resource;
+
 
             final RasterSymbolizer sourceSymbol = symbol.getSource();
 
@@ -171,33 +176,29 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
             //band select ----------------------------------------------------------
             //works as a JAI operation
-            final int nbDim = dataCoverage.getSampleDimensions().size();
-            if (nbDim > 1) {
-                //we can change sample dimension only if we have more then one available.
-                final ChannelSelection selections = sourceSymbol.getChannelSelection();
-                if (selections != null) {
-                    final SelectedChannelType channel = selections.getGrayChannel();
-                    if (channel != null) {
-                        //single band selection
-                        final int[] indices = new int[]{
-                                getBandIndice(channel.getChannelName(), dataCoverage)
-                        };
-                        dataCoverage = selectBand(dataCoverage, indices);
-                    } else {
-                        final SelectedChannelType[] channels = selections.getRGBChannels();
-                        final int[] selected = new int[]{
-                                getBandIndice(channels[0].getChannelName(), dataCoverage),
-                                getBandIndice(channels[1].getChannelName(), dataCoverage),
-                                getBandIndice(channels[2].getChannelName(), dataCoverage)
-                        };
-                        //@Workaround(library="JAI",version="1.0.x")
-                        //TODO when JAI has been rewritten, this test might not be necessary anymore
-                        //check if selection actually does something
-                        if (!(selected[0] == 0 && selected[1] == 1 && selected[2] == 2) || nbDim != 3) {
-                            dataCoverage = selectBand(dataCoverage, selected);
-                        }
+            final ChannelSelection selections = sourceSymbol.getChannelSelection();
+            final List<SampleDimension> sampleDimensions = ref.getSampleDimensions();
+            final int[] channelSelection;
+            //we can change sample dimension only if we have more then one available.
+            if (selections != null && (sampleDimensions == null || sampleDimensions.size() > 1)) {
+                final SelectedChannelType channel = selections.getGrayChannel();
+
+                final SelectedChannelType[] channels = channel != null?
+                        new SelectedChannelType[]{channel} : selections.getRGBChannels();
+                if (channels != null && channels.length > 0) {
+                    channelSelection = new int[channels.length];
+                    for (int i = 0 ; i < channels.length ; i++) {
+                        channelSelection[i] = getBandIndice(channels[i].getChannelName(), sampleDimensions);
                     }
-                }
+                } else channelSelection = null;
+            } else {
+                channelSelection = null;
+            }
+
+            final GridCoverage dataCoverage = getObjectiveCoverage(projectedCoverage, renderingContext.getGridGeometry(), false, channelSelection);
+            if (dataCoverage == null) {
+                //LOGGER.log(Level.WARNING, "RasterSymbolizer : Reprojected coverage is null.");
+                return false;
             }
 
             /*
@@ -210,7 +211,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             // 4 - Apply style                                                //
             ////////////////////////////////////////////////////////////////////
 
-//            RenderedImage dataImage = dataCoverage.getRenderedImage();
             RenderedImage dataImage = applyStyle(ref, dataCoverage, elevationCoverage, sourceSymbol);
             final MathTransform trs2D = dataCoverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
 
@@ -458,18 +458,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //cheat on the colormap if we have only one band and no colormap
         recolorCase:
         if ((recolor == null || recolor.getFunction() == null)) {
-            final List<SampleDimension> sampleDims = coverage.getSampleDimensions();
-            /* First, we check the coverage sample dimensions. We do so, because
-             * not all coverages hold enough information into their metadata.
-             * Even when it is the case, sometimes the coverage description
-             * processes statistics on the fly, which could be costly. But the
-             * following approach is very fast, even if it will be applied only
-             * if we detect that used extremums are user-defined.
-             * The biggest flaw here is that only extremum are used for palette
-             * building, so the result color map could be unfit to represent data
-             * with sparse value distribution.
-             */
-            if (sampleDims != null && sampleDims.size() == 1)
 
             //if there is no geophysic, the same coverage is returned
             coverage = coverage.forConvertedValues(true);
@@ -666,16 +654,17 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         return sampleSize != 8;
     }
 
-    private static int getBandIndice(final String name, final GridCoverage coverage) throws PortrayalException{
+    private static int getBandIndice(final String name, final List<SampleDimension> dims) throws PortrayalException{
         try{
             return Integer.parseInt(name);
         }catch(NumberFormatException ex){
             //can be a name
-            final List<SampleDimension> dims = coverage.getSampleDimensions();
-            for(int i=0,n=dims.size();i<n;i++){
-                final SampleDimension sampleDim = dims.get(i);
-                if (Objects.equals(String.valueOf(sampleDim.getName()), n)) {
-                    return i;
+            if (dims != null) {
+                for (int i = 0, n = dims.size(); i < n; i++) {
+                    final SampleDimension sampleDim = dims.get(i);
+                    if (Objects.equals(String.valueOf(sampleDim.getName()), n)) {
+                        return i;
+                    }
                 }
             }
         }
@@ -889,49 +878,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     ////////////////////////////////////////////////////////////////////////////
     // RenderedImage JAI image operations ///////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Returns a {@link GridCoverage} which contain band extracted from sourceCoverage
-     * at band indices given by indice array parameter.<br><br>
-     *
-     * note : out coverage will have same band number than indice array length.
-     *
-     * @param sourceCoverage coverage which contain all needed band.
-     * @param indices an array which contain band index of sourceCoverage to build another {@link GridCoverage}.
-     * @return a new {@link GridCoverage} with extracted band from sourceCoverage at indice given by indice array.
-     * @throws ProcessException if problem during process band selection.
-     * @see BandSelectProcess
-     */
-    private static GridCoverage selectBand(final GridCoverage sourceCoverage, final int[] indices) throws ProcessException {
-        final List<SampleDimension> sampleDimensions = sourceCoverage.getSampleDimensions();
-
-        if (sampleDimensions.size() < indices.length) {
-            //not enough bands in the image
-            LOGGER.log(Level.WARNING, "Raster Style define more bands than the data");
-            return sourceCoverage;
-        } else {
-            RenderedImage image = sourceCoverage.render(null);
-
-            final ProcessDescriptor bandSelectDesc = BandSelectDescriptor.INSTANCE;
-            final Parameters param = Parameters.castOrWrap(bandSelectDesc.getInputDescriptor().createValue());
-            param.getOrCreate(BandSelectDescriptor.IN_IMAGE).setValue(image);
-            param.getOrCreate(BandSelectDescriptor.IN_BANDS).setValue(indices);
-            final org.geotoolkit.process.Process process = bandSelectDesc.createProcess(param);
-
-            final Parameters output = Parameters.castOrWrap(process.call());
-            image = output.getValue(BandSelectDescriptor.OUT_IMAGE);
-            final GridCoverageBuilder builder = new GridCoverageBuilder();
-            builder.setGridCoverage(sourceCoverage);
-            builder.setRenderedImage(image);
-
-            final List<SampleDimension> newDims = new ArrayList<>();
-            for (int i : indices) {
-                newDims.add(sampleDimensions.get(i));
-            }
-            builder.setSampleDimensions(newDims);
-            return builder.getGridCoverage2D();
-        }
-    }
 
     /**
      * Rescale image colors between datatype bounds (0, 255 for bytes or 0 655535 for short data). This solution will work

@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
@@ -35,7 +34,6 @@ import org.apache.sis.math.Statistics;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.DefaultCachedRule;
@@ -65,7 +63,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 /**
  * TODO : For features, compute statistics only if input symbolizer needs
@@ -407,26 +404,6 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                 }
             }
         }
-    }
-
-    private AffineTransform calculateAverageAffine(final RenderingContext2D context,
-            final GridCoverage2D coverage) throws FactoryException, TransformException{
-
-        final MathTransform trs = context.getMathTransform(context.getObjectiveCRS(),coverage.getCoordinateReferenceSystem2D() );
-
-        final Envelope refEnv = context.getCanvasObjectiveBounds();
-        final GeneralEnvelope coverageEnv = Envelopes.transform(trs, refEnv);
-
-        final double objX = refEnv.getSpan(0);
-        final double objY = refEnv.getSpan(1);
-        final double covX = coverageEnv.getMaximum(0)-coverageEnv.getMinimum(0);
-        final double covY = coverageEnv.getMaximum(1)-coverageEnv.getMinimum(1);
-        final double scaleX = covX/objX;
-        final double scaleY = covY/objY;
-
-        AffineTransform aff = new AffineTransform();
-        aff.setToScale(scaleX,scaleY);
-        return aff;
     }
 
     /**
