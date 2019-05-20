@@ -433,6 +433,11 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     private GridGeometry extractSlice(GridGeometry fullArea, GridGeometry areaOfInterest, boolean applyResolution)
             throws CoverageStoreException, TransformException, FactoryException, ProcessException {
 
+        // HACK : This method cannot manage incomplete grid geometries, so we have to skip
+        if (!fullArea.isDefined(GridGeometry.ENVELOPE | GridGeometry.RESOLUTION | GridGeometry.GRID_TO_CRS | GridGeometry.EXTENT)) {
+            return areaOfInterest;
+        }
+
         // on displayed area
         Envelope canvasEnv = areaOfInterest.getEnvelope();
         double[] resolution = applyResolution ? areaOfInterest.getResolution(true) : null;
