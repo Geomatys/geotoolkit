@@ -67,7 +67,18 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
 
     public MapItemNameColumn() {
         super(GeotkFX.getString(MapItemNameColumn.class,"layers"));
-        setCellValueFactory(param -> FXUtilities.beanProperty(((CellDataFeatures)param).getValue().getValue(), "name", String.class));
+        setCellValueFactory(param -> {
+            if (param instanceof CellDataFeatures) {
+                final TreeItem item = ((CellDataFeatures) param).getValue();
+                final Object value = item.getValue();
+                if (value instanceof MapItem) {
+                    return FXUtilities.beanProperty(value, "name", String.class);
+                } else throw new IllegalArgumentException("Expected a Map item object, but got "+value == null? "null" : value.getClass().getCanonicalName());
+
+            }
+
+            return null;
+        });
         setCellFactory((TreeTableColumn<T, String> param) -> new Cell());
         setEditable(true);
         setPrefWidth(200);

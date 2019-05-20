@@ -3,6 +3,7 @@ package org.geotoolkit.metadata;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.stream.Stream;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -11,6 +12,7 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.OnlineResource;
+import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.identification.Identification;
 
 /**
@@ -75,5 +77,12 @@ public class MetadataUtilities extends Static {
         }
 
         return alreadySet;
+    }
+
+    public static Stream<CoverageDescription> extractCoverageDescription(final Metadata source) {
+        Stream<CoverageDescription> cds = (Stream) source.getContentInfo().stream()
+                .filter(info -> info instanceof CoverageDescription);
+
+        return cds;
     }
 }

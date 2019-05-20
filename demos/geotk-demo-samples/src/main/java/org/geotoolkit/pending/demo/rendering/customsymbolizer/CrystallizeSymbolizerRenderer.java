@@ -48,7 +48,7 @@ public class CrystallizeSymbolizerRenderer extends AbstractSymbolizerRenderer<Cr
         //this is a fast way to do it, don't use it in real code
         GridCoverage dataCoverage;
         try {
-            dataCoverage = graphic.getCoverage(new GridCoverageReadParam());
+            dataCoverage = graphic.getCoverage(renderingContext.getGridGeometry());
         } catch (DataStoreException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
             return false;

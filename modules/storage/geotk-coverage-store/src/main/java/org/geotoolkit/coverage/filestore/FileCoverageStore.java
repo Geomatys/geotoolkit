@@ -299,9 +299,9 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
         if (spi == null) {
             reader = XImageIO.getReader(candidate, Boolean.FALSE, Boolean.FALSE);
         } else {
-            if (spi.canDecodeInput(candidate)) {
+            Object in = XImageIO.toSupportedInput(spi, candidate);
+            if (spi.canDecodeInput(in)) {
                 reader = spi.createReaderInstance();
-                Object in = XImageIO.toSupportedInput(spi, candidate);
                 reader.setInput(in);
             } else {
                 throw new UnsupportedImageFormatException("Unsupported file input for spi "+spi.getPluginClassName());

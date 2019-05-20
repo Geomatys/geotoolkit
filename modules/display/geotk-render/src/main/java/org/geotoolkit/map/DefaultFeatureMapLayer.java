@@ -98,6 +98,8 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
         super(style);
         ArgumentChecks.ensureNonNull("FeatureSet", collection);
         this.collection = collection;
+
+        trySetName(collection);
     }
 
     @Override

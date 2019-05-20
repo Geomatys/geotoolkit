@@ -27,10 +27,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.display.PortrayalException;
@@ -48,8 +48,8 @@ import org.opengis.filter.expression.Literal;
 import org.opengis.metadata.content.AttributeGroup;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 
 /**
  *
@@ -158,7 +158,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                     mapping[i] = index;
                 }
             }
-            GridCoverage2D dataCoverage;
+            GridCoverage dataCoverage;
             try {
                 dataCoverage = getObjectiveCoverage(projectedCoverage,
                         renderingContext.getGridGeometry(), false, toRead);
@@ -185,12 +185,12 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             }
 
             dataCoverage = dataCoverage.forConvertedValues(true);
-            final RenderedImage ri = dataCoverage.getRenderedImage();
+            final RenderedImage ri = dataCoverage.render(null);
 
             final DynamicRangeStretchProcess p = new DynamicRangeStretchProcess(ri, bands, ranges);
             RenderedImage img = p.executeNow();
             if (img instanceof WritableRenderedImage) GO2Utilities.removeBlackBorder((WritableRenderedImage)img);
-            final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
+            final MathTransform trs2D = dataCoverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
 
             renderCoverage(img, trs2D);
 
@@ -235,7 +235,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
     }
 
 
-    private void renderCoverage(RenderedImage img, MathTransform2D trs2D) throws PortrayalException{
+    private void renderCoverage(RenderedImage img, MathTransform trs2D) throws PortrayalException{
         renderingContext.switchToObjectiveCRS();
         if (trs2D instanceof AffineTransform) {
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));

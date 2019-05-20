@@ -14,6 +14,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.datum.PixelInCell;
 
+import static org.opengis.referencing.datum.PixelInCell.CELL_CENTER;
+
 /**
  * Try to generate subsets of a grid. The aim is to create slices over specified
  * dimension, to move along an axis and retrieve all its possible values.
@@ -32,8 +34,6 @@ public class GridGeometryIterator implements Iterator<GridGeometry> {
      */
     private final GridIterator gridIterator;
 
-    private final Function<GridExtent, GridGeometry> generator;
-
     /**
      * Create an iterator which will try to split given geometry as a series of
      * 2D geometries.
@@ -42,29 +42,12 @@ public class GridGeometryIterator implements Iterator<GridGeometry> {
      * @throws IllegalArgumentException If we cannot determine horizontal axes
      * of the given geometry. We do so because we cannot safely determine axes
      * to iterate over without this information. If you know the indices you
-     * must iterate on, you can use {@link #GridGeometryIterator(org.geotoolkit.coverage.grid.GeneralGridGeometry, int...) },
+     * must iterate on, you can use {@link #GridGeometryIterator(org.apache.sis.coverage.grid.GridGeometry, int...) },
      * which won't make any analysis of the geometry, and just iterate over
      * specified dimensions.
      */
     public GridGeometryIterator(final GridGeometry source) throws IllegalArgumentException {
-        this(source, source.getCoordinateReferenceSystem());
-    }
-
-    /**
-     * Create an iterator which will try to split given geometry as a series of
-     * 2D geometries.
-     *
-     * @param source The grid geometry to split.
-     * @param crs source CRS.
-     * @throws IllegalArgumentException If we cannot determine horizontal axes
-     * of the given geometry. We do so because we cannot safely determine axes
-     * to iterate over without this information. If you know the indices you
-     * must iterate on, you can use {@link #GridGeometryIterator(org.geotoolkit.coverage.grid.GeneralGridGeometry, int...) },
-     * which won't make any analysis of the geometry, and just iterate over
-     * specified dimensions.
-     */
-    public GridGeometryIterator(final GridGeometry source, CoordinateReferenceSystem crs) throws IllegalArgumentException {
-        this(GridGeometryIterator.buildSteps(source, crs), source, crs);
+        this(GridGeometryIterator.buildSteps(source), source);
     }
 
     /**
@@ -78,22 +61,7 @@ public class GridGeometryIterator implements Iterator<GridGeometry> {
      * @param movableIndices indices for the dimensions to split and move along.
      */
     public GridGeometryIterator(final GridGeometry source, final int... movableIndices) {
-        this(source, source.getCoordinateReferenceSystem(), movableIndices);
-    }
-
-    /**
-     * Create subsets of the given geometry along specified axes. Note that this
-     * constructor does not enforce generation of 2D geometries. It will produce
-     * geometries whose dimension match the number of fixed axis.
-     * Example : If you've got a 5D geometry, and specify only 2 indices to
-     * iterate on, this iterator will produce 3D geometries.
-     *
-     * @param source The geometry to split.
-     * @param crs source CRS.
-     * @param movableIndices indices for the dimensions to split and move along.
-     */
-    public GridGeometryIterator(final GridGeometry source, CoordinateReferenceSystem crs, final int... movableIndices) {
-        this(buildSteps(source, movableIndices), source, crs);
+        this(buildSteps(source, movableIndices), source);
     }
 
     /**
@@ -103,22 +71,10 @@ public class GridGeometryIterator implements Iterator<GridGeometry> {
      * This parameter meaning is the same as {@link GridIterator#steps}.
      * @param source The geometry to move into.
      */
-    GridGeometryIterator(final int[] steps, final GridGeometry source, final CoordinateReferenceSystem crs) {
+    GridGeometryIterator(final int[] steps, final GridGeometry source) {
         ArgumentChecks.ensureNonNull("Source grid", source);
         this.source = source;
         gridIterator = new GridIterator(source.getExtent(), steps);
-        int fixed = 0;
-        for (final int step : steps) {
-            if (step == 0) {
-                fixed++;
-            }
-        }
-
-        if (fixed < 3) {
-            generator = grid -> new GridGeometry2D(grid, source.getGridToCRS(PixelInCell.CELL_CENTER), crs);
-        } else {
-            generator = grid -> new GridGeometry(grid, PixelInCell.CELL_CENTER, source.getGridToCRS(PixelInCell.CELL_CENTER), crs);
-        }
     }
 
     @Override
@@ -129,7 +85,8 @@ public class GridGeometryIterator implements Iterator<GridGeometry> {
     @Override
     public GridGeometry next() {
         if (hasNext()) {
-            return generator.apply(gridIterator.next());
+            final GridExtent nextExtent = gridIterator.next();
+            return new GridGeometry(nextExtent, CELL_CENTER, source.getGridToCRS(CELL_CENTER), source.getCoordinateReferenceSystem());
         }
 
         throw new NoSuchElementException("No more slice to iterate over");
@@ -149,9 +106,10 @@ public class GridGeometryIterator implements Iterator<GridGeometry> {
      * @throws IllegalArgumentException If no horizontal coordinate system can
      * be found in input geometry.
      */
-    static int[] buildSteps(final GridGeometry source, CoordinateReferenceSystem crs) throws IllegalArgumentException {
+    static int[] buildSteps(final GridGeometry source) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("Source grid", source);
         final GridExtent extent = source.getExtent();
+        final CoordinateReferenceSystem crs = source.getCoordinateReferenceSystem();
         if (crs != null) {
             final SingleCRS horizontal = CRS.getHorizontalComponent(crs);
             if (horizontal != null) {

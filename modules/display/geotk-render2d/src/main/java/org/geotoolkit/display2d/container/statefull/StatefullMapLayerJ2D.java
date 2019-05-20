@@ -149,6 +149,7 @@ public class StatefullMapLayerJ2D<T extends MapLayer> extends StatefullMapItemJ2
                 final ViewDef vdef = new ViewDef(env);
                 final SceneDef sdef = new SceneDef(context);
                 final BufferedImage img = DefaultPortrayalService.portray(cdef, sdef, vdef);
+
                 final GridCoverageBuilder gcb = new GridCoverageBuilder();
                 gcb.setEnvelope(env2d);
                 gcb.setRenderedImage(img);

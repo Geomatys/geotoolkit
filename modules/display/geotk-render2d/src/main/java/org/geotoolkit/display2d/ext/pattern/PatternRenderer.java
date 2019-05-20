@@ -74,16 +74,9 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
     @Override
     public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
 
-        double[] resolution = renderingContext.getResolution();
-        final Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
-        resolution = checkResolution(resolution,bounds);
-        final GridCoverageReadParam param = new GridCoverageReadParam();
-        param.setEnvelope(bounds);
-        param.setResolution(resolution);
-
         GridCoverage dataCoverage;
         try {
-            dataCoverage = projectedCoverage.getCoverage(param);
+            dataCoverage = projectedCoverage.getCoverage(renderingContext.getGridGeometry());
         } catch (DataStoreException ex) {
             throw new PortrayalException(ex);
         }
