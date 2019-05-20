@@ -43,6 +43,9 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.opengis.referencing.operation.TransformException;
 
 /**
+ * TODO: remove duplicate code
+ * TODO: Use Jacobian matrix OF EACH RENDERED POINT to take CRS orientation/deformation into account.
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
