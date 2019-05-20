@@ -50,7 +50,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.PATH;
@@ -322,7 +321,7 @@ public class WPSConvertersUtils {
             if (object instanceof GridCoverage) {
                 final GridCoverage coverage = (GridCoverage) object;
                 CoverageIO.write(coverage, "GEOTIFF", coverageFile);
-                env = Envelopes.transform(GridGeometry2D.castOrCopy(coverage.getGridGeometry()).getEnvelope2D(), outCRS);
+                env = Envelopes.transform(coverage.getGridGeometry().getEnvelope(), outCRS);
                 crsCode = IdentifiedObjects.lookupEPSG(coverage.getCoordinateReferenceSystem());
 
             } else if (object instanceof File || object instanceof Path) {

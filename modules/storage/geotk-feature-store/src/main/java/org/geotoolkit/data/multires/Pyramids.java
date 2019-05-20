@@ -497,7 +497,7 @@ public final class Pyramids extends Static {
 
         final DefiningPyramid pyramid = new DefiningPyramid(crs);
 
-        final GridGeometryIterator ite = new GridGeometryIterator(gridGeom, crs);
+        final GridGeometryIterator ite = new GridGeometryIterator(gridGeom);
         while (ite.hasNext()) {
             final GridGeometry slice = ite.next();
             final Envelope envelope = slice.getEnvelope();
