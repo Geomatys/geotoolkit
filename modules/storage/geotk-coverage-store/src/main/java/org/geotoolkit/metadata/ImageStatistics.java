@@ -18,6 +18,8 @@ package org.geotoolkit.metadata;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Stream;
+
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.internal.SampleType;
 import org.opengis.metadata.content.AttributeGroup;
@@ -258,36 +260,47 @@ public class ImageStatistics implements Serializable{
         if (attributeGroups == null || attributeGroups.isEmpty())
             return null;
 
-        final List<Band> bands = new ArrayList<>();
+        final SampleDimension[] dims = attributeGroups.stream()
+                .flatMap(group -> {
+                    final Collection<? extends RangeDimension> attrs = group.getAttributes();
+                    if (attrs == null) return Stream.empty();
+                    return attrs.stream();
+                })
+                .filter(SampleDimension.class::isInstance)
+                .toArray(size -> new SampleDimension[size]);
 
-        //search for band statistics
-        for (AttributeGroup attg : attributeGroups) {
-            final Collection<? extends RangeDimension> attributes = attg.getAttributes();
-            if (attributes == null || attributes.isEmpty())
-                return null;
-            for (RangeDimension rd : attributes) {
-                if (!(rd instanceof SampleDimension)) continue;
-                final int i = Integer.parseInt(rd.getSequenceIdentifier().tip().toString());
-                final SampleDimension sd = (SampleDimension) rd;
-                final Band band = new Band(i);
-                band.setMin(sd.getMinValue());
-                band.setMax(sd.getMaxValue());
-                band.setStd(sd.getStandardDeviation());
-                band.setMean(sd.getMeanValue());
+        if (dims.length < 1) return null;
 
-                if (sd instanceof DefaultSampleDimensionExt) {
-                    final DefaultSampleDimensionExt ext = (DefaultSampleDimensionExt) sd;
-                    band.setHistogram(ext.getHistogram());
-                }
-
-                bands.add(band);
+        final Band[] bands = new Band[dims.length];
+        for (int i = 0 ; i < dims.length ; i++) {
+            final SampleDimension sd = (SampleDimension) dims[i];
+            if (sd.getMinValue() == null || sd.getMaxValue() == null)
+                return null; // There's missing information in the bands, we ignore the coverage description
+            // TODO: Not sure what to do, but for retro-compatibility purpose, we'll continue trying building band index
+            // from sample name
+            Band band;
+            try {
+                final int bi = Integer.parseInt(sd.getSequenceIdentifier().tip().toString());
+                band = new Band(bi);
+            } catch (NumberFormatException|NullPointerException e) {
+                band = new Band(i);
             }
+
+            band.setMin(sd.getMinValue());
+            band.setMax(sd.getMaxValue());
+            band.setStd(sd.getStandardDeviation());
+            band.setMean(sd.getMeanValue());
+
+            if (sd instanceof DefaultSampleDimensionExt) {
+                final DefaultSampleDimensionExt ext = (DefaultSampleDimensionExt) sd;
+                band.setHistogram(ext.getHistogram());
+            }
+
+            bands[i] = band;
         }
 
-        if (bands.isEmpty()) return null;
-
-        final ImageStatistics stats = new ImageStatistics(bands.size());
-        stats.setBands(bands.toArray(new Band[0]));
+        final ImageStatistics stats = new ImageStatistics(bands.length);
+        stats.setBands(bands);
         return stats;
     }
 }
