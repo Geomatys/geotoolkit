@@ -27,13 +27,16 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Query;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.UnsupportedQueryException;
+import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.ArgumentChecks;
@@ -50,7 +53,6 @@ import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.storage.DataStore;
-import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.version.Version;
@@ -80,7 +82,7 @@ import org.opengis.util.ScopedName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractFeatureStore extends DataStore implements FeatureStore, Aggregate {
+public abstract class AbstractFeatureStore extends DataStore implements FeatureStore, WritableAggregate {
 
     /**
      * Static variables refering to GML model.
@@ -351,6 +353,48 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     public void close() throws DataStoreException {
         synchronized (listeners) {
             listeners.clear();
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Writable aggregate ///////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public Resource add(Resource resource) throws DataStoreException {
+        if (resource instanceof FeatureSet) {
+            final FeatureSet fs = (FeatureSet) resource;
+            FeatureType type = fs.getType();
+            createFeatureType(type);
+            final String name = type.getName().tip().toString();
+            final List<Feature> features = fs.features(false).collect(Collectors.toList());
+            addFeatures(name, features);
+            return findResource(name);
+        } else if (resource instanceof DefiningFeatureSet) {
+            final DefiningFeatureSet fs = (DefiningFeatureSet) resource;
+            final FeatureType type = fs.getType();
+            createFeatureType(type);
+            final String name = type.getName().tip().toString();
+            return findResource(name);
+        } else {
+            throw new DataStoreException("Unsupported resource "+ resource);
+        }
+    }
+
+    @Override
+    public void remove(Resource resource) throws DataStoreException {
+        if (resource instanceof FeatureSet) {
+            final FeatureSet fs = (FeatureSet) resource;
+            FeatureType type = fs.getType();
+            final String name = type.getName().tip().toString();
+            deleteFeatureType(name);
+        } else if (resource instanceof DefiningFeatureSet) {
+            final DefiningFeatureSet fs = (DefiningFeatureSet) resource;
+            final FeatureType type = fs.getType();
+            final String name = type.getName().tip().toString();
+            deleteFeatureType(name);
+        } else {
+            throw new DataStoreException("Unsupported resource "+ resource);
         }
     }
 
