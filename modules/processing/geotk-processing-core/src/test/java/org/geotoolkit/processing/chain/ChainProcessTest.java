@@ -19,6 +19,8 @@ package org.geotoolkit.processing.chain;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -33,6 +35,7 @@ import org.geotoolkit.processing.chain.model.Parameter;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.geotoolkit.processing.chain.model.Element.*;
+import org.geotoolkit.processing.chain.model.StringMap;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -47,8 +50,8 @@ public class ChainProcessTest extends org.geotoolkit.test.TestBase {
         int id = 1;
 
         //input/out/constants parameters
-        final Parameter a = chain.addInputParameter("a", Double.class, "title", "desc",1,1,null);
-        final Parameter b = chain.addInputParameter("b", Double.class, "title", "desc",1,1,null);
+        final Parameter a = chain.addInputParameter("a", Double.class, "title", "desc",1,1,2.0);
+        final Parameter b = chain.addInputParameter("b", Double.class, "title", "desc",1,1,3.0);
         final Parameter r = chain.addOutputParameter("r", Double.class, "title", "desc",1,1,null);
         final Constant c = chain.addConstant(id++, Double.class, 10d);
 
@@ -145,6 +148,11 @@ public class ChainProcessTest extends org.geotoolkit.test.TestBase {
 
         final Chain chain = Chain.read(f);
 
+        // assert that default value are not lost
+        assertNotNull(chain.getInput("a"));
+        assertNotNull(chain.getInput("a").getDefaultValue());
+
+
         //process registries to use
         final Set<MockProcessRegistry> registries = Collections.singleton(new MockProcessRegistry());
 
@@ -228,6 +236,47 @@ public class ChainProcessTest extends org.geotoolkit.test.TestBase {
 
         assertEquals(0.5d, result.parameter("r").doubleValue(),0.000001);
 
+    }
+
+    @Test
+    public void testXmlRW() throws ProcessException, JAXBException, IOException {
+
+        // test various problematic case
+        final Chain chain = new Chain("myChain");
+
+        // sting/string in user map
+        Parameter param = new Parameter("in1", String.class, "enumerated string", "none", 0, 12, "def", new String[] {"def", "undef"});
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put("test", "test");
+        param.setUserMap(userMap);
+        chain.getInputs().add(param);
+
+        Parameter param2 = new Parameter("in2", Character.class, "char", "none", 0, 12, 'c');
+        chain.getInputs().add(param2);
+
+        File f = File.createTempFile("chain", ".xml");
+        chain.write(f);
+
+        final Chain chainr = Chain.read(f);
+        Parameter p = chainr.getInput("in2");
+        // assertEquals('c', p.getDefaultValue()); problem here char are rw to integer...
+
+
+        // sting/double in user map
+        userMap = new HashMap<>();
+        userMap.put("test-double", 125d);
+        param.setUserMap(userMap);
+        f = File.createTempFile("chain", ".xml");
+        chain.write(f);
+
+        // sting/map in user map
+        userMap = new HashMap<>();
+        HashMap<String, String> typeMap = new HashMap<>();
+        typeMap.put("String", "String");
+        userMap.put("test-map", new StringMap(typeMap));
+        param.setUserMap(userMap);
+        f = File.createTempFile("chain", ".xml");
+        chain.write(f);
     }
 
 }

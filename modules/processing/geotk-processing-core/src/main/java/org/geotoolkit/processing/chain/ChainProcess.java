@@ -154,8 +154,9 @@ public class ChainProcess extends AbstractProcess {
                                 first = false;
                             } else {
                                 final Object value = paramValue.getValue();
-                                setValue(value, paramValue);
-                                configs.get(link.getTargetId()).values().add(paramValue);
+                                final ParameterValue cloned = configs.get(link.getTargetId()).parameter(link.getTargetCode()).clone();
+                                setValue(value, cloned);
+                                configs.get(link.getTargetId()).values().add(cloned);
                             }
                         }
                     }
@@ -222,8 +223,9 @@ public class ChainProcess extends AbstractProcess {
                                 first = false;
                             } else {
                                 final Object value = paramValue.getValue();
-                                setValue(value, paramValue);
-                                configs.get(link.getTargetId()).values().add(paramValue);
+                                final ParameterValue cloned = configs.get(link.getTargetId()).parameter(link.getTargetCode()).clone();
+                                setValue(value, cloned);
+                                configs.get(link.getTargetId()).values().add(cloned);
                             }
                         }
                     }

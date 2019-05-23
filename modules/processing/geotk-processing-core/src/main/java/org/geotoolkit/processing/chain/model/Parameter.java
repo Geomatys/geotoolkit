@@ -63,11 +63,11 @@ public class Parameter {
     }
 
     public Parameter(final String code, final Class type, final String title, final String remarks, final int minOccurs, final int maxOccurs) {
-        this(code, type, title, remarks, minOccurs, maxOccurs, null);
+        this(code, type, title, remarks, minOccurs, maxOccurs, null, null);
     }
 
     public Parameter(final String code, final Class type, final String title, final String remarks, final int minOccurs, final int maxOccurs, final Object defaultValue) {
-        this(code, type, title, remarks, minOccurs, maxOccurs, null, null);
+        this(code, type, title, remarks, minOccurs, maxOccurs, defaultValue, null);
     }
 
     public Parameter(final String code, final Class type, final String title, final String remarks, final int minOccurs, final int maxOccurs, final Object defaultValue, final Object[] validValues) {
