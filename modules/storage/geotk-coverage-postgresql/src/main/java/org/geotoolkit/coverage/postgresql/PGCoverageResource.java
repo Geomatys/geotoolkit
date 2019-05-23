@@ -43,7 +43,6 @@ import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
-import org.geotoolkit.coverage.SampleDimensionBuilder;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -53,9 +52,6 @@ import org.geotoolkit.coverage.wkb.WKBRasterConstants;
 import org.geotoolkit.data.multires.MultiResolutionModel;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
-import org.geotoolkit.internal.InternalUtilities;
-import org.geotoolkit.internal.coverage.ColoredCategory;
-import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
@@ -434,7 +430,6 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
                 }
 
                 //read categories
-                final List<Category> categories = new ArrayList<Category>();
                 final StringBuilder catQuery = new StringBuilder();
                 catQuery.append("SELECT \"id\",\"band\",\"name\",\"lower\",\"upper\",\"c0\",\"c1\",\"function\",\"colors\" ");
                 catQuery.append("FROM ").append(pgstore.encodeTableName("Category"));
@@ -442,7 +437,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
                 catQuery.append("\"band\"=").append(Integer.valueOf(sid));
                 stmt = cnx.createStatement();
                 final ResultSet catrs = stmt.executeQuery(catQuery.toString());
-                final SampleDimensionBuilder b = new SampleDimensionBuilder();
+                final SampleDimension.Builder b = new SampleDimension.Builder();
                 while(catrs.next()){
                     final String name = catrs.getString("name");
                     final double lower = catrs.getDouble("lower");
@@ -464,17 +459,11 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
 
                     final MathTransform1D sampleToGeophysics = f.getTransform();
 
-                    final Color[] cols = new Color[colors.length];
-                    for(int i=0;i<cols.length;i++){
-                        cols[i] = new java.awt.Color(InternalUtilities.parseColor(colors[i]), true);
-                    }
-                    if(Double.isNaN(lower) || lower == upper){
+                    if (Double.isNaN(lower) || lower == upper) {
                         b.addQualitative(name, lower);
-                        b.setLastCategoryColors(cols[0]);
-                    }else{
+                    } else {
                         final NumberRange range = NumberRange.create(lower, true, upper, false);
                         b.addQuantitative(name, range, sampleToGeophysics, unit);
-                        b.setLastCategoryColors(cols);
                     }
                 }
                 final SampleDimension dim = b.setName(description).build();
@@ -615,29 +604,26 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
                         double min = Double.isInfinite(SampleDimensionUtils.getMinimumValue(dim)) ? minDimValues[i] : SampleDimensionUtils.getMinimumValue(dim);
                         double max = Double.isInfinite(SampleDimensionUtils.getMaximumValue(dim)) ? maxDimValues[i] : SampleDimensionUtils.getMaximumValue(dim);
 
-                        categories.add(new ColoredCategory("data", Color.BLACK, NumberRange.create(min, true, max, true)));
+                        final SampleDimension.Builder builder = new SampleDimension.Builder();
+                        builder.addQuantitative("data", NumberRange.create(min, true, max, true), null, null);
+
                         if (pNoData != null && pNoData.length > 0) {
                             for (int k = 0; k < pNoData.length; k++) {
-                                categories.add(new ColoredCategory(Vocabulary.formatInternational(Vocabulary.Keys.Nodata) + String.valueOf(k), new Color(0,0,0,0), pNoData[k]));
+                                builder.addQualitative(null, pNoData[k]);
                             }
                         }
+                        categories.addAll(builder.categories());
                     }
 
                     for (Category category : categories) {
                         final double c0;
                         final double c1;
                         final String function;
-                        final String[] colors;
+                        final String[] colors = new String[0];
                         double min = category.getSampleRange().getMinDouble();
                         double max = category.getSampleRange().getMaxDouble();
                         min = fixCloseToZero(min);
                         max = fixCloseToZero(max);
-
-                        final Color[] cols = ColoredCategory.getColors(category);
-                        colors = new String[cols.length];
-                        for (int k=0; k < cols.length; k++){
-                            colors[k] = colorToString(cols[k]);
-                        }
 
                         final MathTransform1D trs = category.getTransferFunction().orElse(null);
                         if (trs == null) {

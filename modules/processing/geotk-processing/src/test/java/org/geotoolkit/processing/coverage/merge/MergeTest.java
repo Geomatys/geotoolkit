@@ -23,10 +23,9 @@ import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -62,7 +61,7 @@ public class MergeTest extends org.geotoolkit.test.TestBase {
         gcb1.setRenderedImage(inputImage1);
         gcb1.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
         gcb1.setEnvelope(-180,-90,+180,+90);
-        final GridCoverage2D inCoverage1 = (GridCoverage2D) gcb1.build();
+        final GridCoverage inCoverage1 = gcb1.build();
 
         //second image, EPSG:4326, 1 float, 2x scale
         final float[][] data = new float[720][360];
@@ -75,7 +74,7 @@ public class MergeTest extends org.geotoolkit.test.TestBase {
         gcb2.setRenderedImage(data);
         gcb2.setCoordinateReferenceSystem(CommonCRS.WGS84.geographic());
         gcb2.setEnvelope(-90,-180,+90,+180);
-        final GridCoverage2D inCoverage2 = (GridCoverage2D) gcb2.build();
+        final GridCoverage inCoverage2 = gcb2.build();
 
 
         //call the merge process
@@ -95,14 +94,14 @@ public class MergeTest extends org.geotoolkit.test.TestBase {
         final ParameterValueGroup result = process.call();
 
         //check result coverage
-        final GridCoverage2D outCoverage = (GridCoverage2D) result.parameter("result").getValue();
+        final GridCoverage outCoverage = (GridCoverage) result.parameter("result").getValue();
         assertEquals(CommonCRS.WGS84.normalizedGeographic(), outCoverage.getCoordinateReferenceSystem());
-        assertEquals(penv.getMinimum(0), outCoverage.getEnvelope().getMinimum(0), DELTA);
-        assertEquals(penv.getMinimum(1), outCoverage.getEnvelope().getMinimum(1), DELTA);
-        assertEquals(penv.getMaximum(0), outCoverage.getEnvelope().getMaximum(0), DELTA);
-        assertEquals(penv.getMaximum(1), outCoverage.getEnvelope().getMaximum(1), DELTA);
+        assertEquals(penv.getMinimum(0), outCoverage.getGridGeometry().getEnvelope().getMinimum(0), DELTA);
+        assertEquals(penv.getMinimum(1), outCoverage.getGridGeometry().getEnvelope().getMinimum(1), DELTA);
+        assertEquals(penv.getMaximum(0), outCoverage.getGridGeometry().getEnvelope().getMaximum(0), DELTA);
+        assertEquals(penv.getMaximum(1), outCoverage.getGridGeometry().getEnvelope().getMaximum(1), DELTA);
 
-        final RenderedImage outImage = outCoverage.getRenderedImage();
+        final RenderedImage outImage = outCoverage.render(null);
         final SampleModel outSampleModel = outImage.getSampleModel();
         assertEquals(90, outImage.getWidth());
         assertEquals(90, outImage.getHeight());

@@ -361,14 +361,14 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
             return null;
         }
 
+        final boolean skipRotation = candidateRotation == 0 || !withRotation;
         //no operation to append to image, return the buffer directly ----------------------------
-        if( (candidateRotation == 0 || !withRotation) && candidateOpacity == 1 ) return subBuffer;
-
+        if( skipRotation && candidateOpacity == 1 ) return subBuffer;
 
         // we must change opacity or rotation ----------------------------------------------------
         final int maxSizeX;
         final int maxSizeY;
-        if(candidateRotation == 0 && withRotation){
+        if(skipRotation) {
             maxSizeX = subBuffer.getWidth();
             maxSizeY = subBuffer.getHeight();
         }else{
@@ -394,9 +394,10 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
         final Composite j2dComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, candidateOpacity);
 
         g2.setComposite(j2dComposite);
-        g2.rotate(candidateRotation, maxSizeX/2f, maxSizeY/2f);
-        final int translateX = (int)((maxSizeX-subBuffer.getWidth())/2 );
-        final int translateY = (int)((maxSizeY-subBuffer.getHeight())/2 );
+        if (!skipRotation)
+            g2.rotate(candidateRotation, maxSizeX/2f, maxSizeY/2f);
+        final int translateX = (maxSizeX-subBuffer.getWidth())/2;
+        final int translateY = (maxSizeY-subBuffer.getHeight())/2;
         g2.drawImage(subBuffer, translateX, translateY, null);
         g2.dispose();
 

@@ -53,7 +53,11 @@ final class ProductAggregate extends AbstractResource implements Aggregate {
 
     @Override
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
-    public List<Resource> components() throws DataStoreException {
+    public synchronized List<Resource> components() throws DataStoreException {
+        /*
+         * Synchronization note: no method from `org.geotoolkit.coverage.sql` package should invoke
+         * (directly or indirectly) this `components()` method, in order to avoid risk of deadlock.
+         */
         if (components == null) {
             components = wrap(store, product.components());
         }
@@ -76,7 +80,11 @@ final class ProductAggregate extends AbstractResource implements Aggregate {
 
         @Override
         @SuppressWarnings("ReturnOfCollectionOrArrayField")
-        public List<Resource> components() throws DataStoreException {
+        public synchronized List<Resource> components() throws DataStoreException {
+            /*
+             * Synchronization note: no method from `org.geotoolkit.coverage.sql` package should invoke
+             * (directly or indirectly) this `components()` method, in order to avoid risk of deadlock.
+             */
             if (components == null) {
                 components = wrap((DatabaseStore) store, product.components());
             }

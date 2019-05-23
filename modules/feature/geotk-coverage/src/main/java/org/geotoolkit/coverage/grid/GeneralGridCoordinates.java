@@ -42,14 +42,9 @@ import org.apache.sis.util.Classes;
  */
 public class GeneralGridCoordinates implements GridCoordinates, Cloneable, Serializable {
     /**
-     * For cross-version compatibility.
-     */
-    private static final long serialVersionUID = 8146318677770695383L;
-
-    /**
      * The grid coordinates.
      */
-    final int[] coordinates;
+    final long[] coordinates;
 
     /**
      * Creates a grid coordinates of the specified dimension.
@@ -58,7 +53,7 @@ public class GeneralGridCoordinates implements GridCoordinates, Cloneable, Seria
      * @param dimension The number of dimension.
      */
     public GeneralGridCoordinates(final int dimension) {
-        coordinates = new int[dimension];
+        coordinates = new long[dimension];
     }
 
     /**
@@ -66,7 +61,20 @@ public class GeneralGridCoordinates implements GridCoordinates, Cloneable, Seria
      *
      * @param coordinates The grid coordinates to copy.
      */
+    @Deprecated
     public GeneralGridCoordinates(final int[] coordinates) {
+        this.coordinates = new long[coordinates.length];
+        for (int i=0; i<coordinates.length; i++) {
+            this.coordinates[i] = coordinates[i];
+        }
+    }
+
+    /**
+     * Creates a grid coordinates initialized to the specified values.
+     *
+     * @param coordinates The grid coordinates to copy.
+     */
+    public GeneralGridCoordinates(final long[] coordinates) {
         this.coordinates = coordinates.clone();
     }
 
@@ -79,7 +87,7 @@ public class GeneralGridCoordinates implements GridCoordinates, Cloneable, Seria
      *
      * @since 2.5
      */
-    public GeneralGridCoordinates(final int[] coordinates, final int lower, final int upper) {
+    public GeneralGridCoordinates(final long[] coordinates, final int lower, final int upper) {
         this.coordinates = Arrays.copyOfRange(coordinates, lower, upper);
     }
 
@@ -114,7 +122,7 @@ public class GeneralGridCoordinates implements GridCoordinates, Cloneable, Seria
      *         back in this {@code GeneralGridCoordinates} object.
      */
     @Override
-    public int[] getCoordinateValues() {
+    public long[] getCoordinateValues() {
         return coordinates.clone();
     }
 
@@ -128,7 +136,7 @@ public class GeneralGridCoordinates implements GridCoordinates, Cloneable, Seria
      * @throws ArrayIndexOutOfBoundsException if the specified dimension is out of bounds.
      */
     @Override
-    public int getCoordinateValue(final int dimension) throws ArrayIndexOutOfBoundsException {
+    public long getCoordinateValue(final int dimension) throws ArrayIndexOutOfBoundsException {
         return coordinates[dimension];
     }
 
@@ -141,7 +149,7 @@ public class GeneralGridCoordinates implements GridCoordinates, Cloneable, Seria
      * @throws UnsupportedOperationException if this grid coordinates is not modifiable.
      */
     @Override
-    public void setCoordinateValue(final int dimension, final int value)
+    public void setCoordinateValue(final int dimension, final long value)
             throws ArrayIndexOutOfBoundsException, UnsupportedOperationException
     {
         coordinates[dimension] = value;
@@ -172,7 +180,7 @@ public class GeneralGridCoordinates implements GridCoordinates, Cloneable, Seria
      */
     @Override
     public int hashCode() {
-        return Arrays.hashCode(coordinates) ^ (int) serialVersionUID;
+        return Arrays.hashCode(coordinates) ^ 45;
     }
 
     /**
@@ -232,7 +240,7 @@ public class GeneralGridCoordinates implements GridCoordinates, Cloneable, Seria
          *
          * @param coordinates The grid coordinates to copy.
          */
-        public Immutable(final int[] coordinates) {
+        public Immutable(final long[] coordinates) {
             super(coordinates);
         }
 
@@ -243,7 +251,7 @@ public class GeneralGridCoordinates implements GridCoordinates, Cloneable, Seria
          * @param lower Index of the first value to copy, inclusive.
          * @param upper Index of the last value to copy, exclusive.
          */
-        public Immutable(final int[] coordinates, final int lower, final int upper) {
+        public Immutable(final long[] coordinates, final int lower, final int upper) {
             super(coordinates, lower, upper);
         }
 
@@ -274,7 +282,7 @@ public class GeneralGridCoordinates implements GridCoordinates, Cloneable, Seria
          * @throws UnsupportedOperationException always thrown.
          */
         @Override
-        public void setCoordinateValue(final int dimension, final int value)
+        public void setCoordinateValue(final int dimension, final long value)
                 throws UnsupportedOperationException
         {
             throw new UnsupportedOperationException();

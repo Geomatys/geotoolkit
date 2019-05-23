@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
@@ -16,14 +17,10 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -68,13 +65,6 @@ public class Categorize extends AbstractProcess {
         final GridCoverageResource source = getSource();
         final GridCoverageResource destination = getDestination();
 
-        final GridCoverageReader reader;
-        try {
-            reader = source.acquireReader();
-        } catch (DataStoreException ex) {
-            throw new ProcessException("Cannot access data source", this, ex);
-        }
-
         final GridCoverageWriter writer;
         try {
             writer = destination.acquireWriter();
@@ -82,8 +72,7 @@ public class Categorize extends AbstractProcess {
             throw new ProcessException("Cannot access data output", this, ex);
         }
 
-        try (final UncheckedCloseable inClose = () -> source.recycle(reader);
-                final UncheckedCloseable outClose = () -> destination.recycle(writer)) {
+        try (final UncheckedCloseable outClose = () -> destination.recycle(writer)) {
             final GridGeometry inputGG = source.getGridGeometry();
 
             final GridGeometry readGeom;
@@ -134,34 +123,28 @@ public class Categorize extends AbstractProcess {
 
             final GridGeometryIterator it = new GridGeometryIterator(readGeom);
             while (it.hasNext()) {
-                final GridCoverageReadParam readParam = new GridCoverageReadParam();
                 final GridGeometry sliceGeom = it.next();
                 final GeneralEnvelope expectedSliceEnvelope = GeneralEnvelope.castOrCopy(sliceGeom.getEnvelope());
-                readParam.setEnvelope(expectedSliceEnvelope);
-                GridCoverage sourceCvg = reader.read(readParam);
+                GridCoverage sourceCvg = source.read(sliceGeom);
                 if (sourceCvg instanceof GridCoverageStack) {
                     // Try to unravel expected slice
-                    final Optional<GridCoverage2D> slice = extractSlice((GridCoverageStack) sourceCvg, sliceGeom.getEnvelope());
+                    final Optional<GridCoverage> slice = extractSlice((GridCoverageStack) sourceCvg, sliceGeom.getEnvelope());
                     if (slice.isPresent()) {
                         sourceCvg = slice.get();
                     }
                 }
 
-                if (!(sourceCvg instanceof GridCoverage2D)) {
-                    throw new ProcessException("Cannot extract 2D slice from given data source", this);
-                }
-
                 // If the reader has not returned a coverage fitting queried
                 // geometry, we have to resample input ourselves.
-                GridCoverage2D source2D = (GridCoverage2D) sourceCvg;
+                GridCoverage source2D = sourceCvg;
                 source2D = source2D.forConvertedValues(true);
                 final boolean compliantCrs = Utilities.equalsApproximatively(expectedSliceEnvelope.getCoordinateReferenceSystem(), source2D.getCoordinateReferenceSystem());
-                final boolean compliantEnvelope = expectedSliceEnvelope.contains(source2D.getEnvelope(), true);
+                final boolean compliantEnvelope = expectedSliceEnvelope.contains(source2D.getGridGeometry().getEnvelope(), true);
                 if (!(compliantCrs && compliantEnvelope)) {
                     source2D = resample(source2D, sliceGeom);
                 }
 
-                final RenderedImage slice = categorize(source2D.getRenderedImage());
+                final RenderedImage slice = categorize(source2D.render(null));
 
                 final GridCoverageBuilder builder = new GridCoverageBuilder();
                 builder.setSources(sourceCvg);
@@ -191,16 +174,16 @@ public class Categorize extends AbstractProcess {
      * @return If we find a 2D data contained in the given envelope, we return it.
      * Otherwise, we return nothing.
      */
-    private static Optional<GridCoverage2D> extractSlice(final GridCoverageStack source, final Envelope aoi) {
+    private static Optional<GridCoverage> extractSlice(final GridCoverageStack source, final Envelope aoi) {
         int stackSize = source.getStackSize();
         for (int i = 0; i < stackSize; i++) {
             final GridCoverage cvg = source.coverageAtIndex(i);
-            final GeneralEnvelope subsetEnvelope = GeneralEnvelope.castOrCopy(cvg.getEnvelope());
+            final GeneralEnvelope subsetEnvelope = GeneralEnvelope.castOrCopy(cvg.getGridGeometry().getEnvelope());
             if (subsetEnvelope.contains(aoi, true)) {
-                if (cvg instanceof GridCoverage2D) {
-                    return Optional.of((GridCoverage2D) cvg);
-                } else if (cvg instanceof GridCoverageStack) {
+                if (cvg instanceof GridCoverageStack) {
                     return extractSlice((GridCoverageStack) cvg, aoi);
+                } else {
+                    return Optional.of(cvg);
                 }
             }
         }
@@ -237,7 +220,7 @@ public class Categorize extends AbstractProcess {
      * @return The resampled data, never null.
      * @throws ProcessException
      */
-    private GridCoverage2D resample(final GridCoverage2D source, final GridGeometry target) throws ProcessException, TransformException {
+    private GridCoverage resample(final GridCoverage source, final GridGeometry target) throws ProcessException, TransformException {
         if (!(target instanceof GridGeometry2D)) {
             throw new ProcessException("Subset cannot be done. Incompatible grid geometry.", this);
         }

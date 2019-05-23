@@ -28,10 +28,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.coverage.Category;
-import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.coverage.SampleDimension;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
-import org.geotoolkit.internal.coverage.ColoredCategory;
 
 /**
  *
@@ -58,7 +57,12 @@ public class XMLCategory {
     public double c1;
     @XmlElement(name="function")
     public String function;
+    /**
+     * Not used anymore
+     * @deprecated
+     */
     @XmlElement(name="colors")
+    @Deprecated
     public String[] colors;
 
 
@@ -149,17 +153,9 @@ public class XMLCategory {
 
         final NumberRange range = getTypedRangeNumber(typeClass, lower, true, upper, true);
 
-        final Color[] cols = new Color[colors.length];
-        for(int i = 0; i < cols.length; i++) {
-            cols[i] = ObjectConverters.convert(colors[i], Color.class);
-        }
-        final Category cat;
-        if (Double.isNaN(lower) || lower == upper) {
-            cat = new ColoredCategory(name, cols[0], range);
-        } else {
-            cat = new ColoredCategory(name, cols, range, sampleToGeophysics);//-- sampletogeophysic may be null.
-        }
-        return cat;
+        final SampleDimension.Builder builder = new SampleDimension.Builder();
+        builder.addQuantitative(name, range, sampleToGeophysics, null);
+        return builder.categories().get(0);
     }
 
     /**
@@ -168,11 +164,6 @@ public class XMLCategory {
     public void fill(Category category){
         //we store the category in packed type
         //category = category.geophysics(false);
-        final Color[] cols = ColoredCategory.getColors(category);
-        colors = new String[cols.length];
-        for(int i=0;i<cols.length;i++){
-            colors[i] = toString(cols[i]);
-        }
         name = category.getName().toString();
         final NumberRange range = category.getSampleRange();
         lower = range.getMinDouble(true);

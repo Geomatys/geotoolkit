@@ -42,7 +42,10 @@ import static java.lang.Math.*;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Replaced by {@link org.apache.sis.referencing.operation.projection.MeridionalDistanceBased}.
  */
+@Deprecated
 abstract class CassiniOrMercator extends UnitaryProjection {
     /**
      * For cross-version compatibility.

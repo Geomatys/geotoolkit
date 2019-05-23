@@ -17,18 +17,18 @@
  */
 package org.geotoolkit.filter.binaryspatial;
 
-import org.locationtech.jts.geom.Geometry;
 import java.util.logging.Level;
-import javax.measure.UnitConverter;
 import javax.measure.Unit;
+import javax.measure.UnitConverter;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.StringUtilities;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.spatial.Beyond;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.util.logging.Logging;
+import org.opengis.util.FactoryException;
 
 /**
  * Immutable "beyond" filter.
@@ -113,7 +113,7 @@ public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expr
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Beyond (distance=");
-        sb.append(distance).append(" ,unit=").append(strUnit).append(")\n");
+        sb.append(distance).append(" ,unit=").append(strUnit).append(")");
         sb.append(StringUtilities.toStringTree(left,right));
         return sb.toString();
     }

@@ -27,8 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.feature.builder.AttributeRole;
@@ -36,10 +35,9 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
@@ -48,12 +46,13 @@ import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2.*;
-import org.geotoolkit.storage.coverage.*;
+import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
+import org.geotoolkit.storage.coverage.ImageTile;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -114,27 +113,16 @@ public class Isoline2 extends AbstractProcess {
             } else {
                 final MathTransform gridtoCRS = gridgeom.getGridToCRS(PixelInCell.CELL_CENTER);
 
-                final GridCoverageReader reader  = coverageRef.acquireReader();
-                RenderedImage image = null;
-                if (readParam == null) {
-                    final Object obj = reader.getInput();
-                    if (obj instanceof RenderedImage) {
-                        image = (RenderedImage) obj;
-                    } else if (obj instanceof ImageReader) {
-                        image = ((ImageReader) obj).read(0);
-                    } else if (obj instanceof ImageInputStream) {
-                        final ImageReader imgReader = XImageIO.getReader(obj, false, false);
-                        image = imgReader.read(0);
-                    }
+                GridGeometry query = coverageRef.getGridGeometry();
+                if (readParam != null) {
+                    query.derive()
+                        .subgrid(readParam.getEnvelope(), readParam.getResolution())
+                        .build();
                 }
+                query = query.derive().sliceByRatio(0.5, 0, 1).build();
 
-                if (image == null) {
-                    GridCoverage2D coverage = (GridCoverage2D) reader.read(readParam);
-                    coverage = coverage = coverage.forConvertedValues(true);
-                    image = coverage.render(null);
-                }
-                coverageRef.recycle(reader);
-
+                final GridCoverage coverage = coverageRef.read(query).forConvertedValues(true);
+                final RenderedImage image = coverage.render(null);
                 final PixelIterator ite = PixelIterator.create(image);
                 final int width = image.getWidth();
                 final int height = image.getHeight();

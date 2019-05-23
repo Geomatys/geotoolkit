@@ -23,9 +23,8 @@ import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -44,9 +43,9 @@ public class BandCombineTest extends org.geotoolkit.test.TestBase {
     @Test
     public void combineTest() throws Exception{
 
-        final GridCoverage2D cov1 = create(BufferedImage.TYPE_3BYTE_BGR, Color.RED, Color.BLACK);
-        final GridCoverage2D cov2 = create(BufferedImage.TYPE_4BYTE_ABGR, Color.BLUE, Color.GREEN);
-        final GridCoverage2D cov3 = create(BufferedImage.TYPE_3BYTE_BGR, Color.GREEN, Color.RED);
+        final GridCoverage cov1 = create(BufferedImage.TYPE_3BYTE_BGR, Color.RED, Color.BLACK);
+        final GridCoverage cov2 = create(BufferedImage.TYPE_4BYTE_ABGR, Color.BLUE, Color.GREEN);
+        final GridCoverage cov3 = create(BufferedImage.TYPE_3BYTE_BGR, Color.GREEN, Color.RED);
 
 
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, BandCombineDescriptor.NAME);
@@ -59,10 +58,10 @@ public class BandCombineTest extends org.geotoolkit.test.TestBase {
         final ParameterValueGroup result = process.call();
 
         //check result coverage
-        final GridCoverage2D outCoverage = (GridCoverage2D) result.parameter("result").getValue();
+        final GridCoverage outCoverage = (GridCoverage) result.parameter("result").getValue();
         assertEquals(CommonCRS.WGS84.normalizedGeographic(), outCoverage.getCoordinateReferenceSystem());
 
-        final RenderedImage outImage = outCoverage.getRenderedImage();
+        final RenderedImage outImage = outCoverage.render(null);
         final SampleModel outSampleModel = outImage.getSampleModel();
         assertEquals(100, outImage.getWidth());
         assertEquals(100, outImage.getHeight());
@@ -87,7 +86,7 @@ public class BandCombineTest extends org.geotoolkit.test.TestBase {
 
     }
 
-    private static GridCoverage2D create(int type, Color color1, Color color2){
+    private static GridCoverage create(int type, Color color1, Color color2){
         final BufferedImage inputImage = new BufferedImage(100, 100, type);
         final Graphics2D g = inputImage.createGraphics();
         g.setColor(color1);
@@ -99,8 +98,7 @@ public class BandCombineTest extends org.geotoolkit.test.TestBase {
         gcb.setRenderedImage(inputImage);
         gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
         gcb.setEnvelope(0,0,500,30);
-        final GridCoverage2D inCoverage = (GridCoverage2D) gcb.build();
-        return inCoverage;
+        return gcb.build();
     }
 
 }

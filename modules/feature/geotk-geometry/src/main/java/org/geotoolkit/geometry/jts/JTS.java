@@ -32,7 +32,7 @@ import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.GeodeticCalculator;
+import org.apache.sis.referencing.GeodeticCalculator;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.util.Classes;
@@ -414,21 +414,21 @@ public final class JTS {
          * shared instances of GeodeticCalculator and GeneralDirectPosition (POSITIONS). None of
          * them are thread-safe.
          */
-        GeodeticCalculator gc = (GeodeticCalculator) CALCULATORS.get(crs);
+        GeodeticCalculator gc = CALCULATORS.get(crs);
         if (gc == null) {
-            gc = new GeodeticCalculator(crs);
+            gc = GeodeticCalculator.create(crs);
             CALCULATORS.put(crs, gc);
         }
-        assert crs.equals(gc.getCoordinateReferenceSystem()) : crs;
+        assert crs.equals(gc.getPositionCRS()) : crs;
 
         final GeneralDirectPosition pos = POSITIONS[Math.min(POSITIONS.length - 1,
                 crs.getCoordinateSystem().getDimension())];
         pos.setCoordinateReferenceSystem(crs);
         copy(p1, pos.ordinates);
-        gc.setStartingPosition(pos);
+        gc.setStartPoint(pos);
         copy(p2, pos.ordinates);
-        gc.setDestinationPosition(pos);
-        return gc.getOrthodromicDistance();
+        gc.setEndPoint(pos);
+        return gc.getGeodesicDistance();
     }
 
     /**

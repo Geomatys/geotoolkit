@@ -54,6 +54,8 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
             throw new NullArgumentException("Coverage reference can not be null.");
         }
         this.ref = ref;
+
+        trySetName(ref);
     }
 
     /**

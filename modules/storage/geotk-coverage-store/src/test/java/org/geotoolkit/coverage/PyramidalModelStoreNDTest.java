@@ -24,6 +24,7 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -33,11 +34,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
 import org.geotoolkit.data.multires.Mosaic;
@@ -214,18 +211,17 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
     @Test
     public void readDefaultTest() throws Exception {
         getCoverageStore();
-        final GridCoverageReader reader = ref.acquireReader();
 
         //we expect a 3D coverage, with all slices
-        final GridCoverage coverage = (GridCoverage) reader.read(null);
-        final Envelope env = coverage.getEnvelope();
+        final GridCoverage coverage = ref.read(null);
+        final Envelope env = coverage.getGridGeometry().getEnvelope();
         assertTrue(Utilities.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()));
         assertEquals(CORNER_LONG,  env.getMinimum(0), DELTA);//-- -180
         assertEquals(  75,         env.getMinimum(1), DELTA);
-        assertEquals( CORNER_V[0], env.getMinimum(2), DELTA);//-- 15
+        assertEquals(CORNER_V[0],  env.getMinimum(2), DELTA);//-- 15
         assertEquals(-160,         env.getMaximum(0), DELTA);
-        assertEquals(  CORNER_LAT, env.getMaximum(1), DELTA);//-- -90
-        assertEquals( 47.58, env.getMaximum(2), DELTA);
+        assertEquals(CORNER_LAT,   env.getMaximum(1), DELTA);//-- -90
+        assertEquals( 46.58,       env.getMaximum(2), DELTA);
 
 
         assertTrue(coverage instanceof GridCoverageStack);
@@ -238,11 +234,9 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
         assertEquals(1, upperCovs.size());
 
         //expecting image from mosaic with min resolution and vertical -15
-        checkCoverage((GridCoverage2D)lowerCovs.get(0), 40, 30, colors[0][1], CORNER_LONG, -160, 75, CORNER_LAT, CORNER_V[0], -14);
+        checkCoverage(lowerCovs.get(0), 40, 30, colors[0][1], CORNER_LONG, -160, 75, CORNER_LAT, CORNER_V[0], -14);
         //expecting image from mosaic with min resolution and vertical 46.58
-        checkCoverage((GridCoverage2D)upperCovs.get(0), 40, 30, colors[1][1], CORNER_LONG, -160, 75, CORNER_LAT, CORNER_V[1], 47.58);
-
-        ref.recycle(reader);
+        checkCoverage(upperCovs.get(0), 40, 30, colors[1][1], CORNER_LONG, -160, 75, CORNER_LAT, CORNER_V[1], 47.58);
     }
 
     /**
@@ -251,55 +245,46 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
     @Test
     public void readSlicesTest() throws Exception {
         getCoverageStore();
-        final GridCoverageReader reader = ref.acquireReader();
-        final GridCoverageReadParam param = new GridCoverageReadParam();
+
+        final GridGeometry gg = ref.getGridGeometry();
 
         //expecting image from mosaic with min resolution and vertical -15
-        param.setEnvelope(createEnvelope(CORNER_LONG, +180,          //-- dim 0 (long)
-                                                 -90, CORNER_LAT,    //-- dim 1 (lat)
-                                         CORNER_V[0], CORNER_V[0])); //-- dim 2 (vertical)
-        param.setResolution(0.5,
-                            0.5,
-                            1);
+        Envelope env = createEnvelope(CORNER_LONG, +180,          //-- dim 0 (long)
+                                              -90, CORNER_LAT,    //-- dim 1 (lat)
+                                      CORNER_V[0], CORNER_V[0]); //-- dim 2 (vertical)
 
-        GridCoverage2D coverage = (GridCoverage2D) reader.read(param);
+
+        GridCoverage coverage = ref.read(gg.derive().subgrid(env, 0.5, 0.5, 1).build());
         checkCoverage(coverage, 40, 30, colors[0][1], CORNER_LONG, -160,
                                                                75, CORNER_LAT,
                                                       CORNER_V[0], -14); //-- -14 = corner_v[0] - 1 unity.
-        ref.recycle(reader);
 
         //expecting image from mosaic with max resolution and vertical -15
-        param.setEnvelope(createEnvelope(CORNER_LONG, +180,
-                                                 -90, CORNER_LAT,
-                                         CORNER_V[0], CORNER_V[0]));
-        param.setResolution(1,1,1);
-        coverage = (GridCoverage2D) reader.read(param);
+        env = createEnvelope(CORNER_LONG, +180,
+                                     -90, CORNER_LAT,
+                             CORNER_V[0], CORNER_V[0]);
+        coverage = ref.read(gg.derive().subgrid(env, 1, 1, 1).build());
         checkCoverage(coverage, 20, 20, colors[0][0], CORNER_LONG, -160,
                                                                70, CORNER_LAT,
                                                       CORNER_V[0], -14);
-        ref.recycle(reader);
 
         //expecting image from mosaic with min resolution and vertical 46.58
-        param.setEnvelope(createEnvelope(CORNER_LONG, +180,
-                                                 -90, CORNER_LAT,
-                                         CORNER_V[1], CORNER_V[1]));
-        param.setResolution(0.5,0.5,1);
-        coverage = (GridCoverage2D) reader.read(param);
+        env = createEnvelope(CORNER_LONG, +180,
+                                     -90, CORNER_LAT,
+                             CORNER_V[1], CORNER_V[1]);
+        coverage = ref.read(gg.derive().subgrid(env, 0.5, 0.5, 1).build());
         checkCoverage(coverage, 40, 30, colors[1][1], CORNER_LONG, -160,
                                                                75, CORNER_LAT,
                                                       CORNER_V[1], 47.58);
-        ref.recycle(reader);
 
         //expecting image from mosaic with max resolution and vertical 46.58
-        param.setEnvelope(createEnvelope(CORNER_LONG, +180,
-                                                 -90, CORNER_LAT,
-                                         CORNER_V[1], CORNER_V[1]));
-        param.setResolution(1,1,1);
-        coverage = (GridCoverage2D) reader.read(param);
+        env = createEnvelope(CORNER_LONG, +180,
+                                     -90, CORNER_LAT,
+                             CORNER_V[1], CORNER_V[1]);
+        coverage = ref.read(gg.derive().subgrid(env, 1, 1, 1).build());
         checkCoverage(coverage, 20, 20, colors[1][0], CORNER_LONG, -160,
                                                                70, CORNER_LAT,
                                                       CORNER_V[1], 47.58);
-        ref.recycle(reader);
     }
 
     /**
@@ -310,9 +295,9 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
      * @param colors colors to be found in the image
      * @param envelope expented envelope
      */
-    private void checkCoverage(GridCoverage2D coverage, int width, int height, int[][] colors, double... envelope){
+    private void checkCoverage(GridCoverage coverage, int width, int height, int[][] colors, double... envelope){
         assertTrue(Utilities.equalsApproximatively(crs, coverage.getCoordinateReferenceSystem()));
-        Envelope env = coverage.getEnvelope();
+        Envelope env = coverage.getGridGeometry().getEnvelope();
         assertEquals(envelope[0], env.getMinimum(0), DELTA);
         assertEquals(envelope[1], env.getMaximum(0), DELTA);
         assertEquals(envelope[2], env.getMinimum(1), DELTA);
@@ -320,7 +305,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
         assertEquals(envelope[4], env.getMinimum(2), DELTA);
         assertEquals(envelope[5], env.getMaximum(2), DELTA);
 
-        final RenderedImage img = coverage.getRenderedImage();
+        final RenderedImage img = coverage.render(null);
         final Raster raster = img.getData();
         assertEquals(width,  img.getWidth());
         assertEquals(height, img.getHeight());

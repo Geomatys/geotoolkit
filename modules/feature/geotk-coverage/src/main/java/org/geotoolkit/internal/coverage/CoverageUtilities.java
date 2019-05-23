@@ -31,6 +31,7 @@ import javax.media.jai.InterpolationBilinear;
 import javax.media.jai.InterpolationNearest;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelope2D;
@@ -40,7 +41,7 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.geotoolkit.coverage.grid.GridCoverage;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -58,6 +59,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -128,11 +130,11 @@ public final class CoverageUtilities extends Static {
             if (geometry.isDefined(GridGeometry2D.ENVELOPE)) {
                 return geometry.getEnvelope2D();
             } else {
-                return geometry.reduce(coverage.getEnvelope());
+                return geometry.reduce(coverage.getGridGeometry().getEnvelope());
             }
         }
         // Following may thrown MismatchedDimensionException.
-        return new Envelope2D(coverage.getEnvelope());
+        return new Envelope2D(coverage.getGridGeometry().getEnvelope());
     }
 
     /**
@@ -564,5 +566,12 @@ public final class CoverageUtilities extends Static {
         builder.setSampleDimensions(coverage.getSampleDimensions());
         builder.setRenderedImage(coverage.render(null));
         return builder.getGridCoverage2D();
+    }
+
+    public static InternationalString getName(GridCoverage coverage) {
+        if (coverage instanceof org.geotoolkit.coverage.grid.GridCoverage) {
+            return ((org.geotoolkit.coverage.grid.GridCoverage) coverage).getName();
+        }
+        return new SimpleInternationalString("");
     }
 }

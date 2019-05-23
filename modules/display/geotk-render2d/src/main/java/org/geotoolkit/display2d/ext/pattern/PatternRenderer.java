@@ -20,14 +20,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
@@ -75,26 +74,19 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
     @Override
     public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
 
-        double[] resolution = renderingContext.getResolution();
-        final Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
-        resolution = checkResolution(resolution,bounds);
-        final GridCoverageReadParam param = new GridCoverageReadParam();
-        param.setEnvelope(bounds);
-        param.setResolution(resolution);
-
-        GridCoverage2D dataCoverage;
+        GridCoverage dataCoverage;
         try {
-            dataCoverage = projectedCoverage.getCoverage(param);
+            dataCoverage = projectedCoverage.getCoverage(renderingContext.getGridGeometry());
         } catch (DataStoreException ex) {
             throw new PortrayalException(ex);
         }
 
-        if(!Utilities.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem2D(), renderingContext.getObjectiveCRS())){
+        if (!Utilities.equalsIgnoreMetadata(CRS.getHorizontalComponent(dataCoverage.getCoordinateReferenceSystem()), renderingContext.getObjectiveCRS())) {
             //coverage is not in objective crs, resample it
             try {
                 //we resample the native view of the coverage only, the style will be applied later.
 
-                dataCoverage = new ResampleProcess(dataCoverage.view(ViewType.NATIVE), renderingContext.getObjectiveCRS(), null, InterpolationCase.NEIGHBOR, null).executeNow();
+                dataCoverage = new ResampleProcess(dataCoverage, renderingContext.getObjectiveCRS(), null, InterpolationCase.NEIGHBOR, null).executeNow();
             } catch(Exception ex) {
                 LOGGER.log(Level.WARNING, "ERROR resample in raster symbolizer renderer",ex);
             }

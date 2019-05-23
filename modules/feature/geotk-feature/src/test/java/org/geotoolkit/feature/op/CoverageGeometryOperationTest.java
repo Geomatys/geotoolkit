@@ -18,10 +18,10 @@
 package org.geotoolkit.feature.op;
 
 import java.awt.image.BufferedImage;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.util.NamesExt;
 import org.junit.AfterClass;

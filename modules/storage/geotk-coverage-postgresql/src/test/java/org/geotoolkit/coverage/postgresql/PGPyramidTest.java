@@ -36,7 +36,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.measure.MeasurementRange;
-import org.geotoolkit.coverage.SampleDimensionBuilder;
+import org.apache.sis.storage.DataSet;
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
@@ -101,7 +101,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         for (GridCoverageResource r : DataStores.flatten(store, true, GridCoverageResource.class)) {
             store.remove(r);
         }
-        assertTrue(store.getNames().isEmpty());
+        assertTrue(DataStores.getNames(store, true, DataSet.class).isEmpty());
     }
 
     @Test
@@ -198,18 +198,15 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
 
         final List<SampleDimension> dimensions = new LinkedList<>();
         // dim 1
-        SampleDimensionBuilder b = new SampleDimensionBuilder();
+        SampleDimension.Builder b = new SampleDimension.Builder();
         b.addQuantitative("data", NumberRange.create(1, true, 100, true), MeasurementRange.create(-50.0, true, 45.6, true, Units.CELSIUS));
-        b.setLastCategoryColors(Color.WHITE, Color.BLACK);
         b.addQualitative(Vocabulary.formatInternational(Vocabulary.Keys.Nodata), Double.NaN);
-        b.setLastCategoryColors(new Color(0,0,0,0));
         final SampleDimension dim1 = b.setName("dim0").build();
         dimensions.add(0, dim1);
 
         // dim 2
         b.clear();
         b.addQuantitative("data", 1, 55, 2.0, 0.0, Units.METRE);
-        b.setLastCategoryColors(Color.WHITE, Color.BLACK);
         b.addQualitative(null, 0);
         final SampleDimension dim2 = b.setName("dim1").build();
         dimensions.add(1, dim2);

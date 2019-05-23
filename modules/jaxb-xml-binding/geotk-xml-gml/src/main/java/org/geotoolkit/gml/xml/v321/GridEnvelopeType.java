@@ -57,10 +57,10 @@ public class GridEnvelopeType {
 
     @XmlList
     @XmlElement(required = true)
-    private List<Integer> low;
+    private List<Long> low;
     @XmlList
     @XmlElement(required = true)
-    private List<Integer> high;
+    private List<Long> high;
 
     public GridEnvelopeType() {
 
@@ -84,7 +84,7 @@ public class GridEnvelopeType {
      * {@link Integer }
      *
      */
-    public List<Integer> getLow() {
+    public List<Long> getLow() {
         if (low == null) {
             low = new ArrayList<>();
         }
@@ -98,7 +98,7 @@ public class GridEnvelopeType {
      * {@link Integer }
      *
      */
-    public List<Integer> getHigh() {
+    public List<Long> getHigh() {
         if (high == null) {
             high = new ArrayList<>();
         }

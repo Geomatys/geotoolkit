@@ -40,10 +40,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
@@ -97,9 +97,8 @@ import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -658,14 +657,14 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setEnvelope(envelope);
             gcb.setRenderedImage(image);
-            final GridCoverage2D coverage = gcb.getGridCoverage2D();
+            final GridCoverage coverage = gcb.getGridCoverage2D();
 
-            final GridCoverage2D resampled = new ResampleProcess(coverage, context2d.getObjectiveCRS2D(), null, InterpolationCase.NEIGHBOR, null).executeNow();
+            final GridCoverage resampled = new ResampleProcess(coverage, context2d.getObjectiveCRS2D(), null, InterpolationCase.NEIGHBOR, null).executeNow();
 
             context2d.switchToObjectiveCRS();
 
-            final RenderedImage renderedImg = resampled.getRenderedImage();
-            final MathTransform2D trs2D = resampled.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
+            final RenderedImage renderedImg = resampled.render(null);
+            final MathTransform trs2D = resampled.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
             if (trs2D instanceof AffineTransform) {
                 graphic.drawRenderedImage(renderedImg, (AffineTransform) trs2D);
             }

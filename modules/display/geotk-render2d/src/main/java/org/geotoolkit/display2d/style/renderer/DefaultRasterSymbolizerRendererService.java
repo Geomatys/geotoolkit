@@ -26,7 +26,6 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -218,6 +217,12 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
             if (doInterpolation) {
                 //fill color array
                 colors = colorMap.values().toArray(new Color[colorMapSize]);
+                //check we don't have any null colors
+                for (int i = 0; i < colors.length; i++) {
+                    if (colors[i] == null) {
+                        colors[i] = new Color(0, 0, 0, 0);
+                    }
+                }
 
                 //fill fraction array
                 final float interval = 0.9f / colorMapSize;

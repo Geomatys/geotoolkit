@@ -36,6 +36,7 @@ import java.util.logging.Logger;
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -46,7 +47,6 @@ import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.display.canvas.CanvasUtilities;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -690,14 +690,14 @@ public class RenderingContext2D implements RenderingContext{
         return monitor;
     }
 
-    public GridGeometry2D getGridGeometry() {
+    public GridGeometry getGridGeometry() {
         final AffineTransform2D dispToObj = getDisplayToObjective();
         final Rectangle bounds = getCanvasDisplayBounds();
         final CoordinateReferenceSystem objCrs = getObjectiveCRS();
 
         if (objCrs.getCoordinateSystem().getDimension() == 2) {
             final GridExtent extent = new GridExtent(bounds.width, bounds.height);
-            return new GridGeometry2D(extent, PixelInCell.CELL_CORNER, dispToObj, objCrs);
+            return new GridGeometry(extent, PixelInCell.CELL_CORNER, dispToObj, objCrs);
         } else {
             //create and N dimension slice
             final long[] upper = new long[objCrs.getCoordinateSystem().getDimension()];
@@ -719,7 +719,7 @@ public class RenderingContext2D implements RenderingContext{
             }
 
             final MathTransform gridToCrs = MathTransforms.compound(dispToObj, MathTransforms.linear(m));
-            return new GridGeometry2D(extent, PixelInCell.CELL_CORNER, gridToCrs, objCrs);
+            return new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, objCrs);
         }
     }
 

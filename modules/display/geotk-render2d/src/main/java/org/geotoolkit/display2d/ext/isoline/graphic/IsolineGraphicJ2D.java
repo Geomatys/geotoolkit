@@ -26,8 +26,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -222,7 +222,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                 getLogger().log(Level.WARNING, null, ex);
                 return false;
             }
-            final GridCoverage2D coverage = output.getValue(KrigingDescriptor.OUT_COVERAGE);
+            final GridCoverage coverage = output.getValue(KrigingDescriptor.OUT_COVERAGE);
             final FeatureCollection isolines = output.getValue(KrigingDescriptor.OUT_LINES);
 
             if(coverage != null){

@@ -20,10 +20,10 @@ package org.geotoolkit.processing.coverage.mathcalc;
 import java.util.AbstractMap;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -112,8 +112,12 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
             }
 
             //find value at given coordinate
-            coverages[index].evaluate(coverageCoord[index],sampleBuffer);
-            return sampleBuffer[0];
+            if (coverages[index] instanceof org.geotoolkit.coverage.grid.GridCoverage) {
+                ((org.geotoolkit.coverage.grid.GridCoverage) coverages[index]).evaluate(coverageCoord[index],sampleBuffer);
+                return sampleBuffer[0];
+            } else {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
         }
 
         @Override

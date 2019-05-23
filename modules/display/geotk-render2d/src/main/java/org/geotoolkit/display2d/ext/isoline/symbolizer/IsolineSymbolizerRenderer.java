@@ -19,15 +19,15 @@ package org.geotoolkit.display2d.ext.isoline.symbolizer;
 
 import java.awt.Rectangle;
 import java.util.Map;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.memory.MemoryCoverageStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.display.PortrayalException;
@@ -47,7 +47,7 @@ import org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.function.Jenks;
 import org.opengis.geometry.Envelope;
@@ -59,7 +59,6 @@ import org.opengis.style.ColorMap;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.TextSymbolizer;
-import org.opengis.util.GenericName;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -132,10 +131,8 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                     param.setEnvelope(bounds);
                     param.setResolution(resolution);
 
-                    final GridCoverageReader reader = coverageReference.acquireReader();
-                    GridCoverage2D inCoverage = (GridCoverage2D) reader.read(param);
+                    GridCoverage inCoverage = coverageReference.read(coverageReference.getGridGeometry().derive().subgrid(bounds, resolution).build());
                     inCoverage = inCoverage.forConvertedValues(true);
-                    coverageReference.recycle(reader);
 
                     final Rectangle rec = renderingContext.getPaintingDisplayBounds();
                     final GridExtent gridEnv = new GridExtent(null, new long[]{rec.x,rec.y}, new long[]{rec.width,rec.height}, false);
@@ -152,11 +149,9 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                     final ResampleProcess resampleProcess = new ResampleProcess(resampleParams);
                     final Parameters output = Parameters.castOrWrap(resampleProcess.call());
 
-                    final GridCoverage2D resampledCoverage = (GridCoverage2D) output.parameter(ResampleDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
+                    final GridCoverage resampledCoverage = (GridCoverage) output.parameter(ResampleDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
                     final MemoryCoverageStore memoryCoverageStore = new MemoryCoverageStore(resampledCoverage, coverageReference.getIdentifier().tip().toString());
-
-                    final GenericName name = memoryCoverageStore.getNames().iterator().next();
-                    final GridCoverageResource resampledCovRef = (GridCoverageResource) memoryCoverageStore.findResource(name.toString());
+                    final GridCoverageResource resampledCovRef = (GridCoverageResource) DataStores.flatten(memoryCoverageStore, true, GridCoverageResource.class).iterator().next();
 
                     /////////////////////
                     // 2.2 - Compute isolines

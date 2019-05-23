@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.metadata.dimap;
 
-import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.IOException;
@@ -74,13 +73,11 @@ import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.util.iso.DefaultNameFactory;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.TypeMap;
 import org.geotoolkit.geometry.isoonjts.GeometryUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
-import org.geotoolkit.internal.coverage.ColoredCategory;
 import org.geotoolkit.lang.Static;
 import static org.geotoolkit.metadata.dimap.DimapConstants.*;
 import org.geotoolkit.metadata.dimap.DimapConstants.DataType;
@@ -384,7 +381,7 @@ public final class DimapAccessor extends Static {
             f.setOffset(physicBias);
             final MathTransform1D sampleToGeo = f.getTransform();
 
-            List<Category> cats = new ArrayList<>();
+            final SampleDimension.Builder sdBuilder = new SampleDimension.Builder();
 
             NumberRange range = valueRanges.get(bandIndex);
             if (range != null) {
@@ -401,7 +398,7 @@ public final class DimapAccessor extends Static {
             double min = range.getMinDouble();
             double max = range.getMaxDouble();
             for (Map.Entry<String, Integer> entry : specialValues.entrySet()) {
-                cats.add(new ColoredCategory(entry.getKey(), new Color(0,0,0,0), entry.getValue()));
+                sdBuilder.addQualitative(entry.getKey(), entry.getValue());
 
                 if (entry.getValue().doubleValue() == min) {
                     min++;
@@ -410,9 +407,10 @@ public final class DimapAccessor extends Static {
                 }
             }
             range = new NumberRange(Double.class, min, true, max, true);
-            cats.add(new ColoredCategory("data", null, range, sampleToGeo));
+            sdBuilder.addQuantitative("data", range, sampleToGeo, null);
+            sdBuilder.setName(Names.createLocalName(null, null, bandDesc));
 
-            final SampleDimension dim = new SampleDimension(Names.createLocalName(null, null, bandDesc), null, cats);
+            final SampleDimension dim = sdBuilder.build();
             dimensions.put(bandIndex, dim);
         }
 

@@ -889,7 +889,7 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
          * because it is redundant with the information provided in the CRS and offset vectors.
          */
         substitutions.put(Dimension.class,           null);  // GridSpatialRepresentation.axisDimensionProperties
-        substitutions.put(Point.class,     double[].class);  // MD_Georectified.centerPoint
+        substitutions.put(Point.class,     double[].class);  // MD_Georectified.centrePoint
         substitutions.put(GCP.class,                 null);  // MD_Georectified.checkPoint
         substitutions.put(Boolean.TYPE,              null);  // MD_Georectified.checkPointAvailability
         substitutions.put(InternationalString.class, null);  // MD_Georectified.various descriptions...

@@ -17,7 +17,6 @@
 
 package org.geotoolkit.metadata.geotiff;
 
-import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.ParseException;
@@ -48,6 +47,7 @@ import org.apache.sis.util.logging.Logging;
 
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
@@ -60,9 +60,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import static org.geotoolkit.coverage.SampleDimensionUtils.*;
-import org.geotoolkit.internal.coverage.ColoredCategory;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.GDAL_METADATA_KEY;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.GDAL_NODATA_KEY;
+import org.opengis.referencing.operation.MathTransform1D;
 
 /**
  * Tiff format may contain multiple additional tags.
@@ -433,22 +433,23 @@ public strictfp class ThirdPartyMetaDataReader {
         ArgumentChecks.ensureNonNull("noDataValues", nodataValues);
         ArgumentChecks.ensureNonNull("typeClass",    typeClass);
 
-        if(scale==null && offset!=null){
+        if (scale == null && offset != null) {
             //we use the default scale value
             scale = 1.0;
         }
-        if(scale!=null && offset==null){
+        if (scale != null && offset == null) {
             //we use the default offset value
             offset = 0.0;
         }
 
         final List<Category> categories = new ArrayList<>();
-        if(nodataValues.isEmpty()){
-            if(scale!=null){
+        if (nodataValues.isEmpty()) {
+            if (scale != null) {
                 //main datas category
-                categories.add(new ColoredCategory("data", null,
-                        getTypedRangeNumber(typeClass,minSampleValue, true,maxSampleValue, true),
-                        scale, offset));
+                final SampleDimension.Builder builder = new SampleDimension.Builder();
+                builder.addQuantitative("data", getTypedRangeNumber(typeClass,minSampleValue, true, maxSampleValue, true),
+                        (MathTransform1D) MathTransforms.linear(scale, offset), null);
+                categories.addAll(builder.categories());
             }
             return categories;
         }
@@ -471,8 +472,10 @@ public strictfp class ThirdPartyMetaDataReader {
         final Iterator<Double> itNoData = nodataValues.iterator();
         while (itNoData.hasNext()) {
             double currentNoData = itNoData.next();
-            final Category noDataCat = new ColoredCategory(NODATA_CATEGORY_NAME, new Color(0,0,0,0),
-                    getTypedRangeNumber(typeClass, currentNoData, true, currentNoData, true));
+
+            final SampleDimension.Builder ndbuilder = new SampleDimension.Builder();
+            ndbuilder.addQualitative(NODATA_CATEGORY_NAME, getTypedRangeNumber(typeClass, currentNoData, true, currentNoData, true));
+            final Category noDataCat = ndbuilder.categories().get(0);
             categories.add(noDataCat);
             currentNoData = noDataCat.getSampleRange().getMinDouble();
 
@@ -481,10 +484,10 @@ public strictfp class ThirdPartyMetaDataReader {
             } else if (currentNoData == currentMaxSV) {
                 isMaxInclude = false;
             } else if (currentMinSV < currentNoData && currentNoData < currentMaxSV) {//-- intersection
-                categories.add(new ColoredCategory("data", null,
-                    getTypedRangeNumber(typeClass,
-                                        currentMinSV, isMinInclude,
-                                        currentNoData, false), scale, offset));
+                final SampleDimension.Builder builder = new SampleDimension.Builder();
+                builder.addQuantitative("data", getTypedRangeNumber(typeClass, currentMinSV, isMinInclude, currentNoData, false),
+                        (MathTransform1D) MathTransforms.linear(scale, offset), null);
+                categories.addAll(builder.categories());
                 isMinInclude = false;
                 currentMinSV = currentNoData;
             }
@@ -493,11 +496,11 @@ public strictfp class ThirdPartyMetaDataReader {
         assert currentMaxSV == maxSampleValue : "buildCategories : last category : currentMaxSample "
                 + "value should be equals to maxSampleValues. Expected: "+maxSampleValue+". Found: "+currentMaxSV;
 
-        if (currentMinSV<currentMaxSV) {
-            categories.add(new ColoredCategory("data", null,
-                    getTypedRangeNumber(typeClass,
-                                        currentMinSV, isMinInclude,
-                                        currentMaxSV, isMaxInclude), scale, offset));
+        if (currentMinSV < currentMaxSV) {
+            final SampleDimension.Builder builder = new SampleDimension.Builder();
+            builder.addQuantitative("data", getTypedRangeNumber(typeClass, currentMinSV, isMinInclude, currentMaxSV, isMaxInclude),
+                    (MathTransform1D) MathTransforms.linear(scale, offset), null);
+            categories.addAll(builder.categories());
         }
 
         return categories;

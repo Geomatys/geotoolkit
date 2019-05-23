@@ -20,7 +20,7 @@ package org.geotoolkit.display2d.style.j2d;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.referencing.GeodeticCalculator;
+import org.apache.sis.referencing.GeodeticCalculator;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
@@ -53,7 +53,7 @@ public class GeodeticPathWalker {
 
     public GeodeticPathWalker(final PathIterator iterator, CoordinateReferenceSystem crs) throws TransformException {
         this.pathIterator = iterator;
-        calculator = new GeodeticCalculator(crs);
+        calculator = GeodeticCalculator.create(crs);
         startPos = new GeneralDirectPosition(crs);
         endPos = new GeneralDirectPosition(crs);
 
@@ -189,9 +189,9 @@ public class GeodeticPathWalker {
     private float distance(final float x1, final float y1, final float x2, final float y2) throws TransformException {
         startPos.setCoordinate(x1,y1);
         endPos.setCoordinate(x2,y2);
-        calculator.setStartingPosition(startPos);
-        calculator.setDestinationPosition(endPos);
-        return (float) calculator.getOrthodromicDistance();
+        calculator.setStartPoint(startPos);
+        calculator.setEndPoint(endPos);
+        return (float) calculator.getGeodesicDistance();
     }
 
     private static float angle(final float x1, final float y1, final float x2, final float y2) {

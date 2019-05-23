@@ -27,9 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
@@ -58,7 +58,7 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
         super(symbol,renderer);
     }
 
-    public Map<Feature,List<CachedSymbolizer>> getMasks(final GridCoverage2D coverage) throws IOException, TransformException{
+    public Map<Feature,List<CachedSymbolizer>> getMasks(final GridCoverage coverage) throws IOException, TransformException{
         final Map<Feature,List<CachedSymbolizer>> features = new LinkedHashMap<>();
         final Map<NumberRange,List<CachedSymbolizer>> styles = new LinkedHashMap<>();
         final Map<Expression, List<Symbolizer>> categorizes = styleElement.getRanges();

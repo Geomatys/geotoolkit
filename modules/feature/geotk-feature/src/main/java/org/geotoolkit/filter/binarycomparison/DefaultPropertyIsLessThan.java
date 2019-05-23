@@ -58,7 +58,7 @@ public class DefaultPropertyIsLessThan extends AbstractBinaryComparisonOperator<
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PropertyIsLessThan (matchcase=");
-        sb.append(match).append(")\n");
+        sb.append(match).append(")");
         sb.append(StringUtilities.toStringTree(left,right));
         return sb.toString();
     }

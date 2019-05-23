@@ -72,7 +72,7 @@ import org.geotoolkit.gml.xml.v321.MeasureType;
 import org.geotoolkit.gml.xml.v321.PointPropertyType;
 import org.geotoolkit.gml.xml.v321.PolygonPatchType;
 import org.geotoolkit.gml.xml.v321.SurfaceType;
-import org.geotoolkit.referencing.GeodeticCalculator;
+import org.apache.sis.referencing.GeodeticCalculator;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -959,10 +959,10 @@ public class GeometryTransformer implements Supplier<Geometry> {
         final int xAxis = AxisDirections.indexOfColinear(sourceCrs.getCoordinateSystem(), hCrs.getCoordinateSystem());
         final int yAxis = xAxis + 1;
 
-        final GeodeticCalculator gc = new GeodeticCalculator(sourceCrs);
-        gc.setStartingPosition(center);
+        final GeodeticCalculator gc = GeodeticCalculator.create(sourceCrs);
+        gc.setStartPoint(center);
 
-        final Unit<Length> radiusUnit = gc.getEllipsoid().getAxisUnit();
+        final Unit<Length> radiusUnit = gc.getDistanceUnit();
         final double r = radius.getUnit(Length.class).getConverterTo(radiusUnit).convert(radius.value);
 
         double theta = startAzimuth.getUnit(Angle.class).getConverterTo(Units.DEGREE).convert(startAzimuth.value);
@@ -983,10 +983,11 @@ public class GeometryTransformer implements Supplier<Geometry> {
         final Coordinate[] arcPerimeter = new Coordinate[(int)Math.ceil(phi/step) + 1];
         final DoubleFunction<Coordinate> pointOnCircle = azimuth -> {
             azimuth = ((azimuth + 180) % 360) - 180;
-            gc.setDirection(azimuth, r);
+            gc.setStartingAzimuth(azimuth);
+            gc.setGeodesicDistance(r);
             final DirectPosition pt;
             try {
-                pt = gc.getDestinationPosition();
+                pt = gc.getEndPoint();
             } catch (TransformException ex) {
                 throw new BackingStoreException(ex);
             }

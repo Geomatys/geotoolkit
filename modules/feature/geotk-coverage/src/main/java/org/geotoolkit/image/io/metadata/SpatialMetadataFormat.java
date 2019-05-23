@@ -198,7 +198,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 ├───<b>SpatialRepresentation</b> : {@linkplain Georectified}
 │   ├───numberOfDimensions
 │   ├───cellGeometry
-│   ├───centerPoint
+│   ├───centrePoint
 │   └───pointInPixel
 └───<b>RectifiedGridDomain</b> : {@linkplain RectifiedGrid}
     ├───<b>Limits</b> : {@linkplain GridEnvelope}

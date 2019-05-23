@@ -17,7 +17,6 @@
 
 package org.geotoolkit.gui.javafx.layer;
 
-import java.awt.Color;
 import java.util.List;
 import java.util.logging.Level;
 import javafx.scene.control.ScrollPane;
@@ -43,7 +42,6 @@ import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.amended.AmendedCoverageResource;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
-import org.geotoolkit.internal.coverage.ColoredCategory;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
@@ -224,7 +222,6 @@ public class FXLayerStructure extends FXPropertyPane {
                                 final NumberRange range = cat.getSampleRange();
                                 final MathTransform1D trs = cat.getTransferFunction().orElse(null);
                                 final boolean isQuant = cat.isQuantitative();
-                                final Color[] colors = ColoredCategory.getColors(cat);
                                 sb.append("<tr><td>");
                                 sb.append(name);
                                 sb.append("</td><td>");

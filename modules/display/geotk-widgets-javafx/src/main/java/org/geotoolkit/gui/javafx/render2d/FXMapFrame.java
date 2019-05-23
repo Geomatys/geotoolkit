@@ -53,7 +53,7 @@ import org.geotoolkit.map.MapContext;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXMapFrame {
+public class FXMapFrame extends BorderPane {
 
     private final FXMap map;
     private final FXContextBar contextBar;
@@ -143,16 +143,13 @@ public class FXMapFrame {
         menu.getItems().add(exit);
         menuBar.getMenus().add(menu);
 
-        final BorderPane framePane = new BorderPane(split,menuBar,null,coordBar,null);
+        setTop(menuBar);
+        setCenter(split);
+        setBottom(coordBar);
+    }
 
-        final Scene scene = new Scene(framePane);
-        final Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.setWidth(1024);
-        stage.setHeight(768);
-
-        stage.show();
-
+    public FXMap getMap() {
+        return map;
     }
 
     public static void show(final MapContext context){
@@ -170,7 +167,15 @@ public class FXMapFrame {
         //Init JavaFX, ugly, but we only have 2 choices, extent Application or create this.
         new JFXPanel();
 
-        Platform.runLater(() -> new FXMapFrame(mc,hints));
+        Platform.runLater(() -> {
+            final FXMapFrame frame = new FXMapFrame(mc,hints);
+            final Scene scene = new Scene(frame);
+            final Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setWidth(1200);
+            stage.setHeight(800);
+            stage.show();
+                });
     }
 
     public static void main(String[] args) {

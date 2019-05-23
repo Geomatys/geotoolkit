@@ -28,14 +28,12 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.referencing.operation.OperationMethod;
-import org.geotoolkit.resources.Errors;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.operation.projection.NormalizedProjection;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 
 import static java.lang.Math.*;
-import static java.lang.Double.*;
 import static org.apache.sis.math.MathFunctions.atanh;
 
 
@@ -153,10 +151,6 @@ abstract class UnitaryProjection extends NormalizedProjection {
         return parameters.parameter("semi_major").doubleValue() == parameters.parameter("semi_minor").doubleValue();
     }
 
-    static boolean nameMatches(final Parameters parameters, final ParameterDescriptorGroup method) {
-        return IdentifiedObjects.isHeuristicMatchForName(method, parameters.getDescriptor().getName().getCode()); // TODO: need more flexible match.
-    }
-
     @Override
     protected abstract void inverseTransform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException;
@@ -180,22 +174,6 @@ abstract class UnitaryProjection extends NormalizedProjection {
     final double msfn(final double sinφ, final double cosφ) {               // == cosφ / rν(sinφ)
         assert !(abs(sinφ*sinφ + cosφ*cosφ - 1) > ARGUMENT_TOLERANCE);
         return cosφ / sqrt(1.0 - (sinφ*sinφ) * eccentricitySquared);
-    }
-
-    /**
-     * Computes the derivative of this {@link #msfn(double, double)} method divided by {@code msfn}.
-     * Callers must multiply the return value by {@code msfn} in order to get the actual value.
-     *
-     * @param  sinφ The sinus of latitude.
-     * @param  cosφ The cosine of latitude.
-     * @param  msfn The value of {@code msfn(sinφ, cosφ)}.
-     * @return The {@code msfn} derivative at the specified latitude.
-     *
-     * @since 3.19
-     */
-    final double dmsfn_dφ(final double sinφ, final double cosφ, double msfn) {
-        msfn *= eccentricity;
-        return (sinφ/cosφ) * (msfn - 1) * (msfn + 1);
     }
 
     /**
@@ -231,90 +209,6 @@ abstract class UnitaryProjection extends NormalizedProjection {
         /*
          * NOTE: 0.5*(t + 1/t)   =   1/cosφ
          */
-    }
-
-    /**
-     * Computes functions (15-9) and (9-13) from Snyder. This is equivalent to
-     * the negative of function (7-7) and is the converse of {@link #cphi2}.
-     * <p>
-     * This function has a periodicity of 2π.  The result is always a positive value when
-     * φ is valid (more on it below). More specifically its behavior at some
-     * particular points is:
-     * <p>
-     * <ul>
-     *   <li>If φ is NaN or infinite, then the result is NaN.</li>
-     *   <li>If φ is π/2,  then the result is close to 0.</li>
-     *   <li>If φ is 0,    then the result is close to 1.</li>
-     *   <li>If φ is -π/2, then the result tends toward positive infinity.
-     *       The actual result is not infinity however, but some large value like 1E+10.</li>
-     *   <li>If φ, after removal of any 2π periodicity, still outside the [-π/2 ... π/2]
-     *       range, then the result is a negative number. If the caller is going to compute the
-     *       logarithm of the returned value as in the Mercator projection, he will get NaN.</li>
-     * </ul>
-     *
-     * {@note <code>ssfn(φ, sinφ)</code> which is part of function (3-1)
-     *        from Snyder, is equivalent to <code>tsfn(-φ, sinφ)</code>.}
-     *
-     * @param  φ    The latitude in radians.
-     * @param  sinφ The sine of the φ argument. This is provided explicitly
-     *              because in many cases, the caller has already computed this value.
-     *
-     * @return The negative of function 7-7 from Snyder. In the case of Mercator projection,
-     *         this is {@code exp(-y)} where <var>y</var> is the northing on the unit ellipse.
-     */
-    final double tsfn(final double φ, double sinφ) {                    // == 1 / exp_y(φ, eccentricity * sinφ)
-        assert !(abs(sinφ - sin(φ)) > ARGUMENT_TOLERANCE) : φ;         // ou exp_y(-φ, -eccentricity * sinφ)
-        sinφ *= eccentricity;
-        return tan(PI/4 - 0.5*φ) / pow((1-sinφ) / (1+sinφ), 0.5*eccentricity);
-    }
-
-    /**
-     * Gets the derivative of the {@link #tsfn(double, double)} method divided by {@code tsfn}.
-     * Callers must multiply the return value by {@code tsfn} in order to get the actual value.
-     *
-     * @param  φ    The latitude.
-     * @param  sinφ the sine of latitude.
-     * @param  cosφ The cosine of latitude.
-     * @return The {@code tsfn} derivative at the specified latitude.
-     *
-     * @since 3.18
-     */
-    final double dtsfn_dφ(final double φ, final double sinφ, final double cosφ) {   // == -dy_dφ(sinφ, cosφ)
-        assert !(abs(sinφ - sin(φ)) > ARGUMENT_TOLERANCE) : φ;
-        assert !(abs(cosφ - cos(φ)) > ARGUMENT_TOLERANCE) : φ;
-        final double t = (1 - sinφ) / cosφ;
-        return (eccentricitySquared*cosφ / (1 - eccentricitySquared*sinφ*sinφ) - 0.5*(t + 1/t));
-    }
-
-    /**
-     * Iteratively solve equation (7-9) from Snyder. This is the converse of {@link #tsfn}.
-     * The input should be a positive number, otherwise the result will be either outside
-     * the [-π/2 ... π/2] range, or will be NaN. Its behavior at some particular points is:
-     * <p>
-     * <ul>
-     *   <li>If {@code ts} is zero, then the result is close to π/2.</li>
-     *   <li>If {@code ts} is 1, then the result is close to zero.</li>
-     *   <li>If {@code ts} is positive infinity, then the result is close to -π/2.</li>
-     * </ul>
-     *
-     * @param  ts The value returned by {@link #tsfn}.
-     * @return The latitude in radians.
-     * @throws ProjectionException if the iteration does not converge.
-     */
-    final double cphi2(final double ts) throws ProjectionException {    // == φ(ts)
-        final double he = 0.5 * eccentricity;
-        double φ = (PI/2) - 2.0 * atan(ts);
-        for (int i=0; i<MAXIMUM_ITERATIONS; i++) {
-            final double con  = eccentricity * sin(φ);
-            final double dphi = abs(φ - (φ = PI/2 - 2.0*atan(ts * pow((1-con)/(1+con), he))));
-            if (dphi <= ITERATION_TOLERANCE) {
-                return φ;
-            }
-        }
-        if (isNaN(ts)) {
-            return NaN;
-        }
-        throw new ProjectionException(Errors.format(Errors.Keys.NoConvergence));
     }
 
     /**

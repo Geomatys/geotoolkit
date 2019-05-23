@@ -351,46 +351,6 @@ compare:    for (final SingleCRS component : actualComponents) {
                 VerticalDatumTypes.ELLIPSOIDAL.equals(((VerticalDatum) vertical).getVerticalDatumType());
     }
 
-    /**
-     * Returns the first ellipsoid found in a coordinate reference system,
-     * or {@code null} if there is none. More specifically:
-     * <p>
-     * <ul>
-     *   <li>If the given CRS is an instance of {@link SingleCRS} and its datum is a
-     *       {@link GeodeticDatum}, then this method returns the datum ellipsoid.</li>
-     *   <li>Otherwise if the given CRS is an instance of {@link CompoundCRS}, then this method
-     *       invokes itself recursively for each component until a geodetic datum is found.</li>
-     *   <li>Otherwise this method returns {@code null}.</li>
-     * </ul>
-     * <p>
-     * Note that this method does not check if there is more than one ellipsoid
-     * (it should never be the case).
-     *
-     * @param  crs The coordinate reference system, or {@code null}.
-     * @return The ellipsoid, or {@code null} if none.
-     *
-     * @see #getDatum(CoordinateReferenceSystem)
-     *
-     * @category information
-     * @since 2.4
-     */
-    public static Ellipsoid getEllipsoid(final CoordinateReferenceSystem crs) {
-        if (crs instanceof SingleCRS) {
-            final Datum datum = ((SingleCRS) crs).getDatum();
-            if (datum instanceof GeodeticDatum) {
-                return ((GeodeticDatum) datum).getEllipsoid();
-            }
-        }
-        if (crs instanceof CompoundCRS) {
-            for (final CoordinateReferenceSystem c : ((CompoundCRS) crs).getComponents()) {
-                final Ellipsoid candidate = getEllipsoid(c);
-                if (candidate != null) {
-                    return candidate;
-                }
-            }
-        }
-        return null;
-    }
 
 
     /////////////////////////////////////////////////

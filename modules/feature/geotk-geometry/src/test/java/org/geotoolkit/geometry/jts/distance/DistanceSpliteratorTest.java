@@ -87,7 +87,7 @@ public class DistanceSpliteratorTest {
                 "Computed distance",
                 isOrthodromic? t.orthodromicDistance : t.loxodromicDistance,
                 totalDistance / 1000, // meter to kilometer
-                EngineTest.EPSI
+                isOrthodromic ? EngineTest.SPHERICAL_ERROR : EngineTest.EPSI
         );
     }
 

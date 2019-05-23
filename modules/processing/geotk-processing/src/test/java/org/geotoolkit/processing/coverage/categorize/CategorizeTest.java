@@ -3,14 +3,12 @@ package org.geotoolkit.processing.coverage.categorize;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.util.Collections;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.memory.MemoryCoverageStore;
@@ -83,23 +81,17 @@ public class CategorizeTest {
             roi = tmpRoi;
             process = create(input, output, roi);
         } else {
-            roi = sourceCvg.getEnvelope();
+            roi = sourceCvg.getGridGeometry().getEnvelope();
             process = create(input, output, null);
         }
 
         process.call();
 
-        final GridCoverage outCvg;
-        final GridCoverageReader outReader = output.acquireReader();
-        try {
-            outCvg = outReader.read(new GridCoverageReadParam());
-        } finally {
-            output.recycle(outReader);
-        }
+        final GridCoverage outCvg = output.read(null);
 
-        final Envelope outEnvelope = outCvg.getEnvelope();
+        final Envelope outEnvelope = outCvg.getGridGeometry().getEnvelope();
         Assert.assertEquals("Output envelope is not conform to source data.", GeneralEnvelope.castOrCopy(roi), GeneralEnvelope.castOrCopy(outEnvelope));
-        final RenderedImage outImage = outCvg.getRenderableImage(0, 1).createDefaultRendering();
+        final RenderedImage outImage = outCvg.render(null);
         final int[] pixels = outImage.getData().getPixels(0, 0, outImage.getWidth(), outImage.getHeight(), (int[]) null);
         Assert.assertArrayEquals("Classification result", expectedClassif, pixels);
     }
@@ -172,22 +164,16 @@ public class CategorizeTest {
         final Categorize process = create(input, output, null);
         process.call();
 
-        final GridCoverageReader outReader = output.acquireReader();
-        try {
-            final GridCoverageReadParam param = new GridCoverageReadParam();
-            final GeneralEnvelope readEnv = new GeneralEnvelope(inputCrs);
-            readEnv.setRange(0, -10, 10);
-            readEnv.setRange(1, -10, 10);
-            for (int i = 0; i < expectedClassifs.length; i++) {
-                readEnv.setRange(2, i, i);
-                final GridCoverage outCvg = outReader.read(param);
-                Assert.assertEquals("Output envelope is not conform to source data.", readEnv, outCvg.getEnvelope());
-                final RenderedImage outImage = outCvg.getRenderableImage(0, 1).createDefaultRendering();
-                final int[] pixels = outImage.getData().getPixels(0, 0, outImage.getWidth(), outImage.getHeight(), (int[]) null);
-                Assert.assertArrayEquals("Classification result", expectedClassifs[i], pixels);
-            }
-        } finally {
-            output.recycle(outReader);
+        final GeneralEnvelope readEnv = new GeneralEnvelope(inputCrs);
+        readEnv.setRange(0, -10, 10);
+        readEnv.setRange(1, -10, 10);
+        for (int i = 0; i < expectedClassifs.length; i++) {
+            readEnv.setRange(2, i, i);
+            final GridCoverage outCvg = output.read(null);
+            Assert.assertEquals("Output envelope is not conform to source data.", readEnv, outCvg.getGridGeometry().getEnvelope());
+            final RenderedImage outImage = outCvg.render(null);
+            final int[] pixels = outImage.getData().getPixels(0, 0, outImage.getWidth(), outImage.getHeight(), (int[]) null);
+            Assert.assertArrayEquals("Classification result", expectedClassifs[i], pixels);
         }
     }
 

@@ -17,9 +17,9 @@
 package org.geotoolkit.processing.coverage.statistics;
 
 import java.awt.image.RenderedImage;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.Process;
@@ -60,11 +60,11 @@ public class StatisticsDescriptor extends AbstractProcessDescriptor {
      */
     public static final String IN_COVERAGE_PARAM_NAME = "inCoverage";
     public static final InternationalString IN_COVERAGE_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_statistic_inCoverage);
-    public static final ParameterDescriptor<GridCoverage2D> COVERAGE = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage> COVERAGE = new ParameterBuilder()
             .addName(IN_COVERAGE_PARAM_NAME)
             .setRemarks(IN_COVERAGE_PARAM_REMARKS)
             .setRequired(false)
-            .create(GridCoverage2D.class, null);
+            .create(GridCoverage.class, null);
 
     /*
      * CoverageResource to analyse

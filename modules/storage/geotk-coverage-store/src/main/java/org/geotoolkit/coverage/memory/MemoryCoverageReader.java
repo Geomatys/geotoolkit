@@ -19,10 +19,9 @@ package org.geotoolkit.coverage.memory;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -34,9 +33,10 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  */
 public class MemoryCoverageReader extends AbstractGridCoverageReader {
-    private final GridCoverage2D coverage;
 
-    public MemoryCoverageReader(final GridCoverage2D coverage) {
+    private final GridCoverage coverage;
+
+    public MemoryCoverageReader(final GridCoverage coverage) {
         this.coverage = coverage;
     }
 
@@ -57,7 +57,9 @@ public class MemoryCoverageReader extends AbstractGridCoverageReader {
 
     @Override
     public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
-        return Names.createLocalName(null, null, coverage.getName() == null ? "" : coverage.getName());
+        CharSequence name = (coverage instanceof org.geotoolkit.coverage.grid.GridCoverage) ? ((org.geotoolkit.coverage.grid.GridCoverage) coverage).getName() : null;
+        if (name == null) name = "";
+        return Names.createLocalName(null, null, name);
     }
 
 }

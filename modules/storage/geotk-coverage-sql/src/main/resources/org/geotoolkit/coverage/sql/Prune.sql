@@ -1,6 +1,10 @@
 --
 -- Delete unused entries.
 --
+DELETE FROM rasters."Series" WHERE "identifier" IN
+  (SELECT "identifier" FROM rasters."GridCoverages" EXCEPT
+     SELECT "series" FROM rasters."GridCoverages");
+
 DELETE FROM rasters."Formats" WHERE "name" IN
   (SELECT "name" FROM rasters."Formats" EXCEPT SELECT "format" FROM rasters."Series");
 

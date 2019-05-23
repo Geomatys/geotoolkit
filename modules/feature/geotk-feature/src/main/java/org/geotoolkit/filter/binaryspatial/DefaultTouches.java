@@ -17,16 +17,15 @@
  */
 package org.geotoolkit.filter.binaryspatial;
 
-import org.locationtech.jts.geom.Geometry;
-
 import java.util.logging.Level;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.StringUtilities;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.spatial.Touches;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.util.logging.Logging;
+import org.opengis.util.FactoryException;
 
 /**
  * Immutable "touches" filter.
@@ -78,7 +77,7 @@ public class DefaultTouches extends AbstractBinarySpatialOperator<Expression,Exp
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Touches \n");
+        final StringBuilder sb = new StringBuilder("Touches");
         sb.append(StringUtilities.toStringTree(left,right));
         return sb.toString();
     }

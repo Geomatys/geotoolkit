@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
@@ -33,8 +34,6 @@ import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.operation.matrix.Matrix4;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.SampleDimensionBuilder;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -77,7 +76,7 @@ public class CoverageFeatureTest {
         raster.setPixel(0, 1, new int[]{50,6});
         raster.setPixel(1, 1, new int[]{70,8});
 
-        SampleDimensionBuilder sdb = new SampleDimensionBuilder();
+        SampleDimension.Builder sdb = new SampleDimension.Builder();
         sdb.setName("values");
         sdb.addQuantitative("valuesCat", NumberRange.create(0, true, 1000, true), (MathTransform1D) MathTransforms.linear(10, -5), null);
         final SampleDimension sdim1 = sdb.build();
@@ -148,7 +147,7 @@ public class CoverageFeatureTest {
                 CommonCRS.Vertical.DEPTH.crs());
 
         //create sample dimensions
-        SampleDimensionBuilder sdb = new SampleDimensionBuilder();
+        SampleDimension.Builder sdb = new SampleDimension.Builder();
         sdb.setName("values");
         sdb.addQuantitative("valuesCat", NumberRange.create(0, true, 1000, true), (MathTransform1D) MathTransforms.linear(10, -5), null);
         final SampleDimension sdim1 = sdb.build();
@@ -209,7 +208,7 @@ public class CoverageFeatureTest {
 
         final GridCoverage coverage3D;
         {//create coverage 3d
-            coverage3D = new GridCoverageStack("Coverage3D", Arrays.asList(slice1,slice2));
+            coverage3D = new GridCoverageStack("Coverage3D", Arrays.asList(slice1, slice2));
         }
 
         //test mapped feature type

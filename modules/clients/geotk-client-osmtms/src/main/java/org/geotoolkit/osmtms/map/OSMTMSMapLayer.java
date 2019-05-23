@@ -21,6 +21,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.osmtms.OSMTileMapClient;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -36,7 +37,7 @@ public class OSMTMSMapLayer extends DefaultCoverageMapLayer {
 
     private static GridCoverageResource getReference(OSMTileMapClient server){
         try {
-            return (GridCoverageResource) server.findResource(server.getNames().iterator().next().toString());
+            return (GridCoverageResource) DataStores.flatten(server, true, GridCoverageResource.class).iterator().next();
         } catch (DataStoreException ex) {
             throw new RuntimeException(ex);
         }

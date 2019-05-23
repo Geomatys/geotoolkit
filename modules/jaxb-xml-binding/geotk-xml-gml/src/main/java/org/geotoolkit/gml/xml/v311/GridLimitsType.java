@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -73,7 +72,7 @@ public class GridLimitsType {
     /**
      * Build a new Grid limits
      */
-    public GridLimitsType(final int[] low, final int[] high){
+    public GridLimitsType(final long[] low, final long[] high){
         this.gridEnvelope = new GridEnvelopeType(low, high);
     }
 

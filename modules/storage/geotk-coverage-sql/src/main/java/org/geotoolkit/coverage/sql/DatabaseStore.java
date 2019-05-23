@@ -16,41 +16,17 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.DatabaseMetaData;
-import java.util.ArrayList;
-import java.util.Set;
-import javax.sql.DataSource;
-import org.opengis.util.FactoryException;
-import org.opengis.util.GenericName;
-import org.opengis.metadata.Metadata;
-import org.opengis.metadata.quality.ConformanceResult;
-import org.opengis.parameter.ParameterDescriptor;
-import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.metadata.sql.ScriptRunner;
 import org.apache.sis.internal.util.Constants;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.sql.MetadataSource;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.factory.sql.EPSGFactory;
-import org.apache.sis.storage.DataStore;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.DataStoreProvider;
-import org.apache.sis.storage.ProbeResult;
-import org.apache.sis.storage.Resource;
-import org.apache.sis.storage.StorageConnector;
-import org.apache.sis.storage.WritableAggregate;
+import org.apache.sis.storage.*;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.ArgumentChecks;
@@ -58,12 +34,46 @@ import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
+import org.opengis.metadata.quality.ConformanceResult;
+import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import static org.geotoolkit.coverage.sql.UpgradableLock.Stamp;
 
 /**
  * Provides access to resource read from the database.
+ *
+ * @implNote Concurrency management is rather strict. You can only launch one insertion at a time, due to information
+ * merging policies (We try to factorize redondant information across products). Otherwise, reading stays accessible
+ * while inserting, except on a short period of time in which we commit all modifications to database. To enforce that
+ * mechanism, we use two different types of lock:
+ * <ul>
+ * <li>An {@link #insertionTicket insertion ticket}. It's simply a {@link Semaphore} with a single permit, to ensure
+ * only one insertion is performed at any time.</li>
+ * <li>An {@link #accessLock access lock} to manage concurrent reads and write over the catalog. ATTENTION ! It's NOT
+ * a reentrant lock, so be careful when using it.</li>
+ * </ul>
  */
 public final class DatabaseStore extends DataStore implements WritableAggregate {
+
+    private static final long DEFAULT_TIMEOUT_MS = TimeUnit.MINUTES.toMillis(5);
+
     /**
      * Provider of {@link DatabaseStore}.
      *
@@ -92,14 +102,30 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
         private static final ParameterDescriptor<Boolean> ALLOW_CREATE;
 
         /**
+         * Parameter to setup timeout on lock acquisitions (insertions, read, etc.)
+         */
+        private static final ParameterDescriptor<Long> LOCK_TIMEOUT;
+
+        /**
          * All parameters.
          */
         private static final ParameterDescriptorGroup PARAMETERS;
         static {
             final ParameterBuilder builder = new ParameterBuilder();
-            DATABASE       = builder.addName("database").setRemarks("Connection to the database.").setRequired(true).create(DataSource.class, null);
-            ROOT_DIRECTORY = builder.addName("rootDirectory").setRemarks("Root of data directory.").setRequired(true).create(Path.class, null);
-            ALLOW_CREATE   = builder.addName(CREATE).setRemarks("Enable schemas creation if they do not exist.").setRequired(false).create(Boolean.class, Boolean.TRUE);
+            ALLOW_CREATE = builder.addName(CREATE).setRemarks("Enable schemas creation if they do not exist.")
+                    .create(Boolean.class, Boolean.TRUE);
+            LOCK_TIMEOUT = builder.addName("lock-timeout")
+                    .setDescription("Maximum number of milliseconds to wait for a read/write lock on the store")
+                    .createBounded(
+                            new MeasurementRange<>(Long.class, 1l, true, Long.MAX_VALUE, true, Units.MILLISECOND),
+                            DEFAULT_TIMEOUT_MS
+                    );
+
+            builder.setRequired(true);
+            DATABASE       = builder.addName("database").setRemarks("Connection to the database.")
+                    .create(DataSource.class, null);
+            ROOT_DIRECTORY = builder.addName("rootDirectory").setRemarks("Root of data directory.")
+                    .create(Path.class, null);
             PARAMETERS     = builder.addName(NAME).createGroup(DATABASE, ROOT_DIRECTORY, ALLOW_CREATE);
         }
 
@@ -230,7 +256,16 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     /**
      * Cached result of {@link #components()}.
      */
-    private List<Resource> components;
+    private volatile List<Resource> components;
+
+    private final UpgradableLock accessLock;
+    private final Semaphore insertionTicket;
+
+    /**
+     * TODO: Add in provider parameters.
+     */
+    private final long lockTimeout;
+    private final TimeUnit lockTimeoutUnit;
 
     /**
      * Creates a new data store for the given parameters. The parameters should be an instance created by
@@ -245,6 +280,11 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     protected DatabaseStore(final Provider provider, final Parameters parameters) throws DataStoreException {
         super(provider, new StorageConnector(parameters.getMandatoryValue(Provider.DATABASE)));
         final DataSource dataSource = parameters.getMandatoryValue(Provider.DATABASE);
+        final Long lockParam = parameters.getValue(Provider.LOCK_TIMEOUT);
+        lockTimeout = lockParam == null? DEFAULT_TIMEOUT_MS : lockParam;
+        lockTimeoutUnit = TimeUnit.MILLISECONDS;
+        accessLock = new UpgradableLock(lockTimeout, lockTimeoutUnit);
+        insertionTicket = new Semaphore(1);
         try {
             if (parameters.booleanValue(Provider.ALLOW_CREATE)) {
                 /*
@@ -358,24 +398,30 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
      */
     @Override
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
-    public synchronized Collection<Resource> components() throws DataStoreException {
+    public Collection<Resource> components() throws DataStoreException {
         if (components == null) {
-            final List<ProductEntry> products;
-            try (Transaction transaction = database.transaction();
-                 ProductTable table = new ProductTable(transaction))
-            {
-                products = table.list();
-            } catch (SQLException e) {
-                throw new CatalogException(e);
-            }
-            final Resource[] resources = new Resource[products.size()];
-            for (int i=0; i<resources.length; i++) {
-                // No need to call prefetch(table) for products obtained by ProductTable.list().
-                resources[i] = createResource(products.get(i));
-            }
-            components = UnmodifiableArrayList.wrap(resources);
+            accessLock.doLocked(this::createComponentsIfNull, true);
         }
         return components;
+    }
+
+    private void createComponentsIfNull(final Stamp stamp) throws DataStoreException {
+        if (components != null) return;
+
+        final List<ProductEntry> products;
+        try (Transaction transaction = database.transaction();
+             ProductTable table = new ProductTable(transaction)) {
+            products = table.list();
+        } catch (SQLException e) {
+            throw new CatalogException(e);
+        }
+        final Resource[] resources = new Resource[products.size()];
+        for (int i = 0; i < resources.length; i++) {
+            // No need to call prefetch(table) for products obtained by ProductTable.list().
+            resources[i] = createResource(products.get(i));
+        }
+
+        components = UnmodifiableArrayList.wrap(resources);
     }
 
     /**
@@ -386,18 +432,21 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
      * @throws DataStoreException if an error occurred while reading data.
      */
     @Override
-    public synchronized Resource findResource(final String productName) throws DataStoreException {
+    public Resource findResource(final String productName) throws DataStoreException {
         ArgumentChecks.ensureNonNull("productName", productName);
-        final ProductEntry product;
-        try (Transaction transaction = database.transaction();
-             ProductTable table = new ProductTable(transaction))
-        {
-            product = table.getEntry(productName);
-            product.prefetch(table);
-        } catch (SQLException e) {
-            throw new CatalogException(e);
-        }
-        return createResource(product);
+        // TODO : check if components are not null, in which case we could get the resource from there.
+        return accessLock.doLocked(stamp -> {
+            try (Transaction transaction = database.transaction();
+                 ProductTable table = new ProductTable(transaction))
+            {
+                final ProductEntry product = table.getEntry(productName);
+                product.components(table);                                  // Force prefetching components.
+
+                return createResource(product);
+            } catch (SQLException e) {
+                throw new CatalogException(e);
+            }
+        }, false);
     }
 
     /**
@@ -443,10 +492,10 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
      * @param  files         the files to add to the specified product.
      * @throws DataStoreException if an error occurred while reading the grid coverages or adding them to the database.
      */
-    public synchronized void addRaster(final String product, final GridGeometry exportedGrid, final AddOption option,
+    public void addRaster(final String product, final GridGeometry exportedGrid, final AddOption option,
             final Path... files) throws DataStoreException
     {
-        addRaster(product, exportedGrid, option, null, files);
+        addRaster(product, exportedGrid, option, null, null, files);
     }
 
     /**
@@ -464,13 +513,14 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
      * @param  exportedGrid  a grid encompassing all files that may be added for this product, or {@code null}.
      * @param  option        specifies if non-existing product should be created.
      * @param  datasets      array of datasets to insert, null for all
+     * @param  provider      provider to use for opening files, or {@code null} for auto-detection.
      * @param  files         the files to add to the specified product.
      * @throws DataStoreException if an error occurred while reading the grid coverages or adding them to the database.
      */
-    public synchronized void addRaster(final String product, final GridGeometry exportedGrid, final AddOption option,
-            final Set<String> datasets, final Path... files) throws DataStoreException
+    public void addRaster(final String product, final GridGeometry exportedGrid, final AddOption option,
+            final Set<String> datasets, final DataStoreProvider provider, final Path... files) throws DataStoreException
     {
-        final Map<String,List<NewRaster>> rasters = NewRaster.list(product, option, files);
+        final Map<String,List<NewRaster>> rasters = NewRaster.list(product, option, provider, files);
         if (datasets != null) {
             for (String ds : rasters.keySet().toArray(new String[0])) {
                 if (!datasets.contains(ds)) {
@@ -478,19 +528,38 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
                 }
             }
         }
-
         if (!rasters.isEmpty()) {
-            try (Transaction transaction = database.transaction()) {
-                transaction.writeStart();
-                try (ProductTable table = new ProductTable(transaction)) {
-                    table.addCoverageReferences(product, exportedGrid, option, rasters);
+            try {
+                // TODO: retry policy ?
+                if (!insertionTicket.tryAcquire(lockTimeout, lockTimeoutUnit)) {
+                    throw new CatalogException("Cannot lock insertion code. Another process is running an insertion for too long.");
                 }
-                transaction.writeEnd();
-            } catch (SQLException e) {
-                throw new CatalogException(e);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw new CatalogException("Thread interrupted while waiting for a lock for insertion", ex);
             }
-            components = null;
+            try {
+                accessLock.doLocked((Stamp stamp) -> insert(product, exportedGrid, option, rasters, stamp), false);
+            } finally {
+                insertionTicket.release();
+            }
         }
+    }
+
+    private void insert(String product, GridGeometry exportedGrid, AddOption option, Map<String, List<NewRaster>> rasters, final Stamp stamp) throws DataStoreException {
+        try (Transaction transaction = database.transaction()) {
+            transaction.writeStart();
+            try (ProductTable table = new ProductTable(transaction)) {
+                table.addCoverageReferences(product, exportedGrid, option, rasters);
+            }
+
+            stamp.tryUpgrade();
+
+            transaction.writeEnd();
+        } catch (SQLException e) {
+            throw new CatalogException(e);
+        }
+        components = null;
     }
 
     /**
@@ -505,22 +574,24 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
      * @param  files  the files to remove from any product.
      * @throws DataStoreException if an error occurred while resolving a path of removing entries from the database.
      */
-    public synchronized void removeRaster(final Path... files) throws DataStoreException {
+    public void removeRaster(final Path... files) throws DataStoreException {
         if (files.length != 0) {
-            try (Transaction transaction = database.transaction()) {
-                transaction.writeStart();
-                try (GridCoverageTable table = new GridCoverageTable(transaction)) {
-                    for (final Path file : files) {
-                        table.remove(file);
+            accessLock.doLocked(stamp -> {
+                try (Transaction transaction = database.transaction()) {
+                    transaction.writeStart();
+                    try (GridCoverageTable table = new GridCoverageTable(transaction)) {
+                        for (final Path file : files) {
+                            table.remove(file);
+                        }
                     }
+                    transaction.writeEnd();
+                } catch (DataStoreException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw new CatalogException(e);
                 }
-                transaction.writeEnd();
-            } catch (DataStoreException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new CatalogException(e);
-            }
-            components = null;
+                components = null;
+            }, true);
         }
     }
 
@@ -546,37 +617,50 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     /**
      * Removes the coverages in the resource which intersect the given envelope.
      *
-     * @param resource
-     * @param areaOfInterest
-     * @return list of remove data Paths
-     * @throws DataStoreException
+     * @param resource The product to remove a part of.
+     * @param areaOfInterest A sub-area to de-reference in input resource.
+     * @return list of files which won't be used anymore after given area removal.
+     * @throws DataStoreException If given resource is not a product from this data store, or there's an issue accessing
+     * inner ledger.
      */
-    public synchronized List<Path> remove(Resource resource, Envelope areaOfInterest) throws DataStoreException {
+    public List<Path> remove(Resource resource, Envelope areaOfInterest) throws DataStoreException {
         ArgumentChecks.ensureNonNull("areaOfInterest", areaOfInterest);
 
-        final List<Path> removed = new ArrayList<>();
         if(resource instanceof ProductResource) {
             final ProductResource pr = (ProductResource) resource;
-            areaOfInterest = pr.getGridGeometry().derive().subgrid(areaOfInterest).build().getEnvelope();
-
-            try (Transaction transaction = database.transaction();
-                GridCoverageTable table = new GridCoverageTable(transaction)) {
-
-                final List<GridCoverageEntry> entries = table.find(pr.toString(), areaOfInterest);
-                for (GridCoverageEntry entry : entries) {
-                    removed.add(entry.getDataPath());
-                }
-                table.remove(pr.toString(), areaOfInterest);
-
-            } catch (DataStoreException exception) {
-                throw exception;
-            } catch (Exception exception) {
-                throw new CatalogException(exception);
-            }
-            components = null;
+            return accessLock.doLocked((Stamp stamp) ->  remove(areaOfInterest, pr, stamp), false);
         }
-        return removed;
+
+        throw new CatalogException("Illegal input resource. Expected a Coverage-SQL product, but got "+resource == null? "null" : resource.getClass().getCanonicalName());
     }
+
+    private List<Path> remove(Envelope areaOfInterest, ProductResource pr, final Stamp readLock) throws DataStoreException {
+        areaOfInterest = pr.getGridGeometry().derive().subgrid(areaOfInterest).build().getEnvelope();
+
+        try (Transaction transaction = database.transaction();
+             GridCoverageTable table = new GridCoverageTable(transaction)) {
+
+            final List<Path> removed = table.find(pr.toString(), areaOfInterest)
+                    .stream()
+                    .map(GridCoverageEntry::getDataPath)
+                    .collect(Collectors.toList());
+
+            readLock.tryUpgrade();
+
+            transaction.writeStart();
+            table.remove(pr.toString(), areaOfInterest);
+            transaction.writeEnd();
+
+            components = null;
+
+            return removed;
+        } catch (DataStoreException exception) {
+            throw exception;
+        } catch (Exception exception) {
+            throw new CatalogException(exception);
+        }
+    }
+
 
     @Override
     public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {

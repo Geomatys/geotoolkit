@@ -4,7 +4,6 @@ org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea
 org.geotoolkit.referencing.operation.provider.Orthographic
 org.geotoolkit.referencing.operation.provider.CassiniSoldner
 org.geotoolkit.referencing.operation.provider.Stereographic
-org.geotoolkit.referencing.operation.provider.Polyconic
 org.geotoolkit.referencing.operation.provider.NewZealandMapGrid
 org.geotoolkit.referencing.operation.provider.Krovak
 org.geotoolkit.referencing.operation.provider.EllipsoidToGeoid

@@ -21,11 +21,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.process.Process;
@@ -69,9 +68,9 @@ public class BandCombineProcess extends AbstractProcess {
      * @return result coverage
      * @throws ProcessException
      */
-    public GridCoverage2D executeNow() throws ProcessException {
+    public GridCoverage executeNow() throws ProcessException {
         execute();
-        return (GridCoverage2D)outputParameters.getValue(OUT_COVERAGE);
+        return outputParameters.getValue(OUT_COVERAGE);
     }
 
     @Override
@@ -95,13 +94,13 @@ public class BandCombineProcess extends AbstractProcess {
             final List<SampleDimension> sds = new ArrayList<>();
 
             for (int i = 0; i < inputCoverage.length; i++) {
-                final GridCoverage2D gridCoverage2D = CoverageUtilities.firstSlice((GridCoverage) inputCoverage[i]);
+                final GridCoverage gridCoverage2D = CoverageUtilities.firstSlice(inputCoverage[i]);
 
                 final SampleDimension[] gsd = gridCoverage2D.getSampleDimensions().toArray(new SampleDimension[0]);
                 if (gsd != null) sds.addAll(Arrays.asList(gsd));
 
-                images[i] = gridCoverage2D.getRenderedImage();
-                sb.append(String.valueOf(gridCoverage2D.getName()));
+                images[i] = gridCoverage2D.render(null);
+                sb.append(String.valueOf(org.geotoolkit.internal.coverage.CoverageUtilities.getName(gridCoverage2D)));
             }
 
             final ProcessDescriptor imageCombineDesc = org.geotoolkit.processing.image.bandcombine.BandCombineDescriptor.INSTANCE;
@@ -110,7 +109,7 @@ public class BandCombineProcess extends AbstractProcess {
             final Process process = imageCombineDesc.createProcess(params);
             RenderedImage resultImage = (RenderedImage)process.call().parameter("result").getValue();
 
-            final GridCoverage2D firstCoverage = CoverageUtilities.firstSlice((GridCoverage) inputCoverage[0]);
+            final GridCoverage firstCoverage = CoverageUtilities.firstSlice(inputCoverage[0]);
             final GridGeometry gridGeometry    = firstCoverage.getGridGeometry();
 
             // REBUILD COVERAGE ////////////////////////////////////////////////////
@@ -119,7 +118,7 @@ public class BandCombineProcess extends AbstractProcess {
             gcb.setRenderedImage(resultImage);
             gcb.setGridGeometry(gridGeometry);
             gcb.setSampleDimensions(sds.toArray(new SampleDimension[sds.size()]));
-            final GridCoverage2D resultCoverage = gcb.getGridCoverage2D();
+            final GridCoverage resultCoverage = gcb.getGridCoverage2D();
 
             outputParameters.getOrCreate(OUT_COVERAGE).setValue(resultCoverage);
         } catch (CoverageStoreException e) {

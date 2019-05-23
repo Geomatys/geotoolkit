@@ -19,9 +19,9 @@ package org.geotoolkit.storage.coverage;
 
 import java.util.*;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -46,7 +46,7 @@ public class CoverageExtractor extends Static {
      * Simple Pojo that keep rayExtraction values.
      */
     public static class Ray {
-        private List<SampleDimension> sampleDimensions = new ArrayList<SampleDimension>();
+        private List<SampleDimension> sampleDimensions = new ArrayList<>();
         private Map<DirectPosition, double[]> values = new TreeMap<>(new SliceComparator());
 
         public List<SampleDimension> getSampleDimensions() {
@@ -62,20 +62,18 @@ public class CoverageExtractor extends Static {
      * Call {@link org.geotoolkit.coverage.grid.GridCoverage#evaluate(org.opengis.geometry.DirectPosition, double[])} on all
      * {@link org.geotoolkit.coverage.grid.GridCoverage2D} slices returned by reader.
      *
+     * TODO: Find a way to simulate a deferred mechanism, to allow loading of only required data.
+     *
      * @param point position given to evaluate function.
-     * @param reader GridCoverageReader not disposed or released
-     * @param param GridCoverageReadParam. Deferred parameter will be forced at true.
+     * @param source GridCoverage containing data to evaluate.
      * @return Ray bean object.
      * @throws CoverageStoreException
      * @throws TransformException
      */
-    public static Ray rayExtraction(GeneralDirectPosition point, GridCoverageReader reader,
-                                                              GridCoverageReadParam param) throws DataStoreException, TransformException {
-        param.setDeferred(true); //force deferred
-        final GridCoverage coverage = reader.read(param);
+    public static Ray rayExtraction(GeneralDirectPosition point, GridCoverage source) throws DataStoreException, TransformException {
         Ray result = new Ray();
-        result.getSampleDimensions().addAll(reader.getSampleDimensions());
-        evaluateAllSlices(point, coverage, result);
+        result.getSampleDimensions().addAll(source.getSampleDimensions());
+        evaluateAllSlices(point, source, result);
         return result;
     }
 

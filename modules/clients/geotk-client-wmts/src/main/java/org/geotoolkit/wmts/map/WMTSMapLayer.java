@@ -20,6 +20,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -47,7 +48,7 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
 
     private static GridCoverageResource getReference(WebMapTileClient server, String mapType){
         try {
-            for(GenericName n : server.getNames()){
+            for(GenericName n : DataStores.getNames(server, true, GridCoverageResource.class)){
                 if(n.tip().toString().equalsIgnoreCase(mapType)){
                     return (GridCoverageResource) server.findResource(n.toString());
                 }

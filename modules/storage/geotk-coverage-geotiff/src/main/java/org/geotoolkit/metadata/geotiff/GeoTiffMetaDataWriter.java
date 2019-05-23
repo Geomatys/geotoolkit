@@ -258,8 +258,8 @@ public class GeoTiffMetaDataWriter {
         // since we support baseline GeoTiff.
         // /////////////////////////////////////////////////////////////////////
         final AffineTransform modifiedRasterToModel;
-        final int minx = range.getLow(0);
-        final int miny = range.getLow(1);
+        final long minx = range.getLow(0);
+        final long miny = range.getLow(1);
         if (minx != 0 || miny != 0) {
             // //
             // Preconcatenate a transform to have raster space beginning at (0,0)

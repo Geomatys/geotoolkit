@@ -105,7 +105,7 @@ public class ExportCoverageItem extends TreeMenuItem {
 
                             writer = new ImageCoverageWriter();
                             writer.setOutput(folder.toPath().resolve(baseName+".tiff"));
-                            writer.write((org.geotoolkit.coverage.grid.GridCoverage) coverage, writeParam);
+                            writer.write(coverage, writeParam);
 
                         } catch (DataStoreException ex) {
                             Loggers.DATA.log(Level.WARNING, ex.getMessage(),ex);

@@ -268,10 +268,10 @@ public final strictfp class SpatialMetadataFormatTest extends org.geotoolkit.tes
         assertEquals(DATATYPE_STRING,                 f.getAttributeDataType     ("SpatialRepresentation", "pointInPixel"));
         assertEquals(VALUE_ENUMERATION,               f.getAttributeValueType    ("SpatialRepresentation", "pointInPixel"));
         assertIsEnum("upperLeft",                     f.getAttributeEnumerations ("SpatialRepresentation", "pointInPixel"));
-        assertEquals(DATATYPE_DOUBLE,                 f.getAttributeDataType     ("SpatialRepresentation", "centerPoint"));
-        assertEquals(VALUE_LIST,                      f.getAttributeValueType    ("SpatialRepresentation", "centerPoint"));
-        assertEquals(0,                               f.getAttributeListMinLength("SpatialRepresentation", "centerPoint"));
-        assertEquals(Integer.MAX_VALUE,               f.getAttributeListMaxLength("SpatialRepresentation", "centerPoint"));
+        assertEquals(DATATYPE_DOUBLE,                 f.getAttributeDataType     ("SpatialRepresentation", "centrePoint"));
+        assertEquals(VALUE_LIST,                      f.getAttributeValueType    ("SpatialRepresentation", "centrePoint"));
+        assertEquals(0,                               f.getAttributeListMinLength("SpatialRepresentation", "centrePoint"));
+        assertEquals(Integer.MAX_VALUE,               f.getAttributeListMaxLength("SpatialRepresentation", "centrePoint"));
         assertEquals(RectifiedGrid.class,             f.getObjectClass           ("RectifiedGridDomain"));
         assertEquals(DATATYPE_DOUBLE,                 f.getAttributeDataType     ("RectifiedGridDomain", "origin"));
         assertEquals(VALUE_LIST,                      f.getAttributeValueType    ("RectifiedGridDomain", "origin"));

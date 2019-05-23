@@ -26,6 +26,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
@@ -35,7 +36,6 @@ import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
@@ -410,7 +410,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Map
     private ProjectedCoverage asCoverage(final RenderingContext2D context, StatelessContextParams params,
             PyramidalCoverageResource ref, String pyramidId, String mosaicId, int tileX, int tileY) {
 
-        final GridCoverage2D coverage;
+        final GridCoverage coverage;
         try {
             coverage = AbstractPyramidalCoverageResource.getTileAsCoverage(ref,pyramidId,mosaicId,tileX,tileY);
         } catch (DataStoreException ex) {
@@ -426,7 +426,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Map
     private ProjectedCoverage asCoverage(final RenderingContext2D context, StatelessContextParams params,
             PyramidalCoverageResource ref, String pyramidId, String mosaicId, ImageTile tile) {
 
-        final GridCoverage2D coverage;
+        final GridCoverage coverage;
         try {
             coverage = AbstractPyramidalCoverageResource.getTileAsCoverage(ref,pyramidId,mosaicId,tile);
         } catch (DataStoreException ex) {

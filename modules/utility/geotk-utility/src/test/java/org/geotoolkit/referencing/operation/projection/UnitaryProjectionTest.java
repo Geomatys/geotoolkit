@@ -40,13 +40,6 @@ public final strictfp class UnitaryProjectionTest extends ProjectionTestBase {
     private static final double TOLERANCE = 1E-12;
 
     /**
-     * Natural logarithm of the pseudo-infinity as returned by Mercator formulas in the spherical
-     * case, truncated to nearest integer. This is not a real infinity because there is no exact
-     * representation of π/2 in base 2, so tan(π/2) is not positive infinity.
-     */
-    static final int LN_INFINITY = 37;
-
-    /**
      * Creates a default test suite.
      */
     public UnitaryProjectionTest() {
@@ -80,34 +73,6 @@ public final strictfp class UnitaryProjectionTest extends ProjectionTestBase {
                 assertEquals("Expected sinphi and qsfn(sinphi) to have same sign.", signum(sinφ), signum(q), 0);
             }
         } while ((ellipse = !ellipse) == false);
-    }
-
-    /**
-     * Tests the {@link UnitaryProjection#dmsfn_dφ} method.
-     *
-     * @throws TransformException Should never happen.
-     *
-     * @since 3.19
-     */
-    @Test
-    @Ignore
-    public void testDmsfn() throws TransformException {
-        boolean ellipse = false;
-        do {
-            final UnitaryProjection mercator = null;//MercatorTest.create(ellipse);
-            transform = new AbstractMathTransform1D() {
-                @Override public double transform(final double φ) {
-                    return mercator.msfn(sin(φ), cos(φ));
-                }
-                @Override public double derivative(final double φ) {
-                    final double sinφ = sin(φ);
-                    final double cosφ = cos(φ);
-                    final double msfn = mercator.msfn(sinφ, cosφ);
-                    return mercator.dmsfn_dφ(sinφ, cosφ, msfn) * msfn;
-                }
-            };
-            verifyInDomain(-PI/3, PI/3);
-        } while ((ellipse = !ellipse) == true);
     }
 
     /**

@@ -81,19 +81,26 @@ final class TransferFunction extends org.apache.sis.referencing.operation.transf
     }
 
     /**
-     * Verifies if two categories should be considered equals, ignoring the exact range type.
+     * Return values for {@link #equals(Category, Category)}.
+     */
+    static final int EQUAL = 2, RANGE_EQUAL = 1, DIFFERENT = 0;
+
+    /**
+     * Verifies if two categories should be considered equal, ignoring the exact range type.
      * We have to be tolerant to the fact that the category of a data store may use {@link Double} type
      * and may have exclusive bounds while the category from the database uses the {@link Integer} type
      * always with inclusive bounds. The rounding is okay even if the values are not integer because it
      * would happen when storing the categories in the database, so the result would be equal categories.
      * We ignore the category name because users are allowed to rename the categories in the database.
+     *
+     * @return one of {@link #EQUAL}, {@link #RANGE_EQUAL} or {@link #DIFFERENT} codes.
      */
-    static boolean equals(final Category category1, final Category category2) {
+    static int equals(final Category category1, final Category category2) {
         final NumberRange<?> range1 = category1.getSampleRange();
         final NumberRange<?> range2 = category2.getSampleRange();
-        if (getLower(range1) != getLower(range2)) return false;
-        if (getUpper(range1) != getUpper(range2)) return false;
-        return category1.getTransferFunction().equals(category2.getTransferFunction());
+        if (getLower(range1) != getLower(range2)) return DIFFERENT;
+        if (getUpper(range1) != getUpper(range2)) return DIFFERENT;
+        return category1.getTransferFunction().equals(category2.getTransferFunction()) ? EQUAL : RANGE_EQUAL;
     }
 
     /**
@@ -110,5 +117,13 @@ final class TransferFunction extends org.apache.sis.referencing.operation.transf
      */
     private static int getUpper(final NumberRange<?> range) {
         return (int) Math.round(range.getMaxDouble(true));
+    }
+
+    /**
+     * Returns whether the given ranges intersect.
+     */
+    static boolean intersect(final NumberRange<?> r1, final NumberRange<?> r2) {
+        return r1.getMinDouble(true) <= r2.getMaxDouble(true) &&
+               r1.getMaxDouble(true) >= r2.getMinDouble(true);
     }
 }

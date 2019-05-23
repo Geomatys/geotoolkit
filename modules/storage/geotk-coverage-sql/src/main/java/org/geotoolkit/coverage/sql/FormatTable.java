@@ -17,19 +17,19 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.util.List;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.storage.DataStoreException;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.apache.sis.coverage.Category;
-import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.apache.sis.measure.MeasurementRange;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 
 /**
@@ -67,7 +67,7 @@ final class FormatTable extends CachedTable<String,FormatEntry> {
      */
     @Override
     String select() {
-        return "SELECT \"driver\", \"metadata\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"name\" = ?";
+        return "SELECT \"driver\", \"metadata\", \"approximate\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"name\" = ?";
     }
 
     /**
@@ -80,10 +80,11 @@ final class FormatTable extends CachedTable<String,FormatEntry> {
      */
     @Override
     FormatEntry createEntry(final ResultSet results, final String identifier) throws SQLException, CatalogException {
-        final String  format   = results.getString(1);
-        final String  metadata = results.getString(2);
+        final String  format      = results.getString (1);
+        final String  metadata    = results.getString (2);
+        final boolean approximate = results.getBoolean(3);
         final SampleDimension[] categories = sampleDimensions.query(identifier);
-        return new FormatEntry(format, UnmodifiableArrayList.wrap(categories), metadata);
+        return new FormatEntry(format, UnmodifiableArrayList.wrap(categories), metadata, approximate);
     }
 
     /**
@@ -129,64 +130,65 @@ final class FormatTable extends CachedTable<String,FormatEntry> {
      * <ul>
      *   <li>Sample dimension names and metadata.</li>
      *   <li>Category names.</li>
-     *   <li>Color palette (ignored because often encoded in the image format,
-     *       in which case {@link #createEntry()} will ignore it anyway).</li>
+     *   <li>Transfer function, ignored only if value in the {@code "approximate"} column is {@code true}
+     *       and the product is non-null.</li>
      * </ul>
      *
-     * @param  driver  the name of the data store plugin.
-     * @param  bands   the sample dimensions to look for.
+     * If a product is specified, this method restricts the search in the formats specified for that product.
+     * Only in such case this method may return the identifier of an approximate format.
+     * This method always searches for an exact match if {@code product} is null.
+     *
+     * @param  product  the product for which to search a format, or {@code null} for not using that criterion.
+     * @param  driver   the name of the data store plugin.
+     * @param  bands    the sample dimensions to look for.
      * @return identifier of an existing format, or {@code null} if none.
      * @throws SQLException if an error occurred while querying the database.
      */
-    private String search(final String driver, final List<SampleDimension> bands) throws SQLException, DataStoreException {
+    private String search(final String product, final String driver, final List<SampleDimensionEntry> bands) throws SQLException, DataStoreException {
         final int numBands = size(bands);
-        try (PreparedStatement statement = getConnection().prepareStatement(
-                "SELECT \"name\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"driver\" = ?"))
-        {
+        String fallback = null;                                                 // Value to return if we find no exact match.
+        final String sql;
+        if (product == null) {
+            // Search in any products (exact matches only).
+            sql = "SELECT \"name\" FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE \"driver\" = ? and \"approximate\" = FALSE";
+        } else {
+            // Restrict the search to formats associated to the given product.
+            sql = "SELECT \"name\" FROM " + SCHEMA + ".\"" + TABLE + "\" INNER JOIN " + SCHEMA + ".\""
+                + SeriesTable.TABLE + "\" ON \"" + SeriesTable.TABLE + "\".\"format\" = \"" + TABLE + "\".\"name\" "
+                + "WHERE \"driver\" = ? AND \"" + SeriesTable.TABLE + "\".\"product\" = ?";
+        }
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
             statement.setString(1, driver);
+            if (product != null) {
+                statement.setString(2, product);
+            }
             try (final ResultSet results = statement.executeQuery()) {
 next:           while (results.next()) {
                     final String name = results.getString(1);
                     final FormatEntry candidate = getEntry(name);                               // May use the cache.
-                    final List<SampleDimension> current = candidate.sampleDimensions;
-                    if (size(current) != numBands) {
-                        // Number of band don't match: look for an other format.
+                    final List<SampleDimension> candidateBands = candidate.sampleDimensions;
+                    if (size(candidateBands) != numBands) {
+                        // Number of band don't match: look for another format.
                         continue;
                     }
+                    final boolean ignoreTransferFunction = candidate.approximate;
+                    boolean transferFunctionMatches = true;
                     for (int i=0; i<numBands; i++) {
-                        SampleDimension band1 = bands.get(i);
-                        SampleDimension band2 = current.get(i);
-                        final boolean isReal1 = SampleDimensionTable.isReal(band1);
-                        final boolean isReal2 = SampleDimensionTable.isReal(band2);
-                        if (isReal1 != isReal2 || !Objects.equals(band1.getUnits(), band2.getUnits())) {
-                            // Units don't match for at least one band: look for an other format.
+                        final SampleDimensionEntry band1 = bands.get(i);
+                        final SampleDimension      band2 = candidateBands.get(i);
+                        if (band1.isReal != SampleDimensionEntry.isReal(band2) || !Objects.equals(band1.band.getUnits(), band2.getUnits())) {
+                            // Units don't match for at least one band: look for another format.
                             continue next;
                         }
-                        if (!band1.getName().tip().toString().equals(band2.getName().tip().toString())) {
+                        if (!band1.band.getName().tip().toString().equals(band2.getName().tip().toString())) {
                             // Since names are used for identifying netCDF variables, we require a match.
                             continue next;
                         }
-                        boolean ignoreTransferFunction = false;
-                        final SampleDimension supplied = band1;
-                        band1 = band1.forConvertedValues(false);
-                        band2 = band2.forConvertedValues(false);
-                        if (isReal1 && band1 == supplied) {
-                            final Optional<MeasurementRange<?>> range = band1.getMeasurementRange();
-                            if (range.isPresent()) {
-                                /*
-                                 * If we enter in this block, the transfer function (scale and offset) inserted in the database was
-                                 * generated by SampleDimensionTable.defaultCategories(…). The generated values may vary slightly
-                                 * between different rasters. In order to avoid inserting many Format entries for basically the same
-                                 * format, we allow reusing an existing entry even if the transfer function is not exactly the same.
-                                 */
-                                ignoreTransferFunction = true;
-                            }
-                        }
-                        List<Category> categories1 = band1.getCategories();
+                        List<Category> categories1 = band1.categories;
                         List<Category> categories2 = band2.getCategories();
                         final int numCategories = size(categories1);
                         if (size(categories2) != numCategories) {
-                            // Number of category don't match in at least one band: look for an other format.
+                            // Number of category don't match in at least one band: look for another format.
                             continue next;
                         }
                         categories1 = sort(categories1);
@@ -198,18 +200,36 @@ next:           while (results.next()) {
                                 continue next;
                             }
                             // Do not compare names. We allow user to rename categories in the database.
-                            if (!ignoreTransferFunction) {
-                                if (!TransferFunction.equals(category1, category2)) {
+                            switch (TransferFunction.equals(category1, category2)) {
+                                case TransferFunction.DIFFERENT: {
                                     continue next;
+                                }
+                                case TransferFunction.RANGE_EQUAL: {
+                                    transferFunctionMatches = false;
+                                    if (!ignoreTransferFunction) {
+                                        continue next;
+                                    }
+                                    // Require at least the measurement ranges to intersect.
+                                    final Optional<MeasurementRange<?>> mr1 = category1.getMeasurementRange();
+                                    final Optional<MeasurementRange<?>> mr2 = category2.getMeasurementRange();
+                                    if ((mr1.isPresent() != mr2.isPresent()) ||
+                                        (mr1.isPresent() && !TransferFunction.intersect(mr1.get(), mr2.get())))
+                                    {
+                                        continue next;
+                                    }
                                 }
                             }
                         }
                     }
-                    return name;
+                    if (transferFunctionMatches) {
+                        return name;
+                    } else if (fallback == null) {
+                        fallback = name;
+                    }
                 }
             }
         }
-        return null;
+        return fallback;
     }
 
     /**
@@ -217,16 +237,21 @@ next:           while (results.next()) {
      * If a format already exists, then this method returns its identifier.
      * Otherwise a new format is created with the given driver and the bands.
      *
+     * @param  product      the product for which to search a format, or {@code null} for not using that criterion.
      * @param  driver       the name of the data store to use.
      * @param  bands        the sample dimensions to add to the database.
      * @param  suggestedID  suggested name if a new format needs to be inserted.
      * @return the actual format name.
      * @throws SQLException if an error occurred while writing to the database.
      */
-    final String findOrInsert(final String driver, final List<SampleDimension> bands, String suggestedID)
+    final String findOrInsert(final String product, final String driver, final List<SampleDimensionEntry> bands, String suggestedID)
             throws SQLException, DataStoreException
     {
-        String existing = search(driver, bands);
+        String existing = search(product, driver, bands);       // Give precedence to format associated to the same product.
+        if (existing != null) {
+            return existing;
+        }
+        existing = search(null, driver, bands);                 // Accept format from any product if exact match.
         if (existing != null) {
             return existing;
         }
@@ -243,7 +268,19 @@ next:           while (results.next()) {
             statement.setString(1, suggestedID);
             if (statement.executeUpdate() != 0) {
                 if (bands != null && !bands.isEmpty()) {
-                    sampleDimensions.insert(suggestedID, bands);
+                    if (sampleDimensions.insert(suggestedID, bands)) {
+                        /*
+                         * If the value we just inserted is approximate, set the boolean in "approximate" column.
+                         * It should happen only once per product, because after we have declared an approximate
+                         * format it should be used for next insertions of the same product.
+                         */
+                        try (PreparedStatement stmt = statement.getConnection().prepareStatement("UPDATE " +
+                                SCHEMA + ".\"" + TABLE + "\" SET \"approximate\" = TRUE WHERE \"name\" = ?"))
+                        {
+                            stmt.setString(1, suggestedID);
+                            stmt.executeUpdate();
+                        }
+                    }
                 }
                 return suggestedID;
             }

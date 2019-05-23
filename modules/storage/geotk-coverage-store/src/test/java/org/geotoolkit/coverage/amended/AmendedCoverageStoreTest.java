@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.amended;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.Collections;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
@@ -28,10 +29,9 @@ import org.apache.sis.referencing.cs.DefaultCartesianCS;
 import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.referencing.datum.DefaultImageDatum;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.memory.MemoryCoverageStore;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.util.NamesExt;
@@ -104,7 +104,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
 
         //decorate this coverage
         final AmendedCoverageStore decorated = new AmendedCoverageStore(store);
-        assertEquals(1,decorated.getNames().size());
+        assertEquals(1, DataStores.flatten(store, true, GridCoverageResource.class).size());
         final AmendedCoverageResource decoratedRef = (AmendedCoverageResource) decorated.findResource(name.toString());
         assertNotNull(decoratedRef);
         assertEquals(IMAGECRS, decoratedRef.getGridGeometry().getCoordinateReferenceSystem());
@@ -114,7 +114,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         decoratedRef.setOverrideCRS(CommonCRS.WGS84.normalizedGeographic());
         assertEquals(CommonCRS.WGS84.normalizedGeographic(), decoratedRef.getGridGeometry().getCoordinateReferenceSystem());
         assertEquals(new AffineTransform(), decoratedRef.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER));
-        GridCoverage coverage = decoratedRef.acquireReader().read(null);
+        GridCoverage coverage = decoratedRef.read(null);
         assertEquals(CommonCRS.WGS84.normalizedGeographic(), coverage.getCoordinateReferenceSystem());
     }
 
@@ -132,7 +132,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
 
         //decorate this coverage
         final AmendedCoverageStore decorated = new AmendedCoverageStore(store);
-        assertEquals(1,decorated.getNames().size());
+        assertEquals(1, DataStores.flatten(store, true, GridCoverageResource.class).size());
         final AmendedCoverageResource decoratedRef = (AmendedCoverageResource) decorated.findResource(name.toString());
         assertNotNull(decoratedRef);
         assertEquals(IMAGECRS, decoratedRef.getGridGeometry().getCoordinateReferenceSystem());
@@ -142,7 +142,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         decoratedRef.setOverrideGridToCrs(new AffineTransform2D(1, 0, 0, 1, 20, 20));
         assertEquals(IMAGECRS, decoratedRef.getGridGeometry().getCoordinateReferenceSystem());
         assertEquals(new AffineTransform2D(1, 0, 0, 1, 20, 20), decoratedRef.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER));
-        GridCoverage coverage = decoratedRef.acquireReader().read(null);
+        GridCoverage coverage = decoratedRef.read(null);
         assertEquals(IMAGECRS, coverage.getCoordinateReferenceSystem());
         assertEquals(new AffineTransform2D(1, 0, 0, 1, 20, 20), decoratedRef.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER));
     }
@@ -178,18 +178,16 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         decoratedRef.setOverrideGridToCrs(new AffineTransform2D(1, 0, 0, 1, 20, 30));
         assertEquals(overrideCrs, decoratedRef.getGridGeometry().getCoordinateReferenceSystem());
         assertEquals(new AffineTransform2D(1, 0, 0, 1, 20, 30), decoratedRef.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER));
-        GridCoverage decoratedCov = decoratedRef.acquireReader().read(null);
+        GridCoverage decoratedCov = decoratedRef.read(null);
         assertEquals(overrideCrs, decoratedCov.getCoordinateReferenceSystem());
         assertEquals(new AffineTransform2D(1, 0, 0, 1, 20, 30), decoratedRef.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER));
 
         //TODO this est is biazed : memory coverage store do not care about the features parameters
         //read an area
-        final GridCoverageReadParam param = new GridCoverageReadParam();
         final GeneralEnvelope env = new GeneralEnvelope(overrideCrs);
-        env.setRange(0, 0, 10);
-        env.setRange(1, 0, 10);
-        param.setEnvelope(env);
-        decoratedCov = decoratedRef.acquireReader().read(param);
+        env.setRange(0, -180, 180);
+        env.setRange(1, -90, 90);
+        decoratedCov = decoratedRef.read(decoratedRef.getGridGeometry().derive().subgrid(env).build());
         assertEquals(overrideCrs, decoratedCov.getCoordinateReferenceSystem());
         assertEquals(new AffineTransform2D(1, 0, 0, 1, 20, 30), decoratedRef.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER));
     }

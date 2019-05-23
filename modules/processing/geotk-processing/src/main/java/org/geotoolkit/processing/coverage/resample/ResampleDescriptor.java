@@ -18,14 +18,13 @@ package org.geotoolkit.processing.coverage.resample;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.simple.SimpleCitation;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
@@ -133,11 +132,11 @@ public class ResampleDescriptor extends AbstractProcessDescriptor {
     public static final String NAME = "coverage:resample";
 
     /**
-     * Convenience constant for the first source {@link GridCoverage2D}. The parameter name
+     * Convenience constant for the first source {@link GridCoverage}. The parameter name
      * is {@code "Source"} (as specified in OGC implementation specification) and the alias
      * is {@code "source0"} (for compatibility with <cite>Java Advanced Imaging</cite>).
      */
-    public static final ParameterDescriptor<GridCoverage2D> IN_COVERAGE;
+    public static final ParameterDescriptor<GridCoverage> IN_COVERAGE;
 
     /**
      * The parameter descriptor for the interpolation type.
@@ -193,7 +192,7 @@ public class ResampleDescriptor extends AbstractProcessDescriptor {
         final Map<String,Object> properties = new HashMap<>(4);
         properties.put(IdentifiedObject.NAME_KEY,  new NamedIdentifier(Citations.OGC, "Source"));
         properties.put(IdentifiedObject.ALIAS_KEY, new NamedIdentifier(new SimpleCitation("JAI"), "source0"));
-        IN_COVERAGE = new DefaultParameterDescriptor<>(properties, GridCoverage2D.class,
+        IN_COVERAGE = new DefaultParameterDescriptor<>(properties, GridCoverage.class,
                         null, null, null, null, null, true);
 
         INPUT_DESC = new ParameterBuilder().addName(NAME + "InputParameters").createGroup(

@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.measure.IncommensurableException;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -35,10 +36,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtilities;
@@ -48,8 +46,8 @@ import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -118,7 +116,7 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
      * Internal only, use setOutputCRS to recalculate output transform
      */
     private void createTransformOutput() throws FactoryException, IncommensurableException {
-        if (outputCrs != null){
+        if (outputCrs != null) {
             final CoordinateReferenceSystem crsImg = gridGeom.getCoordinateReferenceSystem();
             coverageToOutput = CRS.findOperation(crsImg, outputCrs, null).getMathTransform();
             try {
@@ -132,22 +130,19 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
     @Override
     public BufferedImage getBufferedImageOf(final Envelope outputEnv, final Dimension outputDimension) throws PortrayalException {
 
-        if(outputCrs == null){
+        if (outputCrs == null) {
             throw new PortrayalException("Output crs has not been set");
         }
 
-        if (!org.geotoolkit.referencing.CRS.equalsApproximatively(outputEnv.getCoordinateReferenceSystem(), outputCrs)){
+        if (!org.geotoolkit.referencing.CRS.equalsApproximatively(outputEnv.getCoordinateReferenceSystem(), outputCrs)) {
             this.setOutputCRS(outputEnv.getCoordinateReferenceSystem());
         }
 
-        try{
-            final GridCoverageReader reader = coverageRef.acquireReader();
-            final GridCoverageReadParam params = new GridCoverageReadParam();
-            params.setEnvelope(outputEnv);
-            try{
-                final GridCoverage2D coverage = (GridCoverage2D)reader.read(params);
+        try {
+            try {
+                final GridCoverage coverage = coverageRef.read(coverageRef.getGridGeometry().derive().subgrid(outputEnv).build());
                 return extractTileImage(outputEnv, coverage, outputToCoverage, outputDimension);
-            }catch(DisjointCoverageDomainException de){
+            } catch (DisjointCoverageDomainException de) {
                 //tile outside of the coverage, it's possible
                 //create a fake tile at minimum elevation
                 final BufferedImage img = BufferedImages.createImage(
@@ -156,16 +151,16 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
                 return img;
             }
 
-        }catch(Exception ex){
+        } catch(Exception ex) {
             throw new PortrayalException(ex);
         }
     }
 
     private static BufferedImage extractTileImage(final Envelope tileEnvelope,
-            final GridCoverage2D coverage, final MathTransform outputCRSToCoverageCRS,
+            final GridCoverage coverage, final MathTransform outputCRSToCoverageCRS,
             final Dimension tileSize) throws TransformException {
 
-        final RenderedImage dataRenderedImage = coverage.getRenderedImage();
+        final RenderedImage dataRenderedImage = coverage.render(null);
 
         if (dataRenderedImage == null) {
             return null;
@@ -174,7 +169,7 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
         final double targetTileWidth = tileSize.width;
         final double targetTileHeight = tileSize.height;
 
-        final MathTransform coverageCRSToImageGrid = coverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT).inverse();
+        final MathTransform coverageCRSToImageGrid = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER).inverse();
 
         final AffineTransform2D tileGridToOutputCRS = new AffineTransform2D(
                 tileEnvelope.getSpan(0)/targetTileWidth,

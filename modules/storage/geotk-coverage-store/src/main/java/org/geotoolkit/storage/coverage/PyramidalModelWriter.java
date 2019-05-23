@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
@@ -45,7 +46,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.AbstractGridCoverageWriter;
@@ -120,8 +120,8 @@ public class PyramidalModelWriter extends AbstractGridCoverageWriter {
             }
         }
 
-        if(requestedEnvelope == null){
-            requestedEnvelope = coverage.getEnvelope();
+        if (requestedEnvelope == null) {
+            requestedEnvelope = coverage.getGridGeometry().getEnvelope();
         }
 
         ArgumentChecks.ensureNonNull("requestedEnvelope", requestedEnvelope);

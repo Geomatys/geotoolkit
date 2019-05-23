@@ -112,7 +112,7 @@ final class ProductEntry extends Entry {
     /**
      * {@code true} if this product has been deleted.
      */
-    private boolean isDeleted;
+    private volatile boolean isDeleted;
 
     /**
      * Creates a new product.
@@ -204,10 +204,12 @@ final class ProductEntry extends Entry {
      * Fetches now the list of components if not already available.
      * This method should be invoked when the caller is going to invoke {@link #components()} soon.
      */
-    final synchronized void prefetch(final ProductTable table) throws SQLException, DataStoreException {
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
+    final synchronized List<ProductEntry> components(final ProductTable table) throws SQLException, DataStoreException {
         if (components == null) {
             components = table.list(name);
         }
+        return components;
     }
 
     /**
@@ -285,6 +287,10 @@ final class ProductEntry extends Entry {
         }
     }
 
+    /**
+     * Returns sample dimensions "global" to this product. Those sample dimensions may be slightly different than the
+     * sample dimensions returned {@link GridCoverage#getSampleDimensions()} if {@link FormatEntry#approximate} is true.
+     */
     public List<SampleDimension> getSampleDimensions() throws CatalogException {
         ensureValid();
         if (format != null) {
@@ -303,7 +309,6 @@ final class ProductEntry extends Entry {
         if (areaOfInterest == null) {
             areaOfInterest = getGridGeometry();
         }
-
         /*
          * Modify envelope: when we encounter a slice, use the median value instead of the slice width
          * to avoid multiple coverage occurence of coverages at envelope border intersections.
@@ -363,7 +368,7 @@ final class ProductEntry extends Entry {
      * Removes this product from the given database.
      */
     final void remove() throws DataStoreException {
-        try (final Transaction transaction = database.transaction()) {
+        try (Transaction transaction = database.transaction()) {
             transaction.writeStart();
             try (ProductTable table = new ProductTable(transaction)) {
                 removeCached(table);
@@ -379,12 +384,11 @@ final class ProductEntry extends Entry {
      * Removed recursively all cached values.
      */
     private void removeCached(final ProductTable table) throws SQLException, DataStoreException {
-        prefetch(table);
-        for (final ProductEntry c : components) {
-            c.removeCached(table);
-        }
         table.removeCached(name);
         isDeleted = true;
+        for (final ProductEntry c : components(table)) {
+            c.removeCached(table);
+        }
     }
 
     /**

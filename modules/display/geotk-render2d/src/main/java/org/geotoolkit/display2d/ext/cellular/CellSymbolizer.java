@@ -37,10 +37,10 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -223,13 +223,13 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         }
     }
 
-    public static FeatureType buildCellType(GridCoverage2D coverage){
+    public static FeatureType buildCellType(GridCoverage coverage){
         final List<SampleDimension> dims = coverage.getSampleDimensions();
         final String[] names = new String[dims.size()];
         for(int i=0;i<names.length;i++){
             names[i] = dims.get(i).getName().toString();
         }
-        return buildCellType(dims.size(), names, coverage.getCoordinateReferenceSystem2D());
+        return buildCellType(dims.size(), names, CRS.getHorizontalComponent(coverage.getCoordinateReferenceSystem()));
     }
 
     public static FeatureType buildCellType(int nbBand, String[] bandnames, CoordinateReferenceSystem crs){

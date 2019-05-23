@@ -60,17 +60,24 @@ final class FormatEntry extends Entry {
     private final String metadata;
 
     /**
+     * Whether the transfer functions are only approximations. If true, the actual functions must be fetched from the file.
+     */
+    final boolean approximate;
+
+    /**
      * Creates a new entry for this format.
      *
-     * @param driver    the format name (i.e. the plugin to use).
-     * @param bands     sample dimensions for coverages encoded with this format, or {@code null}.
-     *                  The bands given to this constructor shall <strong>not</strong> be geophysics.
-     * @param metadata  reference to an entry in the {@code metadata.Format} table, or {@code null}.
+     * @param driver       the format name (i.e. the plugin to use).
+     * @param bands        sample dimensions for coverages encoded with this format, or {@code null}.
+     *                     The bands given to this constructor shall <strong>not</strong> be geophysics.
+     * @param metadata     reference to an entry in the {@code metadata.Format} table, or {@code null}.
+     * @param approximate  Whether the transfer functions are only approximations.
      */
-    FormatEntry(String driver, final List<SampleDimension> bands, final String metadata) {
+    FormatEntry(String driver, final List<SampleDimension> bands, final String metadata, final boolean approximate) {
         driver = driver.trim();
         sampleDimensions = bands;
         this.metadata    = metadata;
+        this.approximate = approximate;
         for (DataStoreProvider provider : DataStores.providers()) {
             if (driver.equalsIgnoreCase(provider.getShortName())) {
                 this.provider = provider;

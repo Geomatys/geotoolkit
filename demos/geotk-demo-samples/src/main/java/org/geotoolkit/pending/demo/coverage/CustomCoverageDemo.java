@@ -6,9 +6,9 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.MapBuilder;
@@ -44,7 +44,7 @@ public class CustomCoverageDemo {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setEnvelope(env);
         gcb.setRenderedImage(img);
-        final GridCoverage2D coverage =gcb.getGridCoverage2D();
+        final GridCoverage coverage = gcb.getGridCoverage2D();
 
         //display it
         final MapContext context = MapBuilder.createContext();
