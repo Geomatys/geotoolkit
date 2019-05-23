@@ -196,6 +196,13 @@ public abstract class AbstractCoverageResource extends AbstractResource implemen
                 }
             }
         }
+        if (bounds == null) {
+            final GridGeometry gridGeometry = getGridGeometry();
+            if (gridGeometry != null && gridGeometry.isDefined(GridGeometry.ENVELOPE)) {
+                bounds = new GeneralEnvelope(gridGeometry.getEnvelope());
+            }
+        }
+
         return bounds;
     }
 
