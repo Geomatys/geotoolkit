@@ -41,7 +41,8 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import static org.apache.sis.referencing.operation.transform.MathTransforms.concatenate;
 import org.apache.sis.coverage.SampleDimension;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.geometry.GeometricUtilities;
@@ -80,11 +81,11 @@ public class Compose extends AbstractProcess {
         super(ComposeDescriptor.INSTANCE, input);
     }
 
-    public Compose(List<Entry<GridCoverage2D,Geometry[]>> layers, GridGeometry2D gridGeom) {
+    public Compose(List<Entry<GridCoverage,Geometry[]>> layers, GridGeometry2D gridGeom) {
         this(asParameters(layers,gridGeom));
     }
 
-    private static ParameterValueGroup asParameters(List<Entry<GridCoverage2D,Geometry[]>> layers, GridGeometry2D gridGeom){
+    private static ParameterValueGroup asParameters(List<Entry<GridCoverage,Geometry[]>> layers, GridGeometry2D gridGeom){
         final Parameters params = Parameters.castOrWrap(INPUT.createValue());
 
         final Parameters firstLayer = Parameters.castOrWrap(params.groups(LAYER_PARAM.getName().getCode()).get(0));
@@ -93,7 +94,7 @@ public class Compose extends AbstractProcess {
         firstLayer.getOrCreate(EXCLUDE_PARAM).setValue(layers.get(0).getValue()[1]);
 
         for (int i=1,n=layers.size();i<n;i++) {
-            final Entry<GridCoverage2D,Geometry[]> entry = layers.get(i);
+            final Entry<GridCoverage,Geometry[]> entry = layers.get(i);
             final Parameters layer = Parameters.castOrWrap(params.addGroup(LAYER_PARAM.getName().getCode()));
             layer.getOrCreate(COVERAGE_PARAM).setValue(entry.getKey());
             layer.getOrCreate(INCLUDE_PARAM).setValue(entry.getValue()[0]);
@@ -107,7 +108,7 @@ public class Compose extends AbstractProcess {
         return params;
     }
 
-    public GridCoverage2D executeNow() throws ProcessException {
+    public GridCoverage executeNow() throws ProcessException {
         execute();
         return outputParameters.getValue(ComposeDescriptor.COVERAGE_PARAM);
     }
@@ -121,7 +122,7 @@ public class Compose extends AbstractProcess {
         SampleDimension[] sampleDimensions = null;
 
         final int nbCoverage = imageParams.size();
-        final GridCoverage2D[] inGridCoverages = new GridCoverage2D[nbCoverage];
+        final GridCoverage[] inGridCoverages = new GridCoverage[nbCoverage];
         final PixelIterator[] inCursors = new PixelIterator[nbCoverage];
         final int[][] inSizes = new int[nbCoverage][2];
         final Geometry[] includeGeometries = new Geometry[nbCoverage];
@@ -130,16 +131,16 @@ public class Compose extends AbstractProcess {
         //extract coverages and geometries
         for (int i = 0; i < nbCoverage; i++) {
             final Parameters covParam = castOrWrap(imageParams.get(i));
-            final GridCoverage2D coverage = covParam.getValue(COVERAGE_PARAM);
+            final GridCoverage coverage = covParam.getValue(COVERAGE_PARAM);
 
             //extract image informations
             inGridCoverages[i] = coverage;
-            final RenderedImage covImg = coverage.getRenderedImage();
+            final RenderedImage covImg = coverage.render(null);
             inCursors[i] = PixelIterator.create(covImg);
             inSizes[i][0] = covImg.getWidth()-1;
             inSizes[i][1] = covImg.getHeight()-1;
             if (outImageReference == null) {
-                outImageReference = coverage.getRenderedImage();
+                outImageReference = coverage.render(null);
                 sampleDimensions = coverage.getSampleDimensions().toArray(new SampleDimension[0]);
             }
 
@@ -171,8 +172,9 @@ public class Compose extends AbstractProcess {
         final WritableRaster[] clips = new WritableRaster[nbCoverage];
 
         for (int i = 0; i < nbCoverage; i++) {
+            final GridGeometry2D g2d = GridGeometry2D.castOrCopy(inGridCoverages[i].getGridGeometry());
             final BufferedImage image = new BufferedImage(outWidth, outHeight, BufferedImage.TYPE_BYTE_BINARY);
-            final CoordinateReferenceSystem coverageCrs = inGridCoverages[i].getCoordinateReferenceSystem2D();
+            final CoordinateReferenceSystem coverageCrs = g2d.getCoordinateReferenceSystem2D();
             try {
                 MathTransform covCrstoOutCrs = CRS.findOperation(coverageCrs, outCrs, null).getMathTransform();
 
@@ -181,7 +183,7 @@ public class Compose extends AbstractProcess {
                 g.setTransform(outCrsToGrid); //convert to output grid crs
 
                 //set a clip to coverage envelope
-                Geometry clip = GeometricUtilities.toJTSGeometry(inGridCoverages[i].getEnvelope(), WrapResolution.NONE);
+                Geometry clip = GeometricUtilities.toJTSGeometry(g2d.getEnvelope(), WrapResolution.NONE);
                 clip.setUserData(coverageCrs);
                 g.setClip(new JTSGeometryJ2D(clip,covCrstoOutCrs));
 
@@ -215,9 +217,10 @@ public class Compose extends AbstractProcess {
         final GridFactory gf = new GridFactory(0.3);
         for (int i = 0; i < nbCoverage; i++) {
             try {
-                final CoordinateReferenceSystem sourceCrs = inGridCoverages[i].getCoordinateReferenceSystem2D();
+                final GridGeometry2D g2d = GridGeometry2D.castOrCopy(inGridCoverages[i].getGridGeometry());
+                final CoordinateReferenceSystem sourceCrs = g2d.getCoordinateReferenceSystem2D();
                 final MathTransform outCrsToSourceCrs = CRS.findOperation(outCrs, sourceCrs, null).getMathTransform();
-                final MathTransform sourceCrsToGrid = inGridCoverages[i].getGridGeometry().getGridToCRS2D().inverse();
+                final MathTransform sourceCrsToGrid = g2d.getGridToCRS2D().inverse();
 
                 final MathTransform tmpTr = concatenate(
                         outGridToCrs,
@@ -275,30 +278,30 @@ public class Compose extends AbstractProcess {
         gcb.setGridGeometry(outGridGeom);
         if (sampleDimensions!=null) gcb.setSampleDimensions(sampleDimensions);
 
-        final GridCoverage2D gridCoverage2d = gcb.getGridCoverage2D();
+        final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
         final ParameterValue<?> gridCoverageParamOut = outputParameters.parameter(COVERAGE_PARAM.getName().getCode());
         gridCoverageParamOut.setValue(gridCoverage2d);
     }
 
 
-    private static GridGeometry2D getOutputGridGeometry(GridCoverage2D[] coverages) throws TransformException {
+    private static GridGeometry2D getOutputGridGeometry(GridCoverage[] coverages) throws TransformException {
 
         //select the first coverage CRS as output crs
         //todo : use a better algorithm to find best crs
-        final GeneralEnvelope envelope = new GeneralEnvelope(coverages[0].getGridGeometry().getEnvelope2D());
+        final GeneralEnvelope envelope = new GeneralEnvelope(GridGeometry2D.castOrCopy(coverages[0].getGridGeometry()).getEnvelope2D());
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
 
         //compute most accurate resolution for this crs
         final double[] resolution = {Double.POSITIVE_INFINITY,Double.POSITIVE_INFINITY};
 
-        for (GridCoverage2D coverage : coverages) {
-            final GridGeometry2D gridGeometry = coverage.getGridGeometry();
+        for (GridCoverage coverage : coverages) {
+            final GridGeometry gridGeometry = coverage.getGridGeometry();
             double[] res = null;
             try {
                 res = gridGeometry.getResolution(true);
             } catch (IncompleteGridGeometryException ex) {
             }
-            final Envelope2D covEnv = gridGeometry.getEnvelope2D();
+            final Envelope2D covEnv = GridGeometry2D.castOrCopy(gridGeometry).getEnvelope2D();
 
             final double[] cdtRes = ReferencingUtilities.convertResolution(covEnv, res, crs);
             resolution[0] = Math.min(resolution[0], cdtRes[0]);

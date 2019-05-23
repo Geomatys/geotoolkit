@@ -21,18 +21,19 @@ import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.io.LEDataOutputStream;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.FactoryException;
 
 /**
@@ -58,7 +59,7 @@ public class WKBRasterWriter {
      * @return byte[] encoded image
      * @throws IOException
      */
-    public byte[] write(final GridCoverage2D coverage) throws IOException, FactoryException {
+    public byte[] write(final GridCoverage coverage) throws IOException, FactoryException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         write(coverage, out);
         return out.toByteArray();
@@ -71,7 +72,7 @@ public class WKBRasterWriter {
      * @param stream : output stream to write in
      * @throws IOException
      */
-    public void write(final GridCoverage2D coverage, final OutputStream stream) throws IOException, FactoryException {
+    public void write(final GridCoverage coverage, final OutputStream stream) throws IOException, FactoryException {
         write(coverage, stream, true);
     }
 
@@ -83,18 +84,19 @@ public class WKBRasterWriter {
      * @param littleEndian : wanted value encoding
      * @throws IOException
      */
-    public void write(final GridCoverage2D coverage, final OutputStream stream, final boolean littleEndian)
+    public void write(final GridCoverage coverage, final OutputStream stream, final boolean littleEndian)
             throws IOException, FactoryException {
-        final CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem2D();
+        final GridGeometry gridGeometry = coverage.getGridGeometry();
+        final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
         final Integer srid = IdentifiedObjects.lookupEPSG(crs);
-        if(srid == null){
+        if (srid == null) {
             throw new IOException("CoordinateReferenceSystem does not have an EPSG code.");
         }
-        final MathTransform2D gridToCRS = coverage.getGridGeometry().getGridToCRS2D();
-        if(!(gridToCRS instanceof AffineTransform)){
+        final MathTransform gridToCRS = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER);
+        if (!(gridToCRS instanceof AffineTransform)) {
             throw new IOException("Coverage GridToCRS transform is not affine.");
         }
-        final RenderedImage image = coverage.getRenderedImage();
+        final RenderedImage image = coverage.render(null);
 
         write(image, (AffineTransform)gridToCRS, srid, stream);
     }

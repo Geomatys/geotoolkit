@@ -31,6 +31,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
@@ -44,7 +45,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -191,9 +191,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
         final Collection<GridCoverageResource> references = getCoverages(null);
         if (!references.isEmpty()) {
             final GridCoverageResource ref = references.iterator().next();
-            GridCoverageReader reader = ref.acquireReader();
-            sampleDimensions = reader.getSampleDimensions();
-            ref.recycle(reader);
+            sampleDimensions = ref.getSampleDimensions();
         }
 
         return sampleDimensions;

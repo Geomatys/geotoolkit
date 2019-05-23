@@ -32,6 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -59,6 +60,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -71,7 +73,7 @@ import org.opengis.util.GenericName;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
-public class WMSCoverageResource extends AbstractCoverageResource{
+public class WMSCoverageResource extends AbstractCoverageResource {
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
 
@@ -424,17 +426,13 @@ public class WMSCoverageResource extends AbstractCoverageResource{
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        final GridCoverageReader reader = acquireReader();
-        try {
-            return reader.getGridGeometry();
-        } finally {
-            recycle(reader);
-        }
+        //we only know the envelope,
+        return new GridGeometry(PixelInCell.CELL_CENTER, null, getBounds(), GridRoundingMode.ENCLOSING);
     }
 
     @Override
-    public synchronized GridCoverageReader acquireReader() throws CoverageStoreException{
-        if(reader == null){
+    public synchronized GridCoverageReader acquireReader() throws CoverageStoreException {
+        if (reader == null) {
             reader = new WMSCoverageReader(this);
         }
         return reader;

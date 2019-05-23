@@ -24,9 +24,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.vecmath.Point3d;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.geometry.jts.JTS;
@@ -42,6 +42,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 
 import static org.geotoolkit.processing.coverage.isoline.IsolineDescriptor.*;
 
@@ -58,12 +59,13 @@ public class Isoline extends AbstractProcess {
 
     @Override
     protected void execute() throws ProcessException {
-        final GridCoverage2D coverage = inputParameters.getValue(COVERAGE);
+        final GridCoverage coverage = inputParameters.getValue(COVERAGE);
         final double[] intervals = inputParameters.getValue(INTERVALS);
 
-        final CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem2D();
-        final RenderedImage image = coverage.getRenderedImage();
-        final MathTransform2D trs = coverage.getGridGeometry().getGridToCRS2D();
+        final GridGeometry2D g2d = GridGeometry2D.castOrCopy(coverage.getGridGeometry());
+        final CoordinateReferenceSystem crs = g2d.getCoordinateReferenceSystem2D();
+        final RenderedImage image = coverage.render(null);
+        final MathTransform2D trs = g2d.getGridToCRS2D();
 
         final IsolineCreator creator = new IsolineCreator(image, intervals);
         final Map<Point3d, List<Coordinate>> steps = creator.createIsolines();

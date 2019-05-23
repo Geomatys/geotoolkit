@@ -9,6 +9,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -38,10 +39,10 @@ public class WMTSClientDemo {
                 new URL("http://localhost:8080/constellation/WS/wmts/test"),
                 WMTSVersion.v100);
 
-        for(final GenericName n : server.getNames()){
+        for(final Resource ref : DataStores.flatten(server, false)){
+            final GenericName n = ref.getIdentifier();
             System.out.println(n);
 
-            final Resource ref = server.findResource(n.toString());
             final MapLayer layer = MapBuilder.createCoverageLayer(
                     ref,
                     new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));

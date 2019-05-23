@@ -91,7 +91,7 @@ public strictfp class AsciiGridReaderTest extends TextImageReaderTestBase {
             "│       └───high=“19 41”\n" +
             "├───SpatialRepresentation\n" +
             "│   ├───numberOfDimensions=“2”\n" +
-            "│   ├───centerPoint=“0.0 0.0”\n" +
+            "│   ├───centrePoint=“0.0 0.0”\n" +
             "│   └───pointInPixel=“center”\n" +
             "└───ImageDescription\n" +
             "    └───Dimensions\n" +
@@ -122,7 +122,7 @@ public strictfp class AsciiGridReaderTest extends TextImageReaderTestBase {
             "│       └───high=“19 41”\n" +
             "├───SpatialRepresentation\n" +
             "│   ├───numberOfDimensions=“2”\n" +
-            "│   ├───centerPoint=“0.0 0.0”\n" +
+            "│   ├───centrePoint=“0.0 0.0”\n" +
             "│   └───pointInPixel=“center”\n" +
             "└───ImageDescription\n" +
             "    └───Dimensions\n" +

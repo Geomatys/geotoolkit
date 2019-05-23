@@ -66,7 +66,6 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -147,7 +146,7 @@ public final class DefaultPortrayalService implements PortrayalService{
      * @param canvasDimension : size of the wanted image
      * @return resulting image of the portraying operation
      */
-    public static Image portray(final GridCoverage2D coverage, final Envelope mapArea,
+    public static Image portray(final GridCoverage coverage, final Envelope mapArea,
             final Dimension canvasDimension, final boolean strechImage)
             throws PortrayalException{
 
@@ -163,7 +162,7 @@ public final class DefaultPortrayalService implements PortrayalService{
      * @param canvasDimension : size of the wanted image
      * @return resulting image of the portraying operation
      */
-    public static BufferedImage portray(final GridCoverage2D coverage, final Rectangle2D mapArea,
+    public static BufferedImage portray(final GridCoverage coverage, final Rectangle2D mapArea,
             final Dimension canvasDimension, final boolean strechImage)
             throws PortrayalException{
 
@@ -512,7 +511,7 @@ public final class DefaultPortrayalService implements PortrayalService{
                 final GridCoverageBuilder gcb = new GridCoverageBuilder();
                 gcb.setEnvelope(env);
                 gcb.setRenderedImage(image);
-                final GridCoverage2D coverage = gcb.getGridCoverage2D();
+                final GridCoverage coverage = gcb.getGridCoverage2D();
                 writeCoverage(coverage, env, resolution, outputDef,null);
             }else{
                 try {
@@ -990,7 +989,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         }
     }
 
-    private static MapContext convertCoverage(final GridCoverage2D coverage){
+    private static MapContext convertCoverage(final GridCoverage coverage){
         final MutableStyle style = STYLE_FACTORY.style(STYLE_FACTORY.rasterSymbolizer());
         final MapLayer layer = MapBuilder.createCoverageLayer(coverage, style,"coveragename");
 

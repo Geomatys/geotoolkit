@@ -22,20 +22,21 @@ import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -48,11 +49,9 @@ import org.controlsfx.control.StatusBar;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.gui.javafx.crs.CRSButton;
-import org.geotoolkit.gui.javafx.crs.FXAxisView;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
-import org.geotoolkit.temporal.object.TemporalConstants;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
@@ -78,18 +77,9 @@ public class FXCoordinateBar extends GridPane {
                 //range slider
                 final Date[] range = map.getCanvas().getTemporalRange();
                 if(range==null){
-                    sliderview.rangeMinProperty().set(null);
-                    sliderview.rangeMaxProperty().set(null);
+                    //TODO
                 }else{
-                    final boolean wasNull = sliderview.rangeMinProperty().get() == null;
-                    final double min = range[0].getTime();
-                    final double max = range[1]!=null ? range[1].getTime() : min;
-                    sliderview.rangeMinProperty().set(min);
-                    sliderview.rangeMaxProperty().set(max);
-                    if(wasNull){
-                        //zoom on selection
-                        sliderview.moveTo((max+min/2.0));
-                    }
+                    //TODO
                 }
             }
 
@@ -126,8 +116,7 @@ public class FXCoordinateBar extends GridPane {
     private final ComboBox scaleCombo = new ComboBox();
     private final ColorPicker colorPicker = new ColorPicker(Color.WHITE);
     private final CRSButton crsButton = new CRSButton();
-    private final ToggleButton sliderButton = new ToggleButton(null, new ImageView(GeotkFX.ICON_SLIDERS));
-    private final FXAxisView sliderview = new FXAxisView();
+    private final DatePicker datePicker = new DatePicker();
 
     public FXCoordinateBar(FXMap map) {
         this.map = map;
@@ -146,43 +135,30 @@ public class FXCoordinateBar extends GridPane {
         getColumnConstraints().addAll(col0);
         getRowConstraints().addAll(row0,row1);
 
-        sliderview.scaleProperty().set( (1.0/TemporalConstants.DAY_MS)*30 );
-        sliderview.visibleProperty().bind(sliderButton.selectedProperty());
-        sliderButton.setOnAction((ActionEvent event) -> {
-            getChildren().remove(sliderview);
-            if(sliderButton.isSelected()){
-                add(sliderview, 0, 0, 1, 1);
+        datePicker.valueProperty().addListener(new ChangeListener<LocalDate>() {
+            @Override
+            public void changed(ObservableValue<? extends LocalDate> observable, LocalDate oldValue, LocalDate newValue) {
+                try {
+                    if (newValue != null) {
+                        final LocalDate date = newValue;
+                        final int year = date.get(ChronoField.YEAR);
+                        final int day = date.get(ChronoField.DAY_OF_YEAR);
+                        final Calendar cal = Calendar.getInstance();
+                        cal.setTimeInMillis(0);
+                        cal.set(Calendar.YEAR, year);
+                        cal.set(Calendar.DAY_OF_YEAR, day);
+                        final Date dt = cal.getTime();
+                        map.getCanvas().setTemporalRange(dt, dt);
+                    } else {
+                        map.getCanvas().setTemporalRange(null, null);
+                    }
+                } catch (TransformException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 
-        final ChangeListener rangeListener = new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                try {
-                    if(newValue==null){
-                        map.getCanvas().setTemporalRange(null,null);
-                    }else{
-                        Number minValue = sliderview.rangeMinProperty().get();
-                        Number maxValue = sliderview.rangeMaxProperty().get();
-                        if(minValue!=null && maxValue!=null && minValue.doubleValue() > maxValue.doubleValue()){
-                            //avoid an invalid range
-                            maxValue = minValue;
-                        }
-                        map.getCanvas().setTemporalRange(
-                                minValue!=null ? new Date(minValue.longValue()) : null,
-                                maxValue!=null ? new Date(maxValue.longValue()) : null);
-                    }
-                } catch (TransformException ex) {
-                    Loggers.JAVAFX.log(Level.INFO, ex.getMessage(), ex);
-                }
-            }
-        };
-
-        sliderview.rangeMinProperty().addListener(rangeListener);
-        sliderview.rangeMaxProperty().addListener(rangeListener);
-
-
-        statusBar.getLeftItems().add(sliderButton);
+        statusBar.getLeftItems().add(datePicker);
 
         scaleCombo.getItems().addAll(  1000l,
                                  5000l,
@@ -225,7 +201,7 @@ public class FXCoordinateBar extends GridPane {
         });
 
         // Set button tooltips
-        sliderButton.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "temporalTooltip")));
+        datePicker.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "temporalTooltip")));
         statusBar.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "coordinateTooltip")));
         scaleCombo.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "scaleTooltip")));
         colorPicker.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "bgColorTooltip")));
@@ -242,15 +218,6 @@ public class FXCoordinateBar extends GridPane {
 
     public boolean isCrsButtonVisible(){
         return crsButton.isVisible();
-    }
-
-    /**
-     * TODO change this, we should be able to control multiple crs axis at the same time.
-     *
-     * @return temporal axis crs viewer
-     */
-    public FXAxisView getSliderview() {
-        return sliderview;
     }
 
     /**

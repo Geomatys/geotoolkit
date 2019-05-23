@@ -79,18 +79,33 @@ final class ProductSubset extends AbstractGridResource {
         return product.createIdentifier("subset");      // TODO: need a unique name.
     }
 
+    /**
+     * @todo need to build a grid geometry representative of all entries.
+     */
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
         return representative.getGridGeometry();
     }
 
+    /**
+     * @todo need to build sample dimensions representative of all entries.
+     */
     @Override
     public List<SampleDimension> getSampleDimensions() throws DataStoreException {
         return representative.getSampleDimensions();
     }
 
+    /**
+     * @todo we should search here which entry is the best fit for the request.
+     */
     @Override
     public GridCoverage read(final GridGeometry targetGeometry, final int... bands) throws DataStoreException {
-        return representative.coverage(targetGeometry, bands);
+        try {
+            return representative.coverage(targetGeometry, bands);
+        } catch (DataStoreException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new DataStoreException(e);
+        }
     }
 }

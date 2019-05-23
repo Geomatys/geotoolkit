@@ -160,19 +160,21 @@ COMMENT ON VIEW rasters."BoundingBoxes" IS 'Comparison between the calculated en
 -- Requires the "metadata" schema to be created and populated before this "rasters" schema.
 --
 CREATE TABLE rasters."Formats" (
-    "name"     VARCHAR(120) NOT NULL PRIMARY KEY,
-    "driver"   VARCHAR(120) NOT NULL,
-    "metadata" VARCHAR(15),
+    "name"        VARCHAR(120) NOT NULL PRIMARY KEY,
+    "driver"      VARCHAR(120) NOT NULL,
+    "metadata"    VARCHAR(15),
+    "approximate" BOOLEAN      NOT NULL DEFAULT FALSE,
     CONSTRAINT "Reference to ISO metadata" FOREIGN KEY ("metadata")
         REFERENCES metadata."Format" ("ID")
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 );
 
-COMMENT ON TABLE  rasters."Formats"            IS 'Raster formats. Each format is associated to an arbitrary number of SampleDimensions.';
-COMMENT ON COLUMN rasters."Formats"."name"     IS 'Unique name of the format to be used as an identifier.';
-COMMENT ON COLUMN rasters."Formats"."driver"   IS 'Name of the driver to use for decoding the rasters. Examples: GeoTIFF, NetCDF.';
-COMMENT ON COLUMN rasters."Formats"."metadata" IS 'Reference to additional information about the format.';
+COMMENT ON TABLE  rasters."Formats"               IS 'Raster formats. Each format is associated to an arbitrary number of SampleDimensions.';
+COMMENT ON COLUMN rasters."Formats"."name"        IS 'Unique name of the format to be used as an identifier.';
+COMMENT ON COLUMN rasters."Formats"."driver"      IS 'Name of the driver to use for decoding the rasters. Examples: GeoTIFF, NetCDF.';
+COMMENT ON COLUMN rasters."Formats"."metadata"    IS 'Reference to additional information about the format.';
+COMMENT ON COLUMN rasters."Formats"."approximate" IS 'Whether the transfer functions are only approximations. If true, the actual functions must be fetched from the file.';
 
 INSERT INTO rasters."Formats" ("name", "driver", "metadata") VALUES
   ('PNG',  'Image:PNG',  'PNG'),

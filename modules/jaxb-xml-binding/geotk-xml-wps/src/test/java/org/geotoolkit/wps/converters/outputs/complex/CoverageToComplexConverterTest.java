@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
@@ -43,9 +43,9 @@ public class CoverageToComplexConverterTest extends AbstractWPSConverterTest {
     @org.junit.Ignore("Fails randomly because of GeoTIFF reader not found.")
     public void testConversion() throws UnconvertibleObjectException, IOException  {
 
-        final WPSObjectConverter<GridCoverage2D, Data> converter = WPSConverterRegistry.getInstance().getConverter(GridCoverage2D.class, Data.class);
+        final WPSObjectConverter<GridCoverage, Data> converter = WPSConverterRegistry.getInstance().getConverter(GridCoverage.class, Data.class);
 
-        final GridCoverage2D coverage = ConvertersTestUtils.makeCoverage();
+        final GridCoverage coverage = ConvertersTestUtils.makeCoverage();
         final Map<String, Object> param = new HashMap<String, Object>();
         param.put(WPSObjectConverter.MIME, WPSMimeType.IMG_GEOTIFF.val());
         param.put(WPSObjectConverter.ENCODING, "base64");

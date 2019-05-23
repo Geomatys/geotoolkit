@@ -17,25 +17,22 @@
 package org.geotoolkit.display2d.primitive;
 
 import java.util.logging.Level;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.apache.sis.storage.GridCoverageResource;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
@@ -52,7 +49,7 @@ import org.opengis.geometry.Envelope;
  */
 public class ProjectedCoverage implements ProjectedObject<MapLayer> {
 
-    private final Cache<GridCoverageReadParam, GridCoverage2D> cache = new Cache<>(1, 0, false);
+    private final Cache<GridGeometry, GridCoverage> cache = new Cache<>(1, 0, false);
 
     private final StatelessContextParams params;
     private final MapLayer layer;
@@ -84,45 +81,31 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
     /**
      * Return internal coverage.
      *
-     * TODO return a GridCoverage instead of GridCoverage2D ?
+     * @param param : expected output geometry.
+     * @return A coverage covering requested area, or at least a piece of it, in case queried area is not completely
+     * contained in this data. Never null.
      *
-     * @param param : expected coverage parameters
-     * @return GridCoverage2D or {@code null} if the requested parameters are out of the coverage area.
-     *
-     * @throws CoverageStoreException if problem during {@link GridCoverageResource#acquireReader() }
-     * or {@link GridCoverageReader#dispose() } call.
+     * @throws DataStoreException if reading fails for specified geometry. The error can be a {@link org.apache.sis.coverage.grid.DisjointExtentException}
+     * if queried area is completely outside this coverage extent.
      */
-    public GridCoverage2D getCoverage(final GridCoverageReadParam param) throws DataStoreException {
-        GridCoverage2D value = cache.peek(param);
+    public GridCoverage getCoverage(final GridGeometry param) throws DataStoreException {
+        GridCoverage value = cache.peek(param);
         if (value == null) {
-            Cache.Handler<GridCoverage2D> handler = cache.lock(param);
+            Cache.Handler<GridCoverage> handler = cache.lock(param);
             try {
                 value = handler.peek();
                 if (value == null) {
                     Resource resource = layer.getResource();
                     if (resource instanceof GridCoverageResource) {
-                        final GridCoverageResource ref = (GridCoverageResource) resource;
-                        final GridCoverageReader reader = ref.acquireReader();
-                        try {
-                            GridCoverage result = reader.read(param);
-                            if (result instanceof GridCoverageStack) {
-                                Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, "Coverage reader return more than one slice.");
-                            }
-                            while (result instanceof GridCoverageStack) {
-                                //pick the first slice
-                                result = (GridCoverage) ((GridCoverageStack)result).coverageAtIndex(0);
-                            }
-                            value = (GridCoverage2D) result;
-                            ref.recycle(reader);
-                        } catch (DisjointCoverageDomainException ex) {
-                            //-- DisjointCoverageDomainException is return when we request area out of source boundary.
-                            //-- it's an expected comportement
-                            //-- this method will return null in accordance with its contract.
-                            ref.recycle(reader);
-                        } catch (Throwable e) {
-                            reader.dispose();
-                            throw e;
+                        GridCoverage result = ((GridCoverageResource)resource).read(param);
+                        if (result instanceof GridCoverageStack) {
+                            Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, "Coverage reader return more than one slice.");
                         }
+                        while (result instanceof GridCoverageStack) {
+                            //pick the first slice
+                            result = ((GridCoverageStack)result).coverageAtIndex(0);
+                        }
+                        value = result;
                     }
                 }
             } finally {
@@ -154,14 +137,14 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
      *
      * @throws CoverageStoreException
      */
-    public GridCoverage2D getElevationCoverage(final GridCoverageReadParam param) throws DataStoreException {
+    public GridCoverage getElevationCoverage(final GridGeometry param) throws DataStoreException {
         ElevationModel elevationModel = layer.getElevationModel();
         if(elevationModel == null){
              elevationModel = (ElevationModel) params.context.getRenderingHints().get(GO2Hints.KEY_ELEVATION_MODEL);
         }
 
         if(elevationModel != null){
-            return (GridCoverage2D) elevationModel.getCoverageReader().read(param);
+            return elevationModel.getCoverageReader().read(param);
         }else{
             return null;
         }

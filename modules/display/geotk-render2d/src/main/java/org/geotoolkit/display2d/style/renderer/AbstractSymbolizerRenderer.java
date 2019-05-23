@@ -21,6 +21,8 @@ import java.awt.RenderingHints;
 import java.util.Iterator;
 import java.util.logging.Logger;
 import javax.measure.Unit;
+
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;

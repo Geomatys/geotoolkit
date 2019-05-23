@@ -31,6 +31,7 @@ import org.junit.*;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.gui.swing.tree.Trees;
 import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.widget.SwingAssertions.*;
 
 
 /**

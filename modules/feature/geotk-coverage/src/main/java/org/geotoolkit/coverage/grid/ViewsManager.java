@@ -165,10 +165,10 @@ scan:   for (int i=0,n=dims.size(); i<n; i++) {
     static ViewsManager create(final GridCoverage2D coverage) {
         final Class<? extends GridCoverage2D> viewClass = coverage.getViewClass();
         if (viewClass != null) {
-            Collection<GridCoverage> sources = coverage.getSources();
+            Collection<org.apache.sis.coverage.grid.GridCoverage> sources = coverage.getSources();
             while (sources != null) {
-                Collection<GridCoverage> next = null;
-                for (final GridCoverage source : sources) {
+                Collection<org.apache.sis.coverage.grid.GridCoverage> next = null;
+                for (final org.apache.sis.coverage.grid.GridCoverage source : sources) {
                     if (source instanceof GridCoverage2D) {
                         final GridCoverage2D candidate = (GridCoverage2D) source;
                         if (Objects.equals(coverage.image,                 candidate.image)            &&
@@ -180,7 +180,10 @@ scan:   for (int i=0,n=dims.size(); i<n; i++) {
                             return candidate.copyViewsTo(coverage);
                         }
                     }
-                    final Collection<GridCoverage> more = source.getSources();
+                    Collection<org.apache.sis.coverage.grid.GridCoverage> more = null;
+                    if (source instanceof GridCoverage) {
+                        more = ((GridCoverage) source).getSources();
+                    }
                     if (!isNullOrEmpty(more)) {
                         if (next == null) {
                             next = new LinkedHashSet<>(more);

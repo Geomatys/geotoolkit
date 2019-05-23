@@ -347,10 +347,10 @@ final class MetadataProxy<T> implements InvocationHandler {
                     final int dim = (Integer) arg;
                     if (proxy instanceof GridEnvelope) {
                         switch (methodName) {
-                            case "getLow":  return getAttributeAsInteger("low",  dim);
-                            case "getHigh": return getAttributeAsInteger("high", dim);
-                            case "getSpan": return getAttributeAsInteger("high", dim) -
-                                                   getAttributeAsInteger("low",  dim) + 1;
+                            case "getLow":  return (long) getAttributeAsInteger("low",  dim);
+                            case "getHigh": return (long) getAttributeAsInteger("high", dim);
+                            case "getSize": return (long) getAttributeAsInteger("high", dim) -
+                                                   (long) getAttributeAsInteger("low",  dim) + 1;
                         }
                     }
                 }

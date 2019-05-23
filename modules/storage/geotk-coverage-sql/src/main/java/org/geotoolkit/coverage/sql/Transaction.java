@@ -44,7 +44,7 @@ final class Transaction implements AutoCloseable {
     /**
      * Creates a new instance.
      */
-    Transaction(final Database database, final Connection connection){
+    Transaction(final Database database, final Connection connection) {
         this.database   = database;
         this.connection = connection;
     }
@@ -72,10 +72,11 @@ final class Transaction implements AutoCloseable {
      */
     @Override
     public void close() throws SQLException {
-        if (writing) {
-            connection.rollback();
-            writing = false;
+        try (Connection c = connection) {
+            if (writing) {
+                c.rollback();
+                writing = false;
+            }
         }
-        connection.close();
     }
 }

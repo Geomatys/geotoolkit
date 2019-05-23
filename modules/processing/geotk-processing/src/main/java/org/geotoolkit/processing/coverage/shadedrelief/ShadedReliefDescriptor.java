@@ -17,8 +17,8 @@
 
 package org.geotoolkit.processing.coverage.shadedrelief;
 
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -44,22 +44,22 @@ public class ShadedReliefDescriptor extends AbstractProcessDescriptor {
      */
     public static final String IN_COVERAGE_PARAM_NAME = "inCoverage";
     public static final InternationalString IN_COVERAGE_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_shadedrelief_inCoverage);
-    public static final ParameterDescriptor<GridCoverage2D> COVERAGE = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage> COVERAGE = new ParameterBuilder()
             .addName(IN_COVERAGE_PARAM_NAME)
             .setRemarks(IN_COVERAGE_PARAM_REMARKS)
             .setRequired(true)
-            .create(GridCoverage2D.class, null);
+            .create(GridCoverage.class, null);
 
     /*
      * Coverage elevation
      */
     public static final String IN_ELEVATION_PARAM_NAME = "inElevation";
     public static final InternationalString IN_ELEVATION_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_shadedrelief_inElevation);
-    public static final ParameterDescriptor<GridCoverage2D> ELEVATION = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage> ELEVATION = new ParameterBuilder()
             .addName(IN_ELEVATION_PARAM_NAME)
             .setRemarks(IN_ELEVATION_PARAM_REMARKS)
             .setRequired(true)
-            .create(GridCoverage2D.class, null);
+            .create(GridCoverage.class, null);
 
     /*
      * Coverage elevation value to meters
@@ -81,11 +81,11 @@ public class ShadedReliefDescriptor extends AbstractProcessDescriptor {
      */
     public static final String OUT_COVERAGE_PARAM_NAME = "outCoverage";
     public static final InternationalString OUT_COVERAGE_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_shadedrelief_outCoverage);
-    public static final ParameterDescriptor<GridCoverage2D> OUTCOVERAGE = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage> OUTCOVERAGE = new ParameterBuilder()
             .addName(OUT_COVERAGE_PARAM_NAME)
             .setRemarks(OUT_COVERAGE_PARAM_REMARKS)
             .setRequired(true)
-            .create(GridCoverage2D.class, null);
+            .create(GridCoverage.class, null);
 
     /**Output parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder().addName("OutputParameters").createGroup(OUTCOVERAGE);

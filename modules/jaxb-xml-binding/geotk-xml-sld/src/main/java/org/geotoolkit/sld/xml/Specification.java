@@ -24,20 +24,45 @@ package org.geotoolkit.sld.xml;
  */
 public final class Specification {
 
-    public enum Filter{
+    public enum Filter {
         V_1_0_0,
         V_1_1_0,
-        V_2_0_0
+        V_2_0_0;
+
+        public static Filter version(String version) {
+            switch (version) {
+                case "1.0.0" : return V_1_0_0;
+                case "1.1.0" : return V_1_1_0;
+                case "2.0.0" : return V_2_0_0;
+                default: throw new IllegalArgumentException("Unknown version "+version);
+            }
+        }
     }
 
-    public enum SymbologyEncoding{
+    public enum SymbologyEncoding {
         SLD_1_0_0,
-        V_1_1_0
+        V_1_1_0;
+
+        public static SymbologyEncoding version(String version) {
+            switch (version) {
+                case "1.0.0" : return SLD_1_0_0;
+                case "1.1.0" : return V_1_1_0;
+                default: throw new IllegalArgumentException("Unknown version "+version);
+            }
+        }
     }
 
-    public enum StyledLayerDescriptor{
+    public enum StyledLayerDescriptor {
         V_1_0_0,
-        V_1_1_0
+        V_1_1_0;
+
+        public static StyledLayerDescriptor version(String version) {
+            switch (version) {
+                case "1.0.0" : return V_1_0_0;
+                case "1.1.0" : return V_1_1_0;
+                default: throw new IllegalArgumentException("Unknown version "+version);
+            }
+        }
     }
 
 }

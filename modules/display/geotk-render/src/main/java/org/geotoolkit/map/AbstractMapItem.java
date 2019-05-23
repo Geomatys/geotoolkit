@@ -19,8 +19,12 @@ package org.geotoolkit.map;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
+
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.style.StyleConstants;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.measure.NumberRange;
@@ -261,4 +265,18 @@ public abstract class AbstractMapItem implements MapItem {
         return buf.toString();
     }
 
+    /**
+     * Try to affect this object {@link #name} property with given resource {@link Resource#getIdentifier() identifier}.
+     * Note that if an error occurs while accessing the resource identifier, a log is triggered, and we fail silently
+     * (name not affected, no error thrown).
+     *
+     * @param input The resource to get name from. Must not be null.
+     */
+    protected final void trySetName(final Resource input) {
+        try {
+            setName(input.getIdentifier().toString());
+        } catch (DataStoreException e) {
+            LOGGER.log(Level.WARNING, "Cannot extract identifier from a resource", e);
+        }
+    }
 }

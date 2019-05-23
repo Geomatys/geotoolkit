@@ -24,7 +24,7 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -47,7 +47,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public class StatefullMapLayerJ2D<T extends MapLayer> extends StatefullMapItemJ2D<T> {
 
-    protected volatile GridCoverage2D buffer = null;
+    protected volatile GridCoverage buffer = null;
     private volatile Updater updater = null;
 
     public StatefullMapLayerJ2D(J2DCanvas canvas, T item, boolean allowChildren) {
@@ -65,7 +65,7 @@ public class StatefullMapLayerJ2D<T extends MapLayer> extends StatefullMapItemJ2
         final Dimension rect = renderingContext.getCanvasDisplayBounds().getSize();
         updateRequest(env, env2d, rect);
 
-        GridCoverage2D coverage = this.buffer;
+        GridCoverage coverage = this.buffer;
         if(coverage == null) return dataRendered;
 
         final Graphics2D g = renderingContext.getGraphics();
@@ -149,6 +149,7 @@ public class StatefullMapLayerJ2D<T extends MapLayer> extends StatefullMapItemJ2
                 final ViewDef vdef = new ViewDef(env);
                 final SceneDef sdef = new SceneDef(context);
                 final BufferedImage img = DefaultPortrayalService.portray(cdef, sdef, vdef);
+
                 final GridCoverageBuilder gcb = new GridCoverageBuilder();
                 gcb.setEnvelope(env2d);
                 gcb.setRenderedImage(img);

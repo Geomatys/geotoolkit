@@ -62,7 +62,7 @@ public class DefaultSubtract extends AbstractBinaryExpression<Expression,Express
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Substract \n");
+        final StringBuilder sb = new StringBuilder("Substract");
         sb.append(StringUtilities.toStringTree(left,right));
         return sb.toString();
     }

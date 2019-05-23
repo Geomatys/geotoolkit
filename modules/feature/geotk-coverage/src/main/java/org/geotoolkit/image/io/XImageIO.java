@@ -44,6 +44,9 @@ import java.awt.image.RenderedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.sis.internal.storage.io.ChannelDataInput;
+import org.apache.sis.internal.storage.io.ChannelImageInputStream;
+import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArraysExt;
@@ -1097,10 +1100,11 @@ public final class XImageIO extends Static {
         }
 
         //use default image stream if necessary
-        if(in == null){
+        if (in == null) {
             //may throw IOException
             in = CoverageIO.createImageInputStream(input);
         }
+
         return in;
     }
 

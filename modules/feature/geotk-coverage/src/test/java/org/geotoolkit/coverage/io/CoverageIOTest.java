@@ -22,11 +22,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import javax.imageio.ImageIO;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.test.DependsOn;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.image.io.mosaic.MosaicReadWriteTest;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileTest;
@@ -124,7 +124,7 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
      */
     private void verify(final GridCoverageReader reader) throws DataStoreException {
         verify(reader.getGridGeometry(), 360, 180, 90);
-        image = reader.read(null).getRenderableImage(0, 1).createDefaultRendering();
+        image = reader.read(null).render(null);
         assertCurrentChecksumEquals("verify", MosaicReadWriteTest.IMAGE_CHECKSUMS);
     }
 

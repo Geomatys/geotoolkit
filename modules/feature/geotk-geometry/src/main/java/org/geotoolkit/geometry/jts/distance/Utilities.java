@@ -1,7 +1,5 @@
 package org.geotoolkit.geometry.jts.distance;
 
-import javax.measure.UnitConverter;
-import org.apache.sis.measure.Units;
 import org.locationtech.jts.geom.Coordinate;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.cs.AxisDirection;
@@ -14,11 +12,12 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Alexis Manin (Geomatys)
  */
-class Utilities {
+final class Utilities {
+
+    private Utilities() {
+    }
 
     static final double PI_4 = Math.PI / 4;
-
-    static final UnitConverter DEGREE_TO_RADIAN = Units.DEGREE.getConverterTo(Units.RADIAN);
 
     /**
      * Test if given CRS is longitude/latitude or latitude/longitude. Works

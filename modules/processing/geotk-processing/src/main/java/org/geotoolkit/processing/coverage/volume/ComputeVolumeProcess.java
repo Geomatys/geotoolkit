@@ -31,8 +31,8 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.image.PixelIterator;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -42,7 +42,7 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.referencing.GeodeticCalculator;
+import org.apache.sis.referencing.GeodeticCalculator;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -173,7 +173,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             gcrp.setEnvelope(envGeom2D, geomCRS);
             /*******************************************/
 
-            final GridCoverage2D dem      = (GridCoverage2D) gcReader.read(gcrp);
+            final GridCoverage dem      = gcReader.read(gcrp);
             final SampleDimension gsd = dem.getSampleDimensions().get(bandIndex);
 
             final MathTransform1D zmt     = gsd.getTransferFunction().orElse(null);
@@ -181,7 +181,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
                 throw new ProcessException("you should stipulate MathTransform1D from sampleDimension to geophysic.", this, null);
             }
 
-            final GridGeometry2D gg2d = dem.getGridGeometry();
+            final GridGeometry2D gg2d = GridGeometry2D.castOrCopy(dem.getGridGeometry());
 
             InterpolationCase interpolationChoice;
             //-- adapt interpolation in function of grid extend
@@ -203,7 +203,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
 
             final MathTransform gridToCrs  = gg2d.getGridToCRS(PixelInCell.CELL_CENTER);
             final CoordinateSystem destCS  = covCrs.getCoordinateSystem();
-            final RenderedImage mnt        = dem.getRenderedImage();
+            final RenderedImage mnt        = dem.render(null);
 
             final Interpolation interpol   = Interpolation.create(new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(mnt), interpolationChoice, 0, ResampleBorderComportement.EXTRAPOLATION, null);
 
@@ -406,8 +406,8 @@ public class ComputeVolumeProcess extends AbstractProcess {
             this.upGridPosition  = new double[2];
             this.lowCRSPosition  = new double[2];
             this.upCRSPosition   = new double[2];
-            this.geoCalc         = new GeodeticCalculator(crs);
-            ellConverter         = geoCalc.getEllipsoid().getAxisUnit().getConverterToAny(METER);
+            this.geoCalc         = GeodeticCalculator.create(crs);
+            ellConverter         = geoCalc.getDistanceUnit().getConverterToAny(METER);
         }
 
         /**
@@ -424,9 +424,9 @@ public class ComputeVolumeProcess extends AbstractProcess {
             gridToCrs.transform(upGridPosition, 0, upCRSPosition, 0, 1);
 
             // compute distance on grid x projected axis
-            geoCalc.setStartingGeographicPoint(lowCRSPosition[0], lowCRSPosition[1]);
-            geoCalc.setDestinationGeographicPoint(upCRSPosition[0], upCRSPosition[1]);
-            final double distX = ellConverter.convert(geoCalc.getOrthodromicDistance());
+            geoCalc.setStartPoint(lowCRSPosition[1], lowCRSPosition[0]);
+            geoCalc.setEndPoint(upCRSPosition[1], upCRSPosition[0]);
+            final double distX = ellConverter.convert(geoCalc.getGeodesicDistance());
 
             // compute on y grid axis
             lowGridPosition[0] = pixelPosition[0];
@@ -437,9 +437,9 @@ public class ComputeVolumeProcess extends AbstractProcess {
             gridToCrs.transform(upGridPosition, 0, upCRSPosition, 0, 1);
 
             // compute distance on grid y projected axis
-            geoCalc.setStartingGeographicPoint(lowCRSPosition[0], lowCRSPosition[1]);
-            geoCalc.setDestinationGeographicPoint(upCRSPosition[0], upCRSPosition[1]);
-            final double distY = ellConverter.convert(geoCalc.getOrthodromicDistance());
+            geoCalc.setStartPoint(lowCRSPosition[1], lowCRSPosition[0]);
+            geoCalc.setEndPoint(upCRSPosition[1], upCRSPosition[0]);
+            final double distY = ellConverter.convert(geoCalc.getGeodesicDistance());
             return distX * distY;
         }
     }

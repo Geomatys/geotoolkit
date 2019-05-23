@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import java.awt.geom.Point2D;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.parameter.Parameters;
@@ -57,6 +58,40 @@ public final strictfp class CassiniSoldnerTest extends ProjectionTestBase {
             return new CassiniSoldner(new org.geotoolkit.referencing.operation.provider.CassiniSoldner(), parameters);
         } else {
             return new CassiniSoldner.Spherical(new org.geotoolkit.referencing.operation.provider.CassiniSoldner(), parameters);
+        }
+    }
+
+    /**
+     * Tests some identities related to the {@link CassiniOrMercator#mlfn} method.
+     *
+     * @throws TransformException Should never happen.
+     */
+    @Test
+    public void testSimplePoint() throws TransformException {
+        final CassiniSoldner cassini = CassiniSoldnerTest.create(false);
+        /*
+         * Now fix φ=45°, which implies tan(φ)=1.
+         * Test using the CassiniSoldner spherical equation.
+         */
+        final Point2D.Double point = new Point2D.Double();
+        final double domain = toRadians(5);
+        final double step   = domain/100;
+        for (double λ=-domain; λ<=domain; λ+=step) {
+            final double yFromSimplified = PI/2 - atan(cos(λ));
+            point.x = λ;
+            point.y = PI/4;
+            assertSame(point, cassini.transform(point, point));
+            assertEquals("Given excentricity=0 and φ=45°, the spherical equation should simplify to a "
+                    + "very simple expression, which we are testing here.", yFromSimplified, point.y, 1E-9);
+            /*
+             * In the equation below, PI/4 is actually mlfn(φ) where the excentricity=0 and φ=45°.
+             * In our simplified case, the equation using the ellipsoidal formula seems to be an
+             * approximation of PI/2 - atan(cos(λ)). This looks like a sine function (but is not
+             * exactly a sine function).
+             */
+            final double λ2 = λ*λ;
+            final double yEllps = PI/4 + λ2*(0.25 + λ2*0.41666666666666666666); // CassiniSoldner.C3
+            assertEquals("Approximation of PI/2 - atan(cos(λ)", yFromSimplified, yEllps, 3E-5);
         }
     }
 

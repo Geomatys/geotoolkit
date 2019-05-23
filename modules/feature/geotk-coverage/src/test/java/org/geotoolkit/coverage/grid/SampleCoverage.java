@@ -38,10 +38,8 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 
 import org.apache.sis.referencing.operation.transform.TransferFunction;
-import static java.awt.Color.decode;
 import static org.apache.sis.measure.Units.*;
 import static org.apache.sis.measure.NumberRange.create;
-import org.geotoolkit.coverage.SampleDimensionBuilder;
 import static org.junit.Assert.*;
 
 
@@ -120,21 +118,21 @@ public strictfp enum SampleCoverage {
     };
 
     private static SampleDimension sampleDimension(final boolean sst) {
-        final SampleDimensionBuilder b = new SampleDimensionBuilder();
+        final SampleDimension.Builder b = new SampleDimension.Builder();
         if (sst) {
-            b.addQualitative ("Coast line",              create(  0, true,   0, true)); b.setLastCategoryColors(decode("#000000"));
-            b.addQualitative ("Cloud",                   create(  1, true,   9, true)); b.setLastCategoryColors(decode("#C3C3C3"));
-            b.addQualitative ("Unused",                  create( 10, true,  29, true)); b.setLastCategoryColors(decode("#822382"));
+            b.addQualitative ("Coast line",              create(  0, true,   0, true));
+            b.addQualitative ("Cloud",                   create(  1, true,   9, true));
+            b.addQualitative ("Unused",                  create( 10, true,  29, true));
             b.addQuantitative("Sea Surface Temperature", create( 30, true, 219, true), (MathTransform1D) MathTransforms.linear(0.1, 10.0), CELSIUS);
-            b.addQualitative ("Unused",                  create(220, true, 239, true)); b.setLastCategoryColors(decode("#A0505C"));
-            b.addQualitative ("Land",                    create(240, true, 254, true)); b.setLastCategoryColors(decode("#D2C8A0"));
-            b.addQualitative ("No data",                 create(255, true, 255, true)); b.setLastCategoryColors(decode("#FFFFFF"));
+            b.addQualitative ("Unused",                  create(220, true, 239, true));
+            b.addQualitative ("Land",                    create(240, true, 254, true));
+            b.addQualitative ("No data",                 create(255, true, 255, true));
         } else {
             final TransferFunction f = new TransferFunction();
             f.setType(TransferFunctionType.EXPONENTIAL);
             final MathTransform1D exp = f.getTransform();
-            b.addQualitative ("Land",    create(255, true, 255, true)); b.setLastCategoryColors(decode("#000000"));
-            b.addQualitative ("No data", create(  0, true,   0, true)); b.setLastCategoryColors(decode("#FFFFFF"));
+            b.addQualitative ("Land",    create(255, true, 255, true));
+            b.addQualitative ("No data", create(  0, true,   0, true));
             b.addQuantitative("Chl-a",   create(  1, true, 254, true), MathTransforms.concatenate(
                         (MathTransform1D) MathTransforms.linear(0.015, -1.985), exp), KILOGRAM.divide(1E6).divide(CUBIC_METRE));
         }

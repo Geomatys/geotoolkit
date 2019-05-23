@@ -17,8 +17,8 @@
 package org.geotoolkit.processing.coverage.kriging;
 
 import java.awt.Dimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
@@ -86,11 +86,11 @@ public final class KrigingDescriptor extends AbstractProcessDescriptor{
     /**
      * Output coverage.
      */
-    public static final ParameterDescriptor<GridCoverage2D> OUT_COVERAGE = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverage> OUT_COVERAGE = new ParameterBuilder()
             .addName("coverage")
             .setRemarks("Coverage")
             .setRequired(false)
-            .create(GridCoverage2D.class,null);
+            .create(GridCoverage.class,null);
 
     /**
      * Output lines.

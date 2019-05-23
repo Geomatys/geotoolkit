@@ -27,8 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
-
-import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.VisitFilter;
@@ -42,7 +41,6 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
-
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -127,7 +125,7 @@ final class WCSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
             final GridCoverageBuilder gc = new GridCoverageBuilder();
             gc.setEnvelope(env);
             gc.setRenderedImage(image);
-            final GridCoverage2D coverage = gc.getGridCoverage2D();
+            final GridCoverage coverage = gc.getGridCoverage2D();
             try {
                 return GO2Utilities.portray(context2D, coverage);
             } catch (PortrayalException ex) {

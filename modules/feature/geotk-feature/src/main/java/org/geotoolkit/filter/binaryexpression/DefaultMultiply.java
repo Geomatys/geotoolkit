@@ -62,7 +62,7 @@ public class DefaultMultiply extends AbstractBinaryExpression<Expression,Express
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Multiply \n");
+        final StringBuilder sb = new StringBuilder("Multiply");
         sb.append(StringUtilities.toStringTree(left,right));
         return sb.toString();
     }

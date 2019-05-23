@@ -25,9 +25,9 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import net.iharder.Base64;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.nio.IOUtilities;
@@ -36,11 +36,11 @@ import org.geotoolkit.wps.xml.v200.Reference;
 ;
 
 /**
- * Implementation of ObjectConverter to convert a reference into a GridCoverage2D.
+ * Implementation of ObjectConverter to convert a reference into a GridCoverage.
  *
  * @author Quentin Boileau (Geomatys).
  */
-public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceInputConverter<GridCoverage2D> {
+public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceInputConverter<GridCoverage> {
 
     private static ReferenceToGridCoverage2DConverter INSTANCE;
 
@@ -55,17 +55,17 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
     }
 
     @Override
-    public Class<GridCoverage2D> getTargetClass() {
-        return GridCoverage2D.class;
+    public Class<GridCoverage> getTargetClass() {
+        return GridCoverage.class;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return GridCoverage2D.
+     * @return GridCoverage.
      */
     @Override
-    public GridCoverage2D convert(final Reference source, final Map<String, Object> params) throws UnconvertibleObjectException {
+    public GridCoverage convert(final Reference source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         final InputStream stream = getInputStreamFromReference(source);
 
@@ -96,7 +96,7 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
                 } else {
                     reader = XImageIO.getReader(imageStream, null, Boolean.FALSE);
                 }
-                return (GridCoverage2D) CoverageIO.read(reader);
+                return CoverageIO.read(reader);
             } else {
                 throw new UnconvertibleObjectException("Error during image stream acquisition.");
             }

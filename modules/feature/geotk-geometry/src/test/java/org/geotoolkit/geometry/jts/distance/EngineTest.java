@@ -23,6 +23,12 @@ public abstract class EngineTest {
 
     static final double EPSI = 1;
 
+    /**
+     * @deprecated to be removed (replaced by {@link #EPSI}) after {@link GeodeticCalculator} implements ellipsoidal formulas.
+     */
+    @Deprecated
+    static final double SPHERICAL_ERROR = 40;       // In metres.
+
     abstract ToDoubleBiFunction<Coordinate, Coordinate> getEngine(final CoordinateReferenceSystem target);
 
     abstract boolean isOrthodromic();
@@ -70,7 +76,7 @@ public abstract class EngineTest {
                 String.format(msgFormat, source.title),
                 isOrthodromic ? source.orthodromicDistance : source.loxodromicDistance,
                 computedValue / 1000, // meter to kilometer
-                EPSI
+                isOrthodromic ? SPHERICAL_ERROR : EPSI
         );
     }
 }

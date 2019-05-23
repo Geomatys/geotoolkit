@@ -22,16 +22,13 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
-
-import org.geotoolkit.util.StringUtilities;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
-
+import org.geotoolkit.temporal.object.TemporalUtilities;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.expression.Expression;
-
-import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.temporal.object.TemporalUtilities;
 
 /**
  * Defines a like filter, which checks to see if an attribute matches a REGEXP.
@@ -401,7 +398,7 @@ public class DefaultPropertyIsLike implements PropertyIsLike,Serializable {
         sb.append("wildcardMulti=").append(wildcardMulti).append(", ");
         sb.append("escape=").append(escape).append(", ");
         sb.append("matchingCase=").append(matchingCase);
-        sb.append(")\n");
+        sb.append(")");
         sb.append(StringUtilities.toStringTree(attribute));
         return sb.toString();
     }

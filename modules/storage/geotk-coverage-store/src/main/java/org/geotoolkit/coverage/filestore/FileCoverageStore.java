@@ -37,6 +37,7 @@ import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Resource;
@@ -298,9 +299,9 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
         if (spi == null) {
             reader = XImageIO.getReader(candidate, Boolean.FALSE, Boolean.FALSE);
         } else {
-            if (spi.canDecodeInput(candidate)) {
+            Object in = XImageIO.toSupportedInput(spi, candidate);
+            if (spi.canDecodeInput(in)) {
                 reader = spi.createReaderInstance();
-                Object in = XImageIO.toSupportedInput(spi, candidate);
                 reader.setInput(in);
             } else {
                 throw new UnsupportedImageFormatException("Unsupported file input for spi "+spi.getPluginClassName());
@@ -383,8 +384,8 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
         final DefiningCoverageResource cr = (DefiningCoverageResource) resource;
         final GenericName name = cr.getName();
 
-        final Collection<GenericName> names = getNames();
-        if(names.contains(name)){
+        final Collection<GenericName> names = DataStores.getNames(this, true, DataSet.class);
+        if (names.contains(name)) {
             throw new IllegalNameException("Coverage "+name+" already exist in this datastore.");
         }
 

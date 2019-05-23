@@ -17,15 +17,13 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
-import org.apache.sis.storage.DataStoreException;
-
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.JXTree;
 
@@ -33,7 +31,7 @@ import org.jdesktop.swingx.JXTree;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DemoFrame extends JFrame{
+public class DemoFrame extends JFrame {
 
     private final JXTree guiTree = new JXTree();
     private final JPanel mainPane = new JPanel(new BorderLayout());

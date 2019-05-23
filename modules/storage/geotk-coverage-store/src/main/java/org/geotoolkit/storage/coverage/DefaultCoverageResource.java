@@ -17,10 +17,10 @@
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Image;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -35,16 +35,16 @@ import org.opengis.util.GenericName;
  */
 public class DefaultCoverageResource extends AbstractCoverageResource {
 
-    private final GridCoverage2D coverage;
+    private final GridCoverage coverage;
     private final Object input;
 
-    public DefaultCoverageResource(final DataStore store, final GridCoverage2D coverage, GenericName name) {
+    public DefaultCoverageResource(final DataStore store, final GridCoverage coverage, GenericName name) {
         super(store,name);
         this.coverage = coverage;
         this.input = null;
     }
 
-    public DefaultCoverageResource(final GridCoverage2D coverage, GenericName name) {
+    public DefaultCoverageResource(final GridCoverage coverage, GenericName name) {
         super(null,name);
         this.coverage = coverage;
         this.input = null;
@@ -80,8 +80,8 @@ public class DefaultCoverageResource extends AbstractCoverageResource {
     public GridCoverageReader acquireReader() throws DataStoreException {
         if (coverage != null) {
             return new MemoryCoverageReader(coverage);
-        } else if (input instanceof GridCoverage2D) {
-            return new MemoryCoverageReader((GridCoverage2D) input);
+        } else if (input instanceof GridCoverage) {
+            return new MemoryCoverageReader((GridCoverage) input);
         } else if (input instanceof GridCoverageReader) {
             return (GridCoverageReader) input;
         } else {

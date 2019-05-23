@@ -49,7 +49,7 @@ public class DefaultPropertyIsEqualTo extends AbstractPropertyEqual implements P
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PropertyIsEqualTo (matchcase=");
-        sb.append(match).append(")\n");
+        sb.append(match).append(")");
         sb.append(StringUtilities.toStringTree(left,right));
         return sb.toString();
     }

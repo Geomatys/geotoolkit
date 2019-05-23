@@ -8,10 +8,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
@@ -22,6 +21,7 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -46,9 +46,9 @@ public class CrystallizeSymbolizerRenderer extends AbstractSymbolizerRenderer<Cr
 
         //read the coverage
         //this is a fast way to do it, don't use it in real code
-        GridCoverage2D dataCoverage;
+        GridCoverage dataCoverage;
         try {
-            dataCoverage = graphic.getCoverage(new GridCoverageReadParam());
+            dataCoverage = graphic.getCoverage(renderingContext.getGridGeometry());
         } catch (DataStoreException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
             return false;
@@ -58,7 +58,7 @@ public class CrystallizeSymbolizerRenderer extends AbstractSymbolizerRenderer<Cr
         final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
         if (!Utilities.equalsIgnoreMetadata(coverageCRS,renderingContext.getObjectiveCRS2D()) ) {
             try {
-                dataCoverage = new ResampleProcess(dataCoverage.view(ViewType.NATIVE), renderingContext.getObjectiveCRS2D(), null, InterpolationCase.NEIGHBOR, null).executeNow();
+                dataCoverage = new ResampleProcess(dataCoverage, renderingContext.getObjectiveCRS2D(), null, InterpolationCase.NEIGHBOR, null).executeNow();
             } catch (ProcessException ex) {
                 monitor.exceptionOccured(ex, Level.WARNING);
                 return false;
@@ -66,7 +66,7 @@ public class CrystallizeSymbolizerRenderer extends AbstractSymbolizerRenderer<Cr
         }
 
 
-        final RenderedImage img = dataCoverage.getRenderedImage();
+        final RenderedImage img = dataCoverage.render(null);
 
 
         final BufferedImage buffer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -81,7 +81,7 @@ public class CrystallizeSymbolizerRenderer extends AbstractSymbolizerRenderer<Cr
         //we switch in objective CRS to render the coverage.
         renderingContext.switchToObjectiveCRS();
 
-        final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
+        final MathTransform2D trs2D = CoverageUtilities.toGeotk(dataCoverage).getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
         if(trs2D instanceof AffineTransform){
             g2d.drawImage(buffer, (AffineTransform)trs2D, null);
         }

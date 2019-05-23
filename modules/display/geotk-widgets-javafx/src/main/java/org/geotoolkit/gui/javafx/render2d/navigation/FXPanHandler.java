@@ -125,12 +125,8 @@ public class FXPanHandler extends AbstractNavigationHandler {
                 final org.apache.sis.storage.GridCoverageResource gr = (org.apache.sis.storage.GridCoverageResource) ref;
                 final GridGeometry gridGeom = gr.getGridGeometry().derive().subgrid(dp).sliceByRatio(0.5, 0, 1).build();
                 GridCoverage coverage = gr.read(gridGeom);
-
                 //convert image to geophysic
-                //TODO replace by SIS API when available
-                if (coverage.getSampleDimensions() != null && !coverage.getSampleDimensions().isEmpty()) {
-                    coverage = org.geotoolkit.internal.coverage.CoverageUtilities.toGeotk(coverage).forConvertedValues(true);
-                }
+                coverage = coverage.forConvertedValues(true);
 
                 //pick first slice if several are available
                 final GridExtent extent = coverage.getGridGeometry().getExtent();

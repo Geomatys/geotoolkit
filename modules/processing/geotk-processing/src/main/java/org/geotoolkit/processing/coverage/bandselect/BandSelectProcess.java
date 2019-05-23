@@ -22,8 +22,8 @@ import java.util.Hashtable;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.Process;
@@ -47,11 +47,11 @@ public class BandSelectProcess extends AbstractProcess {
      * @param coverage Coverage to process
      * @param bands bands to select for output
      */
-    public BandSelectProcess(GridCoverage2D coverage, int[] bands){
+    public BandSelectProcess(GridCoverage coverage, int[] bands){
         super(BandSelectDescriptor.INSTANCE, asParameters(coverage,bands));
     }
 
-    private static ParameterValueGroup asParameters(GridCoverage2D coverage, int[] bands){
+    private static ParameterValueGroup asParameters(GridCoverage coverage, int[] bands){
         final Parameters params = Parameters.castOrWrap(BandSelectDescriptor.INPUT_DESC.createValue());
         params.getOrCreate(BandSelectDescriptor.IN_COVERAGE).setValue(coverage);
         params.getOrCreate(BandSelectDescriptor.IN_BANDS).setValue(bands);
@@ -64,22 +64,22 @@ public class BandSelectProcess extends AbstractProcess {
      * @return result coverage
      * @throws ProcessException
      */
-    public GridCoverage2D executeNow() throws ProcessException {
+    public GridCoverage executeNow() throws ProcessException {
         execute();
-        return (GridCoverage2D) outputParameters.parameter(BandSelectDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
+        return (GridCoverage) outputParameters.parameter(BandSelectDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
     }
 
     @Override
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
-        final GridCoverage2D inputCoverage = (GridCoverage2D)inputParameters.getValue(BandSelectDescriptor.IN_COVERAGE);
+        final GridCoverage inputCoverage = (GridCoverage)inputParameters.getValue(BandSelectDescriptor.IN_COVERAGE);
         final int[] bands = inputParameters.getValue(BandSelectDescriptor.IN_BANDS);
 
 
         // CALL IMAGE BAND SELECT //////////////////////////////////////////////
         final ProcessDescriptor imageSelectDesc = org.geotoolkit.processing.image.bandselect.BandSelectDescriptor.INSTANCE;
         final Parameters params = Parameters.castOrWrap(imageSelectDesc.getInputDescriptor().createValue());
-        params.parameter("image").setValue(inputCoverage.getRenderedImage());
+        params.parameter("image").setValue(inputCoverage.render(null));
         params.parameter("bands").setValue(bands);
         final Process process = imageSelectDesc.createProcess(params);
         BufferedImage resultImage = (BufferedImage)process.call().parameter("result").getValue();
@@ -101,7 +101,7 @@ public class BandSelectProcess extends AbstractProcess {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(resultImage);
         gcb.setGridGeometry(inputCoverage.getGridGeometry());
-        final GridCoverage2D resultCoverage = gcb.getGridCoverage2D();
+        final GridCoverage resultCoverage = gcb.getGridCoverage2D();
 
         outputParameters.getOrCreate(BandSelectDescriptor.OUT_COVERAGE).setValue(resultCoverage);
     }

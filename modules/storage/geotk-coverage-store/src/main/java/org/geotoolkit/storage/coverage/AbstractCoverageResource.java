@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -33,7 +34,6 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -196,6 +196,13 @@ public abstract class AbstractCoverageResource extends AbstractResource implemen
                 }
             }
         }
+        if (bounds == null) {
+            final GridGeometry gridGeometry = getGridGeometry();
+            if (gridGeometry != null && gridGeometry.isDefined(GridGeometry.ENVELOPE)) {
+                bounds = new GeneralEnvelope(gridGeometry.getEnvelope());
+            }
+        }
+
         return bounds;
     }
 

@@ -25,7 +25,7 @@ import javax.measure.UnitConverter;
 import javax.measure.Unit;
 import org.apache.sis.measure.Units;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.referencing.GeodeticCalculator;
+import org.apache.sis.referencing.GeodeticCalculator;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
@@ -113,7 +113,7 @@ public final class CanvasUtilities {
                     P2[i] += delta;
                 }
             }
-            final GeodeticCalculator gc = new GeodeticCalculator(crs);
+            final GeodeticCalculator gc = GeodeticCalculator.create(crs);
             final GeneralDirectPosition pos1 = new GeneralDirectPosition(crs);
             pos1.setOrdinate(0, P1[0]);
             pos1.setOrdinate(1, P1[1]);
@@ -121,8 +121,8 @@ public final class CanvasUtilities {
             pos2.setOrdinate(0, P2[0]);
             pos2.setOrdinate(1, P2[1]);
             try {
-                gc.setStartingPosition(pos1);
-                gc.setDestinationPosition(pos2);
+                gc.setStartPoint(pos1);
+                gc.setEndPoint(pos2);
             } catch (TransformException ex) {
                 throw new TransformException(ex.getLocalizedMessage(), ex);
             } catch (IllegalArgumentException ex) {
@@ -130,7 +130,7 @@ public final class CanvasUtilities {
                 //the coordinate can be out of the crs area, which causes this exception
                 throw new TransformException(ex.getLocalizedMessage(), ex);
             }
-            distance = Math.abs(gc.getOrthodromicDistance());
+            distance = gc.getGeodesicDistance();
         }
 
         final double displayToDevice = 1f / DEFAULT_DPI * 0.0254f;

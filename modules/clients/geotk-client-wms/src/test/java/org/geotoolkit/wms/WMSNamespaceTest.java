@@ -19,6 +19,8 @@ package org.geotoolkit.wms;
 
 import org.opengis.util.GenericName;
 import java.util.Set;
+import org.apache.sis.storage.GridCoverageResource;
+import org.geotoolkit.storage.DataStores;
 
 import org.geotoolkit.wms.xml.WMSVersion;
 
@@ -39,7 +41,7 @@ public class WMSNamespaceTest extends org.geotoolkit.test.TestBase {
     @Test
     public void test_v100_GetNames() throws Exception {
 
-        final Set<GenericName> names = new MockWebMapClient(WMSVersion.v100).getNames();
+        final Set<GenericName> names = DataStores.getNames(new MockWebMapClient(WMSVersion.v100), true, GridCoverageResource.class);
 
         assertEquals(3, names.size());
         assertTrue(names.stream().anyMatch((GenericName t) -> t.toString().equals("ns1:Sample")));
@@ -52,7 +54,7 @@ public class WMSNamespaceTest extends org.geotoolkit.test.TestBase {
     @Test
     public void test_v111_GetNames() throws Exception {
 
-        final Set<GenericName> names = new MockWebMapClient(WMSVersion.v111).getNames();
+        final Set<GenericName> names = DataStores.getNames(new MockWebMapClient(WMSVersion.v111), true, GridCoverageResource.class);
 
         assertEquals(3, names.size());
         assertTrue(names.stream().anyMatch((GenericName t) -> t.toString().equals("ns1:Sample")));
@@ -65,7 +67,7 @@ public class WMSNamespaceTest extends org.geotoolkit.test.TestBase {
     @Test
     public void test_v130_GetNames() throws Exception {
 
-        final Set<GenericName> names = new MockWebMapClient(WMSVersion.v130).getNames();
+        final Set<GenericName> names = DataStores.getNames(new MockWebMapClient(WMSVersion.v130), true, GridCoverageResource.class);
 
         assertEquals(3, names.size());
         assertTrue(names.stream().anyMatch((GenericName t) -> t.toString().equals("ns1:Sample")));

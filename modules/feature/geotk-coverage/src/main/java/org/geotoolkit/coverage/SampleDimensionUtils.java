@@ -31,7 +31,6 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.collection.Containers;
-import org.geotoolkit.internal.coverage.ColoredCategory;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.opengis.referencing.operation.MathTransform1D;
@@ -190,8 +189,7 @@ public final strictfp class SampleDimensionUtils {
 
     /**
      * Returns a color model for this category list. This method builds up the color model
-     * from each category's colors (as returned by {@link ColoredCategory#getColors}) or default
-     * colors when category colors are not defined.
+     * from each category's default colors.
      *
      * @param  visibleBand The band to be made visible (usually 0). All other bands, if any
      *         will be ignored.
@@ -210,22 +208,20 @@ public final strictfp class SampleDimensionUtils {
 
         final Map<NumberRange<?>, Color[]> ranges = new LinkedHashMap<>();
         for (final Category category : categories) {
-            Color[] colors = ColoredCategory.getColors(category);
-            NumberRange<?> range = category.getSampleRange();
-            if (colors.length == 0) {
-                if (category.isQuantitative()) {
-                    MeasurementRange<?> mrange = category.getMeasurementRange().get();
-                    if (Double.isNaN(mrange.getMinDouble())) {
-                        //no data type category
-                        colors = new Color[]{new Color(0, 0, 0, 0)};
-                    } else {
-                        //use an interpolation
-                        colors = new Color[]{new Color(0, 0, 0),new Color(255, 255, 255)};
-                    }
+            final Color[] colors;
+            final NumberRange<?> range = category.getSampleRange();
+            if (category.isQuantitative()) {
+                MeasurementRange<?> mrange = category.getMeasurementRange().get();
+                if (Double.isNaN(mrange.getMinDouble())) {
+                    //no data type category
+                    colors = new Color[]{new Color(0, 0, 0, 0)};
                 } else {
-                    //qualitative category, pick colors from a default palette
-                    colors = new Color[]{palette.next()};
+                    //use an interpolation
+                    colors = new Color[]{new Color(0, 0, 0),new Color(255, 255, 255)};
                 }
+            } else {
+                //qualitative category, pick colors from a default palette
+                colors = new Color[]{palette.next()};
             }
             ranges.put(range, colors);
         }

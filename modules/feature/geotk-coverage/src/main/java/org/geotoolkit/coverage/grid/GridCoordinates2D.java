@@ -84,8 +84,8 @@ public class GridCoordinates2D extends Point implements GridCoordinates, Cloneab
      * ({@linkplain #x x},{@linkplain #y y}) in an array of length 2.
      */
     @Override
-    public int[] getCoordinateValues() {
-        return new int[] {x, y};
+    public long[] getCoordinateValues() {
+        return new long[] {x, y};
     }
 
     /**
@@ -98,7 +98,7 @@ public class GridCoordinates2D extends Point implements GridCoordinates, Cloneab
      * @throws IndexOutOfBoundsException if the specified dimension is out of bounds.
      */
     @Override
-    public int getCoordinateValue(final int dimension) throws IndexOutOfBoundsException {
+    public long getCoordinateValue(final int dimension) throws IndexOutOfBoundsException {
         switch (dimension) {
             case 0:  return x;
             case 1:  return y;
@@ -115,12 +115,12 @@ public class GridCoordinates2D extends Point implements GridCoordinates, Cloneab
      * @throws UnsupportedOperationException if this grid coordinates is not modifiable.
      */
     @Override
-    public void setCoordinateValue(final int dimension, final int value)
+    public void setCoordinateValue(final int dimension, final long value)
             throws IndexOutOfBoundsException, UnsupportedOperationException
     {
         switch (dimension) {
-            case 0:  x = value; break;
-            case 1:  y = value; break;
+            case 0:  x = Math.toIntExact(value); break;
+            case 1:  y = Math.toIntExact(value); break;
             default: throw new IndexOutOfBoundsException(indexOutOfBounds(dimension));
         }
     }
