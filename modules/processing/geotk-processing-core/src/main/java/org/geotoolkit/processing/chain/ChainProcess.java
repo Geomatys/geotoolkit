@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.parameter.Parameters;
+import org.apache.sis.parameter.DefaultParameterValue;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.function.groovy.GroovyFunctionFactory;
@@ -49,6 +49,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.parameter.GeneralParameterValue;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
@@ -154,9 +155,10 @@ public class ChainProcess extends AbstractProcess {
                                 first = false;
                             } else {
                                 final Object value = paramValue.getValue();
-                                final ParameterValue cloned = configs.get(link.getTargetId()).parameter(link.getTargetCode()).clone();
-                                setValue(value, cloned);
-                                configs.get(link.getTargetId()).values().add(cloned);
+                                final ParameterDescriptor desc = (ParameterDescriptor) configs.get(link.getTargetId()).getDescriptor().descriptor(link.getTargetCode());
+                                final ParameterValue newParam = new DefaultParameterValue(desc);
+                                setValue(value, newParam);
+                                configs.get(link.getTargetId()).values().add(newParam);
                             }
                         }
                     }
@@ -223,9 +225,10 @@ public class ChainProcess extends AbstractProcess {
                                 first = false;
                             } else {
                                 final Object value = paramValue.getValue();
-                                final ParameterValue cloned = configs.get(link.getTargetId()).parameter(link.getTargetCode()).clone();
-                                setValue(value, cloned);
-                                configs.get(link.getTargetId()).values().add(cloned);
+                                final ParameterDescriptor desc = (ParameterDescriptor) configs.get(link.getTargetId()).getDescriptor().descriptor(link.getTargetCode());
+                                final ParameterValue newParam = new DefaultParameterValue(desc);
+                                setValue(value, newParam);
+                                configs.get(link.getTargetId()).values().add(newParam);
                             }
                         }
                     }
