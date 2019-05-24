@@ -205,7 +205,7 @@
        =========================================================== -->
   <properties>
     <geoapi.version>4.0-SNAPSHOT</geoapi.version> <!-- Must be same than the version used by SIS. -->
-    <sis.version>dev-1.0-SNAPSHOT</sis.version>
+    <sis.version>2.0-SNAPSHOT</sis.version>
     <sis.build.helper.version>0.8</sis.build.helper.version>
     <sis.non-free.version>1.0-M1</sis.non-free.version>
     <netcdf.version>4.6.13</netcdf.version>
