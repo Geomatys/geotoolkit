@@ -18,6 +18,7 @@ package org.geotoolkit.sos.netcdf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +45,7 @@ import org.geotoolkit.swe.xml.v101.CompositePhenomenonType;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import static org.geotoolkit.swe.xml.v200.TextEncodingType.DEFAULT_ENCODING;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.observation.CompositePhenomenon;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
 /**
@@ -165,6 +167,45 @@ public class OMUtils {
             phenomenon = new CompositePhenomenonType(compositeId, compositeName, null, null, types);
         }
         return phenomenon;
+    }
+
+    public static Phenomenon getPhenomenon(final String version, final List<Field> phenomenons, final Set<org.opengis.observation.Phenomenon> existingPhens) {
+        final Phenomenon phenomenon;
+        if (phenomenons.size() == 1) {
+            phenomenon = SOSXmlFactory.buildPhenomenon(version, phenomenons.get(0).label, phenomenons.get(0).label);
+        } else {
+            final Set<PhenomenonType> types = new HashSet<>();
+            for (Field phen : phenomenons) {
+                types.add(new PhenomenonType(phen.label, phen.label));
+            }
+
+            // look for an already existing (composite) phenomenon to use instead of creating a new one
+            for (org.opengis.observation.Phenomenon existingPhen : existingPhens) {
+                if (existingPhen instanceof CompositePhenomenon) {
+                    CompositePhenomenon cphen = (CompositePhenomenon) existingPhen;
+                    if (componentsEquals(cphen.getComponent(), types)) {
+                        return (Phenomenon) cphen;
+                    }
+                }
+            }
+
+            final String compositeId = "composite" + UUID.randomUUID().toString();
+            final String compositeName = "urn:ogc:phenomenon:" + compositeId;
+            phenomenon = new CompositePhenomenonType(compositeId, compositeName, null, null, types);
+        }
+        return phenomenon;
+    }
+
+    private static boolean componentsEquals(Collection as, Collection bs) {
+        if (as.size() == bs.size()) {
+            for (Object a : as) {
+                if (!bs.contains(a)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     public static SamplingFeature buildSamplingPoint(final String identifier, final double latitude, final double longitude) {

@@ -192,18 +192,25 @@ public class XmlObservationStore extends AbstractFeatureStore implements Resourc
     }
 
     @Override
-    public ExtractionResult getResults() {
-        return getResults(null);
+    public ExtractionResult getResults() throws DataStoreException {
+        return getResults(null, null, new HashSet<>() ,new HashSet<>());
     }
 
     @Override
-    public ExtractionResult getResults(final String affectedSensorId, final List<String> sensorIDs) {
-        getLogger().warning("XMLObservation store does not allow to override sensor ID");
-        return getResults(sensorIDs);
+    public ExtractionResult getResults(final String affectedSensorId, final List<String> sensorIDs) throws DataStoreException {
+        return getResults(affectedSensorId, sensorIDs, new HashSet<>() ,new HashSet<>());
     }
 
     @Override
-    public ExtractionResult getResults(final List<String> sensorIDs) {
+    public ExtractionResult getResults(final List<String> sensorIDs) throws DataStoreException {
+        return getResults(null, sensorIDs, new HashSet<>() ,new HashSet<>());
+    }
+
+    @Override
+    public ExtractionResult getResults(String affectedSensorID, List<String> sensorIds, Set<Phenomenon> phenomenons, final Set<org.opengis.observation.sampling.SamplingFeature> samplingFeatures) throws DataStoreException {
+        if (affectedSensorID != null) {
+            getLogger().warning("XMLObservation store does not allow to override sensor ID");
+        }
         final ExtractionResult result = new ExtractionResult();
         result.spatialBound.initBoundary();
         final Object obj = readFile();
@@ -212,7 +219,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements Resourc
             for (Observation obs : collection.getMember()) {
                 final AbstractObservation o = (AbstractObservation)obs;
                 final ProcedureTree procedure = new ProcedureTree(o.getProcedure().getHref(), "Component");
-                if (sensorIDs == null || sensorIDs.contains(procedure.id)) {
+                if (sensorIds == null || sensorIds.contains(procedure.id)) {
                     if (!result.procedures.contains(procedure)) {
                         result.procedures.add(procedure);
                     }
@@ -238,7 +245,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements Resourc
         } else if (obj instanceof AbstractObservation) {
             final AbstractObservation obs = (AbstractObservation)obj;
             final ProcedureTree procedure = new ProcedureTree(obs.getProcedure().getHref(), "Component");
-            if (sensorIDs == null || sensorIDs.contains(procedure.id)) {
+            if (sensorIds == null || sensorIds.contains(procedure.id)) {
                 result.observations .add(obs);
                 final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
                 result.fields.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));

@@ -171,7 +171,7 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
      */
     public List<String> getAxisLabels() {
         if (axisLabels == null) {
-            axisLabels = new ArrayList<String>();
+            axisLabels = new ArrayList<>();
         }
         return this.axisLabels;
     }
@@ -359,7 +359,7 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     @Override
     public boolean equals(final TransfiniteSet pointSet) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return equals(pointSet, ComparisonMode.STRICT);
     }
 
     @Override

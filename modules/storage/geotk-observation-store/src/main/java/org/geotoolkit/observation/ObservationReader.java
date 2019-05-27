@@ -26,6 +26,7 @@ import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.sos.xml.ResponseModeType;
 import org.opengis.observation.Observation;
+import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.temporal.TemporalPrimitive;
@@ -119,6 +120,13 @@ public interface ObservationReader {
     Collection<String> getPhenomenonNames() throws DataStoreException;
 
     /**
+     * Return a list of the phenomenon.
+     * @return
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    Collection<Phenomenon> getPhenomenons(final String version) throws DataStoreException;
+
+    /**
      * Return a list of the sensor identifiers measuring the specified phenomenon.
      *
      * @param observedProperty an observed phenomenon.
@@ -172,6 +180,17 @@ public interface ObservationReader {
      * @throws org.apache.sis.storage.DataStoreException
      */
     SamplingFeature getFeatureOfInterest(final String samplingFeatureName, final String version) throws DataStoreException;
+
+    /**
+     * Return a sampling feature for the specified sampling feature.
+     *
+     * @param samplingFeatureName The identifier of the feature of interest.
+     * @param version SOS version of the request.
+     *
+     * @return the corresponding feature Of interest.
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    Collection<SamplingFeature> getFeatureOfInterestForProcedure(final String sensorID, final String version) throws DataStoreException;
 
 
     /**

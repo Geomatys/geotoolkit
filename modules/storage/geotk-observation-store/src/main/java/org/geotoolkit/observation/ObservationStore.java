@@ -24,6 +24,8 @@ import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.metadata.Metadata;
+import org.opengis.observation.Phenomenon;
+import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
 import org.opengis.temporal.TemporalGeometricPrimitive;
@@ -63,6 +65,8 @@ public interface ObservationStore {
     public abstract ExtractionResult getResults(final List<String> sensorIds) throws DataStoreException;
 
     public abstract ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIds) throws DataStoreException;
+
+    public abstract ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIds, final Set<Phenomenon> existingPhenomenons, final Set<SamplingFeature> existingSamplingFeatures) throws DataStoreException;
 
     /**
      * Return an Observation Reader on the data.

@@ -38,6 +38,7 @@ import org.geotoolkit.sos.netcdf.NetCDFParsingException;
 import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.sos.xml.ResponseModeType;
 import org.opengis.observation.Observation;
+import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.temporal.TemporalPrimitive;
@@ -83,6 +84,11 @@ public class NetcdfObservationReader implements ObservationReader {
     }
 
     @Override
+    public Collection<Phenomenon> getPhenomenons(final String version) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet in netcdf implementation.");
+    }
+
+    @Override
     public Collection<String> getProceduresForPhenomenon(final String observedProperty) throws DataStoreException {
         if (existPhenomenon(observedProperty)) {
             return Arrays.asList(getProcedureID());
@@ -101,7 +107,7 @@ public class NetcdfObservationReader implements ObservationReader {
     @Override
     public TemporalGeometricPrimitive getTimeForProcedure(final String version, final String sensorID) throws DataStoreException {
         try {
-            final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null);
+            final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
             if (result != null && result.spatialBound != null) {
                 return result.spatialBound.getTimeObject(version);
             }
@@ -124,7 +130,7 @@ public class NetcdfObservationReader implements ObservationReader {
     @Override
     public Collection<String> getFeatureOfInterestNames() throws DataStoreException {
         try {
-            final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null);
+            final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
             return result.featureOfInterestNames;
         } catch (NetCDFParsingException ex) {
             throw new DataStoreException(ex);
@@ -134,7 +140,7 @@ public class NetcdfObservationReader implements ObservationReader {
     @Override
     public SamplingFeature getFeatureOfInterest(final String samplingFeatureName, final String version) throws DataStoreException {
         try {
-            final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null);
+            final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
             for (org.geotoolkit.sampling.xml.SamplingFeature feature : result.featureOfInterest) {
                 if (feature.getId().equals(samplingFeatureName)) {
                     return feature;
@@ -147,6 +153,17 @@ public class NetcdfObservationReader implements ObservationReader {
     }
 
     @Override
+    public Collection<SamplingFeature> getFeatureOfInterestForProcedure(String sensorID, String version) throws DataStoreException {
+        final List<SamplingFeature> results = new ArrayList<>();
+        if (sensorID.equals(getProcedureID())) {
+            for (String foiName : getFeatureOfInterestNames()) {
+                results.add(getFeatureOfInterest(foiName, version));
+            }
+        }
+        return results;
+    }
+
+    @Override
     public TemporalPrimitive getFeatureOfInterestTime(String samplingFeatureName, String version) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this this implementation.");
     }
@@ -154,7 +171,7 @@ public class NetcdfObservationReader implements ObservationReader {
     @Override
     public Observation getObservation(final String identifier, final QName resultModel, final ResponseModeType mode, final String version) throws DataStoreException {
        try {
-            final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null);
+            final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
             for (Observation obs : result.observations) {
                 final AbstractObservation o = (AbstractObservation) obs;
                 if (o.getId().equals(identifier)) {
