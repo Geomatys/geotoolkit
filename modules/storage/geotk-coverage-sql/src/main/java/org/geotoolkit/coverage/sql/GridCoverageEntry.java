@@ -215,8 +215,8 @@ final class GridCoverageEntry extends Entry {
                             if (AxisDirections.opposite(AdditionalAxisTable.getDirection(requestComponent)) ==
                                                         AdditionalAxisTable.getDirection(dataComponent))
                             {
-                                lower = -lower;
-                                upper = -upper;
+                                lower = -upper;
+                                upper = -lower;
                             }
                             lower += startTime;             // Now an absolute time with same unit and epoch than data CRS.
                             upper += startTime;
