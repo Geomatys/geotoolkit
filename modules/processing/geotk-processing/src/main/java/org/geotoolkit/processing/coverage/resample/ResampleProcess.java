@@ -21,6 +21,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.sis.coverage.SampleDimension;
@@ -35,10 +36,13 @@ import org.apache.sis.internal.coverage.BufferedGridCoverage;
 import org.apache.sis.internal.metadata.AxisDirections;
 import org.apache.sis.internal.raster.RasterFactory;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -50,22 +54,19 @@ import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
+
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
 
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.MathTransformFactory;
-import org.opengis.referencing.operation.TransformException;
+import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
 
 /**
@@ -73,13 +74,6 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  */
 public class ResampleProcess extends AbstractProcess {
-    /**
-     * The corner to use for performing calculation. By default {@link GridGeometry#getGridToCRS()}
-     * maps to pixel center (as of OGC specification). In JAI, the transforms rather map to the
-     * upper left corner.
-     */
-    private static final PixelOrientation CORNER = PixelOrientation.UPPER_LEFT;
-
 
     public ResampleProcess(GridCoverage coverage, CoordinateReferenceSystem targetCrs, double[] background) {
         super(INSTANCE, asParameters(coverage, targetCrs,  null, null, background));
@@ -126,15 +120,9 @@ public class ResampleProcess extends AbstractProcess {
         final GridCoverage source = inputParameters.getValue(IN_COVERAGE);
         final double[] background = inputParameters.getValue(IN_BACKGROUND);
         InterpolationCase interpolation = inputParameters.getValue(IN_INTERPOLATION_TYPE);
-        if (interpolation == null) {
-            interpolation = InterpolationCase.NEIGHBOR;
-        }
         final ResampleBorderComportement border = inputParameters.getValue(IN_BORDER_COMPORTEMENT_TYPE);
 
         CoordinateReferenceSystem targetCRS = (CoordinateReferenceSystem) inputParameters.parameter("CoordinateReferenceSystem").getValue();
-        if (targetCRS == null) {
-            targetCRS = source.getCoordinateReferenceSystem();
-        }
         final GridGeometry targetGG = inputParameters.getValue(IN_GRID_GEOMETRY);
         final GridCoverage target;
 
@@ -212,6 +200,10 @@ public class ResampleProcess extends AbstractProcess {
         final GridGeometry sourceGG = sourceCov.getGridGeometry();
 
         //set default values
+
+        if (interpolationType == null) {
+            interpolationType = InterpolationCase.NEIGHBOR;
+        }
         if(borderComportement==null) borderComportement = ResampleBorderComportement.EXTRAPOLATION;
 
         ////////////////////////////////////////////////////////////////////////////////////////
@@ -225,7 +217,9 @@ public class ResampleProcess extends AbstractProcess {
 
         final CoordinateReferenceSystem sourceCRS = sourceGG.getCoordinateReferenceSystem();
         if (targetCRS == null) {
-            targetCRS = sourceCRS;
+            if (targetGG != null && targetGG.isDefined(GridGeometry.CRS))
+                targetCRS = targetGG.getCoordinateReferenceSystem();
+            else targetCRS = sourceCRS;
             // From this point, consider "targetCRS" as final.
         }
         /*
@@ -271,23 +265,16 @@ public class ResampleProcess extends AbstractProcess {
         final CoordinateReferenceSystem compatibleSourceCRS = compatibleSourceCRS(
                 CRS.getHorizontalComponent(sourceCRS), sourceCRS, targetCRS);
         /*
-         * The projection are usually applied on floating-point values, in order
-         * to gets maximal precision and to handle correctly the special case of
-         * NaN values. However, we can apply the projection on integer values if
-         * the interpolation type is "nearest neighbor", since this is not really
-         * an interpolation.
+         * The projection are usually applied on floating-point values, in order to gets maximal precision and to handle
+         * correctly the special case of NaN values. However, we can apply the projection on integer values if the
+         * interpolation type is "nearest neighbor", since this is not really an interpolation. We can also keep integer
+         * values if sample conversion from packed to geophysic is fully linear, and no "no-data" value is defined. This
+         * last requirement is very important, in order to avoid mixing of aberrant values.
          *
-         * If this condition is meets, then we verify if an "integer version" of the image
-         * is available as a source of the source coverage (i.e. the floating-point image
-         * is derived from the integer image, not the converse).
-         *
-         * TODO : this functionality should be reenabled to optimize performances
-         *        fill value must be converted back to native and if not possible
-         *        view type should remain unchanged.
+         * If one of the two conditions above is meet, then we verify if an "integer version" of the image is available
+         * as a source of the source coverage (i.e. the floating-point image is derived from the integer image, not the
+         *  converse).
          */
-//        final ViewType processingView = preferredViewForOperation(
-//                                        sourceCoverage, interpolationType, false, hints);
-
         final List<SampleDimension> sds = sourceCov.getSampleDimensions();
         if (sds == null || sds.isEmpty())
             throw new IllegalArgumentException("Input coverage does not properly declare sample dimensions");
@@ -317,7 +304,6 @@ public class ResampleProcess extends AbstractProcess {
         ////                                                                                ////
         ////////////////////////////////////////////////////////////////////////////////////////
 
-        final CoordinateOperationFactory factory = DefaultFactories.forBuildin(CoordinateOperationFactory.class);
         final MathTransformFactory mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
         /*
          * Computes the INVERSE of the math transform from [Source Grid] to [Target Grid].
@@ -376,8 +362,9 @@ public class ResampleProcess extends AbstractProcess {
                 throw new CannotReprojectException(Errors.format(Errors.Keys.UnspecifiedCrs));
             }
             final Envelope        sourceEnvelope;
-            final CoordinateOperation operation = factory.createOperation(sourceCRS, targetCRS);
-            final CoordinateOperation inverseOp = factory.createOperation(targetCRS, compatibleSourceCRS);
+            final GeographicBoundingBox roi = tryGetRoi(targetGG, sourceGG);
+            final CoordinateOperation operation = CRS.findOperation(sourceCRS, targetCRS, roi);
+            final CoordinateOperation inverseOp = CRS.findOperation(targetCRS, compatibleSourceCRS, roi);
             final boolean force2D = (sourceCRS != compatibleSourceCRS);
             final GridGeometry sourceGGCopy;
             if (force2D) {
@@ -442,12 +429,16 @@ public class ResampleProcess extends AbstractProcess {
         ////                                                                                ////
         ////////////////////////////////////////////////////////////////////////////////////////
 
-        RenderedImage sourceImage = sourceCov.render(null); // TODO : We should check if a subset of source image is required
+        RenderedImage sourceImage = sourceCov.render(null); // TODO : We should check if only a subset of source image is required
         final int sourceDataType = sourceImage.getTile(0, 0).getDataBuffer().getDataType();
         final GridExtent targetBB = targetGG.getExtent();
 
-        final AccessibleBufferedCoverage targetCov = new AccessibleBufferedCoverage(targetGG, sourceCov.getSampleDimensions(), sourceDataType);
-        // TODO: check, it's surely a bad configuration.
+        final List<SampleDimension> outputSampleDims = geophysicRequired?
+                sds.stream()
+                        .map(sd -> sd.forConvertedValues(true))
+                        .collect(Collectors.toList())
+                : sds;
+        final AccessibleBufferedCoverage targetCov = new AccessibleBufferedCoverage(targetGG, outputSampleDims, sourceDataType);
         final int targetWidth = Math.toIntExact(targetBB.getSize(targetGridAxes.x));
         final WritableRaster targetRaster = RasterFactory.createRaster(
                 targetCov.getBuffer(),
@@ -543,15 +534,47 @@ public class ResampleProcess extends AbstractProcess {
 //            }
 //        }
 
-
-//        final Interpolation interpolator = Interpolation.create(
-//                PixelIteratorFactory.createDefaultIterator(sourceImage,sourceBB), interpolationType, 2);
             final Resample resample = new Resample(targetToSource, targetImage, sourceImage,
                     interpolationType, borderComportement, fillValue);
             resample.fillImage(canUseGrid);
         }
 
         return targetCov;
+    }
+
+    /**
+     * Build a geographic extent by analyzing input geometries. It is a pseudo-safe operation returning null if no area
+     * of interest can be deduced, in order to avoid failure of entire resample.
+     * @param target Primary grid geometry to extract geographic bbox from.
+     * @param fallback If we cannot deduce a bbox from first parameter, we'll try to get one from this one.
+     * @return null if we cannot compute any geographic extent.
+     */
+    private static GeographicBoundingBox tryGetRoi(GridGeometry target, GridGeometry fallback) {
+        GeographicBoundingBox geoBbox = tryExtractGeoBbox(target);
+        if (geoBbox == null)
+            geoBbox = tryExtractGeoBbox(fallback);
+
+        return geoBbox;
+    }
+
+    private static GeographicBoundingBox tryExtractGeoBbox(GridGeometry target) {
+        try {
+            if (target != null && target.isDefined(GridGeometry.ENVELOPE)) {
+                return toGeoBbox(target.getEnvelope());
+            }
+        } catch (RuntimeException | TransformException e) {
+            // TODO: log or raise warning
+        }
+
+        return null;
+    }
+
+    private static GeographicBoundingBox toGeoBbox(Envelope baseEnvelope) throws TransformException {
+        final Envelope geoEnv = Envelopes.transform(baseEnvelope, CommonCRS.defaultGeographic());
+        return new DefaultGeographicBoundingBox(
+                geoEnv.getMinimum(0), geoEnv.getMaximum(0),
+                geoEnv.getMinimum(1), geoEnv.getMaximum(1)
+        );
     }
 
     private static Point getImageAxis(GridGeometry sourceGG) {
@@ -631,19 +654,22 @@ public class ResampleProcess extends AbstractProcess {
         }
     }
 
+    // TODO: try to re-activate, it would allow optimize a few cases.
     private static void resampleUsingJava(
-            RenderedImage sourceImage,InterpolationCase interpolationType, MathTransform trs,
+            RenderedImage sourceImage,InterpolationCase interpolationType, AffineTransform trs,
             BufferedImage targetImage){
 
         final Object javaInterHint = fingJavaInterpolationHint(interpolationType);
-        final RenderingHints ophints = new RenderingHints(new HashMap());
-        ophints.put(RenderingHints.KEY_INTERPOLATION, javaInterHint);
+        final RenderingHints ophints;
+        if (javaInterHint != null) ophints = new RenderingHints(RenderingHints.KEY_INTERPOLATION, javaInterHint);
+        else ophints = null;
         if(sourceImage instanceof BufferedImage){
-            final AffineTransformOp op = new AffineTransformOp((AffineTransform)trs, ophints);
+            final AffineTransformOp op = new AffineTransformOp(trs, ophints);
             op.filter((BufferedImage)sourceImage, targetImage);
         }else{
             //only one tile
-            final AffineTransformOp op = new AffineTransformOp((AffineTransform)trs, ophints);
+            final AffineTransformOp op = new AffineTransformOp(trs, ophints);
+            // TODO : shouldn't we deduce a set of tiles to filter on ?
             op.filter(sourceImage.getTile(0, 0), targetImage.getRaster());
         }
     }
@@ -721,92 +747,6 @@ public class ResampleProcess extends AbstractProcess {
     }
 
     /**
-     * Computes a grid geometry from a source coverage and a target envelope. This is a convenience
-     * method for computing the {@link #GRID_GEOMETRY} argument of a {@code "resample"} operation
-     * from an envelope. The target envelope may contains a different coordinate reference system,
-     * in which case a reprojection will be performed.
-     *
-     * @param source The source coverage.
-     * @param target The target envelope, including a possibly different coordinate reference system.
-     * @return A grid geometry inferred from the target envelope.
-     * @throws TransformException If a transformation was required and failed.
-     *
-     * @since 2.5
-     */
-    public static GridGeometry computeGridGeometry(final GridCoverage source, final Envelope target)
-            throws TransformException
-    {
-        final CoordinateReferenceSystem targetCRS = target.getCoordinateReferenceSystem();
-        final CoordinateReferenceSystem sourceCRS = source.getCoordinateReferenceSystem();
-        final CoordinateReferenceSystem reducedCRS;
-        if (target.getDimension() == 2 && sourceCRS.getCoordinateSystem().getDimension() != 2) {
-            reducedCRS = CoverageUtilities.getCRS2D(source);
-        } else {
-            reducedCRS = sourceCRS;
-        }
-        GridGeometry gridGeometry = source.getGridGeometry();
-        if (targetCRS == null || Utilities.equalsIgnoreMetadata(reducedCRS, targetCRS)) {
-            /*
-             * Same CRS (or unknown target CRS, which we treat as same), so we will keep the same
-             * "gridToCRS" transform. Basically the result will be the same as if we did a crop,
-             * except that we need to take in account a change from nD to 2D.
-             */
-            final MathTransform gridToCRS;
-            if (reducedCRS == sourceCRS) {
-                gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
-            } else {
-                gridToCRS = GridGeometry2D.castOrCopy(gridGeometry).getGridToCRS2D();
-            }
-            gridGeometry = new GridGeometry2D(PixelInCell.CELL_CENTER, gridToCRS, target);
-        } else {
-            /*
-             * Different CRS. We need to infer an image size, which may be the same than the
-             * original size or something smaller if the envelope is a subarea. We process by
-             * transforming the target envelope to the source CRS and compute a new grid geometry
-             * with that envelope. The grid envelope of that grid geometry is the new image size.
-             * Note that failure to transform the envelope is non-fatal (we will assume that the
-             * target image should have the same size). Then create again a new grid geometry,
-             * this time with the target envelope.
-             */
-            GridExtent gridEnvelope;
-            try {
-                final GeneralEnvelope transformed;
-                transformed = Envelopes.transform(CRS.findOperation(targetCRS, reducedCRS, null), target);
-                final Envelope reduced;
-                final MathTransform gridToCRS;
-                if (reducedCRS == sourceCRS) {
-                    reduced   = source.getGridGeometry().getEnvelope();
-                    gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
-                } else {
-                    reduced   = CoverageUtilities.getEnvelope2D(source);
-                    gridToCRS = GridGeometry2D.castOrCopy(gridGeometry).getGridToCRS2D();
-                }
-                transformed.intersect(reduced);
-                gridGeometry = new GridGeometry2D(PixelInCell.CELL_CENTER, gridToCRS, transformed);
-            } catch (FactoryException exception) {
-                recoverableException("resample", exception);
-            } catch (TransformException exception) {
-                recoverableException("resample", exception);
-                // Will use the grid envelope from the original geometry,
-                // which will result in keeping the same image size.
-            }
-            gridEnvelope = gridGeometry.getExtent();
-            gridGeometry = new GridGeometry2D(gridEnvelope, target);
-        }
-        return gridGeometry;
-    }
-
-    /**
-     * Invoked when an error occurred but the application can fallback on a reasonable default.
-     *
-     * @param method The method where the error occurred.
-     * @param exception The error.
-     */
-    private static void recoverableException(final String method, final Exception exception) {
-        Logging.recoverableException(null, ResampleProcess.class, method, exception);
-    }
-
-    /**
      * Test given coverage sample dimension to determine if pixel interpolation requires geophysic values, or can be
      * processed upon packed values (which can be more efficient). Note that if any incertitude is left (missing sample
      * dimension or transfer functions), we force geophysic mode for safety.
@@ -843,6 +783,28 @@ public class ResampleProcess extends AbstractProcess {
 
         private DataBuffer getBuffer() {
             return data;
+        }
+    }
+
+    private static GridGeometry fixGrid(final GridGeometry currentTarget, final CoordinateReferenceSystem targetCrs) {
+        if (currentTarget == null) {
+
+        } else {
+
+        }
+
+        throw new UnsupportedOperationException();
+    }
+
+    private static class ResampleContext {
+        final GridGeometry source;
+        final CoordinateReferenceSystem targetCrs;
+
+        public ResampleContext(GridGeometry source, CoordinateReferenceSystem targetCrs) {
+            ensureNonNull("Source geometry", source);
+            ensureNonNull("Target CRS", targetCrs);
+            this.source = source;
+            this.targetCrs = targetCrs;
         }
     }
 }
