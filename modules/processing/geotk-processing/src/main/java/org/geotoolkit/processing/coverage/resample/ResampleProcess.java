@@ -42,9 +42,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
-import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.BufferedImages;
@@ -55,11 +53,12 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.internal.coverage.BufferedGridCoverage.convert;
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
 
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.resources.Errors;
+import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.parameter.ParameterValueGroup;
@@ -281,7 +280,7 @@ public class ResampleProcess extends AbstractProcess {
         final int nBands = sds.size();
 
         final boolean interpolationIsNearestNeighbor = InterpolationCase.NEIGHBOR.equals(interpolationType);
-        final boolean geophysicRequired = !interpolationIsNearestNeighbor || isGeophysicRequired(sds);
+        final boolean geophysicRequired = !interpolationIsNearestNeighbor && isGeophysicRequired(sds);
         sourceCov = sourceCov.forConvertedValues(geophysicRequired);
 
         //extract fill value after the resampling view type has been chosen. Note that if no geophysic view is needed, no fill value can be correctly applied.
@@ -438,22 +437,13 @@ public class ResampleProcess extends AbstractProcess {
                         .map(sd -> sd.forConvertedValues(true))
                         .collect(Collectors.toList())
                 : sds;
-        final AccessibleBufferedCoverage targetCov = new AccessibleBufferedCoverage(targetGG, outputSampleDims, sourceDataType);
-        final int targetWidth = Math.toIntExact(targetBB.getSize(targetGridAxes.x));
-        final WritableRaster targetRaster = RasterFactory.createRaster(
-                targetCov.getBuffer(),
-                targetWidth,
-                Math.toIntExact(targetBB.getSize(targetGridAxes.y)),
-                nBands,
-                Math.multiplyExact(nBands, targetWidth),
-                new int[]{0},
-                IntStream.range(0, nBands).toArray(),
-                new Point(0, 0)
-        );
 
-        // TODO: verify, I don't know what I'm doing.
-        final ColorModel tmpCM = BufferedImages.createGrayScaleColorModel(sourceDataType, nBands, 0, 0, 1);
-        final BufferedImage targetImage = new BufferedImage(tmpCM, targetRaster, false, null);
+        final BufferedImage targetImage = BufferedImages.createImage(
+                Math.toIntExact(targetBB.getSize(targetGridAxes.x)),
+                Math.toIntExact(targetBB.getSize(targetGridAxes.y)),
+                sourceImage
+        );
+        final WritableRaster targetRaster = targetImage.getRaster();
         //fill target image with fill values
         if (fillValue != null) {
             //if fill values are all 0 do nothing
@@ -539,7 +529,9 @@ public class ResampleProcess extends AbstractProcess {
             resample.fillImage(canUseGrid);
         }
 
-        return targetCov;
+        return geophysicRequired?
+                new NoConversionCoverage(targetGG, outputSampleDims, targetImage) :
+                new PackedCoverage(targetGG, outputSampleDims, targetImage);
     }
 
     /**
@@ -748,8 +740,7 @@ public class ResampleProcess extends AbstractProcess {
 
     /**
      * Test given coverage sample dimension to determine if pixel interpolation requires geophysic values, or can be
-     * processed upon packed values (which can be more efficient). Note that if any incertitude is left (missing sample
-     * dimension or transfer functions), we force geophysic mode for safety.
+     * processed upon packed values (which can be more efficient).
      *
      * @param source Coverage to check.
      * @return True if resample HAVE TO USE geophysic values. False otherwise.
@@ -761,10 +752,10 @@ public class ResampleProcess extends AbstractProcess {
             if (!sd.getNoDataValues().isEmpty())
                 return true;
 
-            final boolean isLinear = sd.getTransferFunction()
-                    .map(LinearTransform.class::isInstance)
+            final boolean isNotLinear = sd.getTransferFunction()
+                    .map(tr -> !(tr instanceof LinearTransform))
                     .isPresent();
-            if (!isLinear)
+            if (isNotLinear)
                 return true;
         }
 
@@ -772,39 +763,60 @@ public class ResampleProcess extends AbstractProcess {
         return false;
     }
 
-    /**
-     * Override of {@link BufferedGridCoverage Apache SIS in-memory coverage} which allow access to its internal buffer.
-     */
-    private static class AccessibleBufferedCoverage extends BufferedGridCoverage {
+    private static class NoConversionCoverage extends GridCoverage {
 
-        public AccessibleBufferedCoverage(GridGeometry grid, Collection<? extends SampleDimension> bands, int dataType) {
-            super(grid, bands, dataType);
+        final RenderedImage buffer;
+        /**
+         * Constructs a grid coverage using the specified grid geometry and sample dimensions.
+         *  @param grid  the grid extent, CRS and conversion from cell indices to CRS.
+         * @param bands sample dimensions for each image band.
+         * @param buffer
+         */
+        protected NoConversionCoverage(GridGeometry grid, Collection<? extends SampleDimension> bands, RenderedImage buffer) {
+            super(grid, bands);
+            this.buffer = buffer;
         }
 
-        private DataBuffer getBuffer() {
-            return data;
+        @Override
+        public synchronized  GridCoverage forConvertedValues(boolean converted) {
+            return this;
+        }
+
+        @Override
+        public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
+            return buffer;
         }
     }
 
-    private static GridGeometry fixGrid(final GridGeometry currentTarget, final CoordinateReferenceSystem targetCrs) {
-        if (currentTarget == null) {
+    private static class PackedCoverage extends NoConversionCoverage {
 
-        } else {
+        /**
+         * Result of the call to {@link #forConvertedValues(boolean)}, created when first needed.
+         */
+        private GridCoverage converted;
 
+        /**
+         * Constructs a grid coverage using the specified grid geometry and sample dimensions.
+         *
+         * @param grid   the grid extent, CRS and conversion from cell indices to CRS.
+         * @param bands  sample dimensions for each image band.
+         * @param buffer
+         */
+        protected PackedCoverage(GridGeometry grid, Collection<? extends SampleDimension> bands, RenderedImage buffer) {
+            super(grid, bands, buffer);
         }
 
-        throw new UnsupportedOperationException();
-    }
-
-    private static class ResampleContext {
-        final GridGeometry source;
-        final CoordinateReferenceSystem targetCrs;
-
-        public ResampleContext(GridGeometry source, CoordinateReferenceSystem targetCrs) {
-            ensureNonNull("Source geometry", source);
-            ensureNonNull("Target CRS", targetCrs);
-            this.source = source;
-            this.targetCrs = targetCrs;
+        @Override
+        public synchronized  GridCoverage forConvertedValues(boolean converted) {
+            if (converted) {
+                synchronized (this) {
+                    if (this.converted == null) {
+                        this.converted = convert(this);
+                    }
+                    return this.converted;
+                }
+            }
+            return this;
         }
     }
 }
