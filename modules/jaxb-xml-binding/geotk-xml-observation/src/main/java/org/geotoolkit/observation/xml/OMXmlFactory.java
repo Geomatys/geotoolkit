@@ -411,18 +411,22 @@ public class OMXmlFactory {
             if (time != null && !(time instanceof org.geotoolkit.gml.xml.v321.AbstractTimeObjectType)) {
                 throw new IllegalArgumentException("unexpected object version for time element");
             }
-            if (phen != null && !(phen instanceof org.geotoolkit.swe.xml.Phenomenon)) {
-                throw new IllegalArgumentException("unexpected object version for phenomenon element");
+            String phename = null;
+            if (phen != null) {
+                if (!(phen instanceof org.geotoolkit.swe.xml.Phenomenon)) {
+                    throw new IllegalArgumentException("unexpected object version for phenomenon element");
+                }
+                org.geotoolkit.swe.xml.Phenomenon sPhen = (org.geotoolkit.swe.xml.Phenomenon)phen;
+                phename = sPhen.getName() != null ? sPhen.getName().getCode() : null;
             }
-            final String phename = (((org.geotoolkit.swe.xml.Phenomenon)phen).getName() != null)?((org.geotoolkit.swe.xml.Phenomenon)phen).getName().getCode():"";
-           return new org.geotoolkit.observation.xml.v200.OMObservationType(id,
-                                                                            name,
-                                                                            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation",
-                                                                            (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType)time,
-                                                                            procedure,
-                                                                            phename,
-                                                                            (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature,
-                                                                            result);
+            return new org.geotoolkit.observation.xml.v200.OMObservationType(id,
+                                                                             name,
+                                                                             "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation",
+                                                                             (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType)time,
+                                                                             procedure,
+                                                                             phename,
+                                                                             (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature,
+                                                                             result);
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }

@@ -154,22 +154,14 @@ public class OMUtils {
     }
 
     public static Phenomenon getPhenomenon(final String version, final List<Field> phenomenons) {
-        final Phenomenon phenomenon;
-        if (phenomenons.size() == 1) {
-            phenomenon = SOSXmlFactory.buildPhenomenon(version, phenomenons.get(0).label, phenomenons.get(0).label);
-        } else {
-            final Set<PhenomenonType> types = new HashSet<>();
-            for (Field phen : phenomenons) {
-                types.add(new PhenomenonType(phen.label, phen.label));
-            }
-            final String compositeId = "composite" + UUID.randomUUID().toString();
-            final String compositeName = "urn:ogc:phenomenon:" + compositeId;
-            phenomenon = new CompositePhenomenonType(compositeId, compositeName, null, null, types);
-        }
-        return phenomenon;
+        return getPhenomenon(version, phenomenons, "urn:ogc:phenomenon:", new HashSet<>());
     }
 
     public static Phenomenon getPhenomenon(final String version, final List<Field> phenomenons, final Set<org.opengis.observation.Phenomenon> existingPhens) {
+        return getPhenomenon(version, phenomenons, "urn:ogc:phenomenon:", existingPhens);
+    }
+
+    public static Phenomenon getPhenomenon(final String version, final List<Field> phenomenons, final String phenomenonIdBase, final Set<org.opengis.observation.Phenomenon> existingPhens) {
         final Phenomenon phenomenon;
         if (phenomenons.size() == 1) {
             phenomenon = SOSXmlFactory.buildPhenomenon(version, phenomenons.get(0).label, phenomenons.get(0).label);
@@ -190,7 +182,7 @@ public class OMUtils {
             }
 
             final String compositeId = "composite" + UUID.randomUUID().toString();
-            final String compositeName = "urn:ogc:phenomenon:" + compositeId;
+            final String compositeName = phenomenonIdBase + compositeId;
             phenomenon = new CompositePhenomenonType(compositeId, compositeName, null, null, types);
         }
         return phenomenon;
