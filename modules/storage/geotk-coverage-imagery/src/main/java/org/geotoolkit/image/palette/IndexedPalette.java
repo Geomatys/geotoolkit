@@ -27,7 +27,7 @@ import javax.imageio.ImageTypeSpecifier;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.color.ColorUtilities;
-import org.apache.sis.internal.raster.ColorModelFactory;
+import org.apache.sis.internal.coverage.ColorModelFactory;
 
 
 /**

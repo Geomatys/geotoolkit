@@ -36,7 +36,7 @@ import java.util.Hashtable;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.util.Static;
-import org.apache.sis.internal.raster.ColorModelFactory;
+import org.apache.sis.internal.coverage.ColorModelFactory;
 
 /**
  *

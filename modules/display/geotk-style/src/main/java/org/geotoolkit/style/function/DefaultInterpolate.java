@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.sis.internal.raster.ColorModelFactory;
+import org.apache.sis.internal.coverage.ColorModelFactory;
 
 import org.geotoolkit.filter.AbstractExpression;
 import org.geotoolkit.filter.DefaultLiteral;
