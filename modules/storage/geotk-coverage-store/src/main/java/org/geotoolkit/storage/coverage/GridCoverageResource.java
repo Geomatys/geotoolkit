@@ -138,7 +138,6 @@ public interface GridCoverageResource extends org.apache.sis.storage.WritableGri
                                     final MathTransform gridToCRS = domain.getGridToCRS(PixelInCell.CELL_CENTER);
                                     final TransformSeparator ts = new TransformSeparator(gridToCRS);
                                     ts.addTargetDimensions(vidx);
-                                    ts.setTrimSourceDimensions(true);
                                     final MathTransform vtrs = ts.separate();
                                     final double[] vcoord = new double[]{extent.getLow(vidx)};
                                     vtrs.transform(vcoord, 0, vcoord, 0, 1);
