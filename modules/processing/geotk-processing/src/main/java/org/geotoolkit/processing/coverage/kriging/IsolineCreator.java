@@ -21,15 +21,16 @@ import java.util.HashMap;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 import javax.vecmath.Point3d;
 import org.opengis.coverage.grid.SequenceType;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.image.PixelIterator;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
 import static java.lang.Double.isNaN;
-import org.apache.sis.image.PixelIterator;
 
 
 /**
@@ -99,7 +100,7 @@ public class IsolineCreator {
         if (iterator.getNumBands() != 1) {
             throw new IllegalArgumentException("Image must have a single band.");
         }
-        if (!SequenceType.LINEAR.equals(iterator.getIterationOrder())) {
+        if (!Optional.of(SequenceType.LINEAR).equals(iterator.getIterationOrder())) {
             throw new IllegalArgumentException("PixelIterator must be row-major.");
         }
         this.iterator = iterator;
