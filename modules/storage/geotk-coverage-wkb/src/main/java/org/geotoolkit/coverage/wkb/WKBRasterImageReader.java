@@ -26,8 +26,6 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Locale;
-
-import org.geotoolkit.util.Utilities;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
@@ -36,6 +34,7 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.util.Utilities;
 
 /**
  * Draft java api image reader for WKB, used in postGIS 2 but can be used elsewhere.
@@ -131,7 +130,7 @@ public class WKBRasterImageReader extends ImageReader{
             if (source instanceof ImageInputStream) {
                 final ImageInputStream is = (ImageInputStream) source;
                 is.mark();
-                source = new byte[3];
+                source = new byte[5];
                 is.readFully((byte[])source);
                 is.reset();
             }
@@ -139,9 +138,13 @@ public class WKBRasterImageReader extends ImageReader{
             if (source instanceof byte[]) {
                 byte[] buffer = (byte[]) source;
                 //check endianess and version
-                return (buffer[0] == 0 || buffer[0] == 1)
+                boolean valid = (buffer[0] == 0 || buffer[0] == 1)
                         && buffer[1] == 0
                         && buffer[2] == 0;
+                //additional check, many files start with several 0x00, band check reduces the risk
+                //number of bands, should be between 1 and 8
+                valid &= (buffer[4] >0 && buffer[4] < 8);
+                return valid;
             }
 
             return false;
