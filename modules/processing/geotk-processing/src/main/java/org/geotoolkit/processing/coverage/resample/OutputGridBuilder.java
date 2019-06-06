@@ -22,7 +22,6 @@ import org.opengis.util.FactoryException;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;

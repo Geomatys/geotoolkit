@@ -22,26 +22,14 @@ import java.awt.image.*;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.coverage.grid.GridRoundingMode;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.internal.metadata.AxisDirections;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.parameter.Parameters;
-import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.referencing.operation.transform.TransformSeparator;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.BufferedImages;
@@ -53,22 +41,16 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 
 import static org.apache.sis.internal.coverage.BufferedGridCoverage.convert;
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
 
-import org.apache.sis.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.CannotEvaluateException;
-import org.opengis.geometry.Envelope;
-import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
 
-import javax.annotation.Nonnull;
 
 /**
  *

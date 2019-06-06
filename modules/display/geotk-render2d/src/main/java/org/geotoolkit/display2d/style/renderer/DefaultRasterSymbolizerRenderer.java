@@ -157,12 +157,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      */
     @Override
     public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
-
         boolean dataRendered = false;
         try {
             GridCoverage elevationCoverage = null;//getObjectiveElevationCoverage(projectedCoverage);
             final MapLayer coverageLayer = projectedCoverage.getLayer();
-
             final Resource resource = coverageLayer.getResource();
             if (!(resource instanceof GridCoverageResource)) {
                 LOGGER.log(Level.WARNING, () -> String.format(
