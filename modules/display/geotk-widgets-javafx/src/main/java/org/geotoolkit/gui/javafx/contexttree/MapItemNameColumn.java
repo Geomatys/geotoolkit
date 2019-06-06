@@ -19,6 +19,7 @@ package org.geotoolkit.gui.javafx.contexttree;
 
 import java.awt.Color;
 import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
@@ -32,6 +33,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Callback;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.FeatureSet;
@@ -67,17 +69,21 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
 
     public MapItemNameColumn() {
         super(GeotkFX.getString(MapItemNameColumn.class,"layers"));
-        setCellValueFactory(param -> {
-            if (param instanceof CellDataFeatures) {
-                final TreeItem item = ((CellDataFeatures) param).getValue();
-                final Object value = item.getValue();
-                if (value instanceof MapItem) {
-                    return FXUtilities.beanProperty(value, "name", String.class);
-                } else throw new IllegalArgumentException("Expected a Map item object, but got "+value == null? "null" : value.getClass().getCanonicalName());
+        setCellValueFactory(new Callback<CellDataFeatures<T, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<T, String> param) {
+                if (param instanceof CellDataFeatures) {
+                    final TreeItem item = ((CellDataFeatures) param).getValue();
+                    final Object value = item.getValue();
+                    if (value instanceof MapItem) {
+                        return FXUtilities.beanProperty(value, "name", String.class);
+                    } else {
+                        throw new IllegalArgumentException("Expected a Map item object, but got "+value == null? "null" : value.getClass().getCanonicalName());
+                    }
 
+                }
+                return null;
             }
-
-            return null;
         });
         setCellFactory((TreeTableColumn<T, String> param) -> new Cell());
         setEditable(true);
