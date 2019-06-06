@@ -267,7 +267,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final InterpolationCase interpolation = InterpolationCase.BILINEAR;
         final GridGeometry slice = extractSlice(ref.getGridGeometry(), canvasGrid, computeMargin2D(interpolation), true);
 
-        GridCoverage coverage = ref.read(slice, sourceBands);
+        GridCoverage coverage = projectedCoverage.getCoverage(slice, sourceBands);
 
         //at this point, we want a single slice in 2D
         //we remove all other dimension to simplify any following operation
@@ -279,6 +279,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         if (Utilities.equalsIgnoreMetadata(crs2d, coverage.getCoordinateReferenceSystem())) {
             return coverage;
         } else {
+            coverage = prepareCoverageToResampling(coverage, symbol);
             //resample
             final double[] fill = new double[coverage.getSampleDimensions().size()];
             Arrays.fill(fill, Double.NaN);
@@ -324,10 +325,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
                 return forwardResample(coverage, resampleGrid);
             } else {
-                if (coverage.getSampleDimensions() != null && !coverage.getSampleDimensions().isEmpty()) {
-                    //interpolate in geophysic
-                    coverage = coverage.forConvertedValues(true);
-                }
                 ResampleProcess process = new ResampleProcess(coverage, crs2d, resampleGrid, interpolation, fill);
                 //do not extrapolate values, can cause large areas of incorrect values
                 process.getInput().parameter(ResampleDescriptor.IN_BORDER_COMPORTEMENT_TYPE.getName().getCode()).setValue(ResampleBorderComportement.FILL_VALUE);
@@ -446,7 +443,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             throws CoverageStoreException, TransformException, FactoryException, ProcessException {
 
         // HACK : This method cannot manage incomplete grid geometries, so we have to skip
-        if (!fullArea.isDefined(GridGeometry.ENVELOPE | GridGeometry.RESOLUTION | GridGeometry.GRID_TO_CRS | GridGeometry.EXTENT)) {
+        if (!fullArea.isDefined(GridGeometry.ENVELOPE | GridGeometry.GRID_TO_CRS | GridGeometry.EXTENT)) {
             return areaOfInterest;
         }
 
