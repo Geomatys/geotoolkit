@@ -27,6 +27,9 @@ import java.lang.ref.SoftReference;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
+
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.SearchArea;
@@ -37,8 +40,10 @@ import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.geometry.Envelope;
 
 /**
  *
@@ -103,6 +108,7 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
         final double opacity = item.getOpacity();
         if (opacity < 1e-6) return false;
 
+        if (!isInView(context)) return false;
 
         if (1-opacity < 1e-6) {
             //we are very close to opacity one, no need to create a intermediate image
@@ -126,7 +132,21 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
 
             return dataRendered;
         }
+    }
 
+    private boolean isInView(final RenderingContext2D context) {
+        // TODO: we should not check only 2D boundary
+        try {
+            final GeneralEnvelope boundary = GeneralEnvelope.castOrCopy(
+                    Envelopes.transform(item.getBounds(), context.getObjectiveCRS2D())
+            );
+            return boundary.intersects(context.getCanvasObjectiveBounds2D());
+        } catch (Exception e) {
+            // TODO: log
+        }
+
+        // Cannot determine intersection. Display object.
+        return true;
     }
 
     /**
