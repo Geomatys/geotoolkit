@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010-2015, Geomatys
+ *    (C) 2010-2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,51 +16,47 @@
  */
 package org.geotoolkit.data.csv;
 
-import org.locationtech.jts.io.ParseException;
-import org.locationtech.jts.io.WKTReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.locks.ReadWriteLock;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.apache.sis.internal.feature.AttributeConvention;
 
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-class CSVFeatureReader implements FeatureReader {
+class CSVReader implements Iterator<Feature>, AutoCloseable {
 
-    protected final CSVFeatureStore store;
+    protected final CSVStore store;
     protected final ReadWriteLock fileLock;
     protected final FeatureType featureType;
     protected final WKTReader reader = new WKTReader();
     protected final Scanner scanner;
     protected final AttributeType[] atts;
-    protected final Feature reuse;
+    protected boolean withId;
     protected Feature current = null;
     protected int inc = 0;
 
-    CSVFeatureReader(CSVFeatureStore store, final FeatureType featureType, final boolean reuseFeature, final ReadWriteLock fileLock) throws DataStoreException {
+    CSVReader(CSVStore store, final FeatureType featureType, final ReadWriteLock fileLock) throws DataStoreException {
         this.store = store;
         this.fileLock = fileLock;
         this.featureType = featureType;
         this.fileLock.readLock().lock();
-        if (reuseFeature) {
-            reuse = CSVUtils.defaultFeature(featureType, "0");
-        } else {
-            reuse = null;
-        }
         try {
             scanner = new Scanner(store.getFile());
             //skip the type line
@@ -76,9 +72,16 @@ class CSVFeatureReader implements FeatureReader {
         }
 
         this.atts = atts.toArray(new AttributeType[0]);
+
+        // Check if there's identifiers to report.
+        try {
+            featureType.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            withId = true;
+        } catch (PropertyNotFoundException e) {
+            //do nothing
+        }
     }
 
-    @Override
     public FeatureType getFeatureType() {
         return featureType;
     }
@@ -107,13 +110,8 @@ class CSVFeatureReader implements FeatureReader {
         final String line = CSVUtils.getNextLine(scanner);
         if (line != null) {
             final List<String> fields = CSVUtils.toStringList(scanner, line, store.getSeparator());
-            current = null;
-            if (reuse == null) {
-                current = CSVUtils.defaultFeature(featureType, Integer.toString(inc++));
-            } else {
-                reuse.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), Integer.toString(inc++));
-                current = reuse;
-            }
+            current = featureType.newInstance();
+            if (withId) current.setPropertyValue(AttributeConvention.IDENTIFIER, inc++);
             final int fieldSize = fields.size();
             for (int i = 0, n = atts.length; i < n; i++) {
                 final AttributeType<?> att = atts[i];
@@ -142,11 +140,6 @@ class CSVFeatureReader implements FeatureReader {
     public void close() {
         fileLock.readLock().unlock();
         scanner.close();
-    }
-
-    @Override
-    public void remove() {
-        throw new FeatureStoreRuntimeException("Not supported on reader.");
     }
 
 }

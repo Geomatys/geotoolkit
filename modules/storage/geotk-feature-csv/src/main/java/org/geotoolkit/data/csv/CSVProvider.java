@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2010-2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,21 @@
 
 package org.geotoolkit.data.csv;
 
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
+import static org.apache.sis.storage.DataStoreProvider.LOCATION;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.data.FileFeatureStoreFactory;
+import org.geotoolkit.storage.ProviderOnFileSystem;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
@@ -24,22 +39,12 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-import java.util.Arrays;
-import java.util.Collection;
-import org.apache.sis.parameter.ParameterBuilder;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.ProbeResult;
-import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
-import org.geotoolkit.data.FileFeatureStoreFactory;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * CSV featurestore factory.
+ * CSV Provider.
  *
  * @author Johann Sorel (Geomatys)
  * @module
@@ -55,13 +60,15 @@ import org.opengis.parameter.ParameterValueGroup;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
+public class CSVProvider extends DataStoreProvider implements ProviderOnFileSystem {
 
-    /** factory identification **/
     public static final String NAME = "geotk_csv";
     public static final String MIME_TYPE = "text/csv";
 
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+    public static final ParameterDescriptor<URI> PATH = new ParameterBuilder()
+            .addName(LOCATION)
+            .setRequired(true)
+            .create(URI.class, null);
 
     /**
      * Optional - the separator character
@@ -74,17 +81,11 @@ public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
             .create(Character.class, ';');
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName(NAME).addName("CSVParameters").createGroup(
-                IDENTIFIER, PATH, SEPARATOR);
+            new ParameterBuilder().addName(NAME).createGroup(PATH, SEPARATOR);
 
     @Override
-    public CharSequence getDescription() {
-        return Bundle.formatInternational(Bundle.Keys.datastoreDescription);
-    }
-
-    @Override
-    public CharSequence getDisplayName() {
-        return Bundle.formatInternational(Bundle.Keys.datastoreTitle);
+    public String getShortName() {
+        return "CSV";
     }
 
     @Override
@@ -93,24 +94,26 @@ public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     }
 
     @Override
+    public Collection<String> getSuffix() {
+        return Arrays.asList("csv");
+    }
+
+    @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
         return FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
     }
 
     @Override
-    public CSVFeatureStore open(final ParameterValueGroup params) throws DataStoreException {
-        ensureCanProcess(params);
-        return new CSVFeatureStore(params);
+    public CSVStore open(final ParameterValueGroup params) throws DataStoreException {
+        return new CSVStore(params);
     }
 
     @Override
-    public CSVFeatureStore create(final ParameterValueGroup params) throws DataStoreException {
-        return open(params);
-    }
-
-    @Override
-    public Collection<String> getSuffix() {
-        return Arrays.asList("csv");
+    public DataStore open(StorageConnector connector) throws DataStoreException {
+        final URI uri = connector.getStorageAs(URI.class);
+        final Parameters parameters = Parameters.castOrWrap(PARAMETERS_DESCRIPTOR.createValue());
+        parameters.getOrCreate(PATH).setValue(uri);
+        return open(parameters);
     }
 
 }

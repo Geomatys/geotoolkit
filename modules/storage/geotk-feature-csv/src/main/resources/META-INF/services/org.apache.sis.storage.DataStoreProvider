@@ -1,2 +1,1 @@
-org.geotoolkit.data.csv.CSVFeatureStoreFactory
-org.geotoolkit.data.csv.CSVFolderFeatureStoreFactory
+org.geotoolkit.data.csv.CSVProvider

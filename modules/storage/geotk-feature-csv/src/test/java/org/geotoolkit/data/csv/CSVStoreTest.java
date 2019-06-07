@@ -17,47 +17,40 @@
 
 package org.geotoolkit.data.csv;
 
-import java.util.Map;
-import java.util.Collections;
-import org.locationtech.jts.geom.Geometry;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.stream.Stream;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
+import org.apache.sis.storage.DataStores;
+import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.nio.IOUtilities;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opengis.util.GenericName;
-import static org.junit.Assert.*;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.Filter;
+import org.opengis.util.GenericName;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class CSVDataStoreTest extends org.geotoolkit.test.TestBase {
+public class CSVStoreTest extends org.geotoolkit.test.TestBase {
 
-    public CSVDataStoreTest() {
+    public CSVStoreTest() {
     }
 
     @BeforeClass
@@ -82,9 +75,7 @@ public class CSVDataStoreTest extends org.geotoolkit.test.TestBase {
         File f = File.createTempFile("test", ".csv");
         f.deleteOnExit();
 
-        final FeatureStore ds = (FeatureStore) DataStores.open(
-                (Map)Collections.singletonMap(AbstractFileFeatureStoreFactory.PATH.getName().getCode(),
-                f.toURI().toURL()));
+        final CSVStore ds = (CSVStore) DataStores.open(new StorageConnector(f));
         assertNotNull(ds);
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -94,74 +85,29 @@ public class CSVDataStoreTest extends org.geotoolkit.test.TestBase {
         ftb.addAttribute(String.class).setName("stringProp");
         ftb.addAttribute(Geometry.class).setName("geometryProp").setCRS(CommonCRS.WGS84.normalizedGeographic());
         FeatureType sft = ftb.build();
-        ds.createFeatureType(sft);
-        GenericName name = ds.getNames().iterator().next();
+        ds.updateType(sft);
+        GenericName name = ds.getType().getName();
 
-        assertEquals(1, ds.getNames().size());
-
-        for(GenericName n : ds.getNames()){
-            FeatureType ft = ds.getFeatureType(n.toString());
-            for(PropertyType desc : sft.getProperties(true)){
-                PropertyType td = ft.getProperty(desc.getName().toString());
-                assertNotNull(td);
-                assertEquals( ((AttributeType)td).getValueClass(), ((AttributeType)desc).getValueClass());
-            }
+        FeatureType ft = ds.getType();
+        for (PropertyType desc : sft.getProperties(true)) {
+            PropertyType td = ft.getProperty(desc.getName().toString());
+            assertNotNull(td);
+            assertEquals( ((AttributeType)td).getValueClass(), ((AttributeType)desc).getValueClass());
         }
 
-        FeatureWriter fw = ds.getFeatureWriter(
-                QueryBuilder.filtered(name.toString(),Filter.EXCLUDE));
-        try{
-            Feature feature = fw.next();
-            fw.write();
-            feature = fw.next();
-            fw.write();
-            feature = fw.next();
-            fw.write();
-        }finally{
-            fw.close();
-        }
+        ds.add(Arrays.asList(ft.newInstance(), ft.newInstance(), ft.newInstance()).iterator());
 
-        FeatureReader reader = ds.getFeatureReader(QueryBuilder.all(name.toString()));
-        int number = 0;
-        try{
-            while(reader.hasNext()){
-                number++;
-                reader.next();
-            }
-        }finally{
-            reader.close();
-        }
-
-        assertEquals(3, number);
-
-
-        //test with hint
-        QueryBuilder qb = new QueryBuilder(name.toString());
-        qb.setHints(new Hints(HintsPending.FEATURE_DETACHED, Boolean.FALSE));
-        reader = ds.getFeatureReader(qb.buildQuery());
-        number = 0;
-        try{
-            while(reader.hasNext()){
-                number++;
-                reader.next();
-            }
-        }finally{
-            reader.close();
-        }
-
-        assertEquals(3, number);
+        long number = ds.features(false).count();
+        assertEquals(3l, number);
 
     }
 
     @Test
     public void testReadEscape() throws Exception {
-        try (final FeatureStore store = new CSVFeatureStore(Paths.get("./src/test/resources/org/geotoolkit/csv/escaped.csv"), ';')) {
+        try (final CSVStore store = new CSVStore(Paths.get("./src/test/resources/org/geotoolkit/csv/escaped.csv"), ';')) {
 
-            assertEquals(1, store.getNames().size());
-
-            FeatureCollection col = store.createSession(false).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
-
-            try (final FeatureIterator ite = col.iterator()) {
+            try (Stream<Feature> stream = store.features(false)) {
+                Iterator<Feature> ite = stream.iterator();
                 Feature next = ite.next();
                 assertEquals("hubert", next.getPropertyValue("name"));
                 assertEquals("someone from the \"big fisher\" corp,\na good guy and;\na ;family \"best\" friend", next.getPropertyValue("comment"));
@@ -175,10 +121,10 @@ public class CSVDataStoreTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void testWriteEscape() throws Exception{
+    public void testWriteEscape() throws Exception {
 
         final Path file = Files.createTempFile("test", ".csv");
-        try (final FeatureStore store = new CSVFeatureStore(file, ';')) {
+        try (final CSVStore store = new CSVStore(file, ';')) {
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
             ftb.setName("test");
             ftb.addAttribute(String.class).setName("name");
@@ -186,13 +132,13 @@ public class CSVDataStoreTest extends org.geotoolkit.test.TestBase {
             ftb.addAttribute(Integer.class).setName("age");
             final FeatureType ft = ftb.build();
 
-            store.createFeatureType(ft);
+            store.updateType(ft);
 
             final Feature f = ft.newInstance();
             f.setPropertyValue("name", "hubert");
             f.setPropertyValue("comment", "someone from the \"big fisher\" corp,\na good guy and\na family \"best\" friend");
             f.setPropertyValue("age", 36);
-            store.addFeatures(ft.getName().toString(), Collections.singleton(f));
+            store.add(Collections.singleton(f).iterator());
 
             final String str = IOUtilities.toString(file);
             assertEquals("name(String);comment(String);age(Integer)\n"
@@ -200,7 +146,7 @@ public class CSVDataStoreTest extends org.geotoolkit.test.TestBase {
                     + "a good guy and\n"
                     + "a family \"\"best\"\" friend\";36\n", str);
         } finally {
-            Files.delete(file);
+            Files.deleteIfExists(file);
         }
     }
 }

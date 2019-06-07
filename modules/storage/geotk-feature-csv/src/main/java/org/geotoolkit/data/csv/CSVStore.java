@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010-2014, Geomatys
+ *    (C) 2010-2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,40 +17,57 @@
 
 package org.geotoolkit.data.csv;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import static java.nio.file.StandardOpenOption.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
+import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.storage.UnsupportedQueryException;
-import org.geotoolkit.data.*;
-import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.data.query.QueryUtilities;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
+import org.apache.sis.storage.WritableFeatureSet;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.data.FeatureStoreContentEvent;
+import org.geotoolkit.data.FeatureStoreManagementEvent;
+import org.geotoolkit.data.query.QueryFeatureSet;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.Geometry;
@@ -58,10 +75,10 @@ import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
@@ -76,18 +93,23 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @author Alexis Manin (Geomatys)
  */
-public class CSVFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
+public class CSVStore extends DataStore implements WritableFeatureSet, ResourceOnFileSystem {
 
+    public static final String COMMENT_STRING = "#";
     public static final Charset UTF8_ENCODING = Charset.forName("UTF-8");
+
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.csv");
+
     protected final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     static final String BUNDLE_PATH = "org/geotoolkit/csv/bundle";
 
-    public static final String COMMENT_STRING = "#";
     private static final Pattern ESCAPE_PATTERN = Pattern.compile("\"");
 
+    private final List<ChangeListener> storeListeners = new ArrayList<>();
     private final ReadWriteLock fileLock = new ReentrantReadWriteLock();
 
+    private final Parameters parameters;
     private final Path file;
     private String name;
     private final char separator;
@@ -95,21 +117,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements ResourceOnF
     private FeatureType featureType;
 
 
-    /**
-     * @deprecated use {@link #CSVFeatureStore(Path, String, char)} instead
-     */
-    public CSVFeatureStore(final File f, final char separator) throws MalformedURLException, DataStoreException{
-        this(f.toPath(),separator,null);
-    }
-
-    /**
-     * @deprecated use {@link #CSVFeatureStore(Path, String, char, FeatureType)} instead
-     */
-    public CSVFeatureStore(final File f, final char separator, FeatureType ft) throws MalformedURLException, DataStoreException{
-        this(f.toPath(), separator, ft);
-    }
-
-    public CSVFeatureStore(final Path f, final char separator) throws MalformedURLException, DataStoreException{
+    public CSVStore(final Path f, final char separator) throws MalformedURLException, DataStoreException{
         this(f,separator,null);
     }
 
@@ -117,24 +125,24 @@ public class CSVFeatureStore extends AbstractFeatureStore implements ResourceOnF
      * Constructor forcing feature type, if the CSV does not have any header.
      *
      */
-    public CSVFeatureStore(final Path f, final char separator, FeatureType ft) throws MalformedURLException, DataStoreException{
+    public CSVStore(final Path f, final char separator, FeatureType ft) throws MalformedURLException, DataStoreException{
         this(toParameters(f, separator));
-        if(ft!=null){
+        if (ft != null) {
             this.featureType = ft;
             name = featureType.getName().tip().toString();
         }
     }
 
-    public CSVFeatureStore(final ParameterValueGroup params) throws DataStoreException {
-        super(params);
-
-        final URI uri = (URI) params.parameter(CSVFeatureStoreFactory.PATH.getName().toString()).getValue();
+    public CSVStore(final ParameterValueGroup params) throws DataStoreException {
+        super(DataStores.getProviderById(CSVProvider.NAME), new StorageConnector(Parameters.castOrWrap(params).getMandatoryValue(CSVProvider.PATH)));
+        parameters = Parameters.unmodifiable(params);
+        final URI uri = parameters.getMandatoryValue(CSVProvider.PATH);
         try {
             this.file = IOUtilities.toPath(uri);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
-        this.separator = (Character) params.parameter(CSVFeatureStoreFactory.SEPARATOR.getName().toString()).getValue();
+        this.separator = parameters.getValue(CSVProvider.SEPARATOR);
 
         final String path = uri.toString();
         final int slash = Math.max(0, path.lastIndexOf('/') + 1);
@@ -143,24 +151,19 @@ public class CSVFeatureStore extends AbstractFeatureStore implements ResourceOnF
             dot = path.length();
         }
         this.name = path.substring(slash, dot);
-
     }
 
     private static ParameterValueGroup toParameters(final Path f, final Character separator) throws MalformedURLException {
-        final Parameters params = Parameters.castOrWrap(CSVFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
-        params.getOrCreate(CSVFeatureStoreFactory.PATH).setValue(f.toUri());
-        params.getOrCreate(CSVFeatureStoreFactory.SEPARATOR).setValue(separator);
+        final Parameters params = Parameters.castOrWrap(CSVProvider.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(CSVProvider.PATH).setValue(f.toUri());
+        params.getOrCreate(CSVProvider.SEPARATOR).setValue(separator);
         return params;
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(CSVFeatureStoreFactory.NAME);
-    }
-
-    @Override
-    public GenericName getIdentifier() {
-        return null;
+    public GenericName getIdentifier() throws DataStoreException {
+        checkExist();
+        return featureType.getName();
     }
 
     Path getFile() {
@@ -185,7 +188,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements ResourceOnF
         try (final Scanner scanner = new Scanner(file)) {
             line = CSVUtils.getNextLine(scanner);
         } catch (IOException ex) {
-            getLogger().log(Level.INFO, ex.getLocalizedMessage());
+            LOGGER.log(Level.INFO, ex.getLocalizedMessage());
             // File does not exists.
             return null;
         } finally {
@@ -201,10 +204,9 @@ public class CSVFeatureStore extends AbstractFeatureStore implements ResourceOnF
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
 
-        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(Integer.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
 
         GenericName defaultGeometryFieldName = null;
-        final List<AttributeType> atts = new ArrayList<>();
 
         for (String field : fields) {
 
@@ -249,14 +251,14 @@ public class CSVFeatureStore extends AbstractFeatureStore implements ResourceOnF
                                 //check if it's a geometry type
                                 atb.setCRS(CRS.forCode(name));
                                 type = Geometry.class;
-                                if(defaultGeometryFieldName==null){
+                                if (defaultGeometryFieldName == null) {
                                     //store first geometry as default
                                     defaultGeometryFieldName = fieldName;
                                 }
                             } catch (NoSuchAuthorityCodeException ex) {
-                                getLogger().log(Level.SEVERE, null, ex);
+                                LOGGER.log(Level.SEVERE, null, ex);
                             } catch (FactoryException ex) {
-                                getLogger().log(Level.SEVERE, null, ex);
+                                LOGGER.log(Level.SEVERE, null, ex);
                             }
                         }else{
                             type = String.class;
@@ -269,10 +271,123 @@ public class CSVFeatureStore extends AbstractFeatureStore implements ResourceOnF
             }
 
             atb.setName(fieldName);
-            atb.setValueClass(type);
+            atb = atb.setValueClass(type);
+            if (fieldName == defaultGeometryFieldName) {
+                atb.addRole(AttributeRole.DEFAULT_GEOMETRY);
+            }
         }
 
         return ftb.build();
+    }
+
+    @Override
+    public ParameterValueGroup getOpenParameters() {
+        return parameters;
+    }
+
+    @Override
+    public Metadata getMetadata() throws DataStoreException {
+        final DefaultMetadata meta = new DefaultMetadata();
+        //todo
+        return meta;
+    }
+
+    @Override
+    public Envelope getEnvelope() throws DataStoreException {
+        return null;
+    }
+
+    @Override
+    public FeatureType getType() throws DataStoreException {
+        checkExist();
+        return featureType;
+    }
+
+    @Override
+    public Path[] getComponentFiles() throws DataStoreException {
+        return new Path[] { this.file };
+    }
+
+    @Override
+    public FeatureSet subset(Query query) throws UnsupportedQueryException, DataStoreException {
+        if (query instanceof SimpleQuery) {
+            return ((SimpleQuery) query).execute(this);
+        } else if (query instanceof org.geotoolkit.data.query.Query) {
+            return QueryFeatureSet.apply(this, (org.geotoolkit.data.query.Query) query);
+        }
+        return WritableFeatureSet.super.subset(query);
+    }
+
+    @Override
+    public Stream<Feature> features(boolean parallel) throws DataStoreException {
+        final CSVReader reader = new CSVReader(this, getType(), fileLock);
+        final Stream<Feature> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(reader, Spliterator.ORDERED), false);
+        stream.onClose(reader::close);
+        return stream;
+    }
+
+    @Override
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+        synchronized (storeListeners) {
+            storeListeners.add(listener);
+        }
+    }
+
+    @Override
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+        synchronized (storeListeners) {
+            storeListeners.remove(listener);
+        }
+    }
+
+    /**
+     * Forward event to all listeners.
+     * @param event , event to send to listeners.
+     */
+    protected synchronized void sendEvent(final ChangeEvent event){
+        final ChangeListener[] lst;
+        synchronized (storeListeners) {
+            lst = storeListeners.toArray(new ChangeListener[storeListeners.size()]);
+        }
+        for (final ChangeListener listener : lst){
+            listener.changeOccured(event);
+        }
+    }
+
+    @Override
+    public void close() throws DataStoreException {
+    }
+
+
+
+    @Override
+    public void updateType(FeatureType newType) throws DataStoreException {
+        if (!newType.isSimple()) {
+            throw new DataStoreException("Feature type must be simple.");
+        }
+
+        //Delete old type
+        final FeatureType oldSchema = featureType;
+        try {
+            fileLock.writeLock().lock();
+            Files.deleteIfExists(file);
+            featureType = null;
+        } catch (IOException e) {
+            throw new DataStoreException(e.getLocalizedMessage(), e);
+        } finally {
+            fileLock.writeLock().unlock();
+        }
+
+        //Create new one
+        featureType = newType;
+        try {
+            fileLock.writeLock().lock();
+            writeType(featureType);
+        } finally {
+            fileLock.writeLock().unlock();
+        }
+
+        sendEvent(FeatureStoreManagementEvent.createUpdateEvent(this, newType.getName(), oldSchema, newType));
     }
 
     String createHeader(final FeatureType type) throws DataStoreException{
@@ -326,175 +441,71 @@ public class CSVFeatureStore extends AbstractFeatureStore implements ResourceOnF
     }
 
     @Override
-    public long getCount(final Query query) throws DataStoreException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+    public void add(Iterator<? extends Feature> features) throws DataStoreException {
 
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
-        if(QueryUtilities.queryAll(gquery)) {
-            //Neither filter nor start index, just count number of lines to avoid reading features.
-            fileLock.readLock().lock();
-            try (final BufferedReader reader = Files.newBufferedReader(file, UTF8_ENCODING)) {
-                long cnt = -1; //avoid counting the header line
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    if (!line.isEmpty() && !line.startsWith(COMMENT_STRING)) {
-                        //avoid potential empty or commented lines
-                        cnt++;
-                    }
+        try (final CSVWriter writer = new CSVWriter(this, featureType, fileLock)) {
+            //skip to end of records
+            while (writer.hasNext()) writer.next();
+
+            RuntimeException error = null;
+            try {
+                while (features.hasNext()) {
+                    final Feature f = features.next();
+                    final Feature candidate = writer.next();
+                    FeatureExt.copy(f, candidate, false);
+                    writer.write();
                 }
-                return cnt;
-            } catch (IOException ex) {
-                throw new DataStoreException(ex);
-            } finally {
-                fileLock.readLock().unlock();
+            } catch (RuntimeException e) {
+                error = e;
+                throw error;
+            }
+        }
+    }
+
+    @Override
+    public boolean removeIf(Predicate<? super Feature> filter) throws DataStoreException {
+        boolean changed = false;
+        try (final CSVWriter writer = new CSVWriter(this, featureType, fileLock)) {
+            while (writer.hasNext()) {
+                Feature candidate = writer.next();
+                if (filter.test(candidate)) {
+                    changed = true;
+                    writer.remove();
+                }
             }
         }
 
-        return super.getCount(gquery);
+        return changed;
     }
 
     @Override
-    public Set<GenericName> getNames() throws DataStoreException {
-        checkExist();
-        if(featureType != null){
-            return Collections.singleton(featureType.getName());
-        }else{
-            return Collections.emptySet();
+    public void replaceIf(Predicate<? super Feature> filter, UnaryOperator<Feature> updater) throws DataStoreException {
+        try (final CSVWriter writer = new CSVWriter(this, featureType, fileLock)) {
+            while (writer.hasNext()) {
+                Feature candidate = writer.next();
+                if (filter.test(candidate)) {
+                    Feature res = updater.apply(candidate);
+                    if (res != candidate) {
+                        FeatureExt.copy(res, candidate, false);
+                    }
+                    writer.write();
+                }
+            }
         }
     }
 
-    @Override
-    public void createFeatureType(final FeatureType featureType) throws DataStoreException {
-        checkExist();
-        if (this.featureType != null) {
-            throw new DataStoreException("Can only have one feature type in CSV dataStore.");
-        }
-
-        if(!featureType.isSimple()){
-            throw new DataStoreException("Feature type must be simple.");
-        }
-
-        try {
-            fileLock.writeLock().lock();
-            writeType(featureType);
-        } finally {
-            fileLock.writeLock().unlock();
-        }
-
-        checkExist();
-        fireSchemaAdded(featureType.getName(), featureType);
-    }
-
-    @Override
-    public void deleteFeatureType(final String typeName) throws DataStoreException {
-        typeCheck(typeName); //raise error is type doesnt exist
-
-        final FeatureType oldSchema = featureType;
-
-        try {
-            fileLock.writeLock().lock();
-            Files.deleteIfExists(file);
-            featureType = null;
-        } catch (IOException e) {
-            throw new DataStoreException(e.getLocalizedMessage(), e);
-        } finally {
-            fileLock.writeLock().unlock();
-        }
-        fireSchemaDeleted(oldSchema.getName(), oldSchema);
-    }
-
-    @Override
-    public void updateFeatureType(final FeatureType featureType) throws DataStoreException {
-        typeCheck(featureType.getName().toString()); //raise error if type doesn't exist
-        deleteFeatureType(featureType.getName().toString());
-        createFeatureType(featureType);
-    }
-
-    @Override
-    public FeatureType getFeatureType(final String typeName) throws DataStoreException {
-        typeCheck(typeName); //raise error is type doesnt exist
-        return featureType;
-    }
-
-    @Override
-    public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
-
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
-        typeCheck(gquery.getTypeName()); //raise error is type doesnt exist
-
-        final Hints hints = gquery.getHints();
-        final Boolean detached = (hints == null) ? null : (Boolean) hints.get(HintsPending.FEATURE_DETACHED);
-
-        final FeatureReader fr = new CSVFeatureReader(this,featureType,detached != null && !detached,fileLock);
-        return FeatureStreams.subset(fr, gquery);
-    }
-
-    @Override
-    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
-
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
-        typeCheck(gquery.getTypeName()); //raise error is type doesnt exist
-        final FeatureWriter fw = new CSVFeatureWriter(this,featureType,fileLock);
-        return FeatureStreams.filter(fw, gquery.getFilter());
-    }
-
-    @Override
-    public boolean isWritable(String typeName) throws DataStoreException {
-        return true;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // FALLTHROUGHT OR NOT IMPLEMENTED /////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    @Override
-    public QueryCapabilities getQueryCapabilities() {
-        return new DefaultQueryCapabilities(false, false);
-    }
-
-    @Override
-    public List<FeatureId> addFeatures(final String groupName, final Collection<? extends Feature> newFeatures,
-            final Hints hints) throws DataStoreException {
-        return handleAddWithFeatureWriter(groupName, newFeatures,hints);
-    }
-
-    @Override
-    public void updateFeatures(final String groupName, final Filter filter, final Map<String, ? extends Object> values) throws DataStoreException {
-        handleUpdateWithFeatureWriter(groupName, filter, values);
-    }
-
-    @Override
-    public void removeFeatures(final String groupName, final Filter filter) throws DataStoreException {
-        handleRemoveWithFeatureWriter(groupName, filter);
-    }
-
-    @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        return new Path[] { this.file };
-    }
-
-    void fireDataChangeEvents(Set<Identifier> addedIds,Set<Identifier> updatedIds,Set<Identifier> deletedIds) {
+    void fireDataChangeEvents(Set<Identifier> addedIds, Set<Identifier> updatedIds, Set<Identifier> deletedIds) {
         if (!addedIds.isEmpty()) {
-            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.ADD, featureType.getName(), FF.id(addedIds));
-            forwardEvent(event);
+            sendEvent(new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.ADD, featureType.getName(), FF.id(addedIds)));
         }
 
         if (!updatedIds.isEmpty()) {
-            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), FF.id(updatedIds));
-            forwardEvent(event);
+            sendEvent(new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), FF.id(updatedIds)));
         }
 
         if (!deletedIds.isEmpty()) {
-            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), FF.id(deletedIds));
-            forwardEvent(event);
+            sendEvent(new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), FF.id(deletedIds)));
         }
-    }
-
-    @Override
-    public void refreshMetaModel() {
-        featureType=null;
     }
 
 }
