@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010-2015, Geomatys
+ *    (C) 2010-2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,40 +16,38 @@
  */
 package org.geotoolkit.data.csv;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.io.WKTWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.WRITE;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.geotoolkit.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureWriter;
+import static org.geotoolkit.data.csv.CSVStore.UTF8_ENCODING;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.temporal.object.TemporalUtilities;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.WKTWriter;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.identity.Identifier;
-import org.apache.sis.internal.feature.AttributeConvention;
-
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.WRITE;
-import static org.geotoolkit.data.csv.CSVFeatureStore.UTF8_ENCODING;
 
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-class CSVFeatureWriter extends CSVFeatureReader implements FeatureWriter {
+class CSVWriter extends CSVReader {
 
     private final WKTWriter wktWriter = new WKTWriter(2);
     private final Writer writer;
@@ -63,8 +61,8 @@ class CSVFeatureWriter extends CSVFeatureReader implements FeatureWriter {
     private final ReadWriteLock tempLock = new ReentrantReadWriteLock();
     private boolean closed = false;
 
-    CSVFeatureWriter(CSVFeatureStore store, FeatureType featureType, ReadWriteLock lock) throws DataStoreException {
-        super(store, featureType, false, lock);
+    CSVWriter(CSVStore store, FeatureType featureType, ReadWriteLock lock) throws DataStoreException {
+        super(store, featureType, lock);
         tempLock.writeLock().lock();
         try {
             writeFile = store.createWriteFile();
@@ -89,7 +87,8 @@ class CSVFeatureWriter extends CSVFeatureReader implements FeatureWriter {
         } catch (FeatureStoreRuntimeException ex) {
             //we reach append mode
             appendMode = true;
-            edited = CSVUtils.defaultFeature(featureType, Integer.toString(inc++));
+            edited = featureType.newInstance();
+            if (withId) edited.setPropertyValue(AttributeConvention.IDENTIFIER, inc++);
         }
         return edited;
     }
@@ -99,13 +98,12 @@ class CSVFeatureWriter extends CSVFeatureReader implements FeatureWriter {
         if (edited == null) {
             throw new FeatureStoreRuntimeException("No feature selected.");
         }
-        deletedIds.add(FeatureExt.getId(edited));
+        if (withId) deletedIds.add(FeatureExt.getId(edited));
         // mark the current feature as null, this will result in it not
         // being rewritten to the stream
         edited = null;
     }
 
-    @Override
     public void write() throws FeatureStoreRuntimeException {
         if (edited == null || lastWritten == edited) {
             return;
@@ -148,10 +146,12 @@ class CSVFeatureWriter extends CSVFeatureReader implements FeatureWriter {
             }
             writer.append('\n');
             writer.flush();
-            if (appendMode) {
-                addedIds.add(FeatureExt.getId(edited));
-            } else {
-                updatedIds.add(FeatureExt.getId(edited));
+            if (withId) {
+                if (appendMode) {
+                    addedIds.add(FeatureExt.getId(edited));
+                } else {
+                    updatedIds.add(FeatureExt.getId(edited));
+                }
             }
         } catch (IOException ex) {
             throw new FeatureStoreRuntimeException(ex);
