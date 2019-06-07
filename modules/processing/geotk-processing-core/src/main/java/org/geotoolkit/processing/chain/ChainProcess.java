@@ -24,30 +24,32 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.parameter.DefaultParameterValue;
+import org.apache.sis.util.ObjectConverter;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.filter.function.groovy.GroovyFunctionFactory;
 import org.geotoolkit.filter.function.javascript.JavaScriptFunctionFactory;
-import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.AbstractProcess;
+import org.geotoolkit.processing.AbstractProcessDescriptor;
+import org.geotoolkit.processing.ForwardProcessListener;
 import org.geotoolkit.processing.chain.model.Chain;
-import org.geotoolkit.processing.chain.model.ElementProcess;
 import org.geotoolkit.processing.chain.model.Constant;
 import org.geotoolkit.processing.chain.model.DataLink;
 import org.geotoolkit.processing.chain.model.Element;
 import org.geotoolkit.processing.chain.model.ElementCondition;
-import org.apache.sis.util.ObjectConverters;
-import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.ObjectConverter;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.processing.ForwardProcessListener;
+import org.geotoolkit.processing.chain.model.ElementProcess;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.parameter.GeneralParameterValue;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
@@ -153,8 +155,10 @@ public class ChainProcess extends AbstractProcess {
                                 first = false;
                             } else {
                                 final Object value = paramValue.getValue();
-                                setValue(value, paramValue);
-                                configs.get(link.getTargetId()).values().add(paramValue);
+                                final ParameterDescriptor desc = (ParameterDescriptor) configs.get(link.getTargetId()).getDescriptor().descriptor(link.getTargetCode());
+                                final ParameterValue newParam = new DefaultParameterValue(desc);
+                                setValue(value, newParam);
+                                configs.get(link.getTargetId()).values().add(newParam);
                             }
                         }
                     }
@@ -221,8 +225,10 @@ public class ChainProcess extends AbstractProcess {
                                 first = false;
                             } else {
                                 final Object value = paramValue.getValue();
-                                setValue(value, paramValue);
-                                configs.get(link.getTargetId()).values().add(paramValue);
+                                final ParameterDescriptor desc = (ParameterDescriptor) configs.get(link.getTargetId()).getDescriptor().descriptor(link.getTargetCode());
+                                final ParameterValue newParam = new DefaultParameterValue(desc);
+                                setValue(value, newParam);
+                                configs.get(link.getTargetId()).values().add(newParam);
                             }
                         }
                     }

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -37,6 +38,7 @@ import org.geotoolkit.processing.chain.model.Chain;
 import org.geotoolkit.processing.chain.model.Parameter;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.processing.chain.model.ParameterFormat;
+import org.geotoolkit.processing.chain.model.StringMap;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -171,7 +173,16 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
             ext.put("Title", param.getTitle());
         }
         if (param.getUserMap() != null) {
-            ext.putAll(param.getUserMap());
+            Map<String, Object> userMap = new HashMap<>();
+            // remove hack for serialisation String map
+            for (Entry<String, Object> entry : param.getUserMap().entrySet()) {
+                if (entry.getValue() instanceof StringMap) {
+                    userMap.put(entry.getKey(), ((StringMap)entry.getValue()).getMap());
+                } else {
+                    userMap.put(entry.getKey(), entry.getValue());
+                }
+            }
+            ext.putAll(userMap);
         }
         if (param.getFormats()!= null && !param.getFormats().isEmpty()) {
             List<Map> formats = new ArrayList<>();
@@ -184,7 +195,7 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
             }
             ext.put("formats", formats);
         }
-        return new ExtendedParameterDescriptor(param.getCode(), null, param.getRemarks(), param.getMinOccurs(), param.getMaxOccurs(), type, convertDefaultValueInClass(param.getDefaultValue(), type), null, ext);
+        return new ExtendedParameterDescriptor(param.getCode(), null, param.getRemarks(), param.getMinOccurs(), param.getMaxOccurs(), type, convertDefaultValueInClass(param.getDefaultValue(), type), param.getValidValues(), ext);
     }
 
     /**

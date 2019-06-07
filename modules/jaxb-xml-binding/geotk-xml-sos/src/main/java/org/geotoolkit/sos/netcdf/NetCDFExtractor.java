@@ -24,6 +24,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,47 +65,28 @@ public class NetCDFExtractor {
         final NCFieldAnalyze analyze = analyzeResult(netCDFFile, null);
         switch (analyze.featureType) {
             case TIMESERIES :
-            return parseDataBlockTS(analyze, procedureID, null);
+            return parseDataBlockTS(analyze, procedureID, null, new HashSet<>());
             case PROFILE :
-            return parseDataBlockXY(analyze, procedureID, null);
+            return parseDataBlockXY(analyze, procedureID, null, new HashSet<>());
             case TRAJECTORY :
-            return parseDataBlockTraj(analyze, procedureID, null);
+            return parseDataBlockTraj(analyze, procedureID, null, new HashSet<>());
             case GRID :
-            return parseDataBlockGrid(analyze, procedureID, null);
+            return parseDataBlockGrid(analyze, procedureID, null, new HashSet<>());
             default : return null;
         }
     }
 
-    public static ExtractionResult getObservationFromNetCDF(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedProcedureIDs) throws NetCDFParsingException {
+    public static ExtractionResult getObservationFromNetCDF(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedProcedureIDs, Set<org.opengis.observation.Phenomenon> phenomenons) throws NetCDFParsingException {
         switch (analyze.featureType) {
             case TIMESERIES :
-            return parseDataBlockTS(analyze, procedureID, acceptedProcedureIDs);
+            return parseDataBlockTS(analyze, procedureID, acceptedProcedureIDs, phenomenons);
             case PROFILE :
-            return parseDataBlockXY(analyze, procedureID, acceptedProcedureIDs);
+            return parseDataBlockXY(analyze, procedureID, acceptedProcedureIDs, phenomenons);
             case TRAJECTORY :
-            return parseDataBlockTraj(analyze, procedureID, acceptedProcedureIDs);
+            return parseDataBlockTraj(analyze, procedureID, acceptedProcedureIDs, phenomenons);
             case GRID :
-            return parseDataBlockGrid(analyze, procedureID, acceptedProcedureIDs);
+            return parseDataBlockGrid(analyze, procedureID, acceptedProcedureIDs, phenomenons);
             default : return null;
-        }
-    }
-
-    public static ExtractionResult getObservationFromNetCDF(final File netCDFFile, final String procedureID, final String selectedBand) throws NetCDFParsingException {
-        final NCFieldAnalyze analyze = analyzeResult(netCDFFile, selectedBand);
-        if (analyze.phenfields.isEmpty()) {
-            LOGGER.info("There is no variable to collect in this file");
-            return new ExtractionResult();
-        }
-        switch (analyze.featureType) {
-            case TIMESERIES :
-            return parseDataBlockTS(analyze, procedureID, null);
-            case PROFILE :
-            return parseDataBlockXY(analyze, procedureID, null);
-            case TRAJECTORY :
-            return parseDataBlockTraj(analyze, procedureID, null);
-            case GRID :
-            return parseDataBlockGrid(analyze, procedureID, null);
-            default : return new ExtractionResult();
         }
     }
 
@@ -333,7 +315,7 @@ public class NetCDFExtractor {
         return false;
     }
 
-    private static ExtractionResult parseDataBlockTS(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
+    private static ExtractionResult parseDataBlockTS(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID, Set<org.opengis.observation.Phenomenon> phenomenons) throws NetCDFParsingException {
         final ExtractionResult results = new ExtractionResult();
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
@@ -364,7 +346,7 @@ public class NetCDFExtractor {
             results.fields.addAll(phenArrays.keySet());
 
             final AbstractDataRecord datarecord = OMUtils.getDataRecordTimeSeries("2.0.0", analyze.phenfields);
-            final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
+            final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields, phenomenons);
             results.phenomenons.add(phenomenon);
 
             if (single) {
@@ -590,7 +572,7 @@ public class NetCDFExtractor {
         return results;
     }
 
-    private static ExtractionResult parseDataBlockXY(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
+    private static ExtractionResult parseDataBlockXY(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID, Set<org.opengis.observation.Phenomenon> phenomenons) throws NetCDFParsingException {
         final ExtractionResult results = new ExtractionResult();
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
@@ -625,7 +607,7 @@ public class NetCDFExtractor {
             results.fields.addAll(phenArrays.keySet());
 
             final AbstractDataRecord datarecord = OMUtils.getDataRecordProfile("2.0.0", analyze.phenfields);
-            final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
+            final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields, phenomenons);
             results.phenomenons.add(phenomenon);
 
             if (single) {
@@ -851,7 +833,7 @@ public class NetCDFExtractor {
         return results;
     }
 
-    private static ExtractionResult parseDataBlockTraj(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
+    private static ExtractionResult parseDataBlockTraj(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID, Set<org.opengis.observation.Phenomenon> phenomenons) throws NetCDFParsingException {
         final ExtractionResult results = new ExtractionResult();
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
@@ -882,7 +864,7 @@ public class NetCDFExtractor {
             results.fields.addAll(phenArrays.keySet());
 
             final AbstractDataRecord datarecord = OMUtils.getDataRecordTrajectory("2.0.0", analyze.phenfields);
-            final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
+            final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields, phenomenons);
             results.phenomenons.add(phenomenon);
 
             if (single) {
@@ -1123,7 +1105,7 @@ public class NetCDFExtractor {
         return results;
     }
 
-    private static ExtractionResult parseDataBlockGrid(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
+    private static ExtractionResult parseDataBlockGrid(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID, Set<org.opengis.observation.Phenomenon> phenomenons) throws NetCDFParsingException {
         final ExtractionResult results = new ExtractionResult();
         final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
         if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
@@ -1151,7 +1133,7 @@ public class NetCDFExtractor {
                 results.fields.addAll(phenArrays.keySet());
 
                 final AbstractDataRecord datarecord = OMUtils.getDataRecordTimeSeries("2.0.0", analyze.phenfields);
-                final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
+                final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields, phenomenons);
                 results.phenomenons.add(phenomenon);
 
                 final int latSize = latVar.getDimension(0).getLength();

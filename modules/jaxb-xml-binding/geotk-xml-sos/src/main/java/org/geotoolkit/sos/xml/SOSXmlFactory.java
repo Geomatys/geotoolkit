@@ -788,7 +788,14 @@ public class SOSXmlFactory {
 
     public static CompositePhenomenon buildCompositePhenomenon(final String version, final String id, final String phenomenonName, final List<org.opengis.observation.Phenomenon> phenomenons) {
         if ("2.0.0".equals(version)) {
-            throw new IllegalArgumentException("Composite phenomenon are not supported in SOS v 2.0.0.");
+            final List<org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon> phens = new ArrayList<>();
+            for (org.opengis.observation.Phenomenon phen : phenomenons) {
+                if (phen != null && !(phen instanceof org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon)) {
+                    throw new IllegalArgumentException("unexpected object version for phenomenon component element");
+                }
+                phens.add((org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon)phen);
+            }
+            return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalCompositePhenomenon(phenomenonName, phens);
         } else if ("1.0.0".equals(version)) {
             final List<org.geotoolkit.swe.xml.v101.PhenomenonType> phens = new ArrayList<>();
             for (org.opengis.observation.Phenomenon phen : phenomenons) {
