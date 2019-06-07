@@ -102,15 +102,21 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
      */
     @Override
     public Envelope getBounds() {
-        if(ref != null && ref instanceof PyramidalCoverageResource){
-            try {
-                return Pyramids.getEnvelope((PyramidalCoverageResource) ref);
-            } catch (DataStoreException ex) {
-                Logging.getLogger("org.geotoolkit.map").log(Level.SEVERE, null, ex);
-            }
+        final GridCoverageResource ref = getResource();
+        // Resource possibly contains the data envelope. We start here, because it's supposed to be the most economic
+        // way to get back the envelope.
+        // TODO: use an expansible list of strategies, and factorize possible cases in super-class.
+        Envelope env = null;
+        try {
+            env = ref.getEnvelope();
+        } catch (DataStoreException e) {
+            LOGGER.log(Level.WARNING, "Cannot access resource envelope.", e);
         }
 
-        final GridCoverageResource ref = getResource();
+        if (env != null) {
+            return env;
+        }
+
         try {
             final GridGeometry geom = ref.getGridGeometry();
             if (geom == null) {

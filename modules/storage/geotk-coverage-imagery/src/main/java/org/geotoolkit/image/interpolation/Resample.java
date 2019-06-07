@@ -54,6 +54,8 @@ public class Resample {
     /**
      * Transform multi-dimensional point (in our case pixel coordinate) from target image
      * {@code CoordinateReferenceSystem} to source image {@code CoordinateReferenceSystem}.
+     * TODO : require a 2D transform, so we can directly convert positions from image iterator instead of requiring
+     * an array buffer.
      */
     private MathTransform destToSourceMathTransform;
 

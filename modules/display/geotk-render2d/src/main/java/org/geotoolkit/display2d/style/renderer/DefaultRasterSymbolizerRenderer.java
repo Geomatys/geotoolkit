@@ -23,14 +23,8 @@ import java.awt.image.renderable.ParameterBlock;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Level;
-import java.util.stream.Stream;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.LookupTableJAI;
@@ -39,11 +33,12 @@ import javax.media.jai.OpImage;
 import javax.media.jai.RenderedOp;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
@@ -51,8 +46,7 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.SampleDimensionType;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -72,21 +66,22 @@ import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Rescaler;
 import org.geotoolkit.image.palette.PaletteFactory;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.metadata.MetadataUtilities;
-import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.shadedrelief.ShadedReliefDescriptor;
 import org.geotoolkit.processing.coverage.statistics.StatisticOp;
 import org.geotoolkit.processing.coverage.statistics.Statistics;
-import org.geotoolkit.processing.image.bandselect.BandSelectDescriptor;
 import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
 import org.geotoolkit.referencing.operation.transform.EarthGravitationalModel;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+
+import static org.apache.sis.util.ArgumentChecks.*;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
 import org.geotoolkit.style.function.CompatibleColorModel;
@@ -96,6 +91,7 @@ import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.locationtech.jts.geom.Geometry;
+import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
@@ -123,6 +119,7 @@ import org.opengis.style.SelectedChannelType;
 import org.opengis.style.ShadedRelief;
 import org.opengis.style.StyleFactory;
 import org.opengis.util.FactoryException;
+import org.opengis.util.LocalName;
 
 /**
  * Symbolizer renderer adapted for Raster.
@@ -139,6 +136,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @see #applyColorMapStyle(GridCoverageResource, GridCoverage, RasterSymbolizer)
      */
     public static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+    public static final LocalName ALPHA_SAMPLE_DIM = Names.createLocalName("GO2", ":", "alpha");
 
 
     public DefaultRasterSymbolizerRenderer(final SymbolizerRendererService service, final CachedRasterSymbolizer symbol, final RenderingContext2D context){
@@ -150,12 +148,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      */
     @Override
     public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
-
         boolean dataRendered = false;
         try {
             GridCoverage elevationCoverage = null;//getObjectiveElevationCoverage(projectedCoverage);
             final MapLayer coverageLayer = projectedCoverage.getLayer();
-
             final Resource resource = coverageLayer.getResource();
             if (!(resource instanceof GridCoverageResource)) {
                 LOGGER.log(Level.WARNING, () -> String.format(
@@ -166,7 +162,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
 
             final GridCoverageResource ref = (GridCoverageResource) resource;
-
+            if (!isInView(projectedCoverage)) return false;
 
             final RasterSymbolizer sourceSymbol = symbol.getSource();
 
@@ -262,43 +258,39 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         return dataRendered;
     }
 
-//    /**
-//     * Analyse input coverage to know if we need to add an alpha channel. Alpha channel is required in photographic
-//     * coverage case, in order for the resample to deliver a ready to style image.
-//     *
-//     * @param source The coverage to analyse.
-//     * @param symbolizer contain color Map.
-//     * @return The same coverage as input if style do not require an ARGB data to properly render, or a new ARGB coverage
-//     * computed from source data.
-//     */
-//    @Override
-//    protected final GridCoverage prepareCoverageToResampling(final GridCoverage source, final CachedRasterSymbolizer symbolizer) {
-//        final List<SampleDimension> dims = source.getSampleDimensions();
-//        final ColorMap cMap = symbolizer.getSource().getColorMap();
-//        if ((cMap != null && cMap.getFunction() != null) ||
-//            (dims != null && dims.size() != 0 && dims.get(0).getNoDataValues() != null) ||
-//            source.getViewTypes().contains(ViewType.GEOPHYSICS)) {
-//            return source;
-//
-//        } else {
-//            final GridCoverage2D photoCvg = source.view(ViewType.PHOTOGRAPHIC);
-//            RenderedImage img = photoCvg.getRenderedImage();
-//            final int datatype = img.getSampleModel().getDataType();
-//            if (datatype != DataBuffer.TYPE_BYTE) return source;
-//            //-- RGB -> ARGB
-//            RenderedImage imga = GO2Utilities.forceAlpha(img);
-//
-//            if (imga != img) {
-//                final GridCoverageBuilder gcb = new GridCoverageBuilder();
-//                gcb.setName("temp");
-//                gcb.setGridGeometry(source.getGridGeometry());
-//                gcb.setRenderedImage(imga);
-//                return gcb.getGridCoverage2D();
-//            } else {
-//                return source;
-//            }
-//        }
-//    }
+    /**
+     * Analyse input coverage to know if we need to add an alpha channel. Alpha channel is required in photographic
+     * coverage case, in order for the resample to deliver a ready to style image.
+     *
+     * @param source The coverage to analyse.
+     * @param symbolizer contain color Map.
+     * @return The same coverage as input if style do not require an ARGB data to properly render, or a new ARGB coverage
+     * computed from source data.
+     */
+    @Override
+    protected final GridCoverage prepareCoverageToResampling(final GridCoverage source, final CachedRasterSymbolizer symbolizer) {
+        final ColorMap cMap = symbolizer.getSource().getColorMap();
+        if (cMap != null && cMap.getFunction() != null) {
+            return source; // Coloration is handled externally
+        }
+
+        final List<SampleDimension> sds = source.getSampleDimensions();
+        if (sds == null || sds.size() != 3) {
+            return source;
+        }
+
+        if (source != source.forConvertedValues(false)) {
+            return source;
+        }
+
+        for (SampleDimension sd : sds) {
+            if (sd.getTransferFunction().isPresent())
+                return source;
+        }
+
+        // At this point, no geophysic information has been found. We will consider input coverage as a colorized image.
+        return new ForcedAlpha(source);
+    }
 
     /**
      * Apply style on current coverage.<br><br>
@@ -343,8 +335,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      */
     private static RenderedImage applyContrastEnhancement(RenderedImage image, final RasterSymbolizer styleElement)
             throws PortrayalException {
-        ArgumentChecks.ensureNonNull("image", image);
-        ArgumentChecks.ensureNonNull("styleElement", styleElement);
+        ensureNonNull("image", image);
+        ensureNonNull("styleElement", styleElement);
          //-- contrast enhancement -------------------
         final ContrastEnhancement ce = styleElement.getContrastEnhancement();
         if(ce != null && image.getColorModel() instanceof ComponentColorModel){
@@ -384,9 +376,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     private static RenderedImage applyShadedRelief(RenderedImage colorMappedImage, final GridCoverage coverage,
             final GridCoverage elevationCoverage, final RasterSymbolizer styleElement)
             throws FactoryException, TransformException, ProcessException {
-        ArgumentChecks.ensureNonNull("colorMappedImage", colorMappedImage);
-        ArgumentChecks.ensureNonNull("coverage", coverage);
-        ArgumentChecks.ensureNonNull("styleElement", styleElement);
+        ensureNonNull("colorMappedImage", colorMappedImage);
+        ensureNonNull("coverage", coverage);
+        ensureNonNull("styleElement", styleElement);
 
         //-- shaded relief---------------------------------------------------------
         final ShadedRelief shadedRel = styleElement.getShadedRelief();
@@ -447,22 +439,18 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      */
     private static RenderedImage applyColorMapStyle(final GridCoverageResource ref,
             GridCoverage coverage,final RasterSymbolizer styleElement) throws ProcessException, IOException {
-        ArgumentChecks.ensureNonNull("CoverageReference", ref);
-        ArgumentChecks.ensureNonNull("coverage", coverage);
-        ArgumentChecks.ensureNonNull("styleElement", styleElement);
+        ensureNonNull("CoverageReference", ref);
+        ensureNonNull("coverage", coverage);
+        ensureNonNull("styleElement", styleElement);
 
         RenderedImage resultImage;
 
         //Recolor coverage -----------------------------------------------------
         ColorMap recolor = styleElement.getColorMap();
-        //cheat on the colormap if we have only one band and no colormap
         recolorCase:
-        if ((recolor == null || recolor.getFunction() == null)) {
+        if (recolor == null || recolor.getFunction() == null) {
 
-            //if there is no geophysic, the same coverage is returned
-            coverage = coverage.forConvertedValues(true);
-
-            final RenderedImage ri = coverage.render(null);
+            final RenderedImage ri = coverage.forConvertedValues(false).render(null);
             final SampleModel sampleMod = ri.getSampleModel();
             final ColorModel riColorModel = ri.getColorModel();
 
@@ -475,6 +463,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 break recolorCase;
             }
 
+            //if there is no geophysic, the same coverage is returned
+            coverage = coverage.forConvertedValues(true);
             CoverageDescription covRefMetadata = null;
             if(ref instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
                 covRefMetadata = ((org.geotoolkit.storage.coverage.GridCoverageResource)ref).getCoverageDescription();
@@ -496,6 +486,15 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             ImageStatistics analyse = null;
             if (covRefMetadata != null) {
                 analyse = ImageStatistics.transform(covRefMetadata);
+                if (analyse != null) {
+                    // Ensure band statistics are valid.
+                    for (ImageStatistics.Band b : analyse.getBands()) {
+                        if (b.getMax() == null || b.getMin() == null || b.getMax() - b.getMin() < 1e-11) {
+                            analyse = null;
+                            break;
+                        }
+                    }
+                }
             }
 
             // TODO : we should analyze a subset of the entire image instead, to
@@ -622,8 +621,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @return {@code true} if a style creation is needed to show image datas else {@code false}.
      */
     private static boolean defaultStyleIsNeeded(final SampleModel sampleModel, final ColorModel colorModel) {
-        ArgumentChecks.ensureNonNull("sampleModel", sampleModel);
-        ArgumentChecks.ensureNonNull("colorModel",  colorModel);
+        ensureNonNull("sampleModel", sampleModel);
+        ensureNonNull("colorModel",  colorModel);
 
         final int[] pixelSampleSize = colorModel.getComponentSize();
         if (pixelSampleSize == null) return true;
@@ -1166,5 +1165,72 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         }
 
         return ranges;
+    }
+
+    private static List<SampleDimension> addAlphaDimension(final List<SampleDimension> source) {
+        if (source == null || source.isEmpty()) {
+            throw new IllegalArgumentException("Source sample dimension list must not be empty.");
+        }
+        final ArrayList<SampleDimension> newSamples = new ArrayList<>(source);
+        newSamples.add(new SampleDimension(ALPHA_SAMPLE_DIM, 0, Collections.EMPTY_SET));
+        return newSamples;
+    }
+
+
+    private boolean isInView(final ProjectedCoverage candidate) {
+        try {
+            final GeneralEnvelope boundary = GeneralEnvelope.castOrCopy(
+                    Envelopes.transform(candidate.getLayer().getBounds(), renderingContext.getObjectiveCRS2D())
+            );
+            return boundary.intersects(renderingContext.getCanvasObjectiveBounds2D());
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Cannot compare layer bbox with rendering context", e);
+        }
+
+        // Cannot determine intersection. Display object.
+        return true;
+    }
+
+    private static class ForcedAlpha extends GridCoverage {
+
+        private final GridCoverage source;
+        private BufferedImage entireAlpha;
+
+        protected ForcedAlpha(final GridCoverage source) {
+            super(source.getGridGeometry(), addAlphaDimension(source.getSampleDimensions()));
+            this.source = source;
+        }
+
+        @Override
+        public GridCoverage forConvertedValues(boolean converted) {
+            return this; // Only support non-geophysic coverages
+        }
+
+        @Override
+        public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
+            synchronized (this) {
+                if (entireAlpha != null) {
+                    if (sliceExtent == null) {
+                        return entireAlpha;
+                    }
+
+                    return CoverageUtilities.subgrid(entireAlpha, sliceExtent);
+                }
+
+                if (sliceExtent == null) {
+                    entireAlpha = addAlpha(source.render(null));
+                    return entireAlpha;
+                }
+            }
+
+            return addAlpha(source.render(sliceExtent));
+        }
+
+        private BufferedImage addAlpha(final RenderedImage img) {
+            // TODO: find a more optimized way.
+            final BufferedImage buffer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            buffer.createGraphics().drawRenderedImage(img, new AffineTransform());
+            return buffer;
+        }
     }
 }
