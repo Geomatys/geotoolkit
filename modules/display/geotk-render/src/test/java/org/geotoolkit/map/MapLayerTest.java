@@ -18,20 +18,19 @@
 package org.geotoolkit.map;
 
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.geotoolkit.data.FeatureStore;
+import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureCollection;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.Query;
+import org.geotoolkit.data.DefiningFeatureSet;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.query.QueryUtilities;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.feature.FeatureType;
-import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -46,10 +45,10 @@ public class MapLayerTest {
     @Test
     public void testFeatureLayer() throws DataStoreException {
 
-        try{
+        try {
             MapBuilder.createFeatureLayer(null, null);
             fail("Creating maplayer with null source should raise an error");
-        }catch(Exception ex){
+        } catch (Exception ex) {
             //ok
         }
 
@@ -58,28 +57,27 @@ public class MapLayerTest {
         builder.setName(name);
         FeatureType type = builder.build();
 
-        FeatureStore ds = new MemoryFeatureStore();
-        ds.createFeatureType(type);
-        FeatureCollection fs = ds.createSession(true).getFeatureCollection(QueryBuilder.all(name));
-
+        MemoryFeatureStore ds = new MemoryFeatureStore();
+        FeatureSet fs = (FeatureSet) ds.add(new DefiningFeatureSet(type, null));
 
         FeatureMapLayer layer = MapBuilder.createFeatureLayer(fs, new DefaultStyleFactory().style());
         assertNotNull(layer);
 
         Query query = layer.getQuery();
-        assertNotNull(query);
-        assertTrue( QueryUtilities.queryAll(query) );
+        assertNull(query);
 
-        try{
+        try {
             layer.setQuery(null);
-            throw new IllegalArgumentException("Can not set a null query");
-        }catch(Exception ex){
+        } catch (Exception ex) {
             //ok
+            throw new IllegalArgumentException("Can set a null query");
         }
 
-        try{
-            layer.setQuery(QueryBuilder.filtered(fs.getType().getName().toString(), Filter.EXCLUDE));
-        }catch(Exception ex){
+        try {
+            final SimpleQuery sq = new SimpleQuery();
+            sq.setFilter(Filter.EXCLUDE);
+            layer.setQuery(sq);
+        } catch (Exception ex) {
             throw new IllegalArgumentException("Should be able to set this query");
         }
 

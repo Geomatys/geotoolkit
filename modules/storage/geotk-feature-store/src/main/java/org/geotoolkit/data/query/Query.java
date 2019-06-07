@@ -17,12 +17,17 @@
  */
 package org.geotoolkit.data.query;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.system.DefaultFactories;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.factory.Hints;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -48,8 +53,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Chris Holmes
  * @version $Id$
  * @module
+ * @deprecated use SIS SimpleQuery
  */
-public final class Query extends org.apache.sis.storage.Query {
+@Deprecated
+public final class Query extends SimpleQuery {
 
     /**
      * Default GeotoolKit language used for querying databases.
@@ -57,11 +64,6 @@ public final class Query extends org.apache.sis.storage.Query {
     public static final String GEOTK_QOM = "GEOTK-QOM";
 
     private final String typeName;
-    private final String[] properties;
-    private final Integer maxFeatures;
-    private final int startIndex;
-    private final Filter filter;
-    private final SortBy[] sortBy;
     private final Hints hints;
     private final CoordinateReferenceSystem crs;
     private final double[] resolution;
@@ -89,28 +91,37 @@ public final class Query extends org.apache.sis.storage.Query {
                 null,
                 null,
                 0,
-                null,
+                -1,
                 null,
                 null,
                 null);
     }
 
     Query(final String typeName, final Filter filter, final String[] attributs, final SortBy[] sort,
-            final CoordinateReferenceSystem crs, final int startIndex, final Integer MaxFeature,
+            final CoordinateReferenceSystem crs, final long startIndex, final long MaxFeature,
             final double[] resolution, final Object version, final Hints hints){
 
         ensureNonNull("query source", typeName);
-        if(filter == null){
+        if (filter == null) {
             throw new NullArgumentException("Query filter can not be null, did you mean Filter.INCLUDE ?");
         }
 
+        setFilter(filter);
+        setOffset(startIndex);
+        setLimit(MaxFeature);
+        setSortBy(sort);
+
+        if (attributs != null) {
+            final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
+            final List<Column> columns = new ArrayList<>();
+            for (String att : attributs) {
+                columns.add(new Column(ff.property(att)));
+            }
+            setColumns(columns.toArray(new Column[0]));
+        }
+
         this.typeName = typeName;
-        this.filter = filter;
-        this.properties = attributs;
-        this.sortBy = sort;
         this.crs = crs;
-        this.startIndex = startIndex;
-        this.maxFeatures = MaxFeature;
         this.resolution = resolution;
         this.version = version;
 
@@ -132,8 +143,8 @@ public final class Query extends org.apache.sis.storage.Query {
              query.getPropertyNames(),
              query.getSortBy(),
              query.getCoordinateSystemReproject(),
-             query.getStartIndex(),
-             query.getMaxFeatures(),
+             query.getOffset(),
+             query.getLimit(),
              (query.getResolution()==null)?null:query.getResolution().clone(),
              (query.getVersionDate()!=null)? query.getVersionDate() : query.getVersionLabel(),
              query.getHints());
@@ -149,16 +160,6 @@ public final class Query extends org.apache.sis.storage.Query {
      */
     public String getTypeName() {
         return typeName;
-    }
-
-    /**
-     * The Filter can be used to define constraints on a query.
-     * The default value is Filter.INCLUDE .
-     *
-     * @return The filter that defines constraints on the query, can not be null.
-     */
-    public Filter getFilter() {
-        return this.filter;
     }
 
     /**
@@ -209,7 +210,13 @@ public final class Query extends org.apache.sis.storage.Query {
      *       Query.FIDS.equals( filter ) would meet this need?
      */
     public String[] getPropertyNames() {
-        return properties;
+        List<Column> columns = getColumns();
+        if (columns == null) return null;
+        final String[] names = new String[columns.size()];
+        for (int i=0;i<names.length;i++) {
+            names[i] = ((PropertyName)columns.get(i).expression).getPropertyName();
+        }
+        return names;
     }
 
     /**
@@ -224,36 +231,7 @@ public final class Query extends org.apache.sis.storage.Query {
      *         the returned FeatureCollection.
      */
     public boolean retrieveAllProperties() {
-        return properties == null;
-    }
-
-    /**
-     * Get the starting index. default value is 0.
-     * Index start counting from 0 so if startIndex == 1 then
-     * the first element should be skipped.
-     *
-     * @return starting index.
-     */
-    public int getStartIndex() {
-        return this.startIndex;
-    }
-
-    /**
-     * The optional maxFeatures can be used to limit the number of features
-     * that a query request retrieves.  If no maxFeatures is specified then
-     * all features should be returned.
-     *
-     * <p>
-     * This is the only method that is not directly out of the Query element in
-     * the WFS spec.  It is instead a part of a GetFeature request, which can
-     * hold one or more queries.  But each of those in turn will need a
-     * maxFeatures, so it is needed here.
-     * </p>
-     *
-     * @return the max features the getFeature call should return.
-     */
-    public Integer getMaxFeatures() {
-        return this.maxFeatures;
+        return getColumns() == null;
     }
 
     /**
@@ -290,42 +268,6 @@ public final class Query extends org.apache.sis.storage.Query {
      */
     public double[] getResolution() {
         return resolution;
-    }
-
-    /**
-     * SortBy results according to indicated property and order.
-     * <p>
-     * SortBy is part of the Filter 1.1 specification, it is referenced
-     * by WFS1.1 and Catalog 2.0.x specifications and is used to organize
-     * results.
-     * </p>
-     * The SortBy's are ment to be applied in order:
-     * <ul>
-     * <li>SortBy( year, ascending )
-     * <li>SortBy( month, decsending )
-     * </ul>
-     * Would produce something like: <pre><code>
-     * [year=2002 month=4],[year=2002 month=3],[year=2002 month=2],
-     * [year=2002 month=1],[year=2003 month=12],[year=2002 month=4],
-     * </code></pre>
-     * </p>
-     * <p>
-     *
-     * SortBy should be considered at the same level of abstraction as Filter,
-     * and like Filter you may sort using properties not listed in
-     * getPropertyNames.
-     * </p>
-     *
-     * <p>
-     * At a technical level the interface SortBy2 is used to indicate the
-     * additional requirements of a GeoToolkit implementation. The pure
-     * WFS 1.1 specification itself is limited to SortBy.
-     * </p>
-     *
-     * @return SortBy array or order of application
-     */
-    public SortBy[] getSortBy() {
-        return sortBy;
     }
 
     /**
@@ -377,6 +319,9 @@ public final class Query extends org.apache.sis.storage.Query {
      */
     @Override
     public boolean equals(final Object obj) {
+        if (!super.equals(obj)) {
+            return false;
+        }
         if (obj == null) {
             return false;
         }
@@ -385,21 +330,6 @@ public final class Query extends org.apache.sis.storage.Query {
         }
         final Query other = (Query) obj;
         if (this.typeName != other.typeName && (this.typeName == null || !this.typeName.equals(other.typeName))) {
-            return false;
-        }
-        if (!Arrays.deepEquals(this.properties, other.properties)) {
-            return false;
-        }
-        if (this.maxFeatures != other.maxFeatures && (this.maxFeatures == null || !this.maxFeatures.equals(other.maxFeatures))) {
-            return false;
-        }
-        if (this.startIndex != other.startIndex) {
-            return false;
-        }
-        if (this.filter != other.filter && (this.filter == null || !this.filter.equals(other.filter))) {
-            return false;
-        }
-        if (!Arrays.deepEquals(this.sortBy, other.sortBy)) {
             return false;
         }
         if (this.hints != other.hints && (this.hints == null || !this.hints.equals(other.hints))) {
@@ -416,60 +346,11 @@ public final class Query extends org.apache.sis.storage.Query {
      */
     @Override
     public int hashCode() {
-        int hash = 7;
+        int hash = super.hashCode();
         hash = 83 * hash + (this.typeName != null ? this.typeName.hashCode() : 0);
-        hash = 83 * hash + Arrays.deepHashCode(this.properties);
-        hash = 83 * hash + (this.maxFeatures != null ? this.maxFeatures.hashCode() : 0);
-        hash = 83 * hash + this.startIndex;
-        hash = 83 * hash + (this.filter != null ? this.filter.hashCode() : 0);
-        hash = 83 * hash + Arrays.deepHashCode(this.sortBy);
         hash = 83 * hash + (this.hints != null ? this.hints.hashCode() : 0);
         hash = 83 * hash + (this.crs != null ? this.crs.hashCode() : 0);
         return hash;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder returnString = new StringBuilder("Query:");
-
-        returnString.append("\n   feature type: ").append(typeName);
-
-        if (filter != null) {
-            returnString.append("\n   filter: ").append(filter.toString());
-        }
-
-        returnString.append("\n   [properties: ");
-
-        if ((properties == null) || (properties.length == 0)) {
-            returnString.append(" ALL ]");
-        } else {
-            for (int i = 0; i < properties.length; i++) {
-                returnString.append(properties[i]);
-
-                if (i < (properties.length - 1)) {
-                    returnString.append(", ");
-                }
-            }
-
-            returnString.append("]");
-        }
-
-        if (sortBy != null && sortBy.length > 0) {
-            returnString.append("\n   [sort by: ");
-            for (int i = 0; i < sortBy.length; i++) {
-                returnString.append(sortBy[i].getPropertyName().getPropertyName());
-                returnString.append(" ");
-                returnString.append(sortBy[i].getSortOrder().name());
-
-                if (i < (sortBy.length - 1)) {
-                    returnString.append(", ");
-                }
-            }
-
-            returnString.append("]");
-        }
-
-        return returnString.toString();
     }
 
 }

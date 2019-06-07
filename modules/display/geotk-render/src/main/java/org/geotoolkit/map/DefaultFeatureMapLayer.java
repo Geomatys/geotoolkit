@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.map;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -24,24 +25,24 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.style.MutableStyle;
-import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Range;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.Query;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import static org.geotoolkit.map.MapLayer.SELECTION_FILTER_PROPERTY;
+import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
@@ -126,14 +127,6 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
      */
     @Override
     public Query getQuery() {
-        if(query == null){
-            try {
-                query = QueryBuilder.all(getResource().getType().getName());
-            } catch (DataStoreException ex) {
-                throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
-            }
-        }
-
         return query;
     }
 
@@ -149,12 +142,11 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
      */
     @Override
     public void setQuery(final Query query) {
-        ensureNonNull("query", query);
 
         final Query oldQuery;
         synchronized (this) {
             oldQuery = getQuery();
-            if(oldQuery.equals(query)){
+            if (Objects.equals(oldQuery, query)){
                 return;
             }
             this.query = query;
@@ -218,10 +210,14 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
         lower.accept(ListingPropertyVisitor.VISITOR, properties);
         upper.accept(ListingPropertyVisitor.VISITOR, properties);
 
-        final QueryBuilder qb = new QueryBuilder();
-        qb.setTypeName(getResource().getType().getName());
-        qb.setProperties(properties.toArray(new String[properties.size()]));
-        final FeatureSet col = getResource().subset(qb.buildQuery());
+        final SimpleQuery qb = new SimpleQuery();
+        final List<SimpleQuery.Column> columns = new ArrayList<>();
+        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
+        for (String property : properties) {
+            columns.add(new SimpleQuery.Column(ff.property(property)));
+        }
+        qb.setColumns(columns.toArray(new SimpleQuery.Column[0]));
+        final FeatureSet col = getResource().subset(qb);
 
         try (Stream<Feature> stream = col.features(false)) {
             return stream

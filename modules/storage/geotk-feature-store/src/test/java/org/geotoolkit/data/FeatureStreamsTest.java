@@ -17,46 +17,45 @@
 
 package org.geotoolkit.data;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.iterator.CheckCloseFeatureIterator;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.ReprojectMapper;
+import org.geotoolkit.feature.TransformMapper;
+import org.geotoolkit.feature.ViewMapper;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
+import org.geotoolkit.util.NamesExt;
+import static org.junit.Assert.*;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
-import org.apache.sis.referencing.CommonCRS;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
-import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
-import static org.junit.Assert.*;
-import org.geotoolkit.feature.ReprojectMapper;
-import org.geotoolkit.feature.TransformMapper;
-import org.geotoolkit.feature.ViewMapper;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.referencing.CRS;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.geotoolkit.data.iterator.CheckCloseFeatureIterator;
 
 /**
  * Tests of the different iterators.
@@ -474,7 +473,6 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
         //create the decimate reader -------------------------------------------
         final Hints hints = new Hints();
-        hints.put(HintsPending.FEATURE_DETACHED, Boolean.TRUE);
 
         GeometryTransformer decim = new GeometryScaleTransformer(10, 10);
         final TransformMapper ttype = new TransformMapper(reader.getFeatureType(), decim);
@@ -507,7 +505,6 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
         // same test but with reuse hint ---------------------------------------
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
-        hints.put(HintsPending.FEATURE_DETACHED, Boolean.FALSE);
 
         decim = new GeometryScaleTransformer(10, 10);
         retyped = FeatureStreams.decorate(reader,new TransformMapper(reader.getFeatureType(), decim), hints);

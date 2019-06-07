@@ -18,14 +18,14 @@ package org.geotoolkit.map;
 
 import java.util.Collection;
 import java.util.List;
-import org.geotoolkit.data.query.Query;
-import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.measure.Range;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.opengis.filter.expression.Expression;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.storage.Query;
 import org.apache.sis.util.Utilities;
 import org.opengis.filter.Id;
+import org.opengis.filter.expression.Expression;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * MapLayer holding a collection of features.

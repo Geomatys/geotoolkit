@@ -18,10 +18,6 @@ package org.geotoolkit.internal.data;
 
 import java.util.Map;
 import java.util.stream.Stream;
-import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.ReprojectMapper;
-import org.geotoolkit.feature.TransformMapper;
-import org.geotoolkit.feature.ViewMapper;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
@@ -29,8 +25,11 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureTypeExt;
+import org.geotoolkit.feature.ReprojectMapper;
+import org.geotoolkit.feature.TransformMapper;
+import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -47,8 +46,8 @@ public class GenericQueryFeatureIterator {
 
     public static FeatureReader wrap(FeatureReader reader, final Query remainingParameters) throws DataStoreException{
 
-        final Integer start = remainingParameters.getStartIndex();
-        final Integer max = remainingParameters.getMaxFeatures();
+        final long start = remainingParameters.getOffset();
+        final long max = remainingParameters.getLimit();
         final Filter filter = remainingParameters.getFilter();
         final String[] properties = remainingParameters.getPropertyNames();
         final SortBy[] sorts = remainingParameters.getSortBy();
@@ -84,19 +83,19 @@ public class GenericQueryFeatureIterator {
         }
 
         //wrap start index -----------------------------------------------------
-        if(start != null && start > 0){
-            reader = FeatureStreams.skip(reader, start);
+        if (start > 0) {
+            reader = FeatureStreams.skip(reader, (int) start);
         }
 
         //wrap max -------------------------------------------------------------
-        if(max != null){
+        if(max != -1){
             if(max == 0){
                 //use an optimized reader
                 reader = FeatureStreams.emptyReader(reader.getFeatureType());
                 //close original reader
                 reader.close();
             }else{
-                reader = FeatureStreams.limit(reader, max);
+                reader = FeatureStreams.limit(reader, (int) max);
             }
         }
 

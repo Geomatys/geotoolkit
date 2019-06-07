@@ -18,14 +18,12 @@
 package org.geotoolkit.data.query;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.factory.Hints;
-import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.opengis.util.GenericName;
 
 
 /**
@@ -33,7 +31,9 @@ import org.apache.sis.internal.feature.AttributeConvention;
  *
  * @author Johann Sorel (Geomatys)
  * @module
+ * @deprecated use SIS SimpleQuery
  */
+@Deprecated
 public final class QueryBuilder {
 
     private static final String[] ONLY_ID_PROPERTIES = new String[]{
@@ -46,8 +46,8 @@ public final class QueryBuilder {
     private String[] properties = null;
     private SortBy[] sortBy = null;
     private CoordinateReferenceSystem crs = null;
-    private int startIndex = 0;
-    private Integer maxFeatures = null;
+    private long startIndex = 0;
+    private long maxFeatures = -1;
     private Hints hints = null;
     private double[] resolution = null;
     private String language = Query.GEOTK_QOM;
@@ -71,7 +71,7 @@ public final class QueryBuilder {
         sortBy = null;
         crs = null;
         startIndex = 0;
-        maxFeatures = null;
+        maxFeatures = -1;
         resolution = null;
         hints = null;
         version = null;
@@ -82,10 +82,10 @@ public final class QueryBuilder {
         this.resolution = (query.getResolution()==null)?null:query.getResolution().clone();
         this.filter = query.getFilter();
         this.hints = query.getHints();
-        this.maxFeatures = query.getMaxFeatures();
+        this.maxFeatures = query.getLimit();
         this.properties = query.getPropertyNames();
         this.sortBy = query.getSortBy();
-        this.startIndex = query.getStartIndex();
+        this.startIndex = query.getOffset();
         this.typeName = query.getTypeName();
         this.version = query.getVersionDate();
         if(this.version==null) this.version = query.getVersionLabel();
@@ -127,19 +127,19 @@ public final class QueryBuilder {
         this.sortBy = sortBy;
     }
 
-    public int getStartIndex() {
+    public long getStartIndex() {
         return startIndex;
     }
 
-    public void setStartIndex(final int startIndex) {
+    public void setStartIndex(final long startIndex) {
         this.startIndex = startIndex;
     }
 
-    public Integer getMaxFeatures() {
+    public long getMaxFeatures() {
         return maxFeatures;
     }
 
-    public void setMaxFeatures(final Integer maxFeatures) {
+    public void setMaxFeatures(final long maxFeatures) {
         this.maxFeatures = maxFeatures;
     }
 

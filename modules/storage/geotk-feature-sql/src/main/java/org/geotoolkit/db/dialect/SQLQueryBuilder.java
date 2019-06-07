@@ -107,7 +107,7 @@ public class SQLQueryBuilder {
         encodeSortBy(featureType, query.getSortBy(), key, sql);
 
         // finally encode limit/offset, if necessary
-        dialect.encodeLimitOffset(sql, query.getMaxFeatures(), query.getStartIndex());
+        dialect.encodeLimitOffset(sql, query.getLimit() == -1 ? null : (int) query.getLimit(), (int) query.getOffset());
 
         return sql.toString();
     }
