@@ -20,13 +20,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.marineapi.nmea.parser.SentenceFactory;
 import net.sf.marineapi.nmea.sentence.Sentence;
 import net.sf.marineapi.nmea.sentence.SentenceValidator;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -35,7 +35,7 @@ import org.opengis.feature.FeatureType;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class NMEAFileReader implements FeatureReader {
+public class NMEAFileReader implements Iterator<Feature>, AutoCloseable {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.nmea");
 
@@ -54,9 +54,8 @@ public class NMEAFileReader implements FeatureReader {
         this.reader = new BufferedReader(isr);
     }
 
-    @Override
     public FeatureType getFeatureType() {
-        return NMEAFeatureStore.NMEA_TYPE;
+        return NMEAStore.NMEA_TYPE;
     }
 
     @Override
@@ -95,13 +94,13 @@ public class NMEAFileReader implements FeatureReader {
                 nextComplete = false;
             }
 
-            if(!nextComplete && data == null){
+            if (!nextComplete && data == null) {
                 builder.endFeature();
             }
 
-            if(data == null){
+            if (data == null) {
                 finished = true;
-                if(!nextComplete){
+                if (!nextComplete) {
                     //try to build a last feature
                     builder.endFeature();
                 }
@@ -117,11 +116,6 @@ public class NMEAFileReader implements FeatureReader {
         } catch (IOException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }
-    }
-
-    @Override
-    public void remove() {
-        throw new FeatureStoreRuntimeException("Read-only reader.");
     }
 
 }

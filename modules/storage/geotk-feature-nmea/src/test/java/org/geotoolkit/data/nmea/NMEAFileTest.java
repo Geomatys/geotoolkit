@@ -17,14 +17,14 @@
 
 package org.geotoolkit.data.nmea;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import static org.junit.Assert.*;
-import org.junit.Test;
 import org.junit.BeforeClass;
+import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.feature.Feature;
 
 /**
@@ -32,6 +32,7 @@ import org.opengis.feature.Feature;
  * @author Johann Sorel (Geomatys)
  */
 public class NMEAFileTest extends org.geotoolkit.test.TestBase {
+    
     @BeforeClass
     public static void setTimeZone() {
         TimeZone.setDefault(TimeZone.getTimeZone("CET"));

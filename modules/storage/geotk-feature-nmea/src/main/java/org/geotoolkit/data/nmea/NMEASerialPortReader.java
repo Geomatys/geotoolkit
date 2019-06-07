@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2013, Geomatys
+ *    (C) 2013-2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.data.nmea;
 
-import static org.geotoolkit.data.nmea.NMEAFeatureStore.NMEA_TYPE;
-import static org.geotoolkit.data.nmea.NMEAFeatureStore.TYPE_NAME;
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
@@ -46,6 +44,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
+import static org.geotoolkit.data.nmea.NMEAStore.NMEA_TYPE;
+import static org.geotoolkit.data.nmea.NMEAStore.TYPE_NAME;
 
 /**
  * Scan serial ports to find GPS data, and then initialize a reader on matching stream.

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2013, Geomatys
+ *    (C) 2013-2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,14 +16,6 @@
  */
 package org.geotoolkit.data.nmea;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import static org.geotoolkit.data.nmea.NMEAFeatureStore.ALT_NAME;
-import static org.geotoolkit.data.nmea.NMEAFeatureStore.DATE_NAME;
-import static org.geotoolkit.data.nmea.NMEAFeatureStore.DEPTH_NAME;
-import static org.geotoolkit.data.nmea.NMEAFeatureStore.GEOM_NAME;
-import static org.geotoolkit.data.nmea.NMEAFeatureStore.SPEED_NAME;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,10 +38,18 @@ import net.sf.marineapi.nmea.util.Time;
 import net.sf.marineapi.provider.event.ProviderEvent;
 import net.sf.marineapi.provider.event.ProviderListener;
 import org.apache.sis.util.logging.Logging;
+import static org.geotoolkit.data.nmea.NMEAStore.ALT_NAME;
+import static org.geotoolkit.data.nmea.NMEAStore.DATE_NAME;
+import static org.geotoolkit.data.nmea.NMEAStore.DEPTH_NAME;
+import static org.geotoolkit.data.nmea.NMEAStore.GEOM_NAME;
+import static org.geotoolkit.data.nmea.NMEAStore.SPEED_NAME;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 
 /**
- * Create features of type {@link NMEAFeatureStore#NMEA_TYPE} from
+ * Create features of type {@link NMEAStore#NMEA_TYPE} from
  * {@link Sentence} read by a {@link SentenceReader} or given by the user.
  *
  * This class implements {@link SentenceListener} interface, what allows you to
@@ -176,7 +176,7 @@ public class NMEABuilder implements SentenceListener {
         }
 
         if (position != null) {
-            next = NMEAFeatureStore.NMEA_TYPE.newInstance();
+            next = NMEAStore.NMEA_TYPE.newInstance();
             final Point geom = GFACTORY.createPoint(new Coordinate(position.getLongitude(), position.getLatitude(), position.getAltitude()));
             next.setPropertyValue(GEOM_NAME.toString(), geom);
             next.setPropertyValue(ALT_NAME.toString(), position.getAltitude());
