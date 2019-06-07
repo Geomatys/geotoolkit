@@ -24,9 +24,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
-import java.util.stream.Stream;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.LookupTableJAI;
@@ -36,13 +34,11 @@ import javax.media.jai.RenderedOp;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.measure.Units;
-import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
@@ -50,9 +46,7 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.SampleDimensionType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -78,13 +72,10 @@ import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.metadata.MetadataUtilities;
-import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.geotoolkit.processing.coverage.shadedrelief.ShadedReliefDescriptor;
 import org.geotoolkit.processing.coverage.statistics.StatisticOp;
 import org.geotoolkit.processing.coverage.statistics.Statistics;
-import org.geotoolkit.processing.image.bandselect.BandSelectDescriptor;
 import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
 import org.geotoolkit.referencing.operation.transform.EarthGravitationalModel;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -171,7 +162,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
 
             final GridCoverageResource ref = (GridCoverageResource) resource;
-
+            if (!isInView(projectedCoverage)) return false;
 
             final RasterSymbolizer sourceSymbol = symbol.getSource();
 
@@ -1183,6 +1174,21 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final ArrayList<SampleDimension> newSamples = new ArrayList<>(source);
         newSamples.add(new SampleDimension(ALPHA_SAMPLE_DIM, 0, Collections.EMPTY_SET));
         return newSamples;
+    }
+
+
+    private boolean isInView(final ProjectedCoverage candidate) {
+        try {
+            final GeneralEnvelope boundary = GeneralEnvelope.castOrCopy(
+                    Envelopes.transform(candidate.getLayer().getBounds(), renderingContext.getObjectiveCRS2D())
+            );
+            return boundary.intersects(renderingContext.getCanvasObjectiveBounds2D());
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Cannot compare layer bbox with rendering context", e);
+        }
+
+        // Cannot determine intersection. Display object.
+        return true;
     }
 
     private static class ForcedAlpha extends GridCoverage {
