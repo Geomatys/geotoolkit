@@ -35,40 +35,22 @@
 
 package org.geotoolkit.metadata.geotiff;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.HashMap;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Unit;
-import org.opengis.parameter.GeneralParameterDescriptor;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CRSFactory;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.GeographicCRS;
-import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.datum.Ellipsoid;
-import org.opengis.referencing.datum.PrimeMeridian;
-import org.opengis.referencing.datum.DatumFactory;
-import org.opengis.referencing.datum.GeodeticDatum;
-import org.opengis.referencing.operation.MathTransformFactory;
-import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.operation.Conversion;
-import org.opengis.referencing.crs.ProjectedCRS;
-import org.opengis.referencing.cs.CartesianCS;
-import org.opengis.referencing.crs.GeodeticCRS;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
-import org.opengis.referencing.operation.OperationMethod;
-import org.opengis.util.FactoryException;
-import org.apache.sis.measure.Units;
 import org.apache.sis.internal.referencing.Formulas;
+import org.apache.sis.internal.referencing.ReferencingFactoryContainer;
 import org.apache.sis.internal.referencing.provider.AlbersEqualArea;
 import org.apache.sis.internal.referencing.provider.Equirectangular;
-import org.apache.sis.internal.referencing.provider.Mercator1SP;
-import org.apache.sis.internal.referencing.provider.Mercator2SP;
 import org.apache.sis.internal.referencing.provider.LambertConformal1SP;
 import org.apache.sis.internal.referencing.provider.LambertConformal2SP;
+import org.apache.sis.internal.referencing.provider.Mercator1SP;
+import org.apache.sis.internal.referencing.provider.Mercator2SP;
+import org.apache.sis.internal.referencing.provider.ObliqueMercator;
 import org.apache.sis.internal.referencing.provider.ObliqueStereographic;
 import org.apache.sis.internal.referencing.provider.PolarStereographicA;
 import org.apache.sis.internal.referencing.provider.PolarStereographicB;
@@ -76,34 +58,52 @@ import org.apache.sis.internal.referencing.provider.PolarStereographicC;
 import org.apache.sis.internal.referencing.provider.TransverseMercator;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Latitude;
+import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
-import org.apache.sis.referencing.cs.DefaultCartesianCS;
-import org.apache.sis.referencing.crs.DefaultProjectedCRS;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.crs.DefaultProjectedCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.referencing.cs.DefaultCartesianCS;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
-import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.internal.referencing.ReferencingFactoryContainer;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
+import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader.ValueMap;
 import org.geotoolkit.referencing.cs.PredefinedCS;
-import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.provider.Krovak;
 import org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea;
 import org.geotoolkit.referencing.operation.provider.NewZealandMapGrid;
-import org.apache.sis.internal.referencing.provider.ObliqueMercator;
 import org.geotoolkit.referencing.operation.provider.Orthographic;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
 import org.geotoolkit.resources.Vocabulary;
-import org.apache.sis.referencing.crs.AbstractCRS;
-import org.apache.sis.referencing.cs.AxesConvention;
-import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
-import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader.*;
+import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.crs.CRSFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.GeodeticCRS;
+import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.crs.ProjectedCRS;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CartesianCS;
+import org.opengis.referencing.datum.DatumFactory;
+import org.opengis.referencing.datum.Ellipsoid;
+import org.opengis.referencing.datum.GeodeticDatum;
+import org.opengis.referencing.datum.PrimeMeridian;
+import org.opengis.referencing.operation.Conversion;
+import org.opengis.referencing.operation.CoordinateOperationFactory;
+import org.opengis.referencing.operation.MathTransformFactory;
+import org.opengis.referencing.operation.OperationMethod;
+import org.opengis.util.FactoryException;
 
 /**
  * TODO this class must be rewritten, redundant code is used here and all geotiff
@@ -1240,7 +1240,7 @@ final class GeoTiffCRSReader {
         final String ellipsoidKey = metadata.getAsString(GeogEllipsoidGeoKey);
         String temp = null;
         // is the ellipsoid user defined?
-        if (ellipsoidKey.equalsIgnoreCase(GeoTiffConstants.GTUserDefinedGeoKey_String)) {
+        if (ellipsoidKey == null || ellipsoidKey.equalsIgnoreCase(GeoTiffConstants.GTUserDefinedGeoKey_String)) {
             // /////////////////////////////////////////////////////////////////////
             // USER DEFINED ELLIPSOID
             // /////////////////////////////////////////////////////////////////////
