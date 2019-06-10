@@ -17,27 +17,31 @@
 package org.geotoolkit.coverage.amended;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import org.apache.sis.storage.Aggregate;
-import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
-import org.geotoolkit.storage.DefaultAggregate;
+import org.geotoolkit.storage.AbstractResource;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  * Wrap a DataNode and it's children.
  *
  * @author Johann Sorel (Geomatys)
  */
-final class AmendedResource extends DefaultAggregate {
+final class AmendedResource extends AbstractResource implements Aggregate {
     private final Aggregate base;
     private final AmendedCoverageStore store;
+    private final List<Resource> resources = new CopyOnWriteArrayList<>();
 
     /**
      * Listen to the real node events and propage them.
@@ -82,5 +86,10 @@ final class AmendedResource extends DefaultAggregate {
                 resources.add(new AmendedResource((Aggregate)n, store));
             }
         }
+    }
+
+    @Override
+    public Collection<? extends Resource> components() throws DataStoreException {
+        return Collections.unmodifiableList(resources);
     }
 }

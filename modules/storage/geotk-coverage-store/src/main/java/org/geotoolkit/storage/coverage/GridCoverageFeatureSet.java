@@ -19,14 +19,20 @@ package org.geotoolkit.storage.coverage;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.feature.CoverageFeature;
 import org.geotoolkit.internal.feature.TypeConventions;
-import org.geotoolkit.storage.AbstractFeatureSet;
+import org.geotoolkit.storage.AbstractResource;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
@@ -38,12 +44,18 @@ import org.opengis.geometry.Envelope;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GridCoverageFeatureSet extends AbstractFeatureSet {
+public class GridCoverageFeatureSet extends AbstractResource implements FeatureSet {
 
     private final GridCoverageResource gcr;
 
     public GridCoverageFeatureSet(GridCoverageResource gcr) {
+        identifier = gcr.getIdentifier();
         this.gcr = gcr;
+    }
+
+    @Override
+    public Envelope getEnvelope() throws DataStoreException {
+        return gcr.getGridGeometry().getEnvelope();
     }
 
     @Override
@@ -84,5 +96,21 @@ public class GridCoverageFeatureSet extends AbstractFeatureSet {
         }
         feature.setProperty(CoverageFeature.coverageRecords(gcr, role));
         return Stream.of(feature);
+    }
+
+    @Override
+    public FeatureSet subset(Query query) throws UnsupportedQueryException, DataStoreException {
+        if (query instanceof SimpleQuery) {
+            return ((SimpleQuery) query).execute(this);
+        }
+        return FeatureSet.super.subset(query);
+    }
+
+    @Override
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> cl, Class<T> type) {
+    }
+
+    @Override
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> cl, Class<T> type) {
     }
 }
