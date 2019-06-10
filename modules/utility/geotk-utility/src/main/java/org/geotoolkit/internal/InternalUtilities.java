@@ -40,7 +40,7 @@ import static java.lang.Math.*;
 public final class InternalUtilities extends Static {
     /**
      * Relative difference tolerated when comparing floating point numbers using
-     * {@link ComparisonMode#APPROXIMATIVE}.
+     * {@link ComparisonMode#APPROXIMATE}.
      * <p>
      * Historically, this was the relative tolerance threshold for considering two matrixes
      * as {@linkplain org.geotoolkit.referencing.operation.matrix.XMatrix#equals(Object,
@@ -112,7 +112,7 @@ public final class InternalUtilities extends Static {
     public static boolean epsilonEqual(final double v1, final double v2, final ComparisonMode mode) {
         switch (mode) {
             default: return org.geotoolkit.util.Utilities.equals(v1, v2);
-            case APPROXIMATIVE: return epsilonEqual(v1, v2);
+            case APPROXIMATE: return epsilonEqual(v1, v2);
             case DEBUG: {
                 final boolean equal = epsilonEqual(v1, v2);
                 assert equal : "v1=" + v1 + " v2=" + v2 + " Δv=" + abs(v1-v2);

@@ -91,7 +91,7 @@ public class SpatialReferencingTable extends Table {
                     expected = expected.forConvention(convention);
                     actual   = actual  .forConvention(convention);
                 }
-                if (actual.equals(expected, ComparisonMode.APPROXIMATIVE)) {
+                if (actual.equals(expected, ComparisonMode.APPROXIMATE)) {
                     final Identifier id = IdentifiedObjects.getIdentifier(found, Citations.EPSG);
                     if (id != null) try {
                         return Integer.valueOf(id.getCode());
@@ -121,7 +121,7 @@ public class SpatialReferencingTable extends Table {
                 String srtext = rs.getString(2);
                 CoordinateReferenceSystem cdt = CRS.fromWKT(srtext);
                 CoordinateSystem cs = cdt.getCoordinateSystem();
-                if (AbstractCS.castOrCopy(crs.getCoordinateSystem()).equals(cs, ComparisonMode.APPROXIMATIVE)) {
+                if (AbstractCS.castOrCopy(crs.getCoordinateSystem()).equals(cs, ComparisonMode.APPROXIMATE)) {
                     return srid;
                 }
             }

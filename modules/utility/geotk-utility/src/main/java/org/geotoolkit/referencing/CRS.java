@@ -378,7 +378,7 @@ compare:    for (final SingleCRS component : actualComponents) {
      * This is a convenience method for the following method call:
      *
      * {@preformat java
-     *     return Utilities.deepEquals(object1, object2, ComparisonMode.APPROXIMATIVE);
+     *     return Utilities.deepEquals(object1, object2, ComparisonMode.APPROXIMATE);
      * }
      *
      * @param  object1 The first object to compare (may be null).
@@ -386,7 +386,7 @@ compare:    for (final SingleCRS component : actualComponents) {
      * @return {@code true} if both objects are approximatively equal.
      *
      * @see Utilities#deepEquals(Object, Object, ComparisonMode)
-     * @see ComparisonMode#APPROXIMATIVE
+     * @see ComparisonMode#APPROXIMATE
      *
      * @category information
      * @since 3.18

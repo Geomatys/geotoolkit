@@ -1051,7 +1051,7 @@ public final class ReferencingUtilities {
     /**
      * Looks up an {@linkplain Identifier identifier}, such as {@code "EPSG:4326"},
      * of the specified object. This method searches in registered factories for an object
-     * {@linkplain ComparisonMode#APPROXIMATIVE approximatively equals} to the specified
+     * {@linkplain ComparisonMode#APPROXIMATE approximately equals} to the specified
      * object. If such an object is found, then its first identifier is returned. Otherwise
      * this method returns {@code null}.
      * <p>
