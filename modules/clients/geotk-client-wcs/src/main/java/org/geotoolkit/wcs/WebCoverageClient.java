@@ -75,7 +75,7 @@ public class WebCoverageClient extends AbstractClient {
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(WCSClientFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(WCSClientFactory.NAME);
     }
 
     @Override

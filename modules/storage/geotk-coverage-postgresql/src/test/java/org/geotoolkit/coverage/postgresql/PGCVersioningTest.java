@@ -90,7 +90,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
             store.close();
         }
 
-        final PGCoverageStoreFactory factory = (PGCoverageStoreFactory) DataStores.getFactoryById("pgraster");
+        final PGCoverageStoreFactory factory = (PGCoverageStoreFactory) DataStores.getProviderById("pgraster");
 
         try{
             store = factory.create(params);

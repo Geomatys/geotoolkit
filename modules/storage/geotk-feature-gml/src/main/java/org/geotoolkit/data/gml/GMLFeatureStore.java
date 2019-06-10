@@ -111,7 +111,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements ResourceOnF
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(GMLFeatureStoreFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(GMLFeatureStoreFactory.NAME);
     }
 
     @Override

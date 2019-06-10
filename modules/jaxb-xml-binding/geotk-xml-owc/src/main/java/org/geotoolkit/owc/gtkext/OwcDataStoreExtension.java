@@ -102,7 +102,7 @@ public class OwcDataStoreExtension extends OwcExtension {
             }
         }
 
-        final DataStoreFactory ff = DataStores.getFactoryById(factoryName);
+        final DataStoreProvider ff = DataStores.getProviderById(factoryName);
         if (ff != null) {
             final DataStore store = DataStores.open(ff,params);
             if (store instanceof FeatureStore) {

@@ -28,6 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.CapabilitiesException;
@@ -35,7 +36,6 @@ import org.geotoolkit.client.Client;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
-import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.wms.auto.GetCapabilitiesAuto;
 import org.geotoolkit.wms.v100.GetCapabilities100;
@@ -193,7 +193,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
 
     @Override
     public WMSClientFactory getProvider() {
-        return (WMSClientFactory)DataStores.getFactoryById(WMSClientFactory.NAME);
+        return (WMSClientFactory) DataStores.getProviderById(WMSClientFactory.NAME);
     }
 
     @Override

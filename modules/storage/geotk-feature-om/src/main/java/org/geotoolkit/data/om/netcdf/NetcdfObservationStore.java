@@ -82,7 +82,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Reso
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(NetcdfObservationStoreFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(NetcdfObservationStoreFactory.NAME);
     }
 
     @Override

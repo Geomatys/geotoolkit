@@ -131,7 +131,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(FileCoverageProvider.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(FileCoverageProvider.NAME);
     }
 
     @Override

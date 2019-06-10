@@ -98,7 +98,7 @@ public class MIFFeatureStore extends AbstractFeatureStore implements ResourceOnF
      */
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(MIFFeatureStoreFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(MIFFeatureStoreFactory.NAME);
     }
 
     @Override

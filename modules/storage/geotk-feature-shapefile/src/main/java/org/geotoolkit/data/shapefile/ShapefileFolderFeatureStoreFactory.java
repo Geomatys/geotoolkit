@@ -71,7 +71,7 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
 
     @Override
     public ShapefileFeatureStoreFactory getSingleFileFactory() {
-        return DataStores.getAllFactories(ShapefileFeatureStoreFactory.class).iterator().next();
+        return (ShapefileFeatureStoreFactory) DataStores.getProviderById(ShapefileFeatureStoreFactory.NAME);
     }
 
     public CharSequence getDescription() {

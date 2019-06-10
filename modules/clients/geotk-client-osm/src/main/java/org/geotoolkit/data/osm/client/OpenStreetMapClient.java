@@ -87,7 +87,7 @@ public class OpenStreetMapClient extends AbstractClient {
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(OSMClientFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(OSMClientFactory.NAME);
     }
 
     @Override

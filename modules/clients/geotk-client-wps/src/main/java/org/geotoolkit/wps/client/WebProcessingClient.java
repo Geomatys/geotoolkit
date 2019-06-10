@@ -196,7 +196,7 @@ public class WebProcessingClient extends AbstractClient {
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(WPSClientFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(WPSClientFactory.NAME);
     }
 
     @Override

@@ -28,12 +28,12 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.Aggregate;
-import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
-import org.geotoolkit.lang.Static;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
+import org.geotoolkit.lang.Static;
 import org.geotoolkit.parameter.Parameters;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptor;
@@ -128,24 +128,6 @@ public final class DataStores extends Static {
         final StoreMetadataExt meta = provider.getClass().getAnnotation(StoreMetadataExt.class);
         if (meta == null) return new ResourceType[0];
         return meta.resourceTypes();
-    }
-
-    /**
-     * Returns the set of all factories, optionally filtered by type.
-     * This method ensures also that the iterator backing the set is properly synchronized.
-     * <p>
-     * Note that the iterator doesn't need to be thread-safe; this is the accesses to the
-     * underlying {@linkplain #loader}, directly or indirectly through its iterator, which
-     * need to be thread-safe.
-     *
-     * @param  <T>  The type of factories to be returned.
-     * @param  clazz The type of factories to be returned, or {@code null} for all kind of factories.
-     * @return The set of factories for the given conditions.
-     * @deprecated use {@link DataStores#getProviders(java.lang.Class, org.geotoolkit.storage.ResourceType...) } instead.
-     */
-    @Deprecated
-    public static <T> Set<T> getAllFactories(final Class<T> clazz) {
-        return getProviders(clazz);
     }
 
     /**
@@ -261,7 +243,7 @@ public final class DataStores extends Static {
     {
         CharSequence unavailable = null;
         Exception error = null;
-        for (final DataStoreFactory factory : getAllFactories(DataStoreFactory.class)) {
+        for (final DataStoreFactory factory : getProviders(DataStoreFactory.class)) {
             try {
                 if ((parameters != null) ? factory.canProcess(parameters) : canProcess(factory,asMap)) {
                     return (DataStore) ((parameters != null) ? factory.open(parameters) : open(factory,asMap));

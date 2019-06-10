@@ -223,7 +223,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(WFSFeatureStoreFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(WFSFeatureStoreFactory.NAME);
     }
 
     @Override

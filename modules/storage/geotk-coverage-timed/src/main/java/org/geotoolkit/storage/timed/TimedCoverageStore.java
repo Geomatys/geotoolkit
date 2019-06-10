@@ -80,7 +80,7 @@ public class TimedCoverageStore extends AbstractCoverageStore implements Aggrega
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(TimedCoverageFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(TimedCoverageFactory.NAME);
     }
 
     @Override

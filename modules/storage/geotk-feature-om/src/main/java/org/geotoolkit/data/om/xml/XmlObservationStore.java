@@ -102,7 +102,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements Resourc
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(XmlObservationStoreFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(XmlObservationStoreFactory.NAME);
     }
 
     @Override

@@ -65,7 +65,7 @@ public class MIFFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
 
     @Override
     public MIFFeatureStoreFactory getSingleFileFactory() {
-        return DataStores.getAllFactories(MIFFeatureStoreFactory.class).iterator().next();
+        return (MIFFeatureStoreFactory) DataStores.getProviderById(MIFFeatureStoreFactory.NAME);
     }
 
     @Override
