@@ -84,7 +84,7 @@ public class SetupNMEA implements SetupService {
 
         } catch (Exception ex) {
             LOGGER.log(Level.WARNING, "A problem occured while loading RXTX native libraries. Port communication might not work.", ex);
-        } catch (UnsatisfiedLinkError er){
+        } catch (UnsatisfiedLinkError er) {
             LOGGER.log(Level.INFO, "A problem occured while loading RXTX native libraries. Library not found for "+System.getProperty("os.name")+" "+System.getProperty("os.arch")+" architecture.");
         }
 

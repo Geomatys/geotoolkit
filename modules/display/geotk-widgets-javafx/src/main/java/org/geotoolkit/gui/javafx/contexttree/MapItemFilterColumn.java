@@ -24,9 +24,10 @@ import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.TextAlignment;
+import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Query;
 import org.geotoolkit.cql.CQLException;
-import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.gui.javafx.filter.FXCQLEditor;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
@@ -69,13 +70,14 @@ public class MapItemFilterColumn extends TreeTableColumn{
             if(candidate instanceof FeatureMapLayer){
                 try{
                     final FeatureMapLayer layer = (FeatureMapLayer) candidate;
-                    Filter filter = layer.getQuery().getFilter();
+                    final Query query = layer.getQuery();
+                    Filter filter = query == null ? Filter.INCLUDE : ((SimpleQuery)query).getFilter();
                     filter = FXCQLEditor.showFilterDialog(this, layer, filter);
 
                     if(filter!=null){
-                        final QueryBuilder qb = new QueryBuilder(layer.getQuery());
-                        qb.setFilter(filter);
-                        layer.setQuery(qb.buildQuery());
+                        final SimpleQuery sq = new SimpleQuery();
+                        sq.setFilter(filter);
+                        layer.setQuery(sq);
                     }
                 }catch(CQLException | DataStoreException ex){
                     Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);

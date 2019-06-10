@@ -266,8 +266,8 @@ public class WFSFeatureStore extends AbstractFeatureStore{
         final FeatureType type = getFeatureType(typeName);
         if(   gquery.getCoordinateSystemReproject() == null
            && gquery.getFilter() == Filter.INCLUDE
-           && (gquery.getMaxFeatures() == null || gquery.getMaxFeatures() == Integer.MAX_VALUE)
-           && gquery.getStartIndex() == 0){
+           && gquery.getLimit() == -1
+           && gquery.getOffset() == 0){
             Envelope env = bounds.get(this, type.getName().toString());
             if(env != null) {return env;}
         }
@@ -550,19 +550,19 @@ public class WFSFeatureStore extends AbstractFeatureStore{
             // Filter is already processed, but a query builder does not support null filter.
             remainingQuery.setFilter(Filter.INCLUDE);
 
-            final int start = gquery.getStartIndex();
-            final Integer max = gquery.getMaxFeatures();
-            if (start <= 0 && max != null) {
-                request.setMaxFeatures(max);
+            final long start = gquery.getOffset();
+            final long max = gquery.getLimit();
+            if (start <= 0 && max != -1) {
+                request.setMaxFeatures((int) max);
                 // For this one, do not remove from remaining queries : If the
                 // wfs service does not manage it, we will do it afterwards.
-            } else if (max != null && max > 0) {
+            } else if (max > 0) {
                 /* If an offset is provided, we'll have to skip elements manually,
                  * so we keep start index in remaining query. All we can do here
                  * is query that we want no more than the number of features
                  * needed to do the skip, + the number of features wanted by
                 */
-                request.setMaxFeatures(start + max);
+                request.setMaxFeatures((int) (start + max));
             }
 
             if (propertyNames != null) {

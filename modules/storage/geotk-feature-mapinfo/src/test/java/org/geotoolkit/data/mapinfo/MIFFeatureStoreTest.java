@@ -43,8 +43,6 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.mapinfo.mif.MIFFeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.mif.MIFFeatureStore;
@@ -159,7 +157,6 @@ public class MIFFeatureStoreTest extends org.geotoolkit.test.TestBase {
 
             //test with hint
             QueryBuilder qb = new QueryBuilder(name.toString());
-            qb.setHints(new Hints(HintsPending.FEATURE_DETACHED, Boolean.FALSE));
             checkFeatures(expectedFeatures, ds, qb.buildQuery());
         }
     }

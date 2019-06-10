@@ -34,17 +34,23 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.feature.ViewMapper;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.display.PortrayalException;
@@ -57,6 +63,8 @@ import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.*;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.container.ContextContainer2D;
+import static org.geotoolkit.display2d.container.stateless.StatelessMapItemJ2D.createBufferedImage;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
@@ -67,8 +75,8 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
-import org.opengis.util.GenericName;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.FilterUtilities;
@@ -79,10 +87,16 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.style.MutableRule;
+import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleUtilities;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
@@ -94,22 +108,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
-import org.apache.sis.util.Utilities;
-import org.geotoolkit.data.FeatureStreams;
-import org.geotoolkit.display2d.container.ContextContainer2D;
-import static org.geotoolkit.display2d.container.stateless.StatelessMapItemJ2D.createBufferedImage;
-import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.style.MutableStyle;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyNotFoundException;
-import org.opengis.feature.PropertyType;
 import org.opengis.style.TextSymbolizer;
+import org.opengis.util.GenericName;
 
 /**
  * Single object to represent a complete feature map layer.
@@ -292,8 +292,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
     protected FeatureSet optimizeCollection(final RenderingContext2D context,
             final Set<String> requieredAtts, final List<Rule> rules) throws Exception {
         currentQuery = prepareQuery(context, item, requieredAtts, rules, symbolsMargin);
-        //we detach feature since we are going to use a cache.
-        currentQuery.getHints().put(HintsPending.FEATURE_DETACHED,Boolean.TRUE);
         final Query query = currentQuery;
         final FeatureSet col = item.getResource().subset(query);
         if (col instanceof FeatureCollection) {
@@ -305,8 +303,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     protected FeatureSet optimizeCollection(final RenderingContext2D context) throws Exception {
         currentQuery = prepareQuery(context, item, symbolsMargin);
-        //we detach feature since we are going to use a cache.
-        currentQuery.getHints().put(HintsPending.FEATURE_DETACHED,Boolean.TRUE);
         final Query query = currentQuery;
         final FeatureSet col = item.getResource().subset(query);
         if (col instanceof FeatureCollection) {
@@ -322,7 +318,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     protected GraphicIterator getIterator(final FeatureSet features,
             final RenderingContext2D renderingContext, final StatelessContextParams params) throws DataStoreException {
-        final Hints iteHints = new Hints(HintsPending.FEATURE_DETACHED, Boolean.FALSE);
+        final Hints iteHints = new Hints();
 
         final FeatureIterator iterator;
         if (features instanceof FeatureCollection) {
@@ -553,8 +549,9 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         //}
 
         //concatenate geographic filter with data filter if there is one
-        if(layer.getQuery() != null && layer.getQuery().getFilter() != null){
-            filter = FILTER_FACTORY.and(filter,layer.getQuery().getFilter());
+        Query query = layer.getQuery();
+        if (query instanceof SimpleQuery) {
+            filter = FILTER_FACTORY.and(filter, ((SimpleQuery) query).getFilter());
         }
 
         final Set<String> copy = new HashSet<>();
@@ -747,7 +744,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
      * Creates an optimal query to send to the datastore, knowing which properties are knowned and
      * the appropriate bounding box to filter.
      */
-    protected static Query prepareQuery(final RenderingContext2D renderingContext,
+    protected static SimpleQuery prepareQuery(final RenderingContext2D renderingContext,
             final FeatureMapLayer layer, double symbolsMargin) throws PortrayalException{
 
         final FeatureSet fs                      = layer.getResource();
@@ -792,8 +789,9 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         //}
 
         //concatenate geographic filter with data filter if there is one
-        if(layer.getQuery() != null && layer.getQuery().getFilter() != null){
-            filter = FILTER_FACTORY.and(filter,layer.getQuery().getFilter());
+        Query query = layer.getQuery();
+        if (query instanceof SimpleQuery) {
+            filter = FILTER_FACTORY.and(filter, ((SimpleQuery) query).getFilter());
         }
 
         //concatenate with temporal range if needed ----------------------------
@@ -859,8 +857,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         //TODO wait for a new geometry implementation
         //qb.setCRS(renderingContext.getObjectiveCRS2D());
 
-        //set the acumulated hints
-        qb.setHints(queryHints);
         return qb.buildQuery();
     }
 

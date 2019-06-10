@@ -25,7 +25,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
-import org.geotoolkit.data.nmea.NMEAFeatureStore;
+import org.geotoolkit.data.nmea.NMEAStore;
 import org.geotoolkit.data.nmea.NMEASerialPortReader;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -71,7 +71,7 @@ public class NMEASerialPortReaderDemo {
             if (event instanceof FeatureStoreContentEvent) {
                 final FeatureStoreContentEvent tmp = (FeatureStoreContentEvent) event;
                 if (tmp.getType().equals(FeatureStoreContentEvent.Type.ADD)) {
-                    final FeatureCollection col = session.getFeatureCollection(QueryBuilder.filtered(NMEAFeatureStore.TYPE_NAME.toString(), tmp.getIds()));
+                    final FeatureCollection col = session.getFeatureCollection(QueryBuilder.filtered(NMEAStore.TYPE_NAME.toString(), tmp.getIds()));
                     final FeatureIterator it = col.iterator();
                     while (it.hasNext()) {
                         LOGGER.log(Level.INFO, it.next().toString());
