@@ -51,6 +51,11 @@ public class MySQLFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory {
                 DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT,SIMPLETYPE);
 
     @Override
+    public String getShortName() {
+        return NAME;
+    }
+
+    @Override
     protected SQLDialect createSQLDialect(final JDBCFeatureStore featureStore) {
         return new MySQLDialect((DefaultJDBCFeatureStore)featureStore);
     }
@@ -63,12 +68,10 @@ public class MySQLFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory {
         return PARAMETERS_DESCRIPTOR;
     }
 
-    @Override
     public CharSequence getDisplayName() {
         return Bundle.formatInternational(Bundle.Keys.datastoreTitle);
     }
 
-    @Override
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.datastoreDescription);
     }

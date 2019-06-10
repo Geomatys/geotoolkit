@@ -36,8 +36,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.data.FeatureCollection;
@@ -45,19 +45,20 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.session.Session;
-import org.opengis.util.GenericName;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Geometry;
+import org.opengis.util.GenericName;
 
 /**
  * Export selected layer in the context tree.
@@ -69,7 +70,7 @@ public class ExportFeatureSetItem extends TreeMenuItem {
     private static final Image ICON = SwingFXUtils.toFXImage(
             IconBuilder.createImage(FontAwesomeIcons.ICON_DOWNLOAD, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
 
-    private final Map<FileChooser.ExtensionFilter,DataStoreFactory> index = new HashMap<>();
+    private final Map<FileChooser.ExtensionFilter,DataStoreProvider> index = new HashMap<>();
     private WeakReference<TreeItem> itemRef;
 
     public ExportFeatureSetItem() {
@@ -78,12 +79,12 @@ public class ExportFeatureSetItem extends TreeMenuItem {
         menuItem.setGraphic(new ImageView(ICON));
 
         //select file factories which support writing
-        final Set<DataStoreFactory> factories = DataStores.getAllFactories((Class) FileFeatureStoreFactory.class);
-        for(DataStoreFactory ff : factories){
+        final Set<DataStoreProvider> factories = DataStores.getProviders((Class) FileFeatureStoreFactory.class);
+        for(DataStoreProvider ff : factories){
             final StoreMetadataExt metadata = ff.getClass().getAnnotation(StoreMetadataExt.class);
             if(metadata != null && metadata.canCreate()&& metadata.canWrite()&& metadata.geometryTypes() != null){
                 final Collection<String> exts = ((FileFeatureStoreFactory)ff).getSuffix();
-                final String name = ff.getDisplayName().toString();
+                final String name = ff.getShortName();
                 final FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(name, new ArrayList(exts));
                 index.put(filter, ff);
 
@@ -106,10 +107,10 @@ public class ExportFeatureSetItem extends TreeMenuItem {
 
     private class ExportSub extends MenuItem{
 
-        private final DataStoreFactory factory;
+        private final DataStoreProvider factory;
 
-        public ExportSub(DataStoreFactory factory) {
-            super(factory.getDisplayName().toString());
+        public ExportSub(DataStoreProvider factory) {
+            super(factory.getShortName().toString());
             this.factory = factory;
 
 
@@ -119,12 +120,12 @@ public class ExportFeatureSetItem extends TreeMenuItem {
                     if(itemRef == null) return;
                     final TreeItem ti = itemRef.get();
                     if(ti == null) return;
-                    final FeatureMapLayer layer = (FeatureMapLayer) ti.getValue();
+                    final MapLayer layer = (MapLayer) ti.getValue();
 
                     final DirectoryChooser chooser = new DirectoryChooser();
                     chooser.setTitle(GeotkFX.getString(ExportFeatureSetItem.class, "folder"));
                     File folder = chooser.showDialog(null);
-                    final FeatureSet baseCol = layer.getResource();
+                    final FeatureSet baseCol = (FeatureSet) layer.getResource();
 
                     if (folder!=null && (baseCol instanceof FeatureCollection)) {
                         try {

@@ -16,6 +16,13 @@
  */
 package org.geotoolkit.db.postgres;
 
+import org.apache.sis.parameter.ParameterBuilder;
+import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
+import org.geotoolkit.db.DefaultJDBCFeatureStore;
+import org.geotoolkit.db.JDBCFeatureStore;
+import org.geotoolkit.db.dialect.SQLDialect;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
@@ -23,13 +30,6 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
-import org.geotoolkit.db.DefaultJDBCFeatureStore;
-import org.geotoolkit.db.JDBCFeatureStore;
-import org.geotoolkit.db.dialect.SQLDialect;
-import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -77,6 +77,11 @@ public class PostgresFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory
             new ParameterBuilder().addName(NAME).addName("PostgresParameters").createGroup(
                 IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,TABLE,USER,PASSWORD,
                 DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT,LOOSEBBOX,SIMPLETYPE);
+
+    @Override
+    public String getShortName() {
+        return NAME;
+    }
 
     @Override
     public ParameterDescriptorGroup getOpenParameters() {

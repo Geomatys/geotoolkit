@@ -20,11 +20,11 @@ package org.geotoolkit.data.dbf;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
@@ -53,18 +53,15 @@ public class DbaseFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
                     .addName(NAME).addName("DBFParameters")
                     .createGroup(IDENTIFIER, PATH);
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
+    public String getShortName() {
+        return NAME;
+    }
+
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.databaseDescription);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public CharSequence getDisplayName() {
         return Bundle.formatInternational(Bundle.Keys.databaseTitle);
     }

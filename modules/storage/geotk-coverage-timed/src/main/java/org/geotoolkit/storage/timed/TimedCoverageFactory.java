@@ -90,6 +90,10 @@ public class TimedCoverageFactory extends DataStoreFactory {
             .createGroup(IDENTIFIER, PATH, NAME_PATTERN, TIME_INDEX, TIME_FORMAT, DELAY, DEFAULT_MILLI_OF_DAY, DEFAULT_OFFSET_SECONDS);
 
     @Override
+    public String getShortName() {
+        return NAME;
+    }
+
     public CharSequence getDescription() {
         return "A coverage store which aims to harvest a directory filled with "
                 + "georeferenced image files, each one containing a date in its "

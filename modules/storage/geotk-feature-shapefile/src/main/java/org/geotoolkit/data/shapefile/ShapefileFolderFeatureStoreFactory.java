@@ -16,26 +16,25 @@
  */
 package org.geotoolkit.data.shapefile;
 
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
-import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.nio.PathFilterVisitor;
-import org.geotoolkit.nio.PosixPathMatcher;
-import org.opengis.parameter.ParameterDescriptor;
-import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.ParameterValueGroup;
-
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.*;
 import java.util.EnumSet;
 import java.util.logging.Level;
+import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.nio.PathFilterVisitor;
+import org.geotoolkit.nio.PosixPathMatcher;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * FeatureStore for a folder of Shapefiles.
@@ -66,20 +65,22 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
     }
 
     @Override
+    public String getShortName() {
+        return NAME;
+    }
+
+    @Override
     public ShapefileFeatureStoreFactory getSingleFileFactory() {
         return DataStores.getAllFactories(ShapefileFeatureStoreFactory.class).iterator().next();
     }
 
-    @Override
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.datastoreFolderDescription);
     }
 
-    @Override
     public CharSequence getDisplayName() {
         return Bundle.formatInternational(Bundle.Keys.datastoreFolderTitle);
     }
-
 
     /**
      * {@inheritDoc}

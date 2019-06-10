@@ -21,8 +21,7 @@ public class ListAllFactoriesDemo {
             final ClientFactory factory = ite.next();
 
             //display general informations about this factory
-            System.out.println(factory.getDisplayName());
-            System.out.println(factory.getDescription());
+            System.out.println(factory.getShortName());
 
             //display the parameter requiered to create a new instance
             //of server of this type

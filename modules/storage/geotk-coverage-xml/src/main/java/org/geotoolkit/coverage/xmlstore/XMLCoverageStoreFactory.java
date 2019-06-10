@@ -70,11 +70,14 @@ public class XMLCoverageStoreFactory extends DataStoreFactory {
                 IDENTIFIER, PATH, CACHE_TILE_STATE);
 
     @Override
+    public String getShortName() {
+        return NAME;
+    }
+
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.coverageXMLDescription);
     }
 
-    @Override
     public CharSequence getDisplayName() {
         return Bundle.formatInternational(Bundle.Keys.coverageXMLTitle);
     }

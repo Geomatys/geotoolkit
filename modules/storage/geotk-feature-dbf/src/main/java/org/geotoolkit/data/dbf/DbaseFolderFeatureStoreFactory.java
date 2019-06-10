@@ -16,10 +16,6 @@
  */
 package org.geotoolkit.data.dbf;
 
-import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
-import org.geotoolkit.nio.IOUtilities;
-import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.ParameterValueGroup;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.DirectoryStream;
@@ -27,9 +23,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
+import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * FeatureStore for a folder of DBF files.
@@ -58,18 +58,15 @@ public class DbaseFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFa
         return DataStores.getAllFactories(DbaseFeatureStoreFactory.class).iterator().next();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
+    public String getShortName() {
+        return NAME;
+    }
+
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.databaseFolderDescription);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public CharSequence getDisplayName() {
         return Bundle.formatInternational(Bundle.Keys.databaseFolderTitle);
     }

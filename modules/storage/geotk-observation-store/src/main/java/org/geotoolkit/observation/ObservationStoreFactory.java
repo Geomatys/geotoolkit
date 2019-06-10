@@ -38,28 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public interface ObservationStoreFactory {
 
-    /**
-     * Name suitable for display to end user.
-     *
-     * <p>
-     * A display name for this data store type with several translations.
-     * </p>
-     *
-     * @return A short name suitable for display in a user interface. Must be an International string.
-     */
-    public abstract CharSequence getDisplayName();
-
-    /**
-     * Describe the nature of the data source constructed by this factory.
-     *
-     * <p>
-     * A description of this data store type with several translations.
-     * </p>
-     *
-     * @return A human readable description that is suitable for inclusion in a
-     *         list of available data sources.
-     */
-    public abstract CharSequence getDescription();
+    public String getShortName();
 
     /**
      * @return Description of the parameters required for the creation of a {@link org.apache.sis.storage.DataStore}.

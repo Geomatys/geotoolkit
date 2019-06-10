@@ -20,8 +20,7 @@ public class ListAllFactoriesDemo {
             final DataStoreFactory factory = ite.next();
 
             //display general informations about this factory
-            System.out.println(factory.getDisplayName());
-            System.out.println(factory.getDescription());
+            System.out.println(factory.getShortName());
 
             //display the parameter requiered to create a new instance
             //of coveragestore of this type

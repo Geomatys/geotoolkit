@@ -66,6 +66,11 @@ public class XmlObservationStoreFactory extends AbstractObservationStoreFactory 
                     IDENTIFIER, NAMESPACE, FILE_PATH);
 
     @Override
+    public String getShortName() {
+        return NAME;
+    }
+
+    @Override
     public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS_DESCRIPTOR;
     }
