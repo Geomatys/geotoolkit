@@ -175,7 +175,7 @@ class SimpleUVSource implements UVSource {
                         -> getSubCrs(userOrigin::getCoordinateReferenceSystem, VERTICAL_EXTRACTOR)
                         .map(component -> {
                             final DirectPosition1D elevation = new DirectPosition1D(component.crs);
-                            elevation.ordinate = userOrigin.getOrdinate(component.idx);
+                            elevation.coordinate = userOrigin.getOrdinate(component.idx);
                             return (DirectPosition) elevation;
                         })
                         .orElseGet(() -> {
@@ -198,7 +198,7 @@ class SimpleUVSource implements UVSource {
         @Override
         public Optional<UVSource.Calibration2D> setTime(Instant target) {
             final DirectPosition1D timePoint = new DirectPosition1D(DEFAULT_TEMPORAL_CRS);
-            timePoint.ordinate = target.getEpochSecond();
+            timePoint.coordinate = target.getEpochSecond();
             try {
                 final GridGeometry geom2d = atOrigin.derive()
                         .slice(timePoint)
