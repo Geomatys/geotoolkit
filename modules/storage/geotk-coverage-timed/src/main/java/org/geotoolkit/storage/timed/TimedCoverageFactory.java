@@ -19,7 +19,6 @@ package org.geotoolkit.storage.timed;
 import java.net.URI;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
@@ -107,7 +106,7 @@ public class TimedCoverageFactory extends DataStoreFactory {
     }
 
     @Override
-    public DataStore open(ParameterValueGroup params) throws DataStoreException {
+    public TimedCoverageStore open(ParameterValueGroup params) throws DataStoreException {
         return new TimedCoverageStore(params);
     }
 

@@ -246,7 +246,7 @@ public final class DataStores extends Static {
         for (final DataStoreFactory factory : getProviders(DataStoreFactory.class)) {
             try {
                 if ((parameters != null) ? factory.canProcess(parameters) : canProcess(factory,asMap)) {
-                    return (DataStore) ((parameters != null) ? factory.open(parameters) : open(factory,asMap));
+                    return ((parameters != null) ? factory.open(parameters) : open(factory,asMap));
                 }
             } catch (Exception e) {
                 // If an error occurs with a factory, we skip it and try another factory.

@@ -122,7 +122,7 @@ public abstract class DataStoreFactory extends DataStoreProvider {
      * @return FeatureStore created store
      * @throws DataStoreException if parameters are incorrect or creation failed.
      */
-    public DataStore create(ParameterValueGroup params) throws DataStoreException {
+    public org.apache.sis.storage.DataStore create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Store creation not supported");
     }
 

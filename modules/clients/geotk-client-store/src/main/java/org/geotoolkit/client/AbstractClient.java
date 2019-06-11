@@ -16,32 +16,32 @@
  */
 package org.geotoolkit.client;
 
-import java.net.URLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
-import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.security.DefaultClientSecurity;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.DataStore;
+import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.StorageEvent;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -54,7 +54,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractClient extends DataStore implements Client{
+public abstract class AbstractClient extends DataStore implements Client {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.client");
 
@@ -73,7 +73,7 @@ public abstract class AbstractClient extends DataStore implements Client{
     }
 
     @Override
-    protected Metadata createMetadata() throws DataStoreException {
+    public Metadata getMetadata() throws DataStoreException {
         //extract an identifier string from url
         String name = serverURL.getHost() + serverURL.getPath();
         final DefaultMetadata metadata = new DefaultMetadata();

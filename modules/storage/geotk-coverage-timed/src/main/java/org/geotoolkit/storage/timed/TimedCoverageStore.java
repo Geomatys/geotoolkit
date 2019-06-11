@@ -32,8 +32,8 @@ import java.util.regex.Pattern;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.opengis.parameter.ParameterValueGroup;
@@ -79,8 +79,8 @@ public class TimedCoverageStore extends AbstractCoverageStore implements Aggrega
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(TimedCoverageFactory.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(TimedCoverageFactory.NAME);
     }
 
     @Override
