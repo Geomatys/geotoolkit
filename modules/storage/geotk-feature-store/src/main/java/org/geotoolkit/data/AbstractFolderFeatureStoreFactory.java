@@ -23,14 +23,14 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
@@ -109,14 +109,6 @@ public abstract class AbstractFolderFeatureStoreFactory extends DataStoreFactory
     @Override
     public ParameterDescriptorGroup getOpenParameters() {
         return paramDesc;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public CharSequence getDescription() {
-        return super.getDisplayName();
     }
 
     /**

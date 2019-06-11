@@ -65,6 +65,11 @@ public class NetcdfObservationStoreFactory extends AbstractObservationStoreFacto
                     IDENTIFIER, NAMESPACE, FILE_PATH);
 
     @Override
+    public String getShortName() {
+        return NAME;
+    }
+
+    @Override
     public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS_DESCRIPTOR;
     }

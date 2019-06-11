@@ -48,7 +48,6 @@ import org.geotoolkit.ogc.xml.v110.AbstractIdType;
 import org.geotoolkit.ogc.xml.v110.AndType;
 import org.geotoolkit.ogc.xml.v110.BBOXType;
 import org.geotoolkit.ogc.xml.v110.BeyondType;
-import org.geotoolkit.ogc.xml.v110.BinaryLogicOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryOperatorType;
 import org.geotoolkit.ogc.xml.v110.ComparisonOpsType;
 import org.geotoolkit.ogc.xml.v110.ContainsType;
@@ -79,7 +78,6 @@ import org.geotoolkit.ogc.xml.v110.PropertyIsNullType;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
 import org.geotoolkit.ogc.xml.v110.TouchesType;
-import org.geotoolkit.ogc.xml.v110.UnaryLogicOpType;
 import org.geotoolkit.ogc.xml.v110.UpperBoundaryType;
 import org.geotoolkit.ogc.xml.v110.WithinType;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -273,44 +271,30 @@ public class FilterToOGC110Converter implements FilterToOGCConverter<FilterType>
             return ogc_factory.createPropertyIsNull(bot);
         } else if (filter instanceof And) {
             final And and = (And) filter;
-            final BinaryLogicOpType lot = ogc_factory.createBinaryLogicOpType();
+            final List<JAXBElement> children = new ArrayList<>();
             for (final Filter f : and.getChildren()) {
                 final JAXBElement<? extends LogicOpsType> ele = (JAXBElement<? extends LogicOpsType>) visit(f);
                 if (ele != null) {
-                    lot.getLogicOps().add(ele);
+                    children.add(ele);
                 }
             }
 
-            return ogc_factory.createAnd(new AndType(lot.getLogicOps().toArray()));
+            return ogc_factory.createAnd(new AndType(children.toArray()));
         } else if (filter instanceof Or) {
             final Or or = (Or) filter;
-            final BinaryLogicOpType lot = ogc_factory.createBinaryLogicOpType();
+            final List<JAXBElement> children = new ArrayList<>();
             for (final Filter f : or.getChildren()) {
                 final JAXBElement<? extends LogicOpsType> ele = (JAXBElement<? extends LogicOpsType>) visit(f);
                 if (ele != null) {
-                    lot.getLogicOps().add(ele);
+                    children.add(ele);
                 }
             }
-            return ogc_factory.createOr(new OrType(lot.getLogicOps().toArray()));
+            return ogc_factory.createOr(new OrType(children.toArray()));
         } else if (filter instanceof Not) {
             final Not not = (Not) filter;
-            final UnaryLogicOpType lot = ogc_factory.createUnaryLogicOpType();
             final JAXBElement<?> sf = visit(not.getFilter());
+            return ogc_factory.createNot(new NotType(sf.getValue()));
 
-            if (sf.getValue() instanceof ComparisonOpsType) {
-                lot.setComparisonOps((JAXBElement<? extends ComparisonOpsType>) sf);
-                return ogc_factory.createNot(new NotType(lot.getComparisonOps().getValue()));
-            }
-            if (sf.getValue() instanceof LogicOpsType) {
-                lot.setLogicOps((JAXBElement<? extends LogicOpsType>) sf);
-                return ogc_factory.createNot(new NotType(lot.getLogicOps().getValue()));
-            }
-            if (sf.getValue() instanceof SpatialOpsType) {
-                lot.setSpatialOps((JAXBElement<? extends SpatialOpsType>) sf);
-                return ogc_factory.createNot(new NotType(lot.getSpatialOps().getValue()));
-            }
-            //should not happen
-            throw new IllegalArgumentException("invalide filter element : " + sf);
         } else if (filter instanceof FeatureId) {
             throw new IllegalArgumentException("Not parsed yet : " + filter);
         } else if (filter instanceof BBOX) {

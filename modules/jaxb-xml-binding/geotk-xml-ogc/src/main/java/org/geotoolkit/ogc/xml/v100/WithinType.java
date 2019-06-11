@@ -33,6 +33,10 @@ public class WithinType extends BinarySpatialOpType {
 
     }
 
+    public WithinType(String propertyName, Object geometry) {
+        super(propertyName, geometry);
+    }
+
     public WithinType(final WithinType that) {
         super(that);
     }
@@ -40,5 +44,10 @@ public class WithinType extends BinarySpatialOpType {
     @Override
     public SpatialOpsType getClone() {
         return new WithinType(this);
+    }
+
+    @Override
+    public String getOperator() {
+        return "Within";
     }
 }

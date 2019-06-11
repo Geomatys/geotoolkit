@@ -17,6 +17,7 @@
 
 package org.geotoolkit.display2d.style;
 
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 
 /**
@@ -33,7 +34,7 @@ public class CachedMokSymbolizer extends CachedSymbolizer<MokSymbolizer>{
     }
 
     @Override
-    public float getMargin(final Object candidate, final float coeff) {
+    public float getMargin(Object candidate, RenderingContext2D ctx) {
         return 0;
     }
 

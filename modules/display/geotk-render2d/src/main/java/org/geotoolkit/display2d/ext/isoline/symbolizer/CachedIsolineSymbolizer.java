@@ -36,6 +36,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.logging.Logger;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -67,8 +68,8 @@ public class CachedIsolineSymbolizer extends CachedSymbolizer<IsolineSymbolizer>
      * {@inheritDoc }
      */
     @Override
-    public float getMargin(Object candidate, float coeff) {
-        return cachedRS.getMargin(candidate, coeff);
+    public float getMargin(Object candidate, RenderingContext2D ctx) {
+        return cachedRS.getMargin(candidate, ctx);
     }
 
     /**

@@ -26,6 +26,22 @@ public class Output extends DataType {
 
   private DataTransmissionMode transmissionMode = null;
 
+  public Output() {
+
+  }
+
+  public Output(Output that) {
+      super(that);
+      if (that != null) {
+          this.transmissionMode = that.transmissionMode;
+      }
+  }
+
+  public Output(String id, Format format, DataTransmissionMode transmissionMode) {
+      super(id, format);
+      this.transmissionMode = transmissionMode;
+  }
+
   public Output transmissionMode(DataTransmissionMode transmissionMode) {
     this.transmissionMode = transmissionMode;
     return this;

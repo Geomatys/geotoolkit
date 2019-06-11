@@ -125,7 +125,7 @@ final class PostgisHexEWKB {
             case 3:
                 return gf.createPoint(new Coordinate(data.getDouble(),data.getDouble(),data.getDouble()));
             case 4:
-                final CoordinateSequence cs = new PackedCoordinateSequence.Double(1, nbDim);
+                final CoordinateSequence cs = new PackedCoordinateSequence.Double(1, nbDim, 0);
                 cs.setOrdinate(0, 0, data.getDouble());
                 cs.setOrdinate(0, 1, data.getDouble());
                 cs.setOrdinate(0, 2, data.getDouble());
@@ -138,7 +138,7 @@ final class PostgisHexEWKB {
 
     private CoordinateSequence readCS(final ValueGetter data, final int nbDim) {
         final int nb = data.getInt();
-        final CoordinateSequence cs = new PackedCoordinateSequence.Double(nb, nbDim);
+        final CoordinateSequence cs = new PackedCoordinateSequence.Double(nb, nbDim, 0);
         for(int index=0; index<nb; index++){
             for(int ordinal=0; ordinal<nbDim; ordinal++){
                 cs.setOrdinate(index, ordinal, data.getDouble());

@@ -34,19 +34,20 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.storage.AbstractFeatureSet;
+import org.geotoolkit.storage.AbstractResource;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
+import org.opengis.geometry.Envelope;
 import org.opengis.util.GenericName;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefaultFeatureResource extends AbstractFeatureSet implements FeatureSet, WritableFeatureSet, ChangeListener<ChangeEvent> {
+public class DefaultFeatureResource extends AbstractResource implements FeatureSet, WritableFeatureSet, ChangeListener<ChangeEvent> {
 
     private final StorageListener.Weak weakListener = new StorageListener.Weak(this);
     private final FeatureStore store;
@@ -66,6 +67,11 @@ public class DefaultFeatureResource extends AbstractFeatureSet implements Featur
     @Override
     public FeatureType getType() throws DataStoreException {
         return store.getFeatureType(query.getTypeName());
+    }
+
+    @Override
+    public Envelope getEnvelope() throws DataStoreException {
+        return null;
     }
 
     @Override

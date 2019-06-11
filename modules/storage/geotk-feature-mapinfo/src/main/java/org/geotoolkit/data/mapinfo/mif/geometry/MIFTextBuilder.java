@@ -98,12 +98,12 @@ public class MIFTextBuilder extends MIFRectangleBuilder {
                 try {
                     double[] afterT = new double[4];
                     toApply.transform(pts, 0, afterT, 0, 2);
-                    seq = new PackedCoordinateSequence.Double(afterT, 2);
+                    seq = new PackedCoordinateSequence.Double(afterT, 2, 0);
                 } catch (Exception e) {
                     throw new DataStoreException("Unable to transform geometry", e);
                 }
             } else {
-                seq = new PackedCoordinateSequence.Double(pts, 2);
+                seq = new PackedCoordinateSequence.Double(pts, 2, 0);
             }
             final Envelope env = new Envelope(seq.getCoordinate(0), seq.getCoordinate(1));
 

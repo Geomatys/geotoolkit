@@ -21,9 +21,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.v212.BoxType;
 import org.geotoolkit.gml.xml.v212.CoordType;
-
+import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.expression.Expression;
 
 /**
  * <p>Java class for BBOXType complex type.
@@ -51,7 +53,7 @@ import org.geotoolkit.gml.xml.v212.CoordType;
     "propertyName",
     "box"
 })
-public class BBOXType extends SpatialOpsType {
+public class BBOXType extends SpatialOpsType implements  org.opengis.filter.spatial.BBOX, org.geotoolkit.ogc.xml.BBOX {
 
     @XmlElement(name = "PropertyName", required = true)
     private PropertyNameType propertyName;
@@ -90,8 +92,20 @@ public class BBOXType extends SpatialOpsType {
      * Gets the value of the propertyName property.
      *
      */
-    public PropertyNameType getPropertyName() {
+    public PropertyNameType getPropertyNameType() {
         return propertyName;
+    }
+
+    /**
+     * Gets the value of the propertyName property.
+     *
+     */
+    @Override
+    public String getPropertyName() {
+        if (propertyName != null) {
+            return propertyName.getPropertyName();
+        }
+        return null;
     }
 
     /**
@@ -121,5 +135,63 @@ public class BBOXType extends SpatialOpsType {
     @Override
     public SpatialOpsType getClone() {
         return new BBOXType(this);
+    }
+
+    @Override
+    public Envelope getEnvelope() {
+       return box;
+    }
+
+    @Override
+    public String getSRS() {
+        if (box != null) {
+            return box.getSrsName();
+        }
+        return null;
+    }
+
+    @Override
+    public double getMinX() {
+        return box.getMinimum(0);
+    }
+
+    @Override
+    public double getMinY() {
+        return box.getMinimum(1);
+    }
+
+    @Override
+    public double getMaxX() {
+        return box.getMaximum(0);
+    }
+
+    @Override
+    public double getMaxY() {
+        return box.getMaximum(1);
+    }
+
+    @Override
+    public String getOperator() {
+        return "BBOX";
+    }
+
+    @Override
+    public Expression getExpression1() {
+        return propertyName;
+    }
+
+    @Override
+    public Expression getExpression2() {
+        return new LiteralType(box);
+    }
+
+    @Override
+    public boolean evaluate(Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object accept(FilterVisitor fv, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

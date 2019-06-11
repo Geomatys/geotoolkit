@@ -33,6 +33,10 @@ public class ContainsType extends BinarySpatialOpType {
 
     }
 
+    public ContainsType(String propertyName, Object geometry) {
+        super(propertyName, geometry);
+    }
+
     public ContainsType(final ContainsType that) {
         super(that);
     }
@@ -40,5 +44,10 @@ public class ContainsType extends BinarySpatialOpType {
     @Override
     public SpatialOpsType getClone() {
         return new ContainsType(this);
+    }
+
+    @Override
+    public String getOperator() {
+        return "Contains";
     }
 }

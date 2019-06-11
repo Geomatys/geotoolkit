@@ -80,7 +80,7 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
         this.readChannel = fixChannel;
         getHeader(fixUrl);
 
-        buffer = ByteBuffer.allocateDirect(IndexedFidWriter.RECORD_SIZE * 1024);
+        buffer = ByteBuffer.allocate(IndexedFidWriter.RECORD_SIZE * 1024);
         buffer.position(buffer.limit());
     }
 

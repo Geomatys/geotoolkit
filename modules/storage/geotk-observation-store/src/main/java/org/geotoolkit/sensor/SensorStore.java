@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.geotoolkit.sml.xml.AbstractSensorML;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -43,7 +43,7 @@ public interface SensorStore extends AutoCloseable {
      *
      * @return this source original factory
      */
-    DataStoreFactory getProvider();
+    DataStoreProvider getProvider();
 
     Metadata getMetadata() throws DataStoreException;
 

@@ -31,22 +31,21 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.ReprojectMapper;
-import org.geotoolkit.feature.TransformMapper;
-import org.geotoolkit.feature.ViewMapper;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalFeatureTypeException;
 import org.apache.sis.storage.ReadOnlyStorageException;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureTypeExt;
+import org.geotoolkit.feature.ReprojectMapper;
+import org.geotoolkit.feature.TransformMapper;
+import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
-import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.storage.StorageListener.Weak;
 import org.geotoolkit.util.NamesExt;
@@ -56,7 +55,6 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.feature.PropertyType;
-import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
@@ -64,6 +62,7 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -227,8 +226,8 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
 
         FeatureCollection result = this;
 
-        final Integer start = remainingParameters.getStartIndex();
-        final Integer max = remainingParameters.getMaxFeatures();
+        final long start = remainingParameters.getOffset();
+        final long max = remainingParameters.getLimit();
         final Filter filter = remainingParameters.getFilter();
         final String[] properties = remainingParameters.getPropertyNames();
         final SortBy[] sorts = remainingParameters.getSortBy();
@@ -262,17 +261,17 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         }
 
         //wrap start index -----------------------------------------------------
-        if(start != null && start > 0){
-            result = FeatureStreams.skip(result, start);
+        if(start > 0){
+            result = FeatureStreams.skip(result, (int) start);
         }
 
         //wrap max -------------------------------------------------------------
-        if(max != null){
+        if(max != -1){
             if(max == 0){
                 //use an optimized reader
                 result = FeatureStreams.emptyCollection(result);
             }else{
-                result = FeatureStreams.limit(result, max);
+                result = FeatureStreams.limit(result, (int) max);
             }
         }
 
@@ -323,7 +322,6 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         final List<Object> datas = new ArrayList<>();
 
         final Hints hints = new Hints();
-        hints.put(HintsPending.FEATURE_DETACHED, Boolean.TRUE);
         final FeatureIterator ite = iterator(hints);
         try{
             while(ite.hasNext()){
@@ -341,7 +339,6 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         final List<Object> datas = new ArrayList<>();
 
         final Hints hints = new Hints();
-        hints.put(HintsPending.FEATURE_DETACHED, Boolean.TRUE);
         final FeatureIterator ite = iterator(hints);
         try{
             while(ite.hasNext()){

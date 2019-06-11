@@ -57,7 +57,7 @@ import org.opengis.filter.spatial.DistanceBufferOperator;
     "any",
     "distance"
 })
-public class DistanceBufferType extends SpatialOpsType implements DistanceBufferOperator {
+public abstract class DistanceBufferType extends SpatialOpsType implements DistanceBufferOperator {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
@@ -189,7 +189,7 @@ public class DistanceBufferType extends SpatialOpsType implements DistanceBuffer
 
     public void cleanAny() {
         if (this.any != null) {
-            final List<Object> toRemove = new ArrayList<Object>();
+            final List<Object> toRemove = new ArrayList<>();
             int i = 0;
             for (Object element : any) {
                 if (element instanceof String) {
@@ -251,27 +251,31 @@ public class DistanceBufferType extends SpatialOpsType implements DistanceBuffer
 
     @Override
     public Expression getExpression1() {
-        if (expression != null && expression.getValue() instanceof Expression) {
-            return (Expression)expression.getValue();
+        if (expression != null && expression.getValue() != null) {
+            if (expression.getValue() instanceof Expression) {
+                return (Expression)expression.getValue();
+            } else if (expression.getValue() instanceof String) {
+                return new InternalPropertyName((String)expression.getValue());
+            }
         }
         return null;
     }
 
     @Override
     public Expression getExpression2() {
-        if (expression != null) {
-            if (expression.getValue() instanceof Expression) {
-                return (Expression)expression.getValue();
-            } else if (expression.getValue() != null){
-                throw new IllegalArgumentException("The object:" + expression.getValue() + "can be casted as an Expression");
-            }
-        }
         final Object a = getAny();
         if (a != null) {
             if (a instanceof Expression) {
                 return (Expression)a;
             } else {
                 throw new IllegalArgumentException("The object:" + a + "can be casted as an Expression");
+            }
+        }
+        if (expression != null) {
+            if (expression.getValue() instanceof Expression) {
+                return (Expression)expression.getValue();
+            } else if (expression.getValue() != null){
+                throw new IllegalArgumentException("The object:" + expression.getValue() + "can be casted as an Expression");
             }
         }
         return null;
@@ -285,11 +289,6 @@ public class DistanceBufferType extends SpatialOpsType implements DistanceBuffer
     @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public SpatialOpsType getClone() {
-        throw new UnsupportedOperationException("Must be overriden in sub-class.");
     }
 
     /**

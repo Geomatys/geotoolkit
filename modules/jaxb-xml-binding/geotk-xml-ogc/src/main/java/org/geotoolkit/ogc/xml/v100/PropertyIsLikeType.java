@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.expression.Expression;
 
 
@@ -53,7 +55,7 @@ import org.opengis.filter.expression.Expression;
     "propertyName",
     "literal"
 })
-public class PropertyIsLikeType extends ComparisonOpsType {
+public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsLike {
 
     @XmlElement(name = "PropertyName", required = true)
     private PropertyNameType propertyName;
@@ -129,11 +131,30 @@ public class PropertyIsLikeType extends ComparisonOpsType {
         this.propertyName = value;
     }
 
+    @Override
+    public Expression getExpression() {
+        return propertyName;
+    }
+
     /**
      * Gets the value of the literal property.
-     *
      */
-    public LiteralType getLiteral() {
+    @Override
+    public String getLiteral() {
+        if (literal != null) {
+            return literal.getStringValue();
+        }
+        return null;
+    }
+
+    public void setLiteral(final String literal) {
+        this.literal = new LiteralType(literal);
+    }
+
+    /**
+     * Gets the value of the literal property.
+     */
+    public LiteralType getLiteralType() {
         return literal;
     }
 
@@ -149,6 +170,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
      * Gets the value of the escape property.
      *
      */
+    @Override
     public String getEscape() {
         return escape;
     }
@@ -165,6 +187,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
      * Gets the value of the singleChar property.
      *
      */
+    @Override
     public String getSingleChar() {
         return singleChar;
     }
@@ -181,6 +204,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
      * Gets the value of the wildCard property.
      *
      */
+    @Override
     public String getWildCard() {
         return wildCard;
     }
@@ -194,7 +218,22 @@ public class PropertyIsLikeType extends ComparisonOpsType {
     }
 
     @Override
+    public boolean isMatchingCase() {
+        return false;
+    }
+
+    @Override
     public ComparisonOpsType getClone() {
         return new PropertyIsLikeType(this);
+    }
+
+    @Override
+    public boolean evaluate(Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object accept(FilterVisitor fv, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

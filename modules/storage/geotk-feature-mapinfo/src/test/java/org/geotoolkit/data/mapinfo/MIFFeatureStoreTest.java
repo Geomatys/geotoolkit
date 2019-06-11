@@ -16,21 +16,12 @@
  */
 package org.geotoolkit.data.mapinfo;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -38,28 +29,34 @@ import java.util.stream.Collectors;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.mapinfo.mif.MIFFeatureStoreFactory;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.mapinfo.mif.MIFFeatureStore;
+import org.geotoolkit.data.mapinfo.mif.MIFFeatureStoreFactory;
 import org.geotoolkit.data.query.Query;
-import org.junit.After;
-import org.junit.Test;
-import org.opengis.util.GenericName;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.storage.DataStores;
+import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -102,7 +99,7 @@ public class MIFFeatureStoreTest extends org.geotoolkit.test.TestBase {
     public void testCreate() throws Exception {
         final Path f = Files.createTempFile(tempDir, "test", ".mif");
 
-        final MIFFeatureStoreFactory ff = (MIFFeatureStoreFactory) DataStores.getFactoryById("MIF-MID");
+        final MIFFeatureStoreFactory ff = (MIFFeatureStoreFactory) DataStores.getProviderById("MIF-MID");
         final Parameters params = Parameters.castOrWrap(ff.getOpenParameters().createValue());
         params.getOrCreate(MIFFeatureStoreFactory.PATH).setValue(f.toUri());
 
@@ -159,7 +156,6 @@ public class MIFFeatureStoreTest extends org.geotoolkit.test.TestBase {
 
             //test with hint
             QueryBuilder qb = new QueryBuilder(name.toString());
-            qb.setHints(new Hints(HintsPending.FEATURE_DETACHED, Boolean.FALSE));
             checkFeatures(expectedFeatures, ds, qb.buildQuery());
         }
     }

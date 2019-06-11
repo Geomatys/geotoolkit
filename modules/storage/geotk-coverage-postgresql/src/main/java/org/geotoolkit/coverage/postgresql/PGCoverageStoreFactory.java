@@ -25,21 +25,21 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.coverage.postgresql.exception.SchemaExistsException;
-import org.geotoolkit.jdbc.DBCPDataSource;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.referencing.factory.sql.EPSGFactory;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.postgresql.exception.SchemaExistsException;
+import org.geotoolkit.internal.sql.AuthenticatedDataSource;
+import org.geotoolkit.internal.sql.DefaultDataSource;
+import org.geotoolkit.jdbc.DBCPDataSource;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.internal.sql.AuthenticatedDataSource;
-import org.geotoolkit.internal.sql.DefaultDataSource;
-import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.StoreMetadataExt;
 
 /**
  * GeotoolKit Coverage Store using PostgreSQL Raster model factory.
@@ -156,6 +156,11 @@ public class PGCoverageStoreFactory extends DataStoreFactory {
                 IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,USER,PASSWORD,
                 DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT);
 
+    @Override
+    public String getShortName() {
+        return NAME;
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -164,12 +169,10 @@ public class PGCoverageStoreFactory extends DataStoreFactory {
         return PARAMETERS_DESCRIPTOR;
     }
 
-    @Override
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.description);
     }
 
-    @Override
     public CharSequence getDisplayName() {
         return Bundle.formatInternational(Bundle.Keys.title);
     }

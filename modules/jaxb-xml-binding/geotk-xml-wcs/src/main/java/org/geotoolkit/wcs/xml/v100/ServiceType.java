@@ -24,8 +24,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.CodeListType;
+import org.geotoolkit.ows.xml.AbstractAdditionalParameters;
 import org.geotoolkit.ows.xml.AbstractCodeType;
 import org.geotoolkit.ows.xml.AbstractMetadata;
+import org.geotoolkit.ows.xml.AbstractOwsContextDescription;
 import org.geotoolkit.ows.xml.AbstractServiceIdentification;
 import org.geotoolkit.ows.xml.v110.CodeType;
 
@@ -210,5 +212,20 @@ public class ServiceType extends AbstractDescriptionType implements AbstractServ
     @Override
     public String getFirstAbstract() {
         return super.getDescription();
+    }
+
+    @Override
+    public List<? extends AbstractAdditionalParameters> getAdditionalParameters() {
+        return new ArrayList<>();
+    }
+
+    /**
+     * not implemented
+     *
+     * @return
+     */
+    @Override
+    public AbstractOwsContextDescription getOwsContext() {
+        return null;
     }
 }

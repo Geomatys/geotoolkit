@@ -31,6 +31,7 @@ public class WPSTypeRegistration extends TypeRegistration {
                 org.geotoolkit.wps.xml.v100.ObjectFactory.class,
                 org.geotoolkit.wps.xml.v200.ObjectFactory.class,
                 org.geotoolkit.gml.xml.v321.ObjectFactory.class,
+                org.geotoolkit.metalinker.ObjectFactory.class,
                 org.geotoolkit.ows.xml.v200.ObjectFactory.class,
                 org.apache.sis.internal.jaxb.geometry.ObjectFactory.class,
                 org.geotoolkit.mathml.xml.ObjectFactory.class

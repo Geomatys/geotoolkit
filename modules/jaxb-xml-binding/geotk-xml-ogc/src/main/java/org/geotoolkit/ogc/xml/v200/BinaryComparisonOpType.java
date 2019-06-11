@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.MatchAction;
@@ -59,7 +58,7 @@ import org.opengis.filter.expression.Expression;
 @XmlType(name = "BinaryComparisonOpType", propOrder = {
     "expression"
 })
-public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryComparisonOperator {
+public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryComparisonOperator, org.geotoolkit.ogc.xml.BinaryComparisonOperator {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private List<JAXBElement<?>> expression;
@@ -90,7 +89,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
      */
     public BinaryComparisonOpType(final LiteralType literal, final String propertyName, final Boolean matchCase) {
         if (this.expression == null) {
-            this.expression = new ArrayList<JAXBElement<?>>();
+            this.expression = new ArrayList<>();
         }
         if (propertyName != null) {
             this.expression.add(FACTORY.createValueReference(propertyName));
@@ -104,7 +103,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
     public BinaryComparisonOpType(final BinaryComparisonOpType that) {
         if (that != null) {
             if (that.expression != null) {
-                this.expression = new ArrayList<JAXBElement<?>>();
+                this.expression = new ArrayList<>();
                 final ObjectFactory factory = new ObjectFactory();
                 for (JAXBElement jb : that.expression) {
                     final Object exp = jb.getValue();
@@ -139,14 +138,14 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
      */
     public List<JAXBElement<?>> getExpression() {
         if (expression == null) {
-            expression = new ArrayList<JAXBElement<?>>();
+            expression = new ArrayList<>();
         }
         return this.expression;
     }
 
     public void addValueReference(final String prop) {
         if (expression == null) {
-            expression = new ArrayList<JAXBElement<?>>();
+            expression = new ArrayList<>();
         }
         this.expression.add(FACTORY.createValueReference(prop));
     }
@@ -234,13 +233,28 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
     @Override
     public Expression getExpression2() {
         for (JAXBElement<?> elem : getExpression()) {
-            if (elem.getValue() instanceof org.geotoolkit.ogc.xml.v200.LiteralType) {
-                return (org.geotoolkit.ogc.xml.v200.LiteralType)elem.getValue();
+            if (elem.getValue() instanceof LiteralType) {
+                return (LiteralType)elem.getValue();
             }
         }
         return null;
     }
 
+    @Override
+    public String getPropertyName() {
+        for (JAXBElement<?> elem : getExpression()) {
+            final Object value = elem.getValue();
+            if (value instanceof String) {
+                return (String) value;
+            }
+            if (value instanceof InternalPropertyName) {
+                return ((InternalPropertyName) value).getPropertyName();
+            }
+        }
+        return null;
+    }
+
+    @Override
      public LiteralType getLiteral() {
         for (JAXBElement<?> elem : getExpression()) {
             if (elem.getValue() instanceof LiteralType) {

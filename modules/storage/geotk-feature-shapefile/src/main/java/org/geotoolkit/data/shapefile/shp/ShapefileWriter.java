@@ -77,7 +77,7 @@ public class ShapefileWriter implements Closeable{
      * Allocate some buffers for writing.
      */
     private void allocateBuffers() {
-        shapeBuffer = ByteBuffer.allocateDirect(16 * 1024);
+        shapeBuffer = ByteBuffer.allocate(16 * 1024);
     }
 
     /**
@@ -85,7 +85,7 @@ public class ShapefileWriter implements Closeable{
      */
     private void checkShapeBuffer(final int size) {
         if (shapeBuffer.capacity() < size) {
-            shapeBuffer = ByteBuffer.allocateDirect(size);
+            shapeBuffer = ByteBuffer.allocate(size);
         }
     }
 

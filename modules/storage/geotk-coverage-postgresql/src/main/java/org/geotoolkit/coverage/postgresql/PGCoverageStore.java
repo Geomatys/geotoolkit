@@ -31,12 +31,12 @@ import javax.sql.DataSource;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.factory.sql.EPSGFactory;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
@@ -104,7 +104,7 @@ public class PGCoverageStore extends AbstractCoverageStore implements WritableAg
      */
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(PGCoverageStoreFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(PGCoverageStoreFactory.NAME);
     }
 
     @Override

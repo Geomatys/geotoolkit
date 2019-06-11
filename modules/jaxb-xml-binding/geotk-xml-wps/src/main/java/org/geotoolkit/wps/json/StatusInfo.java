@@ -24,8 +24,23 @@ import org.geotoolkit.wps.xml.v200.Status;
  */
 public class StatusInfo implements WPSJSONResponse {
 
+    private StatusEnum status = null;
+
+    private String message = null;
+
+    private Integer progress = null;
+
+    private String jobId;
+
     public StatusInfo() {
 
+    }
+
+    public StatusInfo(StatusEnum status, String message, Integer progress, String jobId) {
+        this.status = status;
+        this.message = message;
+        this.progress = progress;
+        this.jobId = jobId;
     }
 
     public StatusInfo(org.geotoolkit.wps.xml.v200.StatusInfo status) {
@@ -33,6 +48,7 @@ public class StatusInfo implements WPSJSONResponse {
             this.progress = status.getPercentCompleted();
             this.message = status.getMessage();
             this.status = StatusEnum.fromValue(status.getStatus());
+            this.jobId = status.getJobID();
         }
     }
 
@@ -41,14 +57,14 @@ public class StatusInfo implements WPSJSONResponse {
      */
     public enum StatusEnum {
 
-        ACCEPTED("accepted"),
-        RUNNING("running"),
-        SUCCESSFUL("successful"), //"Succeeded"
-        FAILED("failed"),
-        DISMISS("dismissed"),
+        accepted("accepted"),
+        running("running"),
+        succeeded("succeeded"),
+        failed("failed"),
+        dismissed("dismissed"),
         // Added this new values  TODO review if really needed
-        STARTED("started"),
-        PAUSED("paused");
+        started("started"),
+        paused("paused");
 
         private String value;
 
@@ -77,7 +93,7 @@ public class StatusInfo implements WPSJSONResponse {
         public static StatusEnum fromValue(Status status) {
             for (StatusEnum b : StatusEnum.values()) {
                 // special case
-                if (b.equals(SUCCESSFUL) && status.name().toLowerCase().equals("succeeded")) {
+                if (b.equals(succeeded) && status.name().toLowerCase().equals("succeeded")) {
                     return b;
                 }
                 if (String.valueOf(b.value).equals(status.name().toLowerCase())) {
@@ -88,12 +104,6 @@ public class StatusInfo implements WPSJSONResponse {
         }
 
     }
-
-    private StatusEnum status = null;
-
-    private String message = null;
-
-    private Integer progress = null;
 
     public StatusInfo status(Status status) {
         this.status = StatusEnum.fromValue(status);
@@ -192,6 +202,20 @@ public class StatusInfo implements WPSJSONResponse {
             return "null";
         }
         return o.toString().replace("\n", "\n    ");
+    }
+
+    /**
+     * @return the jobId
+     */
+    public String getJobId() {
+        return jobId;
+    }
+
+    /**
+     * @param jobId the jobId to set
+     */
+    public void setJobId(String jobId) {
+        this.jobId = jobId;
     }
 
 }

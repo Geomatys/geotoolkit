@@ -42,7 +42,6 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.data.multires.AbstractTileGenerator;
@@ -70,11 +69,16 @@ import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.style.MutableStyle;
+import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.style.Displacement;
 import org.opengis.style.FeatureTypeStyle;
+import org.opengis.style.Fill;
+import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Rule;
+import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -159,7 +163,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     //TODO more accurate test for each mosaic
                     //TODO convert mosaic scale to symbology encoding scale
                     // CanvasUtilities.computeSEScale
-                    if (scaleMin != 0.0 || scaleMax != Double.MAX_VALUE) {
+                    if (scaleMin != 0.0 || scaleMax < 5.0E9) {
                         rasterOptimisation = false;
                         break search;
                     }
@@ -168,19 +172,52 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                         if (symbolizer instanceof RasterSymbolizer ||
                             symbolizer instanceof DynamicRangeSymbolizer) {
                             //ok
+                        } else if (symbolizer instanceof PolygonSymbolizer) {
+                            PolygonSymbolizer ps = (PolygonSymbolizer) symbolizer;
+
+                            //check if we have a plain fill
+                            Displacement displacement = ps.getDisplacement();
+                            Fill fill = ps.getFill();
+                            Stroke stroke = ps.getStroke();
+                            Expression perpendicularOffset = ps.getPerpendicularOffset();
+
+                            if (displacement != null) {
+                                Double dx = displacement.getDisplacementX().evaluate(null, Double.class);
+                                Double dy = displacement.getDisplacementX().evaluate(null, Double.class);
+                                if ( (dx != null && dx != 0.0) || (dy != null && dy != 0.0)) {
+                                    rasterOptimisation = false;
+                                    break search;
+                                }
+                            }
+                            if (perpendicularOffset != null) {
+                                Double off = perpendicularOffset.evaluate(null, Double.class);
+                                if (off != null && off != 0.0) {
+                                    rasterOptimisation = false;
+                                    break search;
+                                }
+                            }
+                            if (stroke != null) {
+                                Double op = stroke.getOpacity().evaluate(null, Double.class);
+                                Double wd = stroke.getWidth().evaluate(null, Double.class);
+                                if ( (op == null || op == 0.0) || (wd == null || wd == 0.0)) {
+                                    //not visible
+                                } else {
+                                    rasterOptimisation = false;
+                                    break search;
+                                }
+                            }
+                            if (fill != null) {
+                                if (fill.getGraphicFill() != null) {
+                                    rasterOptimisation = false;
+                                    break search;
+                                }
+                            }
                         } else {
                             rasterOptimisation = false;
                             break search;
                         }
                     }
                 }
-            }
-
-            if (resource instanceof GridCoverageResource) {
-                //ok
-            } else {
-                rasterOptimisation = false;
-                break search;
             }
         }
 

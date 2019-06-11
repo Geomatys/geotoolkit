@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.opengis.filter.spatial.Within;
 
@@ -24,6 +25,7 @@ import org.opengis.filter.spatial.Within;
  * @author Guilhem Legal
  * @module
  */
+@XmlRootElement(name = "Within")
 public class WithinType extends BinarySpatialOpType implements Within {
 
     /**
@@ -54,5 +56,10 @@ public class WithinType extends BinarySpatialOpType implements Within {
     @Override
     public SpatialOpsType getClone() {
         return new WithinType(this);
+    }
+
+    @Override
+    public String getOperator() {
+        return "Within";
     }
 }

@@ -66,18 +66,14 @@ public class AllowedValues implements org.geotoolkit.ows.xml.AllowedValues {
 
     }
 
-    public AllowedValues(final List<Object> valueOrRange){
-        this.valueOrRange = valueOrRange;
-    }
-
-    /**
-     *  Build an allowed value with the specified list of value.
-     */
-    public AllowedValues(final Collection<String> values){
-
+    public AllowedValues(final Collection valueOrRange){
         this.valueOrRange = new ArrayList<>();
-        for (String value: values){
-            valueOrRange.add(new ValueType(value));
+        for (Object value: valueOrRange){
+            if (value instanceof String) {
+                this.valueOrRange.add(new ValueType((String)value));
+            } else if (value instanceof ValueType || value instanceof RangeType) {
+                this.valueOrRange.add(value);
+            }
         }
     }
 
@@ -123,6 +119,18 @@ public class AllowedValues implements org.geotoolkit.ows.xml.AllowedValues {
             for (Object o : valueOrRange) {
                 if (o instanceof ValueType) {
                     values.add(((ValueType)o).getValue());
+                }
+            }
+        }
+        return values;
+    }
+
+    public List<RangeType> getRangeValues() {
+        final List<RangeType> values = new ArrayList<>();
+        if (valueOrRange != null) {
+            for (Object o : valueOrRange) {
+                if (o instanceof RangeType) {
+                    values.add((RangeType)o);
                 }
             }
         }

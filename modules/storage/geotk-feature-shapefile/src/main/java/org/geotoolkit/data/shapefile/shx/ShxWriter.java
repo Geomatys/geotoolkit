@@ -39,7 +39,7 @@ public class ShxWriter implements Closeable{
     public ShxWriter(final FileChannel channel){
         ensureNonNull("file channel", channel);
         this.channel = channel;
-        buffer = ByteBuffer.allocateDirect(100);
+        buffer = ByteBuffer.allocate(100);
     }
 
     /**

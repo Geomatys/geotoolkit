@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.factory;
 
-import org.geotoolkit.factory.Hints;
-
 /**
  * Additional hints that are using in geotoolkit-pending.
  *
@@ -61,18 +59,6 @@ public final class HintsPending extends Hints {
     ////////                        Features                        ////////
     ////////                                                        ////////
     ////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Whether the features returned by the feature collections should be considered detached from
-     * the datastore, that is, they are updatable without altering the backing store (makes sense
-     * only if features are kept in memory or if there is some transparent persistent mechanism in
-     * place, such as the Hibernate one).
-     *
-     * Default behavior is true on datastores.
-     *
-     * @since 2.4
-     */
-    public static final Key FEATURE_DETACHED = new Key(Boolean.class);
 
     /**
      * When adding features in a datastore, it is not always necessary to have

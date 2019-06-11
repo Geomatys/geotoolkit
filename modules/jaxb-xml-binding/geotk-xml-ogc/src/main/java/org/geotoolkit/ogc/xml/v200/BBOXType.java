@@ -64,7 +64,7 @@ import org.opengis.geometry.DirectPosition;
     "expression",
     "any"
 })
-public class BBOXType extends SpatialOpsType implements BBOX {
+public class BBOXType extends SpatialOpsType implements BBOX, org.geotoolkit.ogc.xml.BBOX {
 
     private static final String DEFAULT_SRS = "EPSG:4326";
 
@@ -257,6 +257,18 @@ public class BBOXType extends SpatialOpsType implements BBOX {
     }
 
     @Override
+    public Envelope getEnvelope() {
+        Object candidate = getAny();
+        if (candidate instanceof JAXBElement) {
+            candidate = ((JAXBElement)candidate).getValue();
+        }
+        if (candidate instanceof Envelope) {
+            return (Envelope) candidate;
+        }
+        return null;
+    }
+
+    @Override
     public String getSRS() {
         Object candidate = getAny();
         if (candidate instanceof JAXBElement) {
@@ -332,6 +344,12 @@ public class BBOXType extends SpatialOpsType implements BBOX {
         }
         return -1;
     }
+
+    @Override
+    public String getOperator() {
+        return "BBOX";
+    }
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder("[BBOXType]");

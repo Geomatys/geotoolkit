@@ -811,7 +811,7 @@ public class OGC100Test {
         PropertyIsLikeType pibt = (PropertyIsLikeType) cot;
 
         PropertyNameType lf = pibt.getPropertyName();
-        LiteralType lt = pibt.getLiteral();
+        LiteralType lt = pibt.getLiteralType();
         String esc = pibt.getEscape();
         String sin = pibt.getSingleChar();
         String wi = pibt.getWildCard();

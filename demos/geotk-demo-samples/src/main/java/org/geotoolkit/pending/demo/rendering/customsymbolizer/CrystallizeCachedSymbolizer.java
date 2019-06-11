@@ -3,6 +3,7 @@
 package org.geotoolkit.pending.demo.rendering.customsymbolizer;
 
 import com.jhlabs.image.CrystallizeFilter;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 
@@ -23,7 +24,7 @@ public class CrystallizeCachedSymbolizer extends CachedSymbolizer<CrystallizeSym
     }
 
     @Override
-    public float getMargin(Object feature, float coeff) {
+    public float getMargin(Object candidate, RenderingContext2D ctx) {
         return 0;
     }
 

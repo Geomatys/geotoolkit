@@ -19,12 +19,17 @@ package org.geotoolkit.ogc.xml;
 import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.ows.xml.AbstractDomain;
+import org.opengis.filter.And;
+import org.opengis.filter.Or;
+import org.opengis.filter.spatial.BBOX;
 import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.PropertyIsGreaterThan;
 import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
 import org.opengis.filter.PropertyIsLessThan;
 import org.opengis.filter.PropertyIsLessThanOrEqualTo;
+import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.PropertyIsNotEqualTo;
+import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.capability.ComparisonOperators;
 import org.opengis.filter.capability.FilterCapabilities;
 import org.opengis.filter.capability.GeometryOperand;
@@ -36,8 +41,12 @@ import org.opengis.filter.capability.SpatialOperator;
 import org.opengis.filter.capability.SpatialOperators;
 import org.opengis.filter.capability.TemporalCapabilities;
 import org.opengis.filter.expression.Literal;
+import org.opengis.filter.sort.SortOrder;
+import org.opengis.filter.spatial.BinarySpatialOperator;
+import org.opengis.filter.spatial.DistanceBufferOperator;
 import org.opengis.filter.temporal.After;
 import org.opengis.filter.temporal.Before;
+import org.opengis.filter.temporal.BinaryTemporalOperator;
 import org.opengis.filter.temporal.During;
 import org.opengis.filter.temporal.TEquals;
 
@@ -46,6 +55,21 @@ import org.opengis.filter.temporal.TEquals;
  * @author Guilhem Legal (Geomatys)
  */
 public class FilterXmlFactory {
+
+    public static XMLFilter buildFilter(final String currentVersion, final Object filter) {
+        if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v200.FilterType(filter);
+
+        } else if ("1.1.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v110.FilterType(filter);
+
+        } else if ("1.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v100.FilterType(filter);
+
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
 
     public static XMLFilter buildFeatureIDFilter(final String currentVersion, final String featureId) {
         if ("2.0.0".equals(currentVersion)) {
@@ -108,6 +132,112 @@ public class FilterXmlFactory {
         }
     }
 
+    public static And buildAnd(final String currentVersion, final Object... operators) {
+        if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v200.AndType(operators);
+        } else if ("1.1.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v110.AndType(operators);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v100.AndType(operators);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static Or buildOr(final String currentVersion, final Object... operators) {
+        if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v200.OrType(operators);
+        } else if ("1.1.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v110.OrType(operators);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v100.OrType(operators);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static BBOX buildBBOX(final String currentVersion, final String propertyName, final double minx, final double miny, final double maxx, final double maxy, final String srs) {
+        if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v200.BBOXType(propertyName, minx, miny, maxx, maxy, srs);
+        } else if ("1.1.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v110.BBOXType(propertyName, minx, miny, maxx, maxy, srs);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v100.BBOXType(propertyName, minx, miny, maxx, maxy, srs);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static DistanceBufferOperator buildDistanceSpatialFilter(final String currentVersion, final String operator, final String propertyName,
+            final Object geom, final double distance, final String unit) {
+        if ("2.0.0".equals(currentVersion)) {
+            switch (operator) {
+                case "DWithin"  : return new org.geotoolkit.ogc.xml.v200.DWithinType(propertyName, geom, distance, unit);
+                case "Beyond"   : return new org.geotoolkit.ogc.xml.v200.BeyondType(propertyName, geom, distance, unit);
+                default: throw new IllegalArgumentException("unexpected distance spatial operator:" + operator);
+            }
+        } else if ("1.1.0".equals(currentVersion)) {
+            if (geom != null && !(geom instanceof  org.geotoolkit.gml.xml.v311.AbstractGeometryType)) {
+                throw new IllegalArgumentException("unexpected geometry type:" + geom);
+            }
+            switch (operator) {
+                case "DWithin"  : return new org.geotoolkit.ogc.xml.v110.DWithinType(propertyName, (org.geotoolkit.gml.xml.v311.AbstractGeometryType)geom, distance, unit);
+                case "Beyond"   : return new org.geotoolkit.ogc.xml.v110.BeyondType(propertyName,  (org.geotoolkit.gml.xml.v311.AbstractGeometryType)geom, distance, unit);
+                default: throw new IllegalArgumentException("unexpected distance spatial operator:" + operator);
+            }
+        } else if ("1.0.0".equals(currentVersion)) {
+            switch (operator) {
+                case "DWithin"  : return new org.geotoolkit.ogc.xml.v100.DWithinType(propertyName, geom, distance, unit);
+                case "Beyond"   : return new org.geotoolkit.ogc.xml.v100.BeyondType(propertyName, geom, distance, unit);
+                default: throw new IllegalArgumentException("unexpected distance spatial operator:" + operator);
+            }
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static BinarySpatialOperator buildBinarySpatial(final String currentVersion, final String operator, final String propertyName, final Object geom) {
+        if ("2.0.0".equals(currentVersion)) {
+            switch (operator) {
+                case "Contains"  : return new org.geotoolkit.ogc.xml.v200.ContainsType(propertyName, geom);
+                case "Crosses"   : return new org.geotoolkit.ogc.xml.v200.CrossesType(propertyName, geom);
+                case "Disjoint"  : return new org.geotoolkit.ogc.xml.v200.DisjointType(propertyName, geom);
+                case "Equals"    : return new org.geotoolkit.ogc.xml.v200.EqualsType(propertyName, geom);
+                case "Intersects": return new org.geotoolkit.ogc.xml.v200.IntersectsType(propertyName, geom);
+                case "Overlaps"  : return new org.geotoolkit.ogc.xml.v200.OverlapsType(propertyName, geom);
+                case "Touches"   : return new org.geotoolkit.ogc.xml.v200.TouchesType(propertyName, geom);
+                case "Within"    : return new org.geotoolkit.ogc.xml.v200.WithinType(propertyName, geom);
+                default: throw new IllegalArgumentException("unexpected binary spatial operator:" + operator);
+            }
+        } else if ("1.1.0".equals(currentVersion)) {
+            switch (operator) {
+                case "Contains"  : return new org.geotoolkit.ogc.xml.v110.ContainsType(new org.geotoolkit.ogc.xml.v110.PropertyNameType(propertyName), geom);
+                case "Crosses"   : return new org.geotoolkit.ogc.xml.v110.CrossesType(new org.geotoolkit.ogc.xml.v110.PropertyNameType(propertyName), geom);
+                case "Disjoint"  : return new org.geotoolkit.ogc.xml.v110.DisjointType(new org.geotoolkit.ogc.xml.v110.PropertyNameType(propertyName), geom);
+                case "Equals"    : return new org.geotoolkit.ogc.xml.v110.EqualsType(new org.geotoolkit.ogc.xml.v110.PropertyNameType(propertyName), geom);
+                case "Intersects": return new org.geotoolkit.ogc.xml.v110.IntersectsType(new org.geotoolkit.ogc.xml.v110.PropertyNameType(propertyName), geom);
+                case "Overlaps"  : return new org.geotoolkit.ogc.xml.v110.OverlapsType(new org.geotoolkit.ogc.xml.v110.PropertyNameType(propertyName), geom);
+                case "Touches"   : return new org.geotoolkit.ogc.xml.v110.TouchesType(new org.geotoolkit.ogc.xml.v110.PropertyNameType(propertyName), geom);
+                case "Within"    : return new org.geotoolkit.ogc.xml.v110.WithinType(new org.geotoolkit.ogc.xml.v110.PropertyNameType(propertyName), geom);
+                default: throw new IllegalArgumentException("unexpected binary spatial operator:" + operator);
+            }
+        } else if ("1.0.0".equals(currentVersion)) {
+            switch (operator) {
+                case "Contains"  : return new org.geotoolkit.ogc.xml.v100.ContainsType(propertyName, geom);
+                case "Crosses"   : return new org.geotoolkit.ogc.xml.v100.CrossesType(propertyName, geom);
+                case "Disjoint"  : return new org.geotoolkit.ogc.xml.v100.DisjointType(propertyName, geom);
+                case "Equals"    : return new org.geotoolkit.ogc.xml.v100.EqualsType(propertyName, geom);
+                case "Intersects": return new org.geotoolkit.ogc.xml.v100.IntersectsType(propertyName, geom);
+                case "Overlaps"  : return new org.geotoolkit.ogc.xml.v100.OverlapsType(propertyName, geom);
+                case "Touches"   : return new org.geotoolkit.ogc.xml.v100.TouchesType(propertyName, geom);
+                case "Within"    : return new org.geotoolkit.ogc.xml.v100.WithinType(propertyName, geom);
+                default: throw new IllegalArgumentException("unexpected binary spatial operator:" + operator);
+            }
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
     public static After buildTimeAfter(final String currentVersion, final String propertyName, final Object temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeAfterType(propertyName, temporal);
@@ -153,6 +283,50 @@ public class FilterXmlFactory {
             return new org.geotoolkit.ogc.xml.v110.TimeEqualsType(propertyName, temporal);
         } else if ("1.0.0".equals(currentVersion)) {
             throw new IllegalArgumentException("Time Equals is not implemented in 1.0.0 filter.");
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static BinaryTemporalOperator buildBynaryTemporal(final String currentVersion, final String operator, final String propertyName, final Object temporal) {
+        if ("2.0.0".equals(currentVersion)) {
+            switch (operator) {
+                case "After"  : return new org.geotoolkit.ogc.xml.v200.TimeAfterType(propertyName, temporal);
+                case "Before"  : return new org.geotoolkit.ogc.xml.v200.TimeBeforeType(propertyName, temporal);
+                case "Begins"  : return new org.geotoolkit.ogc.xml.v200.TimeBeginsType(propertyName, temporal);
+                case "BegunBy"  : return new org.geotoolkit.ogc.xml.v200.TimeBegunByType(propertyName, temporal);
+                case "TContains"  : return new org.geotoolkit.ogc.xml.v200.TimeContainsType(propertyName, temporal);
+                case "During"  : return new org.geotoolkit.ogc.xml.v200.TimeDuringType(propertyName, temporal);
+                case "EndedBy"  : return new org.geotoolkit.ogc.xml.v200.TimeEndedByType(propertyName, temporal);
+                case "Ends"  : return new org.geotoolkit.ogc.xml.v200.TimeEndsType(propertyName, temporal);
+                case "TEquals"  : return new org.geotoolkit.ogc.xml.v200.TimeEqualsType(propertyName, temporal);
+                case "Meets"  : return new org.geotoolkit.ogc.xml.v200.TimeMeetsType(propertyName, temporal);
+                case "MetBy"  : return new org.geotoolkit.ogc.xml.v200.TimeMetByType(propertyName, temporal);
+                case "TOverlaps"  : return new org.geotoolkit.ogc.xml.v200.TimeOverlapsType(propertyName, temporal);
+                case "OverlappedBy"  : return new org.geotoolkit.ogc.xml.v200.TimeOverlappedByType(propertyName, temporal);
+                case "AnyInteracts"  : return new org.geotoolkit.ogc.xml.v200.TimeAnyInteractsType(propertyName, temporal);
+                default: throw new IllegalArgumentException("unexpected temporal operator:" + operator);
+            }
+        } else if ("1.1.0".equals(currentVersion)) {
+            switch (operator) {
+                case "After"  : return new org.geotoolkit.ogc.xml.v110.TimeAfterType(propertyName, temporal);
+                case "Before"  : return new org.geotoolkit.ogc.xml.v110.TimeBeforeType(propertyName, temporal);
+                case "Begins"  : return new org.geotoolkit.ogc.xml.v110.TimeBeginsType(propertyName, temporal);
+                case "BegunBy"  : return new org.geotoolkit.ogc.xml.v110.TimeBegunByType(propertyName, temporal);
+                case "TContains"  : return new org.geotoolkit.ogc.xml.v110.TimeContainsType(propertyName, temporal);
+                case "During"  : return new org.geotoolkit.ogc.xml.v110.TimeDuringType(propertyName, temporal);
+                case "EndedBy"  : return new org.geotoolkit.ogc.xml.v110.TimeEndedByType(propertyName, temporal);
+                case "Ends"  : return new org.geotoolkit.ogc.xml.v110.TimeEndsType(propertyName, temporal);
+                case "TEquals"  : return new org.geotoolkit.ogc.xml.v110.TimeEqualsType(propertyName, temporal);
+                case "Meets"  : return new org.geotoolkit.ogc.xml.v110.TimeMeetsType(propertyName, temporal);
+                case "MetBy"  : return new org.geotoolkit.ogc.xml.v110.TimeMetByType(propertyName, temporal);
+                case "TOverlaps"  : return new org.geotoolkit.ogc.xml.v110.TimeOverlapsType(propertyName, temporal);
+                case "OverlappedBy"  : return new org.geotoolkit.ogc.xml.v110.TimeOverlappedByType(propertyName, temporal);
+                case "AnyInteracts"  : return new org.geotoolkit.ogc.xml.v110.TimeAnyInteractsType(propertyName, temporal);
+                default: throw new IllegalArgumentException("unexpected distance spatial operator:" + operator);
+            }
+        } else if ("1.0.0".equals(currentVersion)) {
+            throw new IllegalArgumentException("There is no time filters in v1.0.0.");
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
@@ -228,6 +402,34 @@ public class FilterXmlFactory {
             }
             final org.geotoolkit.ogc.xml.v100.PropertyNameType pName = new org.geotoolkit.ogc.xml.v100.PropertyNameType(propertyName);
             return new org.geotoolkit.ogc.xml.v100.PropertyIsLessThanType((org.geotoolkit.ogc.xml.v100.LiteralType)lit, pName);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static PropertyIsLike buildPropertyIsLike(final String currentVersion, final String propertyName, final String pattern,
+            final String wildChar, final String singleChar, final String escapeChar) {
+
+        if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v200.PropertyIsLikeType(propertyName, pattern, wildChar, singleChar, escapeChar);
+        } else if ("1.1.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v110.PropertyIsLikeType(propertyName, pattern, wildChar, singleChar, escapeChar);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v100.PropertyIsLikeType(propertyName, pattern, wildChar, singleChar, escapeChar);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static PropertyIsNull buildPropertyIsNull(final String currentVersion, final String propertyName) {
+        if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v200.PropertyIsNullType(propertyName);
+        } else if ("1.1.0".equals(currentVersion)) {
+            final org.geotoolkit.ogc.xml.v110.PropertyNameType pName = new org.geotoolkit.ogc.xml.v110.PropertyNameType(propertyName);
+            return new org.geotoolkit.ogc.xml.v110.PropertyIsNullType(pName);
+        } else if ("1.0.0".equals(currentVersion)) {
+            final org.geotoolkit.ogc.xml.v100.PropertyNameType pName = new org.geotoolkit.ogc.xml.v100.PropertyNameType(propertyName);
+            return new org.geotoolkit.ogc.xml.v100.PropertyIsNullType(pName);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
@@ -421,6 +623,52 @@ public class FilterXmlFactory {
                 }
             }
             return new org.geotoolkit.ogc.xml.v200.ConformanceType(const200);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static SortBy buildSortBy(String currentVersion, List<org.opengis.filter.sort.SortBy> sorts) {
+        if ("2.0.0".equals(currentVersion)) {
+
+            List<org.geotoolkit.ogc.xml.v200.SortPropertyType> filters = new ArrayList<>();
+            for (org.opengis.filter.sort.SortBy sb : sorts) {
+                if (sb instanceof org.geotoolkit.ogc.xml.v200.SortPropertyType) {
+                    filters.add((org.geotoolkit.ogc.xml.v200.SortPropertyType)sb);
+                } else {
+                    throw new IllegalArgumentException("unexpected version for sortProperty.");
+                }
+            }
+            return new org.geotoolkit.ogc.xml.v200.SortByType(filters);
+
+        } else if ("1.1.0".equals(currentVersion)) {
+            List<org.geotoolkit.ogc.xml.v110.SortPropertyType> filters = new ArrayList<>();
+            for (org.opengis.filter.sort.SortBy sb : sorts) {
+                if (sb instanceof org.geotoolkit.ogc.xml.v110.SortPropertyType) {
+                    filters.add((org.geotoolkit.ogc.xml.v110.SortPropertyType)sb);
+                } else {
+                    throw new IllegalArgumentException("unexpected version for sortProperty.");
+                }
+            }
+            return new org.geotoolkit.ogc.xml.v110.SortByType(filters);
+
+        } else if ("1.0.0".equals(currentVersion)) {
+
+            throw new IllegalArgumentException("No sort object for 1.0.0 filter version.");
+
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static org.opengis.filter.sort.SortBy buildSortProperty(String currentVersion, String propName, SortOrder orderType) {
+        if ("2.0.0".equals(currentVersion)) {
+
+            return new org.geotoolkit.ogc.xml.v200.SortPropertyType(propName, orderType);
+        } else if ("1.1.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v110.SortPropertyType(propName, orderType);
+        } else if ("1.0.0".equals(currentVersion)) {
+            throw new IllegalArgumentException("No sort object for 1.0.0 filter version.");
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }

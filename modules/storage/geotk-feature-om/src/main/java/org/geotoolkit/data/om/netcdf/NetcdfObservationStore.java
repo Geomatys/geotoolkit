@@ -49,6 +49,8 @@ import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.FeatureType;
+import org.opengis.observation.Phenomenon;
+import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.util.GenericName;
@@ -80,7 +82,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Reso
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(NetcdfObservationStoreFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(NetcdfObservationStoreFactory.NAME);
     }
 
     @Override
@@ -156,7 +158,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Reso
     @Override
     public ExtractionResult getResults() throws DataStoreException {
         try {
-            return NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null);
+            return NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
         } catch (NetCDFParsingException ex) {
             throw new DataStoreException(ex);
         }
@@ -164,17 +166,19 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Reso
 
     @Override
     public ExtractionResult getResults(final List<String> sensorIDs) throws DataStoreException {
-        try {
-            return NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), sensorIDs);
-        } catch (NetCDFParsingException ex) {
-            throw new DataStoreException(ex);
-        }
+        return getResults(getProcedureID(), sensorIDs, new HashSet<>(), new HashSet<>());
     }
 
     @Override
     public ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIDs) throws DataStoreException {
+        return getResults(affectedSensorID, sensorIDs, new HashSet<>(), new HashSet<>());
+    }
+
+    @Override
+    public ExtractionResult getResults(String affectedSensorID, List<String> sensorIds, Set<Phenomenon> phenomenons, Set<SamplingFeature> samplingFeatures) throws DataStoreException {
         try {
-            return NetCDFExtractor.getObservationFromNetCDF(analyze, affectedSensorID, sensorIDs);
+            // existing sampling features are not used yet
+            return NetCDFExtractor.getObservationFromNetCDF(analyze, affectedSensorID, sensorIds, phenomenons);
         } catch (NetCDFParsingException ex) {
             throw new DataStoreException(ex);
         }
@@ -197,7 +201,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Reso
     @Override
     public TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException {
         try {
-            final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null);
+            final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
             if (result != null && result.spatialBound != null) {
                 return result.spatialBound.getTimeObject("2.0.0");
             }

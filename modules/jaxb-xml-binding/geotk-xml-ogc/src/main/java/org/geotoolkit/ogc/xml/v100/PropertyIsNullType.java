@@ -20,6 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.PropertyIsNull;
+import org.opengis.filter.expression.Expression;
 
 
 /**
@@ -48,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
     "propertyName",
     "literal"
 })
-public class PropertyIsNullType extends ComparisonOpsType {
+public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsNull {
 
     @XmlElement(name = "PropertyName")
     private PropertyNameType propertyName;
@@ -57,6 +60,10 @@ public class PropertyIsNullType extends ComparisonOpsType {
 
     public PropertyIsNullType() {
 
+    }
+
+    public PropertyIsNullType(PropertyNameType propertyName) {
+        this.propertyName = propertyName;
     }
 
     public PropertyIsNullType(final PropertyIsNullType that) {
@@ -105,6 +112,21 @@ public class PropertyIsNullType extends ComparisonOpsType {
     @Override
     public ComparisonOpsType getClone() {
         return new PropertyIsNullType(this);
+    }
+
+    @Override
+    public Expression getExpression() {
+        return propertyName;
+    }
+
+    @Override
+    public boolean evaluate(Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object accept(FilterVisitor visitor, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

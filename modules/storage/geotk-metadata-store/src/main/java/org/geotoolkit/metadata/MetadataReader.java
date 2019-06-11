@@ -16,13 +16,12 @@
  */
 package org.geotoolkit.metadata;
 
-import org.w3c.dom.Node;
-
 import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import javax.xml.namespace.QName;
 
 /**
  *
@@ -31,7 +30,7 @@ import java.util.logging.Level;
 public interface MetadataReader {
 
     /**
-     * Return a metadata object from the specified identifier.
+     * Return a metadata object from the specified identifier and performs transformations if possible to the specified mode.
      *
      * @param identifier The metadata identifier.
      * @param mode An output schema mode: EBRIM, ISO_19115, DUBLINCORE and SENSORML supported.
@@ -39,7 +38,19 @@ public interface MetadataReader {
      * @return A marshallable metadata object.
      * @throws MetadataIoException
      */
-    Node getMetadata(final String identifier, final MetadataType mode) throws MetadataIoException;
+    RecordInfo getMetadata(final String identifier, final MetadataType mode) throws MetadataIoException;
+
+    /**
+     * Return a metadata object from the specified identifier and performs transformations if possible to the specified mode.
+     *
+     * @param identifier The metadata identifier.
+     * @param mode An output schema mode: EBRIM, ISO_19115, DUBLINCORE and SENSORML supported.
+     * @param type An elementSet: FULL, SUMMARY and BRIEF. (implies elementName == null)
+     * @param elementName A list of QName describing the requested fields. (implies type == null)
+     *
+     * @return A document (Node) containing metadata object.
+     */
+    RecordInfo getMetadata(final String identifier, final MetadataType mode, final ElementSetType type, final List<QName> elementName) throws MetadataIoException;
 
     /**
      * Return true if the metadata exist.
@@ -63,7 +74,7 @@ public interface MetadataReader {
      * @return all the entries from the database
      * @throws MetadataIoException
      */
-    List<? extends Object> getAllEntries() throws MetadataIoException;
+    List<RecordInfo> getAllEntries() throws MetadataIoException;
 
      /**
      * @return all the entries identifiers from the database
@@ -74,7 +85,7 @@ public interface MetadataReader {
 
     Iterator<String> getIdentifierIterator() throws MetadataIoException;
 
-    Iterator<? extends Object> getEntryIterator() throws MetadataIoException;
+    Iterator<RecordInfo> getEntryIterator() throws MetadataIoException;
 
     boolean useEntryIterator();
 

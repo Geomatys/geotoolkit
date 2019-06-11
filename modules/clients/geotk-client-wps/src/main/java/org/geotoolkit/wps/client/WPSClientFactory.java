@@ -16,12 +16,9 @@
  */
 package org.geotoolkit.wps.client;
 
-import org.geotoolkit.wps.client.Bundle;
-import org.geotoolkit.wps.client.WPSVersion;
-import org.geotoolkit.wps.client.WebProcessingClient;
-import org.geotoolkit.client.AbstractClientFactory;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.*;
@@ -65,16 +62,19 @@ public class WPSClientFactory extends AbstractClientFactory{
             new ParameterBuilder().addName(NAME).addName("WPSParameters").createGroup(IDENTIFIER, URL,VERSION,SECURITY,TIMEOUT, DYNAMIC_LOADING);
 
     @Override
+    public String getShortName() {
+        return NAME;
+    }
+
+    @Override
     public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS;
     }
 
-    @Override
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.serverDescription);
     }
 
-    @Override
     public CharSequence getDisplayName() {
         return Bundle.formatInternational(Bundle.Keys.serverTitle);
     }

@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.namespace.QName;
 import org.geotoolkit.csw.xml.Insert;
 
 
@@ -86,7 +87,7 @@ public class InsertType implements Insert {
      * Build a new Insert request with the specified objects to insert.
      */
     public InsertType(final Object... objects) {
-        any = new ArrayList<Object>();
+        any = new ArrayList<>();
         for (Object obj: objects) {
             any.add(obj);
         }
@@ -99,7 +100,7 @@ public class InsertType implements Insert {
     @Override
     public List<Object> getAny() {
         if (any == null) {
-            any = new ArrayList<Object>();
+            any = new ArrayList<>();
         }
         return this.any;
     }
@@ -108,8 +109,11 @@ public class InsertType implements Insert {
      * Gets the value of the typeName property.
      */
     @Override
-    public String getTypeName() {
-        return typeName;
+    public QName getTypeName() {
+        if (typeName != null) {
+            return new QName(typeName);
+        }
+        return null;
     }
 
     public void setTypeName(final String typeName) {

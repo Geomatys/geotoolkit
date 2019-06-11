@@ -259,6 +259,17 @@ public class Chain implements Comparable<Chain>,Parameterized {
         this.constants = constants;
     }
 
+    public Parameter getInput(String code) {
+        if (inputs != null) {
+            for (Parameter input : inputs) {
+                if (input.getCode().equals(code)) {
+                    return input;
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public List<Parameter> getInputs() {
         if(inputs == null){
@@ -472,7 +483,7 @@ public class Chain implements Comparable<Chain>,Parameterized {
 
     public static synchronized MarshallerPool getPoolInstance() throws JAXBException{
         if(POOL == null){
-            POOL = new MarshallerPool(JAXBContext.newInstance(Chain.class), null);
+            POOL = new MarshallerPool(JAXBContext.newInstance(Chain.class, StringMap.class), null);
         }
         return POOL;
     }

@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.XMLLiteral;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -83,13 +82,13 @@ public class LiteralType implements XMLLiteral {
      * build a new Literal with the specified String
      */
     public LiteralType(final String content) {
-        this.content = new ArrayList<Object>();
+        this.content = new ArrayList<>();
         this.content.add(content);
     }
 
     public LiteralType(final LiteralType that) {
         if (that != null && that.content != null) {
-            this.content = new ArrayList<Object>(that.content);
+            this.content = new ArrayList<>(that.content);
         }
     }
 
@@ -99,7 +98,7 @@ public class LiteralType implements XMLLiteral {
     @Override
     public List<Object> getContent() {
         if (content == null) {
-            content = new ArrayList<Object>();
+            content = new ArrayList<>();
         }
         return this.content;
     }
@@ -113,7 +112,7 @@ public class LiteralType implements XMLLiteral {
     public void setContent(final Object content) {
         if (content != null) {
             if (this.content == null) {
-                this.content = new ArrayList<Object>();
+                this.content = new ArrayList<>();
             }
             this.content.add(content);
         }
@@ -126,6 +125,19 @@ public class LiteralType implements XMLLiteral {
     public Object getValue() {
         if (content != null && !content.isEmpty()) {
             return content.get(0);
+        }
+        return null;
+    }
+
+    /**
+     * The more often we just want to get a single String value.
+     * This method return the first object of the list and cast it in String (if its possible).
+     */
+    public String getStringValue() {
+        if (content != null && !content.isEmpty()) {
+            if (content.get(0) instanceof String) {
+                return (String)content.get(0);
+            }
         }
         return null;
     }

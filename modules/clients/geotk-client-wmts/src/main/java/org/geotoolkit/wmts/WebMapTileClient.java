@@ -28,13 +28,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
-import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wmts.v100.GetCapabilities100;
@@ -150,7 +150,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
 
     @Override
     public WMTSClientFactory getProvider() {
-        return (WMTSClientFactory)DataStores.getFactoryById(WMTSClientFactory.NAME);
+        return (WMTSClientFactory) DataStores.getProviderById(WMTSClientFactory.NAME);
     }
 
     @Override

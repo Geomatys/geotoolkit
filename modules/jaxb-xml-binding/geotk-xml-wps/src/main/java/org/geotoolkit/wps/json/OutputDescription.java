@@ -31,6 +31,10 @@ public class OutputDescription extends DataDescriptionType {
         super(out);
     }
 
+    public OutputDescription(OutputDescription out) {
+        super(out);
+    }
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {

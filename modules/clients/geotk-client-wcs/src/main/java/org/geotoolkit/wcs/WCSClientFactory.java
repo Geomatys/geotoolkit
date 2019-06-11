@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.wcs;
 
-import org.geotoolkit.client.AbstractClientFactory;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.wcs.xml.WCSVersion;
@@ -55,16 +55,19 @@ public class WCSClientFactory extends AbstractClientFactory{
             new ParameterBuilder().addName(NAME).addName("WCSParameters").createGroup(IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
 
     @Override
+    public String getShortName() {
+        return NAME;
+    }
+
+    @Override
     public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS;
     }
 
-    @Override
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.serverDescription);
     }
 
-    @Override
     public CharSequence getDisplayName() {
         return Bundle.formatInternational(Bundle.Keys.serverTitle);
     }

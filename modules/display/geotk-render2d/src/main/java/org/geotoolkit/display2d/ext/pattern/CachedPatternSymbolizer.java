@@ -43,6 +43,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -156,7 +157,7 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
     }
 
     @Override
-    public float getMargin(final Object candidate, final float coeff) {
+    public float getMargin(Object candidate, RenderingContext2D ctx) {
         return 0;
     }
 

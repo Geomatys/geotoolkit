@@ -3,6 +3,7 @@ package org.geotoolkit.ogc.xml;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -31,7 +32,6 @@ import org.geotoolkit.ogc.xml.v200.AbstractIdType;
 import org.geotoolkit.ogc.xml.v200.FunctionType;
 import org.geotoolkit.ogc.xml.v200.AndType;
 import org.geotoolkit.ogc.xml.v200.BBOXType;
-import org.geotoolkit.ogc.xml.v200.BinaryLogicOpType;
 import org.geotoolkit.ogc.xml.v200.ComparisonOpsType;
 import org.geotoolkit.ogc.xml.v200.ContainsType;
 import org.geotoolkit.ogc.xml.v200.CrossesType;
@@ -57,7 +57,6 @@ import org.geotoolkit.ogc.xml.v200.PropertyIsNotEqualToType;
 import org.geotoolkit.ogc.xml.v200.PropertyIsNullType;
 import org.geotoolkit.ogc.xml.v200.SpatialOpsType;
 import org.geotoolkit.ogc.xml.v200.TouchesType;
-import org.geotoolkit.ogc.xml.v200.UnaryLogicOpType;
 import org.geotoolkit.ogc.xml.v200.UpperBoundaryType;
 import org.geotoolkit.ogc.xml.v200.WithinType;
 import org.geotoolkit.ogc.xml.v200.ObjectFactory;
@@ -172,14 +171,14 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
         } else if (filter instanceof PropertyIsLike) {
             final PropertyIsLike pis = (PropertyIsLike) filter;
             final PropertyIsLikeType bot = ogc_factory.createPropertyIsLikeType();
-            bot.setEscapeChar(pis.getEscape());
+            bot.setEscape(pis.getEscape());
             final LiteralType lt = ogc_factory.createLiteralType();
             lt.setContent(pis.getLiteral());
-            bot.getExpression().add(ogc_factory.createLiteral(lt));
+            bot.getExpressions().add(ogc_factory.createLiteral(lt));
             if (!(pis.getExpression() instanceof PropertyName)) {
                 throw new IllegalArgumentException("PropertyIsLike can support PropertyName only, but was a " + pis.getExpression());
             }
-            bot.getExpression().add(0, extract(pis.getExpression()));
+            bot.getExpressions().add(0, extract(pis.getExpression()));
             bot.setSingleChar(pis.getSingleChar());
             bot.setWildCard(pis.getWildCard());
             return ogc_factory.createPropertyIsLike(bot);
@@ -197,44 +196,31 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
             return ogc_factory.createPropertyIsNull(bot);
         } else if (filter instanceof And) {
             final And and = (And) filter;
-            final BinaryLogicOpType lot = ogc_factory.createBinaryLogicOpType();
+            final List<JAXBElement> lot = new ArrayList<>();
             for (final Filter f : and.getChildren()) {
                 final JAXBElement<?> ele = visit(f);
                 if (ele != null && ele.getValue() instanceof LogicOpsType) {
-                    lot.getLogicOps().add(ele);
+                    lot.add(ele);
                 }
             }
 
-            return ogc_factory.createAnd(new AndType(lot.getLogicOps().toArray()));
+            return ogc_factory.createAnd(new AndType(lot.toArray()));
         } else if (filter instanceof Or) {
             final Or or = (Or) filter;
-            final BinaryLogicOpType lot = ogc_factory.createBinaryLogicOpType();
+            final List<JAXBElement> lot = new ArrayList<>();
             for (final Filter f : or.getChildren()) {
                 final JAXBElement subFilter = visit(f);
                 if (subFilter != null) {
-                    lot.getLogicOps().add(subFilter);
+                    lot.add(subFilter);
                 }
             }
-            return ogc_factory.createOr(new OrType(lot.getLogicOps().toArray()));
+            return ogc_factory.createOr(new OrType(lot.toArray()));
         } else if (filter instanceof Not) {
             final Not not = (Not) filter;
-            final UnaryLogicOpType lot = ogc_factory.createUnaryLogicOpType();
             final JAXBElement<?> sf = visit(not.getFilter());
 
-            if (sf.getValue() instanceof ComparisonOpsType) {
-                lot.setComparisonOps((JAXBElement<? extends ComparisonOpsType>) sf);
-                return ogc_factory.createNot(new NotType(lot.getComparisonOps().getValue()));
-            }
-            if (sf.getValue() instanceof LogicOpsType) {
-                lot.setLogicOps((JAXBElement<? extends LogicOpsType>) sf);
-                return ogc_factory.createNot(new NotType(lot.getLogicOps().getValue()));
-            }
-            if (sf.getValue() instanceof SpatialOpsType) {
-                lot.setSpatialOps((JAXBElement<? extends SpatialOpsType>) sf);
-                return ogc_factory.createNot(new NotType(lot.getSpatialOps().getValue()));
-            }
             //should not happen
-            throw new IllegalArgumentException("invalid filter element : " + sf);
+            return ogc_factory.createNot(new NotType(sf));
         } else if (filter instanceof FeatureId) {
             throw new IllegalArgumentException("Not parsed yet : " + filter);
         } else if (filter instanceof BBOX) {

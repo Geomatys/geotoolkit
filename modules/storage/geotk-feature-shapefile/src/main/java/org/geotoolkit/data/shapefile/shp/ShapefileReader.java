@@ -171,7 +171,7 @@ public final class ShapefileReader implements Closeable{
             // force useMemoryMappedBuffer to false
             this.useMemoryMappedBuffer = false;
             // start with 8K buffer
-            buffer = ByteBuffer.allocateDirect(8 * 1024);
+            buffer = ByteBuffer.allocate(8 * 1024);
             fill(buffer, channel);
             buffer.flip();
             this.currentOffset = 100;
@@ -213,7 +213,7 @@ public final class ShapefileReader implements Closeable{
      */
     public static ShapefileHeader readHeader(final ReadableByteChannel channel,
             final boolean strict) throws IOException {
-        final ByteBuffer buffer = ByteBuffer.allocateDirect(100);
+        final ByteBuffer buffer = ByteBuffer.allocate(100);
         if (fill(buffer, channel) == -1) {
             throw new EOFException("Premature end of header");
         }
@@ -240,7 +240,7 @@ public final class ShapefileReader implements Closeable{
         }
         if (limit != buffer.limit()) {
             // if (record.ready) {
-            buffer = ByteBuffer.allocateDirect(limit);
+            buffer = ByteBuffer.allocate(limit);
             // }
             // else {
             // throw new IllegalArgumentException("next before hasNext");

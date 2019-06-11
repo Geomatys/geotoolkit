@@ -94,7 +94,7 @@ public final class ShxReader implements Closeable{
 //                    this.channelOffset = 0;
 //                } else {
 //                    LOGGER.finest("Reading from file...");
-//                    this.buffer = ByteBuffer.allocateDirect(8 * RECS_IN_BUFFER);
+//                    this.buffer = ByteBuffer.allocate(8 * RECS_IN_BUFFER);
 //                    this.channelOffset = 0;
 //                }
 //
@@ -130,7 +130,7 @@ public final class ShxReader implements Closeable{
     }
 
     private static ShapefileHeader readHeader(final ReadableByteChannel channel) throws IOException {
-        final ByteBuffer buffer = ByteBuffer.allocateDirect(100);
+        final ByteBuffer buffer = ByteBuffer.allocate(100);
         while (buffer.remaining() > 0) {
             channel.read(buffer);
         }
@@ -141,7 +141,7 @@ public final class ShxReader implements Closeable{
     private void readRecords(final ReadableByteChannel channel) throws IOException {
         check();
         final int remaining = (header.getFileLength() * 2) - 100;
-        final ByteBuffer buffer = ByteBuffer.allocateDirect(remaining);
+        final ByteBuffer buffer = ByteBuffer.allocate(remaining);
         buffer.order(ByteOrder.BIG_ENDIAN);
         while (buffer.remaining() > 0) {
             channel.read(buffer);

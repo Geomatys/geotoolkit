@@ -62,12 +62,12 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
                 try {
                     double[] afterT = new double[numCoords];
                     toApply.transform(coords, 0, afterT, 0, numCoords/2);
-                    seq = new PackedCoordinateSequence.Double(afterT, 2);
+                    seq = new PackedCoordinateSequence.Double(afterT, 2, 0);
                 } catch (Exception e) {
                     throw new DataStoreException("Unable to transform geometry", e);
                 }
             } else {
-                seq = new PackedCoordinateSequence.Double(coords, 2);
+                seq = new PackedCoordinateSequence.Double(coords, 2, 0);
             }
 
             toFill.setPropertyValue(FeatureExt.getDefaultGeometry(toFill.getType()).getName().tip().toString(), GEOMETRY_FACTORY.createMultiPoint(seq));

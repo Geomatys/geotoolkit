@@ -468,7 +468,7 @@ public class DbaseFileHeader {
      */
     public void readHeader(final ReadableByteChannel channel) throws IOException {
         // we'll read in chunks of 1K
-        ByteBuffer in = ByteBuffer.allocateDirect(1024);
+        ByteBuffer in = ByteBuffer.allocate(1024);
         // do this or GO CRAZY
         // ByteBuffers come preset to BIG_ENDIAN !
         in.order(ByteOrder.LITTLE_ENDIAN);
@@ -512,7 +512,7 @@ public class DbaseFileHeader {
 
         // if the header is bigger than our 1K, reallocate
         if (headerLength > in.capacity()) {
-            in = ByteBuffer.allocateDirect(headerLength - 10);
+            in = ByteBuffer.allocate(headerLength - 10);
         }
         in.limit(headerLength - 10);
         in.position(0);
@@ -658,7 +658,7 @@ public class DbaseFileHeader {
         if (headerLength == -1) {
             headerLength = MINIMUM_HEADER;
         }
-        ByteBuffer buffer = ByteBuffer.allocateDirect(headerLength);
+        ByteBuffer buffer = ByteBuffer.allocate(headerLength);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 
         // write the output file type.

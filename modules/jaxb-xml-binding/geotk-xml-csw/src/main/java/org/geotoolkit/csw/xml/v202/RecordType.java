@@ -249,6 +249,11 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
         return new BriefRecordType(getIdentifier(), getTitle(), getType(), bboxes);
     }
 
+    @Override
+    public long[] getTemporalExtentRange() {
+        return new long[0];
+    }
+
      /**
      * Verify if this entry is identical to the specified object.
      */

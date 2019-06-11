@@ -58,7 +58,7 @@ import org.opengis.filter.spatial.BBOX;
     "envelope",
     "envelopeWithTimePeriod"
 })
-public class BBOXType extends SpatialOpsType implements BBOX {
+public class BBOXType extends SpatialOpsType implements BBOX, org.geotoolkit.ogc.xml.BBOX {
     private static final String DEFAULT_SRS = "EPSG:4326";
 
     @XmlElement(name = "PropertyName")
@@ -113,8 +113,14 @@ public class BBOXType extends SpatialOpsType implements BBOX {
     /**
      * Gets the value of the envelope property.
      */
+    @Override
     public EnvelopeType getEnvelope() {
-        return envelope;
+        if (envelope != null) {
+            return envelope;
+        } else if (envelopeWithTimePeriod != null) {
+            return envelopeWithTimePeriod;
+        }
+        return null;
     }
 
     /**
@@ -265,6 +271,11 @@ public class BBOXType extends SpatialOpsType implements BBOX {
         hash = 13 * hash + (this.envelope != null ? this.envelope.hashCode() : 0);
         hash = 13 * hash + (this.envelopeWithTimePeriod != null ? this.envelopeWithTimePeriod.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public String getOperator() {
+        return "BBOX";
     }
 
 }

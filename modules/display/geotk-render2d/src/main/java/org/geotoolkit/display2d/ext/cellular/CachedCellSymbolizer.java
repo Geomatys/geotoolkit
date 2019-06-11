@@ -18,6 +18,7 @@ package org.geotoolkit.display2d.ext.cellular;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
@@ -41,7 +42,7 @@ public class CachedCellSymbolizer extends CachedSymbolizer<CellSymbolizer>{
      * {@inheritDoc }
      */
     @Override
-    public float getMargin(final Object feature, final float coeff) {
+    public float getMargin(Object candidate, RenderingContext2D ctx) {
         return 0;
     }
 

@@ -23,10 +23,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractCodeType;
 import org.geotoolkit.ows.xml.AbstractDescription;
 import org.geotoolkit.ows.xml.AbstractMetadata;
+import org.geotoolkit.ows.xml.AbstractOwsContextDescription;
 
 
 /**
@@ -83,6 +85,9 @@ public class DescriptionType implements AbstractDescription {
     private List<LanguageStringType> _abstract;
     @XmlElement(name = "Keywords")
     private List<KeywordsType> keywords;
+
+    @XmlTransient
+    private List<AdditionalParametersType> additionalParameters;
 
     /**
      * An empty constructor used by JAXB.
@@ -244,5 +249,30 @@ public class DescriptionType implements AbstractDescription {
     @Override
     public List<? extends AbstractMetadata> getMetadata() {
         return new ArrayList<>();
+    }
+
+    /**
+     * @return the additionalParameters
+     */
+    @Override
+    public List<AdditionalParametersType> getAdditionalParameters() {
+        return additionalParameters;
+    }
+
+    /**
+     * @param additionalParameters the additionalParameters to set
+     */
+    public void setAdditionalParameters(List<AdditionalParametersType> additionalParameters) {
+        this.additionalParameters = additionalParameters;
+    }
+
+    /**
+     * not implemented
+     *
+     * @return
+     */
+    @Override
+    public AbstractOwsContextDescription getOwsContext() {
+        return null;
     }
 }

@@ -37,6 +37,7 @@ import org.geotoolkit.sos.xml.ResponseModeType;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
+import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
@@ -98,6 +99,27 @@ public class XmlObservationReader implements ObservationReader {
                 final AbstractObservation obs = (AbstractObservation)xmlObject;
                 final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
                 phenomenons.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
+            }
+        }
+        return phenomenons;
+    }
+
+    @Override
+    public Collection<Phenomenon> getPhenomenons(final String version) throws DataStoreException {
+        final Set<Phenomenon> phenomenons = new HashSet<>();
+        for (Object xmlObject : xmlObjects) {
+            if (xmlObject instanceof ObservationCollection) {
+                final ObservationCollection collection = (ObservationCollection)xmlObject;
+                for (Observation obs : collection.getMember()) {
+                    final AbstractObservation o = (AbstractObservation)obs;
+                    final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
+                    phenomenons.add(XmlObservationUtils.getPhenomenons(phenProp));
+                }
+
+            } else if (xmlObject instanceof AbstractObservation) {
+                final AbstractObservation obs = (AbstractObservation)xmlObject;
+                final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
+                phenomenons.add(XmlObservationUtils.getPhenomenons(phenProp));
             }
         }
         return phenomenons;
@@ -211,6 +233,35 @@ public class XmlObservationReader implements ObservationReader {
                 final AbstractObservation obs = (AbstractObservation)xmlObject;
                 final FeatureProperty foiProp = obs.getPropertyFeatureOfInterest();
                 featureOfInterest.add(XmlObservationUtils.getFOIName(foiProp));
+            }
+        }
+        return featureOfInterest;
+    }
+
+    @Override
+    public Collection<SamplingFeature> getFeatureOfInterestForProcedure(String sensorID, String version) throws DataStoreException {
+        final Set<SamplingFeature> featureOfInterest = new HashSet<>();
+        for (Object xmlObject : xmlObjects) {
+            if (xmlObject instanceof ObservationCollection) {
+                final ObservationCollection collection = (ObservationCollection)xmlObject;
+                for (Observation obs : collection.getMember()) {
+                    final AbstractObservation o = (AbstractObservation)obs;
+                    if (o.getProcedure().getHref().equals(sensorID)) {
+                        final FeatureProperty foiProp = o.getPropertyFeatureOfInterest();
+                        if (foiProp != null && foiProp.getAbstractFeature() != null) {
+                            featureOfInterest.add((SamplingFeature) foiProp.getAbstractFeature());
+                        }
+                    }
+                }
+
+            } else if (xmlObject instanceof AbstractObservation) {
+                final AbstractObservation obs = (AbstractObservation)xmlObject;
+                if (obs.getProcedure().getHref().equals(sensorID)) {
+                    final FeatureProperty foiProp = obs.getPropertyFeatureOfInterest();
+                    if (foiProp != null && foiProp.getAbstractFeature() != null) {
+                        featureOfInterest.add((SamplingFeature) foiProp.getAbstractFeature());
+                    }
+                }
             }
         }
         return featureOfInterest;

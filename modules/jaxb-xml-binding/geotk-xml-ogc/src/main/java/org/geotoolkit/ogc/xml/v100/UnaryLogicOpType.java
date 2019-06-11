@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.UnaryLogicOperator;
+import org.geotoolkit.ogc.xml.XMLFilter;
 
 
 /**
@@ -53,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
     "spatialOps",
     "logicOps"
 })
-public class UnaryLogicOpType extends LogicOpsType {
+public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogicOperator {
 
     @XmlElementRef(name = "comparisonOps", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private JAXBElement<? extends ComparisonOpsType> comparisonOps;
@@ -156,8 +158,16 @@ public class UnaryLogicOpType extends LogicOpsType {
     }
 
     @Override
-    public LogicOpsType getClone() {
-        throw new UnsupportedOperationException("Must be overriden by sub-class");
+    public Object getChild() {
+        if (comparisonOps != null) {
+            return comparisonOps.getValue();
+        } else if (logicOps != null) {
+            return logicOps.getValue();
+        } else if (spatialOps != null) {
+            return spatialOps.getValue();
+        } else {
+            return null;
+        }
     }
 
 }

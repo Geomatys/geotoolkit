@@ -25,18 +25,19 @@ import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.ViewMapper;
-import org.geotoolkit.storage.AbstractFeatureSet;
+import org.geotoolkit.storage.AbstractResource;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.geometry.Envelope;
 
 /**
  * Default subset feature resource.
  *
  * @author Johann Sorel (Geomatys)
  */
-final class SubsetFeatureResource extends AbstractFeatureSet implements FeatureSet, ChangeListener<ChangeEvent> {
+final class SubsetFeatureResource extends AbstractResource implements FeatureSet, ChangeListener<ChangeEvent> {
 
     private final StorageListener.Weak weakListener = new StorageListener.Weak(this);
 
@@ -49,6 +50,11 @@ final class SubsetFeatureResource extends AbstractFeatureSet implements FeatureS
         this.parent = parent;
         this.query = query;
         weakListener.registerSource(parent);
+    }
+
+    @Override
+    public Envelope getEnvelope() throws DataStoreException {
+        return null;
     }
 
     @Override

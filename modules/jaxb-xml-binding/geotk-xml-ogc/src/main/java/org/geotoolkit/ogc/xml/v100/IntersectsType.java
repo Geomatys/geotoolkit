@@ -33,6 +33,10 @@ public class IntersectsType extends BinarySpatialOpType {
 
     }
 
+    public IntersectsType(String propertyName, Object geometry) {
+        super(propertyName, geometry);
+    }
+
     public IntersectsType(final IntersectsType that) {
         super(that);
     }
@@ -40,5 +44,10 @@ public class IntersectsType extends BinarySpatialOpType {
     @Override
     public SpatialOpsType getClone() {
         return new IntersectsType(this);
+    }
+
+    @Override
+    public String getOperator() {
+        return "Intersects";
     }
 }

@@ -20,6 +20,7 @@ import java.awt.AlphaComposite;
 import java.awt.Paint;
 import java.awt.RenderingHints;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Displacement;
@@ -239,6 +240,10 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
      * {@inheritDoc }
      */
     @Override
+    public float getMargin(final Object candidate, final RenderingContext2D ctx){
+        return getMargin(candidate, ctx.getUnitCoefficient(this.styleElement.getUnitOfMeasure()));
+    }
+
     public float getMargin(final Object candidate, final float coeff) {
         if(cacheStroke == null){
             return 0f;

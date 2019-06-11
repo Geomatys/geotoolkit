@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.ReadOnlyStorageException;
 import org.apache.sis.storage.Resource;
@@ -33,13 +34,12 @@ import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.util.GenericName;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  * A Featurestore is a storage object which manage a serie of FeatureTypes.
@@ -67,7 +67,7 @@ public interface FeatureStore extends AutoCloseable, Resource {
      *
      * @return this source original factory
      */
-    DataStoreFactory getProvider();
+    DataStoreProvider getProvider();
 
     /**
      * Get version history for given feature type.

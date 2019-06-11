@@ -103,6 +103,11 @@ public class MetadataType implements AbstractMetadata {
         this.href = href;
     }
 
+    public MetadataType(final String href, final String role) {
+        this.href = href;
+        this.role = role;
+    }
+
     public MetadataType(final AbstractMetadata that) {
         if (that != null) {
             this.href    = that.getHref();

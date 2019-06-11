@@ -88,7 +88,7 @@ public class IndexedFidWriter implements Closeable {
      * Allocate some buffers for writing.
      */
     private void allocateBuffers() {
-        writeBuffer = ByteBuffer.allocateDirect(HEADER_SIZE + RECORD_SIZE * 1024);
+        writeBuffer = ByteBuffer.allocate(HEADER_SIZE + RECORD_SIZE * 1024);
     }
 
     /**

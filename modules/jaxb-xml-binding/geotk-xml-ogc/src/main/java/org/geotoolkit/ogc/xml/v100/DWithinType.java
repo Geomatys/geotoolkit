@@ -27,10 +27,17 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DWithin")
-public class DWithinType extends DistanceBufferType {
+public class DWithinType extends DistanceBufferType implements org.opengis.filter.spatial.DWithin {
 
     public DWithinType() {
 
+    }
+
+    /**
+     * Build a new DWithin Filter
+     */
+    public DWithinType(final String propertyName, final Object geometry, final double distance, final String unit) {
+        super(propertyName, geometry, distance, unit);
     }
 
     public DWithinType(final DWithinType that) {
@@ -40,5 +47,10 @@ public class DWithinType extends DistanceBufferType {
     @Override
     public SpatialOpsType getClone() {
         return new DWithinType(this);
+    }
+
+    @Override
+    public String getOperator() {
+        return "DWithin";
     }
 }

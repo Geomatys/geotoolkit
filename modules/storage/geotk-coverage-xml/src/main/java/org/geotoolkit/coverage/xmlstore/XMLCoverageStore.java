@@ -36,11 +36,11 @@ import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
@@ -110,7 +110,7 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(XMLCoverageStoreFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(XMLCoverageStoreFactory.NAME);
     }
 
     @Override

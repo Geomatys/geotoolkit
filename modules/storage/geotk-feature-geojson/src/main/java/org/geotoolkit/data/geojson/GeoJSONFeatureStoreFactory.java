@@ -16,6 +16,21 @@
  */
 package org.geotoolkit.data.geojson;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.ByteBuffer;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collection;
+import org.apache.sis.internal.storage.io.IOUtilities;
+import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
+import org.geotoolkit.data.FileFeatureStoreFactory;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
@@ -23,24 +38,9 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.ByteBuffer;
-import java.nio.file.Path;
-import org.apache.sis.internal.storage.io.IOUtilities;
-import java.util.Arrays;
-import java.util.Collection;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
-import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.apache.sis.parameter.ParameterBuilder;
-import org.apache.sis.storage.ProbeResult;
-import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -85,6 +85,11 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
             new ParameterBuilder().addName(NAME).addName("GeoJSONParameters").createGroup(
                 IDENTIFIER, PATH, COORDINATE_ACCURACY);
 
+    @Override
+    public String getShortName() {
+        return NAME;
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -93,22 +98,10 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
         return PARAMETERS_DESCRIPTOR;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public CharSequence getDisplayName() {
         return Bundle.formatInternational(Bundle.Keys.datastoreTitle);
     }
 
-    /**
-     * Describes the type of data the datastore returned by this factory works
-     * with.
-     *
-     * @return String a human readable description of the type of restore
-     *         supported by this datastore.
-     */
-    @Override
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.datastoreDescription);
     }

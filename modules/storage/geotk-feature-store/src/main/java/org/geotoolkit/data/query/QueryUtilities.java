@@ -44,9 +44,9 @@ public class QueryUtilities {
                 && query.getCoordinateSystemReproject() == null
                 && query.getCoordinateSystemReproject() == null
                 && query.getFilter() == Filter.INCLUDE
-                && query.getMaxFeatures() == null
+                && query.getLimit() == -1
                 && query.getSortBy() == null
-                && query.getStartIndex() == 0;
+                && query.getOffset() == 0;
     }
 
     /**
@@ -69,12 +69,12 @@ public class QueryUtilities {
         qb.setTypeName(original.getTypeName());
 
         //use the more restrictive max features field---------------------------
-        Integer max = original.getMaxFeatures();
-        if(second.getMaxFeatures() != null){
-            if(max == null){
-                max = second.getMaxFeatures();
+        long max = original.getLimit();
+        if (second.getLimit() != -1) {
+            if(max == -1){
+                max = second.getLimit();
             }else{
-                max = Math.min(max, second.getMaxFeatures());
+                max = Math.min(max, second.getLimit());
             }
         }
         qb.setMaxFeatures(max);
@@ -104,7 +104,7 @@ public class QueryUtilities {
         qb.setFilter(filter);
 
         //group start index ----------------------------------------------------
-        int start = original.getStartIndex() + second.getStartIndex();
+        long start = original.getOffset() + second.getOffset();
         qb.setStartIndex(start);
 
         //ordering -------------------------------------------------------------
@@ -209,8 +209,8 @@ public class QueryUtilities {
 
         //none of the queries equals Query.ALL, mix them
         //use the more restrictive max features field
-        final int maxFeatures = Math.min(firstQuery.getMaxFeatures(),
-                secondQuery.getMaxFeatures());
+        final long maxFeatures = Math.min(firstQuery.getLimit(),
+                secondQuery.getLimit());
 
         //join attributes names
         final String[] propNames = joinAttributes(firstQuery.getPropertyNames(),
@@ -226,7 +226,7 @@ public class QueryUtilities {
             filter = FF.and(filter, filter2);
         }
 
-        int start = firstQuery.getStartIndex() + secondQuery.getStartIndex();
+        long start = firstQuery.getOffset() + secondQuery.getOffset();
         //build the mixed query
         final String typeName = firstQuery.getTypeName() != null ?
             firstQuery.getTypeName() :

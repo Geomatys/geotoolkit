@@ -410,6 +410,9 @@ public class ImageReaderAdapter extends SpatialImageReader {
             } catch (TransformException e) {
                 throw new IIOException(e.getLocalizedMessage(), e);
             }
+            if (geometry.isDefined(GridGeometry.CRS)) {
+                region.setCoordinateReferenceSystem(geometry.getCoordinateReferenceSystem());
+            }
             gp.setEnvelope(region);
             /*
              * Computes the resolution.

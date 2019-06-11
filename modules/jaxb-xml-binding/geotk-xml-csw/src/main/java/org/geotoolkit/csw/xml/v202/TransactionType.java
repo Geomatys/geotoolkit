@@ -90,7 +90,7 @@ public class TransactionType extends RequestBaseType implements Transaction {
      */
     public TransactionType(final String service, final String version, final InsertType... inserts) {
         super(service, version);
-        insertOrUpdateOrDelete = new ArrayList<Object>();
+        insertOrUpdateOrDelete = new ArrayList<>();
         for (InsertType insert: inserts) {
             insertOrUpdateOrDelete.add(insert);
         }
@@ -102,7 +102,7 @@ public class TransactionType extends RequestBaseType implements Transaction {
      */
     public TransactionType(final String service, final String version, final UpdateType... updates) {
         super(service, version);
-        insertOrUpdateOrDelete = new ArrayList<Object>();
+        insertOrUpdateOrDelete = new ArrayList<>();
         for (UpdateType update: updates) {
             insertOrUpdateOrDelete.add(update);
         }
@@ -114,7 +114,7 @@ public class TransactionType extends RequestBaseType implements Transaction {
      */
     public TransactionType(final String service, final String version, final DeleteType delete) {
         super(service, version);
-        insertOrUpdateOrDelete = new ArrayList<Object>();
+        insertOrUpdateOrDelete = new ArrayList<>();
         if (delete != null) {
             insertOrUpdateOrDelete.add(delete);
         }
@@ -127,7 +127,7 @@ public class TransactionType extends RequestBaseType implements Transaction {
     @Override
     public List<Object> getInsertOrUpdateOrDelete() {
         if (insertOrUpdateOrDelete == null) {
-            insertOrUpdateOrDelete = new ArrayList<Object>();
+            insertOrUpdateOrDelete = new ArrayList<>();
         }
         return insertOrUpdateOrDelete;
     }

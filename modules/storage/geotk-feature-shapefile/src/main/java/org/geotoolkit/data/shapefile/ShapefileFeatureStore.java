@@ -192,7 +192,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(ShapefileFeatureStoreFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(ShapefileFeatureStoreFactory.NAME);
     }
 
     @Override
@@ -339,8 +339,8 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
         qb.setHints(queryHints);
         qb.setCRS(gquery.getCoordinateSystemReproject());
         qb.setSortBy(gquery.getSortBy());
-        qb.setStartIndex(gquery.getStartIndex());
-        qb.setMaxFeatures(gquery.getMaxFeatures());
+        qb.setStartIndex(gquery.getOffset());
+        qb.setMaxFeatures(gquery.getLimit());
         return FeatureStreams.subset(reader, qb.buildQuery());
     }
 

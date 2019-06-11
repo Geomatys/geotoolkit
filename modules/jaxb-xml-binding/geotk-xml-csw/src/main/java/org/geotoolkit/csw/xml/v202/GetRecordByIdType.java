@@ -103,7 +103,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
     @Override
     public List<String> getId() {
         if (id == null) {
-            id = new ArrayList<String>();
+            id = new ArrayList<>();
         }
         return id;
     }

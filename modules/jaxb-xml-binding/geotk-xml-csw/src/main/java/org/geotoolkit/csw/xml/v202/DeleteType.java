@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.namespace.QName;
 import org.geotoolkit.csw.xml.Delete;
 
 
@@ -96,8 +97,11 @@ public class DeleteType implements Delete {
      * Gets the value of the typeName property.
      */
     @Override
-    public String getTypeName() {
-        return typeName;
+    public QName getTypeName() {
+        if (typeName != null) {
+            return new QName(typeName);
+        }
+        return null;
     }
 
     public void setTypeName(final String typeName) {

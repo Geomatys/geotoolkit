@@ -78,6 +78,14 @@ public class ProcessSummary extends Description implements ProcessProperties {
         this.processVersion = processVersion;
     }
 
+    public ProcessSummary(final Description desc, final String processVersion,
+            final List<JobControlOptions> jobControlOptions, final List<DataTransmissionMode> outputTransmission) {
+        super(desc);
+        this.processVersion = processVersion;
+        this.jobControlOptions = jobControlOptions;
+        this.outputTransmission = outputTransmission;
+    }
+
     /**
      * Gets the value of the jobControlOptions property.
      *

@@ -77,11 +77,11 @@ public class GetDomainResponseType implements GetDomainResponse {
      */
     public GetDomainResponseType(final List<DomainValues> domainValues) {
         if (domainValues != null) {
-            this.domainValues = new ArrayList<DomainValuesType>(domainValues.size());
+            this.domainValues = new ArrayList<>(domainValues.size());
             for (DomainValues dv : domainValues) {
                 List<String> listOfValues = null;
                 if (dv.getListOfValues() != null) {
-                    listOfValues = dv.getListOfValues().getValue();
+                    listOfValues = (List<String>) dv.getListOfValues().getValue();
                 }
                 DomainValuesType dvt = new DomainValuesType(dv.getParameterName(), dv.getPropertyName(), listOfValues, dv.getType());
                 this.domainValues.add(dvt);

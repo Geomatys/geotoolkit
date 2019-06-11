@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display2d.ext.pie;
 
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 
@@ -37,7 +38,7 @@ public class CachedPieSymbolizer extends CachedSymbolizer<PieSymbolizer> {
     }
 
     @Override
-    public float getMargin(Object feature, float coeff) {
+    public float getMargin(Object candidate, RenderingContext2D ctx) {
         return 0;
     }
 

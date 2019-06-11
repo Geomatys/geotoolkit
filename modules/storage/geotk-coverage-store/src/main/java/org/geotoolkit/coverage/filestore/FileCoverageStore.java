@@ -39,6 +39,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
@@ -50,7 +51,6 @@ import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
@@ -130,8 +130,8 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(FileCoverageProvider.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(FileCoverageProvider.NAME);
     }
 
     @Override
@@ -415,8 +415,8 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
      * Note : add source file location in metadata.
      */
     @Override
-    protected Metadata createMetadata() throws DataStoreException {
-        Metadata md = super.createMetadata();
+    public Metadata getMetadata() throws DataStoreException {
+        Metadata md = super.getMetadata();
         if (md == null)
             md = new DefaultMetadata();
 

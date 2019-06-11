@@ -59,7 +59,7 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
             throw new DataStoreException("Line is not properly defined : not enough points found.", ex);
         }
 
-        final CoordinateSequence seq = new PackedCoordinateSequence.Double(linePts, 2);
+        final CoordinateSequence seq = new PackedCoordinateSequence.Double(linePts, 2, 0);
         final LineString line = GEOMETRY_FACTORY.createLineString(seq);
 
         toFill.setPropertyValue(FeatureExt.getDefaultGeometry(toFill.getType()).getName().tip().toString(), line);

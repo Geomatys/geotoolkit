@@ -19,6 +19,7 @@ package org.geotoolkit.ogc.xml.v100;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.And;
 
 /**
  *
@@ -27,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "And")
-public class AndType extends BinaryLogicOpType {
+public class AndType extends BinaryLogicOpType implements And {
 
     public AndType() {
 
@@ -37,8 +38,17 @@ public class AndType extends BinaryLogicOpType {
         super(that);
     }
 
+    public AndType(final Object... operators) {
+        super(operators);
+    }
+
     @Override
     public LogicOpsType getClone() {
         return new AndType(this);
+    }
+
+    @Override
+    public String getOperator() {
+        return "AND";
     }
 }

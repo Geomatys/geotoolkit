@@ -30,4 +30,6 @@ public interface XMLFilter {
     Map<String, String> getPrefixMapping();
 
     void setPrefixMapping(final Map<String, String> prefixMapping);
+
+    String getVersion();
 }

@@ -140,7 +140,9 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         if (procedure != null) {
             this.procedure      = new OMProcessPropertyType(procedure);
         }
-        this.observedProperty    = new ReferenceType(observedProperty);
+        if (observedProperty != null) {
+            this.observedProperty    = new ReferenceType(observedProperty);
+        }
         this.featureOfInterest   = foi;
         this.result = result;
     }

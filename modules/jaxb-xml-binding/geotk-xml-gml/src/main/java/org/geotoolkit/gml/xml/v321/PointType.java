@@ -18,10 +18,12 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.UnmodifiableGeometryException;
 import org.opengis.geometry.coordinate.Position;
@@ -75,7 +77,21 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
      * @param pos A direcPosition locating the point.
      */
     public PointType(final String id, final DirectPosition pos) {
-        super.setId(id);
+        super(id, null);
+        this.pos = (pos instanceof DirectPositionType) ? (DirectPositionType)pos : new DirectPositionType(pos, true);
+        if (this.pos.getSrsName() == null) {
+            this.pos.setSrsName(getSrsName());
+        }
+    }
+
+    /**
+     * Build a new Point with the specified identifier and DirectPositionType
+     *
+     * @param id The identifier of the point.
+     * @param pos A direcPosition locating the point.
+     */
+    public PointType(final String id, String crsName, final DirectPosition pos) {
+        super(id, crsName);
         this.pos = (pos instanceof DirectPositionType) ? (DirectPositionType)pos : new DirectPositionType(pos, true);
         if (this.pos.getSrsName() == null) {
             this.pos.setSrsName(getSrsName());
@@ -194,5 +210,29 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
     @Override
     public Bearing getBearing(final Position toPoint) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (pos != null) {
+            sb.append("pos:").append(pos).append('\n');
+        }
+        if (coordinates != null) {
+            sb.append("coordinates:").append(coordinates).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object object, final ComparisonMode mode) {
+        if (object instanceof PointType) {
+            final PointType that = (PointType) object;
+
+            return Objects.equals(this.coordinates,   that.coordinates)   &&
+                   Objects.equals(this.pos, that.pos);
+        }
+        return false;
+
     }
 }

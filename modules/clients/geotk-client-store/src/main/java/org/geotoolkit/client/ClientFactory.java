@@ -30,28 +30,8 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public interface ClientFactory {
 
-    /**
-     * Name suitable for display to end user.
-     *
-     * <p>
-     * A display name for this data store type with several translations.
-     * </p>
-     *
-     * @return A short name suitable for display in a user interface. Must be an International string.
-     */
-    CharSequence getDisplayName();
+    String getShortName();
 
-    /**
-     * Describe the nature of the data source constructed by this factory.
-     *
-     * <p>
-     * A description of this data store type with several translations.
-     * </p>
-     *
-     * @return A human readable description that is suitable for inclusion in a
-     *         list of available data sources.
-     */
-    CharSequence getDescription();
 
     /**
      * @return Description of the parameters required for the creation of a {@link org.apache.sis.storage.DataStore}.
@@ -92,18 +72,5 @@ public interface ClientFactory {
      * @throws DataStoreException if parameters are incorrect or connexion failed.
      */
     DataStore open(ParameterValueGroup params) throws DataStoreException;
-
-    /**
-     * Create a new storage location.
-     * This method is intended to create from scratch a new storage location.
-     * <br/>
-     * If the purpose is to open an already existing  storage use the open method :
-     * @see DataStoreFactory#open(org.opengis.parameter.ParameterValueGroup)
-     *
-     * @param params
-     * @return FeatureStore created store
-     * @throws DataStoreException if parameters are incorrect or creation failed.
-     */
-    DataStore create(ParameterValueGroup params) throws DataStoreException;
 
 }

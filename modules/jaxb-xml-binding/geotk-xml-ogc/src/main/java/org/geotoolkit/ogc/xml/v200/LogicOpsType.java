@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.LogicOperator;
 import org.opengis.filter.Filter;
 
 
@@ -47,7 +48,7 @@ import org.opengis.filter.Filter;
     BinaryLogicOpType.class,
     UnaryLogicOpType.class
 })
-public abstract class LogicOpsType implements Filter {
+public abstract class LogicOpsType implements Filter, LogicOperator {
 
     public abstract LogicOpsType getClone();
 }

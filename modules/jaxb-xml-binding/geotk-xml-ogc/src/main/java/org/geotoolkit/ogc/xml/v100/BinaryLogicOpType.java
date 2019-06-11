@@ -24,6 +24,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.BinaryLogicOperator;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterVisitor;
 
 
 /**
@@ -52,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "BinaryLogicOpType", propOrder = {
     "comparisonOpsOrSpatialOpsOrLogicOps"
 })
-public class BinaryLogicOpType extends LogicOpsType {
+public abstract class BinaryLogicOpType extends LogicOpsType implements org.opengis.filter.BinaryLogicOperator, BinaryLogicOperator {
 
     @XmlElementRefs({
         @XmlElementRef(name = "comparisonOps", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class),
@@ -70,7 +73,7 @@ public class BinaryLogicOpType extends LogicOpsType {
       */
     public BinaryLogicOpType(final BinaryLogicOpType that) {
          if (that != null && that.comparisonOpsOrSpatialOpsOrLogicOps != null) {
-            this.comparisonOpsOrSpatialOpsOrLogicOps = new ArrayList<JAXBElement<?>>();
+            this.comparisonOpsOrSpatialOpsOrLogicOps = new ArrayList<>();
             final ObjectFactory factory = new ObjectFactory();
             for (JAXBElement<?> jb: that.comparisonOpsOrSpatialOpsOrLogicOps) {
 
@@ -147,14 +150,41 @@ public class BinaryLogicOpType extends LogicOpsType {
      */
     public List<JAXBElement<?>> getComparisonOpsOrSpatialOpsOrLogicOps() {
         if (comparisonOpsOrSpatialOpsOrLogicOps == null) {
-            comparisonOpsOrSpatialOpsOrLogicOps = new ArrayList<JAXBElement<?>>();
+            comparisonOpsOrSpatialOpsOrLogicOps = new ArrayList<>();
         }
         return this.comparisonOpsOrSpatialOpsOrLogicOps;
     }
 
     @Override
     public LogicOpsType getClone() {
-        throw new UnsupportedOperationException("Must be overrident by sub-cless");
+        throw new UnsupportedOperationException("Must be overriden by sub-cless");
     }
 
+    @Override
+    public List<Object> getFilters() {
+        List<Object> result = new ArrayList<>();
+        for (JAXBElement jb: getComparisonOpsOrSpatialOpsOrLogicOps()) {
+            result.add(jb.getValue());
+        }
+        return result;
+    }
+
+    @Override
+    public List<Filter> getChildren() {
+        List<Filter> result = new ArrayList<>();
+        for (JAXBElement jb: getComparisonOpsOrSpatialOpsOrLogicOps()) {
+            result.add((Filter)jb.getValue());
+        }
+        return result;
+    }
+
+    @Override
+    public boolean evaluate(Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object accept(FilterVisitor fv, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

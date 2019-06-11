@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -29,60 +28,55 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
-
-import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.data.FeatureStore;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
-import org.geotoolkit.data.shapefile.lock.ShpFileType;
-import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
-import org.geotoolkit.factory.FactoryRegistryException;
+import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.session.Session;
+import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
+import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
+import org.geotoolkit.data.shapefile.lock.ShpFileType;
+import org.geotoolkit.factory.FactoryRegistryException;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.identity.Identifier;
-import org.opengis.geometry.BoundingBox;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
+import org.geotoolkit.test.TestData;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import org.geotoolkit.feature.FeatureExt;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
-
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
-import org.apache.sis.referencing.CommonCRS;
-
-import org.geotoolkit.test.TestData;
-import org.opengis.util.GenericName;
-
-import org.geotoolkit.geometry.DefaultBoundingBox;
-import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
+import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.identity.Identifier;
+import org.opengis.geometry.BoundingBox;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -244,7 +238,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         IndexedShapefileFeatureStore ds2 = new IndexedShapefileFeatureStore(url.toURI(),
                 false, false, IndexType.NONE,null);
 
-        Envelope newBounds = (JTSEnvelope2D)ds.getEnvelope(QueryBuilder.all(ds2.getNames().iterator().next()));
+        Envelope newBounds = new JTSEnvelope2D(ds.getEnvelope(QueryBuilder.all(ds2.getNames().iterator().next())));
         double dx = newBounds.getWidth() / 4;
         double dy = newBounds.getHeight() / 4;
         newBounds = new Envelope(newBounds.getMinX() + dx, newBounds.getMaxX()

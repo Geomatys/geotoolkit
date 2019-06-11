@@ -33,11 +33,11 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class CachedSymbolizer<T extends Symbolizer> extends Cache<T>{
+public abstract class CachedSymbolizer<T extends Symbolizer> extends Cache<T> {
 
     private final SymbolizerRendererService<T,? extends CachedSymbolizer<T>> renderer;
 
-    public CachedSymbolizer(final T styleElement, final SymbolizerRendererService<T,? extends CachedSymbolizer<T>> renderer){
+    public CachedSymbolizer(final T styleElement, final SymbolizerRendererService<T,? extends CachedSymbolizer<T>> renderer) {
         super(styleElement);
         this.renderer =  renderer;
     }
@@ -45,7 +45,7 @@ public abstract class CachedSymbolizer<T extends Symbolizer> extends Cache<T>{
     /**
      * @return the renderer that created this cache, also the renderer which can render it.
      */
-    public SymbolizerRendererService<T,? extends CachedSymbolizer<T>> getRenderer(){
+    public SymbolizerRendererService<T,? extends CachedSymbolizer<T>> getRenderer() {
         return renderer;
     }
 
@@ -58,19 +58,6 @@ public abstract class CachedSymbolizer<T extends Symbolizer> extends Cache<T>{
      * @return max width of this symbol with the given feature
      *     can be NaN if and only if the given feature is null.
      */
-    public final float getMargin(final Object candidate, final RenderingContext2D ctx){
-        return getMargin(candidate, ctx.getUnitCoefficient(this.styleElement.getUnitOfMeasure()));
-    }
-
-    /**
-     * Get the maximum size of the symbol for the given feature.
-     * This is used to calculate the display boundingbox of a feature.
-     *
-     * @param candidate : feature to evaluate
-     * @param coeff : use to adjust symbolizer size, if in display unit value equals 1
-     * @return max width of this symbol with the given feature
-     *     can be NaN if and only if the given feature is null.
-     */
-    public abstract float getMargin(Object candidate, float coeff);
+    public abstract float getMargin(final Object candidate, final RenderingContext2D ctx);
 
 }

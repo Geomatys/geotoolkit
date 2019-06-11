@@ -102,7 +102,7 @@ public class CatalogServicesClient extends AbstractClient {
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(CSWClientFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(CSWClientFactory.NAME);
     }
 
     @Override

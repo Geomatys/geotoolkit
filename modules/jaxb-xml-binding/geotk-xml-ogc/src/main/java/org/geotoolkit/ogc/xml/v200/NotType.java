@@ -47,4 +47,10 @@ public class NotType extends UnaryLogicOpType implements Not {
      public LogicOpsType getClone() {
         return new NotType(this);
      }
+
+    @Override
+    public String getOperator() {
+        return "NOT";
+    }
+
 }

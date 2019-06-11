@@ -224,16 +224,16 @@ public class CoordinatesType implements Coordinates {
     public String toString() {
         StringBuilder s = new StringBuilder("CoordinatesType[").append('\n');
         if (value != null) {
-            s.append("value : ").append(value.toString()).append('\n');
+            s.append("value : ").append(value).append('\n');
         }
         if (decimal != null) {
-            s.append("decimal : ").append(decimal.toString()).append('\n');
+            s.append("decimal : ").append(decimal).append('\n');
         }
         if (cs != null) {
-            s.append("cs : ").append(cs.toString()).append('\n');
+            s.append("cs : ").append(cs).append('\n');
         }
         if (ts != null) {
-            s.append("ts : ").append(ts.toString()).append('\n');
+            s.append("ts : ").append(ts).append('\n');
         }
         s.append("]");
         return s.toString();

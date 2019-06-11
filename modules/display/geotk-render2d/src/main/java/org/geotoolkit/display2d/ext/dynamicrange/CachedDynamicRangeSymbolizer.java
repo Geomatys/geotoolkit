@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display2d.ext.dynamicrange;
 
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 
@@ -30,7 +31,7 @@ public class CachedDynamicRangeSymbolizer extends CachedSymbolizer<DynamicRangeS
     }
 
     @Override
-    public float getMargin(Object candidate, float coeff) {
+    public float getMargin(Object candidate, RenderingContext2D ctx) {
         return 0;
     }
 

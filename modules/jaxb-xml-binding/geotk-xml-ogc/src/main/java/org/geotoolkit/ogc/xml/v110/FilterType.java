@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.ogc.xml.XMLFilter;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
@@ -137,8 +138,10 @@ public class FilterType implements Filter, XMLFilter {
                     } else if (aid instanceof GmlObjectIdType) {
                         final GmlObjectIdType raid = (GmlObjectIdType) aid;
                         this.id.add(FACTORY.createGmlObjectId(new GmlObjectIdType(raid)));
-                    } else {
+                    } else if (aid != null) {
                         throw new IllegalArgumentException("Unexpected ID type in filter:" + aid.getClass().getName());
+                    } else {
+                        throw new NullArgumentException("ID Filter object must be specified");
                     }
                 }
             }
@@ -153,8 +156,10 @@ public class FilterType implements Filter, XMLFilter {
                 final SpatialOpsType spa = that.spatialOps.getValue().getClone();
                 this.spatialOps = createSpatialOps(spa);
             }
-        } else {
+        } else if (obj != null) {
             throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
+        } else {
+            throw new NullArgumentException("Filter object must be specified");
         }
     }
 
@@ -286,6 +291,11 @@ public class FilterType implements Filter, XMLFilter {
             return temporalOps.getValue();
         }
         return null;
+    }
+
+    @Override
+    public String getVersion() {
+        return "1.1.0";
     }
 
     @Override

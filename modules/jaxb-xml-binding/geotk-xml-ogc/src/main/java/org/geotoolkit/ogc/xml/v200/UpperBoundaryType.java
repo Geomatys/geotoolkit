@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.Boundary;
+import org.geotoolkit.ogc.xml.XMLLiteral;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
 
@@ -51,7 +53,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
 @XmlType(name = "UpperBoundaryType", propOrder = {
     "expression"
 })
-public class UpperBoundaryType implements Expression {
+public class UpperBoundaryType implements Expression, Boundary {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
@@ -106,6 +108,14 @@ public class UpperBoundaryType implements Expression {
      */
     public void setExpression(JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);
+    }
+
+    @Override
+    public XMLLiteral getLiteral() {
+        if (expression != null && expression.getValue() instanceof XMLLiteral) {
+            return (XMLLiteral)expression;
+        }
+        return null;
     }
 
     @Override

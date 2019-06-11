@@ -77,7 +77,10 @@ public class SectionsType implements Sections {
      * Build a new list of Section.
      */
     public SectionsType(final String section){
-        this.section = Arrays.asList(section);
+        this.section = new ArrayList<>();
+        if (section != null) {
+            this.section.add(section);
+        }
     }
 
     /**
@@ -87,7 +90,7 @@ public class SectionsType implements Sections {
     @Override
     public List<String> getSection() {
         if (section == null) {
-            section = new ArrayList<String>();
+            section = new ArrayList<>();
         }
         return this.section;
     }

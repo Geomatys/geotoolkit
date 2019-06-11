@@ -28,24 +28,29 @@ public class NotType extends UnaryLogicOpType implements Not {
     /**
      * An empty constructor used by JAXB
      */
-     public NotType() {
+    public NotType() {
 
-     }
+    }
 
-     /**
-      * Build a new Unary logic operator of type NOT
-      */
-     public NotType(final Object operators) {
-         super(operators);
+    /**
+     * Build a new Unary logic operator of type NOT
+     */
+    public NotType(final Object operators) {
+        super(operators);
 
-     }
+    }
 
-     public NotType(final UnaryLogicOpType that) {
-         super(that);
-     }
+    public NotType(final UnaryLogicOpType that) {
+        super(that);
+    }
 
-     @Override
-     public LogicOpsType getClone() {
+    @Override
+    public LogicOpsType getClone() {
         return new NotType(this);
-     }
+    }
+
+    @Override
+    public String getOperator() {
+        return "NOT";
+    }
 }

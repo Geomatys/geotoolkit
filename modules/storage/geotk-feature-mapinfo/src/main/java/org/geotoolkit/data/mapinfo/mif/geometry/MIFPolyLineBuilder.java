@@ -92,12 +92,12 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
                     try {
                         double[] afterT = new double[numCoord];
                         toApply.transform(linePts, 0, afterT, 0, numCoord/2);
-                        seq = new PackedCoordinateSequence.Double(afterT, 2);
+                        seq = new PackedCoordinateSequence.Double(afterT, 2, 0);
                     } catch (Exception e) {
                         throw new DataStoreException("Unable to transform geometry", e);
                     }
                 } else {
-                    seq = new PackedCoordinateSequence.Double(linePts, 2);
+                    seq = new PackedCoordinateSequence.Double(linePts, 2, 0);
                 }
                 lineTab[lineCount] = GEOMETRY_FACTORY.createLineString(seq);
             }

@@ -16,6 +16,18 @@
  */
 package org.geotoolkit.data.gml;
 
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.logging.Level;
+import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.nio.PosixDirectoryFilter;
+import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
@@ -23,20 +35,8 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.nio.PosixDirectoryFilter;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.logging.Level;
-import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 
 /**
  * FeatureStore for a folder of GML files.
@@ -71,21 +71,18 @@ public class GMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
      */
     @Override
     public GMLFeatureStoreFactory getSingleFileFactory() {
-        return DataStores.getAllFactories(GMLFeatureStoreFactory.class).iterator().next();
+        return (GMLFeatureStoreFactory) DataStores.getProviderById(GMLFeatureStoreFactory.NAME);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
+    public String getShortName() {
+        return NAME;
+    }
+
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.datastoreFolderDescription);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public CharSequence getDisplayName() {
         return Bundle.formatInternational(Bundle.Keys.datastoreFolderTitle);
     }

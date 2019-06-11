@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.csw.xml;
 
+import javax.xml.namespace.QName;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -24,7 +26,7 @@ public interface Delete {
 
     QueryConstraint getConstraint();
 
-    String getTypeName();
+    QName getTypeName();
 
     String getHandle();
 }
