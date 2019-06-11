@@ -96,7 +96,7 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client, 
 
     @Override
     public OSMTMSClientFactory getProvider() {
-        return (OSMTMSClientFactory)DataStores.getFactoryById(OSMTMSClientFactory.NAME);
+        return (OSMTMSClientFactory) DataStores.getProviderById(OSMTMSClientFactory.NAME);
     }
 
     @Override

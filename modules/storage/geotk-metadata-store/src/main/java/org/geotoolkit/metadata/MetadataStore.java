@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.xml.namespace.QName;
+import org.apache.sis.storage.DataStore;
 import org.geotoolkit.csw.xml.DomainValues;
-import org.geotoolkit.storage.DataStore;
 import org.opengis.parameter.ParameterValueGroup;
 import org.w3c.dom.Node;
 
@@ -32,7 +32,7 @@ import org.w3c.dom.Node;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class MetadataStore extends DataStore{
+public abstract class MetadataStore extends DataStore {
 
     protected ParameterValueGroup params;
 

@@ -17,6 +17,8 @@
 
 package org.geotoolkit.data.session;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
@@ -24,7 +26,6 @@ import org.apache.sis.storage.event.ChangeListener;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreContentEvent;
-import org.geotoolkit.storage.AbstractStorage;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
 import org.opengis.filter.Id;
@@ -37,10 +38,11 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractSession extends AbstractStorage implements Resource, Session, ChangeListener<ChangeEvent> {
+public abstract class AbstractSession implements Resource, Session, ChangeListener<ChangeEvent> {
 
     private final StorageListener.Weak weakListener = new StorageListener.Weak(this);
     protected final FeatureStore store;
+    protected final Set<ChangeListener> listeners = new HashSet<>();
 
     public AbstractSession(final FeatureStore store){
         ensureNonNull("feature store", store);
@@ -69,6 +71,41 @@ public abstract class AbstractSession extends AbstractStorage implements Resourc
     ////////////////////////////////////////////////////////////////////////////
     // listeners methods ///////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
+
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType){
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
+    }
+
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
+    }
+
+    /**
+     * Forward an event to all listeners.
+     * @param event , event to send to listeners.
+     */
+    protected void sendEvent(final ChangeEvent event){
+        final ChangeListener[] lst;
+        synchronized (listeners) {
+            lst = listeners.toArray(new ChangeListener[listeners.size()]);
+        }
+        for (final ChangeListener listener : lst) {
+            listener.changeOccured(event);
+        }
+    }
+
+    /**
+     * Forward given event, changing the source by this object.
+     * For implementation use only.
+     * @param event
+     */
+    public void forwardEvent(StorageEvent event){
+        sendEvent(event.copy((Resource) this));
+    }
 
     /**
      * Forward event to listeners by changing source.

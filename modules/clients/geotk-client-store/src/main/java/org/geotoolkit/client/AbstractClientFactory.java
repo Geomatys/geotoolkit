@@ -19,10 +19,10 @@ package org.geotoolkit.client;
 
 import java.net.URL;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
@@ -143,15 +143,6 @@ public abstract class AbstractClientFactory extends DataStoreFactory implements 
             .setRemarks(Bundle.formatInternational(Bundle.Keys.nioRemarks))
             .setRequired(false)
             .create(Boolean.class, Boolean.FALSE);
-
-    /**
-     * Default Implementation returns the display name.
-     * @return return display name
-     */
-    @Override
-    public CharSequence getDescription() {
-        return getDisplayName();
-    }
 
     /**
      * @see #checkIdentifier(org.opengis.parameter.ParameterValueGroup)

@@ -31,6 +31,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -40,7 +41,6 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.image.io.plugin.TiffImageWriter;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.junit.Assert;
@@ -61,7 +61,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
 
     @Test
     public void checkFactory() {
-        DataStoreFactory factory = DataStores.getFactoryById(TimedCoverageFactory.NAME);
+        DataStoreProvider factory = DataStores.getProviderById(TimedCoverageFactory.NAME);
         Assert.assertNotNull("Factory not found for name "+TimedCoverageFactory.NAME, factory);
     }
 

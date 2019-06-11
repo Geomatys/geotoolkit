@@ -20,10 +20,10 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.parameter.ParameterValueGroup;
 
 
@@ -48,7 +48,7 @@ public interface Client extends AutoCloseable {
      *
      * @return this source original factory
      */
-    DataStoreFactory getProvider();
+    DataStoreProvider getProvider();
 
     /**
      * @return the server url as an {@link URI}, or {@code null} il the uri syntax

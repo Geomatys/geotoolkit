@@ -61,7 +61,7 @@ public class SensorObservationServiceClient extends AbstractClient {
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(SOSClientFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(SOSClientFactory.NAME);
     }
 
     @Override

@@ -28,15 +28,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.coverage.Category;
-import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.storage.DataSet;
+import org.apache.sis.storage.DataStoreException;
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
@@ -90,7 +90,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
             store.close();
         }
 
-        final PGCoverageStoreFactory factory = (PGCoverageStoreFactory) DataStores.getFactoryById("pgraster");
+        final PGCoverageStoreFactory factory = (PGCoverageStoreFactory) DataStores.getProviderById("pgraster");
         try{
             store = factory.create(params);
         }catch(DataStoreException ex){

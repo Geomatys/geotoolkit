@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
@@ -41,7 +42,6 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.data.GenericNameIndex;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -83,7 +83,7 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public DataStoreFactory getProvider() {
+    public DataStoreProvider getProvider() {
         return wrapped.getProvider();
     }
 

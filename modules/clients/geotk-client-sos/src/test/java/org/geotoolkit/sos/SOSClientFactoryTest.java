@@ -17,10 +17,10 @@
 package org.geotoolkit.sos;
 
 import java.util.Iterator;
-import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.storage.DataStores;
-import org.junit.Test;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.DataStores;
 import static org.junit.Assert.fail;
+import org.junit.Test;
 
 /**
  * Server tests.
@@ -36,7 +36,7 @@ public class SOSClientFactoryTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testFactory() {
 
-        final Iterator<ClientFactory> ite = DataStores.getAllFactories(ClientFactory.class).iterator();
+        final Iterator<DataStoreProvider> ite = DataStores.providers().iterator();
         boolean found = false;
         while (ite.hasNext()){
             if(ite.next() instanceof SOSClientFactory){

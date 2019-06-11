@@ -28,7 +28,6 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.metadata.iso.DefaultMetadata;
@@ -36,14 +35,13 @@ import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataSet;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.StorageEvent;
 import org.opengis.metadata.Metadata;
@@ -105,28 +103,22 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
      * data.
      */
     @Override
-    protected Metadata createMetadata() throws DataStoreException {
+    public Metadata getMetadata() throws DataStoreException {
 
         final DefaultMetadata rootMd = new DefaultMetadata();
 
         // Queries data specific information
         final Map<GenericName, GridGeometry> geometries = new HashMap<>();
-        final List<GridCoverageResource> refs = DataStores.flatten(this,true).stream()
-                .filter(node -> node instanceof GridCoverageResource)
-                .map(node -> ((GridCoverageResource) node))
-                .collect(Collectors.toList());
+        final Collection<org.apache.sis.storage.GridCoverageResource> refs = DataStores.flatten(this,true, org.apache.sis.storage.GridCoverageResource.class);
 
-        for (final GridCoverageResource ref : refs) {
-            final GridCoverageReader reader = ref.acquireReader();
+        for (final org.apache.sis.storage.GridCoverageResource ref : refs) {
             final Metadata md;
             final GridGeometry gg;
             try {
-                md = reader.getMetadata();
+                md = ref.getMetadata();
                 gg = ref.getGridGeometry();
-                ref.recycle(reader);
             } catch (Exception e) {
                 // If something turned wrong, we definitively get rid of the reader.
-                reader.dispose();
                 throw e;
             }
 
@@ -142,9 +134,7 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
                 }
             }
         }
-
         setSpatialInfo(rootMd, geometries);
-
         return rootMd;
     }
 

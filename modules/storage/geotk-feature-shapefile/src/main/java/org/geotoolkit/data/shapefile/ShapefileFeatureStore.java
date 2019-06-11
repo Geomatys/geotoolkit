@@ -192,7 +192,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(ShapefileFeatureStoreFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(ShapefileFeatureStoreFactory.NAME);
     }
 
     @Override

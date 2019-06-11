@@ -18,15 +18,19 @@
 package org.geotoolkit.csw;
 
 import java.net.URL;
-import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.csw.xml.CSWVersion;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.csw.xml.CSWVersion;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.opengis.parameter.*;
+import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterNotFoundException;
+import org.opengis.parameter.ParameterValue;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * CSW Server factory.
@@ -35,7 +39,7 @@ import org.opengis.parameter.*;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.METADATA)
-public class CSWClientFactory extends AbstractClientFactory{
+public class CSWClientFactory extends AbstractClientFactory {
 
     /** factory identification **/
     public static final String NAME = "csw";
@@ -59,16 +63,19 @@ public class CSWClientFactory extends AbstractClientFactory{
             new ParameterBuilder().addName(NAME).addName("CSWParameters").createGroup(IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
 
     @Override
+    public String getShortName() {
+        return NAME;
+    }
+
+    @Override
     public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS;
     }
 
-    @Override
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.serverDescription);
     }
 
-    @Override
     public CharSequence getDisplayName() {
         return Bundle.formatInternational(Bundle.Keys.serverTitle);
     }

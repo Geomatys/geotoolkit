@@ -50,16 +50,19 @@ public class WMSCClientFactory extends AbstractClientFactory {
             new ParameterBuilder().addName(NAME).addName("WMSCParameters").createGroup(IDENTIFIER,URL,SECURITY,IMAGE_CACHE,NIO_QUERIES,TIMEOUT);
 
     @Override
+    public String getShortName() {
+        return NAME;
+    }
+
+    @Override
     public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS;
     }
 
-    @Override
     public CharSequence getDescription() {
         return new ClassLoaderInternationalString(WMSCClientFactory.class,"org/geotoolkit/wmsc/bundle", "serverDescription");
     }
 
-    @Override
     public CharSequence getDisplayName() {
         return new ClassLoaderInternationalString(WMSCClientFactory.class,"org/geotoolkit/wmsc/bundle", "serverTitle");
     }

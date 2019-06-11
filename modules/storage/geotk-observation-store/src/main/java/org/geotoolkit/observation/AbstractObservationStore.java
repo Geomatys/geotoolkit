@@ -17,9 +17,9 @@
 package org.geotoolkit.observation;
 
 import java.util.logging.Logger;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.DataStore;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**

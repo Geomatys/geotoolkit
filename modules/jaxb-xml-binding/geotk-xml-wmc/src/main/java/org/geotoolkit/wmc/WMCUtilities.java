@@ -29,7 +29,9 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
@@ -44,8 +46,6 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.storage.DataStore;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
@@ -165,7 +165,7 @@ public class WMCUtilities {
             try {
                 final URL serviceURL = new URL(serverType.getOnlineResource().getHref());
 
-                final DataStoreFactory factory = DataStores.getFactoryById(serviceId);
+                final DataStoreProvider factory = DataStores.getProviderById(serviceId);
                 final ParameterValueGroup parameters = factory.getOpenParameters().createValue();
                 parameters.parameter("identifier").setValue(serviceId);
                 parameters.parameter("version").setValue(serverType.getVersion());

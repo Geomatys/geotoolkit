@@ -17,13 +17,6 @@
 
 package org.geotoolkit.data.wfs;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
@@ -33,6 +26,13 @@ import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.wfs.xml.WFSVersion;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.parameter.*;
 
 /**
@@ -51,7 +51,7 @@ import org.opengis.parameter.*;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public class WFSFeatureStoreFactory extends DataStoreFactory implements ClientFactory{
+public class WFSFeatureStoreFactory extends DataStoreFactory implements ClientFactory {
 
     /** factory identification **/
     public static final String NAME = "wfs";
@@ -94,15 +94,15 @@ public class WFSFeatureStoreFactory extends DataStoreFactory implements ClientFa
                 IDENTIFIER, AbstractClientFactory.URL, VERSION, AbstractClientFactory.SECURITY,
                 LONGITUDE_FIRST,POST_REQUEST,AbstractClientFactory.TIMEOUT);
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
+    public String getShortName() {
+        return NAME;
+    }
+
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.datastoreDescription);
     }
 
-    @Override
     public CharSequence getDisplayName() {
         return Bundle.formatInternational(Bundle.Keys.datastoreTitle);
     }

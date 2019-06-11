@@ -38,7 +38,6 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.owc.xml.OwcExtension;
 import org.geotoolkit.owc.xml.v10.OfferingType;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -102,7 +101,7 @@ public class OwcDataStoreExtension extends OwcExtension {
             }
         }
 
-        final DataStoreFactory ff = DataStores.getFactoryById(factoryName);
+        final DataStoreProvider ff = DataStores.getProviderById(factoryName);
         if (ff != null) {
             final DataStore store = DataStores.open(ff,params);
             if (store instanceof FeatureStore) {
@@ -160,7 +159,7 @@ public class OwcDataStoreExtension extends OwcExtension {
             if(session!=null){
                 final FeatureStore store = session.getFeatureStore();
                 if(store!=null){
-                    final DataStoreFactory factory = store.getProvider();
+                    final DataStoreProvider factory = store.getProvider();
                     return factory.getOpenParameters().getName().getCode();
                 }
             }

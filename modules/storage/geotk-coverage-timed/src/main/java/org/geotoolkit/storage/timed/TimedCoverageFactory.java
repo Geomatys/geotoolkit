@@ -19,7 +19,6 @@ package org.geotoolkit.storage.timed;
 import java.net.URI;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
@@ -90,6 +89,10 @@ public class TimedCoverageFactory extends DataStoreFactory {
             .createGroup(IDENTIFIER, PATH, NAME_PATTERN, TIME_INDEX, TIME_FORMAT, DELAY, DEFAULT_MILLI_OF_DAY, DEFAULT_OFFSET_SECONDS);
 
     @Override
+    public String getShortName() {
+        return NAME;
+    }
+
     public CharSequence getDescription() {
         return "A coverage store which aims to harvest a directory filled with "
                 + "georeferenced image files, each one containing a date in its "
@@ -103,7 +106,7 @@ public class TimedCoverageFactory extends DataStoreFactory {
     }
 
     @Override
-    public DataStore open(ParameterValueGroup params) throws DataStoreException {
+    public TimedCoverageStore open(ParameterValueGroup params) throws DataStoreException {
         return new TimedCoverageStore(params);
     }
 

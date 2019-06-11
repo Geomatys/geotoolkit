@@ -54,6 +54,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.client.ClientFactory;
@@ -67,11 +68,9 @@ import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.parameter.ParameterValueGroup;
-import org.apache.sis.storage.GridCoverageResource;
 
 /**
  *
@@ -98,13 +97,9 @@ public class FXStoreChooser extends BorderPane {
         }
 
         private String getText(Object candidate){
-            if(candidate instanceof DataStoreFactory){
-                return ((DataStoreFactory)candidate).getDisplayName().toString();
-            }else if(candidate instanceof DataStoreProvider){
+            if (candidate instanceof DataStoreProvider) {
                 return ((DataStoreProvider)candidate).getShortName();
-            }else if(candidate instanceof ClientFactory){
-                return ((ClientFactory)candidate).getDisplayName().toString();
-            }else{
+            } else {
                 return "";
             }
         }
@@ -361,12 +356,8 @@ public class FXStoreChooser extends BorderPane {
             setText(null);
             setGraphic(null);
             if(!empty && item!=null){
-                if(item instanceof DataStoreFactory){
-                    setText(((DataStoreFactory)item).getDisplayName().toString());
-                }else if(item instanceof DataStoreProvider){
+                if (item instanceof DataStoreProvider) {
                     setText(((DataStoreProvider)item).getShortName());
-                }else if(item instanceof ClientFactory){
-                    setText(((ClientFactory)item).getDisplayName().toString());
                 }
                 setGraphic(new ImageView(findIcon(item)));
             }

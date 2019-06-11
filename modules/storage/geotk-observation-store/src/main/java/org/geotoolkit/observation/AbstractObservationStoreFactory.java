@@ -57,14 +57,6 @@ public abstract class AbstractObservationStoreFactory extends DataStoreFactory i
      * {@inheritDoc }
      */
     @Override
-    public CharSequence getDescription() {
-        return getDisplayName();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public boolean canProcess(final ParameterValueGroup params) {
         if(params == null){
             return false;

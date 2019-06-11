@@ -123,7 +123,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements ResourceOnF
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(GPXFeatureStoreFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(GPXFeatureStoreFactory.NAME);
     }
 
     public Metadata getGPXMetaData() throws DataStoreException{

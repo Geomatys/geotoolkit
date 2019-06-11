@@ -32,6 +32,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.Resource;
@@ -51,7 +52,6 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.ViewMapper;
-import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.version.Version;
@@ -117,7 +117,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     }
 
     @Override
-    protected Metadata createMetadata() throws DataStoreException {
+    public Metadata getMetadata() throws DataStoreException {
         final MetadataBuilder builder = new MetadataBuilder();
         String name = "";
         if (getProvider() != null) {

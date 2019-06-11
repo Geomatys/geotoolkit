@@ -85,7 +85,7 @@ public class OSMMemoryFeatureStore extends AbstractFeatureStore{
 
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(OSMMemoryFeatureStoreFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(OSMMemoryFeatureStoreFactory.NAME);
     }
 
     @Override

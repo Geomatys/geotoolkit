@@ -122,7 +122,7 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
 
     @Override
     public WFSFeatureStoreFactory getProvider() {
-        return (WFSFeatureStoreFactory)DataStores.getFactoryById(WFSFeatureStoreFactory.NAME);
+        return (WFSFeatureStoreFactory) DataStores.getProviderById(WFSFeatureStoreFactory.NAME);
     }
 
     @Override

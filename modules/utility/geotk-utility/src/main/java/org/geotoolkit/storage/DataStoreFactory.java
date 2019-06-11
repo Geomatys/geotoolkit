@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage;
 
-import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
@@ -31,6 +30,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValue;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Base interface for {@link org.apache.sis.storage.DataStore} factories. The aim is to get a factory with metadata which
@@ -39,6 +39,7 @@ import org.opengis.parameter.ParameterValue;
  * @author Alexis Manin (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
+@Deprecated
 public abstract class DataStoreFactory extends DataStoreProvider {
 
     /**
@@ -51,50 +52,6 @@ public abstract class DataStoreFactory extends DataStoreProvider {
             .setRemarks(Bundle.formatInternational(Bundle.Keys.paramIdentifierRemarks))
             .setRequired(true)
             .create(String.class, null);
-
-    /**
-     * Name suitable for display to end user.
-     *
-     * <p>
-     * A display name for this data store type with several translations.
-     * </p>
-     *
-     * <p>
-     * Default Implementation abuses the naming convention.
-     * Will return <code>Foo</code> for
-     * <code>org.geotoolkit.data.foo.FooFactory</code>.
-     * </p>
-     *
-     * @return A short name suitable for display in a user interface. Must be an International string.
-     */
-    public CharSequence getDisplayName() {
-        String name = this.getClass().getName();
-
-        name = name.substring(name.lastIndexOf('.')+1);
-        if (name.endsWith("Factory")) {
-            name = name.substring(0, name.length() - 7);
-        }
-        return name;
-    }
-
-    @Override
-    public String getShortName() {
-        return getDisplayName().toString();
-    }
-
-    /**
-     * Describe the nature of the data source constructed by this factory.
-     *
-     * <p>
-     * A description of this data store type with several translations.
-     * </p>
-     *
-     * @return A human readable description that is suitable for inclusion in a
-     *         list of available data sources.
-     */
-    public CharSequence getDescription() {
-        return "";
-    }
 
     /**
      * @param params
@@ -155,20 +112,6 @@ public abstract class DataStoreFactory extends DataStoreProvider {
     }
 
     /**
-     * Open a link to the storage location.
-     * This method is intended to open an existing storage.
-     * <br/>
-     * If the purpose is to create a new one storage use the create method :
-     * @see DataStoreFactory#create(org.opengis.parameter.ParameterValueGroup)
-     *
-     * @param params
-     * @return DataStore opened store
-     * @throws DataStoreException if parameters are incorrect or connexion failed.
-     */
-    @Override
-    public abstract DataStore open(ParameterValueGroup params) throws DataStoreException;
-
-    /**
      * Create a new storage location.
      * This method is intended to create from scratch a new storage location.
      * <br/>
@@ -179,7 +122,7 @@ public abstract class DataStoreFactory extends DataStoreProvider {
      * @return FeatureStore created store
      * @throws DataStoreException if parameters are incorrect or creation failed.
      */
-    public DataStore create(ParameterValueGroup params) throws DataStoreException {
+    public org.apache.sis.storage.DataStore create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Store creation not supported");
     }
 

@@ -17,15 +17,15 @@
  */
 package org.geotoolkit.wms;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.storage.StoreMetadataExt;
 
 /**
  * WMS Server factory.
@@ -58,16 +58,19 @@ public class WMSClientFactory extends AbstractClientFactory {
             new ParameterBuilder().addName(NAME).addName("WMSParameters").createGroup(IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
 
     @Override
+    public String getShortName() {
+        return NAME;
+    }
+
+    @Override
     public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS;
     }
 
-    @Override
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.coverageDescription);
     }
 
-    @Override
     public CharSequence getDisplayName() {
         return Bundle.formatInternational(Bundle.Keys.coverageTitle);
     }

@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.sos;
 
-import org.geotoolkit.client.AbstractClientFactory;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.sos.xml.SOSVersion;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.sos.xml.SOSVersion;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.*;
@@ -55,16 +55,19 @@ public class SOSClientFactory extends AbstractClientFactory{
             new ParameterBuilder().addName(NAME).addName("SOSParameters").createGroup(IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
 
     @Override
+    public String getShortName() {
+        return NAME;
+    }
+
+    @Override
     public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS;
     }
 
-    @Override
     public CharSequence getDisplayName() {
         return Bundle.formatInternational(Bundle.Keys.serverTitle);
     }
 
-    @Override
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.serverDescription);
     }

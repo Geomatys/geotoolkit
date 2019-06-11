@@ -110,7 +110,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements Resou
      */
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(DbaseFeatureStoreFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(DbaseFeatureStoreFactory.NAME);
     }
 
     @Override
