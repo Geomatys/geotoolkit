@@ -17,16 +17,20 @@
 
 package org.geotoolkit.data.gml;
 
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FileFeatureStoreFactory;
+import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.locationtech.jts.geom.Geometry;
@@ -38,12 +42,10 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.ParameterNotFoundException;
-import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * GML featurestore factory.
+ * GML data store provider.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -58,13 +60,13 @@ import org.opengis.parameter.ParameterValueGroup;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
+public class GMLProvider extends DataStoreProvider implements ProviderOnFileSystem {
 
     /** factory identification **/
     public static final String NAME = "gml";
     public static final String MIME_TYPE = "application/gml+xml";
 
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+    public static final ParameterDescriptor<URI> PATH = AbstractFileFeatureStoreFactory.PATH;
 
     /**
      * Open a folder of sparsed features
@@ -105,8 +107,8 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
             .create(Boolean.class, Boolean.TRUE);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName(NAME).addName("GMLParameters").createGroup(
-                IDENTIFIER, PATH,SPARSE,XSD,XSD_TYPE_NAME,LONGITUDE_FIRST);
+            new ParameterBuilder().addName(NAME).createGroup(
+                PATH,SPARSE,XSD,XSD_TYPE_NAME,LONGITUDE_FIRST);
 
     @Override
     public String getShortName() {
@@ -133,9 +135,8 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     @Override
     public DataStore open(final ParameterValueGroup params) throws DataStoreException {
-        ensureCanProcess(params);
         final Boolean sparse = Parameters.castOrWrap(params).getValue(SPARSE);
-        if(sparse){
+        if (sparse) {
             return new GMLSparseFeatureStore(params);
         }else{
             return new GMLFeatureStore(params);
@@ -143,32 +144,18 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     }
 
     @Override
-    public DataStore create(final ParameterValueGroup params) throws DataStoreException {
-        return open(params);
+    public DataStore open(StorageConnector connector) throws DataStoreException {
+        final URI path = connector.getStorageAs(URI.class);
+        try {
+            return new GMLFeatureStore(path);
+        } catch (MalformedURLException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        }
     }
 
     @Override
     public Collection<String> getSuffix() {
         return Arrays.asList("gml");
     }
-
-    @Override
-    public boolean canProcess(ParameterValueGroup params) {
-        Boolean sparse = null;
-        try{
-            ParameterValue<?> parameter = params.parameter(SPARSE.getName().getCode());
-            if(parameter!=null && parameter.getValue() instanceof Boolean){
-                sparse = (Boolean) parameter.getValue();
-            }
-        }catch(ParameterNotFoundException ex){
-        }
-        if(sparse != null && sparse){
-            return true;
-        }else{
-            return super.canProcess(params);
-        }
-    }
-
-
 
 }

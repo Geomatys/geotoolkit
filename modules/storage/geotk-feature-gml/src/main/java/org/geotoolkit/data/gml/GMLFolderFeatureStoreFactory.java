@@ -57,10 +57,10 @@ import org.opengis.parameter.ParameterValueGroup;
                         MultiPolygon.class})
 public class GMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFactory{
 
-    public static final String NAME = derivateName(GMLFeatureStoreFactory.NAME);
+    public static final String NAME = derivateName(GMLProvider.NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            derivateDescriptor(NAME,GMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
+            derivateDescriptor(NAME,GMLProvider.PARAMETERS_DESCRIPTOR);
 
     public GMLFolderFeatureStoreFactory(){
         super(PARAMETERS_DESCRIPTOR);
@@ -70,8 +70,8 @@ public class GMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
      * {@inheritDoc}
      */
     @Override
-    public GMLFeatureStoreFactory getSingleFileFactory() {
-        return (GMLFeatureStoreFactory) DataStores.getProviderById(GMLFeatureStoreFactory.NAME);
+    public GMLProvider getSingleFileFactory() {
+        return (GMLProvider) DataStores.getProviderById(GMLProvider.NAME);
     }
 
     @Override

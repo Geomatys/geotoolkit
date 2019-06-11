@@ -23,29 +23,37 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
-import org.geotoolkit.data.AbstractFeatureStore;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStreams;
-import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.collection.CloseableIterator;
+import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
 
@@ -54,17 +62,12 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GMLFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
+public class GMLFeatureStore extends DataStore implements FeatureSet, ResourceOnFileSystem {
 
-    static final QueryCapabilities CAPABILITIES = new DefaultQueryCapabilities(false);
-
+    private final Parameters parameters;
     private final Path file;
-    private String name;
     private FeatureType featureType;
     private Boolean longitudeFirst;
-
-    //all types
-    private final Map<GenericName, Object> cache = new HashMap<>();
 
     /**
      * @deprecated use {@link #GMLFeatureStore(Path)} or {@link #GMLFeatureStore(ParameterValueGroup)} instead
@@ -83,42 +86,39 @@ public class GMLFeatureStore extends AbstractFeatureStore implements ResourceOnF
     }
 
     public GMLFeatureStore(final ParameterValueGroup params) throws DataStoreException {
-        super(params);
+        parameters = Parameters.unmodifiable(params);
 
-        final URI uri = (URI) params.parameter(GMLFeatureStoreFactory.PATH.getName().toString()).getValue();
+        final URI uri = parameters.getMandatoryValue(GMLProvider.PATH);
         this.file = Paths.get(uri);
-
-        final String path = uri.toString();
-        final int slash = Math.max(0, path.lastIndexOf('/') + 1);
-        int dot = path.indexOf('.', slash);
-        if (dot < 0) {
-            dot = path.length();
-        }
-        this.name = path.substring(slash, dot);
-        this.longitudeFirst = (Boolean) params.parameter(GMLFeatureStoreFactory.LONGITUDE_FIRST.getName().toString()).getValue();
+        this.longitudeFirst = parameters.getValue(GMLProvider.LONGITUDE_FIRST);
     }
 
     private static ParameterValueGroup toParameters(final URI uri) throws MalformedURLException{
-        final Parameters params = Parameters.castOrWrap(GMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
-        params.getOrCreate(GMLFeatureStoreFactory.PATH).setValue(uri);
+        final Parameters params = Parameters.castOrWrap(GMLProvider.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(GMLProvider.PATH).setValue(uri);
         return params;
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
+    public GenericName getIdentifier() throws DataStoreException {
+        return getType().getName();
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(GMLFeatureStoreFactory.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(GMLProvider.NAME);
     }
 
     @Override
-    public synchronized Set<GenericName> getNames() throws DataStoreException {
+    public ParameterValueGroup getOpenParameters() {
+        return parameters;
+    }
+
+    @Override
+    public synchronized FeatureType getType() throws DataStoreException {
         if (featureType == null) {
-            final String xsd = (String) parameters.parameter(GMLFeatureStoreFactory.XSD.getName().toString()).getValue();
-            final String xsdTypeName = (String) parameters.parameter(GMLFeatureStoreFactory.XSD_TYPE_NAME.getName().toString()).getValue();
+            final String xsd = parameters.getValue(GMLProvider.XSD);
+            final String xsdTypeName = parameters.getValue(GMLProvider.XSD_TYPE_NAME);
             if (xsd != null) {
                 //read types from XSD file
                 final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
@@ -150,27 +150,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements ResourceOnF
                 }
             }
         }
-        return Collections.singleton(featureType.getName());
-    }
-
-    @Override
-    public FeatureType getFeatureType(String typeName) throws DataStoreException {
-        typeCheck(typeName);
         return featureType;
-    }
-
-    @Override
-    public List<FeatureType> getFeatureTypeHierarchy(String typeName) throws DataStoreException {
-        return super.getFeatureTypeHierarchy(typeName);
-    }
-
-    @Override
-    public QueryCapabilities getQueryCapabilities() {
-        return CAPABILITIES;
-    }
-
-    @Override
-    public void refreshMetaModel() {
     }
 
     @Override
@@ -179,13 +159,16 @@ public class GMLFeatureStore extends AbstractFeatureStore implements ResourceOnF
     }
 
     @Override
-    public FeatureReader getFeatureReader(Query query) throws DataStoreException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+    public FeatureSet subset(Query query) throws UnsupportedQueryException, DataStoreException {
+        if (query instanceof SimpleQuery) {
+            return ((SimpleQuery) query).execute(this);
+        }
+        return FeatureSet.super.subset(query);
+    }
 
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
-        typeCheck(gquery.getTypeName());
-
-        final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader(featureType);
+    @Override
+    public Stream<Feature> features(boolean parallel) throws DataStoreException {
+        final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader(getType());
         reader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
         final CloseableIterator ite;
         try {
@@ -198,8 +181,37 @@ public class GMLFeatureStore extends AbstractFeatureStore implements ResourceOnF
             //reader.dispose();
         }
 
-        final FeatureReader freader = FeatureStreams.asReader(ite,featureType);
-        return FeatureStreams.subset(freader, gquery);
+        final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize(ite, Spliterator.ORDERED);
+        final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
+        return stream.onClose(ite::close);
+    }
+
+    @Override
+    public Metadata getMetadata() throws DataStoreException {
+        final DefaultMetadata metadata = new DefaultMetadata();
+        final DefaultDataIdentification idf = new DefaultDataIdentification();
+        final DefaultCitation citation = new DefaultCitation();
+        citation.getIdentifiers().add(NamedIdentifier.castOrCopy(getIdentifier()));
+        idf.setCitation(citation);
+        metadata.setIdentificationInfo(Arrays.asList(idf));
+        return metadata;
+    }
+
+    @Override
+    public Envelope getEnvelope() throws DataStoreException {
+        return null;
+    }
+
+    @Override
+    public void close() throws DataStoreException {
+    }
+
+    @Override
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    }
+
+    @Override
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 
 }

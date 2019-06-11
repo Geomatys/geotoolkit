@@ -39,6 +39,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
@@ -62,6 +63,8 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  */
 public class GMLSparseFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
+
+    static final QueryCapabilities CAPABILITIES = new DefaultQueryCapabilities(false);
 
     private final Path file;
     private FeatureType featureType;
@@ -88,17 +91,17 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements Resou
     public GMLSparseFeatureStore(final ParameterValueGroup params) throws DataStoreException {
         super(params);
 
-        final URI uri = (URI) params.parameter(GMLFeatureStoreFactory.PATH.getName().toString()).getValue();
+        final URI uri = (URI) params.parameter(GMLProvider.PATH.getName().toString()).getValue();
         this.file = Paths.get(uri);
-        this.longitudeFirst = (Boolean) params.parameter(GMLFeatureStoreFactory.LONGITUDE_FIRST.getName().toString()).getValue();
+        this.longitudeFirst = (Boolean) params.parameter(GMLProvider.LONGITUDE_FIRST.getName().toString()).getValue();
     }
 
     private static ParameterValueGroup toParameters(final Path f,String xsd, String typeName) throws MalformedURLException{
-        final Parameters params = Parameters.castOrWrap(GMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
-        params.getOrCreate(GMLFeatureStoreFactory.PATH).setValue(f.toUri());
-        params.getOrCreate(GMLFeatureStoreFactory.SPARSE).setValue(true);
-        if(xsd!=null) params.getOrCreate(GMLFeatureStoreFactory.XSD).setValue(xsd);
-        if(typeName!=null) params.getOrCreate(GMLFeatureStoreFactory.XSD_TYPE_NAME).setValue(typeName);
+        final Parameters params = Parameters.castOrWrap(GMLProvider.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(GMLProvider.PATH).setValue(f.toUri());
+        params.getOrCreate(GMLProvider.SPARSE).setValue(true);
+        if(xsd!=null) params.getOrCreate(GMLProvider.XSD).setValue(xsd);
+        if(typeName!=null) params.getOrCreate(GMLProvider.XSD_TYPE_NAME).setValue(typeName);
         return params;
     }
 
@@ -109,14 +112,14 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements Resou
 
     @Override
     public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(GMLFeatureStoreFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(GMLProvider.NAME);
     }
 
     @Override
     public synchronized Set<GenericName> getNames() throws DataStoreException {
         if(featureType==null){
-            final String xsd = (String) parameters.parameter(GMLFeatureStoreFactory.XSD.getName().toString()).getValue();
-            final String xsdTypeName = (String) parameters.parameter(GMLFeatureStoreFactory.XSD_TYPE_NAME.getName().toString()).getValue();
+            final String xsd = (String) parameters.parameter(GMLProvider.XSD.getName().toString()).getValue();
+            final String xsdTypeName = (String) parameters.parameter(GMLProvider.XSD_TYPE_NAME.getName().toString()).getValue();
 
             if(xsd!=null){
                 //read types from XSD file
@@ -180,7 +183,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements Resou
 
     @Override
     public QueryCapabilities getQueryCapabilities() {
-        return GMLFeatureStore.CAPABILITIES;
+        return CAPABILITIES;
     }
 
     @Override

@@ -1,2 +1,2 @@
-org.geotoolkit.data.gml.GMLFeatureStoreFactory
+org.geotoolkit.data.gml.GMLProvider
 org.geotoolkit.data.gml.GMLFolderFeatureStoreFactory
