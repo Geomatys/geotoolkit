@@ -41,7 +41,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
-import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.font.FontAwesomeIcons;
@@ -216,11 +215,7 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
         if (resource instanceof FeatureSet) {
             return ICON_VECTOR;
         } else if (resource instanceof GridCoverageResource) {
-            if (store instanceof ClientFactory) {
-                return ICON_SERVICE;
-            } else {
-                return ICON_RASTER;
-            }
+            return ICON_RASTER;
         }
         return ICON_FOLDER;
     }

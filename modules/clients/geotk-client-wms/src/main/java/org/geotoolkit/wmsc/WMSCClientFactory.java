@@ -20,7 +20,7 @@ import java.net.URL;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.internal.ClassLoaderInternationalString;
 import org.geotoolkit.security.ClientSecurity;
@@ -39,7 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.COVERAGE)
-public class WMSCClientFactory extends AbstractClientFactory {
+public class WMSCClientFactory extends AbstractClientProvider {
 
     /** factory identification **/
     public static final String NAME = "wmsc";

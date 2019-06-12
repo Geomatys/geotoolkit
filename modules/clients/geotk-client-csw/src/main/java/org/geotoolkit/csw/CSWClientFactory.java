@@ -21,7 +21,7 @@ import java.net.URL;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.csw.xml.CSWVersion;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.ResourceType;
@@ -39,7 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.METADATA)
-public class CSWClientFactory extends AbstractClientFactory {
+public class CSWClientFactory extends AbstractClientProvider {
 
     /** factory identification **/
     public static final String NAME = "csw";

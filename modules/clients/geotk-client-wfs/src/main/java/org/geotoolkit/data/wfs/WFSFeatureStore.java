@@ -48,6 +48,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
@@ -69,7 +70,6 @@ import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.ows.xml.BoundingBox;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wfs.xml.FeatureTypeList;
@@ -95,7 +95,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WFSFeatureStore extends AbstractFeatureStore{
+public class WFSFeatureStore extends AbstractFeatureStore {
 
     private static final AtomicLong NS_INC = new AtomicLong();
 
@@ -214,16 +214,16 @@ public class WFSFeatureStore extends AbstractFeatureStore{
     }
 
     public boolean getUsePost(){
-        return parameters.getValue(WFSFeatureStoreFactory.POST_REQUEST);
+        return parameters.getValue(WFSProvider.POST_REQUEST);
     }
 
     public boolean getLongitudeFirst(){
-        return parameters.getValue(WFSFeatureStoreFactory.LONGITUDE_FIRST);
+        return parameters.getValue(WFSProvider.LONGITUDE_FIRST);
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(WFSFeatureStoreFactory.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(WFSProvider.NAME);
     }
 
     @Override

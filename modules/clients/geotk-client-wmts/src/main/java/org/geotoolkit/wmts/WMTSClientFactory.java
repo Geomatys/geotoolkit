@@ -18,7 +18,7 @@ package org.geotoolkit.wmts;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
@@ -32,7 +32,7 @@ import org.opengis.parameter.*;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.PYRAMID)
-public class WMTSClientFactory extends AbstractClientFactory {
+public class WMTSClientFactory extends AbstractClientProvider {
 
     public static final String NAME = "wmts";
 

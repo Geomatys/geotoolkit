@@ -57,7 +57,6 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
@@ -77,8 +76,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  */
 public class FXStoreChooser extends BorderPane {
-
-    public static final Predicate CLIENTFACTORY_ONLY = (Object t) -> t instanceof ClientFactory;
 
     static final Comparator<Object> SORTER = new Comparator<Object>() {
         @Override
@@ -105,12 +102,6 @@ public class FXStoreChooser extends BorderPane {
         }
 
         private int getPriority(Object o){
-
-            if (o instanceof ClientFactory) {
-                return 4;
-            }else if(o instanceof AbstractJDBCFeatureStoreFactory){
-                return 3;
-            }
 
             ResourceType[] types = new ResourceType[0];
             if (o instanceof DataStoreProvider) {
@@ -376,10 +367,7 @@ public class FXStoreChooser extends BorderPane {
 
     private static Image findIcon(Object candidate){
 
-
-        if (candidate instanceof ClientFactory) {
-            return ICON_SERVER;
-        }else if(candidate instanceof AbstractJDBCFeatureStoreFactory){
+        if(candidate instanceof AbstractJDBCFeatureStoreFactory){
             return ICON_DATABASE;
         }
 

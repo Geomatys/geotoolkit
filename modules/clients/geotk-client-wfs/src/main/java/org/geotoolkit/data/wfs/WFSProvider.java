@@ -17,12 +17,16 @@
 
 package org.geotoolkit.data.wfs;
 
+import java.net.URL;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.client.AbstractClientFactory;
-import static org.geotoolkit.client.AbstractClientFactory.createVersionDescriptor;
-import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.storage.DataStoreFactory;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.client.AbstractClientProvider;
+import static org.geotoolkit.client.AbstractClientProvider.createVersionDescriptor;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.wfs.xml.WFSVersion;
@@ -51,12 +55,10 @@ import org.opengis.parameter.*;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public class WFSFeatureStoreFactory extends DataStoreFactory implements ClientFactory {
+public class WFSProvider extends DataStoreProvider {
 
     /** factory identification **/
     public static final String NAME = "wfs";
-
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     /**
      * Version, Mandatory.
@@ -90,9 +92,8 @@ public class WFSFeatureStoreFactory extends DataStoreFactory implements ClientFa
             .create(Boolean.class, Boolean.FALSE);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName(NAME).addName("WFSParameters").createGroup(
-                IDENTIFIER, AbstractClientFactory.URL, VERSION, AbstractClientFactory.SECURITY,
-                LONGITUDE_FIRST,POST_REQUEST,AbstractClientFactory.TIMEOUT);
+            new ParameterBuilder().addName(NAME).createGroup(AbstractClientProvider.URL, VERSION, AbstractClientProvider.SECURITY,
+                LONGITUDE_FIRST,POST_REQUEST,AbstractClientProvider.TIMEOUT);
 
     @Override
     public String getShortName() {
@@ -117,7 +118,20 @@ public class WFSFeatureStoreFactory extends DataStoreFactory implements ClientFa
 
     @Override
     public WebFeatureClient open(ParameterValueGroup params) throws DataStoreException {
-        ensureCanProcess(params);
         return new WebFeatureClient(params);
     }
+
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        return ProbeResult.UNSUPPORTED_STORAGE;
+    }
+
+    @Override
+    public DataStore open(StorageConnector connector) throws DataStoreException {
+        final URL url = connector.getStorageAs(URL.class);
+        final Parameters parameters = Parameters.castOrWrap(PARAMETERS_DESCRIPTOR.createValue());
+        parameters.getOrCreate(AbstractClientProvider.URL).setValue(url);
+        return open(parameters);
+    }
+
 }

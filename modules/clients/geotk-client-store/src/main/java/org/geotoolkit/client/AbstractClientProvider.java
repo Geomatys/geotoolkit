@@ -34,7 +34,7 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel
  * @module
  */
-public abstract class AbstractClientFactory extends DataStoreFactory implements ClientFactory {
+public abstract class AbstractClientProvider extends DataStoreFactory {
 
     /**
      * commonly used translation for version parameters.

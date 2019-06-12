@@ -18,7 +18,7 @@ package org.geotoolkit.osmtms;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
@@ -31,7 +31,7 @@ import org.opengis.parameter.*;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.PYRAMID)
-public class OSMTMSClientFactory extends AbstractClientFactory {
+public class OSMTMSClientFactory extends AbstractClientProvider {
 
     /** factory identification **/
     public static final String NAME = "osm-tms";

@@ -30,7 +30,7 @@ import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.security.ClientSecurity;
@@ -222,7 +222,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
     }
 
     public boolean getImageCache(){
-        return parameters.getValue(AbstractClientFactory.IMAGE_CACHE);
+        return parameters.getValue(AbstractClientProvider.IMAGE_CACHE);
     }
 
     /**

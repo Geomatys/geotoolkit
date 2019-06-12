@@ -22,7 +22,7 @@ import java.util.logging.Level;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
-import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -37,8 +37,7 @@ public class MockClient extends AbstractClient{
 
     private static final ParameterValueGroup PARAM;
     static {
-        final ParameterDescriptorGroup desc = new ParameterBuilder().addName("mock").createGroup(
-                AbstractClientFactory.URL,AbstractClientFactory.SECURITY);
+        final ParameterDescriptorGroup desc = new ParameterBuilder().addName("mock").createGroup(AbstractClientProvider.URL,AbstractClientProvider.SECURITY);
         PARAM = desc.createValue();
         try {
             PARAM.parameter("url").setValue(new URL("http://test.com"));
@@ -67,7 +66,7 @@ public class MockClient extends AbstractClient{
 
     private static ParameterValueGroup appendSecurity(final ClientSecurity security){
         ParameterValueGroup param = PARAM.clone();
-        param.parameter(AbstractClientFactory.SECURITY.getName().getCode()).setValue(security);
+        param.parameter(AbstractClientProvider.SECURITY.getName().getCode()).setValue(security);
         return param;
     }
 

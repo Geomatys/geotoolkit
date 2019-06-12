@@ -19,7 +19,7 @@ package org.geotoolkit.wfs;
 import java.util.Iterator;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.DataStores;
-import org.geotoolkit.data.wfs.WFSFeatureStoreFactory;
+import org.geotoolkit.data.wfs.WFSProvider;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 
@@ -40,7 +40,7 @@ public class WFSClientFactoryTest extends org.geotoolkit.test.TestBase {
         final Iterator<DataStoreProvider> ite = DataStores.providers().iterator();
         boolean found = false;
         while (ite.hasNext()){
-            if(ite.next() instanceof WFSFeatureStoreFactory){
+            if(ite.next() instanceof WFSProvider){
                 found = true;
             }
         }
