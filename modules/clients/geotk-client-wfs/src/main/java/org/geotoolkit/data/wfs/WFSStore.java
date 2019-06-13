@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,29 +21,27 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
+import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.Query;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
-import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.client.Client;
-import org.geotoolkit.data.AbstractFeatureStore;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.data.session.Session;
 import org.geotoolkit.data.wfs.v100.GetFeature100;
 import org.geotoolkit.data.wfs.v110.Delete110;
 import org.geotoolkit.data.wfs.v110.GetFeature110;
@@ -52,39 +50,31 @@ import org.geotoolkit.data.wfs.v110.Native110;
 import org.geotoolkit.data.wfs.v110.Transaction110;
 import org.geotoolkit.data.wfs.v110.Update110;
 import org.geotoolkit.data.wfs.v200.GetFeature200;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.version.Version;
-import org.geotoolkit.version.VersionControl;
-import org.geotoolkit.version.VersioningException;
+import org.geotoolkit.wfs.xml.FeatureTypeList;
 import org.geotoolkit.wfs.xml.WFSBindingUtilities;
 import org.geotoolkit.wfs.xml.WFSCapabilities;
 import org.geotoolkit.wfs.xml.WFSVersion;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
-import org.opengis.feature.MismatchedFeatureException;
-import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.util.GenericName;
 
 /**
- * WFS server, used to aquiere capabilites and requests objects.
+ * Web Feature service DataStore.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
-public class WebFeatureClient extends AbstractFeatureStore implements Client {
+public class WFSStore extends DataStore implements Aggregate, Client {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.client");
 
-    protected final URL serverURL;
+    private final Parameters parameters;
+    private List<WFSFeatureSet> components;
 
+    protected final URL serverURL;
     private final Map<String,Object> userProperties = new HashMap<>();
     private String sessionId = null;
 
@@ -96,25 +86,9 @@ public class WebFeatureClient extends AbstractFeatureStore implements Client {
     private static final long TIMEOUT = 60000;
 
     private volatile WFSCapabilities capabilities;
-    private WFSFeatureStore store; //created when needed
 
-    @Deprecated
-    public WebFeatureClient(final URL serverURL, final String version) {
-        this(serverURL,null,version);
-    }
 
-    @Deprecated
-    public WebFeatureClient(final URL serverURL, final ClientSecurity security, final String version) {
-        this(create(WFSProvider.PARAMETERS_DESCRIPTOR, serverURL, security));
-        if(version.equals("1.1.0")){
-            parameters.getOrCreate(WFSProvider.VERSION).setValue(version);
-        }else{
-            throw new IllegalArgumentException("unknowned version : "+ version);
-        }
-        parameters.getOrCreate(WFSProvider.POST_REQUEST).setValue(false);
-    }
-
-    public WebFeatureClient(final URL serverURL, final ClientSecurity security, final WFSVersion version, final boolean usePost) {
+    public WFSStore(final URL serverURL, final ClientSecurity security, final WFSVersion version, final boolean usePost) {
         this(create(WFSProvider.PARAMETERS_DESCRIPTOR, serverURL, security));
         if(version == null){
             throw new IllegalArgumentException("unknowned version : "+ version);
@@ -123,17 +97,10 @@ public class WebFeatureClient extends AbstractFeatureStore implements Client {
         parameters.getOrCreate(WFSProvider.POST_REQUEST).setValue(usePost);
     }
 
-    /**
-     *
-     * @param params the {@link ParameterValueGroup} to use
-     * @deprecated because of the version set to {@link WFSVersion#v110}. Please explicitly set the version using
-     * {@link WebFeatureClient#WebFeatureClient(org.opengis.parameter.ParameterValueGroup, org.geotoolkit.wfs.xml.WFSVersion) }
-     */
-    @Deprecated
-    public WebFeatureClient(final ParameterValueGroup params) {
-        super(params);
-        this.serverURL = parameters.getValue(AbstractClientProvider.URL);
-        ArgumentChecks.ensureNonNull("server url", serverURL);
+
+    public WFSStore(ParameterValueGroup params) {
+        this.parameters = Parameters.unmodifiable(params);
+        this.serverURL = parameters.getMandatoryValue(AbstractClientProvider.URL);
         /*
         On ne souhaite plus forcer la version du WFS, mais la lire dans les paramètres
         Changement de comportement : Cela suppose qu'on ne le remplit plus dans les parameters si les params ne le fournissent pas. (À VALIDER)
@@ -143,13 +110,57 @@ public class WebFeatureClient extends AbstractFeatureStore implements Client {
     }
 
     @Override
-    public Parameters getOpenParameters() {
-        if(parameters != null){
-            //defensive copy
-            return parameters.clone();
-        }
-        return null;
+    public ParameterValueGroup getOpenParameters() {
+        return parameters;
     }
+
+    @Override
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(WFSProvider.NAME);
+    }
+
+    @Override
+    public Metadata getMetadata() throws DataStoreException {
+        return new DefaultMetadata();
+    }
+
+    /**
+     * @return default server logger.
+     */
+    Logger getLogger(){
+        return LOGGER;
+    }
+
+    @Override
+    public synchronized Collection<? extends Resource> components() throws DataStoreException {
+        if (components == null) {
+            components = new ArrayList<>();
+
+            final WFSCapabilities capabilities = getServiceCapabilities();
+            final FeatureTypeList lst = capabilities.getFeatureTypeList();
+
+            for (final org.geotoolkit.wfs.xml.FeatureType ftt : lst.getFeatureType()) {
+                WFSFeatureSet set = new WFSFeatureSet(this, capabilities, ftt);
+                components.add(set);
+            }
+            components = Collections.unmodifiableList(components);
+        }
+        return components;
+    }
+
+    @Override
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    }
+
+    @Override
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    }
+
+    @Override
+    public void close() throws DataStoreException {
+    }
+
+    // WFS CLIENT methods //////////////////////////////////////////////////////
 
     /**
      * {@inheritDoc}
@@ -167,7 +178,7 @@ public class WebFeatureClient extends AbstractFeatureStore implements Client {
         try {
             return serverURL.toURI();
         } catch (URISyntaxException ex) {
-            getLogger().log(Level.WARNING, ex.getLocalizedMessage(), ex);
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
         }
         return null;
     }
@@ -221,16 +232,6 @@ public class WebFeatureClient extends AbstractFeatureStore implements Client {
         return userProperties;
     }
 
-    @Override
-    public WFSProvider getProvider() {
-        return (WFSProvider) DataStores.getProviderById(WFSProvider.NAME);
-    }
-
-    @Override
-    public GenericName getIdentifier() {
-        return null;
-    }
-
     public WFSVersion getVersion(){
         return WFSVersion.fromCode(parameters.getValue(WFSProvider.VERSION));
     }
@@ -241,13 +242,6 @@ public class WebFeatureClient extends AbstractFeatureStore implements Client {
 
     public boolean getLongitudeFirst(){
         return parameters.getValue(WFSProvider.LONGITUDE_FIRST);
-    }
-
-    private synchronized FeatureStore getStore() {
-        if(store == null){
-            store = new WFSFeatureStore(this);
-        }
-        return store;
     }
 
     /**
@@ -359,14 +353,6 @@ public class WebFeatureClient extends AbstractFeatureStore implements Client {
         }
     }
 
-    /**
-     * @return default server logger.
-     */
-    @Override
-    protected Logger getLogger(){
-        return LOGGER;
-    }
-
     protected void applySessionId(final URLConnection conec) {
         if (sessionId != null) {
             conec.setRequestProperty("Cookie", sessionId);
@@ -396,114 +382,4 @@ public class WebFeatureClient extends AbstractFeatureStore implements Client {
         }
         return param;
     }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // FeatureStore methods ///////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    @Override
-    public Session createSession(boolean asynchrone, Version version) {
-        return getStore().createSession(asynchrone,version);
-    }
-
-    @Override
-    public VersionControl getVersioning(String typeName) throws VersioningException {
-        return store.getVersioning(typeName);
-    }
-
-    @Override
-    public Set<GenericName> getNames() throws DataStoreException {
-        return getStore().getNames();
-    }
-
-    @Override
-    public void createFeatureType(FeatureType featureType) throws DataStoreException {
-        getStore().createFeatureType(featureType);
-    }
-
-    @Override
-    public void updateFeatureType(FeatureType featureType) throws DataStoreException {
-        getStore().updateFeatureType(featureType);
-    }
-
-    @Override
-    public void deleteFeatureType(String typeName) throws DataStoreException {
-        getStore().deleteFeatureType(typeName);
-    }
-
-    @Override
-    public FeatureType getFeatureType(String typeName) throws DataStoreException {
-        return getStore().getFeatureType(typeName);
-    }
-
-    @Override
-    public FeatureType getFeatureType(Query query) throws DataStoreException, MismatchedFeatureException {
-        return getStore().getFeatureType(query);
-    }
-
-    @Override
-    public boolean isWritable(String typeName) throws DataStoreException {
-        return getStore().isWritable(typeName);
-    }
-
-    @Override
-    public QueryCapabilities getQueryCapabilities() {
-            return getStore().getQueryCapabilities();
-    }
-
-    @Override
-    public long getCount(Query query) throws DataStoreException {
-        return getStore().getCount(query);
-    }
-
-    @Override
-    public Envelope getEnvelope(Query query) throws DataStoreException {
-        return getStore().getEnvelope(query);
-    }
-
-    @Override
-    public List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
-        return getStore().addFeatures(groupName, newFeatures, hints);
-    }
-
-    @Override
-    public void updateFeatures(String groupName, Filter filter, Map<String, ? extends Object> values) throws DataStoreException {
-        getStore().updateFeatures(groupName, filter, values);
-    }
-
-    @Override
-    public void removeFeatures(String groupName, Filter filter) throws DataStoreException {
-        getStore().removeFeatures(groupName, filter);
-    }
-
-    @Override
-    public FeatureReader getFeatureReader(Query query) throws DataStoreException {
-        return getStore().getFeatureReader(query);
-    }
-
-    @Override
-    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        return getStore().getFeatureWriter(query);
-    }
-
-    @Override
-    public void close() throws DataStoreException {
-        getStore().close();
-    }
-
-    @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-        getStore().addListener(listener, eventType);
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
-        getStore().removeListener(listener, eventType);
-    }
-
-    @Override
-    public void refreshMetaModel() throws DataStoreException {
-        getStore().refreshMetaModel();
-    }
-
 }

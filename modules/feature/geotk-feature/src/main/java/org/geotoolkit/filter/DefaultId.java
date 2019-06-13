@@ -21,13 +21,12 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.filter.binding.Binding;
 import org.geotoolkit.filter.binding.Bindings;
-
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
-import org.apache.sis.internal.feature.AttributeConvention;
 
 /**
  * Immutable id filter.
@@ -37,7 +36,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultId implements Id,Serializable{
+public class DefaultId extends AbstractFilter implements Id,Serializable{
 
     private static final String XPATH_ID = AttributeConvention.IDENTIFIER_PROPERTY.toString();
 

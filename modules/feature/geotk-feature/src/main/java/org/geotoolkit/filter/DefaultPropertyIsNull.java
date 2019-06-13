@@ -18,11 +18,10 @@
 package org.geotoolkit.filter;
 
 import java.io.Serializable;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.expression.Expression;
-
-import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Immutable "is null" filter.
@@ -30,7 +29,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultPropertyIsNull implements PropertyIsNull,Serializable {
+public class DefaultPropertyIsNull extends AbstractFilter implements PropertyIsNull,Serializable {
 
     private final Expression exp;
 

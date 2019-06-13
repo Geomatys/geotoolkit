@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,6 @@ package org.geotoolkit.data.wfs;
 import java.net.URL;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
-import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.ProbeResult;
@@ -40,7 +39,7 @@ import org.locationtech.jts.geom.Polygon;
 import org.opengis.parameter.*;
 
 /**
- * FeatureStore factory for WFS client.
+ * DataStore provider for WFS.
  *
  * @author Johann Sorel (Geomatys)
  * @module
@@ -117,8 +116,8 @@ public class WFSProvider extends DataStoreProvider {
     }
 
     @Override
-    public WebFeatureClient open(ParameterValueGroup params) throws DataStoreException {
-        return new WebFeatureClient(params);
+    public WFSStore open(ParameterValueGroup params) throws DataStoreException {
+        return new WFSStore(params);
     }
 
     @Override
@@ -127,7 +126,7 @@ public class WFSProvider extends DataStoreProvider {
     }
 
     @Override
-    public DataStore open(StorageConnector connector) throws DataStoreException {
+    public WFSStore open(StorageConnector connector) throws DataStoreException {
         final URL url = connector.getStorageAs(URL.class);
         final Parameters parameters = Parameters.castOrWrap(PARAMETERS_DESCRIPTOR.createValue());
         parameters.getOrCreate(AbstractClientProvider.URL).setValue(url);

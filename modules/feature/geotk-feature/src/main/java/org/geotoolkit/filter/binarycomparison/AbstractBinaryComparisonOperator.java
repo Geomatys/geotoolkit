@@ -24,6 +24,7 @@ import java.util.Date;
 import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.ObjectConverters;
+import org.geotoolkit.filter.AbstractFilter;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.MatchAction;
 import org.opengis.filter.expression.Expression;
@@ -37,7 +38,7 @@ import org.opengis.filter.expression.Expression;
  * @module
  */
 public abstract class AbstractBinaryComparisonOperator<E extends Expression,F extends Expression>
-                                                implements BinaryComparisonOperator,Serializable{
+                                                extends AbstractFilter implements BinaryComparisonOperator,Serializable{
 
     protected final E left;
     protected final F right;

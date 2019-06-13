@@ -31,7 +31,7 @@ import org.opengis.filter.expression.Expression;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultPropertyIsBetween implements PropertyIsBetween,Serializable{
+public class DefaultPropertyIsBetween extends AbstractFilter implements PropertyIsBetween,Serializable{
 
     private final Expression candidate;
     private final Expression lower;
