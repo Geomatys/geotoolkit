@@ -6,12 +6,14 @@ import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.Utilities;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -22,29 +24,39 @@ import org.opengis.util.FactoryException;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
+import java.awt.image.Raster;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.IntStream;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 /**
- * TODO: Cache intermediate information, as math-transforms, etc.
- * TODO: check CRS dimension: {@link #compatibleSourceCRS(CoordinateReferenceSystem, CoordinateReferenceSystem, CoordinateReferenceSystem)}.
+ * Helps define a complete Grid geometry for resampling operation. Also provides math transform to go from
+ * {@link #target target grid} to {@link #source source grid}. Note that for conversion between pixel coordinates in
+ * coverage renderings, you should use {@link #forDefaultRendering()} or {@link #forRendering(GridExtent, GridExtent)}
+ * methods, which include shifts between {@link GridGeometry#getExtent() coverage grid extents} and
+ * {@link Raster#getBounds() rendering boundaries}.
  *
- final boolean force2D = (sourceCRS != compatibleSourceCRS);
- final GridGeometry sourceGGCopy;
- if (force2D) {
- final int xAxis = AxisDirections.indexOfColinear(sourceCRS.getCoordinateSystem(), compatibleSourceCRS.getCoordinateSystem());
- sourceGGCopy = sourceGG.reduce(xAxis, xAxis+1);
- } else sourceGGCopy = sourceGG;
+ * /!\ Not THREAD-SAFE !
+ * @implNote This object uses an internal {@link #cache} to avoid re-computing information. However, if you add methods
+ * which impacts target grid geometry, you should ALWAYS call {@link Cache#clear()} after alteration.
  */
-class OutputGridBuilder {
+final class OutputGridBuilder {
 
     @Nonnull
     final GridGeometry source;
-    @Nonnull GridGeometry target;
+    @Nonnull
+    GridGeometry target;
 
     @Nonnull
     final MathTransformFactory mtFactory;
+
+    @Nonnull
+    final Cache cache;
+
+    @Nonnull
+    final Point sourceXY;
 
     /**
      *
@@ -108,8 +120,19 @@ class OutputGridBuilder {
         }
 
         this.target = target;
+        sourceXY = findImageAxes(source);
+        cache = new Cache();
     }
 
+    /**
+     * Converts current target into given CRS, if needed. Note that we'll try to conserve original Grid To CRS, and
+     * provide CRS shift by concatenating a {@link CoordinateOperation} to it. The resulting grid geometry should
+     * therefore conserve its original grid, and its envelopes will be adapted as needed.
+     *
+     * @param targetCrs The coordindate reference system wanted for output grid.
+     * @return this builder for further modifications.
+     * @throws FactoryException
+     */
     OutputGridBuilder setTargetCrs(final CoordinateReferenceSystem targetCrs) throws FactoryException {
         if (targetCrs == null) return this;
 
@@ -117,12 +140,13 @@ class OutputGridBuilder {
         final MathTransform newG2C = concatenateGrid2Crs(target, targetCrs, inCell);
         // TODO: Should we check if the operation is inversible ? Resample will need it, but prehaps it's automatically checked when build the geom.
         target = new GridGeometry(target.getExtent(), inCell, newG2C, targetCrs);
+        cache.clear();
 
         return this;
     }
 
     Dimension getTargetImageDimension() {
-        final Point imageAxes = getImageAxis(target);
+        final Point imageAxes = cache.getOrComputeImageAxes();
         final GridExtent baseExtent = target.getExtent();
         return new Dimension(
                 Math.toIntExact(baseExtent.getSize(imageAxes.x)),
@@ -132,6 +156,10 @@ class OutputGridBuilder {
 
     /**
      * Computes the math transform from [Target Grid] to [Source Grid].
+     * /!\ Be careful ! This transform does not include translation from/to image renderings. When resampling, between
+     * rendered images, please use {@link #forDefaultRendering()} or {@link #forRendering(GridExtent, GridExtent)}
+     * instead.
+     *
      * @implNote
      * The transform will be computed using the following path:
      *
@@ -150,9 +178,12 @@ class OutputGridBuilder {
      * @throws NoninvertibleTransformException If we cannot inverse source grid transform.
      * @throws FactoryException If we cannot find a conversion between source and target CRS.
      */
-    MathTransform createBridge(PixelInCell inCell) throws NoninvertibleTransformException, FactoryException {
-        final Point sourceXY = getImageAxis(source);
-        final Point targetXY = getImageAxis(target);
+    MathTransform getOrCreateBridge2D(PixelInCell inCell) throws NoninvertibleTransformException, FactoryException {
+        return cache.getOrCreateBridge2D(inCell);
+    }
+
+    private MathTransform createBridge(PixelInCell inCell) throws NoninvertibleTransformException, FactoryException {
+        final Point targetXY = cache.getOrComputeImageAxes();
         final GridGeometry source = this.source.reduce(new int[]{sourceXY.x, sourceXY.y});
         final GridGeometry target = this.target.reduce(new int[]{targetXY.x, targetXY.y});
         final MathTransform step1 = target.getGridToCRS(inCell);
@@ -239,7 +270,7 @@ class OutputGridBuilder {
         );
     }
 
-    private static Point getImageAxis(GridGeometry sourceGG) {
+    private static Point findImageAxes(GridGeometry sourceGG) {
         if (sourceGG.isDefined(GridGeometry.EXTENT)) {
             final GridExtent extent = sourceGG.getExtent();
             final int[] dims = IntStream.range(0, sourceGG.getDimension())
@@ -265,5 +296,93 @@ class OutputGridBuilder {
 
         // TODO: Warn user
         return new Point(0, 1);
+    }
+
+    /**
+     * Create a math transform concatenating {@link #createBridge(PixelInCell) cell center bridge} with translations
+     * to take into account {@link org.apache.sis.coverage.grid.GridCoverage#render(GridExtent) grid coverage rendering}
+     * shifts.
+     *
+     * This method is a shortcut for <code>{@link #forRendering(GridExtent, GridExtent) forRendering}(source.getExtent(), target.getExent())</code>.
+     *
+     * @return A math transform which can project target default rendering (null extent) to source one.
+     * @throws FactoryException If we cannot find any valid transform between source and target CRSs.
+     * @throws NoninvertibleTransformException If we cannot invert transform between source and target CRSs.
+     */
+    MathTransform forDefaultRendering() throws FactoryException, NoninvertibleTransformException {
+        return forRendering(source.getExtent(), target.getExtent());
+    }
+
+    /**
+     * Create a math transform concatenating {@link #createBridge(PixelInCell) cell center bridge} with translations
+     * to take into account {@link org.apache.sis.coverage.grid.GridCoverage#render(GridExtent) grid coverage rendering}
+     * shifts.
+     *
+     * @implNote
+     * Creates a math transform using the following path:
+     *
+     *      Target rendering --> Target Grid --> Target CRS --> Source CRS --> Source Grid --> Source rendering
+     *
+     * @param sourceRendering The grid extent used for source coverage rendering.
+     * @param targetRendering The grid extent used for target coverage rendering.
+     * @return A math transform which can project target specified rendering to source one.
+     * @throws FactoryException If we cannot find any valid transform between source and target CRSs.
+     * @throws NoninvertibleTransformException If we cannot invert transform between source and target CRSs.
+     */
+    MathTransform forRendering(final GridExtent sourceRendering, final GridExtent targetRendering) throws FactoryException, NoninvertibleTransformException {
+        final MathTransform bridge = cache.getOrCreateBridge2D(PixelInCell.CELL_CENTER);
+        final AffineTransform2D source = new AffineTransform2D(
+                1, 0, 0, 1,
+                -sourceRendering.getLow(sourceXY.x),
+                -sourceRendering.getLow(sourceXY.y)
+        );
+        final Point targetXY = cache.getOrComputeImageAxes();
+        final AffineTransform2D target = new AffineTransform2D(
+                1, 0, 0, 1,
+                targetRendering.getLow(targetXY.x),
+                targetRendering.getLow(targetXY.y)
+        );
+
+        // Don't use factory, because there should not be any caching needs for this.
+        return MathTransforms.concatenate(target, bridge, source);
+    }
+
+    private class Cache {
+
+        private Point targetXY;
+        private final Map<PixelInCell, MathTransform> bridges = new TreeMap<>();
+
+        private void clear() {
+            targetXY = null;
+            bridges.clear();
+        }
+
+        Point getOrComputeImageAxes() {
+            if (targetXY == null) {
+                targetXY = findImageAxes(target);
+            }
+
+            return targetXY;
+        }
+
+        MathTransform getOrCreateBridge2D(final PixelInCell inCell) throws NoninvertibleTransformException, FactoryException {
+            try {
+                return bridges.computeIfAbsent(inCell, this::createBridgeBackingError);
+            } catch (BackingStoreException e) {
+                try {
+                    throw e.unwrapOrRethrow(FactoryException.class);
+                } catch (BackingStoreException still) {
+                    throw e.unwrapOrRethrow(NoninvertibleTransformException.class);
+                }
+            }
+        }
+
+        private MathTransform createBridgeBackingError(final PixelInCell inCell) {
+            try {
+                return createBridge(inCell);
+            } catch (FactoryException | NoninvertibleTransformException e) {
+                throw new BackingStoreException(e);
+            }
+        }
     }
 }

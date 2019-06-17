@@ -28,8 +28,10 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.BufferedImages;
@@ -194,7 +196,7 @@ public class ResampleProcess extends AbstractProcess {
 
         ////////////////////////////////////////////////////////////////////////////////////////
         ////                                                                                ////
-        //// =======>>  STEP 1: Extracts needed informations from the parameters   <<====== ////
+        //// =======>>  STEP 1: Extracts needed information from the parameters   <<====== ////
         ////            STEP 2: Creates the "target to source" MathTransform                ////
         ////            STEP 3: Computes the target image layout                            ////
         ////            STEP 4: Applies the transform operation ("Affine","Warp")           ////
@@ -244,7 +246,11 @@ public class ResampleProcess extends AbstractProcess {
         final OutputGridBuilder builder = new OutputGridBuilder(sourceCov.getGridGeometry(), targetGG)
                 .setTargetCrs(targetCRS);
 
-        MathTransform targetToSource = builder.createBridge(PixelInCell.CELL_CENTER);
+        /* For now, we use only one rendering to pass from source to target. However, in the future, we could split
+         * processing into many tiles, each one with its own transform layout for rendering. We could also use
+         * progressive rendering, and make rendering transform layout vary upon user request.
+         */
+        MathTransform targetToSource = builder.forDefaultRendering();
 
         ////////////////////////////////////////////////////////////////////////////////////////
         ////                                                                                ////
