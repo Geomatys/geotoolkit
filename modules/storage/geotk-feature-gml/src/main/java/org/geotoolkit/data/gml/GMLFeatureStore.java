@@ -21,12 +21,18 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.xml.bind.JAXBException;
@@ -41,11 +47,14 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
+import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
+import org.geotoolkit.internal.data.ArrayFeatureSet;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
@@ -60,7 +69,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GMLFeatureStore extends DataStore implements FeatureSet, ResourceOnFileSystem {
+public class GMLFeatureStore extends DataStore implements WritableFeatureSet, ResourceOnFileSystem {
 
     private final Parameters parameters;
     private final Path file;
@@ -79,8 +88,12 @@ public class GMLFeatureStore extends DataStore implements FeatureSet, ResourceOn
         this(f.toUri());
     }
 
+    public GMLFeatureStore(final Path f, String xsd, String typeName) throws MalformedURLException, DataStoreException{
+        this(toParameters(f.toUri(), xsd, typeName));
+    }
+
     public GMLFeatureStore(final URI uri) throws MalformedURLException, DataStoreException{
-        this(toParameters(uri));
+        this(toParameters(uri, null, null));
     }
 
     public GMLFeatureStore(final ParameterValueGroup params) throws DataStoreException {
@@ -91,9 +104,11 @@ public class GMLFeatureStore extends DataStore implements FeatureSet, ResourceOn
         this.longitudeFirst = parameters.getValue(GMLProvider.LONGITUDE_FIRST);
     }
 
-    private static ParameterValueGroup toParameters(final URI uri) throws MalformedURLException{
+    private static ParameterValueGroup toParameters(final URI uri, String xsd, String typeName) throws MalformedURLException{
         final Parameters params = Parameters.castOrWrap(GMLProvider.PARAMETERS_DESCRIPTOR.createValue());
         params.getOrCreate(GMLProvider.PATH).setValue(uri);
+        if (xsd != null) params.getOrCreate(GMLProvider.XSD).setValue(xsd);
+        if (typeName != null) params.getOrCreate(GMLProvider.XSD_TYPE_NAME).setValue(typeName);
         return params;
     }
 
@@ -156,24 +171,29 @@ public class GMLFeatureStore extends DataStore implements FeatureSet, ResourceOn
         return new Path[]{file};
     }
 
-    @Override
     public Stream<Feature> features(boolean parallel) throws DataStoreException {
-        final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader(getType());
-        reader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
-        final CloseableIterator ite;
-        try {
-            ite = reader.readAsStream(file);
-        } catch (IOException | XMLStreamException ex) {
-            reader.dispose();
-            throw new DataStoreException(ex.getMessage(),ex);
-        } finally{
-            //do not dispose, the iterator is closeable and will close the reader
-            //reader.dispose();
-        }
+        if (Files.exists(file)) {
+            final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader(getType());
+            reader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
+            final CloseableIterator ite;
+            try {
+                ite = reader.readAsStream(file);
+            } catch (IOException | XMLStreamException ex) {
+                reader.dispose();
+                throw new DataStoreException(ex.getMessage(),ex);
+            } finally{
+                //do not dispose, the iterator is closeable and will close the reader
+                //reader.dispose();
+            }
 
-        final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize(ite, Spliterator.ORDERED);
-        final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
-        return stream.onClose(ite::close);
+            final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize(ite, Spliterator.ORDERED);
+            final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
+            return stream.onClose(ite::close);
+        } else {
+            //file may not exist yet if it's a new file.
+            final Spliterator<Feature> empty = Spliterators.emptySpliterator();
+            return StreamSupport.stream(empty, false);
+        }
     }
 
     @Override
@@ -204,6 +224,50 @@ public class GMLFeatureStore extends DataStore implements FeatureSet, ResourceOn
 
     @Override
     public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    }
+
+    @Override
+    public void updateType(FeatureType newType) throws DataStoreException {
+        throw new DataStoreException("Not supported.");
+    }
+
+    @Override
+    public void add(Iterator<? extends Feature> features) throws DataStoreException {
+        if (true) throw new DataStoreException("Not supported yet.");
+
+        final Path tempFile = file.resolveSibling(file.getFileName().toString()+".update");
+
+        final FeatureType type = getType();
+
+        final JAXPStreamFeatureWriter writer = new JAXPStreamFeatureWriter(null,null,null);
+        try {
+            //concatenate existing and new feature sets
+            final List<Feature> lst = new ArrayList<>();
+            while (features.hasNext()) lst.add(features.next());
+            final FeatureSet newfs = new ArrayFeatureSet(type, lst, null);
+            //TODO concatenate previous features
+
+            writer.write(newfs, tempFile);
+
+        } catch (IOException | XMLStreamException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        } finally {
+            try {
+                writer.dispose();
+            } catch (IOException | XMLStreamException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+        }
+    }
+
+    @Override
+    public boolean removeIf(Predicate<? super Feature> filter) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
+
+    @Override
+    public void replaceIf(Predicate<? super Feature> filter, UnaryOperator<Feature> updater) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
     }
 
 }
