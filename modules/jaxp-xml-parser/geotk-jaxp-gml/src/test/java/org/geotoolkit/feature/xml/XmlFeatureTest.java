@@ -199,8 +199,8 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         String result    = IOUtilities.toString(new FileInputStream(temp));
         String expResult = IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
-        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
         DomCompare.compare(expResult, result);
     }
 
@@ -216,8 +216,8 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         String result    = IOUtilities.toString(new FileInputStream(temp));
         String expResult = IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature321.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
-        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
         org.apache.sis.test.MetadataAssert.assertXmlEquals(expResult, result,
                 "http://www.w3.org/2000/xmlns:*",
                 "http://www.w3.org/2001/XMLSchema-instance:schemaLocation"
@@ -236,8 +236,8 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         String result    = IOUtilities.toString(new FileInputStream(temp));
         String expResult = IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureWithAttribute.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
-        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
         DomCompare.compare(expResult, result);
     }
 
@@ -253,8 +253,8 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         String result    = IOUtilities.toString(new FileInputStream(temp));
         String expResult = IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureWithObjectProperty.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
-        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
         DomCompare.compare(expResult, result);
     }
 
@@ -271,8 +271,8 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         String result    = IOUtilities.toString(new FileInputStream(temp));
         String expResult = IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureEmpty.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
-        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
 
         final Expression exp = new DefaultPropertyName("/identifier/_value");
         Object v = exp.evaluate(featureEmpty);
@@ -292,8 +292,8 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         String result    = IOUtilities.toString(new FileInputStream(temp));
         String expResult = IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/FeatureWithNil.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
-        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
         DomCompare.compare(expResult, result);
     }
 
@@ -318,8 +318,8 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         String result    = IOUtilities.toString(new FileInputStream(temp));
         String expResult = IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureDom.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
-        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
         DomCompare.compare(expResult, result);
     }
 
@@ -446,8 +446,8 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         String result    = IOUtilities.toString(new FileInputStream(temp));
         String expResult = IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/ComplexFeature.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
-        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
         DomCompare.compare(expResult, result);
     }
 
