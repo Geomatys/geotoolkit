@@ -778,7 +778,7 @@ public class Utils {
             return null;
         }
         if (schemaLocation == null) return null;
-        if (isCompletePath(schemaLocation)) return schemaLocation;
+        if (isCompletePath(schemaLocation) || baseLocation == null) return schemaLocation;
 
         //compose path from base location
         if (!(baseLocation.endsWith("/") || baseLocation.endsWith("\\"))) {

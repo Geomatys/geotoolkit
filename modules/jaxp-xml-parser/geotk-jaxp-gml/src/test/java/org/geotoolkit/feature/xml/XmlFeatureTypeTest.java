@@ -17,9 +17,7 @@
 
 package org.geotoolkit.feature.xml;
 
-import org.locationtech.jts.geom.Geometry;
 import java.io.BufferedReader;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,16 +32,16 @@ import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import static org.geotoolkit.data.AbstractFeatureStore.GML_311_NAMESPACE;
-import org.geotoolkit.util.NamesExt;
+import static org.geotoolkit.feature.xml.XmlTestData.*;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.xml.DomCompare;
-
 import org.junit.*;
-
 import static org.junit.Assert.*;
-import static org.geotoolkit.feature.xml.XmlTestData.*;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
@@ -262,6 +260,39 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
 
         assertEquals(typeEmpty.getName(), readType.getName());
         checkProperties(typeEmpty.getProperties(true), readType);
+    }
+
+    @Test
+    public void testReadGroupChoice() throws JAXBException {
+        final JAXBFeatureTypeReader reader = getReader(true);
+        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/GroupChoiceMinMaxType.xsd"));
+        removeGMLBaseTypes(types);
+        assertEquals(6, types.size());
+        FeatureType dataset  = types.get(types.size()-1);
+
+        assertEquals("http://www.iho.int/S-121:dataset", dataset.getName().toString());
+
+        //check we should have 4 properties, sis:id, gml:id, and the two group choices
+        final PropertyType[] properties = dataset.getProperties(true).toArray(new PropertyType[0]);
+        assertEquals("sis:identifier", properties[0].getName().toString());
+        assertEquals("http://www.opengis.net/gml/3.2:@id", properties[1].getName().toString());
+        assertEquals("http://www.iho.int/S-121:Right", properties[2].getName().toString());
+        assertEquals("http://www.iho.int/S-121:Source", properties[3].getName().toString());
+        assertTrue(properties[2] instanceof FeatureAssociationRole);
+        assertTrue(properties[3] instanceof FeatureAssociationRole);
+        FeatureAssociationRole far1 = (FeatureAssociationRole) properties[2];
+        FeatureAssociationRole far2 = (FeatureAssociationRole) properties[3];
+        assertEquals("http://www.iho.int/S-121:information", far1.getValueType().getName().toString());
+        assertEquals("http://www.iho.int/S-121:information", far2.getValueType().getName().toString());
+        //check min max occurs
+        assertEquals(0, far1.getMinimumOccurs());
+        assertEquals(Integer.MAX_VALUE, far1.getMaximumOccurs());
+        assertEquals(0, far2.getMinimumOccurs());
+        assertEquals(Integer.MAX_VALUE, far2.getMaximumOccurs());
+
+
+
     }
 
     @Test
