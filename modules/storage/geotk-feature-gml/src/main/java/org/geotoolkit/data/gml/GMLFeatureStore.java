@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Predicate;
@@ -47,6 +48,7 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
@@ -55,6 +57,8 @@ import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.geotoolkit.internal.data.ArrayFeatureSet;
+import org.geotoolkit.internal.data.FeatureCatalogue;
+import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
@@ -69,12 +73,13 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GMLFeatureStore extends DataStore implements WritableFeatureSet, ResourceOnFileSystem {
+public class GMLFeatureStore extends DataStore implements WritableFeatureSet, ResourceOnFileSystem, FeatureCatalogue {
 
     private final Parameters parameters;
     private final Path file;
     private FeatureType featureType;
     private Boolean longitudeFirst;
+    private GenericNameIndex<FeatureType> catalog;
 
     /**
      * @deprecated use {@link #GMLFeatureStore(Path)} or {@link #GMLFeatureStore(ParameterValueGroup)} instead
@@ -132,18 +137,14 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
         if (featureType == null) {
             final String xsd = parameters.getValue(GMLProvider.XSD);
             final String xsdTypeName = parameters.getValue(GMLProvider.XSD_TYPE_NAME);
+            catalog = new GenericNameIndex();
+
             if (xsd != null) {
                 //read types from XSD file
                 final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
                 try {
-                    for (FeatureType ft : reader.read(new URL(xsd))) {
-                        if (ft.getName().tip().toString().equalsIgnoreCase(xsdTypeName)) {
-                            featureType = ft;
-                        }
-                    }
-                    if (featureType == null) {
-                        throw new DataStoreException("Type for name " + xsdTypeName + " not found in xsd.");
-                    }
+                    catalog = reader.read(new URL(xsd));
+                    featureType = catalog.get(xsdTypeName);
 
                     // schemaLocations.put(reader.getTargetNamespace(),xsd); needed?
                 } catch (MalformedURLException | JAXBException ex) {
@@ -152,9 +153,10 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
             } else {
                 final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader();
                 reader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
-                reader.setReadEmbeddedFeatureType(true);
+                reader.getProperties().put(JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE, true);
                 try {
                     FeatureReader ite = reader.readAsStream(file);
+                    catalog = reader.getFeatureTypes();
                     featureType = ite.getFeatureType();
                 } catch (IOException | XMLStreamException ex) {
                     throw new DataStoreException(ex.getMessage(), ex);
@@ -171,6 +173,19 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
         return new Path[]{file};
     }
 
+    @Override
+    public Set<GenericName> getTypeNames() throws DataStoreException {
+        getType(); //force loading catalogue
+        return catalog.getNames();
+    }
+
+    @Override
+    public FeatureType getFeatureType(String name) throws DataStoreException, IllegalNameException {
+        getType(); //force loading catalogue
+        return catalog.get(null, name);
+    }
+
+    @Override
     public Stream<Feature> features(boolean parallel) throws DataStoreException {
         if (Files.exists(file)) {
             final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader(getType());
@@ -233,7 +248,6 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
 
     @Override
     public void add(Iterator<? extends Feature> features) throws DataStoreException {
-        if (true) throw new DataStoreException("Not supported yet.");
 
         final Path tempFile = file.resolveSibling(file.getFileName().toString()+".update");
 

@@ -56,6 +56,7 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.WritableFeatureSet;
@@ -71,6 +72,7 @@ import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
+import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.storage.FeatureMapUpdate;
 import org.geotoolkit.util.NamesExt;
@@ -380,10 +382,12 @@ public class WFSFeatureSet implements WritableFeatureSet {
                 store.getLogger().log(Level.INFO, "[WFS Client] request type : {0}", request.getURL());
                 stream = request.getURL().openStream();
             }
-            final List<FeatureType> featureTypes = reader.read(stream);
-            return featureTypes.get(0);
+            final GenericNameIndex<FeatureType> featureTypes = reader.read(stream);
+            return featureTypes.get(typeName.getLocalPart());
 
         } catch (JAXBException ex) {
+            throw new IOException(ex);
+        } catch (IllegalNameException ex) {
             throw new IOException(ex);
         }
     }

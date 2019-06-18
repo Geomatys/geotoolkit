@@ -46,6 +46,7 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
+import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.PosixDirectoryFilter;
 import org.geotoolkit.storage.DataStoreFactory;
@@ -116,19 +117,12 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements Resou
             final String xsd = (String) parameters.parameter(GMLProvider.XSD.getName().toString()).getValue();
             final String xsdTypeName = (String) parameters.parameter(GMLProvider.XSD_TYPE_NAME.getName().toString()).getValue();
 
-            if(xsd!=null){
+            if (xsd != null) {
                 //read types from XSD file
                 final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
-                try{
-                    for(FeatureType ft : reader.read(new URL(xsd))){
-                        if(ft.getName().tip().toString().equalsIgnoreCase(xsdTypeName)){
-                            featureType = ft;
-                        }
-                    }
-                    if(featureType==null){
-                        throw new DataStoreException("Type for name "+xsdTypeName+" not found in xsd.");
-                    }
-
+                try {
+                    GenericNameIndex<FeatureType> catalog = reader.read(new URL(xsd));
+                    featureType = catalog.get(xsdTypeName);
                     schemaLocations.put(reader.getTargetNamespace(),xsd);
                 }catch(MalformedURLException | JAXBException ex){
                     throw new DataStoreException(ex.getMessage(),ex);

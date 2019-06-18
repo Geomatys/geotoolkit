@@ -17,13 +17,12 @@
 
 package org.geotoolkit.feature.xml.jaxp;
 
-import org.locationtech.jts.geom.Geometry;
 import java.io.File;
-import java.net.URL;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.Map.Entry;
@@ -36,42 +35,41 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
+import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
+import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
-import org.geotoolkit.data.FeatureStoreUtilities;
+import net.iharder.Base64;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.storage.IllegalNameException;
+import org.apache.sis.util.Numbers;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.MarshallerPool;
+import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.feature.xml.ExceptionReport;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBEventHandler;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
-import org.geotoolkit.internal.jaxb.LineStringPosListType;
-import org.geotoolkit.internal.jaxb.PolygonType;
-import org.apache.sis.util.ObjectConverters;
-import org.apache.sis.xml.MarshallerPool;
-import org.apache.sis.xml.Namespaces;
-import org.geotoolkit.xml.StaxStreamReader;
-
-import org.opengis.util.GenericName;
-
-import static javax.xml.stream.events.XMLEvent.*;
-import net.iharder.Base64;
-import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
-import org.opengis.util.FactoryException;
-import org.apache.sis.util.Numbers;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.xml.ExceptionReport;
+import org.geotoolkit.internal.data.GenericNameIndex;
+import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
+import org.geotoolkit.internal.jaxb.LineStringPosListType;
+import org.geotoolkit.internal.jaxb.PolygonType;
+import org.geotoolkit.xml.StaxStreamReader;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -80,6 +78,8 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
+import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 import org.w3c.dom.Document;
 
 
@@ -105,7 +105,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
      * GML namespace for this class.
      */
     private static final String GML = "http://www.opengis.net/gml";
-    protected List<FeatureType> featureTypes;
+    protected GenericNameIndex<FeatureType> featureTypes;
     private URI base = null;
     //benchmarked 07/04/2015 : reduce by 10% reading time
     private final Map<QName,GenericName> nameCache = new HashMap<QName,GenericName>(){
@@ -131,8 +131,15 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         this(Arrays.asList(featureType));
     }
 
-    public JAXPStreamFeatureReader(final List<FeatureType> featureTypes) {
-        this.featureTypes = featureTypes;
+    public JAXPStreamFeatureReader(final Collection<FeatureType> featureTypes) {
+        this.featureTypes = new GenericNameIndex<>();
+        for (FeatureType ft : featureTypes) {
+            try {
+                this.featureTypes.add(ft.getName(), ft);
+            } catch (IllegalNameException ex) {
+                throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
+            }
+        }
         this.properties.put(READ_EMBEDDED_FEATURE_TYPE, false);
     }
 
@@ -149,7 +156,21 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
      */
     @Override
     public void setFeatureType(final FeatureType featureType) {
-        this.featureTypes = Arrays.asList(featureType);
+        this.featureTypes = new GenericNameIndex<>();
+        try {
+            this.featureTypes.add(featureType.getName(), featureType);
+        } catch (IllegalNameException ex) {
+            throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * List all feature types declared.
+     * Should be called only after a reading operation started.
+     * @return list of FeatureType
+     */
+    public GenericNameIndex<FeatureType> getFeatureTypes() {
+        return featureTypes;
     }
 
     @Override
@@ -238,8 +259,8 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 if (name.tip().toString().equals("FeatureCollection")) {
                     final Object coll = readFeatureCollection(id);
                     if (coll == null) {
-                        if (featureTypes.size() == 1) {
-                            return FeatureStoreUtilities.collection(id, featureTypes.get(0));
+                        if (featureTypes.getNames().size() == 1) {
+                            return FeatureStoreUtilities.collection(id, featureTypes.getValues().iterator().next());
                         } else {
                             return FeatureStoreUtilities.collection(id, null);
                         }
@@ -250,11 +271,13 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     return extractFeatureFromTransaction();
 
                 } else {
-                    for (FeatureType ft : featureTypes) {
-                        if (ft.getName().equals(name)) {
-                            return readFeature(ft);
+                    try {
+                        FeatureType ft = featureTypes.get(name.toString());
+                        return readFeature(ft);
+                    } catch (IllegalNameException ex) {
+                        for(GenericName n : featureTypes.getNames()) {
+                            expectedFeatureType.append(n).append('\n');
                         }
-                        expectedFeatureType.append(ft.getName()).append('\n');
                     }
                 }
 
@@ -281,12 +304,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     schemaLocations.put(namespace, fturl);
                     try {
                         final URI uri = Utils.resolveURI(base, fturl);
-                        List<FeatureType> fts = (List<FeatureType>) featureTypeReader.read(uri);
-                        for (FeatureType ft : fts) {
-                            if (!featureTypes.contains(ft)) {
-                                featureTypes.add(ft);
-                            }
-                        }
+                        featureTypes = featureTypeReader.read(uri);
                     } catch (IOException | JAXBException | URISyntaxException ex) {
                         LOGGER.log(Level.WARNING, null, ex); // TODO : should we not crash here ?
                     }
@@ -344,15 +362,18 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
                     boolean find = false;
                     StringBuilder expectedFeatureType = new StringBuilder();
-                    for (FeatureType ft : featureTypes) {
-                        if (ft.getName().equals(name)) {
-                            if (collection == null) {
-                                collection = FeatureStoreUtilities.collection(id, ft);
-                            }
-                            collection.add((Feature)readFeature(ft));
-                            find = true;
+
+                    try {
+                        FeatureType ft = featureTypes.get(name.toString());
+                        if (collection == null) {
+                            collection = FeatureStoreUtilities.collection(id, ft);
                         }
-                        expectedFeatureType.append(ft.getName()).append('\n');
+                        collection.add((Feature)readFeature(ft));
+                        find = true;
+                    } catch (IllegalNameException ex) {
+                        for (GenericName n : featureTypes.getNames()) {
+                            expectedFeatureType.append(n).append('\n');
+                        }
                     }
 
                     if (!find) {
@@ -707,12 +728,14 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     }
                     boolean find = false;
                     StringBuilder expectedFeatureType = new StringBuilder();
-                    for (FeatureType ft : featureTypes) {
-                        if (ft.getName().equals(name)) {
-                            features.add((Feature)readFeature(ft));
-                            find = true;
+                    try {
+                        FeatureType ft = featureTypes.get(name.toString());
+                        find = true;
+                        features.add((Feature)readFeature(ft));
+                    } catch (IllegalNameException ex) {
+                        for (GenericName n : featureTypes.getNames()) {
+                            expectedFeatureType.append(n).append('\n');
                         }
-                        expectedFeatureType.append(ft.getName()).append('\n');
                     }
 
                     if (!find) {
@@ -843,14 +866,17 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         throw new XMLStreamException("Transaction types are not supported as stream");
 
                     } else {
-                        for (FeatureType ft : featureTypes) {
-                            if (ft.getName().equals(name)) {
-                                singleFeature = true;
-                                next = (Feature) readFeature(ft);
-                                type = next.getType();
-                                return;
+
+                        try {
+                            FeatureType ft = featureTypes.get(name.toString());
+                            singleFeature = true;
+                            next = (Feature) readFeature(ft);
+                            type = next.getType();
+                            return;
+                        } catch (IllegalNameException ex) {
+                            for (GenericName n : featureTypes.getNames()) {
+                                expectedFeatureType.append(n).append('\n');
                             }
-                            expectedFeatureType.append(ft.getName()).append('\n');
                         }
                     }
 
@@ -865,11 +891,11 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         @Override
         public FeatureType getFeatureType() {
             findNext();
-            if(type==null){
+            if (type == null) {
                 //collection is empty
-                if(!featureTypes.isEmpty()){
+                if (!featureTypes.getValues().isEmpty()) {
                     //return the first feature type in the xsd
-                    return featureTypes.get(0);
+                    return featureTypes.getValues().iterator().next();
                 }
             }
             return type;
@@ -935,14 +961,16 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
                             boolean find = false;
                             StringBuilder expectedFeatureType = new StringBuilder();
-                            for (FeatureType ft : featureTypes) {
-                                if (ft.getName().equals(name)) {
-                                    next = (Feature) readFeature(ft);
-                                    find = true;
-                                    if(type==null) type = next.getType();
-                                    return;
+                            try {
+                                FeatureType ft = featureTypes.get(name.toString());
+                                next = (Feature) readFeature(ft);
+                                find = true;
+                                if (type == null) type = next.getType();
+                                return;
+                            } catch (IllegalNameException ex) {
+                                for (GenericName n : featureTypes.getNames()) {
+                                    expectedFeatureType.append(n).append('\n');
                                 }
-                                expectedFeatureType.append(ft.getName()).append('\n');
                             }
 
                             if (!find) {
