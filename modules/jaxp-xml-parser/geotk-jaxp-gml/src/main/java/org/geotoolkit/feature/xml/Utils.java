@@ -17,16 +17,6 @@
 
 package org.geotoolkit.feature.xml;
 
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
@@ -61,23 +51,33 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.XMLEvent;
 import net.iharder.Base64;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.Features;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.xsd.xml.v2001.Import;
 import org.geotoolkit.xsd.xml.v2001.Include;
 import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
-import org.opengis.util.GenericName;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.nio.IOUtilities;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyType;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -645,7 +645,7 @@ public class Utils {
 
     public static URI resolveURI(URI base, String location) throws MalformedURLException, URISyntaxException{
         //try an url
-        if (location.startsWith("http://") || location.startsWith("https://")) {
+        if (location.startsWith("http://") || location.startsWith("https://") || location.startsWith("file:")) {
             return new URI(location);
         }
 
@@ -768,24 +768,37 @@ public class Utils {
      * @param attr
      * @return
      */
-    public static String getIncludedLocation(final String baseLocation, final Object attr) {
-        final String schemaLocation;
+    public static String getIncludedLocation(String baseLocation, final Object attr) {
+        String schemaLocation;
         if (attr instanceof Import) {
-             schemaLocation = ((Import)attr).getSchemaLocation();
-         } else if (attr instanceof Include) {
-             schemaLocation = ((Include)attr).getSchemaLocation();
-         } else {
-             return null;
-         }
-         if (schemaLocation != null  && baseLocation != null && baseLocation.startsWith("http://") && !schemaLocation.startsWith("http://")) {
-             if(schemaLocation.startsWith("./")){
-                 return baseLocation + schemaLocation.substring(2);
-             }else{
-                return baseLocation + schemaLocation;
-             }
+            schemaLocation = ((Import)attr).getSchemaLocation();
+        } else if (attr instanceof Include) {
+            schemaLocation = ((Include)attr).getSchemaLocation();
         } else {
-            return schemaLocation;
+            return null;
         }
+        if (schemaLocation == null) return null;
+        if (isCompletePath(schemaLocation)) return schemaLocation;
+
+        //compose path from base location
+        if (!(baseLocation.endsWith("/") || baseLocation.endsWith("\\"))) {
+            int idx = Integer.max(baseLocation.lastIndexOf('/'), baseLocation.lastIndexOf('\\'));
+            baseLocation = baseLocation.substring(0, idx+1);
+        }
+        if (schemaLocation.startsWith("./")) {
+            schemaLocation = schemaLocation.substring(2);
+        }
+        return baseLocation + schemaLocation;
+    }
+
+    private static boolean isCompletePath(String path) {
+        path = path.toLowerCase();
+        if ( path.startsWith("http:")
+          || path.startsWith("https:")
+          || path.startsWith("file:")) {
+            return true;
+        }
+        return false;
     }
 
     public static String getNameWithTypeSuffix(String name){

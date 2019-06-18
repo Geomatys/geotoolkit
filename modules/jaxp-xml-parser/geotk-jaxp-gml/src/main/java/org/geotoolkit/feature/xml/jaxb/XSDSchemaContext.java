@@ -68,7 +68,7 @@ import org.opengis.feature.MismatchedFeatureException;
 import org.w3c.dom.Node;
 
 /**
- * Store location and relations in sxd schemas.
+ * Store location and relations in xsd schemas.
  *
  * @author Johann Sorel (Geomatys)
  */
