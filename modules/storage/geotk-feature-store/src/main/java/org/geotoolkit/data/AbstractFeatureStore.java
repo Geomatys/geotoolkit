@@ -130,7 +130,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
                 if (!(r instanceof FeatureSet)) continue;
                 final FeatureSet fs = (FeatureSet) r;
                 final FeatureType type = fs.getType();
-                builder.addFeatureType(type, null);
+                builder.addFeatureType(type, -1);
                 final CoordinateReferenceSystem crs = FeatureExt.getCRS(type);
                 if (crs!=null) builder.addReferenceSystem(crs);
             }
