@@ -144,12 +144,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!--GPX -->
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-feature-gpx</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-feature-csv</artifactId>
