@@ -48,7 +48,6 @@ import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
-import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -59,17 +58,13 @@ import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.storage.Query;
 import org.apache.sis.storage.StorageConnector;
-import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreManagementEvent;
-import org.geotoolkit.data.query.QueryFeatureSet;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
@@ -314,16 +309,6 @@ public class CSVStore extends DataStore implements WritableFeatureSet, ResourceO
     @Override
     public Path[] getComponentFiles() throws DataStoreException {
         return new Path[] { this.file };
-    }
-
-    @Override
-    public FeatureSet subset(Query query) throws UnsupportedQueryException, DataStoreException {
-        if (query instanceof SimpleQuery) {
-            return ((SimpleQuery) query).execute(this);
-        } else if (query instanceof org.geotoolkit.data.query.Query) {
-            return QueryFeatureSet.apply(this, (org.geotoolkit.data.query.Query) query);
-        }
-        return WritableFeatureSet.super.subset(query);
     }
 
     @Override

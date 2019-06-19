@@ -19,13 +19,8 @@ package org.geotoolkit.storage.coverage;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.storage.Query;
-import org.apache.sis.storage.UnsupportedQueryException;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.geometry.GeometricUtilities;
@@ -96,21 +91,5 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
         }
         feature.setProperty(CoverageFeature.coverageRecords(gcr, role));
         return Stream.of(feature);
-    }
-
-    @Override
-    public FeatureSet subset(Query query) throws UnsupportedQueryException, DataStoreException {
-        if (query instanceof SimpleQuery) {
-            return ((SimpleQuery) query).execute(this);
-        }
-        return FeatureSet.super.subset(query);
-    }
-
-    @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> cl, Class<T> type) {
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> cl, Class<T> type) {
     }
 }

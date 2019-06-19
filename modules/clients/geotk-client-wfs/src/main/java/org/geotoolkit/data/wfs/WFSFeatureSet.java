@@ -46,7 +46,6 @@ import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -56,7 +55,6 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.WritableFeatureSet;
@@ -218,14 +216,6 @@ public class WFSFeatureSet implements WritableFeatureSet {
         idf.setCitation(citation);
         metadata.setIdentificationInfo(Arrays.asList(idf));
         return metadata;
-    }
-
-    @Override
-    public FeatureSet subset(Query query) throws UnsupportedQueryException, DataStoreException {
-        if (query instanceof SimpleQuery) {
-            return ((SimpleQuery) query).execute(this);
-        }
-        return WritableFeatureSet.super.subset(query);
     }
 
     @Override

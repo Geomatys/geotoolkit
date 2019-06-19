@@ -31,7 +31,6 @@ import java.util.stream.StreamSupport;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
-import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -41,8 +40,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.storage.Query;
-import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.data.FeatureReader;
@@ -156,14 +153,6 @@ public class GMLFeatureStore extends DataStore implements FeatureSet, ResourceOn
     @Override
     public Path[] getComponentFiles() throws DataStoreException {
         return new Path[]{file};
-    }
-
-    @Override
-    public FeatureSet subset(Query query) throws UnsupportedQueryException, DataStoreException {
-        if (query instanceof SimpleQuery) {
-            return ((SimpleQuery) query).execute(this);
-        }
-        return FeatureSet.super.subset(query);
     }
 
     @Override

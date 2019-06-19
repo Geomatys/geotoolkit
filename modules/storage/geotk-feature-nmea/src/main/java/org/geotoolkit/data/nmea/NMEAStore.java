@@ -29,19 +29,15 @@ import java.util.stream.StreamSupport;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
-import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.storage.Query;
 import org.apache.sis.storage.StorageConnector;
-import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
-import org.geotoolkit.data.query.QueryFeatureSet;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
@@ -122,16 +118,6 @@ public class NMEAStore extends DataStore implements FeatureSet, ResourceOnFileSy
     @Override
     public FeatureType getType() throws DataStoreException {
         return NMEA_TYPE;
-    }
-
-    @Override
-    public FeatureSet subset(Query query) throws UnsupportedQueryException, DataStoreException {
-        if (query instanceof SimpleQuery) {
-            return ((SimpleQuery) query).execute(this);
-        } else if (query instanceof org.geotoolkit.data.query.Query) {
-            return QueryFeatureSet.apply(this, (org.geotoolkit.data.query.Query) query);
-        }
-        return FeatureSet.super.subset(query);
     }
 
     @Override

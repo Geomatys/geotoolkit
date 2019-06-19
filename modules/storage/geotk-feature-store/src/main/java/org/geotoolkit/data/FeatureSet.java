@@ -17,7 +17,6 @@
 package org.geotoolkit.data;
 
 import java.util.Collections;
-import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -60,10 +59,8 @@ public interface FeatureSet extends Resource, org.apache.sis.storage.FeatureSet 
     default org.apache.sis.storage.FeatureSet subset(org.apache.sis.storage.Query query) throws UnsupportedQueryException, DataStoreException {
         if (query instanceof Query) {
             return subset((Query)query);
-        } else if (query instanceof SimpleQuery) {
-            return ((SimpleQuery) query).execute(this);
         } else {
-            throw new UnsupportedQueryException("Unsupported query type "+query);
+            return org.apache.sis.storage.FeatureSet.super.subset(query);
         }
     }
 
