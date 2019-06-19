@@ -93,12 +93,12 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
         this(f.toUri());
     }
 
-    public GMLFeatureStore(final Path f, String xsd, String typeName) throws MalformedURLException, DataStoreException{
-        this(toParameters(f.toUri(), xsd, typeName));
+    public GMLFeatureStore(final Path f, String xsd, String typeName, Boolean longitudeFirst) throws MalformedURLException, DataStoreException{
+        this(toParameters(f.toUri(), xsd, typeName, longitudeFirst));
     }
 
     public GMLFeatureStore(final URI uri) throws MalformedURLException, DataStoreException{
-        this(toParameters(uri, null, null));
+        this(toParameters(uri, null, null, null));
     }
 
     public GMLFeatureStore(final ParameterValueGroup params) throws DataStoreException {
@@ -109,11 +109,12 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
         this.longitudeFirst = parameters.getValue(GMLProvider.LONGITUDE_FIRST);
     }
 
-    private static ParameterValueGroup toParameters(final URI uri, String xsd, String typeName) throws MalformedURLException{
+    private static ParameterValueGroup toParameters(final URI uri, String xsd, String typeName, Boolean longitudeFirst) throws MalformedURLException{
         final Parameters params = Parameters.castOrWrap(GMLProvider.PARAMETERS_DESCRIPTOR.createValue());
         params.getOrCreate(GMLProvider.PATH).setValue(uri);
         if (xsd != null) params.getOrCreate(GMLProvider.XSD).setValue(xsd);
         if (typeName != null) params.getOrCreate(GMLProvider.XSD_TYPE_NAME).setValue(typeName);
+        if (longitudeFirst != null) params.getOrCreate(GMLProvider.LONGITUDE_FIRST).setValue(longitudeFirst);
         return params;
     }
 
@@ -253,7 +254,8 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
 
         final FeatureType type = getType();
 
-        final JAXPStreamFeatureWriter writer = new JAXPStreamFeatureWriter(null,null,null);
+        final JAXPStreamFeatureWriter writer = new JAXPStreamFeatureWriter("3.2.1", "1.0.0", null);
+        writer.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
         try {
             //concatenate existing and new feature sets
             final List<Feature> lst = new ArrayList<>();

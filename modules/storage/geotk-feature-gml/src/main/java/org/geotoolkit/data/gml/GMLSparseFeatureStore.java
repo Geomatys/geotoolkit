@@ -26,35 +26,45 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
-import org.geotoolkit.data.AbstractFeatureStore;
+import org.apache.sis.storage.WritableFeatureSet;
+import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureStreams;
-import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
+import org.geotoolkit.internal.data.FeatureCatalogue;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.PosixDirectoryFilter;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
 
@@ -63,17 +73,16 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GMLSparseFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
+public class GMLSparseFeatureStore extends DataStore implements WritableFeatureSet, ResourceOnFileSystem, FeatureCatalogue {
 
-    static final QueryCapabilities CAPABILITIES = new DefaultQueryCapabilities(false);
-
+    private final Parameters parameters;
     private final Path file;
+    private GenericNameIndex<FeatureType> catalog;
+
     private FeatureType featureType;
     private final Map<String,String> schemaLocations = new HashMap<>();
     private String gmlVersion = "3.2.1";
 
-    //all types
-    private final Map<GenericName, Object> cache = new HashMap<>();
     private Boolean longitudeFirst;
 
     public GMLSparseFeatureStore(final File f) throws MalformedURLException, DataStoreException{
@@ -90,7 +99,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements Resou
     }
 
     public GMLSparseFeatureStore(final ParameterValueGroup params) throws DataStoreException {
-        super(params);
+        parameters = Parameters.unmodifiable(params);
 
         final URI uri = (URI) params.parameter(GMLProvider.PATH.getName().toString()).getValue();
         this.file = Paths.get(uri);
@@ -101,37 +110,64 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements Resou
         final Parameters params = Parameters.castOrWrap(GMLProvider.PARAMETERS_DESCRIPTOR.createValue());
         params.getOrCreate(GMLProvider.PATH).setValue(f.toUri());
         params.getOrCreate(GMLProvider.SPARSE).setValue(true);
-        if(xsd!=null) params.getOrCreate(GMLProvider.XSD).setValue(xsd);
-        if(typeName!=null) params.getOrCreate(GMLProvider.XSD_TYPE_NAME).setValue(typeName);
+        if (xsd != null) params.getOrCreate(GMLProvider.XSD).setValue(xsd);
+        if (typeName != null) params.getOrCreate(GMLProvider.XSD_TYPE_NAME).setValue(typeName);
         return params;
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(GMLProvider.NAME);
+    public Optional<GenericName> getIdentifier() {
+        return Optional.empty();
     }
 
     @Override
-    public synchronized Set<GenericName> getNames() throws DataStoreException {
-        if(featureType==null){
-            final String xsd = (String) parameters.parameter(GMLProvider.XSD.getName().toString()).getValue();
-            final String xsdTypeName = (String) parameters.parameter(GMLProvider.XSD_TYPE_NAME.getName().toString()).getValue();
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(GMLProvider.NAME);
+    }
+
+    @Override
+    public ParameterValueGroup getOpenParameters() {
+        return parameters;
+    }
+
+    @Override
+    public Metadata getMetadata() throws DataStoreException {
+        final DefaultMetadata metadata = new DefaultMetadata();
+        final DefaultDataIdentification idf = new DefaultDataIdentification();
+        final DefaultCitation citation = new DefaultCitation();
+        getIdentifier()
+                .map(NamedIdentifier::castOrCopy)
+                .ifPresent(citation.getIdentifiers()::add);
+        idf.setCitation(citation);
+        metadata.setIdentificationInfo(Arrays.asList(idf));
+        return metadata;
+    }
+
+    @Override
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.empty();
+    }
+
+    @Override
+    public synchronized FeatureType getType() throws DataStoreException {
+        if (featureType == null) {
+            final String xsd = parameters.getValue(GMLProvider.XSD);
+            final String xsdTypeName = parameters.getValue(GMLProvider.XSD_TYPE_NAME);
+            catalog = new GenericNameIndex();
 
             if (xsd != null) {
                 //read types from XSD file
                 final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
                 try {
-                    GenericNameIndex<FeatureType> catalog = reader.read(new URL(xsd));
+                    catalog = reader.read(new URL(xsd));
                     featureType = catalog.get(xsdTypeName);
-                    schemaLocations.put(reader.getTargetNamespace(),xsd);
-                }catch(MalformedURLException | JAXBException ex){
-                    throw new DataStoreException(ex.getMessage(),ex);
+                } catch (MalformedURLException | JAXBException ex) {
+                    throw new DataStoreException(ex.getMessage(), ex);
                 }
-            }else{
-                //read type in the first gml file
+            } else {
                 final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader();
                 reader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
-                reader.setReadEmbeddedFeatureType(true);
+                reader.getProperties().put(JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE, true);
                 try {
                     if (Files.isDirectory(file)) {
                         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(file, new PosixDirectoryFilter("*.gml", true))) {
@@ -139,16 +175,17 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements Resou
                             // get first gml file only
                             if (gmlPaths.hasNext()) {
                                 final Path gmlPath = gmlPaths.next();
-                                FeatureReader ite = reader.readAsStream(gmlPath);
+                                FeatureReader ite = reader.readAsStream(file);
+                                catalog = reader.getFeatureTypes();
                                 featureType = ite.getFeatureType();
-                                schemaLocations.putAll(reader.getSchemaLocations());
                             }
                         }
                     } else {
                         FeatureReader ite = reader.readAsStream(file);
+                        catalog = reader.getFeatureTypes();
                         featureType = ite.getFeatureType();
-                        schemaLocations.putAll(reader.getSchemaLocations());
                     }
+
                 } catch (IOException | XMLStreamException ex) {
                     throw new DataStoreException(ex.getMessage(), ex);
                 } finally {
@@ -156,27 +193,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements Resou
                 }
             }
         }
-        return Collections.singleton(featureType.getName());
-    }
-
-    @Override
-    public FeatureType getFeatureType(String typeName) throws DataStoreException {
-        typeCheck(typeName);
         return featureType;
-    }
-
-    @Override
-    public List<FeatureType> getFeatureTypeHierarchy(String typeName) throws DataStoreException {
-        return super.getFeatureTypeHierarchy(typeName);
-    }
-
-    @Override
-    public QueryCapabilities getQueryCapabilities() {
-        return CAPABILITIES;
-    }
-
-    @Override
-    public void refreshMetaModel() {
     }
 
     @Override
@@ -185,47 +202,108 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements Resou
     }
 
     @Override
-    public boolean isWritable(String typeName) throws DataStoreException {
-        typeCheck(typeName);
-        return true;
+    public Set<GenericName> getTypeNames() throws DataStoreException {
+        getType(); //force loading catalogue
+        return catalog.getNames();
     }
 
     @Override
-    public FeatureReader getFeatureReader(Query query) throws DataStoreException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+    public FeatureType getFeatureType(String name) throws DataStoreException, IllegalNameException {
+        getType(); //force loading catalogue
+        return catalog.get(null, name);
+    }
 
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
-        typeCheck(gquery.getTypeName());
+    @Override
+    public FeatureSet subset(Query query) throws UnsupportedQueryException, DataStoreException {
+        if (query instanceof SimpleQuery) {
+            return ((SimpleQuery) query).execute(this);
+        }
+        return WritableFeatureSet.super.subset(query);
+    }
+
+    @Override
+    public Stream<Feature> features(boolean parallel) throws DataStoreException {
         final ReadIterator ite = new ReadIterator(featureType, file);
-        return FeatureStreams.subset(ite, gquery);
+        final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize(ite, Spliterator.ORDERED);
+        final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
+        return stream.onClose(ite::close);
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+    public void add(Iterator<? extends Feature> features) throws DataStoreException {
 
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
-        typeCheck(gquery.getTypeName());
-        final WriterIterator ite = new WriterIterator(featureType, file);
-        return FeatureStreams.filter((FeatureWriter)ite, gquery.getFilter());
+        while (features.hasNext()) {
+            final Feature feature = features.next();
+            final Path currentFile = file.resolve(FeatureExt.getId(feature).getID()+".gml");
+
+            //write feature
+            final JAXPStreamFeatureWriter writer = new JAXPStreamFeatureWriter(gmlVersion,"2.0.0",schemaLocations);
+            try {
+                writer.write(feature, currentFile);
+            } catch (IOException | XMLStreamException | DataStoreException ex) {
+                throw new FeatureStoreRuntimeException(ex.getMessage(),ex);
+            } finally {
+                try {
+                    writer.dispose();
+                } catch (IOException | XMLStreamException ex) {
+                    throw new FeatureStoreRuntimeException(ex.getMessage(),ex);
+                }
+            }
+        }
     }
 
     @Override
-    public List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
-        return handleAddWithFeatureWriter(groupName, newFeatures, hints);
+    public boolean removeIf(Predicate<? super Feature> filter) throws DataStoreException {
+        boolean changed = false;
+        try (WriterIterator writer = new WriterIterator(featureType, file)) {
+            while (writer.hasNext()) {
+                final Feature f = writer.next();
+                if (filter.test(f)) {
+                    changed = true;
+                    writer.remove();
+                }
+            }
+        } catch (FeatureStoreRuntimeException ex) {
+            throw new DataStoreException(ex);
+        }
+        return changed;
     }
 
     @Override
-    public void updateFeatures(String groupName, Filter filter, Map<String, ? extends Object> values) throws DataStoreException {
-        handleUpdateWithFeatureWriter(groupName, filter, values);
+    public void replaceIf(Predicate<? super Feature> filter, UnaryOperator<Feature> updater) throws DataStoreException {
+
+        try (WriterIterator writer = new WriterIterator(featureType, file)) {
+            while (writer.hasNext()) {
+                final Feature f = writer.next();
+                if (filter.test(f)) {
+                    Feature nw = updater.apply(f);
+                    FeatureExt.copy(nw, f, false);
+                    writer.write();
+                }
+            }
+        } catch (FeatureStoreRuntimeException ex) {
+            throw new DataStoreException(ex);
+        }
     }
 
     @Override
-    public void removeFeatures(String groupName, Filter filter) throws DataStoreException {
-        handleRemoveWithFeatureWriter(groupName, filter);
+    public void updateType(FeatureType newType) throws DataStoreException {
+        throw new DataStoreException("Not supported.");
     }
 
-    private class ReadIterator implements FeatureReader{
+    @Override
+    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    }
+
+    @Override
+    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    }
+
+    @Override
+    public void close() throws DataStoreException {
+    }
+
+    private class ReadIterator implements Iterator<Feature>, AutoCloseable {
 
         protected final FeatureType type;
         protected final JAXPStreamFeatureReader xmlReader;
@@ -259,11 +337,6 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements Resou
         }
 
         @Override
-        public FeatureType getFeatureType() {
-            return type;
-        }
-
-        @Override
         public Feature next() throws FeatureStoreRuntimeException {
             try {
                 findNext();
@@ -278,11 +351,6 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements Resou
             currentFile = files.get(index);
             nextFeature = null;
             return currentFeature;
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException("No supported yet");
         }
 
         @Override
@@ -325,11 +393,8 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements Resou
 
     }
 
-    private class WriterIterator extends ReadIterator implements FeatureWriter{
-        /**
-         * @deprecated
-         */
-        @Deprecated
+    private class WriterIterator extends ReadIterator {
+
         public WriterIterator(FeatureType type, File folder) throws DataStoreException {
             super(type, folder.toPath());
         }
@@ -363,7 +428,6 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements Resou
             }
         }
 
-        @Override
         public void write() throws FeatureStoreRuntimeException {
             if(currentFeature==null){
                 throw new IllegalStateException("No current feature to write.");
