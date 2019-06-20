@@ -43,7 +43,7 @@ import org.opengis.util.GenericName;
  * @version 1.0
  * @since   1.0
  */
-public class LandsatCoverageResource extends AbstractCoverageResource implements ResourceOnFileSystem {
+final class LandsatCoverageResource extends AbstractCoverageResource implements ResourceOnFileSystem {
 
     /**
      * {@link Path} of the parent directory which contain all
@@ -104,7 +104,6 @@ public class LandsatCoverageResource extends AbstractCoverageResource implements
      * {@inheritDoc }
      *
      * @return always return false, no Landsat 8 writer.
-     * @throws DataStoreException
      */
     @Override
     public boolean isWritable() throws DataStoreException {
@@ -125,9 +124,6 @@ public class LandsatCoverageResource extends AbstractCoverageResource implements
      *
      * Throw an exception.<br>
      * Landsat 8 writer does not supported.
-     *
-     * @return
-     * @throws CoverageStoreException
      */
     @Override
     public GridCoverageWriter acquireWriter() throws CoverageStoreException {
@@ -136,8 +132,6 @@ public class LandsatCoverageResource extends AbstractCoverageResource implements
 
     /**
      * {@inheritDoc }
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
      */
     @Override
     public Image getLegend() throws DataStoreException {

@@ -63,8 +63,7 @@ import org.opengis.util.NoSuchIdentifierException;
  * @version 1.0
  * @since   1.0
  */
-public class LandsatReader extends GeoReferencedGridCoverageReader {
-
+final class LandsatReader extends GeoReferencedGridCoverageReader {
     /**
      * TiffImageReader SPI used to read images
      */
@@ -135,27 +134,12 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
         }
     }
 
-    /**
-     * {@inheritDoc }
-     *
-     * @return
-     * @throws CoverageStoreException
-     * @throws CancellationException
-     */
     @Override
     public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
         final String sceneName  = metaParse.getValue(false, SCENE_ID);
         return group.createName(sceneName);
     }
 
-    /**
-     * {@inheritDoc }
-     *
-     * @param index 0
-     * @return
-     * @throws CoverageStoreException
-     * @throws CancellationException
-     */
     @Override
     public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
 
@@ -163,9 +147,9 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
         final MathTransform gridToCRS;
         final CoordinateReferenceSystem crs;
         try {
-            gridExtent        = metaParse.getGridExtent(group);
-            gridToCRS         = metaParse.getGridToCRS(group);
-            crs               = metaParse.getCRS();
+            gridExtent = metaParse.getGridExtent(group);
+            gridToCRS  = metaParse.getGridToCRS(group);
+            crs        = metaParse.getCRS();
         } catch (Exception ex) {
             throw new CoverageStoreException(ex);
         }
@@ -177,18 +161,13 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
      *
      * @param index 0, 1 or 2 for respectively ({@link LandsatConstants#REFLECTIVE_LABEL},
      * {@link LandsatConstants#PANCHROMATIC_LABEL}, {@link LandsatConstants#THERMAL_LABEL}).
-     * @return
-     * @throws CoverageStoreException
-     * @throws CancellationException
      */
     @Override
     public List<SampleDimension> getSampleDimensions() throws DataStoreException, CancellationException {
-
-        if (gsdLandsat != null)
+        if (gsdLandsat != null) {
             return gsdLandsat;
-
+        }
         final int[] bandId = group.bands;
-
         final List<SampleDimension> gList = new ArrayList<>();
         for (int i : bandId) {
             final String bandName = metaParse.getValue(true, BAND_NAME_LABEL + i);
@@ -206,15 +185,14 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
                 imageCoverageReader.dispose();
             }
         }
-
-        gsdLandsat= gList;
+        gsdLandsat = gList;
         return gsdLandsat;
     }
 
     @Override
     protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, GridCoverageReadParam param)
-            throws DataStoreException, TransformException, CancellationException {
-
+            throws DataStoreException, TransformException, CancellationException
+    {
         GridGeometry geometry = GeoReferencedGridCoverageReader.getGridGeometry(getGridGeometry(), areaLower, areaUpper, subsampling);
 
         //-- get all needed band to build coverage (see Landsat spec)
@@ -250,7 +228,6 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
                     tiffReader.dispose();
                 }
             }
-
             final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("geotoolkit", "image:bandcombine");
             final ParameterValueGroup params = desc.getInputDescriptor().createValue();
             params.parameter("images").setValue(bands);
@@ -268,7 +245,5 @@ public class LandsatReader extends GeoReferencedGridCoverageReader {
         } catch(IOException | NoSuchIdentifierException | ProcessException ex) {
             throw new CoverageStoreException(ex.getMessage(), ex);
         }
-
     }
-
 }

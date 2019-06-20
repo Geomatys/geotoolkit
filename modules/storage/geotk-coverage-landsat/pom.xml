@@ -57,6 +57,11 @@
   <!-- =========================================================== -->
     <dependencies>
         <dependency>
+            <groupId>org.apache.sis.storage</groupId>
+            <artifactId>sis-earth-observation</artifactId>
+            <version>${sis.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-coverage-store</artifactId>
             <version>${project.version}</version>
