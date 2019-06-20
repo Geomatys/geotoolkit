@@ -261,7 +261,7 @@ public class FXStoreChooser extends BorderPane {
             if (selection instanceof GridCoverageResource) {
                 final GridCoverageResource ref = (GridCoverageResource) selection;
                 final MapLayer layer = MapBuilder.createCoverageLayer(ref);
-                layer.setName(ref.getIdentifier().tip().toString());
+                ref.getIdentifier().ifPresent((id) -> layer.setName(id.tip().toString()));
                 layers.add(layer);
             } else if (selection instanceof FeatureSet) {
                 final FeatureSet fs = (FeatureSet) selection;

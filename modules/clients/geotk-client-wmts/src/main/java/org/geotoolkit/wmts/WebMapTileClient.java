@@ -153,11 +153,6 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
         return (WMTSClientFactory) DataStores.getProviderById(WMTSClientFactory.NAME);
     }
 
-    @Override
-    public GenericName getIdentifier() {
-        return null;
-    }
-
     /**
      * Returns the {@linkplain Capabilities capabilities} response for this request.
      *

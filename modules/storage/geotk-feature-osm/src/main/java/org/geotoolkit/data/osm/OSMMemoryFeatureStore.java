@@ -89,11 +89,6 @@ public class OSMMemoryFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
-    }
-
-    @Override
     public Set<GenericName> getNames() throws DataStoreException {
         return memoryStore.getNames();
     }

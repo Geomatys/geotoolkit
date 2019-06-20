@@ -114,7 +114,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
 
         GenericName coverageName = null;
         try {
-            coverageName = item.getResource().getIdentifier();
+            coverageName = item.getResource().getIdentifier().orElse(null);
         } catch (DataStoreException ex) {
             //do nothing
         }
@@ -181,7 +181,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
 
         GenericName coverageName = null;
         try {
-            coverageName = item.getResource().getIdentifier();
+            coverageName = item.getResource().getIdentifier().orElse(null);
         } catch (DataStoreException ex) {
             //do nothing
         }

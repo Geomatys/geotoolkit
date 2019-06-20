@@ -38,7 +38,7 @@ public interface FeatureSet extends Resource, org.apache.sis.storage.FeatureSet 
     default Metadata getMetadata() throws DataStoreException {
         final DefaultMetadata metadata = new DefaultMetadata();
         final DefaultDataIdentification identification = new DefaultDataIdentification();
-        final NamedIdentifier identifier = NamedIdentifier.castOrCopy(getIdentifier());
+        final NamedIdentifier identifier = NamedIdentifier.castOrCopy(getIdentifier().get());
         final DefaultCitation citation = new DefaultCitation(identifier.toString());
         citation.setIdentifiers(Collections.singleton(identifier));
         identification.setCitation(citation);

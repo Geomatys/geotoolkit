@@ -18,6 +18,7 @@
 package org.geotoolkit.data.session;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
@@ -51,8 +52,8 @@ public abstract class AbstractSession implements Resource, Session, ChangeListen
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
+    public Optional<GenericName> getIdentifier() {
+        return Optional.empty();
     }
 
     @Override

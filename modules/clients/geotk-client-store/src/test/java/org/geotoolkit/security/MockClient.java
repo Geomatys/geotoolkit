@@ -18,6 +18,7 @@ package org.geotoolkit.security;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.logging.Level;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.logging.Logging;
@@ -51,8 +52,8 @@ public class MockClient extends AbstractClient{
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
+    public Optional<GenericName> getIdentifier() {
+        return Optional.empty();
     }
 
     public MockRequest createRequest(){

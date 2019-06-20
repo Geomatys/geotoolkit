@@ -17,6 +17,7 @@
 package org.geotoolkit.internal.data;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
@@ -64,8 +65,8 @@ public class ArrayFeatureSet implements FeatureSet {
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return type.getName();
+    public Optional<GenericName> getIdentifier() {
+        return Optional.of(type.getName());
     }
 
     @Override
@@ -91,12 +92,11 @@ public class ArrayFeatureSet implements FeatureSet {
     /**
      * Envelope is not stored or computed.
      *
-     * @return always null
-     * @throws DataStoreException
+     * @return always empty
      */
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
-        return null;
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.empty();
     }
 
     @Override

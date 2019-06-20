@@ -16,9 +16,11 @@
  */
 package org.geotoolkit.storage.coverage;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -43,14 +45,14 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
 
     private final GridCoverageResource gcr;
 
-    public GridCoverageFeatureSet(GridCoverageResource gcr) {
-        identifier = gcr.getIdentifier();
+    public GridCoverageFeatureSet(GridCoverageResource gcr) throws DataStoreException {
+        identifier = NamedIdentifier.castOrCopy(gcr.getIdentifier().orElse(null));
         this.gcr = gcr;
     }
 
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
-        return gcr.getGridGeometry().getEnvelope();
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.ofNullable(gcr.getGridGeometry().getEnvelope());
     }
 
     @Override

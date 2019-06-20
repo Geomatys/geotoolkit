@@ -138,7 +138,7 @@ final class NewRaster {
                 for (final GridCoverageResource gr : candidates) {
                     final String dataset;
                     if (isMultiResources) {
-                        dataset = gr.getIdentifier().tip().toString();
+                        dataset = gr.getIdentifier().get().tip().toString();
                     } else {
                         dataset = null;
                     }

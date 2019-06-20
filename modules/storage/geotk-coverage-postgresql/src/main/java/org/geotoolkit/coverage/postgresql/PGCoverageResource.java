@@ -106,7 +106,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
         try{
             cnx = pgstore.getDataSource().getConnection();
             stmt = cnx.createStatement();
-            final int layerId = pgstore.getLayerId(cnx,getIdentifier().tip().toString());
+            final int layerId = pgstore.getLayerId(cnx,getIdentifier().get().tip().toString());
 
             final StringBuilder query = new StringBuilder();
             query.append("SELECT p.id, p.epsg, pp.value FROM ");
@@ -325,7 +325,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
 
             stmt = cnx.createStatement();
 
-            final int layerId = pgstore.getLayerId(cnx,getIdentifier().tip().toString());
+            final int layerId = pgstore.getLayerId(cnx,getIdentifier().get().tip().toString());
 
             StringBuilder query = new StringBuilder();
             query.append("INSERT INTO ");
@@ -391,7 +391,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
             cnx = pgstore.getDataSource().getConnection();
             cnx.setReadOnly(false);
 
-            final int layerId = pgstore.getLayerId(cnx,getIdentifier().tip().toString());
+            final int layerId = pgstore.getLayerId(cnx,getIdentifier().get().tip().toString());
             String versionStr;
             if (version != null && !version.getLabel().equals(PGVersionControl.UNSET)) {
                 versionStr = TemporalUtilities.toISO8601Z(version.getDate(), TimeZone.getTimeZone("GMT+0"));
@@ -535,7 +535,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
                 cnx = pgstore.getDataSource().getConnection();
                 cnx.setReadOnly(false);
 
-                final int layerId = pgstore.getLayerId(cnx,getIdentifier().tip().toString());
+                final int layerId = pgstore.getLayerId(cnx,getIdentifier().get().tip().toString());
                 for (int i = 0; i < dimensions.size(); i++) {
 
                     final SampleDimension dim = dimensions.get(i);

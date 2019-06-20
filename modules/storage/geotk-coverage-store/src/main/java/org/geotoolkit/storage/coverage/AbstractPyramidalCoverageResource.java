@@ -24,6 +24,7 @@ import java.awt.image.SampleModel;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -107,8 +108,8 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
     }
 
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
-        return Pyramids.getEnvelope(this);
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.ofNullable(Pyramids.getEnvelope(this));
     }
 
     @Override

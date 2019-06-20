@@ -73,7 +73,7 @@ class SimpleUVSource implements UVSource {
 
         final List<SampleDimension> sampleDims = source.getSampleDimensions();
         if (sampleDims == null) {
-            throw new DataStoreException("No sample dimension available for given coverage: "+source.getIdentifier());
+            throw new DataStoreException("No sample dimension available for given coverage: "+source.getIdentifier().orElse(null));
         }
         final int expectedNbBands = Math.max(uvIndices.x, uvIndices.y) + 1;
         final int actualNbBands = sampleDims.size();
@@ -81,7 +81,7 @@ class SimpleUVSource implements UVSource {
             throw new IllegalArgumentException(String.format(
                     "Given coverage should contain at least %d bands as U and V are located in bands %d and %d "
                             + "respectively, but only %d bands are available in input coverage %s.",
-                    expectedNbBands, uvIndices.x, uvIndices.y, actualNbBands, source.getIdentifier()
+                    expectedNbBands, uvIndices.x, uvIndices.y, actualNbBands, source.getIdentifier().orElse(null)
             ));
         }
         this.source = source;

@@ -17,6 +17,7 @@
 package org.geotoolkit.wms;
 
 import java.awt.Image;
+import java.util.Optional;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
@@ -54,12 +55,6 @@ public class QueryableAggregate extends WMSAggregate implements GridCoverageReso
         name = new NamedIdentifier(Names.createScopedName(null, ":", layer.getName()));
         queryableResource = new WMSCoverageResource(client, layer.getName());
     }
-
-    @Override
-    public NamedIdentifier getIdentifier() {
-        return name;
-    }
-
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
@@ -117,7 +112,7 @@ public class QueryableAggregate extends WMSAggregate implements GridCoverageReso
     }
 
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
         return queryableResource.getEnvelope();
     }
 }

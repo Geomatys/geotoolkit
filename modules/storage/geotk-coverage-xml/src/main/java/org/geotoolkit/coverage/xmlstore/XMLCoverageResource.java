@@ -30,6 +30,7 @@ import static java.nio.file.StandardOpenOption.WRITE;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -269,8 +270,8 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
     }
 
     @Override
-    public NamedIdentifier getIdentifier() {
-        return id;
+    public Optional<GenericName> getIdentifier() {
+        return Optional.of(id);
     }
 
     /**
@@ -720,7 +721,7 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
         if (template instanceof Pyramid) {
             final Pyramid base = (Pyramid) template;
             final XMLPyramidSet set = getPyramidSet();
-            final Pyramid pyramid = set.createPyramid(getIdentifier().tip().toString(), base.getCoordinateReferenceSystem());
+            final Pyramid pyramid = set.createPyramid(getIdentifier().get().tip().toString(), base.getCoordinateReferenceSystem());
             save();
             Pyramids.copyStructure(base, pyramid);
             return pyramid;

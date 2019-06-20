@@ -48,6 +48,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -235,13 +236,13 @@ public class PredictorTest {
         }
 
         @Override
-        public Envelope getEnvelope() throws DataStoreException {
-            return DATA_GEOM.getEnvelope();
+        public Optional<Envelope> getEnvelope() throws DataStoreException {
+            return Optional.of(DATA_GEOM.getEnvelope());
         }
 
         @Override
-        public GenericName getIdentifier() throws DataStoreException {
-            return name;
+        public Optional<GenericName> getIdentifier() throws DataStoreException {
+            return Optional.of(name);
         }
 
         @Override

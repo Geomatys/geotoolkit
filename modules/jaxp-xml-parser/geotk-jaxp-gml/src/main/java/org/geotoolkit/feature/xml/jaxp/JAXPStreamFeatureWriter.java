@@ -690,10 +690,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         // id does not appear in WFS 2
         if (!"2.0.0".equals(wfsVersion)) {
-            String collectionID = "";
-            if (featureCollection.getIdentifier()!= null) {
-                collectionID = featureCollection.getIdentifier().toString();
-            }
+            String collectionID = featureCollection.getIdentifier().map(GenericName::toString).orElse("");
             writer.writeAttribute("gml", gmlNamespace, "id", collectionID);
         }
         // timestamp
@@ -731,7 +728,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
          /*
          * The boundedby part
          */
-        writeBounds(featureCollection.getEnvelope(), writer);
+        writeBounds(featureCollection.getEnvelope().orElse(null), writer);
 
         // we write each feature member of the collection
         FeatureIterator iterator = featureCollection.iterator();

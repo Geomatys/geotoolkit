@@ -196,11 +196,6 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
         return (WMSClientFactory) DataStores.getProviderById(WMSClientFactory.NAME);
     }
 
-    @Override
-    public GenericName getIdentifier() {
-        return null;
-    }
-
     /**
      * {@inheritDoc}
      */

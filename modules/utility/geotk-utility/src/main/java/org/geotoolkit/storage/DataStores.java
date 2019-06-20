@@ -114,7 +114,7 @@ public final class DataStores extends Static {
     public static final <T extends Resource> Set<GenericName> getNames(Resource root, boolean includeRoot, Class<T> resourceClass) throws DataStoreException {
         final Set<GenericName> names = new HashSet<>();
         for (T t : flatten(root, includeRoot, resourceClass)) {
-            names.add(t.getIdentifier());
+            t.getIdentifier().ifPresent((name) -> names.add(name));
         }
         return names;
     }

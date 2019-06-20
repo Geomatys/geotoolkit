@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -82,8 +83,8 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
     }
 
     @Override
-    public GenericName getIdentifier() throws DataStoreException {
-        return null;
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return Optional.empty();
     }
 
     /**
@@ -123,7 +124,7 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
             }
 
             if (gg != null) {
-                geometries.put(ref.getIdentifier(), gg);
+                geometries.put(ref.getIdentifier().orElse(null), gg);
             }
 
             if (md != null && md.getContentInfo() != null) {

@@ -19,9 +19,9 @@ package org.geotoolkit.data;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.data.query.Query;
@@ -30,6 +30,7 @@ import org.geotoolkit.factory.Hints;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
+import org.opengis.util.GenericName;
 
 /**
  * A java collection that may hold only features.
@@ -47,7 +48,7 @@ import org.opengis.filter.Filter;
 public interface FeatureCollection extends Collection<Feature>, FeatureSet, WritableFeatureSet {
 
     @Override
-    NamedIdentifier getIdentifier();
+    Optional<GenericName> getIdentifier();
 
     /**
      * A collection may be linked to a session, this implies that changes maid
@@ -144,5 +145,4 @@ public interface FeatureCollection extends Collection<Feature>, FeatureSet, Writ
     default boolean removeIf(Predicate<? super Feature> predicate) {
         return Collection.super.removeIf(predicate);
     }
-
 }

@@ -82,7 +82,7 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
 
         @Override
         public GenericName getCoverageName() throws CoverageStoreException {
-            return ProductResource.this.getIdentifier();
+            return ProductResource.this.getIdentifier().orElse(null);
         }
 
         @Override
@@ -114,7 +114,7 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
 
         @Override
         public GenericName getCoverageName() throws CoverageStoreException {
-            return ProductResource.this.getIdentifier();
+            return ProductResource.this.getIdentifier().orElse(null);
         }
 
         @Override

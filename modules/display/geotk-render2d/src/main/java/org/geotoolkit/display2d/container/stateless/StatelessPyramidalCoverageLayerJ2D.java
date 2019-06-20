@@ -286,7 +286,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Map
 
         GenericName coverageName = null;
         try {
-            coverageName = item.getResource().getIdentifier();
+            coverageName = item.getResource().getIdentifier().orElse(null);
         } catch (DataStoreException ex) {
             //do nothing
         }

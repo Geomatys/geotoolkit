@@ -100,11 +100,6 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client, 
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
-    }
-
-    @Override
     public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
         return Collections.singletonList(resource);
     }

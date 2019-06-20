@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.storage.DataStoreFactory;
@@ -50,11 +49,6 @@ public class MPCoverageStore extends AbstractCoverageStore implements WritableAg
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
-    }
-
-    @Override
     public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
         return Collections.unmodifiableList(resources);
     }
@@ -78,9 +72,6 @@ public class MPCoverageStore extends AbstractCoverageStore implements WritableAg
         if (!(resource instanceof GridCoverageResource)) {
             throw new DataStoreException("Unknown resource "+resource);
         }
-        final GridCoverageResource cr = (GridCoverageResource) resource;
-        final NamedIdentifier name = cr.getIdentifier();
-
         //TODO
         throw new DataStoreException("Remove operation not supported.");
     }

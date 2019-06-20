@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.concurrent.atomic.AtomicLong;
@@ -197,14 +198,14 @@ public class WFSFeatureSet implements WritableFeatureSet {
     }
 
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
         init();
-        return envelope;
+        return Optional.ofNullable(envelope);
     }
 
     @Override
-    public GenericName getIdentifier() throws DataStoreException {
-        return getType().getName();
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return Optional.of(getType().getName());
     }
 
     @Override
@@ -212,7 +213,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
         final DefaultMetadata metadata = new DefaultMetadata();
         final DefaultDataIdentification idf = new DefaultDataIdentification();
         final DefaultCitation citation = new DefaultCitation();
-        citation.getIdentifiers().add(NamedIdentifier.castOrCopy(getIdentifier()));
+        getIdentifier().ifPresent((name) -> citation.getIdentifiers().add(NamedIdentifier.castOrCopy(name)));
         idf.setCitation(citation);
         metadata.setIdentificationInfo(Arrays.asList(idf));
         return metadata;

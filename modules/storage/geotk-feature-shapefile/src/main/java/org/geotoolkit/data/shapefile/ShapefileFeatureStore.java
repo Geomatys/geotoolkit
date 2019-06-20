@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import org.apache.sis.feature.builder.AttributeRole;
@@ -186,11 +187,6 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
-    }
-
-    @Override
     public DataStoreFactory getProvider() {
         return (DataStoreFactory) DataStores.getProviderById(ShapefileFeatureStoreFactory.NAME);
     }
@@ -299,8 +295,8 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
     protected FeatureSet create(GenericName resourceName) throws DataStoreException {
         return new DefaultFeatureResource(this, resourceName) {
             @Override
-            public Envelope getEnvelope() throws DataStoreException {
-                return getHeaderEnvelope();
+            public Optional<Envelope> getEnvelope() throws DataStoreException {
+                return Optional.ofNullable(getHeaderEnvelope());
             }
         };
     }

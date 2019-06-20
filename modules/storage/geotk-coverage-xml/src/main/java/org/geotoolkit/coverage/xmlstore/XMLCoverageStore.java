@@ -34,7 +34,6 @@ import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
-import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
@@ -104,11 +103,6 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
-    }
-
-    @Override
     public DataStoreFactory getProvider() {
         return (DataStoreFactory) DataStores.getProviderById(XMLCoverageStoreFactory.NAME);
     }
@@ -175,9 +169,6 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
         if (!(resource instanceof GridCoverageResource)) {
             throw new DataStoreException("Unknown resource "+resource);
         }
-        final GridCoverageResource cr = (GridCoverageResource) resource;
-        final NamedIdentifier name = cr.getIdentifier();
-
         //TODO
         throw new DataStoreException("Remove operation not supported.");
     }

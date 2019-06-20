@@ -274,7 +274,7 @@ public abstract class AbstractMapItem implements MapItem {
      */
     protected final void trySetName(final Resource input) {
         try {
-            setName(input.getIdentifier().toString());
+            input.getIdentifier().ifPresent((id) -> setName(id.toString()));
         } catch (DataStoreException|RuntimeException e) {
             LOGGER.log(Level.WARNING, "Cannot extract identifier from a resource", e);
         }

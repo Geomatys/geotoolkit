@@ -17,6 +17,7 @@
 package org.geotoolkit.storage.coverage;
 
 import java.util.Arrays;
+import java.util.Optional;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -100,8 +101,8 @@ public class DefiningCoverageResource implements Resource {
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return name;
+    public Optional<GenericName> getIdentifier() {
+        return Optional.of(name);
     }
 
     /**

@@ -324,7 +324,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void testReadSimpleCollection() throws JAXBException, IOException, XMLStreamException{
+    public void testReadSimpleCollection() throws JAXBException, IOException, XMLStreamException, DataStoreException {
         final XmlFeatureReader reader = new JAXPStreamFeatureReader(simpleTypeBasic);
         final Object obj = reader.read(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/CollectionSimple.xml"));
@@ -334,10 +334,10 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
 
         FeatureCollection result = (FeatureCollection) obj;
         try {
-            NamedIdentifier id = result.getIdentifier();
+            NamedIdentifier id = NamedIdentifier.castOrCopy(result.getIdentifier().get());
             result = result.subset(QueryBuilder.sorted(
                     result.getType().getName().toString(), FF.sort("attDouble", SortOrder.ASCENDING)));
-            ((AbstractFeatureCollection)result).setIdentifier(id);
+            ((AbstractFeatureCollection) result).setIdentifier(id);
         } catch (DataStoreException ex) {
             Logging.getLogger("org.geotoolkit.feature.xml").log(Level.SEVERE, null, ex);
         }
@@ -346,7 +346,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         FeatureIterator expectedIte = collectionSimple.iterator();
 
         assertEquals(collectionSimple.size(), result.size());
-        assertEquals(collectionSimple.getIdentifier(), result.getIdentifier());
+        assertEquals(collectionSimple.getIdentifier().get(), result.getIdentifier().get());
         assertEquals(collectionSimple.getType(), result.getType());
 
         assertEquals(resultIte.next(), expectedIte.next());

@@ -19,6 +19,7 @@ package org.geotoolkit.storage.coverage;
 import java.awt.Point;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -31,6 +32,7 @@ import org.apache.sis.metadata.iso.content.DefaultAttributeGroup;
 import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
@@ -87,7 +89,7 @@ public abstract class AbstractCoverageResource extends AbstractResource implemen
     protected DefaultMetadata createMetadata() throws DataStoreException {
         final DefaultDataIdentification idf = new DefaultDataIdentification();
         final DefaultCitation citation = new DefaultCitation();
-        citation.getIdentifiers().add(getIdentifier());
+        getIdentifier().ifPresent((id) -> citation.getIdentifiers().add(NamedIdentifier.castOrCopy(id)));
         idf.setCitation(citation);
 
         GridCoverageReader reader = null;
@@ -173,7 +175,7 @@ public abstract class AbstractCoverageResource extends AbstractResource implemen
      * @throws DataStoreException if an error occurred while reading or computing the envelope.
      */
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
         final Metadata metadata = getMetadata();
         GeneralEnvelope bounds = null;
         if (metadata != null) {
@@ -202,8 +204,7 @@ public abstract class AbstractCoverageResource extends AbstractResource implemen
                 bounds = new GeneralEnvelope(gridGeometry.getEnvelope());
             }
         }
-
-        return bounds;
+        return Optional.ofNullable(bounds);
     }
 
     /**
@@ -229,61 +230,61 @@ public abstract class AbstractCoverageResource extends AbstractResource implemen
     }
 
     protected CoverageStoreManagementEvent firePyramidAdded(final String pyramidId){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidAddEvent(this, getIdentifier(), pyramidId);
+        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidAddEvent(this, getIdentifier().orElse(null), pyramidId);
         sendEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent firePyramidUpdated(final String pyramidId){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidUpdateEvent(this, getIdentifier(), pyramidId);
+        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidUpdateEvent(this, getIdentifier().orElse(null), pyramidId);
         sendEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent firePyramidDeleted(final String pyramidId){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidDeleteEvent(this, getIdentifier(), pyramidId);
+        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidDeleteEvent(this, getIdentifier().orElse(null), pyramidId);
         sendEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent fireMosaicAdded(final String pyramidId, final String mosaicId){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicAddEvent(this, getIdentifier(), pyramidId, mosaicId);
+        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicAddEvent(this, getIdentifier().orElse(null), pyramidId, mosaicId);
         sendEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent fireMosaicUpdated(final String pyramidId, final String mosaicId){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicUpdateEvent(this, getIdentifier(), pyramidId, mosaicId);
+        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicUpdateEvent(this, getIdentifier().orElse(null), pyramidId, mosaicId);
         sendEvent(event);
         return event;
     }
 
     protected CoverageStoreManagementEvent fireMosaicDeleted(final String pyramidId, final String mosaicId){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicDeleteEvent(this, getIdentifier(), pyramidId, mosaicId);
+        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicDeleteEvent(this, getIdentifier().orElse(null), pyramidId, mosaicId);
         sendEvent(event);
         return event;
     }
 
     protected CoverageStoreContentEvent fireDataUpdated(){
-        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createDataUpdateEvent(this, getIdentifier());
+        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createDataUpdateEvent(this, getIdentifier().orElse(null));
         sendEvent(event);
         return event;
     }
 
     protected CoverageStoreContentEvent fireTileAdded(final String pyramidId, final String mosaicId, final List<Point> tiles){
-        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileAddEvent(this, getIdentifier(), pyramidId, mosaicId, tiles);
+        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileAddEvent(this, getIdentifier().orElse(null), pyramidId, mosaicId, tiles);
         sendEvent(event);
         return event;
     }
 
     protected CoverageStoreContentEvent fireTileUpdated(final String pyramidId, final String mosaicId, final List<Point> tiles){
-        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileUpdateEvent(this, getIdentifier(), pyramidId, mosaicId, tiles);
+        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileUpdateEvent(this, getIdentifier().orElse(null), pyramidId, mosaicId, tiles);
         sendEvent(event);
         return event;
     }
 
     protected CoverageStoreContentEvent fireTileDeleted(final String pyramidId, final String mosaicId, final List<Point> tiles){
-        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileDeleteEvent(this, getIdentifier(), pyramidId, mosaicId, tiles);
+        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileDeleteEvent(this, getIdentifier().orElse(null), pyramidId, mosaicId, tiles);
         sendEvent(event);
         return event;
     }
@@ -291,8 +292,6 @@ public abstract class AbstractCoverageResource extends AbstractResource implemen
     /**
      * Dispose a reader, trying to properly release sub resources.
      * Best effort.
-     *
-     * @param reader
      */
     protected void dispose(GridCoverageReader reader) {
         try {

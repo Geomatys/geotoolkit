@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.event.ChangeEvent;
@@ -46,15 +47,15 @@ final class SubsetFeatureResource extends AbstractResource implements FeatureSet
     private FeatureType type;
 
     public SubsetFeatureResource(FeatureSet parent, Query query) throws DataStoreException {
-        super(parent.getIdentifier());
+        super(parent.getIdentifier().get());
         this.parent = parent;
         this.query = query;
         weakListener.registerSource(parent);
     }
 
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
-        return null;
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.empty();
     }
 
     @Override

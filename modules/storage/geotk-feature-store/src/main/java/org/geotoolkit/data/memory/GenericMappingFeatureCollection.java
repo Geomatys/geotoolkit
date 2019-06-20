@@ -22,9 +22,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
-import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalFeatureTypeException;
 import org.apache.sis.storage.ReadOnlyStorageException;
@@ -43,6 +43,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
+import org.opengis.util.GenericName;
 
 /**
  * Basic support for a FeatureCollection that moves attributs to a new type definition
@@ -76,7 +77,7 @@ public class GenericMappingFeatureCollection extends AbstractCollection<Feature>
     }
 
     @Override
-    public NamedIdentifier getIdentifier() {
+    public Optional<GenericName> getIdentifier() {
         return original.getIdentifier();
     }
 
@@ -91,7 +92,7 @@ public class GenericMappingFeatureCollection extends AbstractCollection<Feature>
     }
 
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
         return original.getEnvelope();
     }
 
@@ -187,10 +188,8 @@ public class GenericMappingFeatureCollection extends AbstractCollection<Feature>
         throw new FeatureStoreRuntimeException("Not writable");
     }
 
-
     @Override
     public void clear() {
         throw new FeatureStoreRuntimeException("Not writable");
     }
-
 }

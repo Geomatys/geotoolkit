@@ -106,11 +106,6 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements Resou
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
-    }
-
-    @Override
     public DataStoreFactory getProvider() {
         return (DataStoreFactory) DataStores.getProviderById(GMLProvider.NAME);
     }

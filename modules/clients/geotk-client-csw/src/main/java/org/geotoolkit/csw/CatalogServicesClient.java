@@ -18,6 +18,7 @@ package org.geotoolkit.csw;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.util.ArgumentChecks;
@@ -106,8 +107,8 @@ public class CatalogServicesClient extends AbstractClient {
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
+    public Optional<GenericName> getIdentifier() {
+        return Optional.empty();
     }
 
     private static CSWVersion toVersion(final String version){

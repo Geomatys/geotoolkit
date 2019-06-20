@@ -17,6 +17,7 @@
 package org.geotoolkit.data;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Predicate;
@@ -70,8 +71,8 @@ public class DefaultFeatureResource extends AbstractResource implements FeatureS
     }
 
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
-        return null;
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.empty();
     }
 
     @Override

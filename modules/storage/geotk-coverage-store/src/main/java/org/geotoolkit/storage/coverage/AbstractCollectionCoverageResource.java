@@ -303,7 +303,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
                 }
 
                 final GridCoverageBuilder builder = new GridCoverageBuilder();
-                builder.setName(ref.getIdentifier().tip().toString());
+                ref.getIdentifier().ifPresent((n) -> builder.setName(n.tip().toString()));
                 builder.setRenderedImage(targetImage);
                 builder.setGridGeometry(gridGeom);
                 builder.setSampleDimensions(coverages.get(0).getSampleDimensions());

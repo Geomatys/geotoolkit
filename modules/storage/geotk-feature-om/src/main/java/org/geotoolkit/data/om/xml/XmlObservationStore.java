@@ -105,11 +105,6 @@ public class XmlObservationStore extends AbstractFeatureStore implements Resourc
         return (DataStoreFactory) DataStores.getProviderById(XmlObservationStoreFactory.NAME);
     }
 
-    @Override
-    public GenericName getIdentifier() {
-        return null;
-    }
-
     ////////////////////////////////////////////////////////////////////////////
     // FEATURE STORE ///////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////

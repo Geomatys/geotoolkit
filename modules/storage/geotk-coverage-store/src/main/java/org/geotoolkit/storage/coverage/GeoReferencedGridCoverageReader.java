@@ -65,8 +65,8 @@ public abstract class GeoReferencedGridCoverageReader extends AbstractGridCovera
     }
 
     @Override
-    public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
-        return ref.getIdentifier();
+    public GenericName getCoverageName() throws DataStoreException, CancellationException {
+        return ref.getIdentifier().orElse(null);
     }
 
     /**

@@ -112,8 +112,8 @@ public class PyramidalModelReader extends AbstractGridCoverageReader {
     }
 
     @Override
-    public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
-        return getInput().getIdentifier();
+    public GenericName getCoverageName() throws DataStoreException, CancellationException {
+        return getInput().getIdentifier().orElse(null);
     }
 
     @Override
@@ -506,7 +506,7 @@ public class PyramidalModelReader extends AbstractGridCoverageReader {
 
         //build the coverage ---------------------------------------------------
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName(ref.getIdentifier().tip().toString());
+        ref.getIdentifier().ifPresent((n) -> gcb.setName(n.tip().toString()));
         final List<SampleDimension> dimensions = getSampleDimensions();
         if (dimensions != null) {
             gcb.setSampleDimensions(dimensions.toArray(new SampleDimension[dimensions.size()]));

@@ -24,6 +24,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
@@ -97,8 +98,8 @@ public class GMLFeatureStore extends DataStore implements FeatureSet, ResourceOn
     }
 
     @Override
-    public GenericName getIdentifier() throws DataStoreException {
-        return getType().getName();
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return Optional.of(getType().getName());
     }
 
     @Override
@@ -178,17 +179,19 @@ public class GMLFeatureStore extends DataStore implements FeatureSet, ResourceOn
     @Override
     public Metadata getMetadata() throws DataStoreException {
         final DefaultMetadata metadata = new DefaultMetadata();
-        final DefaultDataIdentification idf = new DefaultDataIdentification();
-        final DefaultCitation citation = new DefaultCitation();
-        citation.getIdentifiers().add(NamedIdentifier.castOrCopy(getIdentifier()));
-        idf.setCitation(citation);
-        metadata.setIdentificationInfo(Arrays.asList(idf));
+        getIdentifier().ifPresent((id) -> {
+            final DefaultDataIdentification idf = new DefaultDataIdentification();
+            final DefaultCitation citation = new DefaultCitation();
+            citation.getIdentifiers().add(NamedIdentifier.castOrCopy(id));
+            idf.setCitation(citation);
+            metadata.setIdentificationInfo(Arrays.asList(idf));
+        });
         return metadata;
     }
 
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
-        return null;
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.empty();
     }
 
     @Override

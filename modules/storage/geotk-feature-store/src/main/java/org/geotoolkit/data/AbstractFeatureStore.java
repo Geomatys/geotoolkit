@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -112,8 +113,8 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     }
 
     @Override
-    public GenericName getIdentifier() throws DataStoreException {
-        return null;
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return Optional.empty();
     }
 
     @Override
@@ -179,7 +180,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     }
 
     private static void listNames(Resource resource, Set<GenericName> names) throws DataStoreException {
-        names.add(resource.getIdentifier());
+        resource.getIdentifier().ifPresent((n) -> names.add(n));
         if (resource instanceof Aggregate) {
             final Aggregate ds = (Aggregate) resource;
             for (Resource rs : ds.components()) {

@@ -17,6 +17,7 @@
 package org.geotoolkit.data;
 
 import java.util.Arrays;
+import java.util.Optional;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -86,8 +87,8 @@ public class DefiningFeatureSet implements Resource {
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return type.getName();
+    public Optional<GenericName> getIdentifier() {
+        return Optional.of(type.getName());
     }
 
     /**

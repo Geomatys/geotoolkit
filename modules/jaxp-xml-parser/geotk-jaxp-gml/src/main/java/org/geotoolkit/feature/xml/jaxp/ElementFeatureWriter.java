@@ -368,10 +368,7 @@ public class ElementFeatureWriter {
 
         document.appendChild(rootElement);
 
-        String collectionID = "";
-        if (featureCollection.getIdentifier()!= null) {
-            collectionID = featureCollection.getIdentifier().toString();
-        }
+        String collectionID = featureCollection.getIdentifier().map(GenericName::toString).orElse("");
         final Attr idAttribute = document.createAttributeNS(GML, "id");
         idAttribute.setValue(collectionID);
         idAttribute.setPrefix("gml");
@@ -403,10 +400,12 @@ public class ElementFeatureWriter {
         /*
          * The boundedby part
          */
-        final Element boundElement = writeBounds(featureCollection.getEnvelope(), document);
-        if (boundElement != null) {
-            rootElement.appendChild(boundElement);
-        }
+        featureCollection.getEnvelope().ifPresent((env) -> {
+            final Element boundElement = writeBounds(env, document);
+            if (boundElement != null) {
+                rootElement.appendChild(boundElement);
+            }
+        });
 
         // we write each feature member of the collection
         FeatureIterator iterator = featureCollection.iterator();

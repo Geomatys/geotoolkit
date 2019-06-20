@@ -18,6 +18,7 @@ package org.geotoolkit.storage.coverage;
 
 import java.awt.Image;
 import java.util.List;
+import java.util.Optional;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -25,7 +26,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.metadata.AxisDirections;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -39,6 +39,7 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 
 /**
  * Resource to a coverage in the coverage store.
@@ -55,7 +56,7 @@ public interface GridCoverageResource extends org.apache.sis.storage.WritableGri
      * @todo restore the exception.
      */
     @Override
-    NamedIdentifier getIdentifier();
+    Optional<GenericName> getIdentifier();
 
     /**
      * Get the coverage description and statistics.

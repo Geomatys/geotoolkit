@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.Spliterator;
@@ -160,9 +161,9 @@ public class CSVStore extends DataStore implements WritableFeatureSet, ResourceO
     }
 
     @Override
-    public GenericName getIdentifier() throws DataStoreException {
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
         checkExist();
-        return featureType.getName();
+        return Optional.of(featureType.getName());
     }
 
     Path getFile() {
@@ -289,15 +290,15 @@ public class CSVStore extends DataStore implements WritableFeatureSet, ResourceO
         final DefaultMetadata metadata = new DefaultMetadata();
         final DefaultDataIdentification idf = new DefaultDataIdentification();
         final DefaultCitation citation = new DefaultCitation();
-        citation.getIdentifiers().add(NamedIdentifier.castOrCopy(getIdentifier()));
+        citation.getIdentifiers().add(NamedIdentifier.castOrCopy(getIdentifier().get()));
         idf.setCitation(citation);
         metadata.setIdentificationInfo(Arrays.asList(idf));
         return metadata;
     }
 
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
-        return null;
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.empty();
     }
 
     @Override

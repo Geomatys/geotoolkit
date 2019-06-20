@@ -145,12 +145,12 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
             final float size = gcrs.size();
             int inc = 0;
             for(GridCoverageResource gcr : gcrs){
-                GenericName n = gcr.getIdentifier();
+                GenericName n = gcr.getIdentifier().get();
                 fireProgressing("Copying "+n+".", (int)((inc*100f)/size), false);
                 final Resource resource = inStore.findResource(n.toString());
                 if (resource instanceof GridCoverageResource) {
                     final GridCoverageResource inRef = (GridCoverageResource) resource;
-                    final GenericName name = inRef.getIdentifier();
+                    final GenericName name = inRef.getIdentifier().get();
 
                     //remove if exist
                     if (erase) {
@@ -346,9 +346,9 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         final GridGeometry globalGeom = inRef.getGridGeometry();
         final CoordinateReferenceSystem crs = globalGeom.getCoordinateReferenceSystem();
 
-        final GenericName name = inRef.getIdentifier();
         if(crs instanceof ImageCRS){
             //image is not georeferenced, we can't store it.
+            final GenericName name = inRef.getIdentifier().orElse(null);
             fireWarningOccurred("Image "+name+" does not have a CoordinateReferenceSystem, insertion is skipped.", 0, null);
             return;
         }

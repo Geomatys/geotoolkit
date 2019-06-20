@@ -22,6 +22,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
@@ -95,8 +96,8 @@ public class NMEAStore extends DataStore implements FeatureSet, ResourceOnFileSy
     }
 
     @Override
-    public GenericName getIdentifier() throws DataStoreException {
-        return getType().getName();
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return Optional.of(getType().getName());
     }
 
     @Override
@@ -111,8 +112,8 @@ public class NMEAStore extends DataStore implements FeatureSet, ResourceOnFileSy
     }
 
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
-        return null;
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.empty();
     }
 
     @Override

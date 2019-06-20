@@ -97,7 +97,7 @@ public class ExportCoverageItem extends TreeMenuItem {
 
                         ImageCoverageWriter writer = null;
                         try {
-                            final GenericName baseName = base.getIdentifier();
+                            final GenericName baseName = base.getIdentifier().get();
                             final GridCoverage coverage = base.read(null);
 
                             final GridCoverageWriteParam writeParam = new GridCoverageWriteParam();

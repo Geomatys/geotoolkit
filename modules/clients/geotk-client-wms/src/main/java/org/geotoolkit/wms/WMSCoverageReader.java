@@ -88,7 +88,7 @@ public class WMSCoverageReader extends AbstractGridCoverageReader {
     @Override
     public GenericName getCoverageName() throws DataStoreException, CancellationException {
         final NameFactory dnf = DefaultFactories.forBuildin(NameFactory.class);
-        final GenericName name = getInput().getIdentifier();
+        final GenericName name = getInput().getIdentifier().get();
         NameSpace ns = null;
         if (NamesExt.getNamespace(name) != null) {
             ns = dnf.createNameSpace(dnf.createGenericName(null, NamesExt.getNamespace(name)), null);

@@ -106,11 +106,6 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
         return folderFactory;
     }
 
-    @Override
-    public GenericName getIdentifier() {
-        return null;
-    }
-
     /**
      * Fallthrought to sub feature stores.
      */
