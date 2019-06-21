@@ -28,20 +28,21 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.apache.cxf.staxutils.StaxUtils;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.util.NamesExt;
-import org.opengis.util.GenericName;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
@@ -65,8 +66,7 @@ import org.geotoolkit.gml.xml.v321.PointType;
 import org.geotoolkit.gml.xml.v321.SolidPropertyType;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
-import org.apache.sis.referencing.IdentifiedObjects;
-import org.apache.sis.util.ObjectConverters;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
@@ -81,6 +81,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 import org.w3c.dom.Document;
 
 
@@ -187,11 +188,11 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         setOutput(output);
         if (candidate instanceof Feature) {
             writeFeature((Feature) candidate,true);
-        } else if (candidate instanceof FeatureCollection) {
-            writeFeatureCollection((FeatureCollection) candidate,false, nbMatched);
+        } else if (candidate instanceof FeatureSet) {
+            writeFeatureCollection((FeatureSet) candidate,false, nbMatched);
         } else {
             throw new IllegalArgumentException("The given object is not a Feature or a" +
-                    " FeatureCollection: "+ candidate);
+                    " FeatureSet: "+ candidate);
         }
     }
 
@@ -677,7 +678,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      *
      * @param fragment true if we write in a stream, dont write start and end elements
      */
-    public void writeFeatureCollection(final FeatureCollection featureCollection, final boolean fragment, final Integer nbMatched)
+    public void writeFeatureCollection(final FeatureSet featureSet, final boolean fragment, final Integer nbMatched)
                                                             throws DataStoreException, XMLStreamException
     {
         // the XML header
@@ -690,7 +691,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         // id does not appear in WFS 2
         if (!"2.0.0".equals(wfsVersion)) {
-            String collectionID = featureCollection.getIdentifier().map(GenericName::toString).orElse("");
+            String collectionID = featureSet.getIdentifier().map(GenericName::toString).orElse("");
             writer.writeAttribute("gml", gmlNamespace, "id", collectionID);
         }
         // timestamp
@@ -708,16 +709,25 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         /*
          * Other version dependant WFS feature collection attribute
          */
-        if ("2.0.0".equals(wfsVersion)) {
-            writer.writeAttribute("numberReturned", Integer.toString(featureCollection.size()));
-            if (nbMatched != null) {
-                writer.writeAttribute("numberMatched", Integer.toString(nbMatched));
-            }
+        final long size;
+        if (featureSet instanceof FeatureCollection) {
+            size = ((FeatureCollection) featureSet).size();
         } else {
-            writer.writeAttribute("numberOfFeatures", Integer.toString(featureCollection.size()));
+            try (Stream<Feature> stream = featureSet.features(false)) {
+                size = stream.count();
+            }
         }
 
-        FeatureType type = featureCollection.getType();
+        if ("2.0.0".equals(wfsVersion)) {
+            writer.writeAttribute("numberReturned", Long.toString(size));
+            if (nbMatched != null) {
+                writer.writeAttribute("numberMatched", Long.toString(nbMatched));
+            }
+        } else {
+            writer.writeAttribute("numberOfFeatures", Long.toString(size));
+        }
+
+        FeatureType type = featureSet.getType();
         if (type != null && type.getName() != null) {
             for(String n : Utils.listAllNamespaces(type)){
                 if (n != null && !(n.equals("http://www.opengis.net/gml") || n.equals("http://www.opengis.net/gml/3.2")) && !n.isEmpty()) {
@@ -728,11 +738,11 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
          /*
          * The boundedby part
          */
-        writeBounds(featureCollection.getEnvelope().orElse(null), writer);
+        writeBounds(featureSet.getEnvelope().orElse(null), writer);
 
         // we write each feature member of the collection
-        FeatureIterator iterator = featureCollection.iterator();
-        try {
+        try (Stream<Feature> stream = featureSet.features(false)) {
+            final Iterator<Feature> iterator = stream.iterator();
             while (iterator.hasNext()) {
                 final Feature f = iterator.next();
 
@@ -744,10 +754,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 writeFeature(f, false);
                 writer.writeEndElement();
             }
-
-        } finally {
-            // we close the stream
-            iterator.close();
         }
 
         writer.writeEndElement();

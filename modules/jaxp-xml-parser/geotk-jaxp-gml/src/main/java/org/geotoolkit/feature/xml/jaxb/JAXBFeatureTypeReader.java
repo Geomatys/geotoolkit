@@ -17,7 +17,6 @@
 
 package org.geotoolkit.feature.xml.jaxb;
 
-import org.locationtech.jts.geom.Geometry;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,18 +34,20 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import org.apache.sis.feature.DefaultAssociationRole;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.Features;
-import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.CharacteristicTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
+import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.feature.xml.Utils;
+import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.xml.AbstractConfigurable;
 import org.geotoolkit.xsd.xml.v2001.Annotated;
@@ -75,6 +76,7 @@ import org.geotoolkit.xsd.xml.v2001.SimpleRestrictionType;
 import org.geotoolkit.xsd.xml.v2001.SimpleType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
 import org.geotoolkit.xsd.xml.v2001.Union;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
@@ -139,13 +141,19 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
         return getFeatureTypeFromSchema(schema, name);
     }
 
-    public List<FeatureType> read(final Object candidate) throws JAXBException {
+    public GenericNameIndex<FeatureType> read(final Object candidate) throws JAXBException {
         final Entry<Schema, String> entry = xsdContext.read(candidate);
-        return getAllFeatureTypeFromSchema(entry.getKey(), entry.getValue());
+        try {
+            return getAllFeatureTypeFromSchema(entry.getKey(), entry.getValue());
+        } catch (MismatchedFeatureException ex) {
+            throw new JAXBException(ex.getMessage(), ex);
+        } catch (IllegalNameException ex) {
+            throw new JAXBException(ex.getMessage(), ex);
+        }
     }
 
-    private List<FeatureType> getAllFeatureTypeFromSchema(final Schema schema, final String baseLocation) throws MismatchedFeatureException {
-        final List<FeatureType> result = new ArrayList<>();
+    private GenericNameIndex<FeatureType> getAllFeatureTypeFromSchema(final Schema schema, final String baseLocation) throws MismatchedFeatureException, IllegalNameException {
+        final GenericNameIndex<FeatureType> result = new GenericNameIndex<>();
         // first we look for imported xsd
         // NOTE : we must list and fill the knownshemas map before analyzing
         // some xsd have cyclic references : core -> sub1 + sub2 , sub1 -> core
@@ -153,19 +161,19 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
         refs.add(new AbstractMap.SimpleEntry<>(schema, baseLocation));
         xsdContext.listAllSchemas(schema, baseLocation, refs);
 
-        for(Entry<Schema,String> entry : refs){
+        for (Entry<Schema,String> entry : refs) {
             listFeatureTypes(entry.getKey(), result);
         }
 
         return result;
     }
 
-    private void listFeatureTypes(Schema schema, List<FeatureType> result) throws MismatchedFeatureException {
+    private void listFeatureTypes(Schema schema, GenericNameIndex<FeatureType> result) throws MismatchedFeatureException, IllegalNameException {
 
         // then we look for feature type and groups
         for (OpenAttrs opAtts : schema.getSimpleTypeOrComplexTypeOrGroup()) {
 
-            if(opAtts instanceof TopLevelElement){
+            if (opAtts instanceof TopLevelElement) {
                 final TopLevelElement element = (TopLevelElement) opAtts;
                 final QName typeName = element.getType();
                 if (typeName != null) {
@@ -174,17 +182,17 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                     if (xsdContext.isFeatureType(type)) {
                         final BuildStack stack = new BuildStack();
                         final FeatureType ft = (FeatureType) getType(typeName.getNamespaceURI(), type, stack);
-                        result.add(ft);
+                        addIfMissing(result, ft);
 
                         //if the type name is not the same as the element name, make a subtype
-                        if(!ft.getName().tip().toString().equals(element.getName())){
+                        if (!ft.getName().tip().toString().equals(element.getName())) {
                             final GenericName name = NamesExt.create(NamesExt.getNamespace(ft.getName()), element.getName());
 
                             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
                             ftb.setName(name);
                             ftb.setSuperTypes(ft);
                             final FeatureType renamed = ftb.build();
-                            result.add(renamed);
+                            addIfMissing(result, renamed);
                         }
 
                     } else if (type == null && xsdContext.findSimpleType(typeName) == null) {
@@ -197,8 +205,23 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                 }
             }
         }
-
     }
+
+    private void addIfMissing(GenericNameIndex<FeatureType> result, FeatureType type) throws IllegalNameException {
+        try {
+            result.add(type.getName(), type);
+        } catch (IllegalNameException ex) {
+            //already exist, check feature type is the same
+            FeatureType ft = result.get(type.getName().toString());
+            if (ft.equals(type)) {
+                //ok
+                return;
+            } else {
+                throw new IllegalNameException("A type with a different definition already exist for name " + type.getName());
+            }
+        }
+    }
+
 
     private FeatureType getFeatureTypeFromSchema(Schema schema, String name) {
         final TopLevelElement element = schema.getElementByName(name);
@@ -398,22 +421,22 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
     }
 
     private List<PropertyType> getGroupAttributes(String namespaceURI, Group group, BuildStack stack) throws MismatchedFeatureException {
-        if(group==null) return Collections.EMPTY_LIST;
+        if (group == null) return Collections.EMPTY_LIST;
 
         final List<PropertyType> atts = new ArrayList<>();
 
         final List<Object> particles = group.getParticle();
-        for(Object particle : particles){
-            if(particle instanceof JAXBElement){
-                particle = ((JAXBElement)particle).getValue();
+        for (Object particle : particles) {
+            if (particle instanceof JAXBElement) {
+                particle = ((JAXBElement) particle).getValue();
             }
 
-            if(particle instanceof Element){
+            if (particle instanceof Element) {
                 final Element ele = (Element) particle;
                 final PropertyType att = elementToAttribute(namespaceURI, ele, stack);
                 atts.add(att);
 
-            }else if(particle instanceof Any){
+            } else if(particle instanceof Any) {
                 final Any ele = (Any) particle;
                 final SingleAttributeTypeBuilder atb = new SingleAttributeTypeBuilder();
                 atb.setName(namespaceURI, Utils.ANY_PROPERTY_NAME);
@@ -435,7 +458,22 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                 final GroupRef ref = (GroupRef) particle;
                 final QName groupRef = ref.getRef();
                 final NamedGroup ng = xsdContext.findGlobalGroup(groupRef);
-                atts.addAll(getGroupAttributes(namespaceURI, ng, stack));
+
+                final List<PropertyType> groupAttributes = getGroupAttributes(namespaceURI, ng, stack);
+
+                //change min/max occurences
+                int minOcc = ref.getMinOccurs() == null ? 0 : ref.getMinOccurs().intValue();
+                int maxOcc = 1;
+                String maxxAtt = ref.getMaxOccurs();
+                if("unbounded".equalsIgnoreCase(maxxAtt)) {
+                    maxOcc = Integer.MAX_VALUE;
+                } else if(maxxAtt!=null){
+                    maxOcc = Integer.parseInt(maxxAtt);
+                }
+                for (PropertyType pt : groupAttributes) {
+                    pt = new FeatureTypeBuilder().addProperty(pt).setMinimumOccurs(minOcc).setMaximumOccurs(maxOcc).build();
+                    atts.add(pt);
+                }
 
             } else if (particle instanceof ExplicitGroup) {
                 final ExplicitGroup eg = (ExplicitGroup) particle;

@@ -17,15 +17,14 @@
 package org.geotoolkit.wps.converters.inputs.references;
 
 import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
+import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Reference;
-;
-import org.opengis.feature.FeatureType;import org.opengis.feature.FeatureType;
+import org.opengis.feature.FeatureType;
 
 
 /**
@@ -67,12 +66,12 @@ public final class ReferenceToFeatureTypeConverter extends AbstractReferenceInpu
                 mime.equalsIgnoreCase(WPSMimeType.TEXT_GML.val())) {
              try {
                 final JAXBFeatureTypeReader xsdReader = new JAXBFeatureTypeReader();
-                final List<FeatureType> ft = xsdReader.read(stream);
+                final GenericNameIndex<FeatureType> ft = xsdReader.read(stream);
 
-                if(ft.size() != 1){
+                if (ft.getNames().size() != 1) {
                     throw new UnconvertibleObjectException("Invalid reference input : More than one FeatureType in schema.");
                 }
-                return ft.get(0);
+                return ft.getValues().iterator().next();
             } catch (JAXBException ex) {
                 throw new UnconvertibleObjectException("Invalid reference input : can't read reference schema.",ex);
             }
