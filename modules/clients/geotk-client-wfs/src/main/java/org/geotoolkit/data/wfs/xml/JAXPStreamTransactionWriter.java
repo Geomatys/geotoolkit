@@ -17,7 +17,6 @@
 
 package org.geotoolkit.data.wfs.xml;
 
-import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
@@ -29,9 +28,8 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
-import org.geotoolkit.feature.xml.Utils;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.wfs.Delete;
 import org.geotoolkit.data.wfs.IdentifierGenerationOption;
@@ -41,6 +39,7 @@ import org.geotoolkit.data.wfs.ReleaseAction;
 import org.geotoolkit.data.wfs.TransactionElement;
 import org.geotoolkit.data.wfs.TransactionRequest;
 import org.geotoolkit.data.wfs.Update;
+import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.geotoolkit.gml.JTStoGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
@@ -48,18 +47,17 @@ import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.GeometryPropertyType;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
-import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.ogc.xml.FilterMarshallerPool;
 import org.geotoolkit.ogc.xml.FilterVersion;
 import org.geotoolkit.ogc.xml.XMLFilter;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.NamesExt;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.PropertyType;
-
-import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -243,7 +241,7 @@ public class JAXPStreamTransactionWriter {
         final FeatureCollection col = element.getFeatures();
         final JAXPStreamFeatureWriter fw = new JAXPStreamFeatureWriter();
         fw.setOutput(writer);
-        fw.writeFeatureCollection(col,true, null);
+        fw.writeFeatureCollection(col, null);
 
         writer.writeEndElement();
     }
