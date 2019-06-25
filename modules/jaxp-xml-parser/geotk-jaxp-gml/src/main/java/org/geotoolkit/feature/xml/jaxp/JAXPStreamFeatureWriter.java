@@ -222,7 +222,48 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         writer.flush();
     }
 
-    public void writeEndWFSCollection() throws XMLStreamException {
+    /**
+     * <p>
+     * A feature collection is a collection of feature instances.Within GML 3.2.1, the generic
+     * gml:FeatureCollection element has been deprecated. A feature collection is any feature class
+     * with a property element in its content model (for example member) which is derived by
+     * extension from gml:AbstractFeatureMemberType.
+     * <p>
+     * <p>
+     * Only the feature collection tag is written by this method.
+     * All properties must be written separately.
+     * </p>
+     *
+     * @param collection feature which matches the definition of a collection.
+     * @throws XMLStreamException
+     */
+    public void writeStartCollection(Feature collection) throws XMLStreamException {
+
+        final FeatureType collectionType = collection.getType();
+        final GenericName typeName = collectionType.getName();
+        final String namespace = getNamespace(typeName);
+        final String localPart = typeName.tip().toString();
+
+        if (namespace != null && !namespace.isEmpty()) {
+            final Prefix prefix = getPrefix(namespace);
+            writer.writeStartElement(prefix.prefix, localPart, namespace);
+            if (prefix.unknow) {
+                writer.writeNamespace(prefix.prefix, namespace);
+            }
+        } else {
+            writer.writeStartElement(localPart);
+        }
+
+        writeNamespaces(collectionType);
+
+        if (schemaLocation != null && !schemaLocation.equals("")) {
+            writer.writeAttribute("xsi", XSI_NAMESPACE, "schemaLocation", schemaLocation);
+        }
+
+        writer.flush();
+    }
+
+    public void writeEndCollection() throws XMLStreamException {
         writer.writeEndElement();
         writer.flush();
     }
@@ -318,7 +359,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }
         }
 
-        writeEndWFSCollection();
+        writeEndCollection();
     }
 
     /**

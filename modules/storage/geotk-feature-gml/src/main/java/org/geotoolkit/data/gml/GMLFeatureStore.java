@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -62,7 +63,9 @@ import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
@@ -77,6 +80,17 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
 
     private final Parameters parameters;
     private final Path file;
+    /**
+     * Root type may differ from feature type if the root type is actually
+     * a feature collection (has attributes which are GML FeatureMember).
+     *
+     * A feature collection is a collection of feature instances.Within GML 3.2.1, the generic
+     * gml:FeatureCollection element has been deprecated. A feature collection is any feature class
+     * with a property element in its content model (for example member) which is derived by
+     * extension from gml:AbstractFeatureMemberType.
+     *
+     */
+    private FeatureType rootType;
     private FeatureType featureType;
     private Boolean longitudeFirst;
     private GenericNameIndex<FeatureType> catalog;
@@ -135,7 +149,7 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
 
     @Override
     public synchronized FeatureType getType() throws DataStoreException {
-        if (featureType == null) {
+        if (rootType == null) {
             final String xsd = parameters.getValue(GMLProvider.XSD);
             final String xsdTypeName = parameters.getValue(GMLProvider.XSD_TYPE_NAME);
             catalog = new GenericNameIndex();
@@ -145,7 +159,7 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
                 final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
                 try {
                     catalog = reader.read(new URL(xsd));
-                    featureType = catalog.get(xsdTypeName);
+                    rootType = catalog.get(xsdTypeName);
 
                     // schemaLocations.put(reader.getTargetNamespace(),xsd); needed?
                 } catch (MalformedURLException | JAXBException ex) {
@@ -158,13 +172,15 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
                 try {
                     FeatureReader ite = reader.readAsStream(file);
                     catalog = reader.getFeatureTypes();
-                    featureType = ite.getFeatureType();
+                    rootType = ite.getFeatureType();
                 } catch (IOException | XMLStreamException ex) {
                     throw new DataStoreException(ex.getMessage(), ex);
                 } finally {
                     reader.dispose();
                 }
             }
+
+            featureType = getCollectionSubType(rootType);
         }
         return featureType;
     }
@@ -197,7 +213,7 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
             } catch (IOException | XMLStreamException ex) {
                 reader.dispose();
                 throw new DataStoreException(ex.getMessage(),ex);
-            } finally{
+            } finally {
                 //do not dispose, the iterator is closeable and will close the reader
                 //reader.dispose();
             }
@@ -286,4 +302,57 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
         throw new DataStoreException("Not supported yet.");
     }
 
+    /**
+     * Determinate if give type is a FeatureCollection type.
+     * @return the children collection feature type or base feature type if type is not a collection
+     */
+    private static FeatureType getCollectionSubType(FeatureType featureType) {
+        boolean isCollectionType = false;
+
+        //check if type is a Feature Collection, for GML up to version 3.2.1
+        if (isGmlCollectionType(featureType)) {
+            //TODO which property is the sub feature type ?
+            return featureType;
+        }
+
+        //check if an attribute is a gml feature member, from GML version 3.0
+        FeatureType subType = featureType;
+        if (!isCollectionType) {
+            Collection<? extends PropertyType> properties = featureType.getProperties(true);
+            for (PropertyType property : properties) {
+                if (property instanceof FeatureAssociationRole) {
+                    final FeatureAssociationRole far = (FeatureAssociationRole) property;
+                    final FeatureType valueType = far.getValueType();
+                    if (isGmlCollectionMemberType(valueType)) {
+                        subType = valueType;
+                    }
+                }
+            }
+        }
+
+        //not a collection type
+        return subType;
+    }
+
+    private static boolean isGmlCollectionType(FeatureType type) {
+        final String name = type.getName().tip().toString();
+        if ("AbstractFeatureCollectionType".equals(name) || "FeatureCollection".equals(name)) {
+            return true;
+        }
+        for (FeatureType ft : type.getSuperTypes()) {
+            if (isGmlCollectionType(ft)) return true;
+        }
+        return false;
+    }
+
+    private static boolean isGmlCollectionMemberType(FeatureType type) {
+        final String name = type.getName().tip().toString();
+        if ("AbstractFeatureMemberType".equals(name)) {
+            return true;
+        }
+        for (FeatureType ft : type.getSuperTypes()) {
+            if (isGmlCollectionMemberType(ft)) return true;
+        }
+        return false;
+    }
 }
