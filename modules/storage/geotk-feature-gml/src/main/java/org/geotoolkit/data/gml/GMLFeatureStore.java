@@ -24,20 +24,25 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.internal.storage.ConcatenatedFeatureSet;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -62,7 +67,9 @@ import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
@@ -75,8 +82,22 @@ import org.opengis.util.GenericName;
  */
 public class GMLFeatureStore extends DataStore implements WritableFeatureSet, ResourceOnFileSystem, FeatureCatalogue {
 
+    private final ReadWriteLock MAINLOCK = new ReentrantReadWriteLock();
+    private final ReadWriteLock UPDATELOCK = new ReentrantReadWriteLock();
+
     private final Parameters parameters;
     private final Path file;
+    /**
+     * Root type may differ from feature type if the root type is actually
+     * a feature collection (has attributes which are GML FeatureMember).
+     *
+     * A feature collection is a collection of feature instances.Within GML 3.2.1, the generic
+     * gml:FeatureCollection element has been deprecated. A feature collection is any feature class
+     * with a property element in its content model (for example member) which is derived by
+     * extension from gml:AbstractFeatureMemberType.
+     *
+     */
+    private FeatureType rootType;
     private FeatureType featureType;
     private Boolean longitudeFirst;
     private GenericNameIndex<FeatureType> catalog;
@@ -135,7 +156,7 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
 
     @Override
     public synchronized FeatureType getType() throws DataStoreException {
-        if (featureType == null) {
+        if (rootType == null) {
             final String xsd = parameters.getValue(GMLProvider.XSD);
             final String xsdTypeName = parameters.getValue(GMLProvider.XSD_TYPE_NAME);
             catalog = new GenericNameIndex();
@@ -145,7 +166,7 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
                 final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
                 try {
                     catalog = reader.read(new URL(xsd));
-                    featureType = catalog.get(xsdTypeName);
+                    rootType = catalog.get(xsdTypeName);
 
                     // schemaLocations.put(reader.getTargetNamespace(),xsd); needed?
                 } catch (MalformedURLException | JAXBException ex) {
@@ -158,13 +179,15 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
                 try {
                     FeatureReader ite = reader.readAsStream(file);
                     catalog = reader.getFeatureTypes();
-                    featureType = ite.getFeatureType();
+                    rootType = ite.getFeatureType();
                 } catch (IOException | XMLStreamException ex) {
                     throw new DataStoreException(ex.getMessage(), ex);
                 } finally {
                     reader.dispose();
                 }
             }
+
+            featureType = getCollectionSubType(rootType);
         }
         return featureType;
     }
@@ -193,18 +216,22 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
             reader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
             final CloseableIterator ite;
             try {
+                MAINLOCK.readLock().lock();
                 ite = reader.readAsStream(file);
             } catch (IOException | XMLStreamException ex) {
+                MAINLOCK.readLock().unlock();
                 reader.dispose();
                 throw new DataStoreException(ex.getMessage(),ex);
-            } finally{
+            } finally {
                 //do not dispose, the iterator is closeable and will close the reader
                 //reader.dispose();
             }
 
             final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize(ite, Spliterator.ORDERED);
             final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
-            return stream.onClose(ite::close);
+            return stream
+                    .onClose(ite::close)
+                    .onClose(MAINLOCK.readLock()::unlock);
         } else {
             //file may not exist yet if it's a new file.
             final Spliterator<Feature> empty = Spliterators.emptySpliterator();
@@ -259,11 +286,32 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
         try {
             //concatenate existing and new feature sets
             final List<Feature> lst = new ArrayList<>();
-            while (features.hasNext()) lst.add(features.next());
+            while (features.hasNext()) {
+                final Feature feature = features.next();
+                if (!type.isAssignableFrom(feature.getType())) {
+                    throw new DataStoreException(feature.getType().getName() + " is not of type " +type.getName());
+                }
+                lst.add(feature);
+            }
             final FeatureSet newfs = new ArrayFeatureSet(type, lst, null);
-            //TODO concatenate previous features
+            final FeatureSet all = ConcatenatedFeatureSet.create(this, newfs);
 
-            writer.write(newfs, tempFile);
+            try {
+                UPDATELOCK.writeLock().lock();
+
+                // write
+                writer.write(all, tempFile);
+
+                // replace files
+                try {
+                    MAINLOCK.writeLock().lock();
+                    Files.move(tempFile, file, StandardCopyOption.REPLACE_EXISTING);
+                } finally {
+                    MAINLOCK.writeLock().unlock();
+                }
+            } finally {
+                UPDATELOCK.writeLock().unlock();
+            }
 
         } catch (IOException | XMLStreamException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
@@ -286,4 +334,57 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
         throw new DataStoreException("Not supported yet.");
     }
 
+    /**
+     * Determinate if give type is a FeatureCollection type.
+     * @return the children collection feature type or base feature type if type is not a collection
+     */
+    private static FeatureType getCollectionSubType(FeatureType featureType) {
+        boolean isCollectionType = false;
+
+        //check if type is a Feature Collection, for GML up to version 3.2.1
+        if (isGmlCollectionType(featureType)) {
+            //TODO which property is the sub feature type ?
+            return featureType;
+        }
+
+        //check if an attribute is a gml feature member, from GML version 3.0
+        FeatureType subType = featureType;
+        if (!isCollectionType) {
+            Collection<? extends PropertyType> properties = featureType.getProperties(true);
+            for (PropertyType property : properties) {
+                if (property instanceof FeatureAssociationRole) {
+                    final FeatureAssociationRole far = (FeatureAssociationRole) property;
+                    final FeatureType valueType = far.getValueType();
+                    if (isGmlCollectionMemberType(valueType)) {
+                        subType = valueType;
+                    }
+                }
+            }
+        }
+
+        //not a collection type
+        return subType;
+    }
+
+    private static boolean isGmlCollectionType(FeatureType type) {
+        final String name = type.getName().tip().toString();
+        if ("AbstractFeatureCollectionType".equals(name) || "FeatureCollection".equals(name)) {
+            return true;
+        }
+        for (FeatureType ft : type.getSuperTypes()) {
+            if (isGmlCollectionType(ft)) return true;
+        }
+        return false;
+    }
+
+    private static boolean isGmlCollectionMemberType(FeatureType type) {
+        final String name = type.getName().tip().toString();
+        if ("AbstractFeatureMemberType".equals(name)) {
+            return true;
+        }
+        for (FeatureType ft : type.getSuperTypes()) {
+            if (isGmlCollectionMemberType(ft)) return true;
+        }
+        return false;
+    }
 }

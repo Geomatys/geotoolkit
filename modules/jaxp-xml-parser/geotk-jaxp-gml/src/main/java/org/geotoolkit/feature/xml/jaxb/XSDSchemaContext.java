@@ -334,15 +334,15 @@ public class XSDSchemaContext {
                 if (schemalocation != null && !locatedSchemas.containsKey(schemalocation)) {
                     //check for a relocation
                     final String relocation = locationMap.get(schemalocation);
-                    final String finalLocation = (relocation==null) ? schemalocation : relocation;
+                    final String finalLocation = (relocation == null) ? schemalocation : relocation;
                     Schema importedSchema = null;
-                    try{
+                    try {
                         importedSchema = SCHEMA_CACHE.getOrCreate(finalLocation, new Callable() {
                             public Schema call()  {
                                 return Utils.getDistantSchema(finalLocation);
                             }
                         });
-                    }catch(Exception ex){
+                    } catch (Exception ex) {
                         throw new MismatchedFeatureException(ex.getMessage(),ex);
                     }
 
@@ -561,9 +561,9 @@ public class XSDSchemaContext {
      */
     public boolean isFeatureType(ComplexType search){
         //loop on parent types until we find a Feature type
-        while(search!=null){
-            if(search.extendFeature()) return true;
-            if(search.getComplexContent()==null || search.getComplexContent().getExtension()==null) break;
+        while (search != null) {
+            if (search.extendFeature()) return true;
+            if (search.getComplexContent() == null || search.getComplexContent().getExtension() == null) break;
             final QName base = search.getComplexContent().getExtension().getBase();
             search = findComplexType(base);
         }

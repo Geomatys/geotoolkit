@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -51,7 +50,9 @@ import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.xml.AbstractConfigurable;
 import org.geotoolkit.xsd.xml.v2001.Annotated;
+import org.geotoolkit.xsd.xml.v2001.Annotation;
 import org.geotoolkit.xsd.xml.v2001.Any;
+import org.geotoolkit.xsd.xml.v2001.Appinfo;
 import org.geotoolkit.xsd.xml.v2001.Attribute;
 import org.geotoolkit.xsd.xml.v2001.AttributeGroup;
 import org.geotoolkit.xsd.xml.v2001.AttributeGroupRef;
@@ -80,6 +81,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.IdentifiedType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.feature.PropertyType;
 import org.opengis.util.GenericName;
@@ -101,7 +103,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
 
     private boolean skipStandardObjectProperties = false;
 
-    private final Map<GenericName,FeatureType> featureTypeCache = new HashMap<>();
+    private final Map<GenericName,IdentifiedType> featureTypeCache = new HashMap<>();
 
     public JAXBFeatureTypeReader() {
         this(null);
@@ -179,7 +181,12 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                 if (typeName != null) {
                     final ComplexType type = xsdContext.findComplexType(typeName);
 
-                    if (xsdContext.isFeatureType(type)) {
+                    if (type == null && xsdContext.findSimpleType(typeName) == null) {
+                        LOGGER.log(Level.WARNING, "Unable to find a the declaration of type {0} in schemas.", typeName.getLocalPart());
+                        continue;
+                    }
+
+                    //if (xsdContext.isFeatureType(type)) {
                         final BuildStack stack = new BuildStack();
                         final FeatureType ft = (FeatureType) getType(typeName.getNamespaceURI(), type, stack);
                         addIfMissing(result, ft);
@@ -194,11 +201,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                             final FeatureType renamed = ftb.build();
                             addIfMissing(result, renamed);
                         }
-
-                    } else if (type == null && xsdContext.findSimpleType(typeName) == null) {
-                        LOGGER.log(Level.WARNING, "Unable to find a the declaration of type {0} in schemas.", typeName.getLocalPart());
-                        continue;
-                    }
+                    //}
 
                 } else {
                     LOGGER.log(Level.WARNING, "null typeName for element : {0}", element.getName());
@@ -243,7 +246,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
      */
     private Object getType(QName qname, BuildStack stack) throws MismatchedFeatureException {
         final ComplexType type = xsdContext.findComplexType(qname);
-        if(type==null){
+        if (type == null) {
             throw new MismatchedFeatureException("Unable to find complex type for name : "+ qname);
         }
 
@@ -268,54 +271,77 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
             return featureTypeCache.get(name);
         }
 
+        //search for deprecated information stored in AppInfo (in GML XSD at least)
+        boolean deprecated = false;
+        final Annotation annotation = type.getAnnotation();
+        if (annotation != null) {
+            for (Object obj : annotation.getAppinfoOrDocumentation()) {
+                if (obj instanceof Appinfo) {
+                    final Appinfo app = (Appinfo) obj;
+                    for (Object ele : app.getContent()) {
+                        if (ele instanceof String) {
+                            final String text = (String) ele;
+                            deprecated |= "deprecated".equalsIgnoreCase(text);
+                        }
+                    }
+                }
+            }
+        }
+
         //read simple content type if defined
         final SimpleContent simpleContent = type.getSimpleContent();
-        if(simpleContent!=null){
+        if (simpleContent != null) {
             final ExtensionType sext = simpleContent.getExtension();
 
-            if(sext!=null){
+            if (sext != null) {
                 //simple type base, it must be : this is the content of the tag <tag>XXX<tag>
                 //it is not named, so we call it value
                 final QName base = sext.getBase();
                 final AttributeType st = (AttributeType) resolveType(base, stack);
                 final AttributeTypeBuilder atb = new FeatureTypeBuilder().addAttribute(st);
                 atb.setName(name);
+                atb.setDeprecated(deprecated);
 
                 //read attributes
                 for (PropertyType property : getAnnotatedAttributes(namespaceURI, sext.getAttributeOrAttributeGroup(), stack)) {
                     CharacteristicTypeBuilder cb = atb.getCharacteristic(property.getName().toString());
-                    if (cb==null) {
+                    if (cb == null) {
                         atb.addCharacteristic((AttributeType) property);
                     } else {
                         //characteristic already exist
                     }
                 }
-                return atb.build();
+                final AttributeType att = atb.build();
+                featureTypeCache.put(name, att);
+                return att;
             }
 
             final SimpleRestrictionType restriction = simpleContent.getRestriction();
-            if(restriction!=null){
+            if (restriction != null) {
 
                 final QName base = restriction.getBase();
-                if(base !=null){
+                if (base != null) {
                     final ComplexType sct = xsdContext.findComplexType(base);
-                    if(sct!=null){
+                    if (sct != null) {
                         final AttributeType tct = (AttributeType) getType(namespaceURI, sct, stack);
                         final AttributeTypeBuilder atb = new FeatureTypeBuilder().addAttribute(tct);
                         atb.setName(name);
+                        atb.setDeprecated(deprecated);
 
                         //read attributes
                         for (PropertyType property : getAnnotatedAttributes(namespaceURI, restriction.getAttributeOrAttributeGroup(), stack)) {
                             CharacteristicTypeBuilder cb = atb.getCharacteristic(property.getName().toString());
-                            if (cb==null) {
+                            if (cb == null) {
                                 atb.addCharacteristic((AttributeType) property);
                             } else {
                                 //characteristic already exist
                             }
 
                         }
-                        return atb.build();
-                    }else{
+                        final AttributeType att = atb.build();
+                        featureTypeCache.put(name, att);
+                        return att;
+                    } else {
 //                        final PropertyType restType = resolveType(base, stack);
 //                        addOrReplace(finalType.builder, atb.create(restType, NamesExt.create(namespaceURI, Utils.VALUE_PROPERTY_NAME), 0, 1, false, null));
                     }
@@ -328,6 +354,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
+        ftb.setDeprecated(deprecated);
 
         //read attributes
         for (PropertyType property : getAnnotatedAttributes(namespaceURI, type.getAttributeOrAttributeGroup(), stack)) {
@@ -345,11 +372,11 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
             final ExtensionType extension = content.getExtension();
             if (extension != null) {
                 final QName base = extension.getBase();
-                if (base!=null && !base.getLocalPart().equalsIgnoreCase("anytype")) {
+                if (base != null && !base.getLocalPart().equalsIgnoreCase("anytype")) {
                     final Object parent = getType(base, stack);
                     if (parent instanceof FeatureType) {
                         ftb.setSuperTypes((FeatureType)parent);
-                    } else if(parent instanceof GenericName) {
+                    } else if (parent instanceof GenericName) {
                         //parent type is currently being resolved
                         return name;
                     }
@@ -513,8 +540,8 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
 
         //extract min/max
         final Integer[] minMax = getMinMax(element);
-        if(minMax[0]==null) minMax[0] = 1;
-        if(minMax[1]==null) minMax[1] = 1;
+        if (minMax[0] == null) minMax[0] = 1;
+        if (minMax[1] == null) minMax[1] = 1;
 
 
         final QName typeName = element.getType();
@@ -734,7 +761,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
     private PropertyType resolveType(QName name, BuildStack stack) throws MismatchedFeatureException{
 
         //check if primitive type
-        if(Utils.existPrimitiveType(name.getLocalPart())){
+        if (Utils.existPrimitiveType(name.getLocalPart())) {
             final Class valueType = Utils.getTypeFromQName(name);
             final SingleAttributeTypeBuilder atb = new SingleAttributeTypeBuilder();
             atb.setName(NamesExt.create(name));
@@ -744,20 +771,20 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
 
         //check if a simple type exist
         final SimpleType simpleType = xsdContext.findSimpleType(name);
-        if(simpleType!=null){
+        if (simpleType != null) {
             return toProperty(simpleType, stack);
-        }else{
+        } else {
             //could be a complex type ... for a simple content, that's not an error. xsd/xml makes no sense at all sometimes
             final Object sct = getType(name, stack);
             final Map properties = Collections.singletonMap("name", NamesExt.create(name));
-            if (sct==null) {
+            if (sct == null) {
                 throw new MismatchedFeatureException("Could not find type : "+name);
             } else if(sct instanceof GenericName) {
                 return new DefaultAssociationRole(properties, (GenericName)sct, 1, 1);
             } else if(sct instanceof FeatureType) {
                 return new DefaultAssociationRole(properties, (FeatureType)sct, 1, 1);
             } else if(sct instanceof AttributeType) {
-                return (AttributeType)sct;
+                return (AttributeType) sct;
             } else {
                 throw new MismatchedFeatureException("Unexpected type "+sct);
             }
@@ -956,8 +983,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
      *
      */
     private static final class BuildStack extends HashSet<GenericName> {
-
-        final Set<QName> toResolve = new HashSet<>();
 
     }
 
