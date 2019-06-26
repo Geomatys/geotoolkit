@@ -83,7 +83,7 @@ import org.opengis.util.GenericName;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class Utils {
+public final class Utils {
 
     private static final Pattern GEOAPI_HOST_PATTERN;
     static {

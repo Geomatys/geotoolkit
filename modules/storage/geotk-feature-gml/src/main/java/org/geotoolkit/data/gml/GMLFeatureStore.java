@@ -24,6 +24,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,12 +34,15 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.internal.storage.ConcatenatedFeatureSet;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -77,6 +81,9 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  */
 public class GMLFeatureStore extends DataStore implements WritableFeatureSet, ResourceOnFileSystem, FeatureCatalogue {
+
+    private final ReadWriteLock MAINLOCK = new ReentrantReadWriteLock();
+    private final ReadWriteLock UPDATELOCK = new ReentrantReadWriteLock();
 
     private final Parameters parameters;
     private final Path file;
@@ -209,8 +216,10 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
             reader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
             final CloseableIterator ite;
             try {
+                MAINLOCK.readLock().lock();
                 ite = reader.readAsStream(file);
             } catch (IOException | XMLStreamException ex) {
+                MAINLOCK.readLock().unlock();
                 reader.dispose();
                 throw new DataStoreException(ex.getMessage(),ex);
             } finally {
@@ -220,7 +229,9 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
 
             final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize(ite, Spliterator.ORDERED);
             final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
-            return stream.onClose(ite::close);
+            return stream
+                    .onClose(ite::close)
+                    .onClose(MAINLOCK.readLock()::unlock);
         } else {
             //file may not exist yet if it's a new file.
             final Spliterator<Feature> empty = Spliterators.emptySpliterator();
@@ -275,11 +286,32 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
         try {
             //concatenate existing and new feature sets
             final List<Feature> lst = new ArrayList<>();
-            while (features.hasNext()) lst.add(features.next());
+            while (features.hasNext()) {
+                final Feature feature = features.next();
+                if (!type.isAssignableFrom(feature.getType())) {
+                    throw new DataStoreException(feature.getType().getName() + " is not of type " +type.getName());
+                }
+                lst.add(feature);
+            }
             final FeatureSet newfs = new ArrayFeatureSet(type, lst, null);
-            //TODO concatenate previous features
+            final FeatureSet all = ConcatenatedFeatureSet.create(this, newfs);
 
-            writer.write(newfs, tempFile);
+            try {
+                UPDATELOCK.writeLock().lock();
+
+                // write
+                writer.write(all, tempFile);
+
+                // replace files
+                try {
+                    MAINLOCK.writeLock().lock();
+                    Files.move(tempFile, file, StandardCopyOption.REPLACE_EXISTING);
+                } finally {
+                    MAINLOCK.writeLock().unlock();
+                }
+            } finally {
+                UPDATELOCK.writeLock().unlock();
+            }
 
         } catch (IOException | XMLStreamException ex) {
             throw new DataStoreException(ex.getMessage(), ex);

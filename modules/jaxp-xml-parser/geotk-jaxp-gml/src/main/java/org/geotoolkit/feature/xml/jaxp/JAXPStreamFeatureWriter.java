@@ -25,8 +25,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.StringJoiner;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import javax.xml.bind.JAXBElement;
@@ -110,19 +112,17 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
     private static final org.geotoolkit.gml.xml.v321.ObjectFactory GML32_FACTORY = new org.geotoolkit.gml.xml.v321.ObjectFactory();
 
-    protected String schemaLocation;
+    private static final DateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+    private final Map<String, String> schemaLocations = new LinkedHashMap<>();
 
     private final String gmlVersion;
-
     private final String wfsVersion;
-
     private final String wfsNamespace;
     private final String wfsLocation;
-
     private final String gmlNamespace;
     private final String gmlLocation;
 
-    private static final DateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     //automatic id increment for geometries id
     private int gidInc = 0;
@@ -132,6 +132,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     }
 
     public JAXPStreamFeatureWriter(final String gmlVersion, final String wfsVersion, final Map<String, String> schemaLocations)  {
+        if (schemaLocations != null) this.schemaLocations.putAll(schemaLocations);
+
         this.gmlVersion = gmlVersion;
         this.wfsVersion = wfsVersion;
         if ("2.0.0".equals(wfsVersion)) {
@@ -148,15 +150,11 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             gmlNamespace = "http://www.opengis.net/gml";
             gmlLocation  = "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd";
         }
-        if (schemaLocations != null && schemaLocations.size() > 0) {
-            final StringBuilder sb = new StringBuilder();
-            for (Entry<String, String> entry : schemaLocations.entrySet()) {
-                sb.append(entry.getKey()).append(' ').append(entry.getValue()).append(' ');
-            }
+
+        if (!this.schemaLocations.isEmpty()) {
             // add wfs schema Location
-            sb.append(wfsNamespace).append(' ').append(wfsLocation).append(' ');
-            sb.append(gmlNamespace).append(' ').append(gmlLocation).append(' ');
-            schemaLocation = sb.toString();
+            this.schemaLocations.put(wfsNamespace, wfsLocation);
+            this.schemaLocations.put(gmlNamespace, gmlLocation);
         }
     }
 
@@ -203,7 +201,9 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         writer.writeNamespace("gml", gmlNamespace);
         writer.writeNamespace("wfs", wfsNamespace);
         writer.writeNamespace("xsi", XSI_NAMESPACE);
-        if (schemaLocation != null && !schemaLocation.equals("")) {
+
+        final String schemaLocation = buildSchemaLocationString(schemaLocations);
+        if (!schemaLocation.isEmpty()) {
             writer.writeAttribute("xsi", XSI_NAMESPACE, "schemaLocation", schemaLocation);
         }
 
@@ -256,7 +256,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         writeNamespaces(collectionType);
 
-        if (schemaLocation != null && !schemaLocation.equals("")) {
+        final String schemaLocation = buildSchemaLocationString(schemaLocations);
+        if (!schemaLocation.isEmpty()) {
             writer.writeAttribute("xsi", XSI_NAMESPACE, "schemaLocation", schemaLocation);
         }
 
@@ -904,5 +905,16 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     private static boolean isAttributeProperty(GenericName name) {
         final String localPart = name.tip().toString();
         return !localPart.isEmpty() && localPart.charAt(0) == '@';
+    }
+
+    private static String buildSchemaLocationString(Map<String,String> schemaLocations) {
+        if (schemaLocations != null && !schemaLocations.isEmpty()) {
+            final StringJoiner sb = new StringJoiner(" ");
+            for (Entry<String, String> entry : schemaLocations.entrySet()) {
+                sb.add(entry.getKey()).add(entry.getValue());
+            }
+            return sb.toString();
+        }
+        return "";
     }
 }
