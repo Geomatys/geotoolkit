@@ -147,15 +147,6 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
     /**
      * {@inheritDoc }
      */
-    @Deprecated
-    @Override
-    public void setPosition(final DirectPosition position) throws UnmodifiableGeometryException {
-        setDirectPosition(position);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public PrimitiveBoundary getBoundary() {
         return (PrimitiveBoundary) super.getBoundary();

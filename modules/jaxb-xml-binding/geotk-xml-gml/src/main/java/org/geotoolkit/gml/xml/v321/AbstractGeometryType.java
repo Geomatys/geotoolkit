@@ -87,10 +87,6 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     @XmlAttribute
     private List<String> uomLabels;
 
-    // Opengis attribute
-    @XmlTransient
-    private Precision precision;
-
 
     /**
      * empty constructor used by JAXB
@@ -217,18 +213,6 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
         }
 
         return null;
-    }
-
-    @Override
-    public Precision getPrecision() {
-        return precision;
-    }
-
-    /**
-     * @param precision the precision to set
-     */
-    public void setPrecision(Precision precision) {
-        this.precision = precision;
     }
 
     @Override
@@ -439,9 +423,6 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
         }
         if (srsName != null) {
             sb.append("srsName:").append(srsName).append('\n');
-        }
-        if (precision != null) {
-            sb.append("precision:").append(precision).append('\n');
         }
         if (srsDimension != null) {
             sb.append("srsDimension:").append(srsDimension).append('\n');

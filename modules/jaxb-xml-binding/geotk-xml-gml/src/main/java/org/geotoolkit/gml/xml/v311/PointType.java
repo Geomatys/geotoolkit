@@ -195,11 +195,6 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
     }
 
     @Override
-    public void setPosition(final DirectPosition position) throws UnmodifiableGeometryException {
-        pos = new DirectPositionType(position);
-    }
-
-    @Override
     public OrientablePrimitive[] getProxy() {
         return null;
     }

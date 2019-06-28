@@ -19,7 +19,6 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.NotifyingArrayLis
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.PointArray;
-import org.opengis.geometry.coordinate.PointGrid;
 import org.opengis.geometry.coordinate.Position;
 
 
@@ -78,20 +77,6 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
     //*************************************************************************
     //  implement the PointArray interface
     //*************************************************************************
-
-    /**
-     * Returns the size (the number of elements) of this array.
-     * This is equivalent to {@code getColumns().size()}.
-     *
-     * @return The array size.
-     *
-     * @see List#size
-     * @see PointGrid#width
-     */
-    @Override
-    public int length() {
-        return size();
-    }
 
     /**
      * Returns the dimensionality of the coordinates in this array.
@@ -211,18 +196,6 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
             result[i] = new GeneralDirectPosition((DirectPosition)get(i));
         }
         return result;
-    }
-
-    /**
-     * Returns a view of the points in this array as a list of {@linkplain Position positions}.
-     * The list is backed by this {@code PointArray}, so changes to the array are reflected
-     * in the list, and vice-versa.
-     *
-     * @return The points in this array.
-     */
-    @Override
-    public List<Position> positions() {
-        return this;
     }
 
     @Override

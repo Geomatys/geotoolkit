@@ -82,7 +82,7 @@ import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
 import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
-import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
@@ -101,7 +101,6 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.identity.FeatureId;
-import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -521,7 +520,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         //we better not do any call to the layer bounding box before since it can be
         //really expensive, the featurestore is the best placed to check if he might
         //optimize the filter.
-        //if( ((BoundingBox)bbox).contains(new DefaultBoundingBox(layerBounds))){
+        //if( ((BoundingBox)bbox).contains(new BoundingBox(layerBounds))){
             //the layer bounds overlaps the bbox, no need for a spatial filter
         //   filter = Filter.INCLUDE;
         //}else{
@@ -772,7 +771,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         //we better not do any call to the layer bounding box before since it can be
         //really expensive, the featurestore is the best placed to check if he might
         //optimize the filter.
-        //if( ((BoundingBox)bbox).contains(new DefaultBoundingBox(layerBounds))){
+        //if( ((BoundingBox)bbox).contains(new BoundingBox(layerBounds))){
             //the layer bounds overlaps the bbox, no need for a spatial filter
         //   filter = Filter.INCLUDE;
         //}else{
@@ -876,7 +875,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             final GeneralEnvelope env = new GeneralEnvelope(bbox);
             env.setRange(0, env.getMinimum(0)-symbolsMargin, env.getMaximum(0)+symbolsMargin);
             env.setRange(1, env.getMinimum(1)-symbolsMargin, env.getMaximum(1)+symbolsMargin);
-            bbox = new DefaultBoundingBox(env);
+            bbox = new BoundingBox(env);
         }
 
         //layer crs may be null if it define an abstract collection
@@ -923,7 +922,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             env = new GeneralEnvelope(env);
             ((GeneralEnvelope)env).setCoordinateReferenceSystem(layerCRS);
 
-            bbox = new DefaultBoundingBox(env);
+            bbox = new BoundingBox(env);
         }
 
         return bbox;

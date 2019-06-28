@@ -1217,7 +1217,8 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         JTSCurve expCurve = (JTSCurve) expBoundary.getExterior().getElements().iterator().next();
         JTSCurve resCurve = (JTSCurve) resBoundary.getExterior().getElements().iterator().next();
 
-        assertEquals(((JTSLineString)expCurve.getSegments().get(0)).getControlPoints().positions().get(0), ((JTSLineString)resCurve.getSegments().get(0)).getControlPoints().positions().get(0));
+        assertEquals(((JTSLineString)expCurve.getSegments().get(0)).getControlPoints().get(0),
+                     ((JTSLineString)resCurve.getSegments().get(0)).getControlPoints().get(0));
         assertEquals(expCurve.getSegments().get(0), resCurve.getSegments().get(0));
         assertEquals(expCurve, resCurve);
 

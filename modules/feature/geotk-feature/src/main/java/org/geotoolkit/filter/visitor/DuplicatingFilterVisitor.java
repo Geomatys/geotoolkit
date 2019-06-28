@@ -81,7 +81,7 @@ import org.opengis.filter.temporal.OverlappedBy;
 import org.opengis.filter.temporal.TContains;
 import org.opengis.filter.temporal.TEquals;
 import org.opengis.filter.temporal.TOverlaps;
-import org.opengis.geometry.BoundingBox;
+import org.geotoolkit.geometry.BoundingBox;
 
 
 /**

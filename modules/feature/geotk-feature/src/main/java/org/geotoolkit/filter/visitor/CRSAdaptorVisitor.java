@@ -5,7 +5,7 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
 import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
-import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.referencing.CRS;
 import org.opengis.feature.AttributeType;
@@ -16,7 +16,6 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.BBOX;
-import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -70,7 +69,7 @@ public class CRSAdaptorVisitor extends DuplicatingFilterVisitor {
                         l = ff.literal(geom);
                     }else if(lo instanceof Envelope){
                         Envelope env = Envelopes.transform((Envelope) lo, targetCrs);
-                        l = ff.literal(new DefaultBoundingBox(env));
+                        l = ff.literal(new BoundingBox(env));
                     }
                 }catch (Exception ex){
                     throw new IllegalArgumentException(ex.getMessage(),ex);

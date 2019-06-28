@@ -130,7 +130,7 @@ public class PolygonType {
                             line.setCoordinateReferenceSystem(coordinateReferenceSystem);
                             PointArray pa = line.getControlPoints();
                             List<Position> newPositions = new ArrayList<Position>();
-                            for (Position pos : pa.positions()) {
+                            for (Position pos : pa) {
                                 if (pos instanceof GeneralDirectPosition) {
                                     ((GeneralDirectPosition) pos).setCoordinateReferenceSystem(coordinateReferenceSystem);
                                     newPositions.add(pos);
@@ -162,7 +162,7 @@ public class PolygonType {
                                 line.setCoordinateReferenceSystem(coordinateReferenceSystem);
                                 PointArray pa = line.getControlPoints();
                                 List<Position> newPositions = new ArrayList<Position>();
-                                for (Position pos : pa.positions()) {
+                                for (Position pos : pa) {
                                     if (pos instanceof GeneralDirectPosition) {
                                         ((GeneralDirectPosition) pos).setCoordinateReferenceSystem(coordinateReferenceSystem);
                                         newPositions.add(pos);

@@ -35,7 +35,7 @@ import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.geometry.BoundingBox;
 import org.apache.sis.referencing.CommonCRS;
 import org.junit.Before;
 import org.junit.Test;
@@ -531,7 +531,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
         session.updateFeatures(name.toString(), FF.equals(FF.property("double"), FF.literal(2d)), values);
 
         //check we have a modification in data crs -----------------------------
-        DefaultBoundingBox bbox = new DefaultBoundingBox(CommonCRS.WGS84.normalizedGeographic());
+        BoundingBox bbox = new BoundingBox(CommonCRS.WGS84.normalizedGeographic());
         bbox.setRange(0, 49, 51);
         bbox.setRange(1, 0, 2);
         qb.reset();
@@ -563,7 +563,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
 
 
         //check we have a modification in another crs --------------------------
-        bbox = new DefaultBoundingBox(CommonCRS.WGS84.geographic());
+        bbox = new BoundingBox(CommonCRS.WGS84.geographic());
         bbox.setRange(1, 49, 51);
         bbox.setRange(0, 0, 2);
         qb.reset();

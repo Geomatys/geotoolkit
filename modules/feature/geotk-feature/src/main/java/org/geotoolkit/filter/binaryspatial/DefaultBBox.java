@@ -42,7 +42,7 @@ import org.opengis.feature.PropertyType;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.BBOX;
-import org.opengis.geometry.BoundingBox;
+import org.geotoolkit.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;

@@ -100,7 +100,7 @@ public class PolyhedralSurfaceType {
                             JTSLineString line = (JTSLineString) cv;
                             PointArray pa = line.getControlPoints();
                             List<Position> newPositions = new ArrayList<Position>();
-                            for (Position pos : pa.positions()) {
+                            for (Position pos : pa) {
                                 if (pos instanceof GeneralDirectPosition) {
                                     ((GeneralDirectPosition)pos).setCoordinateReferenceSystem(coordinateReferenceSystem);
                                     newPositions.add(pos);
@@ -125,7 +125,7 @@ public class PolyhedralSurfaceType {
                                     JTSLineString line = (JTSLineString) cv;
                                     PointArray pa = line.getControlPoints();
                                     List<Position> newPositions = new ArrayList<Position>();
-                                    for (Position pos : pa.positions()) {
+                                    for (Position pos : pa) {
                                         if (pos instanceof GeneralDirectPosition) {
                                             ((GeneralDirectPosition)pos).setCoordinateReferenceSystem(coordinateReferenceSystem);
                                             newPositions.add(pos);

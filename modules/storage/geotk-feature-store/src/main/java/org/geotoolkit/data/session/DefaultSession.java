@@ -35,7 +35,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
-import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.version.Version;
@@ -45,7 +45,6 @@ import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.identity.Identifier;
-import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -368,13 +367,13 @@ public class DefaultSession extends AbstractSession {
                     BoundingBox bb = (BoundingBox) obj;
                     if(bb.getCoordinateReferenceSystem() == null){
                         //force crs definition
-                        bb = new DefaultBoundingBox(bb, crs);
+                        bb = new BoundingBox(bb, crs);
                         return FF.literal(bb);
                     }else if(replace){
                         try {
                             //reproject bbox
                             final Envelope env = Envelopes.transform(bb, crs);
-                            bb = new DefaultBoundingBox(env);
+                            bb = new BoundingBox(env);
                             return FF.literal(bb);
                         } catch (TransformException ex) {
                             Logging.getLogger("org.geotoolkit.data.session").log(Level.SEVERE, null, ex);

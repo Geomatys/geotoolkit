@@ -40,6 +40,7 @@ import org.opengis.geometry.primitive.CurveSegment;
 import org.opengis.geometry.primitive.OrientablePrimitive;
 import org.opengis.geometry.primitive.Primitive;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.geometry.SampledByPoints;
 
 /**
  * The {@code LineStringImpl} class implements the {@link LineString}
@@ -51,7 +52,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module
  */
 public class JTSLineString extends AbstractJTSGenericCurve
-    implements LineString, Primitive {
+    implements LineString, Primitive, SampledByPoints {
 
     /**
      * Points comprising this geometry.
@@ -162,14 +163,13 @@ public class JTSLineString extends AbstractJTSGenericCurve
     /**
      * {@inheritDoc }
      */
-    @Override
     public CurveSegment reverse() {
         JTSLineString result = new JTSLineString();
         PointArray pa = result.getSamplePoints();
-        List list = pa.positions();
-        int n = controlPoints.length();
+        List list = pa;
+        int n = controlPoints.size();
         for (int i=n-1; i>=0; i--) {
-            list.add(new GeneralDirectPosition(controlPoints.positions().get(i).getDirectPosition()));
+            list.add(new GeneralDirectPosition(controlPoints.get(i).getDirectPosition()));
         }
         return result;
     }
@@ -179,7 +179,7 @@ public class JTSLineString extends AbstractJTSGenericCurve
      */
     @Override
     public DirectPosition getStartPoint() {
-        return (DirectPosition) controlPoints.positions().get(0);
+        return (DirectPosition) controlPoints.get(0);
     }
 
     /**
@@ -187,7 +187,7 @@ public class JTSLineString extends AbstractJTSGenericCurve
      */
     @Override
     public DirectPosition getEndPoint() {
-        return (DirectPosition) controlPoints.positions().get(controlPoints.length() - 1);
+        return (DirectPosition) controlPoints.get(controlPoints.size() - 1);
     }
 
     /**
@@ -281,12 +281,12 @@ public class JTSLineString extends AbstractJTSGenericCurve
      */
     @Override
     protected Geometry computeJTSPeer() {
-        int n = controlPoints.length();
+        int n = controlPoints.size();
         org.locationtech.jts.geom.Coordinate [] coords =
             new org.locationtech.jts.geom.Coordinate[n];
         for (int i=0; i<n; i++) {
             coords[i] = JTSUtils.directPositionToCoordinate(
-                (DirectPosition) controlPoints.positions().get(i));
+                (DirectPosition) controlPoints.get(i));
         }
         final org.locationtech.jts.geom.LineString result = JTSUtils.GEOMETRY_FACTORY.createLineString(coords);
         CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
@@ -325,7 +325,7 @@ public class JTSLineString extends AbstractJTSGenericCurve
     public void applyCRSOnChild() {
         if (controlPoints != null) {
             List<Position> newPositions = new ArrayList<Position>();
-            for (Position pos : controlPoints.positions()) {
+            for (Position pos : controlPoints) {
                 if (pos instanceof GeneralDirectPosition) {
                     ((GeneralDirectPosition) pos).setCoordinateReferenceSystem(getCoordinateReferenceSystem());
                     newPositions.add(pos);
@@ -339,10 +339,7 @@ public class JTSLineString extends AbstractJTSGenericCurve
     @XmlElement(name="pos", namespace="http://www.opengis.net/gml")
     @XmlJavaTypeAdapter(DirectPositionAdapter.class)
     public List<Position> getPositions() {
-        if (controlPoints != null) {
-            return controlPoints.positions();
-        }
-        return null;
+        return controlPoints;
     }
 
     @Override

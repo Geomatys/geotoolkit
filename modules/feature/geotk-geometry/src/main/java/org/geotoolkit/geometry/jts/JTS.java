@@ -41,7 +41,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.factory.HintsPending;
 import org.apache.sis.util.ArgumentChecks;
 
-import org.opengis.geometry.BoundingBox;
+import org.geotoolkit.geometry.BoundingBox;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
