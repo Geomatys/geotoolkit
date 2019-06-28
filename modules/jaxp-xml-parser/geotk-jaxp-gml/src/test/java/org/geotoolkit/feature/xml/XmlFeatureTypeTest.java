@@ -78,6 +78,7 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
 
         // GML defines a lot more properties than what we strictly need. Nonetheless,
         // we must ensure that required prpoerties are read from xsd.
+        simpleTypeFull.equals(types.get(0));
         assertEquals(simpleTypeFull, types.get(0));
     }
 
@@ -153,6 +154,7 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexType.xsd")).getValues());
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
+        complexType.equals(types.get(0));
         assertEquals(complexType, types.get(0));
     }
 

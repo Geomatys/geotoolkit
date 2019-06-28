@@ -20,6 +20,14 @@
             <gml:country>Canada</gml:country>
         </gml:Address>
     </gml:mailAddress>
+    <gml:mailAddress2>
+        <gml:streetName>Second</gml:streetName>
+        <gml:streetNumber>7</gml:streetNumber>
+        <gml:city>AnotherTown</gml:city>
+        <gml:province>France</gml:province>
+        <gml:postalCode>14000</gml:postalCode>
+        <gml:country>France</gml:country>
+    </gml:mailAddress2>
     <gml:phone>4161234567</gml:phone>
     <gml:phone>4168901234</gml:phone>
 </gml:Person>

@@ -45,6 +45,7 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
@@ -436,7 +437,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             nameProperty = nameProperty.substring(1);
 
             nil |= "nil".equals(nameProperty) && Boolean.TRUE.equals(value);
-            if(value instanceof Boolean) {
+            if (value instanceof Boolean) {
                 value = (Boolean)value ? "1" : "0";
             }
 
@@ -483,7 +484,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         if (isNil) return;
 
         //write properties in the type order
-        for(PropertyType pt : feature.getType().getProperties(true)){
+        for (PropertyType pt : feature.getType().getProperties(true)) {
             final Object value = feature.getPropertyValue(pt.getName().toString());
             final Collection<?> values;
             if (value instanceof Collection) {
@@ -527,7 +528,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             if (value instanceof Boolean) {
                 value = (Boolean)value ? "1" : "0";
             }
-            if (value!=null) {
+            if (value != null) {
                 writer.writeAttribute(namespace, localPart,ObjectConverters.convert(value, String.class));
             }
         }
@@ -566,7 +567,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         if (typeA instanceof FeatureAssociationRole && valueA instanceof Feature) {
             final FeatureAssociationRole far = (FeatureAssociationRole) typeA;
-            final Feature ca = (Feature)valueA;
+            final Feature ca = (Feature) valueA;
 
             //write feature
             if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
@@ -588,7 +589,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             follow the OGC 'PropertyType' pattern and is not encapsulated.
             Note : if more cases are found, a more generic approach should be used.
             */
-            boolean encapsulate = !"identifier".equals(ca.getType().getName().tip().toString());
+            boolean encapsulate = GMLConvention.isDecoratedProperty(far);
 
             if (encapsulate) {
                 //we need to encapsulate type
@@ -615,7 +616,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 } else {
                     writer.writeStartElement(nameProperty);
                 }
-                if(hasChars) writeCharacteristics((Attribute) parent.getProperty(nameA.toString()));
+                if (hasChars) writeCharacteristics((Attribute) parent.getProperty(nameA.toString()));
                 writer.writeCharacters(Utils.getStringValue(value));
                 writer.writeEndElement();
             }
@@ -742,7 +743,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                     } catch (FactoryException ex) {
                         LOGGER.log(Level.WARNING, "Factory exception when transforming JTS geometry to GML binding", ex);
                     }
-                    if(gmlGeometry!=null){
+                    if (gmlGeometry != null) {
                         //id is requiered in version 3.2.1
                         //NOTE we often see gml where the geometry id is the same as the feature
                         // we use the last parent with an id, seems acceptable.
@@ -773,7 +774,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      *
      * @param inc auto increment value, ids must be unique
      */
-    private void setId(AbstractGeometry gmlGeometry, String id){
+    private void setId(AbstractGeometry gmlGeometry, String id) {
         if (gmlGeometry.getId()==null || gmlGeometry.getId().isEmpty()) {
             //do not override ids if they exist
             gmlGeometry.setId(id+(gidInc));
@@ -822,7 +823,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      * <strong>Must</strong> be called when closing the feature writer.
      */
     @Override
-    public void dispose() throws IOException, XMLStreamException{
+    public void dispose() throws IOException, XMLStreamException {
         super.dispose();
     }
 

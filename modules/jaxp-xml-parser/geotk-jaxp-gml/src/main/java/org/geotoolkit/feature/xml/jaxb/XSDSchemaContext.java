@@ -48,9 +48,9 @@ import javax.xml.namespace.QName;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.xsd.xml.v2001.Appinfo;
 import org.geotoolkit.xsd.xml.v2001.Attribute;
 import org.geotoolkit.xsd.xml.v2001.ComplexType;
 import org.geotoolkit.xsd.xml.v2001.Element;
@@ -208,7 +208,7 @@ public class XSDSchemaContext {
         //default relocations
         this.locationMap.putAll(RELOCATIONS);
 
-        if(locationMap!=null){
+        if (locationMap != null) {
             this.locationMap.putAll(locationMap);
         }
     }
@@ -269,15 +269,15 @@ public class XSDSchemaContext {
             final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
             Object schema;
             String location = null;
-            if(candidate instanceof File) schema = unmarshaller.unmarshal((File)candidate);
-            else if(candidate instanceof Node) schema = unmarshaller.unmarshal((Node)candidate);
-            else if(candidate instanceof Reader) schema = unmarshaller.unmarshal((Reader)candidate);
-            else if(candidate instanceof InputStream) schema = unmarshaller.unmarshal((InputStream)candidate);
-            else if(candidate instanceof String) schema = unmarshaller.unmarshal(new StringReader((String)candidate));
-            else if(candidate instanceof URL){
-                schema = unmarshaller.unmarshal(((URL)candidate).openStream());
+            if (candidate instanceof File) schema = unmarshaller.unmarshal((File) candidate);
+            else if (candidate instanceof Node) schema = unmarshaller.unmarshal((Node) candidate);
+            else if (candidate instanceof Reader) schema = unmarshaller.unmarshal((Reader) candidate);
+            else if (candidate instanceof InputStream) schema = unmarshaller.unmarshal((InputStream) candidate);
+            else if (candidate instanceof String) schema = unmarshaller.unmarshal(new StringReader((String) candidate));
+            else if (candidate instanceof URL) {
+                schema = unmarshaller.unmarshal(((URL) candidate).openStream());
                 // we build the base url to retrieve imported xsd
-                location = ((URL)candidate).toString();
+                location = ((URL) candidate).toString();
             } else if (candidate instanceof URLConnection) {
                 final URLConnection conn = (URLConnection) candidate;
                 try (final InputStream stream = conn.getInputStream()) {
@@ -288,9 +288,8 @@ public class XSDSchemaContext {
                 try (final InputStream stream = IOUtilities.open(candidate, StandardOpenOption.READ)) {
                     schema = unmarshaller.unmarshal(stream);
                 }
-                location = ((URI)candidate).toString();
-            }
-            else {
+                location = ((URI) candidate).toString();
+            } else {
                 POOL.recycle(unmarshaller); // We won't use it, it can be recycled.
                 throw new JAXBException("Unsupported input type : "+candidate);
             }
@@ -301,6 +300,7 @@ public class XSDSchemaContext {
             }
 
             if (schema instanceof Schema) {
+                ((Schema) schema).getOtherAttributes().put(new QName("__location"), String.valueOf(candidate));
                 if (location == null || location.trim().isEmpty()) {
                     unlocatedSchemas.add((Schema) schema);
                 } else {
@@ -339,7 +339,9 @@ public class XSDSchemaContext {
                     try {
                         importedSchema = SCHEMA_CACHE.getOrCreate(finalLocation, new Callable() {
                             public Schema call()  {
-                                return Utils.getDistantSchema(finalLocation);
+                                Schema schema = Utils.getDistantSchema(finalLocation);
+                                schema.getOtherAttributes().put(new QName("__location"), finalLocation);
+                                return schema;
                             }
                         });
                     } catch (Exception ex) {
@@ -374,21 +376,21 @@ public class XSDSchemaContext {
      * @param schema
      */
     private void fillAllSubstitution(Schema schema){
-        for(OpenAttrs att : schema.getSimpleTypeOrComplexTypeOrGroup()){
-            if(att instanceof TopLevelElement){
+        for (OpenAttrs att : schema.getSimpleTypeOrComplexTypeOrGroup()) {
+            if (att instanceof TopLevelElement) {
                 final TopLevelElement ele = (TopLevelElement) att;
                 final QName parent = ele.getSubstitutionGroup();
-                if(parent!=null){
+                if (parent != null) {
                     Set<QName> subList = substitutionGroups.get(parent);
-                    if(subList==null){
+                    if (subList == null) {
                         subList = new HashSet<>();
                         substitutionGroups.put(parent, subList);
                     }
                     final QName name = new QName(schema.getTargetNamespace(), ele.getName());
-                    if(subList.contains(name)){
+                    if (subList.contains(name)) {
                         //name already here, check if one of them is deprecated
                         subList.add(name);
-                    }else{
+                    } else {
                         subList.add(name);
                     }
                 }
@@ -441,12 +443,12 @@ public class XSDSchemaContext {
         // look in the schemas
         while (schemas.hasNext()) {
             final Schema schema = schemas.next();
-            for(OpenAttrs att : schema.getSimpleTypeOrComplexTypeOrGroup()){
-                if(att instanceof Element){
+            for (OpenAttrs att : schema.getSimpleTypeOrComplexTypeOrGroup()) {
+                if (att instanceof Element) {
                     final TopLevelElement candidate = (TopLevelElement) att;
-                    if(candidate.getName().equals(typeName.getLocalPart())){
+                    if (candidate.getName().equals(typeName.getLocalPart())) {
                         //check if it's a deprecated type, we will return it only in last case
-                        if(isDeprecated(candidate)){
+                        if (GMLConvention.isDeprecated(candidate)) {
                             element = candidate;
                         } else {
                             //found it
@@ -544,8 +546,8 @@ public class XSDSchemaContext {
     public Set<QName> getSubstitutions(QName name){
         final Set<QName> subs = new HashSet<>();
         final Set<QName> lst = substitutionGroups.get(name);
-        if(lst!=null){
-            for(QName sub : lst){
+        if (lst != null) {
+            for (QName sub : lst) {
                 subs.add(sub);
                 subs.addAll(getSubstitutions(sub));
             }
@@ -570,19 +572,4 @@ public class XSDSchemaContext {
         return false;
     }
 
-    public static boolean isDeprecated(TopLevelElement candidate){
-        //check if it's a deprecated type, we will return it only in last case
-        if(candidate.getAnnotation()!=null){
-            for(Object obj : candidate.getAnnotation().getAppinfoOrDocumentation()){
-                if(obj instanceof Appinfo){
-                    for(Object cdt : ((Appinfo)obj).getContent()){
-                        if(cdt instanceof String && "deprecated".equalsIgnoreCase((String)cdt)){
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
 }

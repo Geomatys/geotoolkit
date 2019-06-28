@@ -16,17 +16,6 @@
  */
 package org.geotoolkit.feature.xml;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Arrays;
@@ -38,24 +27,35 @@ import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureCollection;
 import static org.geotoolkit.data.AbstractFeatureStore.GML_32_NAMESPACE;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.util.NamesExt;
+import static org.geotoolkit.feature.xml.GMLConvention.*;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.util.NamesExt;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+import org.opengis.feature.Attribute;
+import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortOrder;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.NamedIdentifier;
-import static org.geotoolkit.feature.xml.GMLConvention.*;
-import org.opengis.feature.Attribute;
-import org.opengis.feature.AttributeType;
 
 /**
  *
@@ -176,7 +176,8 @@ public class XmlTestData {
         ftb.addAttribute(Integer.class)          .setName(GML_311_NAMESPACE,"age")              .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(String.class)           .setName(GML_311_NAMESPACE,"sex")              .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(Point .class)           .setName(GML_311_NAMESPACE,"position")         .setMinimumOccurs(0).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
-        ftb.addAssociation(adress).setName(NamesExt.create(GML_311_NAMESPACE, "mailAddress"))   .setMinimumOccurs(0).setMaximumOccurs(1);
+        ftb.addAssociation(adress).setName(NamesExt.create(GML_311_NAMESPACE, "mailAddress"))   .setMinimumOccurs(0).setMaximumOccurs(1).setDescription(GMLConvention.DECORATED_DESCRIPTION+" {http://www.opengis.net/gml}Address");
+        ftb.addAssociation(adress).setName(NamesExt.create(GML_311_NAMESPACE, "mailAddress2"))  .setMinimumOccurs(0).setMaximumOccurs(1);
         ftb.addAttribute(String .class)          .setName(GML_311_NAMESPACE,"phone")            .setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         complexType = ftb.build();
 
@@ -350,7 +351,16 @@ public class XmlTestData {
         address.setPropertyValue("postalCode","M1R1K9");
         address.setPropertyValue("country","Canada");
 
+        final Feature address2 = adress.newInstance();
+        address2.setPropertyValue("streetName","Second");
+        address2.setPropertyValue("streetNumber","7");
+        address2.setPropertyValue("city","AnotherTown");
+        address2.setPropertyValue("province","France");
+        address2.setPropertyValue("postalCode","14000");
+        address2.setPropertyValue("country","France");
+
         featureComplex.setPropertyValue("mailAddress", address);
+        featureComplex.setPropertyValue("mailAddress2", address2);
         featureComplex.setPropertyValue("phone", Arrays.asList("4161234567","4168901234"));
 
         EPSG_VERSION = org.geotoolkit.referencing.CRS.getVersion("EPSG").toString();
