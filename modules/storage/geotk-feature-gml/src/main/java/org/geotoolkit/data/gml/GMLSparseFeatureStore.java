@@ -116,8 +116,8 @@ public class GMLSparseFeatureStore extends DataStore implements WritableFeatureS
     }
 
     @Override
-    public Optional<GenericName> getIdentifier() {
-        return Optional.empty();
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return Optional.of(getType().getName());
     }
 
     @Override
