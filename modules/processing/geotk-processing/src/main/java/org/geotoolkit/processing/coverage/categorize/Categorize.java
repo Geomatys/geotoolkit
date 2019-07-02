@@ -15,14 +15,14 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.geotoolkit.coverage.io.GridCoverageWriteParam;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.process.DismissProcessException;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -32,7 +32,6 @@ import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifier;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifierDescriptor;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.parameter.ParameterValueGroup;
@@ -63,16 +62,9 @@ public class Categorize extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         final GridCoverageResource source = getSource();
-        final GridCoverageResource destination = getDestination();
+        final WritableGridCoverageResource destination = getDestination();
 
-        final GridCoverageWriter writer;
         try {
-            writer = destination.acquireWriter();
-        } catch (DataStoreException ex) {
-            throw new ProcessException("Cannot access data output", this, ex);
-        }
-
-        try (final UncheckedCloseable outClose = () -> destination.recycle(writer)) {
             final GridGeometry inputGG = source.getGridGeometry();
 
             final GridGeometry readGeom;
@@ -153,8 +145,7 @@ public class Categorize extends AbstractProcess {
 
                 final GridCoverage resultCoverage = builder.build();
 
-                final GridCoverageWriteParam writeParam = new GridCoverageWriteParam();
-                writer.write(resultCoverage, writeParam);
+                destination.write(resultCoverage);
             }
         } catch (TransformException ex) {
             throw new ProcessException("Cannot adapt input geometry", this, ex);
@@ -258,7 +249,7 @@ public class Categorize extends AbstractProcess {
         SampleClassifier.addInterval(inputParameters, inclusiveMin, exclusiveMax, classValue);
     }
 
-    public GridCoverageResource getDestination() {
+    public WritableGridCoverageResource getDestination() {
         return inputParameters.getMandatoryValue(CategorizeDescriptor.OUT_COVERAGE);
     }
 
@@ -285,12 +276,6 @@ public class Categorize extends AbstractProcess {
 
     public void setEnvelope(final Envelope roi) {
         inputParameters.getOrCreate(CategorizeDescriptor.ENVELOPE).setValue(roi);
-    }
-
-    private static interface UncheckedCloseable extends AutoCloseable {
-
-        @Override
-        public void close();
     }
 
     /**
