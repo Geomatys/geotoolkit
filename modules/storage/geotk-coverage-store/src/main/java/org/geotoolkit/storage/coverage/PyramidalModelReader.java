@@ -52,6 +52,7 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.MultiResolutionModel;
@@ -389,11 +390,10 @@ public class PyramidalModelReader extends AbstractGridCoverageReader {
 
             if (candidates.isEmpty()) {
                 //no tiles intersect
-                LOGGER.log(Level.FINE, "Following Requested envelope : "
+                throw new DisjointCoverageDomainException("Following Requested envelope : "
                         +wantedEnv
-                        + "\n do not intersect data define by following data Envelope."
+                        + "\n do not intersect any tiles data in mosaic Envelope : "
                         +mosaic.getEnvelope());
-                return null;
             }
 
             //--debug helper
@@ -492,11 +492,10 @@ public class PyramidalModelReader extends AbstractGridCoverageReader {
 
             if (image == null) {
                 //no tiles intersect
-                LOGGER.log(Level.FINE, "Following Requested envelope : "
+                throw new DisjointCoverageDomainException("Following Requested envelope : "
                         +wantedEnv
-                        + "\n do not intersect data define by following data Envelope."
+                        + "\n do not intersect any tiles data in mosaic Envelope : "
                         +mosaic.getEnvelope());
-                return null;
             }
         }
 ////
