@@ -23,6 +23,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
@@ -34,7 +35,6 @@ import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.storage.GridCoverageResource;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
@@ -112,6 +112,8 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
                             result = ((GridCoverageStack)result).coverageAtIndex(0);
                         }
                         value = result;
+                    } else {
+                        throw new DataStoreException("Resource is not a coverage" + resource);
                     }
                 }
             } finally {

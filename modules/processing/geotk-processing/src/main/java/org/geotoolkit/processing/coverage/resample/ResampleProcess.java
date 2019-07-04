@@ -16,22 +16,27 @@
  */
 package org.geotoolkit.processing.coverage.resample;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-import java.awt.image.*;
-import java.util.*;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.RenderedImage;
+import java.awt.image.WritableRaster;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.internal.coverage.BufferedGridCoverage;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.BufferedImages;
@@ -41,16 +46,13 @@ import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-
-import static org.apache.sis.internal.coverage.BufferedGridCoverage.convert;
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
-
 import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.*;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 
@@ -534,7 +536,7 @@ public class ResampleProcess extends AbstractProcess {
             if (converted) {
                 synchronized (this) {
                     if (this.converted == null) {
-                        this.converted = convert(this);
+                        this.converted = BufferedGridCoverage.convert(this);
                     }
                     return this.converted;
                 }
