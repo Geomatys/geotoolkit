@@ -22,6 +22,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelopes;
@@ -37,7 +38,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -46,6 +46,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -358,14 +359,14 @@ public final class Pyramids extends Static {
         }
 
         //-- define appropriate gridToCRS
-        final Dimension gridSize = mosaic.getGridSize();
+//        final Dimension gridSize = mosaic.getGridSize();
         final Dimension tileSize = mosaic.getTileSize();
-        final double sx          = mosEnv2D.getSpan(0) / (gridSize.width  * tileSize.width);
-        final double sy          = mosEnv2D.getSpan(1) / (gridSize.height * tileSize.height);
-        final double offsetX     = upperLeft.getOrdinate(xAxis);
-        final double offsetY     = upperLeft.getOrdinate(yAxis);
+//        final double sx          = mosEnv2D.getSpan(0) / (gridSize.width  * tileSize.width);
+//        final double sy          = mosEnv2D.getSpan(1) / (gridSize.height * tileSize.height);
+//        final double offsetX     = upperLeft.getOrdinate(xAxis);
+//        final double offsetY     = upperLeft.getOrdinate(yAxis);
 
-        final AffineTransform2D gridToCrs2D = new AffineTransform2D(sx, 0, 0, -sy, offsetX, offsetY);
+        final MathTransform gridToCrs2D = Pyramids.getTileGridToCRS2D(mosaic, new Point(0, 0), PixelInCell.CELL_CENTER);
 
         final GeneralEnvelope envelopOfInterest2D = new GeneralEnvelope(wantedEnv2D);
         envelopOfInterest2D.intersect(mosEnv2D);

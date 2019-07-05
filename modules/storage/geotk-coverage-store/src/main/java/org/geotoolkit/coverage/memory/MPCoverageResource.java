@@ -24,6 +24,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -38,7 +39,7 @@ import org.opengis.util.GenericName;
  *
  * @author Marechal Remi (Geomatys).
  */
-public class MPCoverageResource extends AbstractPyramidalCoverageResource {
+public class MPCoverageResource extends AbstractPyramidalCoverageResource implements WritableGridCoverageResource{
 
     private final DefaultPyramidSet pyramidSet;
     final AtomicLong mosaicID = new AtomicLong(0);

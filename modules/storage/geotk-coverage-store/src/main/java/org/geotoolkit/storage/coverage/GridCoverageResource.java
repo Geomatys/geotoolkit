@@ -29,6 +29,7 @@ import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -50,7 +51,7 @@ import org.opengis.util.GenericName;
  * @module
  */
 @Deprecated
-public interface GridCoverageResource extends org.apache.sis.storage.WritableGridCoverageResource, StoreResource {
+public interface GridCoverageResource extends WritableGridCoverageResource, StoreResource {
 
     /**
      * Same as {@link org.apache.sis.storage.Resource} without exception.

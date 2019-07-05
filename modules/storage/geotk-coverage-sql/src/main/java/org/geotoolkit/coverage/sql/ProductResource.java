@@ -25,7 +25,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.WritableGridCoverageResource;
 import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -42,7 +42,7 @@ import org.opengis.util.GenericName;
 /**
  * Interoperability with legacy API.
  */
-class ProductResource extends AbstractCoverageResource implements GridCoverageResource {
+class ProductResource extends AbstractCoverageResource implements WritableGridCoverageResource {
     final ProductEntry product;
 
     ProductResource(final DataStore store, final ProductEntry product)  {

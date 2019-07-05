@@ -266,14 +266,6 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource{
      * {@inheritDoc }
      */
     @Override
-    public boolean isWritable() throws DataStoreException {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public GridCoverageReader acquireReader() throws DataStoreException {
         return new AmendedCoverageReader(this);
     }
