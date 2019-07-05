@@ -333,6 +333,8 @@ public class PyramidalModelReader extends AbstractGridCoverageReader {
                 //-- features a data cube of multiple slices
                 return readCube(mosaics, wantedEnv, deferred);
             }
+        } catch (CoverageStoreException ex) {
+            throw ex;
         } catch (DataStoreException ex) {
             throw new CoverageStoreException(ex); //-- to be in accordance with reader method interface signature
         }
