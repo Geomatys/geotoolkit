@@ -349,7 +349,11 @@ public class HGTReader extends SpatialImageReader {
                 return false;
             }
 
-            return (FILENAME_PATTERN.matcher(temp.getFileName().toString()).find() && Files.isReadable(temp));
+            if (Files.isReadable(temp) && Files.isRegularFile(temp)) {
+                String name = temp.getFileName().toString().toLowerCase();
+                return name.endsWith(".hgt");
+            }
+            return false;
         }
 
         @Override
