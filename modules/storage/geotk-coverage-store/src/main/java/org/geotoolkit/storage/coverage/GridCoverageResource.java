@@ -19,6 +19,7 @@ package org.geotoolkit.storage.coverage;
 import java.awt.Image;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -28,6 +29,7 @@ import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -67,13 +69,19 @@ public interface GridCoverageResource extends org.apache.sis.storage.WritableGri
 
     /**
      * @return true if coverage is writable
+     * @Deprecated Use WritableGridCoverageResource interface instead.
      */
-    boolean isWritable() throws DataStoreException;
+    @Deprecated
+    default boolean isWritable() throws DataStoreException {
+        return false;
+    }
 
     /**
      * Return the legend of this coverage
      */
-    Image getLegend() throws DataStoreException;
+    default Image getLegend() throws DataStoreException {
+        return null;
+    }
 
     /**
      * Get a reader for this coverage.
@@ -87,17 +95,31 @@ public interface GridCoverageResource extends org.apache.sis.storage.WritableGri
      * When you have finished using it, return it using the recycle method.
      */
     @Deprecated
-    GridCoverageWriter acquireWriter() throws DataStoreException;
+    default GridCoverageWriter acquireWriter() throws DataStoreException {
+        throw new DataStoreException("Not supported.");
+    }
 
     /**
      * Return the used reader, they can be reused later.
      */
-    void recycle(GridCoverageReader reader);
+    default void recycle(GridCoverageReader reader) {
+        try {
+            reader.dispose();
+        } catch (DataStoreException ex) {
+            Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
+        }
+    }
 
     /**
      * Return the used writer, they can be reused later.
      */
-    void recycle(GridCoverageWriter writer);
+   default void recycle(GridCoverageWriter writer) {
+        try {
+            writer.dispose();
+        } catch (DataStoreException ex) {
+            Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
+        }
+    }
 
     @Override
     default GridCoverage read(org.apache.sis.coverage.grid.GridGeometry domain, int... range) throws DataStoreException {

@@ -27,7 +27,6 @@ import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.opengis.geometry.Envelope;
@@ -67,11 +66,6 @@ public class QueryableAggregate extends WMSAggregate implements GridCoverageReso
     }
 
     @Override
-    public boolean isWritable() throws DataStoreException {
-        return queryableResource.isWritable();
-    }
-
-    @Override
     public DataStore getOriginator() {
         return queryableResource.getOriginator();
     }
@@ -79,21 +73,6 @@ public class QueryableAggregate extends WMSAggregate implements GridCoverageReso
     @Override
     public GridCoverageReader acquireReader() throws CoverageStoreException {
         return queryableResource.acquireReader();
-    }
-
-    @Override
-    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
-        return queryableResource.acquireWriter();
-    }
-
-    @Override
-    public void recycle(GridCoverageReader reader) {
-        queryableResource.recycle(reader);
-    }
-
-    @Override
-    public void recycle(GridCoverageWriter writer) {
-        queryableResource.recycle(writer);
     }
 
     @Override

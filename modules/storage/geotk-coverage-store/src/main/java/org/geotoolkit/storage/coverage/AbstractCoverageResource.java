@@ -38,7 +38,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -205,28 +204,6 @@ public abstract class AbstractCoverageResource extends AbstractResource implemen
             }
         }
         return Optional.ofNullable(bounds);
-    }
-
-    /**
-     * Default recycle implementation.
-     * Dispose the reader.
-     */
-    @Override
-    public void recycle(GridCoverageReader reader) {
-        dispose(reader);
-    }
-
-    /**
-     * Default recycle implementation.
-     * Dispose the writer.
-     */
-    @Override
-    public void recycle(GridCoverageWriter writer) {
-        try {
-            writer.dispose();
-        } catch (DataStoreException ex) {
-            Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
-        }
     }
 
     protected CoverageStoreManagementEvent firePyramidAdded(final String pyramidId){

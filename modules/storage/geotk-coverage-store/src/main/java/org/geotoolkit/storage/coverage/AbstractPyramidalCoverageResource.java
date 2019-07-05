@@ -17,7 +17,6 @@
 
 package org.geotoolkit.storage.coverage;
 
-import java.awt.Image;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -65,11 +64,6 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
 
     public AbstractPyramidalCoverageResource(DataStore store, GenericName name) {
         super(store, name);
-    }
-
-    @Override
-    public boolean isWritable() throws CoverageStoreException {
-        return false;
     }
 
     @Override
@@ -126,11 +120,6 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
         }else{
             throw new CoverageStoreException("Pyramid is not writable");
         }
-    }
-
-    @Override
-    public Image getLegend() throws DataStoreException {
-        return null;
     }
 
     @Override

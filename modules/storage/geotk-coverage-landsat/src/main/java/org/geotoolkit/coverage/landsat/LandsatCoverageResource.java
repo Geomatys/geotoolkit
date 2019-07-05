@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.coverage.landsat;
 
-import java.awt.Image;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.ParseException;
@@ -28,7 +27,6 @@ import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
 import org.geotoolkit.coverage.landsat.LandsatConstants.CoverageGroup;
 import org.geotoolkit.storage.coverage.AbstractCoverageResource;
@@ -100,16 +98,6 @@ final class LandsatCoverageResource extends AbstractCoverageResource implements 
         }
     }
 
-    /**
-     * {@inheritDoc }
-     *
-     * @return always return false, no Landsat 8 writer.
-     */
-    @Override
-    public boolean isWritable() throws DataStoreException {
-        return false;
-    }
-
     @Override
     public GridCoverageReader acquireReader() throws CoverageStoreException {
         try {
@@ -117,25 +105,6 @@ final class LandsatCoverageResource extends AbstractCoverageResource implements 
         } catch (IOException ex) {
             throw new CoverageStoreException(ex);
         }
-    }
-
-    /**
-     * {@inheritDoc }
-     *
-     * Throw an exception.<br>
-     * Landsat 8 writer does not supported.
-     */
-    @Override
-    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
-        throw new CoverageStoreException("Not supported.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Image getLegend() throws DataStoreException {
-        return null;
     }
 
     @Override

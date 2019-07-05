@@ -23,7 +23,6 @@ import java.util.List;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.data.multires.MultiResolutionResource;
 import org.geotoolkit.data.multires.Pyramid;
 
@@ -115,13 +114,5 @@ public interface PyramidalCoverageResource extends GridCoverageResource, MultiRe
      * @throws org.apache.sis.storage.DataStoreException
      */
     void setSampleModel(SampleModel sampleModel) throws DataStoreException;
-
-    /**
-     *
-     * @return true if model can be modified
-     * @throws org.geotoolkit.coverage.io.CoverageStoreException
-     */
-    @Override
-    boolean isWritable() throws CoverageStoreException;
 
 }

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.coverage.filestore;
 
-import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -121,11 +120,6 @@ public class FileCoverageResource extends AbstractCoverageResource {
 
     public ImageReaderSpi getSpi() {
         return spi;
-    }
-
-    @Override
-    public Image getLegend() throws DataStoreException {
-        return null;
     }
 
 }

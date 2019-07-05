@@ -48,7 +48,6 @@ import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.coverage.AbstractCoverageResource;
@@ -210,16 +209,6 @@ public class WMSCoverageResource extends AbstractCoverageResource {
      */
     public GenericName[] getNames() throws DataStoreException{
         return layers.clone();
-    }
-
-    @Override
-    public boolean isWritable() throws CoverageStoreException {
-        return false;
-    }
-
-    @Override
-    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
-        throw new CoverageStoreException("WMS coverage are not writable.");
     }
 
     /**

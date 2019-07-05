@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage.timed;
 
-import java.awt.Image;
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -38,7 +37,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.opengis.referencing.datum.PixelInCell;
@@ -94,23 +92,8 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
     }
 
     @Override
-    public boolean isWritable() throws DataStoreException {
-        return false;
-    }
-
-    @Override
     public GridCoverageReader acquireReader() throws DataStoreException {
         return new TimedReader(this);
-    }
-
-    @Override
-    public GridCoverageWriter acquireWriter() throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Image getLegend() throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
