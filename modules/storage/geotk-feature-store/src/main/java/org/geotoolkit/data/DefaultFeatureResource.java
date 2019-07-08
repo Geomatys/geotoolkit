@@ -24,6 +24,8 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.apache.sis.internal.storage.StoreResource;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalFeatureTypeException;
 import org.apache.sis.storage.ReadOnlyStorageException;
@@ -48,7 +50,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefaultFeatureResource extends AbstractResource implements FeatureSet, WritableFeatureSet, ChangeListener<ChangeEvent> {
+public class DefaultFeatureResource extends AbstractResource implements FeatureSet, WritableFeatureSet, ChangeListener<ChangeEvent>, StoreResource {
 
     private final StorageListener.Weak weakListener = new StorageListener.Weak(this);
     private final FeatureStore store;
@@ -73,6 +75,11 @@ public class DefaultFeatureResource extends AbstractResource implements FeatureS
     @Override
     public Optional<Envelope> getEnvelope() throws DataStoreException {
         return Optional.empty();
+    }
+
+    @Override
+    public DataStore getOriginator() {
+        return (DataStore) store;
     }
 
     @Override

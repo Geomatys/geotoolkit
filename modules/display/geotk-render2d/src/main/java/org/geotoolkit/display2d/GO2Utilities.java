@@ -53,6 +53,7 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.*;
@@ -60,8 +61,6 @@ import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.processing.coverage.resample.CannotReprojectException;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -80,12 +79,13 @@ import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.jts.awt.DecimateJTSGeometryJ2D;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
+import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.jai.FloodFill;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.coverage.resample.CannotReprojectException;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
-import org.apache.sis.referencing.CRS;
 import org.geotoolkit.renderer.style.WKMMarkFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -834,15 +834,15 @@ public final class GO2Utilities {
         for (int i=0; i<dimension; i++){
             final CoordinateSystemAxis axis = cs.getAxis(i);
             final Unit axisUnit = axis.getUnit();
-            if (axisUnit.isCompatible(symbolUnit)){
+            if (axisUnit.isCompatible(symbolUnit)) {
                 final UnitConverter converter = axisUnit.getConverterTo(symbolUnit);
 
                 if (!converter.isLinear()) {
                     throw new UnsupportedOperationException("Cannot convert nonlinear units yet");
-                }else{
+                } else {
                     converters.add(converter.convert(1) - converter.convert(0));
                 }
-            }else if(axisUnit == Units.DEGREE){
+            } else if (axisUnit == Units.DEGREE) {
                 //calculate coefficient at center of the screen.
                 final Rectangle rect = context.getCanvasDisplayBounds();
                 final AffineTransform2D trs = context.getDisplayToObjective();
@@ -889,7 +889,7 @@ public final class GO2Utilities {
             coeff = (float) Math.sqrt( sum/2d );
         }
 
-        return 1/coeff;
+        return Math.abs(1/coeff);
     }
 
     /**

@@ -740,7 +740,7 @@ public class RenderingContext2D implements RenderingContext{
      */
     public float getUnitCoefficient(final Unit<Length> uom){
         Float f = coeffs.get(uom);
-        if(f==null){
+        if (f == null) {
             f = GO2Utilities.calculateScaleCoefficient(this,uom);
             coeffs.put(uom, f);
         }
