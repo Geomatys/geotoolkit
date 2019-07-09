@@ -20,8 +20,11 @@ package org.geotoolkit.data;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.data.query.Query;
@@ -115,7 +118,10 @@ public interface FeatureCollection extends Collection<Feature>, FeatureSet, Writ
 
     @Override
     default Stream<Feature> features(boolean parallal) throws DataStoreException {
-        return stream();
+        final FeatureIterator reader = iterator();
+        final Spliterator<Feature> spliterator = Spliterators.spliterator(reader, Long.MAX_VALUE, Spliterator.ORDERED);
+        final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
+        return stream.onClose(reader::close);
     }
 
     /**
