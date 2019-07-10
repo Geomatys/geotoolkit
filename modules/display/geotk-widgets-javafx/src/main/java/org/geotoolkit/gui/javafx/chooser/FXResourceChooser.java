@@ -65,6 +65,26 @@ public class FXResourceChooser extends BorderPane{
         return resources;
     }
 
+    public void setSelected(List<Resource> resources) {
+        TreeItem<Resource> root = treeTable.getRoot();
+        if (root == null) return;
+
+        final List<ResourceItem> selected = new ArrayList<>();
+        select((ResourceItem) root, resources, selected);
+        treeTable.getSelectionModel().clearSelection();
+//        treeTable.getSelectionModel().getSelectedItems().setAll(selected);
+    }
+
+    private void select(ResourceItem root, List<Resource> resources, List<ResourceItem> selected) {
+        if (resources.contains(root.resource)) {
+            treeTable.getSelectionModel().select(root);
+            selected.add(root);
+        }
+        for (TreeItem<Resource> r : root.getChildren()) {
+            select((ResourceItem) r, resources, selected);
+        }
+    }
+
     private void updateTree() {
         if (resource==null) {
             treeTable.setRoot(null);
@@ -81,6 +101,7 @@ public class FXResourceChooser extends BorderPane{
         public ResourceItem(Resource res) {
             super(res);
             this.resource = res;
+            setExpanded(true);
         }
 
         public ObservableList<TreeItem<Resource>> getChildren() {
@@ -112,6 +133,5 @@ public class FXResourceChooser extends BorderPane{
         }
 
     }
-
 
 }

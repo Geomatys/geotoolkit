@@ -19,6 +19,7 @@ package org.geotoolkit.gui.javafx.chooser;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -49,6 +50,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
@@ -220,6 +222,9 @@ public class FXStoreChooser extends BorderPane {
                     DataStore store = getStore();
                     resourceChooser.setResource(store);
                     accordion.setExpandedPane(paneResource);
+
+                    Collection<DataSet> preselected = org.geotoolkit.storage.DataStores.flatten(store, true, DataSet.class);
+                    resourceChooser.setSelected(new ArrayList<>(preselected));
 
                 } catch (DataStoreException ex) {
                     infoLabel.setText("Error "+ex.getMessage());

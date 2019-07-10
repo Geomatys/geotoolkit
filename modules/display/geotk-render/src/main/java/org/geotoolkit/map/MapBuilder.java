@@ -22,13 +22,16 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.storage.coverage.DefaultCoverageResource;
+import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.style.Description;
 import org.opengis.style.StyleFactory;
 
 /**
@@ -88,15 +91,20 @@ public final class MapBuilder {
     public static FeatureMapLayer createFeatureLayer(final FeatureSet collection){
         MutableStyle style;
         String name = "";
+        Description description = null;
         try {
             final FeatureType type = collection.getType();
-            name = type.getName().toString();
+            name = type.getName().tip().toString();
+            description = new DefaultDescription(
+                    new SimpleInternationalString(name),
+                    new SimpleInternationalString(type.getName().toString()));
             style = RandomStyleBuilder.createDefaultVectorStyle(type);
         } catch (DataStoreException ex) {
             style = ((MutableStyleFactory)DefaultFactories.forBuildin(StyleFactory.class)).style(RandomStyleBuilder.createRandomPointSymbolizer());
         }
         final DefaultFeatureMapLayer maplayer = new DefaultFeatureMapLayer(collection, style);
         maplayer.setName(name);
+        if (description != null) maplayer.setDescription(description);
         return maplayer;
     }
 

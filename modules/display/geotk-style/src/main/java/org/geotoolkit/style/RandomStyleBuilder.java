@@ -17,12 +17,6 @@
  */
 package org.geotoolkit.style;
 
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +24,14 @@ import java.util.function.Supplier;
 import javax.measure.Unit;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.measure.Units;
+import org.geotoolkit.feature.FeatureExt;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
@@ -48,10 +50,8 @@ import org.opengis.style.PointSymbolizer;
 import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Stroke;
-import org.opengis.style.Symbolizer;
-import org.apache.sis.measure.Units;
-import org.geotoolkit.feature.FeatureExt;
 import org.opengis.style.StyleFactory;
+import org.opengis.style.Symbolizer;
 
 /**
  * Random style builder. This is a convini class if you dont need special styles.
@@ -99,7 +99,7 @@ public class RandomStyleBuilder {
         final Expression opa = FF.literal(1);
         final Expression size = FF.literal(randomPointSize());
         final Expression rotation = FF.literal(0);
-        final AnchorPoint anchor =  SF.anchorPoint(0, 0);
+        final AnchorPoint anchor =  SF.anchorPoint(0.5, 0.5);
         final Displacement displacement =  SF.displacement(0, 0);
 
         final Graphic gra =  SF.graphic(symbols,opa,size,rotation,anchor,displacement);

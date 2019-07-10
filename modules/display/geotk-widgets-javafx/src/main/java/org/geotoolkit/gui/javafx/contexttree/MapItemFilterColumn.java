@@ -49,6 +49,7 @@ public class MapItemFilterColumn extends TreeTableColumn{
         setPrefWidth(26);
         setMinWidth(26);
         setMaxWidth(26);
+        setSortable(false);
     }
 
     private final class FilterCell extends TreeTableCell{

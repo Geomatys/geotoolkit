@@ -25,7 +25,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
-import javafx.scene.layout.Region;
+import javafx.stage.Modality;
 import javafx.stage.Window;
 import org.controlsfx.control.action.Action;
 import org.geotoolkit.internal.GeotkFX;
@@ -45,11 +45,13 @@ public class FXOptionDialog {
         pane.setContent(content);
         dia.setTitle(title);
         if(owner instanceof Node){
-            final Window window = ((Node)owner).getScene().getWindow();
+            final Window window = ((Node) owner).getScene().getWindow();
             dia.initOwner(window);
         }
+        if (modal) dia.initModality(Modality.WINDOW_MODAL);
         dia.setDialogPane(pane);
         final Optional<ButtonType> result = dia.showAndWait();
+        dia.close();
 
         return result.isPresent() && result.get() == ButtonType.OK;
 
