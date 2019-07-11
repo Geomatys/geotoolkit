@@ -46,6 +46,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.apache.sis.internal.feature.FunctionRegister;
 import org.apache.sis.storage.DataStoreException;
 import org.fxmisc.richtext.CodeArea;
 import org.geotoolkit.cql.CQL;
@@ -129,22 +130,24 @@ public class FXCQLEditor extends BorderPane {
         final TreeItem<Object> root = new TreeItem<>("root");
 
         //sort factory by name
-        final List<FunctionFactory> factories = new ArrayList<>(Functions.getFactories());
-        Collections.sort(factories, new Comparator<FunctionFactory>() {
+        final List<FunctionRegister> factories = new ArrayList<>(Functions.getFactories());
+        Collections.sort(factories, new Comparator<FunctionRegister>() {
             @Override
-            public int compare(FunctionFactory o1, FunctionFactory o2) {
+            public int compare(FunctionRegister o1, FunctionRegister o2) {
                 return o1.getIdentifier().compareTo(o2.getIdentifier());
             }
         });
 
-        for(FunctionFactory ff : factories){
+        for(FunctionRegister ff : factories){
             final TreeItem fnode = new TreeItem(ff.getIdentifier());
-            String[] names = ff.getNames();
+            String[] names = ff.getNames().toArray(new String[0]);
             Arrays.sort(names);
             for(String str : names){
-                final ParameterDescriptorGroup desc = ff.describeFunction(str);
-                final TreeItem enode = new TreeItem(desc);
-                fnode.getChildren().add(enode);
+                if (ff instanceof FunctionFactory) {
+                    final ParameterDescriptorGroup desc = ((FunctionFactory) ff).describeFunction(str);
+                    final TreeItem enode = new TreeItem(desc);
+                    fnode.getChildren().add(enode);
+                }
             }
             root.getChildren().add(fnode);
         }

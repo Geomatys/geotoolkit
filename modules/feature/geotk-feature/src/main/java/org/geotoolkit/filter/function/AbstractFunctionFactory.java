@@ -5,8 +5,10 @@ package org.geotoolkit.filter.function;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.internal.simple.SimpleParameterDescriptor;
@@ -29,12 +31,12 @@ public class AbstractFunctionFactory implements FunctionFactory{
 
     private final String identifier;
     private final Map<String,Class> functions;
-    private final String[] names;
+    private final Set<String> names;
 
     public AbstractFunctionFactory(String identifier, Map<String, Class> functions) {
         this.identifier = identifier;
         this.functions = functions;
-        this.names = functions.keySet().toArray(new String[0]);
+        this.names = Collections.unmodifiableSet(functions.keySet());
     }
 
     @Override
@@ -43,8 +45,13 @@ public class AbstractFunctionFactory implements FunctionFactory{
     }
 
     @Override
-    public String[] getNames() {
+    public Set<String> getNames() {
         return names;
+    }
+
+    @Override
+    public Function create(String name, Expression... parameters) throws IllegalArgumentException {
+        return createFunction(name, null, parameters);
     }
 
     @Override
