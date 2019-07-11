@@ -20,44 +20,43 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.logging.Logger;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.storage.DataStoreException;
-
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
-
-import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.xml.Namespaces;
 import org.apache.sis.xml.MarshallerPool;
+import org.apache.sis.xml.Namespaces;
+import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
-
+import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
-import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -124,8 +123,8 @@ public class ElementFeatureWriter {
 
         if (candidate instanceof Feature) {
             return writeFeature((Feature) candidate, null, fragment);
-        } else if (candidate instanceof FeatureCollection) {
-            return writeFeatureCollection((FeatureCollection) candidate, fragment, true, nbMatched);
+        } else if (candidate instanceof FeatureSet) {
+            return writeFeatureCollection((FeatureSet) candidate, fragment, true, nbMatched);
         } else {
             throw new IllegalArgumentException("The given object is not a Feature or a" +
                     " FeatureCollection: "+ candidate);
@@ -340,7 +339,7 @@ public class ElementFeatureWriter {
      * @param fragment : true if we write in a stream, dont write start and end elements
      * @throws DataStoreException
      */
-    public Element writeFeatureCollection(final FeatureCollection featureCollection, final boolean fragment, final boolean wfs, final Integer nbMatched) throws DataStoreException, ParserConfigurationException {
+    public Element writeFeatureCollection(final FeatureSet featureCollection, final boolean fragment, final boolean wfs, final Integer nbMatched) throws DataStoreException, ParserConfigurationException {
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         // then we have to create document-loader:
@@ -374,7 +373,7 @@ public class ElementFeatureWriter {
         idAttribute.setPrefix("gml");
         rootElement.setAttributeNodeNS(idAttribute);
 
-        rootElement.setAttribute("numberOfFeatures", Integer.toString(featureCollection.size()));
+        rootElement.setAttribute("numberOfFeatures", Long.toString(FeatureStoreUtilities.getCount(featureCollection)));
 
         if (nbMatched != null) {
             rootElement.setAttribute("numberMatched", Integer.toString(nbMatched));
@@ -408,8 +407,8 @@ public class ElementFeatureWriter {
         });
 
         // we write each feature member of the collection
-        FeatureIterator iterator = featureCollection.iterator();
-        try {
+        try (Stream<Feature> stream = featureCollection.features(false)) {
+            Iterator<Feature> iterator = stream.iterator();
             while (iterator.hasNext()) {
                 final Feature f = iterator.next();
                 final Element memberElement = document.createElementNS(GML, "featureMember");
@@ -418,10 +417,6 @@ public class ElementFeatureWriter {
                 rootElement.appendChild(memberElement);
 
             }
-
-        } finally {
-            // we close the stream
-            iterator.close();
         }
         return rootElement;
     }

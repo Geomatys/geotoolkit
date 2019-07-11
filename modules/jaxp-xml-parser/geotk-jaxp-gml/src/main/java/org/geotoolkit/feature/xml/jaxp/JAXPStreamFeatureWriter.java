@@ -43,7 +43,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
@@ -330,14 +330,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             throws DataStoreException, XMLStreamException {
 
         final String collectionId = featureSet.getIdentifier().map(GenericName::toString).orElse("");
-        final long size;
-        if (featureSet instanceof FeatureCollection) {
-            size = ((FeatureCollection) featureSet).size();
-        } else {
-            try (Stream<Feature> stream = featureSet.features(false)) {
-                size = stream.count();
-            }
-        }
+        final long size = FeatureStoreUtilities.getCount(featureSet);
 
         writeStartWFSCollection(wfsVersion, gmlVersion, collectionId, size, nbMatched);
         writeNamespaces(featureSet.getType());
