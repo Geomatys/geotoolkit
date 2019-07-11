@@ -53,7 +53,7 @@ class MonoDimensionMove implements Spliterator<double[]> {
             final double start = startPoint[dimension];
             double nextPos = moveDir.applyAsDouble(start);
             final double dist = nextPos - start;
-            if (dist > distanceLeft) {
+            if (Math.abs(dist) > Math.abs(distanceLeft)) {
                 nextPos = start + distanceLeft;
                 hasNext = false;
             }
