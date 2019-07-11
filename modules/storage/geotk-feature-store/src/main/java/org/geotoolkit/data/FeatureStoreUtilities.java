@@ -105,7 +105,6 @@ public class FeatureStoreUtilities {
     public static FeatureCollection collection(final String id, final FeatureType type) {
         ArgumentChecks.ensureNonNull("Collection id", id);
         ArgumentChecks.ensureNonEmpty("Collection id", id);
-        ArgumentChecks.ensureNonNull("Collection type", type);
         final NamedIdentifier ident = new NamedIdentifier(NamesExt.create(id));
         return collection(ident, type);
     }
