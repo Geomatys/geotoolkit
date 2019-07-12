@@ -16,12 +16,6 @@
  */
 package org.geotoolkit.data;
 
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,25 +28,32 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.memory.MemoryFeatureStore;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataSet;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.util.collection.CloseableIterator;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.memory.GenericMappingFeatureCollection;
+import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.memory.mapping.DefaultFeatureMapper;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.session.Session;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.util.collection.CloseableIterator;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.IdentifiedType;
@@ -63,6 +64,10 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
+import org.opengis.metadata.content.ContentInformation;
+import org.opengis.metadata.content.FeatureCatalogueDescription;
+import org.opengis.metadata.content.FeatureTypeInfo;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
@@ -100,7 +105,6 @@ public class FeatureStoreUtilities {
     public static FeatureCollection collection(final String id, final FeatureType type) {
         ArgumentChecks.ensureNonNull("Collection id", id);
         ArgumentChecks.ensureNonEmpty("Collection id", id);
-        ArgumentChecks.ensureNonNull("Collection type", type);
         final NamedIdentifier ident = new NamedIdentifier(NamesExt.create(id));
         return collection(ident, type);
     }
@@ -212,6 +216,46 @@ public class FeatureStoreUtilities {
     }
 
     /**
+     * Write the features from the given collection and return the list of generated FeatureID
+     * send by the writer.
+     *
+     * @param writer, writer will not be closed
+     * @param collection
+     * @return List of generated FeatureId. Can be empty if output data type has
+     * no identifier property.
+     * @throws FeatureStoreRuntimeException
+     */
+    public static List<FeatureId> write(final FeatureWriter writer, final FeatureSet collection)
+            throws FeatureStoreRuntimeException {
+        final List<FeatureId> ids = new ArrayList<>();
+        boolean withId = false;
+        // Check if there's identifiers to report.
+        try {
+            writer.getFeatureType().getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            withId = true;
+        } catch (PropertyNotFoundException e) {
+            LOGGER.log(Level.FINE, "No identifier available at copy", e);
+        }
+
+        try (Stream<Feature> stream = collection.features(false)) {
+            final Iterator<? extends Feature> ite = stream.iterator();
+            while (ite.hasNext()) {
+                final Feature f = ite.next();
+                final Feature candidate = writer.next();
+                FeatureExt.copy(f, candidate, false);
+                writer.write();
+                if (withId) {
+                    ids.add(FeatureExt.getId(candidate));
+                }
+            }
+        } catch (DataStoreException ex) {
+            throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
+        }
+
+        return ids;
+    }
+
+    /**
      * Iterate on the given iterator and calculate count.
      * @throws FeatureStoreRuntimeException
      */
@@ -285,13 +329,34 @@ public class FeatureStoreUtilities {
      * </p>
      *
      * @param dataset Data set to extract or compute from, must not be null
-     * @param forceCompute ignore dataset declared envelope and always compute envelope
+     * @param forceCompute ignore dataset declared envelope and always compute count
      * @return features count
      * @throws org.apache.sis.storage.DataStoreException
      */
     public static Long getCount(FeatureSet dataset, boolean forceCompute) throws DataStoreException {
-        //TODO extract count value from metadata, where is it stored ?
+
         Long count = null;
+        if (!forceCompute) {
+            //extract information from metadata
+            Metadata metadata = dataset.getMetadata();
+            search:
+            for (ContentInformation ci : metadata.getContentInfo()) {
+                if (ci instanceof FeatureCatalogueDescription) {
+                    FeatureCatalogueDescription fcd = (FeatureCatalogueDescription) ci;
+                    for (FeatureTypeInfo fti : fcd.getFeatureTypeInfo()) {
+                        Integer nb = fti.getFeatureInstanceCount();
+                        if (nb != null) {
+                            count = nb.longValue();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (count == null && dataset instanceof FeatureCollection) {
+            count =  (long) ((FeatureCollection) dataset).size();
+        }
 
         if (count == null) {
             try (Stream<Feature> stream = dataset.features(true)) {

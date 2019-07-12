@@ -177,7 +177,7 @@ public class MIFFeatureStore extends AbstractFeatureStore implements ResourceOnF
                     toWrite = FeatureStreams.decorate(FeatureStoreUtilities.collection(newFeatures.toArray(new Feature[newFeatures.size()])),
                             new ReprojectMapper(type, manager.getWrittenCRS()));
                 }
-                addedFeatures = FeatureStoreUtilities.write(writer, toWrite);
+                addedFeatures = FeatureStoreUtilities.write(writer, (Collection) toWrite);
             } else {
                 addedFeatures = FeatureStoreUtilities.write(writer, newFeatures);
             }

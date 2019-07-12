@@ -52,7 +52,9 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  * @module
+ * @deprecated replace by Apache SIS DataStore and FeatureSet
  */
+@Deprecated
 public interface FeatureStore extends AutoCloseable, Resource {
 
     /**

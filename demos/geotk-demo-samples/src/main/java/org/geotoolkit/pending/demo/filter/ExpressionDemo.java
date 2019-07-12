@@ -3,15 +3,15 @@
 package org.geotoolkit.pending.demo.filter;
 
 import java.util.Collection;
+import org.apache.sis.internal.feature.FunctionRegister;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.filter.function.FunctionFactory;
 import org.geotoolkit.filter.function.Functions;
 import org.geotoolkit.filter.function.math.MathFunctionFactory;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.util.StringUtilities;
-import org.apache.sis.util.Classes;
 import org.opengis.feature.Feature;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
@@ -58,10 +58,10 @@ public class ExpressionDemo {
 
         //display all available functions
         System.out.println("\n==============================================================\n");
-        final Collection<FunctionFactory> factories = Functions.getFactories();
-        for(FunctionFactory ff : factories){
+        final Collection<FunctionRegister> factories = Functions.getFactories();
+        for(FunctionRegister ff : factories){
             System.out.println(Classes.getShortClassName(ff));
-            System.out.println(StringUtilities.toStringTree((Object[])ff.getNames()));
+            System.out.println(StringUtilities.toStringTree(ff.getNames()));
         }
 
         final Function function = Functions.function(MathFunctionFactory.COS, null, FF.property("age"));

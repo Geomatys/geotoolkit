@@ -17,10 +17,23 @@
 
 package org.geotoolkit.data.query;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.factory.Hints;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.IdentifiedType;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Literal;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
@@ -279,6 +292,46 @@ public final class QueryBuilder {
         }
 
         return true;
+    }
+
+    /**
+     * Create a simple query with columns which transform all geometric types to the given crs.
+     *
+     * @param type
+     * @param crs
+     * @return
+     */
+    public static SimpleQuery reproject(FeatureType type, final CoordinateReferenceSystem crs) {
+
+        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
+        final Literal crsLiteral = ff.literal(crs);
+
+
+        final SimpleQuery query = new SimpleQuery();
+        final List<SimpleQuery.Column> columns = new ArrayList<>();
+
+        for (PropertyType pt : type.getProperties(true)) {
+            final GenericName name = pt.getName();
+            Expression property = ff.property(name.toString());
+
+            //unroll operation
+            IdentifiedType result = pt;
+            while (result instanceof Operation) {
+                result = ((Operation) result).getResult();
+            }
+
+            if (result instanceof AttributeType) {
+                AttributeType at = (AttributeType) result;
+                if (Geometry.class.isAssignableFrom(at.getValueClass())) {
+                    property = ff.function("ST_Transform", property, crsLiteral);
+                }
+            }
+
+            columns.add(new SimpleQuery.Column(property, name));
+        }
+
+        query.setColumns(columns.toArray(new SimpleQuery.Column[0]));
+        return query;
     }
 
 }
