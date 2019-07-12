@@ -216,6 +216,46 @@ public class FeatureStoreUtilities {
     }
 
     /**
+     * Write the features from the given collection and return the list of generated FeatureID
+     * send by the writer.
+     *
+     * @param writer, writer will not be closed
+     * @param collection
+     * @return List of generated FeatureId. Can be empty if output data type has
+     * no identifier property.
+     * @throws FeatureStoreRuntimeException
+     */
+    public static List<FeatureId> write(final FeatureWriter writer, final FeatureSet collection)
+            throws FeatureStoreRuntimeException {
+        final List<FeatureId> ids = new ArrayList<>();
+        boolean withId = false;
+        // Check if there's identifiers to report.
+        try {
+            writer.getFeatureType().getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            withId = true;
+        } catch (PropertyNotFoundException e) {
+            LOGGER.log(Level.FINE, "No identifier available at copy", e);
+        }
+
+        try (Stream<Feature> stream = collection.features(false)) {
+            final Iterator<? extends Feature> ite = stream.iterator();
+            while (ite.hasNext()) {
+                final Feature f = ite.next();
+                final Feature candidate = writer.next();
+                FeatureExt.copy(f, candidate, false);
+                writer.write();
+                if (withId) {
+                    ids.add(FeatureExt.getId(candidate));
+                }
+            }
+        } catch (DataStoreException ex) {
+            throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
+        }
+
+        return ids;
+    }
+
+    /**
      * Iterate on the given iterator and calculate count.
      * @throws FeatureStoreRuntimeException
      */
