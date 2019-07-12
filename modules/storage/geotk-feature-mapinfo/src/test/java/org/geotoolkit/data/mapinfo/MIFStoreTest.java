@@ -23,21 +23,23 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.mapinfo.mif.MIFFeatureStore;
-import org.geotoolkit.data.mapinfo.mif.MIFFeatureStoreFactory;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryBuilder;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.WritableFeatureSet;
+import org.geotoolkit.data.DefiningFeatureSet;
+import org.geotoolkit.data.mapinfo.mif.MIFProvider;
+import org.geotoolkit.data.mapinfo.mif.MIFStore;
 import org.geotoolkit.storage.DataStores;
 import org.junit.After;
 import static org.junit.Assert.*;
@@ -55,7 +57,7 @@ import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.util.GenericName;
 
 /**
@@ -63,9 +65,10 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class MIFFeatureStoreTest extends org.geotoolkit.test.TestBase {
+public class MIFStoreTest extends org.geotoolkit.test.TestBase {
 
     private static final GeometryFactory GF = new GeometryFactory();
+    private static final FilterFactory FF = DefaultFactories.forClass(FilterFactory.class);
     private Path tempDir;
 
     @Before
@@ -99,13 +102,13 @@ public class MIFFeatureStoreTest extends org.geotoolkit.test.TestBase {
     public void testCreate() throws Exception {
         final Path f = Files.createTempFile(tempDir, "test", ".mif");
 
-        final MIFFeatureStoreFactory ff = (MIFFeatureStoreFactory) DataStores.getProviderById("MIF-MID");
+        final MIFProvider ff = (MIFProvider) DataStores.getProviderById("MIF-MID");
         final Parameters params = Parameters.castOrWrap(ff.getOpenParameters().createValue());
-        params.getOrCreate(MIFFeatureStoreFactory.PATH).setValue(f.toUri());
+        params.getOrCreate(MIFProvider.PATH).setValue(f.toUri());
 
         //create new store from scratch
-        try (final FeatureStore ds = (FeatureStore) ff.create(params)) {
-            assertNotNull(ds);
+        try (final MIFStore store = (MIFStore) ff.open(params)) {
+            assertNotNull(store);
 
             //create a feature type
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -116,47 +119,39 @@ public class MIFFeatureStoreTest extends org.geotoolkit.test.TestBase {
             ftb.addAttribute(Point.class).setName("geometryProp").setCRS(CommonCRS.WGS84.normalizedGeographic());
             final FeatureType featureType = ftb.build();
 
-            ds.createFeatureType(featureType);
-            final Set<GenericName> names = ds.getNames();
-            assertEquals(1, names.size());
+            store.add(new DefiningFeatureSet(featureType, null));
+            assertEquals(1, store.components().size());
 
-            GenericName name = names.iterator().next();
-
-            for (GenericName n : names) {
-                FeatureType ft = ds.getFeatureType(n.toString());
-                for (PropertyType desc : featureType.getProperties(true)) {
-                    if (!(desc instanceof AttributeType))
-                        continue; // ignore conventions and operations
-                    PropertyType td = ft.getProperty(desc.getName().toString());
-                    assertNotNull(td);
-                    assertTrue(((AttributeType) td).getValueClass().isAssignableFrom(((AttributeType) desc).getValueClass()));
-                }
+            WritableFeatureSet resource = (WritableFeatureSet) store.components().iterator().next();
+            FeatureType ft = resource.getType();
+            for (PropertyType desc : featureType.getProperties(true)) {
+                if (!(desc instanceof AttributeType))
+                    continue; // ignore conventions and operations
+                PropertyType td = ft.getProperty(desc.getName().toString());
+                assertNotNull(td);
+                assertTrue(((AttributeType) td).getValueClass().isAssignableFrom(((AttributeType) desc).getValueClass()));
             }
+
+
+            Feature feature1 = ft.newInstance();
+            feature1.setPropertyValue("integerProp", 8);
+            feature1.setPropertyValue("doubleProp", 3.12);
+            feature1.setPropertyValue("stringProp", "hello");
+            feature1.setPropertyValue("geometryProp", GF.createPoint(new Coordinate(10.3, 15.7)));
+
+            Feature feature2 = ft.newInstance();
+            feature2.setPropertyValue("integerProp", -15);
+            feature2.setPropertyValue("doubleProp", -7.1);
+            feature2.setPropertyValue("stringProp", "world");
+            feature2.setPropertyValue("geometryProp", GF.createPoint(new Coordinate(-1.6, -5.4)));
 
             final List<Feature> expectedFeatures = new ArrayList<>(2);
-            try (final FeatureWriter fw = ds.getFeatureWriter(QueryBuilder.filtered(name.toString(), Filter.EXCLUDE))) {
-                Feature feature = fw.next();
-                feature.setPropertyValue("integerProp", 8);
-                feature.setPropertyValue("doubleProp", 3.12);
-                feature.setPropertyValue("stringProp", "hello");
-                feature.setPropertyValue("geometryProp", GF.createPoint(new Coordinate(10.3, 15.7)));
-                fw.write();
-                expectedFeatures.add(feature);
+            expectedFeatures.add(feature1);
+            expectedFeatures.add(feature2);
 
-                feature = fw.next();
-                feature.setPropertyValue("integerProp", -15);
-                feature.setPropertyValue("doubleProp", -7.1);
-                feature.setPropertyValue("stringProp", "world");
-                feature.setPropertyValue("geometryProp", GF.createPoint(new Coordinate(-1.6, -5.4)));
-                fw.write();
-                expectedFeatures.add(feature);
-            }
+            resource.add(Arrays.asList(feature1, feature2).iterator());
 
-            checkFeatures(expectedFeatures, ds, QueryBuilder.all(name.toString()));
-
-            //test with hint
-            QueryBuilder qb = new QueryBuilder(name.toString());
-            checkFeatures(expectedFeatures, ds, qb.buildQuery());
+            checkFeatures(expectedFeatures, resource, new SimpleQuery());
         }
     }
 
@@ -168,53 +163,51 @@ public class MIFFeatureStoreTest extends org.geotoolkit.test.TestBase {
     @Test
     public void multipleGeometryTypes() throws Exception {
         final Path tmpFile = Files.createTempFile(tempDir, "multiple", ".mif");
-        try (final MIFFeatureStore store = new MIFFeatureStore(tmpFile.toUri())) {
+        try (final MIFStore store = new MIFStore(tmpFile.toUri())) {
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
             ftb.setName("multi");
             ftb.addAttribute(String.class).setName("otherProperty");
             ftb.addAttribute(Geometry.class).setName("geometry").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
             final FeatureType featureType = ftb.build();
 
-            store.createFeatureType(featureType);
-            final Set<GenericName> names = store.getNames();
-            assertEquals(1, names.size());
+            store.add(new DefiningFeatureSet(featureType, null));
+            assertEquals(1, store.components().size());
 
-            GenericName name = names.iterator().next();
+            final WritableFeatureSet resource = (WritableFeatureSet) store.components().iterator().next();
+            final FeatureType ft = resource.getType();
+
+            final Feature feature1 = ft.newInstance();
+            final Point point = GF.createPoint(new Coordinate(10.3, 15.7));
+            feature1.setPropertyValue("otherProperty", "here is a point");
+            feature1.setPropertyValue("geometry", point);
+
+            final Feature feature2 = ft.newInstance();
+            final Coordinate startPoint = new Coordinate(-1.6, -5.4);
+            Coordinate[] coords = {startPoint, new Coordinate(0, 0), new Coordinate(3.1, 3.4)};
+            final MultiLineString line = GF.createMultiLineString(new LineString[]{GF.createLineString(coords)});
+            feature2.setPropertyValue("otherProperty", "here is a line");
+            feature2.setPropertyValue("geometry", line);
+
+            final Feature feature3 = ft.newInstance();
+            coords = new Coordinate[]{startPoint, new Coordinate(-6, -6), new Coordinate(-3.1, -3.4), startPoint};
+            final MultiPolygon polygon = GF.createMultiPolygon(new Polygon[]{GF.createPolygon(coords)});
+            feature3.setPropertyValue("otherProperty", "here is a polygon");
+            feature3.setPropertyValue("geometry", polygon);
+
+            final Feature feature4 = ft.newInstance();
+            final Geometry[] geometries = new Geometry[]{polygon, line, GF.createMultiPoint(new Point[]{point})};
+            feature4.setPropertyValue("otherProperty", "here is a collection of geometries.");
+            feature4.setPropertyValue("geometry", GF.createGeometryCollection(geometries));
+
             final List<Feature> expectedFeatures = new ArrayList<>(4);
-            try (final FeatureWriter fw = store.getFeatureWriter(QueryBuilder.filtered(name.toString(), Filter.EXCLUDE))) {
-                Feature feature = fw.next();
-                feature.setPropertyValue("otherProperty", "here is a point");
-                final Point point = GF.createPoint(new Coordinate(10.3, 15.7));
-                feature.setPropertyValue("geometry", point);
-                fw.write();
-                expectedFeatures.add(feature);
+            expectedFeatures.add(feature1);
+            expectedFeatures.add(feature2);
+            expectedFeatures.add(feature3);
+            expectedFeatures.add(feature4);
 
-                feature = fw.next();
-                feature.setPropertyValue("otherProperty", "here is a line");
-                final Coordinate startPoint = new Coordinate(-1.6, -5.4);
-                Coordinate[] coords = {startPoint, new Coordinate(0, 0), new Coordinate(3.1, 3.4)};
-                final MultiLineString line = GF.createMultiLineString(new LineString[]{GF.createLineString(coords)});
-                feature.setPropertyValue("geometry", line);
-                fw.write();
-                expectedFeatures.add(feature);
+            resource.add(expectedFeatures.iterator());
 
-                feature = fw.next();
-                feature.setPropertyValue("otherProperty", "here is a polygon");
-                coords = new Coordinate[]{startPoint, new Coordinate(-6, -6), new Coordinate(-3.1, -3.4), startPoint};
-                final MultiPolygon polygon = GF.createMultiPolygon(new Polygon[]{GF.createPolygon(coords)});
-                feature.setPropertyValue("geometry", polygon);
-                fw.write();
-                expectedFeatures.add(feature);
-
-                feature = fw.next();
-                feature.setPropertyValue("otherProperty", "here is a collection of geometries.");
-                final Geometry[] geometries = new Geometry[]{polygon, line, GF.createMultiPoint(new Point[]{point})};
-                feature.setPropertyValue("geometry", GF.createGeometryCollection(geometries));
-                fw.write();
-                expectedFeatures.add(feature);
-            }
-
-            checkFeatures(expectedFeatures, store, QueryBuilder.all(name.toString()));
+            checkFeatures(expectedFeatures, resource, new SimpleQuery());
         }
     }
 
@@ -225,7 +218,7 @@ public class MIFFeatureStoreTest extends org.geotoolkit.test.TestBase {
     @Test
     public void filterProperties() throws Exception {
         final Path tmpFile = Files.createTempFile(tempDir, "filtered", ".mif");
-        try (final MIFFeatureStore store = new MIFFeatureStore(tmpFile.toUri())) {
+        try (final MIFStore store = new MIFStore(tmpFile.toUri())) {
 
             //create a feature type
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -236,36 +229,36 @@ public class MIFFeatureStoreTest extends org.geotoolkit.test.TestBase {
             ftb.addAttribute(Point.class).setName("geometryProp").setCRS(CommonCRS.WGS84.normalizedGeographic());
             final FeatureType featureType = ftb.build();
 
-            store.createFeatureType(featureType);
-            final Set<GenericName> names = store.getNames();
-            assertEquals(1, names.size());
+            store.add(new DefiningFeatureSet(featureType, null));
+            assertEquals(1, store.components().size());
 
-            GenericName name = names.iterator().next();
+            final WritableFeatureSet resource = (WritableFeatureSet) store.components().iterator().next();
+            final FeatureType ft = resource.getType();
+
+            final Feature feature1 = ft.newInstance();
+            feature1.setPropertyValue("integerProp", 8);
+            feature1.setPropertyValue("doubleProp", 3.12);
+            feature1.setPropertyValue("stringProp", "hello");
+            feature1.setPropertyValue("geometryProp", GF.createPoint(new Coordinate(10.3, 15.7)));
+
+            final Feature feature2 = ft.newInstance();
+            feature2.setPropertyValue("integerProp", -15);
+            feature2.setPropertyValue("doubleProp", -7.1);
+            feature2.setPropertyValue("stringProp", "world");
+            feature2.setPropertyValue("geometryProp", GF.createPoint(new Coordinate(-1.6, -5.4)));
 
             List<Feature> expectedFeatures = new ArrayList<>(2);
-            try (final FeatureWriter fw = store.getFeatureWriter(QueryBuilder.filtered(name.toString(), Filter.EXCLUDE))) {
-                Feature feature = fw.next();
-                feature.setPropertyValue("integerProp", 8);
-                feature.setPropertyValue("doubleProp", 3.12);
-                feature.setPropertyValue("stringProp", "hello");
-                feature.setPropertyValue("geometryProp", GF.createPoint(new Coordinate(10.3, 15.7)));
-                fw.write();
-                expectedFeatures.add(feature);
+            expectedFeatures.add(feature1);
+            expectedFeatures.add(feature2);
 
-                feature = fw.next();
-                feature.setPropertyValue("integerProp", -15);
-                feature.setPropertyValue("doubleProp", -7.1);
-                feature.setPropertyValue("stringProp", "world");
-                feature.setPropertyValue("geometryProp", GF.createPoint(new Coordinate(-1.6, -5.4)));
-                fw.write();
-                expectedFeatures.add(feature);
-            }
+            resource.add(expectedFeatures.iterator());
 
             // filter output
-            final QueryBuilder queryBuilder = new QueryBuilder();
+            final SimpleQuery query = new SimpleQuery();
             final String[] filteredProps = new String[]{"stringProp", "integerProp"};
-            queryBuilder.setProperties(filteredProps);
-            queryBuilder.setTypeName(name);
+            query.setColumns(
+                    new SimpleQuery.Column(FF.property("stringProp")),
+                    new SimpleQuery.Column(FF.property("integerProp")));
             ftb.getProperty("doubleProp").remove();
             ftb.getProperty("geometryProp").remove();
 
@@ -280,13 +273,16 @@ public class MIFFeatureStoreTest extends org.geotoolkit.test.TestBase {
                         return result;
                     })
                     .collect(Collectors.toList());
-            checkFeatures(expectedFeatures, store, queryBuilder.buildQuery());
+            checkFeatures(expectedFeatures, resource, query);
         }
     }
 
-    private static void checkFeatures(final List<Feature> expected, final FeatureStore source, final Query readQuery) throws DataStoreException {
+    private static void checkFeatures(final List<Feature> expected, final FeatureSet source, final SimpleQuery readQuery) throws DataStoreException {
+
+        FeatureSet subset = source.subset(readQuery);
         int number = 0;
-        try (final FeatureReader reader = source.getFeatureReader(readQuery)) {
+        try (final Stream<Feature> stream = subset.features(false)) {
+            final Iterator<Feature> reader = stream.iterator();
             while (reader.hasNext()) {
                 assertSame(expected.get(number), reader.next());
                 number++;

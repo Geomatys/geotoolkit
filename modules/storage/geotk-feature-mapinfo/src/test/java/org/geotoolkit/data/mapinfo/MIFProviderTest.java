@@ -18,7 +18,7 @@ package org.geotoolkit.data.mapinfo;
 
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.DataStores;
-import org.geotoolkit.data.mapinfo.mif.MIFFeatureStoreFactory;
+import org.geotoolkit.data.mapinfo.mif.MIFProvider;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 
@@ -28,9 +28,9 @@ import org.junit.Test;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class MIFFeatureStoreFactoryTest extends org.geotoolkit.test.TestBase {
+public class MIFProviderTest extends org.geotoolkit.test.TestBase {
 
-    public MIFFeatureStoreFactoryTest() {
+    public MIFProviderTest() {
     }
 
     @Test
@@ -38,7 +38,7 @@ public class MIFFeatureStoreFactoryTest extends org.geotoolkit.test.TestBase {
 
         boolean found = false;
         for (DataStoreProvider provider : DataStores.providers()) {
-            if (provider instanceof MIFFeatureStoreFactory) {
+            if (provider instanceof MIFProvider) {
                 found = true;
             }
         }

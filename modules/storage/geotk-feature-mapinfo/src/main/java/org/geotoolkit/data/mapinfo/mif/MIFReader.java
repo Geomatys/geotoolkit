@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2013, Geomatys
+ *    (C) 2013-2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,13 +15,6 @@
  *    Lesser General Public License for more details.
  */
 package org.geotoolkit.data.mapinfo.mif;
-
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.apache.sis.util.ObjectConverters;
-import org.apache.sis.util.CharSequences;
-import org.geotoolkit.nio.IOUtilities;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,15 +31,21 @@ import java.time.temporal.TemporalQuery;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.CharSequences;
+import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.nio.IOUtilities;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -58,9 +57,9 @@ import org.opengis.feature.PropertyType;
  * MID file.
  *
  * @author Alexis Manin (Geomatys)
- * @date : 22/02/13
+ * @author Johann Sorel (Geomatys)
  */
-public class MIFFeatureReader implements FeatureReader {
+public class MIFReader implements Iterator<Feature>, AutoCloseable {
 
     private final static Logger LOGGER = Logging.getLogger("org.geotoolkit.data.mapinfo.mif");
 
@@ -106,7 +105,7 @@ public class MIFFeatureReader implements FeatureReader {
     final Function[] converters;
     final Map<String, Integer> propertiesToRead;
 
-    public MIFFeatureReader(final MIFManager parent, final FeatureType ft) throws DataStoreException {
+    public MIFReader(final MIFManager parent, final FeatureType ft) throws DataStoreException {
         ArgumentChecks.ensureNonNull("Parent reader", parent);
         master = parent;
         readType = ft;
@@ -120,7 +119,7 @@ public class MIFFeatureReader implements FeatureReader {
             try {
                 converters[i] = FeatureExt.castOrUnwrap(readType.getProperty(pName))
                         .map(AttributeType::getValueClass)
-                        .map(MIFFeatureReader::findConverter)
+                        .map(MIFReader::findConverter)
                         .orElse(Function.identity());
                 propertiesToRead.put(pName, i);
             } catch (PropertyNotFoundException e) {
@@ -140,10 +139,6 @@ public class MIFFeatureReader implements FeatureReader {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public FeatureType getFeatureType() {
         return readType;
     }
@@ -206,7 +201,7 @@ public class MIFFeatureReader implements FeatureReader {
                 try {
                     resFeature.setPropertyValue(entry.getKey(), converters[idx].apply(split[idx]));
                 } catch (RuntimeException e) {
-                    Logging.recoverableException(LOGGER, MIFFeatureReader.class, "next", e);
+                    Logging.recoverableException(LOGGER, MIFReader.class, "next", e);
                 }
             }
             midCounter++;
@@ -296,15 +291,6 @@ public class MIFFeatureReader implements FeatureReader {
             LOGGER.log(Level.WARNING, "Input connections to MIF/MID files can't be closed.", e);
         }
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException("MIF feature iterator is for reading only.");
-    }
-
 
     /**
      * Check if we have an open access to mif/mid files. If not, try to get one.
@@ -417,7 +403,7 @@ public class MIFFeatureReader implements FeatureReader {
             try {
                 return format.parse(t);
             } catch (ParseException ex) {
-                Logging.recoverableException(LOGGER, MIFFeatureReader.class, "next", ex);
+                Logging.recoverableException(LOGGER, MIFReader.class, "next", ex);
                 return null;
             }
         }

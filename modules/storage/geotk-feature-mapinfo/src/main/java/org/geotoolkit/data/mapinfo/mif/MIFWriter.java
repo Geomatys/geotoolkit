@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2013, Geomatys
+ *    (C) 2013-2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,17 +16,15 @@
  */
 package org.geotoolkit.data.mapinfo.mif;
 
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureWriter;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.UUID;
 import java.util.logging.Level;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -34,12 +32,12 @@ import org.opengis.feature.FeatureType;
  * An iterator to write features into MIF/MID files.
  *
  * @author Alexis Manin (Geomatys)
- *         Date : 06/03/13
+ * @author Johann Sorel (Geomatys)
  */
-public class MIFFeatureWriter implements FeatureWriter {
+public class MIFWriter implements Iterator<Feature>, AutoCloseable {
 
     private final MIFManager master;
-    private FeatureReader reader;
+    private MIFReader reader;
 
     private final FeatureType writeType;
     private Feature currentFeature;
@@ -50,7 +48,7 @@ public class MIFFeatureWriter implements FeatureWriter {
     private Path tmpMidFile;
     private BufferedWriter tmpMidWriter;
 
-    public MIFFeatureWriter(MIFManager parent, FeatureReader readingIterator) throws DataStoreException {
+    public MIFWriter(MIFManager parent, MIFReader readingIterator) throws DataStoreException {
         ArgumentChecks.ensureNonNull("File manager", parent);
         ArgumentChecks.ensureNonNull("MIF reader", readingIterator);
         master = parent;
@@ -70,7 +68,6 @@ public class MIFFeatureWriter implements FeatureWriter {
 
     }
 
-    @Override
     public FeatureType getFeatureType() {
         return writeType;
     }
@@ -126,8 +123,6 @@ public class MIFFeatureWriter implements FeatureWriter {
         currentFeature = null;
     }
 
-
-    @Override
     public void write() throws FeatureStoreRuntimeException {
         if (currentFeature == null) {
             throw new FeatureStoreRuntimeException("There's no feature to write (null value).");
