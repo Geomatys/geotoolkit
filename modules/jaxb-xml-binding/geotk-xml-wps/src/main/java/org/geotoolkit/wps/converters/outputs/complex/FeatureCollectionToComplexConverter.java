@@ -17,22 +17,23 @@
 package org.geotoolkit.wps.converters.outputs.complex;
 
 import java.io.*;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
+import org.geotoolkit.wps.io.WPSMimeType;
+import org.geotoolkit.wps.xml.v200.Data;
 import org.opengis.feature.FeatureType;
 
 /**
@@ -97,7 +98,7 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try {
                 try (GeoJSONStreamWriter writer = new GeoJSONStreamWriter(baos, ft, WPSConvertersUtils.FRACTION_DIGITS)) {
-                    FeatureStoreUtilities.write(writer, source);
+                    FeatureStoreUtilities.write(writer, (Collection) source);
                 }
                 WPSConvertersUtils.addCDATAToComplex(baos.toString("UTF-8"), complex);
                 complex.setSchema(null);
