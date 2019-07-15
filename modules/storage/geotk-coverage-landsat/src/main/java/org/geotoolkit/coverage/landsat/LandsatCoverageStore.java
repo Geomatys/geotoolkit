@@ -30,6 +30,7 @@ import java.util.Set;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
@@ -63,12 +64,15 @@ public class LandsatCoverageStore extends org.apache.sis.storage.earthobservatio
         }
     };
 
+    public LandsatCoverageStore(final StorageConnector connector) throws DataStoreException {
+        this(connector, connector.getStorageAs(Path.class));
+    }
     /**
      * Build Landsat Coverage store.
      */
-    public LandsatCoverageStore(final StorageConnector connector) throws DataStoreException {
+    private LandsatCoverageStore(final StorageConnector connector, Path path) throws DataStoreException {
         super(null, connector);
-        metadataParser = getMetadataParser(connector.getStorageAs(Path.class));
+        metadataParser = getMetadataParser(path);
         final Path origin = metadataParser.getPath().getParent();
 
         final LandsatCoverageResource reflectiveRef = new LandsatCoverageResource(this, origin, metadataParser, CoverageGroup.REFLECTIVE);
@@ -155,6 +159,12 @@ public class LandsatCoverageStore extends org.apache.sis.storage.earthobservatio
         }
         throw new DataStoreException("Invalid metadata file :"+file.toString());
     }
+
+    @Override
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(LandsatProvider.NAME);
+    }
+
 
     @Override
     public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
