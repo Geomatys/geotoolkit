@@ -30,6 +30,7 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
@@ -39,6 +40,8 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import net.iharder.Base64;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.util.Numbers;
@@ -62,6 +65,7 @@ import org.geotoolkit.internal.data.ArrayFeatureSet;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.xml.StaxStreamReader;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -178,8 +182,110 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     @Override
     public Object read(final Object xml) throws IOException, XMLStreamException  {
         setInput(xml);
-        return read();
+        Object object = read();
+
+        try {
+            //rebuild index and references
+
+            //first pass find all features an object ids and store them in the index.
+            populateIndex(object);
+
+            //second pass, replace references by real values
+            resolveReferences(object);
+        } catch (DataStoreException ex) {
+            throw new IOException(ex.getMessage(), ex);
+        }
+
+        return object;
     }
+
+    private void populateIndex(Object obj) throws DataStoreException {
+        final String gmlId = GMLConvention.getGmlId(obj);
+        if (gmlId != null) index.put(gmlId, obj);
+
+        if (obj instanceof Feature) {
+            final Feature feature = (Feature) obj;
+            for (PropertyType pt : feature.getType().getProperties(true)) {
+                if (pt instanceof AttributeType) {
+                    AttributeType atType = (AttributeType) pt;
+                    if (Geometry.class.isAssignableFrom(atType.getValueClass())) {
+                        Object value = feature.getPropertyValue(pt.getName().toString());
+                        populateIndex(value);
+                    }
+                } else if (pt instanceof FeatureAssociationRole) {
+                    Object value = feature.getPropertyValue(pt.getName().toString());
+                    populateIndex(value);
+                }
+            }
+        } else if (obj instanceof FeatureSet) {
+            final FeatureSet fs = (FeatureSet) obj;
+            try (Stream<Feature> stream = fs.features(false)) {
+                Iterator<Feature> iterator = stream.iterator();
+                while (iterator.hasNext()) {
+                    populateIndex(iterator.next());
+                }
+            }
+        } else if (obj instanceof Collection) {
+            final Collection col = (Collection) obj;
+            Iterator<Feature> iterator = col.iterator();
+            while (iterator.hasNext()) {
+                populateIndex(iterator.next());
+            }
+        }
+    }
+
+    /**
+     * Replace each feature xlink href characteristic by it's real value if it exist.
+     *
+     * @param obj
+     * @throws DataStoreException
+     */
+    private void resolveReferences(Object obj) throws DataStoreException {
+
+        if (obj instanceof Feature) {
+            final Feature feature = (Feature) obj;
+            final FeatureType type = feature.getType();
+            for (PropertyType pt : type.getProperties(true)) {
+                if (pt instanceof AttributeType) {
+                    AttributeType attType = (AttributeType) pt;
+                    if (attType.getMaximumOccurs() == 1) {
+                        Attribute att = (Attribute) feature.getProperty(pt.getName().toString());
+                        Object value = att.getValue();
+                        if (value == null) {
+                            Attribute charatt = (Attribute) att.characteristics().get(GMLConvention.XLINK_HREF.tip().toString());
+                            if (charatt != null) {
+                                String refGmlId = (String) charatt.getValue();
+                                Object target = index.get(refGmlId);
+                                if (target == null && refGmlId.startsWith("#")) {
+                                    //local references start with a #
+                                    target = index.get(refGmlId.substring(1));
+                                }
+                                if (target != null) att.setValue(target);
+                            }
+                        }
+                    }
+                } else if (pt instanceof FeatureAssociationRole) {
+                    Object value = feature.getPropertyValue(pt.getName().toString());
+                    resolveReferences(value);
+                }
+            }
+        } else if (obj instanceof FeatureSet) {
+            final FeatureSet fs = (FeatureSet) obj;
+            try (Stream<Feature> stream = fs.features(false)) {
+                Iterator<Feature> iterator = stream.iterator();
+                while (iterator.hasNext()) {
+                    resolveReferences(iterator.next());
+                }
+            }
+        } else if (obj instanceof Collection) {
+            final Collection col = (Collection) obj;
+            Iterator<Feature> iterator = col.iterator();
+            while (iterator.hasNext()) {
+                resolveReferences(iterator.next());
+            }
+        }
+    }
+
 
     @Override
     public FeatureReader readAsStream(final Object xml) throws IOException, XMLStreamException {
@@ -552,14 +658,6 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 //            final OperationType type = entry.getKey().getType();
 //            type.invokeSet(feature, entry.getValue());
 //        }
-
-        //store it in index
-        try {
-            Object id = feature.getPropertyValue("@id");
-            index.put(String.valueOf(id), feature);
-        } catch (PropertyNotFoundException ex) {
-            //not a gml object
-        }
 
         return feature;
     }
