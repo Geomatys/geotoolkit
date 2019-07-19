@@ -37,6 +37,50 @@ import static org.geotoolkit.util.grid.GridTraversal.EPSILON;
 public class GridTraversalTest {
 
     @Test
+    public void testIncludeStart() {
+        final GridTraversal.Builder builder = new GridTraversal.Builder()
+                .setPolyline(2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7)
+                .setIncludeStart(false);
+
+        double[] firstPoint = getFirstPoint(builder);
+        Assert.assertArrayEquals("Should be equal to second point", new double[]{4, 4}, firstPoint, 1e-9);
+
+        builder.setIncludeStart(true);
+
+        firstPoint = getFirstPoint(builder);
+        Assert.assertArrayEquals("Should be equal to first point", new double[]{3, 3}, firstPoint, 1e-9);
+
+        builder.setPolyline(2, 3, 3, 2, 2);
+
+        firstPoint = getFirstPoint(builder);
+        Assert.assertArrayEquals("Should be equal to first point", new double[]{3, 3}, firstPoint, 1e-9);
+
+        builder.setIncludeStart(false);
+
+        firstPoint = getFirstPoint(builder);
+        Assert.assertArrayEquals("Should be equal to second point", new double[]{2, 2}, firstPoint, 1e-9);
+
+        // Now we check for single dimension move
+        builder.setPolyline(1, 3, 2, 1);
+        firstPoint = getFirstPoint(builder);
+        Assert.assertArrayEquals("Should be equal to second point", new double[]{2}, firstPoint, 1e-9);
+
+        builder.setIncludeStart(true);
+        Assert.assertArrayEquals("Should be equal to first point", new double[]{2}, firstPoint, 1e-9);
+
+        // Check behavior when putting only one point
+        builder.setIncludeStart(false)
+            .setPolyline(1, 1);
+        Assert.assertFalse("No point should be returned", builder.stream().findFirst().isPresent());
+    }
+
+    private static double[] getFirstPoint(final GridTraversal.Builder source) {
+        return source.stream()
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Grid traversal returned no result !"));
+    }
+
+    @Test
     public void testVectorCreation() {
         final Random rand = new Random();
         final long seed = rand.nextLong();

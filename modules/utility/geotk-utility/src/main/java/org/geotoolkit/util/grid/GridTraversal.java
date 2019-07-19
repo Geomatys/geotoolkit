@@ -30,8 +30,8 @@ import org.apache.sis.util.ArgumentChecks;
  * Find all intersections between a regular grid (whose cells are aligned with 0 origin, and size is 1 on each of their
  * axes) and a polyline. It returns all points of the polyline, adding intersection points on the fly.
  *
- * To acquire a stream of all points in the populated line string, use {@link #stream(double[], int, boolean) } or the
- * {@link Builder} class.
+ * To acquire a stream of all points in the populated line string, use {@link #stream(double[], int, boolean, boolean)}
+ * or the {@link Builder} class.
  *
  * @implNote
  * This algorithm complexity is roughly O(d*n), with d the number of dimensions of the polyline, and n is the total
@@ -61,7 +61,6 @@ public class GridTraversal implements Spliterator<double[]> {
      *
      * @param trajectory The polyline ordinates. We expect ordinates of each points are given in order. Example: for
      * a 3 dimension polyline composed of points a and b, we expect the array to be: [a0, a1, a2, b0, b1, b2].
-     * @param dimension Number of dimension of the polyline.
      */
     private GridTraversal(PointList trajectory) {
         this.trajectory = trajectory;
@@ -200,7 +199,7 @@ public class GridTraversal implements Spliterator<double[]> {
      *
      * TODO : replace with true {@link List} interface.
      */
-    static interface PointList {
+    interface PointList {
         int size();
         boolean isEmpty();
         double[] getPoint(int index);
@@ -219,7 +218,7 @@ public class GridTraversal implements Spliterator<double[]> {
 
         final int size;
 
-        public ContiguousArrayPoint(double[] ordinates, int dimension) {
+        public ContiguousArrayPoint(int dimension, double... ordinates) {
             ArgumentChecks.ensureStrictlyPositive("dimension", dimension);
             if (ordinates.length % dimension != 0) {
                 throw new IllegalArgumentException(String.format(
@@ -336,8 +335,20 @@ public class GridTraversal implements Spliterator<double[]> {
             return this;
         }
 
+        /**
+         *
+         * @param coordinates
+         * @param dimension
+         * @return
+         * @deprecated Use {@link #setPolyline(int, double...)} instead.
+         */
+        @Deprecated
         public Builder setPolyline(final double[] coordinates, final int dimension) {
-            polyline = coordinates == null? null : new ContiguousArrayPoint(coordinates, dimension);
+            return setPolyline(dimension, coordinates);
+        }
+
+        public Builder setPolyline(final int dimension, final double... coordinates) {
+            polyline = coordinates == null? null : new ContiguousArrayPoint(dimension, coordinates);
             return this;
         }
 
