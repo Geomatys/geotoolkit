@@ -129,6 +129,7 @@ public interface GridCoverageResource extends WritableGridCoverageResource, Stor
             final GridCoverageReadParam param = new GridCoverageReadParam();
             if (range != null && range.length > 0) {
                 param.setSourceBands(range);
+                param.setDestinationBands(range);
             }
 
             if (domain != null && domain.isDefined(org.apache.sis.coverage.grid.GridGeometry.ENVELOPE)) {
