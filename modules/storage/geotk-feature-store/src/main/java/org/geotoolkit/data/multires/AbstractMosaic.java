@@ -18,9 +18,9 @@ package org.geotoolkit.data.multires;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.util.UUID;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
@@ -128,7 +128,7 @@ public abstract class AbstractMosaic implements Mosaic {
      * {@inheritDoc}
      */
     @Override
-    public boolean isMissing(int col, int row) {
+    public boolean isMissing(long col, long row) {
         return false;
     }
 
@@ -136,7 +136,7 @@ public abstract class AbstractMosaic implements Mosaic {
      * {@inheritDoc}
      */
     @Override
-    public Rectangle getDataExtent() {
+    public GridExtent getDataExtent() {
 
         Point start = null;
         for (int y = 0; y < gridSize.height; y++) {
@@ -164,12 +164,16 @@ public abstract class AbstractMosaic implements Mosaic {
             assert end.x >= start.x;
             assert end.y >= start.y;
 
-            return new Rectangle(start.x*tileSize.width, start.y*tileSize.height,
-                                (end.x - start.x + 1) * tileSize.width,
-                                (end.y - start.y + 1) * tileSize.height);
+            long sx = ((long) start.x) * tileSize.width;
+            long sy = ((long) start.y) * tileSize.height;
+            long ex = (end.x - start.x + 1) * tileSize.width;
+            long ey = (end.y - start.y + 1) * tileSize.height;
+            return new GridExtent(null, new long[]{sx,sy}, new long[]{ex,ey}, false);
         } else {
             //all mosaic tiles are missing
-            return new Rectangle(0,0, gridSize.width*tileSize.width, gridSize.height * tileSize.height);
+            return new GridExtent(
+                    ((long) gridSize.width) * tileSize.width,
+                    ((long) gridSize.height) * tileSize.height);
         }
     }
 

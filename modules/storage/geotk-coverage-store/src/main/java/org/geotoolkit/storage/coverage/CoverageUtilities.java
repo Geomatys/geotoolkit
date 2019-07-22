@@ -18,13 +18,13 @@ package org.geotoolkit.storage.coverage;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
@@ -314,8 +314,13 @@ public final class CoverageUtilities {
             }
             if (!mosaicFound) {
                 // Create a new mosaic
-                final DefiningMosaic dm = new DefiningMosaic(null, newUpperleft,
-                        scale, tileSize, gridSize, new Rectangle(dataPixelWidth, dataPixelHeight));
+                final DefiningMosaic dm = new DefiningMosaic(
+                        null,
+                        newUpperleft,
+                        scale,
+                        tileSize,
+                        gridSize,
+                        new GridExtent(dataPixelWidth, dataPixelHeight));
                 pyramid.createMosaic(dm);
             }
         }

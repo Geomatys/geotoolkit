@@ -18,9 +18,9 @@ package org.geotoolkit.data.multires;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.util.Map;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.process.Monitor;
 import org.opengis.coverage.PointOutsideCoverageException;
@@ -72,7 +72,7 @@ final class ProgressiveMosaic implements Mosaic {
     }
 
     @Override
-    public boolean isMissing(int col, int row) throws PointOutsideCoverageException {
+    public boolean isMissing(long col, long row) throws PointOutsideCoverageException {
         if (pyramid.res.generator == null) {
             return base.isMissing(col, row);
         }
@@ -81,11 +81,11 @@ final class ProgressiveMosaic implements Mosaic {
     }
 
     @Override
-    public Tile getTile(int col, int row, Map hints) throws DataStoreException {
+    public Tile getTile(long col, long row, Map hints) throws DataStoreException {
         Tile tile = base.getTile(col, row);
         if (tile == null && pyramid.res.generator != null) {
             //generate tile
-            tile = pyramid.res.generator.generateTile(pyramid, base, new Point(col, row));
+            tile = pyramid.res.generator.generateTile(pyramid, base, new Point(Math.toIntExact(col), Math.toIntExact(row)));
             base.writeTiles(Stream.of(tile), null);
             tile = base.getTile(col, row);
         }
@@ -93,7 +93,7 @@ final class ProgressiveMosaic implements Mosaic {
     }
 
     @Override
-    public Rectangle getDataExtent() {
+    public GridExtent getDataExtent() {
         return base.getDataExtent();
     }
 

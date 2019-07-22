@@ -187,15 +187,15 @@ public class PyramidalModelReader extends AbstractGridCoverageReader {
         }
 
         //-- size of internal pixel data recovered
-        final Rectangle dataSize = mosaic.getDataExtent();
+        final GridExtent dataSize = mosaic.getDataExtent();
 
         final long[] high  = new long[nbdim];
 
         for (int i = 0; i < cs.getDimension(); i++) {
             if (i == minordi) {
-                high[i] = dataSize.width; //-- X horizontal 2D part
+                high[i] = dataSize.getSize(0); //-- X horizontal 2D part
             } else if (i == minordi + 1) {
-                high[i] = dataSize.height; //-- Y horizontal 2D part
+                high[i] = dataSize.getSize(1); //-- Y horizontal 2D part
             } else if (i != minordi && i != minordi + 1) {
                 high[i] = multiAxisValues.get(i).length; //-- other dimension grid high value = discret axis values number.
             } else {

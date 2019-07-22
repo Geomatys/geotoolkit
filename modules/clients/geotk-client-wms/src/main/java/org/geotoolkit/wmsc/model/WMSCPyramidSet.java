@@ -91,7 +91,7 @@ public class WMSCPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    public Request getTileRequest(Pyramid pyramid, Mosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+    public Request getTileRequest(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException {
         final GetMapRequest request = getServer().createGetMap();
         request.setLayers(layer);
         request.setEnvelope(Pyramids.computeTileEnvelope(mosaic, col, row));

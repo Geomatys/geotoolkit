@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.multires.Mosaic;
@@ -115,12 +116,12 @@ public class WMSCMosaic implements Mosaic {
     }
 
     @Override
-    public boolean isMissing(int col, int row) {
+    public boolean isMissing(long col, long row) {
         return false;
     }
 
     @Override
-    public ImageTile getTile(int col, int row, Map hints) throws DataStoreException {
+    public ImageTile getTile(long col, long row, Map hints) throws DataStoreException {
         return pyramid.getPyramidSet().getTile(pyramid, this, col, row, hints);
     }
 
@@ -130,9 +131,11 @@ public class WMSCMosaic implements Mosaic {
     }
 
     @Override
-    public Rectangle getDataExtent() {
+    public GridExtent getDataExtent() {
         TileSet tileset = pyramid.getTileset();
-        return new Rectangle(0,0, gridSize.width * tileset.getWidth() , gridSize.height * tileset.getHeight());
+        return new GridExtent(
+                ((long) gridSize.width) * tileset.getWidth() ,
+                ((long) gridSize.height) * tileset.getHeight());
     }
 
     @Override

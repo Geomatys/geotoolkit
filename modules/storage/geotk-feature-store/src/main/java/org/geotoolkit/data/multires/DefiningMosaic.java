@@ -17,9 +17,9 @@
 package org.geotoolkit.data.multires;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.util.Map;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.process.Monitor;
@@ -37,24 +37,26 @@ public class DefiningMosaic implements Mosaic {
     private final double scale;
     private final Dimension tileSize;
     private final Dimension gridSize;
-    private final Rectangle dataExtent;
+    private final GridExtent dataExtent;
 
     public DefiningMosaic(String identifier, DirectPosition upperLeft, double scale, Dimension tileSize, Dimension gridSize) {
-        this(identifier,upperLeft, scale, tileSize, gridSize, (Rectangle) null);
+        this(identifier,upperLeft, scale, tileSize, gridSize, (GridExtent) null);
     }
 
     public DefiningMosaic(String identifier, DirectPosition upperLeft, double scale, Dimension tileSize, Dimension gridSize, Dimension dataExtent) {
-        this(identifier,upperLeft, scale, tileSize, gridSize, new Rectangle(dataExtent));
+        this(identifier,upperLeft, scale, tileSize, gridSize, new GridExtent(dataExtent.width, dataExtent.height));
     }
 
-    public DefiningMosaic(String identifier, DirectPosition upperLeft, double scale, Dimension tileSize, Dimension gridSize, Rectangle dataExtent) {
+    public DefiningMosaic(String identifier, DirectPosition upperLeft, double scale, Dimension tileSize, Dimension gridSize, GridExtent dataExtent) {
         this.identifier = identifier;
         this.upperLeft = upperLeft;
         this.scale = scale;
         this.tileSize = tileSize;
         this.gridSize = gridSize;
         this.dataExtent = dataExtent != null ? dataExtent :
-                new Rectangle(0,0, gridSize.width*tileSize.width, gridSize.height * tileSize.height);
+                new GridExtent(
+                        ((long) gridSize.width) * tileSize.width,
+                        ((long) gridSize.height) * tileSize.height);
     }
 
     @Override
@@ -83,17 +85,17 @@ public class DefiningMosaic implements Mosaic {
     }
 
     @Override
-    public Rectangle getDataExtent() {
-        return new Rectangle(dataExtent);
+    public GridExtent getDataExtent() {
+        return dataExtent;
     }
 
     @Override
-    public boolean isMissing(int col, int row) throws PointOutsideCoverageException {
+    public boolean isMissing(long col, long row) throws PointOutsideCoverageException {
         throw new UnsupportedOperationException("Not supported.");
     }
 
     @Override
-    public Tile getTile(int col, int row, Map hints) throws DataStoreException {
+    public Tile getTile(long col, long row, Map hints) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 

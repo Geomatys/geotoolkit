@@ -277,7 +277,7 @@ public final class Pyramids extends Static {
      * @param row
      * @return
      */
-    public static Envelope computeTileEnvelope(Mosaic mosaic, final int col, final int row) {
+    public static Envelope computeTileEnvelope(Mosaic mosaic, final long col, final long row) {
         final Dimension tileSize = mosaic.getTileSize();
         final double scale = mosaic.getScale();
         final GeneralDirectPosition ul = new GeneralDirectPosition(mosaic.getUpperLeftCorner());

@@ -118,9 +118,9 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         return server;
     }
 
-    public abstract Request getTileRequest(Pyramid pyramid, Mosaic mosaic, int col, int row, Map hints) throws DataStoreException;
+    public abstract Request getTileRequest(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException;
 
-    public ImageTile getTile(Pyramid pyramid, Mosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+    public ImageTile getTile(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException {
         final String formatmime = (hints==null) ? null : (String) hints.get(Pyramids.HINT_FORMAT);
         ImageReaderSpi spi = null;
         if(formatmime!=null){
@@ -132,13 +132,13 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         }
 
         if (cacheImages) {
-            return new DefaultImageTile(spi, getTileImage(pyramid, mosaic, col, row, hints), 0, new Point(col, row));
+            return new DefaultImageTile(spi, getTileImage(pyramid, mosaic, col, row, hints), 0, new Point(Math.toIntExact(col), Math.toIntExact(row)));
         } else {
-            return new RequestImageTile(spi, getTileRequest(pyramid, mosaic, col, row, hints), 0, new Point(col, row));
+            return new RequestImageTile(spi, getTileRequest(pyramid, mosaic, col, row, hints), 0, new Point(Math.toIntExact(col), Math.toIntExact(row)));
         }
     }
 
-    private static String toId(Pyramid pyramid, Mosaic mosaic, int col, int row, Map hints) {
+    private static String toId(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) {
         final String pyramidId = pyramid.getIdentifier();
         final String mosaicId = mosaic.getIdentifier();
 
@@ -147,7 +147,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         return sb.toString();
     }
 
-    private RenderedImage getTileImage(Pyramid pyramid, Mosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+    private RenderedImage getTileImage(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException {
 
         final String tileId = toId(pyramid, mosaic, col, row, hints);
 

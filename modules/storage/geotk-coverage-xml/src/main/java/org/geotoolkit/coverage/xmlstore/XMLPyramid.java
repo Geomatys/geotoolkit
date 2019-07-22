@@ -268,8 +268,8 @@ public class XMLPyramid implements Pyramid {
         mosaic.tileWidth = template.getTileSize().width;
         mosaic.tileHeight = template.getTileSize().height;
         mosaic.upperLeft = template.getUpperLeftCorner().getCoordinate();
-        mosaic.dataPixelWidth = template.getDataExtent().width;
-        mosaic.dataPixelHeight = template.getDataExtent().height;
+        mosaic.dataPixelWidth = template.getDataExtent().getSize(0);
+        mosaic.dataPixelHeight = template.getDataExtent().getSize(1);
         mosaics.add(mosaic);
         mosaic.initialize(this);
         set.getRef().save();

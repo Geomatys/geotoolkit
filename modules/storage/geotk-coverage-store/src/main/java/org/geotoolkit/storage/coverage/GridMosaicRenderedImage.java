@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.Cache;
@@ -104,11 +105,13 @@ public class GridMosaicRenderedImage implements RenderedImage {
         if (colorModel == null && sampleModel == null) {
             try {
                 //search the first non missing tile of the Mosaic
-                final Rectangle dataArea = mosaic.getDataExtent();
+                final GridExtent dataArea = mosaic.getDataExtent();
                 final Dimension tileSize = mosaic.getTileSize();
                 if (dataArea != null) {
 
-                    final Tile tile = mosaic.getTile(dataArea.x / tileSize.width, dataArea.y / tileSize.height);
+                    final Tile tile = mosaic.getTile(
+                            dataArea.getLow(0) / tileSize.width,
+                            dataArea.getLow(1) / tileSize.height);
                     if (tile instanceof ImageTile) {
                         final ImageTile imgTile = (ImageTile) tile;
                         firstTile = imgTile.getImage();
