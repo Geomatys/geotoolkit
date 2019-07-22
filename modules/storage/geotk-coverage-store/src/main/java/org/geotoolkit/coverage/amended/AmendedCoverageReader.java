@@ -240,7 +240,7 @@ public class AmendedCoverageReader extends AbstractGridCoverageReader {
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setGridCoverage(coverage);
-            gcb.setSampleDimensions(overrideDims.toArray(new SampleDimension[overs.size()]));
+            gcb.setSampleDimensions(overs.toArray(new SampleDimension[overs.size()]));
             coverage = gcb.build();
         }
 
