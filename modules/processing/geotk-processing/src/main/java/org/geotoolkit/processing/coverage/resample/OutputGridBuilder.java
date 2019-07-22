@@ -1,5 +1,25 @@
 package org.geotoolkit.processing.coverage.resample;
 
+import java.awt.*;
+import java.awt.image.Raster;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+import javax.annotation.Nonnull;
+
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.CoordinateOperation;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransformFactory;
+import org.opengis.referencing.operation.NoninvertibleTransformException;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
+
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
@@ -14,20 +34,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.opengis.geometry.Envelope;
-import org.opengis.metadata.extent.GeographicBoundingBox;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.SingleCRS;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.*;
-import org.opengis.util.FactoryException;
-
-import javax.annotation.Nonnull;
-import java.awt.*;
-import java.awt.image.Raster;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.IntStream;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -189,16 +195,70 @@ final class OutputGridBuilder {
         final MathTransform step1 = target.getGridToCRS(inCell);
         final MathTransform step3 = source.getGridToCRS(inCell).inverse();
 
+        // Note: Before applying wrap-around, we must ensure it is really needed. Fore more information, see the
+        // following unit test : ResampleTest#resampleFalse0_360
         final CoordinateOperation inverseOp = targetToSourceCrs(source, target);
         if (inverseOp != null) {
+            final MathTransform withoutWrap = mtFactory.createConcatenatedTransform(
+                    mtFactory.createConcatenatedTransform(step1, inverseOp.getMathTransform()),
+                    step3
+            );
+
             final MathTransform step2 = WraparoundTransform.create(mtFactory, inverseOp);
-            return mtFactory.createConcatenatedTransform(
+            final MathTransform withWrap = mtFactory.createConcatenatedTransform(
                     mtFactory.createConcatenatedTransform(step1, step2),
                     step3
             );
+
+            return checkIfWrapAroundIsNeeded(withWrap, withoutWrap, source.getExtent(), target.getExtent());
         }
 
         return mtFactory.createConcatenatedTransform(step1, step3);
+    }
+
+    /**
+     * Check if we need to include a wrap-around workaround in resample transform. This is a necessary check, because
+     * even if a CRS of the workflow use different axis convention, it does not mean the attached grid geometry follows
+     * the convention. For more information check {@code ResampleTest#resampleFalse0_360()} unit test.
+     *
+     * TODO: It's total heuristic here. We should think about a better approach.
+     *
+     * @implNote
+     * Here, we compare extents obtained after transformation with given source one. We keep the transform that give us
+     * the extent closest to given source.
+     *
+     * @param with A version of the resample transform using wrap-around.
+     * @param without A version of the resample transform NOT using wrap-around.
+     * @param sourceExtent Extent of source grid geometry of the resampling.
+     * @param targetExtent Extent of target grid geometry og the resampling.
+     * @return The Chosen math-transform.
+     */
+    private MathTransform checkIfWrapAroundIsNeeded(final MathTransform with, final MathTransform without, final GridExtent sourceExtent, final GridExtent targetExtent) {
+        final Envelope extentWith = new GridGeometry(targetExtent, PixelInCell.CELL_CENTER, with, null).getEnvelope();
+        final Envelope extentWithout = new GridGeometry(targetExtent, PixelInCell.CELL_CENTER, without, null).getEnvelope();
+
+        final GeneralEnvelope sourceExtentAsEnvelope = new GeneralEnvelope(
+                LongStream.of(sourceExtent.getLow().getCoordinateValues()).mapToDouble(val -> (double)val).toArray(),
+                LongStream.of(sourceExtent.getHigh().getCoordinateValues()).mapToDouble(val -> (double)val).toArray()
+        );
+
+        final GeneralEnvelope intersectWith = new GeneralEnvelope(extentWith);
+        intersectWith.intersect(sourceExtentAsEnvelope);
+        if (intersectWith.isEmpty())
+            return without;
+
+        final GeneralEnvelope intersectWithout = new GeneralEnvelope(extentWithout);
+        intersectWithout.intersect(sourceExtentAsEnvelope);
+        if (intersectWithout.isEmpty())
+            return with;
+
+        double nbPxWith = 1, nbPxWithout = 1;
+        for (int i = 0 ; i < sourceExtent.getDimension() ; i++) {
+            nbPxWith *= intersectWith.getSpan(i);
+            nbPxWithout *= intersectWithout.getSpan(i);
+        }
+
+        return nbPxWith > nbPxWithout? with : without;
     }
 
     private static CoordinateOperation targetToSourceCrs(final GridGeometry source, final GridGeometry target) throws FactoryException {

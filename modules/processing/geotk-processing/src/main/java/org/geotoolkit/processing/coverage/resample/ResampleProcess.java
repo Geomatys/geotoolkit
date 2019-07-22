@@ -481,7 +481,7 @@ public class ResampleProcess extends AbstractProcess {
         return false;
     }
 
-    private static class NoConversionCoverage extends GridCoverage {
+    static class NoConversionCoverage extends GridCoverage {
 
         final RenderedImage buffer;
         /**
