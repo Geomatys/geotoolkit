@@ -20,12 +20,14 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -41,6 +43,9 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.NoninvertibleTransformException;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -178,6 +183,57 @@ public class ResampleTest extends AbstractProcessTest {
         testPart(raster,  0, 10, 20, 30,NN);testPart(raster,  10, 20, 20, 30, 3);testPart(raster, 20, 30, 20, 30, 4);testPart(raster, 30, 40, 20, 30, 5);testPart(raster, 40, 50, 20, 30,NN);
         testPart(raster,  0, 10, 30, 40,NN);testPart(raster,  10, 20, 30, 40, 6);testPart(raster, 20, 30, 30, 40, 7);testPart(raster, 30, 40, 30, 40, 8);testPart(raster, 40, 50, 30, 40,NN);
         testPart(raster,  0, 60, 40, 60,NN);
+    }
+
+    @Ignore
+    @Test
+    public void resample000360Test() throws FactoryException, NoninvertibleTransformException, TransformException {
+
+        final GridGeometry source;
+        final GridGeometry target;
+
+        {
+            /*
+            Create a 0-360 CRS with a grid geometry which cross the greenwich meridian
+            GridGeometry
+              ├─Grid extent
+              │   ├─Dimension 0: [0 … 200] (201 cells)
+              │   └─Dimension 1: [0 … 300] (301 cells)
+              ├─Geographic extent
+              │   ├─Upper bound:  53°01′30″N  12°03′01″E
+              │   └─Lower bound:  37°58′29″N  08°03′00″W
+              ├─Envelope
+              │   ├─Geodetic longitude:              -8.05 … 12.05   ∆Lon = 0.1°
+              │   └─Geodetic latitude:  37.974999999999994 … 53.025  ∆Lat = 0.05°
+              ├─Coordinate reference system
+              │   └─grib-lonlat-crs
+              └─Conversion (origin in a cell center)
+                  └─┌                  ┐
+                    │ 0.1   0     -8.0 │
+                    │ 0    -0.05  53.0 │
+                    │ 0     0      1   │
+                    └                  ┘
+            */
+            final AffineTransform2D gridToCrs = new AffineTransform2D(0.1, 0, 0, -0.05, -8.0, 53.0);
+            CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+            crs = ((DefaultGeographicCRS)crs).forConvention(AxesConvention.POSITIVE_RANGE);
+            source = new GridGeometry(new GridExtent(200, 300), PixelInCell.CELL_CENTER, gridToCrs, crs);
+        }
+
+        {
+            final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -7, 50);
+            target = new GridGeometry(new GridExtent(17, 10), PixelInCell.CELL_CENTER, gridToCrs, CommonCRS.WGS84.normalizedGeographic());
+        }
+
+        OutputGridBuilder builder = new OutputGridBuilder(source, target);
+        builder.setTargetCrs(target.getCoordinateReferenceSystem());
+        MathTransform trs = builder.forDefaultRendering();
+
+        //transform point should be in the left side of source image
+        double[] crd = new double[]{0,0};
+        trs.transform(crd, 0, crd, 0, 1);
+        assertTrue(crd[0] < 50);;
+
     }
 
     private static void testPart(Raster raster, int minx, int maxx, int miny, int maxy, double value){
