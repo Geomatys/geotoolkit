@@ -27,27 +27,29 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.se.xml.v110.CoverageStyleType;
 import org.geotoolkit.se.xml.v110.ObjectFactory;
 import org.geotoolkit.se.xml.v110.RuleType;
+import org.geotoolkit.sld.xml.GTtoSE110Transformer;
+import org.geotoolkit.sld.xml.JAXBSLDUtilities;
+import org.geotoolkit.sld.xml.SE110toGTTransformer;
 import org.geotoolkit.sld.xml.v110.UserStyle;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.sld.xml.GTtoSE110Transformer;
-import org.geotoolkit.sld.xml.JAXBSLDUtilities;
-import org.geotoolkit.sld.xml.SE110toGTTransformer;
-import org.apache.sis.xml.MarshallerPool;
-import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.ogc.xml.v110.PropertyNameType;
+import org.geotoolkit.style.function.Interpolate;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
-import org.opengis.util.FactoryException;
+import org.opengis.filter.expression.Expression;
 import org.opengis.style.ContrastMethod;
+import org.opengis.style.Graphic;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.Mark;
 import org.opengis.style.OverlapBehavior;
@@ -57,6 +59,7 @@ import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.SemanticType;
 import org.opengis.style.StyleFactory;
 import org.opengis.style.TextSymbolizer;
+import org.opengis.util.FactoryException;
 
 /**
  * Test class for style jaxb marshelling and unmarshelling.
@@ -99,6 +102,8 @@ public class SEforSLD110Test {
     private static File FILE_SE_FTS;
     private static File FILE_SE_RULE;
 
+    private static File FILE_SE_FILL_INTERPOLATION;
+
     private static File TEST_FILE_SE_SYMBOL_POINT;
     private static File TEST_FILE_SE_SYMBOL_LINE;
     private static File TEST_FILE_SE_SYMBOL_POLYGON;
@@ -129,6 +134,7 @@ public class SEforSLD110Test {
             FILE_SE_STYLE = new File( SEforSLD110Test.class.getResource("/org/geotoolkit/sample/SLD_userstyle_v110.xml").toURI() );
             FILE_SE_FTS = new File( SEforSLD110Test.class.getResource("/org/geotoolkit/sample/SE_fts_v110.xml").toURI() );
             FILE_SE_RULE = new File( SEforSLD110Test.class.getResource("/org/geotoolkit/sample/SE_rule_v110.xml").toURI() );
+            FILE_SE_FILL_INTERPOLATION = new File( SEforSLD110Test.class.getResource("/org/geotoolkit/sample/SE_MarkWithInterpolation.xml").toURI() );
 
         } catch (URISyntaxException ex) { ex.printStackTrace(); }
 
@@ -140,6 +146,7 @@ public class SEforSLD110Test {
         assertNotNull(FILE_SE_STYLE);
         assertNotNull(FILE_SE_FTS);
         assertNotNull(FILE_SE_RULE);
+        assertNotNull(FILE_SE_FILL_INTERPOLATION);
 
         try{
             TEST_FILE_SE_SYMBOL_POINT = File.createTempFile("test_se_symbol_point_v110", ".xml");
@@ -577,6 +584,35 @@ public class SEforSLD110Test {
 
         MARSHALLER.marshal(pvt, TEST_FILE_SE_SYMBOL_RASTER);
         POOL.recycle(MARSHALLER);
+        POOL.recycle(UNMARSHALLER);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // JAXB TEST UNMARSHELLING FOR USER CASES //////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    public void testFillInterpolation() throws JAXBException {
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+
+        //Read test
+        Object obj = UNMARSHALLER.unmarshal(FILE_SE_FILL_INTERPOLATION);
+        assertNotNull(obj);
+
+        JAXBElement<org.geotoolkit.se.xml.v110.PointSymbolizerType> jax = (JAXBElement<org.geotoolkit.se.xml.v110.PointSymbolizerType>) obj;
+        PointSymbolizer pointSymbol = TRANSFORMER_GT.visit(jax.getValue());
+        assertNotNull(pointSymbol);
+
+        assertEquals(pointSymbol.getGeometryPropertyName(), valueGeom);
+        assertEquals(Units.POINT, pointSymbol.getUnitOfMeasure());
+        assertNotNull(pointSymbol.getGraphic());
+
+        Graphic graphic = pointSymbol.getGraphic();
+        Mark mark = (Mark) graphic.graphicalSymbols().get(0);
+        Expression color = mark.getFill().getColor();
+        assertTrue(color instanceof Interpolate);
+
         POOL.recycle(UNMARSHALLER);
     }
 
