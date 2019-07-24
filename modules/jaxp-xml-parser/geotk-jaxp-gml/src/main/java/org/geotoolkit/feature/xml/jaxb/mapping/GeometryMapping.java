@@ -292,14 +292,21 @@ public class GeometryMapping implements XSDMapping {
             final boolean longitudeFirst = (bool == null) || Boolean.TRUE.equals(bool);
 
             //extract marshaller parameter
-            String bindingPackage = (String) stack.getProperties().get(BINDING_PACKAGE);
+            Object bindingPackage = stack.getProperties().get(BINDING_PACKAGE);
+
             MarshallerPool pool;
-            if ("JTSWrapper".equals(bindingPackage)) {
-                pool = JTSWrapperMarshallerPool.getInstance();
-            } else if (bindingPackage == null || "GML".equals(bindingPackage)) {
-                pool = GMLMarshallerPool.getInstance();
+            if (bindingPackage instanceof String) {
+                if ("JTSWrapper".equals(bindingPackage)) {
+                    pool = JTSWrapperMarshallerPool.getInstance();
+                } else if ("GML".equals(bindingPackage)) {
+                    pool = GMLMarshallerPool.getInstance();
+                } else {
+                    throw new IllegalArgumentException("Unexpected property value for BINDING_PACKAGE:" + bindingPackage);
+                }
+            } else if (bindingPackage instanceof MarshallerPool) {
+                pool = (MarshallerPool) bindingPackage;
             } else {
-                throw new IllegalArgumentException("Unexpected property value for BINDING_PACKAGE:" + bindingPackage);
+                pool = GMLMarshallerPool.getInstance();
             }
 
             final boolean decorated = GMLConvention.isDecoratedProperty(name.tip().toString());
