@@ -241,7 +241,7 @@ public class JAXPStreamTransactionWriter {
         final FeatureCollection col = element.getFeatures();
         final JAXPStreamFeatureWriter fw = new JAXPStreamFeatureWriter();
         fw.setOutput(writer);
-        fw.writeFeatureCollection(col, null);
+        fw.writeFeatureCollection(col, null, true);
 
         writer.writeEndElement();
     }

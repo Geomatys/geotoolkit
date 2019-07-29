@@ -28,6 +28,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Level;
 import java.io.FileInputStream;
+import java.util.Arrays;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -404,7 +405,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         writer.dispose();
 
         String s = temp.toString();
-        s = s.replaceAll("timeStamp=\"[^\"]*\" ", "timeStamp=\"\" ");
+        s = s.replaceAll("timeStamp=\"[^\"]*\" ", "timeStamp=\"2002-05-30T09:00:00\" ");
         DomCompare.compare(IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/CollectionSimple.xml")), s);
     }
 
@@ -431,6 +432,40 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         String s = temp.toString();
         s = s.replaceAll("timeStamp=\"[^\"]*\" ", "timeStamp=\"\" ");
         DomCompare.compare(expResult, s);
+    }
+
+    @Test
+    public void testWriteMixedCollectionElement() throws JAXBException, IOException, XMLStreamException,
+            DataStoreException, ParserConfigurationException, SAXException, TransformerConfigurationException, TransformerException{
+        final StringWriter temp = new StringWriter();
+        final ElementFeatureWriter writer = new ElementFeatureWriter();
+        Element result = writer.write(Arrays.asList(collectionSimple, collectionSimple2), false);
+
+        Source source = new DOMSource(result.getOwnerDocument());
+
+        // Prepare the output file
+        Result resultxml = new StreamResult(temp);
+
+        // Write the DOM document to the file
+        Transformer xformer = TransformerFactory.newInstance().newTransformer();
+        xformer.transform(source, resultxml);
+
+        String s = temp.toString();
+        s = s.replaceAll("timeStamp=\"[^\"]*\"", "timeStamp=\"\"");
+        DomCompare.compare(IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/CollectionMixedDom.xml")), s);
+    }
+
+    @Test
+    public void testWriteMixedCollection() throws JAXBException, IOException, XMLStreamException,
+            DataStoreException, ParserConfigurationException, SAXException{
+        final StringWriter temp = new StringWriter();
+        final XmlFeatureWriter writer = new JAXPStreamFeatureWriter();
+        writer.write(Arrays.asList(collectionSimple, collectionSimple2), temp);
+        writer.dispose();
+
+        String s = temp.toString();
+        s = s.replaceAll("timeStamp=\"[^\"]*\" ", "timeStamp=\"2002-05-30T09:00:00\" ");
+        DomCompare.compare(IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/CollectionMixed.xml")), s);
     }
 
     @Test

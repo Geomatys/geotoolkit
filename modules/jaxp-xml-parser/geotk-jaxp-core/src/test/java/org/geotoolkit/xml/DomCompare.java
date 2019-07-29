@@ -42,6 +42,7 @@ public class DomCompare {
     {
         final DocumentComparator comparator = new DocumentComparator(expected, result);
         comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns");
+        comparator.ignoredAttributes.add("http://www.w3.org/2001/XMLSchema-instance:schemaLocation");
         comparator.compare();
     }
 }

@@ -21,13 +21,18 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.logging.Level;
 import java.util.stream.Stream;
@@ -327,14 +332,16 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      * @param featureSet FeatureSet to write
      * @param nbMatched number of matching features
      */
-    public void writeFeatureCollection(final FeatureSet featureSet, final Integer nbMatched)
+    public void writeFeatureCollection(final FeatureSet featureSet, final Integer nbMatched, boolean root)
             throws DataStoreException, XMLStreamException {
 
         final String collectionId = featureSet.getIdentifier().map(GenericName::toString).orElse("");
         final long size = FeatureStoreUtilities.getCount(featureSet);
 
         writeStartWFSCollection(wfsVersion, gmlVersion, collectionId, size, nbMatched);
-        writeNamespaces(featureSet.getType());
+        if (root) {
+            writeNamespaces(featureSet.getType());
+        }
         writeBounds(featureSet.getEnvelope().orElse(null), writer);
 
         // we write each feature member of the collection
@@ -375,7 +382,38 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             writeFeature((Feature) candidate,true);
         } else if (candidate instanceof FeatureSet) {
             writeStartDocument();
-            writeFeatureCollection((FeatureSet) candidate, nbMatched);
+            writeFeatureCollection((FeatureSet) candidate, nbMatched, true);
+            writeEndDocument();
+        } else if (candidate instanceof List) {
+            // see http://schemas.opengis.net/wfs/2.0/examples/GetFeature/GetFeature_08_Res.xml
+            List collections = (List) candidate;
+            writeStartDocument();
+            long count = 0;
+            List<FeatureType> types = new ArrayList<>();
+            for (Object c : collections) {
+                if (c instanceof FeatureSet) {
+                    count = count + FeatureStoreUtilities.getCount((FeatureSet)c);
+                    types.add(((FeatureSet)c).getType());
+                } else {
+                    throw new IllegalArgumentException("Only list of Feature set is allowed");
+                }
+            }
+
+            writeStartWFSCollection(wfsVersion, gmlVersion, "collection-1", count, nbMatched);
+            writeNamespaces(types);
+
+            for (Object collection : collections) {
+                if ("2.0.0".equals(wfsVersion)) {
+                    writeStartMember("wfs", "member", wfsNamespace);
+                    writeFeatureCollection((FeatureSet) collection, null, false);
+                    writeEndMember();
+                } else {
+                    writeStartMember("gml", "featureMember", gmlNamespace);
+                    writeFeatureCollection((FeatureSet) collection, null, false);
+                    writeEndMember();
+                }
+            }
+            writeEndCollection();
             writeEndDocument();
         } else {
             throw new IllegalArgumentException("The given object is not a Feature or a" +
@@ -828,11 +866,19 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     }
 
     private void writeNamespaces(FeatureType type) throws XMLStreamException {
-        if (type != null && type.getName() != null) {
-            for(String n : Utils.listAllNamespaces(type)){
-                if (n != null && !(n.equals("http://www.opengis.net/gml") || n.equals("http://www.opengis.net/gml/3.2")) && !n.isEmpty()) {
-                    writer.writeNamespace(getPrefix(n).prefix, n);
-                }
+        writeNamespaces(Arrays.asList(type));
+    }
+
+    private void writeNamespaces(List<FeatureType> types) throws XMLStreamException {
+        Set<String> nmsps = new LinkedHashSet<>();
+        for (FeatureType type : types) {
+            if (type != null && type.getName() != null) {
+                nmsps.addAll(Utils.listAllNamespaces(type));
+            }
+        }
+        for(String n : nmsps){
+            if (n != null && !(n.equals("http://www.opengis.net/gml") || n.equals("http://www.opengis.net/gml/3.2")) && !n.isEmpty()) {
+                writer.writeNamespace(getPrefix(n).prefix, n);
             }
         }
     }

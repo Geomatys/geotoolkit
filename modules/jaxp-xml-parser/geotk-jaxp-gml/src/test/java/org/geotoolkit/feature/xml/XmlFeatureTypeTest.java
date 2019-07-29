@@ -298,13 +298,12 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testWriteSimpleFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
-        final File temp = File.createTempFile("gml", ".xml");
-        temp.deleteOnExit();
         final JAXBFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
-        writer.write(simpleTypeFull, new FileOutputStream(temp));
+        StringWriter sw = new StringWriter();
+        writer.write(simpleTypeFull, sw);
 
         DomCompare.compare(XmlFeatureTypeTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleType.xsd"), temp);
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleType.xsd"), sw.toString());
     }
 
     @Test
