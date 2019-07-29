@@ -21,7 +21,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.util.GeometricShapeFactory;
@@ -215,12 +214,11 @@ public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
         final CurveType curve = new CurveType();
         curve.setSegments(segments);
 
-        final LineString line = GF.createLineString(new Coordinate[]{
+        final LineString expected = GF.createLineString(new Coordinate[]{
             new Coordinate(10, 20),
             new Coordinate(30, 40),
             new Coordinate(50, 60),
         });
-        final MultiLineString expected = GF.createMultiLineString(new LineString[]{line});
 
         final Geometry result = GeometrytoJTS.toJTS(curve);
         Assert.assertEquals(expected, result);

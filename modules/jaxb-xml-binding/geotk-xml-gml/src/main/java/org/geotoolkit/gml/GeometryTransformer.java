@@ -730,16 +730,15 @@ public class GeometryTransformer implements Supplier<Geometry> {
         return poly;
     }
 
-    private MultiLineString convertCurve(final Curve mc) {
+    private LineString convertCurve(final Curve mc) {
         CurveSegmentArrayProperty segments = mc.getSegments();
-        final List<LineString> lines = new ArrayList<>();
+        final List<Coordinate> coords = new ArrayList<>();
         for (AbstractCurveSegment cs : segments.getAbstractCurveSegment()) {
-            final Coordinate[] coordinates = StreamSupport.stream(getCoordinates(cs), false)
-                    .toArray(size -> new Coordinate[size]);
-            lines.add(GF.createLineString(coordinates));
+            StreamSupport.stream(getCoordinates(cs), false)
+                    .forEach(coords::add);
         }
 
-        final MultiLineString mls = GF.createMultiLineString(lines.toArray(new LineString[lines.size()]));
+        final LineString mls = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
         applyCRS(mls);
         return mls;
     }

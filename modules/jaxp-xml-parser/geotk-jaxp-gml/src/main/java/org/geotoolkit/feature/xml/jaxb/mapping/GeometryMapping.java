@@ -114,7 +114,7 @@ public class GeometryMapping implements XSDMapping {
         CLASS_BINDING.put("GeometryPropertyType",          Geometry.class);
         CLASS_BINDING.put("MultiPointPropertyType",        MultiPoint.class);
         CLASS_BINDING.put("PointPropertyType",             Point.class);
-        CLASS_BINDING.put("CurvePropertyType",             MultiLineString.class);
+        CLASS_BINDING.put("CurvePropertyType",             LineString.class);
         CLASS_BINDING.put("MultiGeometryPropertyType",     GeometryCollection.class);
         CLASS_BINDING.put("CompositeCurvePropertyType",    MultiLineString.class);
         CLASS_BINDING.put("MultiLineStringPropertyType",   MultiLineString.class);
@@ -123,7 +123,7 @@ public class GeometryMapping implements XSDMapping {
         CLASS_BINDING.put("PolyHedralSurfacePropertyType", MultiPolygon.class);
         CLASS_BINDING.put("MultiSurfacePropertyType",      MultiPolygon.class);
         CLASS_BINDING.put("MultiPolygonPropertyType",      MultiPolygon.class);
-        CLASS_BINDING.put("SurfacePropertyType",           Polygon.class);
+        CLASS_BINDING.put("SurfacePropertyType",           MultiPolygon.class);
         CLASS_BINDING.put("PolygonPropertyType",           Polygon.class);
         CLASS_BINDING.put("RingPropertyType",              LinearRing.class);
         CLASS_BINDING.put("LinearRingPropertyType",        LinearRing.class);
