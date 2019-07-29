@@ -101,6 +101,7 @@ public class PointPropertyType implements PointProperty {
      *     {@link PointType }
      *
      */
+    @Override
     public PointType getPoint() {
         return point;
     }

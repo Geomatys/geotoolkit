@@ -43,6 +43,7 @@ import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.LineStringPosListType;
 import org.geotoolkit.internal.jaxb.PolygonType;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.xsd.xml.v2001.Annotated;
 import org.geotoolkit.xsd.xml.v2001.ComplexType;
 import org.locationtech.jts.geom.Envelope;
@@ -113,7 +114,7 @@ public class GeometryMapping implements XSDMapping {
         CLASS_BINDING.put("GeometryPropertyType",          Geometry.class);
         CLASS_BINDING.put("MultiPointPropertyType",        MultiPoint.class);
         CLASS_BINDING.put("PointPropertyType",             Point.class);
-        CLASS_BINDING.put("CurvePropertyType",             LineString.class);
+        CLASS_BINDING.put("CurvePropertyType",             MultiLineString.class);
         CLASS_BINDING.put("MultiGeometryPropertyType",     GeometryCollection.class);
         CLASS_BINDING.put("CompositeCurvePropertyType",    MultiLineString.class);
         CLASS_BINDING.put("MultiLineStringPropertyType",   MultiLineString.class);
@@ -276,6 +277,10 @@ public class GeometryMapping implements XSDMapping {
             if (!(xsdObject instanceof ComplexType)) return null;
 
             final ComplexType ct = (ComplexType) xsdObject;
+            final String namespace = NamesExt.getNamespace(name);
+
+            if (!(GMLConvention.GML_311_NAMESPACE.equals(namespace)
+                || GMLConvention.GML_321_NAMESPACE.equals(namespace))) return null;
 
 //            final ComplexContent complexContent = ct.getComplexContent();
 //            if (complexContent == null) return null;
