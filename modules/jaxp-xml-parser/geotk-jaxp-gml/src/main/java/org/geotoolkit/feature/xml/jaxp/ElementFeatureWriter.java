@@ -20,10 +20,12 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -124,7 +126,63 @@ public class ElementFeatureWriter {
         if (candidate instanceof Feature) {
             return writeFeature((Feature) candidate, null, fragment);
         } else if (candidate instanceof FeatureSet) {
-            return writeFeatureCollection((FeatureSet) candidate, fragment, true, nbMatched);
+            return writeFeatureCollection((FeatureSet) candidate, null, fragment, true, nbMatched, true);
+        } else if (candidate instanceof List) {
+            // see http://schemas.opengis.net/wfs/2.0/examples/GetFeature/GetFeature_08_Res.xml
+            List collections = (List) candidate;
+
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            // then we have to create document-loader:
+            factory.setNamespaceAware(false);
+            DocumentBuilder loader = factory.newDocumentBuilder();
+
+            // creating a new DOM-document...
+            Document document = loader.newDocument();
+            final Element rootElement = document.createElementNS("http://www.opengis.net/wfs", "FeatureCollection");
+            rootElement.setPrefix("wfs");
+
+            document.appendChild(rootElement);
+
+            String collectionID = "collection-1";
+            final Attr idAttribute = document.createAttributeNS(GML, "id");
+            idAttribute.setValue(collectionID);
+            idAttribute.setPrefix("gml");
+            rootElement.setAttributeNodeNS(idAttribute);
+
+            long count = 0;
+            List<FeatureType> types = new ArrayList<>();
+            for (Object c : collections) {
+                if (c instanceof FeatureSet) {
+                    count = count + FeatureStoreUtilities.getCount((FeatureSet)c);
+                    types.add(((FeatureSet)c).getType());
+                } else {
+                    throw new IllegalArgumentException("Only list of Feature set is allowed");
+                }
+            }
+
+            rootElement.setAttribute("numberOfFeatures", Long.toString(count));
+
+            if (nbMatched != null) {
+                rootElement.setAttribute("numberMatched", Integer.toString(nbMatched));
+            }
+
+            // timestamp
+            synchronized(FORMATTER) {
+                rootElement.setAttribute("timeStamp", FORMATTER.format(new Date(System.currentTimeMillis())));
+            }
+
+            if (schemaLocation != null && !schemaLocation.equals("")) {
+                rootElement.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", schemaLocation);
+            }
+
+            for (Object collection : collections) {
+                final Element memberElement = document.createElementNS(GML, "featureMember");
+                memberElement.setPrefix("gml");
+                memberElement.appendChild(writeFeatureCollection((FeatureSet) collection, document, fragment, true, null, false));
+                rootElement.appendChild(memberElement);
+            }
+            return rootElement;
+
         } else {
             throw new IllegalArgumentException("The given object is not a Feature or a" +
                     " FeatureCollection: "+ candidate);
@@ -339,20 +397,24 @@ public class ElementFeatureWriter {
      * @param fragment : true if we write in a stream, dont write start and end elements
      * @throws DataStoreException
      */
-    public Element writeFeatureCollection(final FeatureSet featureCollection, final boolean fragment, final boolean wfs, final Integer nbMatched) throws DataStoreException, ParserConfigurationException {
+    public Element writeFeatureCollection(final FeatureSet featureCollection, final Document rootDocument, final boolean fragment, final boolean wfs, final Integer nbMatched, boolean root) throws DataStoreException, ParserConfigurationException {
 
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        // then we have to create document-loader:
-        factory.setNamespaceAware(false);
-        DocumentBuilder loader = factory.newDocumentBuilder();
+        final Document document;
+        if (rootDocument == null) {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            // then we have to create document-loader:
+            factory.setNamespaceAware(false);
+            DocumentBuilder loader = factory.newDocumentBuilder();
 
-        // creating a new DOM-document...
-        Document document = loader.newDocument();
+            // creating a new DOM-document...
+            document = loader.newDocument();
+        } else {
+            document = rootDocument;
+        }
 
         // the XML header
         if (!fragment) {
             document.setXmlVersion("1.0");
-            //writer.writeStartDocument("UTF-8", "1.0");
         }
 
         // the root Element
@@ -365,7 +427,9 @@ public class ElementFeatureWriter {
             rootElement.setPrefix("gml");
         }
 
-        document.appendChild(rootElement);
+        if (root) {
+            document.appendChild(rootElement);
+        }
 
         String collectionID = featureCollection.getIdentifier().map(GenericName::toString).orElse("");
         final Attr idAttribute = document.createAttributeNS(GML, "id");
@@ -384,7 +448,7 @@ public class ElementFeatureWriter {
             rootElement.setAttribute("timeStamp", FORMATTER.format(new Date(System.currentTimeMillis())));
         }
 
-        if (schemaLocation != null && !schemaLocation.equals("")) {
+        if (root && schemaLocation != null && !schemaLocation.equals("")) {
             rootElement.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", schemaLocation);
         }
 

@@ -30,7 +30,7 @@ import org.apache.sis.storage.DataStoreException;
 public interface XmlFeatureWriter extends Configurable {
 
     /**
-     * Write an XML representation of the specified feature collection or feature
+     * Write an XML representation of the specified Feature, FeatureCollection or list of FeatureCollection to write
      * into the output.
      *
      * @param candidate Feature or FeatureCollection to write
@@ -42,7 +42,7 @@ public interface XmlFeatureWriter extends Configurable {
      * Write an XML representation of the specified feature collection or feature
      * into the output.
      *
-     * @param candidate Feature or FeatureCollection to write
+     * @param candidate Feature, FeatureCollection or list of FeatureCollection to write
      * @param output where to write the candidate
      * @param nbMatched total number of feature matching (feature collection can be limited)
      */
