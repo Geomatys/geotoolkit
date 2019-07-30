@@ -318,7 +318,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
                 }
             }
-        } else if (obj instanceof FeatureSet) {
+        } else if (obj instanceof WritableFeatureSet) {
             final WritableFeatureSet fs = (WritableFeatureSet) obj;
             final List<Feature> newFeatures = new ArrayList<>();
             try (Stream<Feature> stream = fs.features(false)) {
@@ -331,6 +331,8 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             }
             fs.removeIf((Feature t) -> true);
             fs.add(newFeatures.iterator());
+        } else if (obj instanceof FeatureSet) {
+            //can not update features, not writable
 
         } else if (obj instanceof Collection) {
             final Collection col = (Collection) obj;
