@@ -40,6 +40,7 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import net.iharder.Base64;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.IllegalNameException;
@@ -511,14 +512,27 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         final int nbAtts = reader.getAttributeCount();
         for (int i=0; i<nbAtts; i++) {
             final QName attName = reader.getAttributeName(i);
-            try {
-                final AttributeType pd = (AttributeType) featureType.getProperty("@"+attName.getLocalPart());
-                final String attVal = reader.getAttributeValue(i);
-                final Object val = ObjectConverters.convert(attVal, pd.getValueClass());
-                feature.setPropertyValue(pd.getName().toString(), val);
-            } catch(PropertyNotFoundException ex) {
-                //do nothing
+
+            if ("href".equals(attName.getLocalPart())) {
+                //store href as identifier, it will be replaced later
+                //or if can't be resolved we will still have the id
+                try {
+                    final String attVal = reader.getAttributeValue(i);
+                    feature.setPropertyValue(AttributeConvention.IDENTIFIER, attVal);
+                } catch (IllegalArgumentException ex) {
+                    //do nothing
+                }
+            } else {
+                try {
+                    final AttributeType pd = (AttributeType) featureType.getProperty("@"+attName.getLocalPart());
+                    final String attVal = reader.getAttributeValue(i);
+                    final Object val = ObjectConverters.convert(attVal, pd.getValueClass());
+                    feature.setPropertyValue(pd.getName().toString(), val);
+                } catch(PropertyNotFoundException ex) {
+                    //do nothing
+                }
             }
+
         }
 
         boolean doNext = true;

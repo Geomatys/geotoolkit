@@ -194,18 +194,26 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
 
                     //if (xsdContext.isFeatureType(type)) {
                         final BuildStack stack = new BuildStack();
-                        final FeatureType ft = (FeatureType) getType(typeName.getNamespaceURI(), type, stack, true);
-                        addIfMissing(result, ft);
+                        Object typeObj = getType(typeName.getNamespaceURI(), type, stack, true);
+                        FeatureType ft = null;
+                        if (typeObj instanceof FeatureAssociationRole) {
+                            ft = ((FeatureAssociationRole) typeObj).getValueType();
+                        } else if (typeObj instanceof FeatureType) {
+                            ft = (FeatureType) typeObj;
+                        }
+                        if (ft != null) {
+                            addIfMissing(result, ft);
 
-                        //if the type name is not the same as the element name, make a subtype
-                        if (!ft.getName().tip().toString().equals(element.getName())) {
-                            final GenericName name = NamesExt.create(NamesExt.getNamespace(ft.getName()), element.getName());
+                            //if the type name is not the same as the element name, make a subtype
+                            if (!ft.getName().tip().toString().equals(element.getName())) {
+                                final GenericName name = NamesExt.create(NamesExt.getNamespace(ft.getName()), element.getName());
 
-                            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-                            ftb.setName(name);
-                            ftb.setSuperTypes(ft);
-                            final FeatureType renamed = ftb.build();
-                            addIfMissing(result, renamed);
+                                final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+                                ftb.setName(name);
+                                ftb.setSuperTypes(ft);
+                                final FeatureType renamed = ftb.build();
+                                addIfMissing(result, renamed);
+                            }
                         }
                     //}
 
@@ -319,6 +327,28 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                 typesCache.put(name, mappedType);
                 return mappedType;
             }
+        }
+
+        //special case for gml:ReferenceType
+        final String namespace = NamesExt.getNamespace(name);
+        if ( (GMLConvention.GML_311_NAMESPACE.equals(namespace)
+            || GMLConvention.GML_321_NAMESPACE.equals(namespace))
+            && "ReferenceType".equals(name.tip().toString())) {
+            //note : can't use real AbstractGMLType, recursive object creation
+            final QName gml = new QName(namespace, "AbstractGMLType");
+            final Object abstractGmlType = getType(gml, stack);
+            if (abstractGmlType instanceof GenericName) {
+                final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+                FeatureAssociationRole far = ftb.addAssociation((GenericName) abstractGmlType).setName(name).build();
+                typesCache.put(name, far);
+                return far;
+            } else {
+                final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+                FeatureAssociationRole far = ftb.addAssociation((FeatureType) abstractGmlType).setName(name).build();
+                typesCache.put(name, far);
+                return far;
+            }
+
         }
 
         final boolean deprecated = GMLConvention.isDeprecated(type);
@@ -554,7 +584,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
             if (candidateDefaultGeom != null) {
                 ((AttributeTypeBuilder) candidateDefaultGeom).addRole(AttributeRole.DEFAULT_GEOMETRY);
             }
-            
+
             FeatureType featureType = ftb.build();
 
             typesCache.put(name, featureType);

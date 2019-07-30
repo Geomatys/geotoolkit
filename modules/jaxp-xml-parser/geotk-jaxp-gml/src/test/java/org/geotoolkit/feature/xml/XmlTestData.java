@@ -73,6 +73,7 @@ public class XmlTestData {
     public static final FeatureType typeEmpty;
     public static final FeatureType typeEmpty2;
     public static final FeatureType typeWithNil;
+    public static final FeatureType typeReference;
     public static final Feature simpleFeatureFull;
     public static final Feature simpleFeature1;
     public static final Feature simpleFeature2;
@@ -211,6 +212,13 @@ public class XmlTestData {
         ftb.setName(GML_32_NAMESPACE,"TestSimple");
         ftb.setSuperTypes(ABSTRACTFEATURETYPE_32);
         typeEmpty = ftb.build();
+
+        ftb = new FeatureTypeBuilder();
+        ftb.setName(GML_32_NAMESPACE,"Person");
+        ftb.setSuperTypes(ABSTRACTFEATURETYPE_32);
+        ftb.addAssociation(ABSTRACTGMLTYPE_32).setName(NamesExt.create(GML_32_NAMESPACE, "link")).setMinimumOccurs(0).setMaximumOccurs(1).build();
+        ftb.addAssociation(ABSTRACTGMLTYPE_32).setName(NamesExt.create(GML_32_NAMESPACE, "linkedTo")).setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE).build();
+        typeReference = ftb.build();
 
         AttributeTypeBuilder ib = new FeatureTypeBuilder().addAttribute(String.class);
         ib.setName(GML_32_NAMESPACE,"identifier");

@@ -297,6 +297,18 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
+    public void testReadReferenceType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
+        final JAXBFeatureTypeReader reader = getReader(true);
+        final List<FeatureType> types = new ArrayList<>(reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/ReferenceType.xsd")).getValues());
+        removeGMLBaseTypes(types);
+        assertEquals(1, types.size());
+        final FeatureType readType = types.get(0);
+        assertEquals(typeReference.getName(), readType.getName());
+        checkProperties(typeReference.getProperties(true), readType);
+    }
+
+    @Test
     public void testWriteSimpleFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
         final JAXBFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
         StringWriter sw = new StringWriter();

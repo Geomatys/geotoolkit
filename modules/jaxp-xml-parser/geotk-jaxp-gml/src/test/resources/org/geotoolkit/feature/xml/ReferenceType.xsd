@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema elementFormDefault="qualified"
+    targetNamespace="http://www.opengis.net/gml/3.2"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:import schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd" namespace="http://www.opengis.net/gml/3.2"/>
+    <xs:element xmlns:gml="http://www.opengis.net/gml/3.2" name="Person" type="gml:PersonType" substitutionGroup="gml:_Feature"/>
+    <xs:complexType name="PersonType">
+        <xs:complexContent>
+            <xs:extension xmlns:gml="http://www.opengis.net/gml/3.2" base="gml:AbstractFeatureType" >
+                <xs:sequence>
+                    <xs:element name="link"  maxOccurs="1" minOccurs="0" type="gml:ReferenceType"/>
+                    <xs:element name="linkedTo" maxOccurs="unbounded" minOccurs="0" type="gml:ReferenceType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>
