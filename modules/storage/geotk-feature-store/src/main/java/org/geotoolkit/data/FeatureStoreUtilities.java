@@ -339,15 +339,17 @@ public class FeatureStoreUtilities {
         if (!forceCompute) {
             //extract information from metadata
             Metadata metadata = dataset.getMetadata();
-            search:
-            for (ContentInformation ci : metadata.getContentInfo()) {
-                if (ci instanceof FeatureCatalogueDescription) {
-                    FeatureCatalogueDescription fcd = (FeatureCatalogueDescription) ci;
-                    for (FeatureTypeInfo fti : fcd.getFeatureTypeInfo()) {
-                        Integer nb = fti.getFeatureInstanceCount();
-                        if (nb != null) {
-                            count = nb.longValue();
-                            break;
+            if (metadata != null) {
+                search:
+                for (ContentInformation ci : metadata.getContentInfo()) {
+                    if (ci instanceof FeatureCatalogueDescription) {
+                        FeatureCatalogueDescription fcd = (FeatureCatalogueDescription) ci;
+                        for (FeatureTypeInfo fti : fcd.getFeatureTypeInfo()) {
+                            Integer nb = fti.getFeatureInstanceCount();
+                            if (nb != null) {
+                                count = nb.longValue();
+                                break;
+                            }
                         }
                     }
                 }

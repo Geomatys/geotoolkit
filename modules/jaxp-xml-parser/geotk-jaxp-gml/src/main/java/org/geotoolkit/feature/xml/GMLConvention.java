@@ -21,6 +21,7 @@ import javax.xml.namespace.QName;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.feature.xml.jaxb.mapping.XSDMapping;
 import org.geotoolkit.util.NamesExt;
@@ -95,6 +96,7 @@ public class GMLConvention {
      * Must have the pattern 'decorated:PointPropertyType'
      */
     public static final String DECORATED_DESCRIPTION;
+    public static final String UNDECORATED_DESCRIPTION;
 
     public static final String MAPPING = "mapping";
 
@@ -107,6 +109,7 @@ public class GMLConvention {
         SUBTYPE_PROPERTY        = factory.createLocalName(ns, "gmlPropertyType");
         NO_SUBTYPE              = factory.createLocalName(ns, "noPropertyType");
         DECORATED_DESCRIPTION   = "decorated";
+        UNDECORATED_DESCRIPTION = "undecorated";
 
         XSD_TYPE_ID_CHARACTERISTIC = new FeatureTypeBuilder()
                 .addAttribute(String.class)
@@ -157,15 +160,35 @@ public class GMLConvention {
     public static boolean isDecoratedProperty(PropertyType type) {
         //we need the String.valueOf, description may be an internationalString
         String description = String.valueOf(type.getDescription());
+
+        /**
+         * Special case : a geometric attribute is always decorated,
+         * unless its description starts with "undecorated"
+         */
+        if (AttributeConvention.isGeometryAttribute(type)) {
+            return !description.startsWith(UNDECORATED_DESCRIPTION);
+        }
+
+
         return description.startsWith(DECORATED_DESCRIPTION);
     }
 
-    public static QName getDecorationTypeName(PropertyType type) {
+    public static QName getDecorationTypeName(String gmlVersion, PropertyType type) {
         //we need the String.valueOf, description may be an internationalString
         String description = String.valueOf(type.getDescription());
         if (description.startsWith(DECORATED_DESCRIPTION)) {
             int split = description.indexOf(' ');
             return QName.valueOf(description.substring(split).trim());
+        }
+
+        /**
+         * Special case : a geometric attribute is always decorated,
+         * unless its description starts with "undecorated"
+         */
+        if (AttributeConvention.isGeometryAttribute(type)) {
+            if (!description.startsWith(UNDECORATED_DESCRIPTION)) {
+                return Utils.getQNameFromType(type, gmlVersion);
+            }
         }
         return null;
     }

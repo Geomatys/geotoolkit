@@ -36,7 +36,10 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import static org.geotoolkit.feature.xml.GMLConvention.*;
+import org.geotoolkit.feature.xml.jaxb.mapping.GeometryMapping;
+import org.geotoolkit.feature.xml.jaxb.mapping.XSDMapping;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -65,6 +68,7 @@ public class XmlTestData {
 
     public static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
+    public static final FeatureType simpleTypeGeom;
     public static final FeatureType simpleTypeBasic;
     public static final FeatureType simpleTypeBasic2;
     public static final FeatureType simpleTypeFull;
@@ -102,6 +106,7 @@ public class XmlTestData {
         ////////////////////////////////////////////////////////////////////////
 
 
+        AttributeTypeBuilder atb;
         FeatureTypeBuilder ftb = new FeatureTypeBuilder();
 
         //NOTE : store the xsd simple type name using characteristic : Utils.SIMPLETYPE_NAME_CHARACTERISTIC
@@ -126,7 +131,10 @@ public class XmlTestData {
         ftb.addAttribute(Polygon.class)           .setName(CUSTOM_NAMESPACE,"geomPolygon")      .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(GeometryCollection.class).setName(CUSTOM_NAMESPACE,"geomMultiPolygon") .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(GeometryCollection.class).setName(CUSTOM_NAMESPACE,"geomMultiGeometry").setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
-        ftb.addAttribute(Geometry.class)          .setName(CUSTOM_NAMESPACE,"geomAnyGeometry")  .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        atb = ftb.addAttribute(Geometry.class)    .setName(CUSTOM_NAMESPACE,"geomAnyGeometry")  .setMinimumOccurs(1).setMaximumOccurs(1);
+        atb.addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        atb.addRole(AttributeRole.DEFAULT_GEOMETRY);
+
         simpleTypeFull = ftb.build();
 
 
@@ -150,7 +158,9 @@ public class XmlTestData {
         ftb.addAttribute(Polygon.class)           .setName(GML_311_NAMESPACE,"geomPolygon")      .setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(GeometryCollection.class).setName(GML_311_NAMESPACE,"geomMultiPolygon") .setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(GeometryCollection.class).setName(GML_311_NAMESPACE,"geomMultiGeometry").setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
-        ftb.addAttribute(Geometry.class)          .setName(GML_311_NAMESPACE,"geomAnyGeometry")  .setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        atb = ftb.addAttribute(Geometry.class)    .setName(GML_311_NAMESPACE,"geomAnyGeometry")  .setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE);
+        atb.addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        atb.addRole(AttributeRole.DEFAULT_GEOMETRY);
         multiGeomType = ftb.build();
 
         ftb = new FeatureTypeBuilder();
@@ -166,6 +176,15 @@ public class XmlTestData {
         ftb.addAttribute(String.class)           .setName(CUSTOM_NAMESPACE,"attString2")        .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(Double.class)           .setName(CUSTOM_NAMESPACE,"attDouble2")        .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         simpleTypeBasic2 = ftb.build();
+
+        ftb = new FeatureTypeBuilder();
+        ftb.setName(CUSTOM_NAMESPACE,"SimpleGeom");
+        ftb.setSuperTypes(ABSTRACTFEATURETYPE_31);
+        ftb.addAttribute(String.class)           .setName(CUSTOM_NAMESPACE,"attString")        .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        atb = ftb.addAttribute(Point.class)      .setName(CUSTOM_NAMESPACE,"geomPoint")       .setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
+        atb.addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        atb.addRole(AttributeRole.DEFAULT_GEOMETRY);
+        simpleTypeGeom = ftb.build();
 
         ftb = new FeatureTypeBuilder();
         ftb.setName(GML_311_NAMESPACE,"AddressType");
@@ -186,7 +205,9 @@ public class XmlTestData {
         ftb.addAttribute(String.class)           .setName(GML_311_NAMESPACE,"firstName")        .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(Integer.class)          .setName(GML_311_NAMESPACE,"age")              .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(String.class)           .setName(GML_311_NAMESPACE,"sex")              .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
-        ftb.addAttribute(Point .class)           .setName(GML_311_NAMESPACE,"position")         .setMinimumOccurs(0).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        atb = ftb.addAttribute(Point .class)           .setName(GML_311_NAMESPACE,"position")         .setMinimumOccurs(0).setMaximumOccurs(1);
+        atb.addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        atb.addRole(AttributeRole.DEFAULT_GEOMETRY);
         ftb.addAssociation(adress).setName(NamesExt.create(GML_311_NAMESPACE, "mailAddress"))   .setMinimumOccurs(0).setMaximumOccurs(1).setDescription(GMLConvention.DECORATED_DESCRIPTION+" {http://www.opengis.net/gml}Address");
         ftb.addAssociation(adress).setName(NamesExt.create(GML_311_NAMESPACE, "mailAddress2"))  .setMinimumOccurs(0).setMaximumOccurs(1);
         ftb.addAttribute(String .class)          .setName(GML_311_NAMESPACE,"phone")            .setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);

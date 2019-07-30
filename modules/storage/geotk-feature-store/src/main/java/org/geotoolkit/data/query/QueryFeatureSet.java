@@ -61,9 +61,12 @@ public final class QueryFeatureSet implements FeatureSet {
     public Metadata getMetadata() throws DataStoreException {
         //create a new metadata preserving only the identification informations
         final Metadata metadata = base.getMetadata();
-        final DefaultMetadata meta = new DefaultMetadata();
-        meta.setIdentificationInfo(metadata.getIdentificationInfo());
-        return meta;
+        if (metadata != null) {
+            final DefaultMetadata meta = new DefaultMetadata();
+            meta.setIdentificationInfo(metadata.getIdentificationInfo());
+            return meta;
+        }
+        return null;
     }
 
     /**

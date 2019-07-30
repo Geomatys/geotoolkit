@@ -16,13 +16,13 @@
           <xs:element type="xs:date" nillable="true" minOccurs="1" maxOccurs="1" name="attDate"/>
           <xs:element type="xs:dateTime" nillable="true" minOccurs="1" maxOccurs="1" name="attDateTime"/>
           <xs:element type="xs:boolean" nillable="true" minOccurs="1" maxOccurs="1" name="attBoolean"/>
-          <xs:element type="gml:Point" nillable="true" minOccurs="1" maxOccurs="1" name="geomPoint"/>
-          <xs:element type="gml:MultiPoint" nillable="true" minOccurs="1" maxOccurs="1" name="geomMultiPoint"/>
-          <xs:element type="gml:Curve" nillable="true" minOccurs="1" maxOccurs="1" name="geomLine"/>
-          <xs:element type="gml:CompositeCurve" nillable="true" minOccurs="1" maxOccurs="1" name="geomMultiLine"/>
-          <xs:element type="gml:Polygon" nillable="true" minOccurs="1" maxOccurs="1" name="geomPolygon"/>
-          <xs:element type="gml:MultiGeometry" nillable="true" minOccurs="1" maxOccurs="1" name="geomMultiPolygon"/>
-          <xs:element type="gml:MultiGeometry" nillable="true" minOccurs="1" maxOccurs="1" name="geomMultiGeometry"/>
+          <xs:element type="gml:PointPropertyType" nillable="true" minOccurs="1" maxOccurs="1" name="geomPoint"/>
+          <xs:element type="gml:MultiPointPropertyType" nillable="true" minOccurs="1" maxOccurs="1" name="geomMultiPoint"/>
+          <xs:element type="gml:CurvePropertyType" nillable="true" minOccurs="1" maxOccurs="1" name="geomLine"/>
+          <xs:element type="gml:CompositeCurvePropertyType" nillable="true" minOccurs="1" maxOccurs="1" name="geomMultiLine"/>
+          <xs:element type="gml:PolygonPropertyType" nillable="true" minOccurs="1" maxOccurs="1" name="geomPolygon"/>
+          <xs:element type="gml:MultiGeometryPropertyType" nillable="true" minOccurs="1" maxOccurs="1" name="geomMultiPolygon"/>
+          <xs:element type="gml:MultiGeometryPropertyType" nillable="true" minOccurs="1" maxOccurs="1" name="geomMultiGeometry"/>
           <xs:element type="gml:GeometryPropertyType" nillable="true" minOccurs="1" maxOccurs="1" name="geomAnyGeometry"/>
         </xs:sequence>
       </xs:extension>

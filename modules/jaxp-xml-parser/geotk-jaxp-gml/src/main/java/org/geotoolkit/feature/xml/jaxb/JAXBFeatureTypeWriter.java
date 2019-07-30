@@ -307,7 +307,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
                 attributes.add(att);
             } else {
                 if (decorated) {
-                    final QName decorationTypeName = GMLConvention.getDecorationTypeName(pType);
+                    final QName decorationTypeName = GMLConvention.getDecorationTypeName(gmlVersion, pType);
                     final String namespace = decorationTypeName.getNamespaceURI();
                     if (!GMLConvention.isGmlNamespace(namespace)) {
                         //create a new separate type, how ?

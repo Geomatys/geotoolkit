@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import java.util.Iterator;
+import java.util.stream.Stream;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -43,23 +45,21 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.apache.sis.referencing.NamedIdentifier;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import static org.geotoolkit.feature.xml.XmlTestData.*;
-import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
-import org.geotoolkit.filter.DefaultPropertyName;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.*;
 import static org.junit.Assert.*;
+import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.filter.DefaultPropertyName;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.sort.SortOrder;
@@ -331,30 +331,32 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/CollectionSimple.xml"));
         reader.dispose();
 
-        assertTrue(obj instanceof FeatureCollection);
+        assertTrue(obj instanceof FeatureSet);
 
-        FeatureCollection result = (FeatureCollection) obj;
+        FeatureSet result = (FeatureSet) obj;
         try {
-            NamedIdentifier id = NamedIdentifier.castOrCopy(result.getIdentifier().get());
+           // NamedIdentifier id = NamedIdentifier.castOrCopy(result.getIdentifier().get());
             result = result.subset(QueryBuilder.sorted(
                     result.getType().getName().toString(), FF.sort("attDouble", SortOrder.ASCENDING)));
-            ((AbstractFeatureCollection) result).setIdentifier(id);
+            //((AbstractFeatureCollection) result).setIdentifier(id);
         } catch (DataStoreException ex) {
             Logging.getLogger("org.geotoolkit.feature.xml").log(Level.SEVERE, null, ex);
         }
 
-        FeatureIterator resultIte = result.iterator();
-        FeatureIterator expectedIte = collectionSimple.iterator();
+        try (Stream<Feature> resultS = result.features(false);
+            Stream<Feature> expectedS = collectionSimple.features(false)) {
 
-        assertEquals(collectionSimple.size(), result.size());
-        assertEquals(collectionSimple.getIdentifier().get(), result.getIdentifier().get());
-        assertEquals(collectionSimple.getType(), result.getType());
+            Iterator<Feature> resultIte = resultS.iterator();
+            Iterator<Feature> expectedIte = expectedS.iterator();
 
-        assertEquals(resultIte.next(), expectedIte.next());
-        assertEquals(resultIte.next(), expectedIte.next());
-        assertEquals(resultIte.next(), expectedIte.next());
-        resultIte.close();
-        expectedIte.close();
+            assertEquals(collectionSimple.size(), FeatureStoreUtilities.getCount(result).intValue());
+            assertEquals(collectionSimple.getIdentifier().get().toString(), result.getIdentifier().get().toString());
+            assertEquals(collectionSimple.getType(), result.getType());
+
+            assertEquals(resultIte.next(), expectedIte.next());
+            assertEquals(resultIte.next(), expectedIte.next());
+            assertEquals(resultIte.next(), expectedIte.next());
+        }
     }
 
     @Ignore

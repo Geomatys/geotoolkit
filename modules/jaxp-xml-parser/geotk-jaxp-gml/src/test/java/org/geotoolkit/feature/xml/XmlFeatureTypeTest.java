@@ -31,9 +31,12 @@ import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.IllegalNameException;
 import static org.geotoolkit.data.AbstractFeatureStore.GML_311_NAMESPACE;
+import static org.geotoolkit.feature.xml.GMLConvention.NILLABLE_CHARACTERISTIC;
 import static org.geotoolkit.feature.xml.XmlTestData.*;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
@@ -79,7 +82,30 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         // GML defines a lot more properties than what we strictly need. Nonetheless,
         // we must ensure that required prpoerties are read from xsd.
         simpleTypeFull.equals(types.get(0));
-        assertEquals(simpleTypeFull, types.get(0));
+        Collection<? extends PropertyType> expProperties = simpleTypeFull.getProperties(false);
+        Collection<? extends PropertyType> resProperties = types.get(0).getProperties(false);
+        assertEquals(diffSizeProperties(expProperties, resProperties), expProperties.size(), resProperties.size());
+
+        assertEquals(diffProperties(expProperties, resProperties), simpleTypeFull, types.get(0));
+    }
+
+    @Test
+    public void testReadSimpleGeomFeatureType() throws JAXBException {
+
+        final JAXBFeatureTypeReader reader = getReader(true);
+        final List<FeatureType> types = new ArrayList<>(reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleGeomType.xsd")).getValues());
+        removeGMLBaseTypes(types);
+        assertEquals(1, types.size());
+
+        // GML defines a lot more properties than what we strictly need. Nonetheless,
+        // we must ensure that required prpoerties are read from xsd.
+        simpleTypeGeom.equals(types.get(0));
+        Collection<? extends PropertyType> expProperties = simpleTypeGeom.getProperties(false);
+        Collection<? extends PropertyType> resProperties = types.get(0).getProperties(false);
+        assertEquals(diffSizeProperties(expProperties, resProperties), expProperties.size(), resProperties.size());
+
+        assertEquals(diffProperties(expProperties, resProperties), simpleTypeGeom, types.get(0));
     }
 
     @Test
@@ -124,6 +150,11 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/MultiGeomType.xsd")).getValues());
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
+
+        Collection<? extends PropertyType> expProperties = multiGeomType.getProperties(false);
+        Collection<? extends PropertyType> resProperties = types.get(0).getProperties(false);
+        assertEquals(diffSizeProperties(expProperties, resProperties), expProperties.size(), resProperties.size());
+
         assertEquals(multiGeomType, types.get(0));
     }
 
@@ -139,10 +170,16 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(ns,"quadrige");
         ftb.setSuperTypes(GMLConvention.ABSTRACTFEATURETYPE_31);
-        ftb.addAttribute(Geometry.class).setName(ns, "msGeometry").setMinimumOccurs(0).setMaximumOccurs(1);
+        AttributeTypeBuilder atb= ftb.addAttribute(Geometry.class).setName(ns, "msGeometry").setMinimumOccurs(0).setMaximumOccurs(1);
+        atb.addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        atb.addRole(AttributeRole.DEFAULT_GEOMETRY);
         ftb.addAttribute(String.class).setName(ns, "C_SIEPT38").setMinimumOccurs(1).setMaximumOccurs(1);
         ftb.addAttribute(String.class).setName(ns, "L_SIEPT").setMinimumOccurs(1).setMaximumOccurs(1);
         final FeatureType wfsType = ftb.build();
+
+        Collection<? extends PropertyType> expProperties = wfsType.getProperties(false);
+        Collection<? extends PropertyType> resProperties = types.get(0).getProperties(false);
+        assertEquals(diffSizeProperties(expProperties, resProperties), expProperties.size(), resProperties.size());
 
         assertEquals(wfsType, types.get(0));
     }
@@ -155,6 +192,10 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
         complexType.equals(types.get(0));
+
+        Collection<? extends PropertyType> expProperties = complexType.getProperties(false);
+        Collection<? extends PropertyType> resProperties = types.get(0).getProperties(false);
+        assertEquals(diffSizeProperties(expProperties, resProperties), expProperties.size(), resProperties.size());
         assertEquals(complexType, types.get(0));
     }
 
@@ -293,7 +334,7 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         final FeatureType type = types.get(0);
         assertEquals("TestSimple", type.getName().tip().toString());
         //we do not count the substitution groups
-        assertEquals(3, type.getProperties(true).size());
+        assertEquals(5, type.getProperties(true).size());
     }
 
     @Test
@@ -320,24 +361,33 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testWriteMultiGeomFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
-        final File temp = File.createTempFile("gml", ".xml");
-        temp.deleteOnExit();
+        final StringWriter sw = new StringWriter();
         final JAXBFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
-        writer.write(multiGeomType, new FileOutputStream(temp));
+        writer.write(multiGeomType, sw);
 
         DomCompare.compare(XmlFeatureTypeTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/MultiGeomType.xsd"), temp);
+                .getResourceAsStream("/org/geotoolkit/feature/xml/MultiGeomType.xsd"), sw.toString());
     }
 
     @Test
-    public void testWriteComplexFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
-        final File temp = File.createTempFile("gml", ".xml");
-        temp.deleteOnExit();
+    public void testWriteSimpleGeomFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
+        final StringWriter sw = new StringWriter();
         final JAXBFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
-        writer.write(complexType, new FileOutputStream(temp));
+        writer.write(simpleTypeGeom, sw);
 
         DomCompare.compare(XmlFeatureTypeTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexType.xsd"), temp);
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleGeomType.xsd"), sw.toString());
+    }
+
+
+    @Test
+    public void testWriteComplexFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
+        final StringWriter sw = new StringWriter();
+        final JAXBFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
+        writer.write(complexType, sw);
+
+        DomCompare.compare(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexType.xsd"), sw.toString());
     }
 
 //    @Ignore
@@ -441,5 +491,64 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
                 fail(e.getMessage());
             }
         }
+    }
+
+    private static String diffSizeProperties(Collection<? extends PropertyType> expProperties, Collection<? extends PropertyType> resProperties) {
+        StringBuilder sb = new StringBuilder();
+        if (expProperties.size() > resProperties.size()) {
+            sb.append("Missing properties:\n");
+            for (PropertyType expProp : expProperties) {
+                boolean found = false;
+                for (PropertyType resProp : resProperties) {
+                    if (resProp.getName().equals(expProp.getName())) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    sb.append(" - ").append(expProp.getName()).append('\n');
+                }
+            }
+        } else {
+            sb.append("Additional properties:\n");
+            for (PropertyType resProp : resProperties) {
+                boolean found = false;
+                for (PropertyType expProp : expProperties) {
+                    if (resProp.getName().equals(expProp.getName())) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    sb.append(" - ").append(resProp.getName()).append('\n');
+                }
+            }
+        }
+        return sb.toString();
+    }
+    private static String diffProperties(Collection<? extends PropertyType> expProperties, Collection<? extends PropertyType> resProperties) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Different properties:\n");
+        for (PropertyType expProp : expProperties) {
+            for (PropertyType resProp : resProperties) {
+                if (resProp.getName().equals(expProp.getName())) {
+                    if (!resProp.equals(expProp)) {
+                        String resatt = "";
+                        String expatt = "";
+                        if (resProp instanceof AttributeType) {
+                            AttributeType att = (AttributeType)resProp;
+                            resatt = " characteristics:" + att.characteristics().toString();
+                        }
+                        if (expProp instanceof AttributeType) {
+                            AttributeType att = (AttributeType)expProp;
+                            expatt = " characteristics:" + att.characteristics().toString();
+                        }
+                        sb.append("expected:").append(expProp).append(expatt).append(" but was:").append(resProp).append(resatt).append("\n");
+                    }
+                }
+            }
+
+        }
+        return sb.toString();
     }
 }

@@ -59,6 +59,7 @@ import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBEventHandler;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
+import org.geotoolkit.feature.xml.jaxb.mapping.GeometryMapping;
 import org.geotoolkit.feature.xml.jaxb.mapping.XSDMapping;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
@@ -675,7 +676,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 if (propertyType instanceof Operation) {
                     final Operation opType = (Operation) propertyType;
                     final PropertyType resultType = (PropertyType) opType.getResult();
-                    final Object value = readPropertyValue(resultType, null);
+                    final Object value = readPropertyValue(resultType, null, null);
                     ops.add(new AbstractMap.SimpleImmutableEntry<>((Operation)propertyType,value));
                     if (resultType.getName().equals(propertyType.getName())) {
                         //we are already on the next element here, jaxb ate one
@@ -711,7 +712,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     mapping.readValue(reader, propName, feature);
                 } else {
                     //parse the value
-                    final Object value = readPropertyValue(propertyType, associationSubType);
+                    final Object value = readPropertyValue(propertyType, associationSubType, feature);
                     setValue(feature, propertyType, propName, nameAttribute, value);
                 }
 
@@ -732,81 +733,22 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         return feature;
     }
 
-    private Object readPropertyValue(PropertyType propertyType, FeatureType associationSubType) throws XMLStreamException {
+    private Object readPropertyValue(PropertyType propertyType, FeatureType associationSubType, Feature feature) throws XMLStreamException {
         boolean skipCurrent = GMLConvention.isDecoratedProperty(propertyType);
         final GenericName propName = nameCache.get(reader.getName());
 
         Object value = null;
-//        if (AttributeConvention.isGeometryAttribute(propertyType)) {
-//            int event;
-//
-//            //backward compatible with incorrect old writings
-//            final String localName = reader.getLocalName();
-//            final String propertyName = propertyType.getName().tip().toString();
-//            if (propertyName.equals(localName)) {
-//                skipCurrent = true;
-//            }
-//
-//            if (skipCurrent) {
-//                event = reader.next();
-//            } else {
-//                event = reader.getEventType();
-//            }
-//            while (event != START_ELEMENT) {
-//                if (event == END_ELEMENT) {
-//                    return null;
-//                }
-//                event = reader.next();
-//            }
-//            try {
-//                final boolean longitudeFirst;
-//                if (getProperty(LONGITUDE_FIRST) != null) {
-//                    longitudeFirst = (boolean) getProperty(LONGITUDE_FIRST);
-//                } else {
-//                    longitudeFirst = true;
-//                }
-//
-//                final Geometry jtsGeom;
-//                final Object geometry = ((JAXBElement) unmarshaller.unmarshal(reader)).getValue();
-//                if (geometry instanceof JTSGeometry) {
-//                    final JTSGeometry isoGeom = (JTSGeometry) geometry;
-//                    if (isoGeom instanceof JTSMultiCurve) {
-//                        ((JTSMultiCurve)isoGeom).applyCRSonChild();
-//                    }
-//                    jtsGeom = isoGeom.getJTSGeometry();
-//                } else if (geometry instanceof PolygonType) {
-//                    final PolygonType polygon = ((PolygonType)geometry);
-//                    jtsGeom = polygon.getJTSPolygon().getJTSGeometry();
-//                    if (polygon.getCoordinateReferenceSystem() != null) {
-//                        JTS.setCRS(jtsGeom, polygon.getCoordinateReferenceSystem());
-//                    }
-//                } else if (geometry instanceof LineStringPosListType) {
-//                    final JTSLineString line = ((LineStringPosListType)geometry).getJTSLineString();
-//                    jtsGeom = line.getJTSGeometry();
-//                    if (line.getCoordinateReferenceSystem() != null) {
-//                        JTS.setCRS(jtsGeom, line.getCoordinateReferenceSystem());
-//                    }
-//                } else if (geometry instanceof AbstractGeometry) {
-//                    try {
-//                        jtsGeom = GeometrytoJTS.toJTS((AbstractGeometry) geometry, longitudeFirst);
-//                    } catch (FactoryException ex) {
-//                        throw new XMLStreamException("Factory Exception while transforming GML object to JTS", ex);
-//                    }
-//                } else {
-//                    throw new IllegalArgumentException("unexpected geometry type:" + geometry);
-//                }
-//                value = jtsGeom;
-//
-//            } catch (JAXBException ex) {
-//                String msg = ex.getMessage();
-//                if (msg == null && ex.getLinkedException() != null) {
-//                    msg = ex.getLinkedException().getMessage();
-//                }
-//                throw new IllegalArgumentException("JAXB exception while reading the feature geometry: " + msg, ex);
-//            }
-//
-//        } else
-        if (propertyType instanceof FeatureAssociationRole) {
+        if (AttributeConvention.isGeometryAttribute(propertyType)) {
+            final boolean longitudeFirst;
+            if (getProperty(LONGITUDE_FIRST) != null) {
+                longitudeFirst = (boolean) getProperty(LONGITUDE_FIRST);
+            } else {
+                longitudeFirst = true;
+            }
+            GeometryMapping mapping = new GeometryMapping(null, propertyType, getPool(), longitudeFirst, skipCurrent);
+            mapping.readValue(reader, propName, feature);
+
+        } else if (propertyType instanceof FeatureAssociationRole) {
 
             final FeatureAssociationRole far = (FeatureAssociationRole) propertyType;
             final FeatureType valueType = (associationSubType == null) ? far.getValueType() : associationSubType;
