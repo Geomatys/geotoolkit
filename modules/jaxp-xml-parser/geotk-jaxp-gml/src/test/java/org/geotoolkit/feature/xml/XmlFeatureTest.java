@@ -18,17 +18,20 @@
 package org.geotoolkit.feature.xml;
 
 import java.io.BufferedReader;
-
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.logging.Level;
-import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -41,28 +44,25 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.sis.referencing.NamedIdentifier;
-
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
+import static org.geotoolkit.feature.xml.XmlTestData.*;
+import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
-import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.xml.DomCompare;
-
 import org.junit.*;
-
-import org.opengis.filter.sort.SortOrder;
-
 import static org.junit.Assert.*;
-import static org.geotoolkit.feature.xml.XmlTestData.*;
-import org.geotoolkit.data.AbstractFeatureCollection;
-import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.filter.DefaultPropertyName;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.sort.SortOrder;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
@@ -393,6 +393,42 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         reader.dispose();
 
         assertTrue(obj instanceof FeatureCollection);
+    }
+
+    @Test
+    public void testReadReferenceCollection() throws JAXBException, IOException, XMLStreamException, DataStoreException {
+        final XmlFeatureReader reader = new JAXPStreamFeatureReader(typeReference);
+        final Object obj = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/CollectionReference.xml"));
+        reader.dispose();
+
+        assertTrue(obj instanceof FeatureSet);
+
+        FeatureSet result = (FeatureSet) obj;
+
+        List<Feature> features = result.features(false).collect(Collectors.toList());
+        assertEquals(4, features.size());
+
+        Feature f1 = features.get(0);
+        Feature f2 = features.get(1);
+        Feature f3 = features.get(2);
+        Feature f4 = features.get(3);
+        assertEquals("id1", f1.getPropertyValue("identifier"));
+        assertEquals("id2", f2.getPropertyValue("identifier"));
+        assertEquals("id3", f3.getPropertyValue("identifier"));
+        assertEquals("id4", f4.getPropertyValue("identifier"));
+        assertEquals("einstein", f1.getPropertyValue("username"));
+        assertEquals("sobel", f2.getPropertyValue("username"));
+        assertEquals("snow-white", f3.getPropertyValue("username"));
+        assertEquals("admin", f4.getPropertyValue("username"));
+
+        Object link = f4.getPropertyValue("link");
+        List linkedTo = new ArrayList( (Collection) f4.getPropertyValue("linkedTo"));
+        assertEquals(2, linkedTo.size());
+        assertEquals(f1, link);
+        assertEquals(f2, linkedTo.get(0));
+        assertEquals(f3, linkedTo.get(1));
+
     }
 
 

@@ -266,18 +266,72 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         }
                     }
                 } else if (pt instanceof FeatureAssociationRole) {
-                    Object value = feature.getPropertyValue(pt.getName().toString());
-                    resolveReferences(value);
+
+                    final Object value = feature.getPropertyValue(pt.getName().toString());
+
+                    //if association is a gml:referenceType try to resolve the real feature
+                    FeatureType valueType = ((FeatureAssociationRole) pt).getValueType();
+                    if ("AbstractGMLType".equals(valueType.getName().tip().toString())) {
+
+                        if (value instanceof Feature) {
+                            Feature f = (Feature) value;
+                            try {
+                                Object fid = f.getPropertyValue(AttributeConvention.IDENTIFIER);
+                                if (String.valueOf(fid).startsWith("#")) {
+                                    //local references start with a #
+                                    Feature target = (Feature) index.get(fid.toString().substring(1));
+                                    if (target != null) {
+                                        feature.setPropertyValue(pt.getName().toString(), target);
+                                    }
+                                }
+                            } catch (IllegalArgumentException ex) {
+                                //do nothing
+                            }
+                        } else if (value instanceof Collection) {
+                            final List<Feature> newFeatures = new ArrayList<>();
+                            final Collection col = (Collection) value;
+                            Iterator<Feature> iterator = col.iterator();
+                            while (iterator.hasNext()) {
+                                Feature f = (Feature) iterator.next();
+                                try {
+                                    Object fid = f.getPropertyValue(AttributeConvention.IDENTIFIER);
+                                    if (String.valueOf(fid).startsWith("#")) {
+                                        //local references start with a #
+                                        Feature target = (Feature) index.get(fid.toString().substring(1));
+                                        if (target != null) {
+                                            f = target;
+                                        }
+                                    }
+                                } catch (IllegalArgumentException ex) {
+                                    //do nothing
+                                }
+                                newFeatures.add(f);
+                            }
+
+                            feature.setPropertyValue(pt.getName().toString(), newFeatures);
+                        }
+
+                    } else {
+                        //resolve sub children references
+                        resolveReferences(value);
+                    }
+
                 }
             }
         } else if (obj instanceof FeatureSet) {
-            final FeatureSet fs = (FeatureSet) obj;
+            final WritableFeatureSet fs = (WritableFeatureSet) obj;
+            final List<Feature> newFeatures = new ArrayList<>();
             try (Stream<Feature> stream = fs.features(false)) {
                 Iterator<Feature> iterator = stream.iterator();
                 while (iterator.hasNext()) {
-                    resolveReferences(iterator.next());
+                    Feature f = iterator.next();
+                    resolveReferences(f);
+                    newFeatures.add(f);
                 }
             }
+            fs.removeIf((Feature t) -> true);
+            fs.add(newFeatures.iterator());
+
         } else if (obj instanceof Collection) {
             final Collection col = (Collection) obj;
             Iterator<Feature> iterator = col.iterator();

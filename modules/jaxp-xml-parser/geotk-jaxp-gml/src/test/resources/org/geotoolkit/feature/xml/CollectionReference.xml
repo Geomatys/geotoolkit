@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wfs:FeatureCollection
+    xmlns:wfs="http://www.opengis.net/wfs"
+    xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd ReferenceType.xsd"
+    gml:id="one-of-a-kind-ID" timeStamp="2002-05-30T09:00:00" numberOfFeatures="3">
+    <gml:featureMember>
+        <gml:Person gml:id="id1">
+            <gml:username>einstein</gml:username>
+        </gml:Person>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gml:Person gml:id="id2">
+            <gml:username>sobel</gml:username>
+        </gml:Person>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gml:Person gml:id="id3">
+            <gml:username>snow-white</gml:username>
+        </gml:Person>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gml:Person gml:id="id4">
+            <gml:username>admin</gml:username>
+            <gml:link xlink:href="#id1"/>
+            <gml:linkedTo xlink:href="#id2"/>
+            <gml:linkedTo xlink:href="#id3"/>
+        </gml:Person>
+    </gml:featureMember>
+</wfs:FeatureCollection>

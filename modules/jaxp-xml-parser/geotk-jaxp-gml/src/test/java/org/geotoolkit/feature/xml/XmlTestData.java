@@ -216,6 +216,7 @@ public class XmlTestData {
         ftb = new FeatureTypeBuilder();
         ftb.setName(GML_32_NAMESPACE,"Person");
         ftb.setSuperTypes(ABSTRACTFEATURETYPE_32);
+        ftb.addAttribute(String.class).setName(NamesExt.create(GML_32_NAMESPACE, "username")).setMinimumOccurs(1).setMaximumOccurs(1).build();
         ftb.addAssociation(ABSTRACTGMLTYPE_32).setName(NamesExt.create(GML_32_NAMESPACE, "link")).setMinimumOccurs(0).setMaximumOccurs(1).build();
         ftb.addAssociation(ABSTRACTGMLTYPE_32).setName(NamesExt.create(GML_32_NAMESPACE, "linkedTo")).setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE).build();
         typeReference = ftb.build();
