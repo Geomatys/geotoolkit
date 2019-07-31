@@ -18,8 +18,6 @@
 package org.geotoolkit.feature.xml;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
@@ -312,16 +310,13 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         assertTrue(properties[3] instanceof FeatureAssociationRole);
         FeatureAssociationRole far1 = (FeatureAssociationRole) properties[2];
         FeatureAssociationRole far2 = (FeatureAssociationRole) properties[3];
-        assertEquals("http://www.iho.int/S-121:information", far1.getValueType().getName().toString());
-        assertEquals("http://www.iho.int/S-121:information", far2.getValueType().getName().toString());
+        assertEquals("http://www.iho.int/S-121:Right", far1.getValueType().getName().toString());
+        assertEquals("http://www.iho.int/S-121:Source", far2.getValueType().getName().toString());
         //check min max occurs
         assertEquals(0, far1.getMinimumOccurs());
         assertEquals(Integer.MAX_VALUE, far1.getMaximumOccurs());
         assertEquals(0, far2.getMinimumOccurs());
         assertEquals(Integer.MAX_VALUE, far2.getMaximumOccurs());
-
-
-
     }
 
     @Test
