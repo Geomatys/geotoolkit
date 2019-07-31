@@ -61,8 +61,7 @@ public class ArrayFeatureSet implements WritableFeatureSet {
     private GenericName id;
 
     public ArrayFeatureSet(String id, FeatureType type) {
-        this(type, new ArrayList<>(), null);
-        this.id = (id != null) ? NamesExt.create(id) : null;
+        this((id != null) ? NamesExt.create(id) : null, type, new ArrayList<>(), null);
     }
 
     /**
@@ -72,7 +71,7 @@ public class ArrayFeatureSet implements WritableFeatureSet {
      * @param metadata can be null
      */
     public ArrayFeatureSet(FeatureType type, Collection<Feature> features, Metadata metadata) {
-        this(type, new ArrayList<>(features), metadata);
+        this(null, type, new ArrayList<>(features), metadata);
     }
 
     /**
@@ -82,6 +81,20 @@ public class ArrayFeatureSet implements WritableFeatureSet {
      * @param metadata can be null
      */
     public ArrayFeatureSet(FeatureType type, List<Feature> features, Metadata metadata) {
+        this.metadata = metadata;
+        this.type = type;
+        this.features = features;
+    }
+
+    /**
+     *
+     * @param id featureSet resource identifier
+     * @param type stored features type.
+     * @param features collection of stored features, this list will not be copied.
+     * @param metadata can be null
+     */
+    public ArrayFeatureSet(GenericName id, FeatureType type, List<Feature> features, Metadata metadata) {
+        this.id = id;
         this.metadata = metadata;
         this.type = type;
         this.features = features;

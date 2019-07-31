@@ -5,7 +5,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd ReferenceType.xsd"
-    gml:id="one-of-a-kind-ID" timeStamp="2002-05-30T09:00:00" numberOfFeatures="3">
+    gml:id="one-of-a-kind-ID" timeStamp="2002-05-30T09:00:00" numberOfFeatures="4">
     <gml:featureMember>
         <gml:Person gml:id="id1">
             <gml:username>einstein</gml:username>

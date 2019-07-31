@@ -207,6 +207,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         writer.writeNamespace("gml", gmlNamespace);
         writer.writeNamespace("wfs", wfsNamespace);
         writer.writeNamespace("xsi", XSI_NAMESPACE);
+        writer.writeNamespace("xlink", GMLConvention.XLINK_NAMESPACE);
 
         final String schemaLocation = buildSchemaLocationString(schemaLocations);
         if (!schemaLocation.isEmpty()) {
@@ -606,6 +607,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         if (typeA instanceof FeatureAssociationRole && valueA instanceof Feature) {
             final FeatureAssociationRole far = (FeatureAssociationRole) typeA;
             final Feature ca = (Feature) valueA;
+            final FeatureType valueType = far.getValueType();
 
             //write feature
             if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
@@ -622,6 +624,15 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 return;
             }
 
+            //check if we are working on a gml:ReferenceType
+            if ("AbstractGMLType".equals(valueType.getName().tip().toString())) {
+                //write and xlink href in local file
+                Object valueId = ca.getPropertyValue(AttributeConvention.IDENTIFIER);
+                writer.writeAttribute(GMLConvention.XLINK_NAMESPACE, "href", "#"+valueId);
+                writer.writeEndElement();
+                return;
+            }
+
             /*
             Note : the GML 3.2 identifier element is this only one which does not
             follow the OGC 'PropertyType' pattern and is not encapsulated.
@@ -631,7 +642,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
             if (encapsulate) {
                 //we need to encapsulate type
-                final FeatureType valueType = far.getValueType();
                 final String encapName = Utils.getNameWithoutTypeSuffix(valueType.getName().tip().toString());
                 if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
                     writer.writeStartElement(namespaceProperty, encapName);
