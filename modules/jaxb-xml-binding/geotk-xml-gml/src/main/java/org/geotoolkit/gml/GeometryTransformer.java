@@ -167,6 +167,14 @@ public class GeometryTransformer implements Supplier<Geometry> {
     Boolean isLongitudeFirst;
 
     /**
+     * A parameter which can be set by user to force the transformation of PolygonType into MultiPolygon instead of Polygon.
+     * This is needed for special case of a gml SurfacePropertyType who can either contains a SurfaceType (MultiPolygon) or a PolygonType (Polygon).
+     * False by default.
+     * Warning this flag is only applied on the parent configuration.
+     */
+    Boolean forceMultiPolygon;
+
+    /**
      * Prepare conversion of a GML geometry.
      * @param source The geometry to convert to JTS.
      */
@@ -218,6 +226,12 @@ public class GeometryTransformer implements Supplier<Geometry> {
             geometry = convertRing((Ring) source);
         } else if (source instanceof org.geotoolkit.gml.xml.Polygon) {
             geometry = convertPolygon((org.geotoolkit.gml.xml.Polygon) source);
+            if (isForceMultiPolygon()) {
+                Polygon[] polys = {(Polygon)geometry};
+                final MultiPolygon result = GF.createMultiPolygon(polys);
+                applyCRS(result);
+                geometry = result;
+            }
         } else if (source instanceof AbstractSurface) {
             if (source instanceof SurfaceType) {
                 geometry = convertSurface((SurfaceType)source);
@@ -594,6 +608,17 @@ public class GeometryTransformer implements Supplier<Geometry> {
 
     public void setLongitudeFirst(final Boolean forceLongitudeFirst) {
         isLongitudeFirst = forceLongitudeFirst;
+    }
+
+    public boolean isForceMultiPolygon() {
+        if (forceMultiPolygon != null) {
+            return forceMultiPolygon;
+        }
+        return false;
+    }
+
+    public void setForceMultiPolygon(final Boolean forceMultiPolygon) {
+        this.forceMultiPolygon = forceMultiPolygon;
     }
 
     protected Stream<GeometryTransformer> familyTree() {

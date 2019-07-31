@@ -99,7 +99,7 @@ public class GeometryMapping implements XSDMapping {
         CLASS_BINDING.put("PolyHedralSurfaceType",         MultiPolygon.class);
         CLASS_BINDING.put("MultiPolygon",                  MultiPolygon.class);
         CLASS_BINDING.put("MultiPolygonType",              MultiPolygon.class);
-        CLASS_BINDING.put("SurfaceType",                   Polygon.class);
+        CLASS_BINDING.put("SurfaceType",                   MultiPolygon.class);
         CLASS_BINDING.put("Polygon",                       Polygon.class);
         CLASS_BINDING.put("PolygonType",                   Polygon.class);
         CLASS_BINDING.put("Ring",                          LinearRing.class);
@@ -181,6 +181,9 @@ public class GeometryMapping implements XSDMapping {
             skipCurrent = true;
         }
 
+        // special case for SurfacePropertyType which may contain a simple polygon
+        boolean forceMultiPolygon = propertyName.equalsIgnoreCase("multipolygon");
+
         if (skipCurrent) {
             event = reader.next();
         } else {
@@ -217,7 +220,7 @@ public class GeometryMapping implements XSDMapping {
                 }
             } else if (geometry instanceof AbstractGeometry) {
                 try {
-                    jtsGeom = GeometrytoJTS.toJTS((AbstractGeometry) geometry, longitudeFirst);
+                    jtsGeom = GeometrytoJTS.toJTS((AbstractGeometry) geometry, longitudeFirst, forceMultiPolygon);
                 } catch (FactoryException ex) {
                     throw new XMLStreamException("Factory Exception while transforming GML object to JTS", ex);
                 }
