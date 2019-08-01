@@ -19,11 +19,13 @@ package org.geotoolkit.coverage.filestore;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
@@ -78,6 +80,16 @@ public class FileCoverageResource extends AbstractCoverageResource implements Wr
         final GridCoverageReader reader = acquireReader();
         try {
             return reader.getGridGeometry();
+        } finally {
+            recycle(reader);
+        }
+    }
+
+    @Override
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
+        final GridCoverageReader reader = acquireReader();
+        try {
+            return reader.getSampleDimensions();
         } finally {
             recycle(reader);
         }

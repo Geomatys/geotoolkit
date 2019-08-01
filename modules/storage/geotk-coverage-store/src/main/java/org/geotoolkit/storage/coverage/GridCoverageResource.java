@@ -17,10 +17,7 @@
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Image;
-import java.util.List;
-import java.util.Optional;
 import java.util.logging.Level;
-import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -42,7 +39,6 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.opengis.util.GenericName;
 
 /**
  * Resource to a coverage in the coverage store.
@@ -52,14 +48,6 @@ import org.opengis.util.GenericName;
  */
 @Deprecated
 public interface GridCoverageResource extends WritableGridCoverageResource, StoreResource {
-
-    /**
-     * Same as {@link org.apache.sis.storage.Resource} without exception.
-     *
-     * @todo restore the exception.
-     */
-    @Override
-    Optional<GenericName> getIdentifier();
 
     /**
      * Get the coverage description and statistics.
@@ -195,16 +183,6 @@ public interface GridCoverageResource extends WritableGridCoverageResource, Stor
             writer.write(coverage, null);
         } finally {
             recycle(writer);
-        }
-    }
-
-    @Override
-    default List<SampleDimension> getSampleDimensions() throws DataStoreException {
-        final GridCoverageReader reader = acquireReader();
-        try {
-            return reader.getSampleDimensions();
-        } finally {
-            recycle(reader);
         }
     }
 

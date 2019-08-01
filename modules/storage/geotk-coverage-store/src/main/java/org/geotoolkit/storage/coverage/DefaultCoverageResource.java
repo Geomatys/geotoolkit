@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.storage.coverage;
 
+import java.util.List;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStore;
@@ -64,6 +66,16 @@ public class DefaultCoverageResource extends AbstractCoverageResource {
             }
         } else {
             return coverage.getGridGeometry();
+        }
+    }
+
+    @Override
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
+        final GridCoverageReader reader = acquireReader();
+        try {
+            return reader.getSampleDimensions();
+        } finally {
+            recycle(reader);
         }
     }
 

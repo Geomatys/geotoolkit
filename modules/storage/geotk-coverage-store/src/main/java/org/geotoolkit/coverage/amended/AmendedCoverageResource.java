@@ -21,6 +21,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -29,6 +31,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -59,6 +62,8 @@ import org.opengis.util.GenericName;
  */
 public class AmendedCoverageResource implements Resource, GridCoverageResource{
 
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage");
+
     protected final Set<ChangeListener> listeners = new HashSet<>();
     protected final GridCoverageResource ref;
     protected final DataStore store;
@@ -84,7 +89,7 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource{
     }
 
     @Override
-    public Optional<GenericName> getIdentifier() {
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
         return ref.getIdentifier();
     }
 
@@ -148,7 +153,11 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource{
     public void setOverrideCRS(CoordinateReferenceSystem overrideCRS) {
         if(this.overrideCRS==overrideCRS) return;
         this.overrideCRS = overrideCRS;
-        sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, getIdentifier().orElse(null), null, null));
+        try {
+            sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, getIdentifier().orElse(null), null, null));
+        } catch (DataStoreException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+        }
     }
 
     /**
@@ -188,7 +197,11 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource{
     public void setOverrideGridToCrs(MathTransform overrideGridToCrs) {
         if(this.overrideGridToCrs==overrideGridToCrs) return;
         this.overrideGridToCrs = overrideGridToCrs;
-        sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, getIdentifier().orElse(null), null, null));
+        try {
+            sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, getIdentifier().orElse(null), null, null));
+        } catch (DataStoreException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+        }
     }
 
     /**
@@ -245,7 +258,8 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource{
      * @return overridden sample dimensions or original ones is there are no overrides.
      * @throws CoverageStoreException
      */
-    public List<SampleDimension> getSampleDimensions(int index) throws DataStoreException {
+    @Override
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
         loadRefData();
         if(overrideDims!=null){
             return overrideDims;

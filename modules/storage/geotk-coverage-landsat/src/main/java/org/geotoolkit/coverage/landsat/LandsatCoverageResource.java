@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
@@ -82,6 +84,16 @@ final class LandsatCoverageResource extends AbstractCoverageResource implements 
         final GridCoverageReader reader = acquireReader();
         try {
             return reader.getGridGeometry();
+        } finally {
+            recycle(reader);
+        }
+    }
+
+    @Override
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
+        final GridCoverageReader reader = acquireReader();
+        try {
+            return reader.getSampleDimensions();
         } finally {
             recycle(reader);
         }

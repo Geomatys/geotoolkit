@@ -17,7 +17,9 @@
 package org.geotoolkit.wms;
 
 import java.awt.Image;
+import java.util.List;
 import java.util.Optional;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
@@ -58,6 +60,11 @@ public class QueryableAggregate extends WMSAggregate implements GridCoverageReso
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
         return queryableResource.getGridGeometry();
+    }
+
+    @Override
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
+        return queryableResource.getSampleDimensions();
     }
 
     @Override
