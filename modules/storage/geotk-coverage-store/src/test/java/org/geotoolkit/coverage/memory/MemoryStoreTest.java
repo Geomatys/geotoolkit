@@ -10,11 +10,12 @@ import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.metadata.Metadata;
@@ -39,7 +40,7 @@ public class MemoryStoreTest {
         gcb.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         gcb.setEnvelope(new GeneralEnvelope(new DefaultGeographicBoundingBox(-7, 7, -7, 7)));
 
-        ref.acquireWriter().write(gcb.build(), null);
+        ((WritableGridCoverageResource) ref).write(gcb.build(), null);
         return mcs;
     }
 
