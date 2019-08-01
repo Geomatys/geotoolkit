@@ -17,20 +17,20 @@
 package org.geotoolkit.storage.coverage;
 
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.StorageCountListener;
-import org.geotoolkit.coverage.memory.MemoryCoverageStore;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.storage.event.ChangeEvent;
+import org.geotoolkit.coverage.StorageCountListener;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.memory.MemoryCoverageStore;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.util.NamesExt;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.util.GenericName;
-
-import static org.junit.Assert.*;
 
 
 /**
@@ -74,9 +74,7 @@ public abstract class AbstractCoverageStoreEventTest extends org.geotoolkit.test
         final GridCoverage coverage = gcb.getGridCoverage2D();
 
         ref.addListener(reflistener, ChangeEvent.class);
-        final GridCoverageWriter writer = ref.acquireWriter();
-        writer.write(coverage, null);
-        ref.recycle(writer);
+        ((WritableGridCoverageResource) ref).write(coverage);
 
         assertEquals(1, storelistener.numManageEvent);
         assertEquals(1, storelistener.numContentEvent);

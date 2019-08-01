@@ -33,6 +33,7 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.data.multires.Mosaic;

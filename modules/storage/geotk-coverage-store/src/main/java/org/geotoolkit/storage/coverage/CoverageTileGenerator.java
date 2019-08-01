@@ -31,11 +31,10 @@ import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.multires.AbstractTileGenerator;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramid;
@@ -50,7 +49,6 @@ import org.geotoolkit.process.ProcessFinder;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.util.NoSuchIdentifierException;
 
 /**
@@ -70,30 +68,20 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
         this.resource = resource;
 
-        final GridCoverageReader reader = resource.acquireReader();
         try {
-            List<SampleDimension> sampleDimensions = reader.getSampleDimensions();
+            List<SampleDimension> sampleDimensions = resource.getSampleDimensions();
 
             if (sampleDimensions == null) {
-                final GridCoverageReadParam param = new GridCoverageReadParam();
-                param.setDeferred(true);
-                GridCoverage coverage = reader.read(param);
+                GridGeometry onepixel = resource.getGridGeometry().derive().sliceByRatio(1).build();
+                GridCoverage coverage = resource.read(onepixel);
                 sampleDimensions = coverage.getSampleDimensions();
             }
-
             empty = new double[sampleDimensions.size()];
             for (int i=0;i<empty.length;i++) {
                 empty[i] = getEmptyValue(sampleDimensions.get(i));
             }
 
-            this.resource.recycle(reader);
         } catch (DataStoreException ex) {
-            //dispose the reader, it may be in an invalid state
-            try {
-                reader.dispose();
-            } catch (DataStoreException e) {
-                ex.addSuppressed(e);
-            }
             throw ex;
         }
     }
@@ -148,23 +136,10 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         final GridExtent extent = new GridExtent(null, null, high, true);
         final GridGeometry gridGeomNd = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCrsNd, crs);
 
-        //extract resolution
-        final Matrix matrix = gridToCrsNd.getMatrix();
-        final double[] resolution = new double[high.length];
-        for (int i=0;i<resolution.length;i++) {
-            resolution[i] = Math.abs(matrix.getElement(i, i));
-        }
-
-        final GridCoverageReader reader = resource.acquireReader();
         GridCoverage coverage;
         try {
-            final GridCoverageReadParam param = new GridCoverageReadParam();
-            param.setEnvelope(gridGeomNd.getEnvelope());
-            param.setResolution(resolution);
-            coverage = reader.read(param);
-            resource.recycle(reader);
+            coverage = resource.read(gridGeomNd);
         } catch (DisjointCoverageDomainException ex) {
-            resource.recycle(reader);
             //create an empty tile
             final BufferedImage img = BufferedImages.createImage(tileSize.width, tileSize.height, empty.length, DataBuffer.TYPE_DOUBLE);
             final WritablePixelIterator ite = WritablePixelIterator.create(img);
@@ -174,12 +149,6 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             ite.close();
             return new DefaultImageTile(img, tileCoord);
         } catch (DataStoreException ex) {
-            //dispose the reader, it may be in an invalid state
-            try {
-                reader.dispose();
-            } catch (DataStoreException e) {
-                ex.addSuppressed(e);
-            }
             throw ex;
         }
 

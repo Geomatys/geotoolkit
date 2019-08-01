@@ -17,14 +17,14 @@
 package org.geotoolkit.wmsc;
 
 import java.net.URL;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapClient;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * WMS-C is a osgeo profile for WMS 1.1.1.

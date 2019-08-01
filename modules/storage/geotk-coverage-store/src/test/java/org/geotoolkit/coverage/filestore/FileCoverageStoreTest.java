@@ -26,13 +26,13 @@ import javax.imageio.ImageIO;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.junit.Assert;
 import org.junit.Test;
 

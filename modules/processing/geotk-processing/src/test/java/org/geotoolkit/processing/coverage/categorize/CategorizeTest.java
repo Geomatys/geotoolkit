@@ -8,6 +8,8 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.WritableGridCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -15,7 +17,6 @@ import org.geotoolkit.coverage.memory.MemoryCoverageStore;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifierTest;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.test.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -64,12 +65,7 @@ public class CategorizeTest {
         builder.setEnvelope(-20, -20, 10, 10);
         final GridCoverage sourceCvg = builder.build();
 
-        final GridCoverageWriter writer = input.acquireWriter();
-        try {
-            writer.write(sourceCvg, new GridCoverageWriteParam());
-        } finally {
-            input.recycle(writer);
-        }
+        ((WritableGridCoverageResource) input).write(sourceCvg);
 
         final GridCoverageResource output = store.add(new DefiningCoverageResource("output"));
         final Envelope roi;
@@ -146,7 +142,7 @@ public class CategorizeTest {
             }
         };
 
-        final GridCoverageWriter writer = input.acquireWriter();
+        final GridCoverageWriter writer = ((org.geotoolkit.storage.coverage.GridCoverageResource) input).acquireWriter();
         try {
             for (int i = 0; i < inputs.length; i++) {
                 final GridCoverageBuilder builder = new GridCoverageBuilder();
@@ -157,7 +153,7 @@ public class CategorizeTest {
                 writer.write(sourceCvg, new GridCoverageWriteParam());
             }
         } finally {
-            input.recycle(writer);
+            ((org.geotoolkit.storage.coverage.GridCoverageResource) input).recycle(writer);
         }
 
         final GridCoverageResource output = store.add(new DefiningCoverageResource("output"));
